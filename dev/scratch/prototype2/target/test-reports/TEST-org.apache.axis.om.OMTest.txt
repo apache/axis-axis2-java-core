@@ -1,3 +1,0 @@
-Testsuite: org.apache.axis.om.OMTest
-Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.078 sec
-
