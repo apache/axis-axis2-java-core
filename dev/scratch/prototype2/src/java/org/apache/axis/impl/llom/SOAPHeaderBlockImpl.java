@@ -55,7 +55,6 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
     }
 
     /**
-     *
      * @param attributeName
      * @param attrValue
      */
@@ -120,7 +119,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
      */
     public boolean getMustUnderstand() {
         String mustUnderstand = "";
-        if( (mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND)) != null){
+        if ((mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND)) != null) {
             return mustUnderstand.equalsIgnoreCase("true");
         }
         return false;

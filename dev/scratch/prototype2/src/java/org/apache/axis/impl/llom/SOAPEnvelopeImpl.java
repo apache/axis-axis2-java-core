@@ -27,13 +27,12 @@ import java.util.Iterator;
 public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMConstants {
 
     /**
-     *
      * @param builder
      */
-    public SOAPEnvelopeImpl(OMXMLParserWrapper builder){
-         super("",null,null,builder);
+    public SOAPEnvelopeImpl(OMXMLParserWrapper builder) {
+        super("", null, null, builder);
         this.localName = SOAPENVELOPE_LOCAL_NAME;
-        
+
     }
 
     public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {

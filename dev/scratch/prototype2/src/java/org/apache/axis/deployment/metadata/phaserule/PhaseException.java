@@ -18,7 +18,6 @@ package org.apache.axis.deployment.metadata.phaserule;
  * @author Deepal Jayasinghe
  *         Nov 8, 2004
  *         2:08:38 PM
- *
  */
 public class PhaseException extends Exception {
     public PhaseException() {

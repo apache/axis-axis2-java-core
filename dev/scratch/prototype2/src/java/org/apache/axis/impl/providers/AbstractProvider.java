@@ -21,12 +21,14 @@ import org.apache.axis.impl.registry.AbstractEngineElement;
 import javax.xml.namespace.QName;
 
 /**
- * This is the Absract provider. It is just a another handler. the 
+ * This is the Absract provider. It is just a another handler. the
  * protected abstract methods are only for the sake of braking down the logic
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class AbstractProvider extends AbstractEngineElement implements Provider{
+public abstract class AbstractProvider extends AbstractEngineElement implements Provider {
     private QName name;
+
     public QName getName() {
         return name;
     }

@@ -21,5 +21,5 @@ package org.apache.axis.registry;
  * Runtime representation of the possible transport used. e.g. HTTP/SMTP
  */
 
-public interface Transport extends FlowInclude,NamedEngineElement,ModuleInclude{
+public interface Transport extends FlowInclude, NamedEngineElement, ModuleInclude {
 }

@@ -15,16 +15,21 @@
  */
 
 package org.apache.axis.registry;
+
 /**
- * Logical Bag of Flows, a inflow, outflow,faultflow  
+ * Logical Bag of Flows, a inflow, outflow,faultflow
  */
-public interface FlowInclude{
+public interface FlowInclude {
     public Flow getInFlow();
+
     public Flow getOutFlow();
+
     public Flow getFaultFlow();
-    
+
     public void setInFlow(Flow flow);
+
     public void setOutFlow(Flow flow);
+
     public void setFaultFlow(Flow flow);
 
 }

@@ -22,7 +22,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Nov 8, 2004
  *         1:57:15 PM
- *
  */
 public class PhaseMetaData {
 
@@ -205,6 +204,7 @@ public class PhaseMetaData {
      * This method is to check whether  user try to add a handler whose before property is
      * phaseFitsr handler , this cannot allowed , so this will throws an exception
      * otherewise it will retun
+     *
      * @throws PhaseException
      */
     private void validatebefore() throws PhaseException {
@@ -224,6 +224,7 @@ public class PhaseMetaData {
     /**
      * This method is to check user try to add or plase a hander after the phaseLast
      * that operation dose not allowd  so then this throw a exception
+     *
      * @throws PhaseException
      */
     private void validateafter() throws PhaseException {
@@ -355,6 +356,7 @@ public class PhaseMetaData {
     /**
      * This method assume that both the before and after cant be a same hander
      * that dose not check inside this , it should check befor calling this method
+     *
      * @param handler
      * @return
      */

@@ -17,7 +17,7 @@
 package org.apache.axis.impl.transport.http;
 
 import java.io.IOException;
-import java.io.InputStream; 
+import java.io.InputStream;
 
 public class NonBlockingBufferedInputStream extends InputStream {
 
@@ -34,29 +34,32 @@ public class NonBlockingBufferedInputStream extends InputStream {
 
     /**
      * set the input stream to be used for subsequent reads
+     *
      * @param in the InputStream
      */
-    public void setInputStream (InputStream in) {
+    public void setInputStream(InputStream in) {
         this.in = in;
         numbytes = 0;
         offset = 0;
-        remainingContent = (in==null)? 0 : Integer.MAX_VALUE;
+        remainingContent = (in == null) ? 0 : Integer.MAX_VALUE;
     }
 
     /**
      * set the maximum number of bytes allowed to be read from this input
      * stream.
+     *
      * @param value the Content Length
      */
-    public void setContentLength (int value) {
-        if (in != null) this.remainingContent = value - (numbytes-offset);
+    public void setContentLength(int value) {
+        if (in != null) this.remainingContent = value - (numbytes - offset);
     }
 
     /**
-     * Replenish the buffer with data from the input stream.  This is 
+     * Replenish the buffer with data from the input stream.  This is
      * guaranteed to read atleast one byte or throw an exception.  When
      * possible, it will read up to the length of the buffer
      * the data is buffered for efficiency.
+     *
      * @return the byte read
      */
     private void refillBuffer() throws IOException {
@@ -64,8 +67,8 @@ public class NonBlockingBufferedInputStream extends InputStream {
 
         // determine number of bytes to read
         numbytes = in.available();
-        if (numbytes > remainingContent) numbytes=remainingContent;
-        if (numbytes > buffer.length) numbytes=buffer.length;
+        if (numbytes > remainingContent) numbytes = remainingContent;
+        if (numbytes > buffer.length) numbytes = buffer.length;
         if (numbytes <= 0) numbytes = 1;
 
         // actually attempt to read those bytes
@@ -79,6 +82,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
     /**
      * Read a byte from the input stream, blocking if necessary.  Internally
      * the data is buffered for efficiency.
+     *
      * @return the byte read
      */
     public int read() throws IOException {
@@ -87,13 +91,14 @@ public class NonBlockingBufferedInputStream extends InputStream {
         if (offset >= numbytes) return -1;
         return buffer[offset++] & 0xFF;
     }
-    
+
     /**
-     * Read bytes from the input stream.  This is guaranteed to return at 
-     * least one byte or throw an exception.  When possible, it will return 
-     * more bytes, up to the length of the array, as long as doing so would 
+     * Read bytes from the input stream.  This is guaranteed to return at
+     * least one byte or throw an exception.  When possible, it will return
+     * more bytes, up to the length of the array, as long as doing so would
      * not require waiting on bytes from the input stream.
-     * @param dest      byte array to read into
+     *
+     * @param dest byte array to read into
      * @return the number of bytes actually read
      */
     public int read(byte[] dest) throws IOException {
@@ -106,9 +111,10 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * possible, it will return more bytes, up to the length specified,
      * as long as doing so would not require waiting on bytes from the
      * input stream.
-     * @param dest      byte array to read into
-     * @param off       starting offset into the byte array
-     * @param len       maximum number of bytes to read
+     *
+     * @param dest byte array to read into
+     * @param off  starting offset into the byte array
+     * @param len  maximum number of bytes to read
      * @return the number of bytes actually read
      */
     public int read(byte[] dest, int off, int len) throws IOException {
@@ -118,7 +124,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
             System.arraycopy(buffer, offset, dest, off, len);
             offset += len;
             return len;
-        } else if (ready>0) {
+        } else if (ready > 0) {
             System.arraycopy(buffer, offset, dest, off, ready);
             offset = numbytes;
             return ready;
@@ -126,31 +132,33 @@ public class NonBlockingBufferedInputStream extends InputStream {
             if (in == null) return -1;
             refillBuffer();
             if (offset >= numbytes) return -1;
-            return read(dest,off,len);
+            return read(dest, off, len);
         }
     }
-    
+
     /**
      * skip over (and discard) a specified number of bytes in this input
      * stream
+     *
      * @param len the number of bytes to be skipped
      * @return the action number of bytes skipped
      */
     public int skip(int len) throws IOException {
         int count = 0;
-        while (len-->0 && read()>=0) count++;
+        while (len-- > 0 && read() >= 0) count++;
         return count;
     }
 
     /**
      * return the number of bytes available to be read without blocking
+     *
      * @return the number of bytes
      */
     public int available() throws IOException {
         if (in == null) return 0;
 
         // return buffered + available from the stream
-        return (numbytes-offset) + in.available();
+        return (numbytes - offset) + in.available();
     }
 
     /**
@@ -161,9 +169,10 @@ public class NonBlockingBufferedInputStream extends InputStream {
     }
 
     /**
-     * Just like read except byte is not removed from the buffer. 
+     * Just like read except byte is not removed from the buffer.
      * the data is buffered for efficiency.
      * Was added to support multiline http headers. ;-)
+     *
      * @return the byte read
      */
     public int peek() throws IOException {

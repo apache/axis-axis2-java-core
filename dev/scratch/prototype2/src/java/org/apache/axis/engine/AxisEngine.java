@@ -16,8 +16,6 @@
 
 package org.apache.axis.engine;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.handlers.OpNameFinder;
 import org.apache.axis.om.OMFactory;
@@ -28,74 +26,75 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *  There is one engine for the Server and the Client. the send() and receive()
- *  Methods are the basic operations the Sync, Async messageing are build on top.
- *  Two methods will find and execute the <code>CommonExecuter</code>'s Transport,
- *  Global,Service.  
+ * There is one engine for the Server and the Client. the send() and receive()
+ * Methods are the basic operations the Sync, Async messageing are build on top.
+ * Two methods will find and execute the <code>CommonExecuter</code>'s Transport,
+ * Global,Service.
  */
 public class AxisEngine {
     private Log log = LogFactory.getLog(getClass());
     private EngineRegistry registry;
-    public AxisEngine(EngineRegistry registry){
-        log.info("Axis Engine Started");        
+
+    public AxisEngine(EngineRegistry registry) {
+        log.info("Axis Engine Started");
         this.registry = registry;
     }
 
-    public void send(MessageContext mc)throws AxisFault{
+    public void send(MessageContext mc) throws AxisFault {
         Service service = null;
         //dispatch the service Name
         service = mc.getService();
-        try{
+        try {
             //what are we suppose to do in the client side 
             //how the client side handlers are deployed ??? this is a hack and no client side handlers
-            if(mc.isServerSide() || service != null){
+            if (mc.isServerSide() || service != null) {
                 ExecutionChain exeChain = service.getOutputExecutionChain();
                 exeChain.invoke(mc);
             }
             sendTheMessage(mc);
-        }catch(AxisFault e){
-            handleFault(mc,e,service);
+        } catch (AxisFault e) {
+            handleFault(mc, e, service);
         }
         log.info("end the send()");
     }
-    
-    public void receive(MessageContext mc)throws AxisFault{
+
+    public void receive(MessageContext mc) throws AxisFault {
         Service service = null;
-        try{
-            if(mc.isServerSide()){
+        try {
+            if (mc.isServerSide()) {
                 service = ServiceLocator.locateService(mc);
                 mc.setService(service);
             }
 
-            if(service != null){
+            if (service != null) {
                 ExecutionChain exeChain = service.getInputExecutionChain();
                 exeChain.invoke(mc);
-            }        
-            if(mc.isServerSide()){
+            }
+            if (mc.isServerSide()) {
                 OpNameFinder finder = new OpNameFinder();
                 finder.invoke(mc);
                 Receiver receiver = ReceiverLocator.locateReceiver(mc);
                 receiver.invoke(mc);
             }
-        }catch(AxisFault e){
-            handleFault(mc,e,service);
+        } catch (AxisFault e) {
+            handleFault(mc, e, service);
         }
         log.info("end the receive()");
-    }    
-    
-    private void sendTheMessage(MessageContext msgCtx)throws AxisFault{
+    }
+
+    private void sendTheMessage(MessageContext msgCtx) throws AxisFault {
         TransportSender ts = TransportSenderLocator.locateTransPortSender(msgCtx);
         ts.invoke(msgCtx);
     }
-    
-    private void handleFault(MessageContext mc,Exception e,Service service) throws AxisFault{
-        if(mc.isProcessingFault()){
+
+    private void handleFault(MessageContext mc, Exception e, Service service) throws AxisFault {
+        if (mc.isProcessingFault()) {
             //TODO log and exit
-            log.error("Error in fault flow",e);
-        }else{
-            log.debug("receive failed",e);
+            log.error("Error in fault flow", e);
+        } else {
+            log.debug("receive failed", e);
             mc.setProcessingFault(true);
-            if(service != null){
+            if (service != null) {
                 ExecutionChain faultExeChain = service.getFaultExecutionChain();
                 faultExeChain.invoke(mc);
             }
@@ -106,17 +105,18 @@ public class AxisEngine {
             sendTheMessage(mc);
         }
     }
-    
-	/**
-	 * @return Returns the registry.
-	 */
-	public EngineRegistry getRegistry() {
-		return registry;
-	}
-	/**
-	 * @param registry The registry to set.
-	 */
-	public void setRegistry(EngineRegistry registry) {
-		this.registry = registry;
-	}
+
+    /**
+     * @return Returns the registry.
+     */
+    public EngineRegistry getRegistry() {
+        return registry;
+    }
+
+    /**
+     * @param registry The registry to set.
+     */
+    public void setRegistry(EngineRegistry registry) {
+        this.registry = registry;
+    }
 }

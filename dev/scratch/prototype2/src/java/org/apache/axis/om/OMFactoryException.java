@@ -16,12 +16,12 @@ package org.apache.axis.om;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Dec 3, 2004
- * Time: 10:30:05 AM
- *
- * Exception thrown when the factory returns an error
+ *         Date: Dec 3, 2004
+ *         Time: 10:30:05 AM
+ *         <p/>
+ *         Exception thrown when the factory returns an error
  */
-public class OMFactoryException extends OMException{
+public class OMFactoryException extends OMException {
 
     public OMFactoryException() {
     }

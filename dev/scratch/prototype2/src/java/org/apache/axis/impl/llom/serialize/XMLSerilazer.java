@@ -34,12 +34,10 @@ public class XMLSerilazer {
 
     }
 
-    public StringBuffer serialize(OMElement element){
+    public StringBuffer serialize(OMElement element) {
 
         return b;
     }
-
-
 
 
     public static String printEvent(StreamingWrapper streamingWrapper) {

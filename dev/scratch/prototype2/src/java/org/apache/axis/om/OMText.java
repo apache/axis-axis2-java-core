@@ -27,5 +27,6 @@ public interface OMText extends OMNode {
      * @param type
      */
     public void setTextType(short type);
+
     public short getTextType();
 }

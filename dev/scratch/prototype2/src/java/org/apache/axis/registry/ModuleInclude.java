@@ -15,12 +15,15 @@
  */
 
 package org.apache.axis.registry;
+
 /**
- * Logical Bag of Modules, a inflow, outflow,faultflow  
+ * Logical Bag of Modules, a inflow, outflow,faultflow
  */
 public interface ModuleInclude {
     public int getModuleCount();
+
     public Module getModule(int index);
+
     public void addModule(Module module);
 
 }

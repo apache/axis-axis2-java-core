@@ -25,17 +25,21 @@ import java.util.Vector;
  * @author hemapani@opensource.lk
  */
 public class FlowImpl implements Flow {
-   protected Vector list = null; 
-   public FlowImpl(){
+    protected Vector list = null;
+
+    public FlowImpl() {
         list = new Vector();
-   }
-   public void addHandler(Handler handler) {
-       list.add(handler);
-   }
-   public Handler getHandler(int index) {
-       return (Handler)list.get(index);
-   }
-   public int getHandlerCount() {
-       return list.size();
-   }
+    }
+
+    public void addHandler(Handler handler) {
+        list.add(handler);
+    }
+
+    public Handler getHandler(int index) {
+        return (Handler) list.get(index);
+    }
+
+    public int getHandlerCount() {
+        return list.size();
+    }
 }

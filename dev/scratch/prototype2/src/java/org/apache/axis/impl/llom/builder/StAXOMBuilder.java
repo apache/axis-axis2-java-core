@@ -25,11 +25,11 @@ import javax.xml.stream.XMLStreamReader;
  * User: Eran Chinthaka - Lanka Software Foundation
  * Date: Dec 6, 2004
  * Time: 4:37:02 PM
- *
+ * <p/>
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
  * And this will habe the Document concept also.
  */
-public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
+public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     protected OMDocument document;
 
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
@@ -60,7 +60,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         }
 
         //create the namespaces
-        processNamespaceData(node,false);
+        processNamespaceData(node, false);
 
         //fill in the attributes
         processAttributes(node);
@@ -89,7 +89,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
                     lastNode = createOMElement();
                     break;
 
-                case XMLStreamConstants.START_DOCUMENT :
+                case XMLStreamConstants.START_DOCUMENT:
                     document = new OMDocument(this);
                     break;
 
@@ -132,7 +132,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         return document.getRootElement();
     }
 
-    protected void processNamespaceData(OMElement node,boolean isSOAPElement) {
+    protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));

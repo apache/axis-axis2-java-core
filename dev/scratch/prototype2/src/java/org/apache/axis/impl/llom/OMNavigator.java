@@ -28,8 +28,8 @@ import org.apache.axis.om.OMNode;
 /**
  * @author Dasarath Weeratunge
  * @author (modifier) Ajith Ranabahu
- * Refer to the testClass to find out how to use
- * features like isNavigable, isComplete and step
+ *         Refer to the testClass to find out how to use
+ *         features like isNavigable, isComplete and step
  */
 public class OMNavigator {
 
@@ -43,7 +43,7 @@ public class OMNavigator {
     private boolean backtracked;
 
     //flags that tell the status of the navigator
-    private boolean end=false;
+    private boolean end = false;
     private boolean start = true;
 
     public OMNavigator() {
@@ -61,12 +61,13 @@ public class OMNavigator {
 
     /**
      * get the next node
+     *
      * @return OMnode in the sequence of preorder traversal. Note however that an element node is
-     * treated slightly diffrently. Once the element is passed it returns the same element in the
-     * next encounter as well
+     *         treated slightly diffrently. Once the element is passed it returns the same element in the
+     *         next encounter as well
      */
     public OMNode next() {
-        if (next == null){
+        if (next == null) {
             return null;
         }
         node = next;
@@ -75,11 +76,11 @@ public class OMNavigator {
 
         updateNextNode();
         //set the starting and ending flags
-        if (root.equals(node)){
-            if (!start){
-                end=true;
-            } else{
-                start=false;
+        if (root.equals(node)) {
+            if (!start) {
+                end = true;
+            } else {
+                start = false;
             }
         }
 
@@ -100,7 +101,7 @@ public class OMNavigator {
             else
                 next = null;
 
-        }else{
+        } else {
             //todo this is unsuitable
             OMNodeImpl n = (OMNodeImpl) next;
 
@@ -126,21 +127,22 @@ public class OMNavigator {
      * which means that the navigating the given element is not complete but
      * the navigator cannot proceed
      */
-    public void step(){
-        if (!end){
+    public void step() {
+        if (!end) {
             next = node;
-           updateNextNode();
+            updateNextNode();
         }
     }
 
     /**
      * the navigable status
+     *
      * @return
      */
-    public boolean isNavigable(){
+    public boolean isNavigable() {
         if (end)
             return false;
-        else if (next==null)
+        else if (next == null)
             return false;
         else
             return true;
@@ -148,9 +150,10 @@ public class OMNavigator {
 
     /**
      * The completed status
+     *
      * @return
      */
-    public boolean isCompleted(){
+    public boolean isCompleted() {
         return end;
     }
 }

@@ -20,7 +20,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 21, 2004
  *         11:25:45 AM
- *
  */
 public class FaultFlowMetaData implements FlowMetaData {
     private Vector handlers = new Vector();
@@ -31,7 +30,6 @@ public class FaultFlowMetaData implements FlowMetaData {
     }
 
     /**
-     *
      * @param handler
      */
     public void addHandler(HandlerMetaData handler) {

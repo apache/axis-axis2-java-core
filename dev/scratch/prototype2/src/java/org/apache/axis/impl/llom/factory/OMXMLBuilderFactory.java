@@ -32,11 +32,11 @@ public class OMXMLBuilderFactory {
     public static final String MODEL_SOAP_SPECIFIC = "SOAP_SPECIFIC";
     public static final String MODEL_OM = "OM_ONLY";
 
-    public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(OMFactory ombuilderFactory, XMLStreamReader parser){
+    public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         return new StAXSOAPModelBuilder(ombuilderFactory, parser);
     }
 
-    public static StAXOMBuilder createStAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser){
+    public static StAXOMBuilder createStAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         return new StAXOMBuilder(ombuilderFactory, parser);
     }
 

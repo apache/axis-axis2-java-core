@@ -21,12 +21,11 @@ import java.util.Date;
  * @author Deepal Jayasinghe
  *         Oct 5, 2004
  *         9:36:14 AM
- *
  */
 public class DeploymentIterator implements ScheduleIterator {
     private Calendar calendar = Calendar.getInstance();
 
-    public DeploymentIterator(){
+    public DeploymentIterator() {
 
     }
 

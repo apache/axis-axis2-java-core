@@ -38,7 +38,7 @@ import java.io.InputStream;
  * 1 server.xml
  * 2 service.xml
  * 3 module.xml
- *
+ * <p/>
  * this class implements DeployCons to get some constant values need to
  * parse a given document
  */
@@ -62,8 +62,10 @@ public class DeploymentParser implements DeploymentConstants {
      */
     private DeploymentEngine dpengine;
     private String archiveName;
+
     /**
      * constructor to parce service.xml
+     *
      * @param inputStream
      * @param engine
      * @param fileName
@@ -73,24 +75,24 @@ public class DeploymentParser implements DeploymentConstants {
         this.dpengine = engine;
         this.archiveName = fileName;
 
-     //   try {
-            pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-     //   } catch (XMLStreamException e) {
-      //      e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-      //  } catch (FactoryConfigurationError factoryConfigurationError) {
-       //     factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
-       // }
+        //   try {
+        pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        //   } catch (XMLStreamException e) {
+        //      e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        //  } catch (FactoryConfigurationError factoryConfigurationError) {
+        //     factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        // }
     }
 
 
     public DeploymentParser(InputStream inputStream, DeploymentEngine engine) throws XMLStreamException {
         this.inputStream = inputStream;
         this.dpengine = engine;
-      //  try {
-            pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-       // } catch (XMLStreamException e) {
+        //  try {
+        pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        // } catch (XMLStreamException e) {
         //    e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-       // } catch (FactoryConfigurationError factoryConfigurationError) {
+        // } catch (FactoryConfigurationError factoryConfigurationError) {
         //    factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
         //}
     }
@@ -102,7 +104,7 @@ public class DeploymentParser implements DeploymentConstants {
 
         try {
             while (!END_DOCUMENT) {
-                int eventType =  pullparser.next();
+                int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
@@ -126,7 +128,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public  void procesServerXML(ServerMetaData serverMetaData ) throws DeploymentException{
+    public void procesServerXML(ServerMetaData serverMetaData) throws DeploymentException {
         try {
             boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
@@ -137,29 +139,29 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if(ST.equals(serverXMLST)){
+                    if (ST.equals(serverXMLST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
-                                if(attname.equals(ServerMetaData.SERVERNAME)){
+                                if (attname.equals(ServerMetaData.SERVERNAME)) {
                                     serverMetaData.setName(attvalue);
                                 }
                             }
                         }
-                    }   else  if (ST.equals(PARAMETERST)) {
+                    } else if (ST.equals(PARAMETERST)) {
                         ParameterMetaData parameter = processParameter();
                         serverMetaData.appParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
                         processTypeMapping();
-                    } else if (ST.equals(MODULEST)){
+                    } else if (ST.equals(MODULEST)) {
                         ModuleMetaData metaData = processModule();
                         serverMetaData.addModule(metaData);
-                    } else if (ST.equals(HANDERST)){
+                    } else if (ST.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         serverMetaData.addHandlers(handler);
-                    }   else if (ST.equals(PHASE_ORDER)){
+                    } else if (ST.equals(PHASE_ORDER)) {
                         processPhaseOrder(serverMetaData);
                     }
                 }
@@ -228,7 +230,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (ST.equals(FAILTFLOWST)) {
                         FaultFlowMetaData faultFlow = processFaultFlow();
                         service.setFaultFlow(faultFlow);
-                    } else if (ST.equals(MODULEST)){
+                    } else if (ST.equals(MODULEST)) {
                         ModuleMetaData moduleMetaData = getModule();//processModule();
                         service.addModules(moduleMetaData);
                     }
@@ -243,8 +245,10 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * This will process the <ParameterMetaData>....</ParameterMetaData> tag and craete a
      * ParameterMetaData object using those values
-     * @return  ParameterMetaData
+     *
+     * @return ParameterMetaData
      * @throws org.apache.axis.deployment.DeploymentException
+     *
      */
     private ParameterMetaData processParameter() throws DeploymentException {
         String name = pullparser.getLocalName();
@@ -275,7 +279,7 @@ public class DeploymentParser implements DeploymentConstants {
         //todo this should change to support xsdany
         try {
             while (!END_PARAMETER) {
-                int eventType =  pullparser.next();
+                int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
@@ -286,7 +290,7 @@ public class DeploymentParser implements DeploymentConstants {
                         END_PARAMETER = true;
                         break;
                     }
-                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
                 }
             }
@@ -302,11 +306,13 @@ public class DeploymentParser implements DeploymentConstants {
 
     /**
      * this method is to process the HandlerMetaData tag in the either service.xml or server.xml
+     *
      * @return HandlerMetaData object
      * @throws org.apache.axis.deployment.DeploymentException
+     *
      */
     private HandlerMetaData processHandler() throws DeploymentException {
-      //  String name = pullparser.getLocalName();
+        //  String name = pullparser.getLocalName();
         boolean ref_name = false;
         HandlerMetaData handler = new HandlerMetaData();
         int attribCount = pullparser.getAttributeCount();
@@ -340,7 +346,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_HANDLER) {
                 int eventType = pullparser.next();
-               if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_HANDLER = true;
@@ -385,7 +391,7 @@ public class DeploymentParser implements DeploymentConstants {
                         END_HANDLER = true;
                         break;
                     }
-                }else if (eventType == XMLStreamConstants.CHARACTERS) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
                 }
             }
@@ -402,7 +408,9 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * This method used to process the <typeMapping>..</typeMapping> tag
      * in the service.xml
+     *
      * @throws org.apache.axis.deployment.DeploymentException
+     *
      */
     public void processTypeMapping() throws DeploymentException {
         //todo complete this method
@@ -422,7 +430,7 @@ public class DeploymentParser implements DeploymentConstants {
                         END_TYPEMAPPING = true;
                         break;
                     }
-                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 }
             }
@@ -435,7 +443,7 @@ public class DeploymentParser implements DeploymentConstants {
 
 
     private OperationMetaData processOperation() throws DeploymentException {
-      //  String name = pullparser.getLocalName();
+        //  String name = pullparser.getLocalName();
         OperationMetaData operation = new OperationMetaData();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 4) {  // there should be two attributes
@@ -502,7 +510,9 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * This method used to process the <typeMapping>..</typeMapping> tag
      * in the service.xml
+     *
      * @throws org.apache.axis.deployment.DeploymentException
+     *
      */
     public void processBeanMapping() throws DeploymentException {
         //todo complete this method
@@ -511,12 +521,12 @@ public class DeploymentParser implements DeploymentConstants {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_BEANMAPPING) {
-                int eventType =pullparser.next();
+                int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_BEANMAPPING = true;
-                }  else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(BEANMAPPINGST)) {
                         END_BEANMAPPING = true;
@@ -531,18 +541,18 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
-    private  ModuleMetaData getModule() throws DeploymentException{
-        String moduleref ="";
+    private ModuleMetaData getModule() throws DeploymentException {
+        String moduleref = "";
         int attribCount = pullparser.getAttributeCount();
-     //   boolean ref_name = false;
+        //   boolean ref_name = false;
 
-        if(attribCount > 0 ){
+        if (attribCount > 0) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
 
                 if (attname.equals(ModuleMetaData.REF)) {
-                    moduleref  = attvalue;
+                    moduleref = attvalue;
                 }
             }
         }
@@ -571,7 +581,7 @@ public class DeploymentParser implements DeploymentConstants {
             throw new DeploymentException("Unknown process Exception", e);
         }
         ModuleMetaData module = dpengine.getModule(moduleref);
-        if (module == null){
+        if (module == null) {
             throw new DeploymentException(moduleref + " is not a valid module ");
         } else
             return module;
@@ -582,7 +592,7 @@ public class DeploymentParser implements DeploymentConstants {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
 
-        if(attribCount > 0 ){
+        if (attribCount > 0) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
@@ -644,7 +654,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
 
@@ -681,7 +691,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
         return inFlow;
@@ -694,7 +704,7 @@ public class DeploymentParser implements DeploymentConstants {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_OUTFLOW) {
-                int eventType =  pullparser.next();
+                int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
@@ -748,7 +758,7 @@ public class DeploymentParser implements DeploymentConstants {
                         END_FAULTFLOW = true;
                         break;
                     }
-                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 }
             }
@@ -761,7 +771,7 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    public void processPhaseOrder(ServerMetaData server) throws DeploymentException{
+    public void processPhaseOrder(ServerMetaData server) throws DeploymentException {
         boolean END_PHASEORDER = false;
         String text = ""; // to store the paramater elemnt
         try {
@@ -774,7 +784,7 @@ public class DeploymentParser implements DeploymentConstants {
                     if (tagnae.equals(PHASEST)) {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
-                        if(attname.equals(PhaseMetaData.PHASE_NAME)){
+                        if (attname.equals(PhaseMetaData.PHASE_NAME)) {
                             PhaseMetaData phase = new PhaseMetaData(attvalue);
                             server.addPhases(phase);
                         }
@@ -791,7 +801,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
     }
@@ -800,6 +810,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * this method is to get the value of attribue
      * eg xsd:anyVal --> anyVal
+     *
      * @return
      */
     private String getValue(String in) {
@@ -822,8 +833,8 @@ public class DeploymentParser implements DeploymentConstants {
 
         try {
             while (!END_DOCUMENT) {
-                int eventType =  pullparser.next();
-               if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {

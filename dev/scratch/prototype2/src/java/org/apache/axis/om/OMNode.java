@@ -1,8 +1,6 @@
 package org.apache.axis.om;
 
 
-
-
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -122,22 +120,26 @@ public interface OMNode {
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException;
 
-    /** This is to get the type of node, as this is the super class of all the nodes
+    /**
+     * This is to get the type of node, as this is the super class of all the nodes
      *
      * @return
      * @throws OMException
      */
     public short getType() throws OMException;
+
     public void setType(short nodeType) throws OMException;
 
     /**
      * get the previous sibling
+     *
      * @return
      */
     public OMNode getPreviousSibling();
 
     /**
-     *  Set the previous sibling
+     * Set the previous sibling
+     *
      * @param previousSibling
      */
     public void setPreviousSibling(OMNode previousSibling);

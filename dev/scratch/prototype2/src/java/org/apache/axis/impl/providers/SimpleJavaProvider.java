@@ -33,7 +33,8 @@ import java.lang.reflect.Method;
 
 
 /**
- * This is a Simple java Provider. 
+ * This is a Simple java Provider.
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 
@@ -43,61 +44,59 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     private String scope;
     private Method method;
     private ClassLoader classLoader;
-    
-    public SimpleJavaProvider(){
+
+    public SimpleJavaProvider() {
         scope = Constants.APPLICATION_SCOPE;
 
     }
-    
+
     protected Object makeNewServiceObject(MessageContext msgContext)
-        throws AxisFault
-    {
+            throws AxisFault {
         try {
             Service service = msgContext.getService();
             classLoader = service.getClassLoader();
             Parameter classParm = service.getParameter("className");
-            String className = (String)classParm.getValue();
-            if(className == null)
+            String className = (String) classParm.getValue();
+            if (className == null)
                 throw new AxisFault("className parameter is null");
-            if(classLoader == null){
+            if (classLoader == null) {
                 classLoader = Thread.currentThread().getContextClassLoader();
             }
-            Class implClass =Class.forName(className,true,classLoader);
+            Class implClass = Class.forName(className, true, classLoader);
             return implClass.newInstance();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }
 
-    public Object getTheImplementationObject(
-            MessageContext msgContext)throws AxisFault{
-            Service service = msgContext.getService();
-            QName serviceName = service.getName();
-        if(Constants.APPLICATION_SCOPE.equals(scope)){
+    public Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
+        Service service = msgContext.getService();
+        QName serviceName = service.getName();
+        if (Constants.APPLICATION_SCOPE.equals(scope)) {
             return makeNewServiceObject(msgContext);
-        }else if(Constants.SESSION_SCOPE.equals(scope)){
+        } else if (Constants.SESSION_SCOPE.equals(scope)) {
             SessionContext sessionContext = msgContext.getSessionContext();
             Object obj = sessionContext.get(serviceName);
-            if(obj == null){
+            if (obj == null) {
                 obj = makeNewServiceObject(msgContext);
-                sessionContext.put(serviceName,obj);
-            }
-            return obj;            
-        }else if(Constants.GLOBAL_SCOPE.equals(scope)){
-            SessionContext globalContext = msgContext.getSessionContext();
-            Object obj = globalContext.get(serviceName);
-            if(obj == null){
-                obj = makeNewServiceObject(msgContext);
-                globalContext.put(serviceName,obj);
+                sessionContext.put(serviceName, obj);
             }
             return obj;
-        }else{
-            throw new AxisFault("unknown scope "+ scope);
+        } else if (Constants.GLOBAL_SCOPE.equals(scope)) {
+            SessionContext globalContext = msgContext.getSessionContext();
+            Object obj = globalContext.get(serviceName);
+            if (obj == null) {
+                obj = makeNewServiceObject(msgContext);
+                globalContext.put(serviceName, obj);
+            }
+            return obj;
+        } else {
+            throw new AxisFault("unknown scope " + scope);
         }
-            
-    } 
-    
-    public Object[] deserializeParameters(MessageContext msgContext,Method method){
+
+    }
+
+    public Object[] deserializeParameters(MessageContext msgContext, Method method) {
         return null;
     }
 
@@ -112,26 +111,26 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             Object obj = getTheImplementationObject(msgContext);
             
             //find the WebService method  
-            Class ImplClass =obj.getClass();
+            Class ImplClass = obj.getClass();
             Operation op = msgContext.getOperation();
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
-            for(int i = 0;i<methods.length;i++){
-                if(methods[i].getName().equals(methodName)){
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
                     break;
                 }
             }
             //deserialize (XML-> java)
-            Object[] parms = deserializeParameters(msgContext,method);
+            Object[] parms = deserializeParameters(msgContext, method);
             //invoke the WebService 
-            Object result = method.invoke(obj,parms);
+            Object result = method.invoke(obj, parms);
 
             //TODO fix the server side  
 //            SOAPXMLParserWrapper parser = new OMXMLPullParserWrapper();
 //            msgContext.setOutMessage(new OMMessageImpl(parser));
             return msgContext;
-        }  catch (SecurityException e) {
+        } catch (SecurityException e) {
             throw AxisFault.makeFault(e);
         } catch (IllegalArgumentException e) {
             throw AxisFault.makeFault(e);

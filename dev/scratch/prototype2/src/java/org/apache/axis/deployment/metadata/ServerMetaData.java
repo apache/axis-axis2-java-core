@@ -22,7 +22,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 18, 2004
  *         4:18:09 PM
- *
  */
 public class ServerMetaData {
 
@@ -56,10 +55,11 @@ public class ServerMetaData {
 
     /**
      * this is a dumy method  to fill some pahses
+     *
      * @return
      */
 
-     public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -130,16 +130,16 @@ public class ServerMetaData {
         return false;
     }
 
-    public PhaseMetaData[] getOrderPhases(PhaseMetaData [] phasesmetadats){
+    public PhaseMetaData[] getOrderPhases(PhaseMetaData[] phasesmetadats) {
         PhaseMetaData[] temppahse = new PhaseMetaData[phasesmetadats.length];
-        int count =0;
+        int count = 0;
         for (int i = 0; i < phases.size(); i++) {
             PhaseMetaData phasemetadata = (PhaseMetaData) phases.elementAt(i);
             for (int j = 0; j < phasesmetadats.length; j++) {
                 PhaseMetaData tempmetadata = phasesmetadats[j];
-                if(tempmetadata.getName().equals(phasemetadata.getName())){
+                if (tempmetadata.getName().equals(phasemetadata.getName())) {
                     temppahse[count] = tempmetadata;
-                    count ++;
+                    count++;
                 }
             }
 

@@ -41,7 +41,7 @@ public class ModuleMetaData {
     private String className;
     private String name;
 
-    private String archiveName ;
+    private String archiveName;
 
     private Vector parameters = new Vector();
 
@@ -117,9 +117,6 @@ public class ModuleMetaData {
     public void setFaultFlow(FaultFlowMetaData faultFlow) {
         this.faultFlow = faultFlow;
     }
-
-
-
 
 
 }

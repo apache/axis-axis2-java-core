@@ -18,9 +18,11 @@ package org.apache.axis.registry;
 
 public interface Parameter {
     public static int TEXT_PARAMETER = 0;
-    public static int DOM_PARAMETER = 1; 
-    
+    public static int DOM_PARAMETER = 1;
+
     public String getName();
+
     public Object getValue();
+
     public int getParameterType();
 }

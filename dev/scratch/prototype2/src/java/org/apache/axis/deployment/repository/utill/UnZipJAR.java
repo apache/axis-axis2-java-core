@@ -33,14 +33,16 @@ import java.util.zip.ZipInputStream;
 
 public class UnZipJAR implements DeploymentConstants {
     final int BUFFER = 2048;
+
     /**
      * This method will unzipService the given jar or aar.
      * it take two arguments filename and refereance to DeployEngine
+     *
      * @param filename
      * @param engine
      */
     public ServiceMetaData unzipService(String filename, DeploymentEngine engine) {
-        ServiceMetaData service =null;
+        ServiceMetaData service = null;
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -54,7 +56,7 @@ public class UnZipJAR implements DeploymentConstants {
                     break;
                 }
             }
-          //  zin.closeEntry();
+            //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,8 +64,8 @@ public class UnZipJAR implements DeploymentConstants {
         return service;
     }
 
-    public ModuleMetaData unzipModule(String filename, DeploymentEngine engine){
-        ModuleMetaData module =null;
+    public ModuleMetaData unzipModule(String filename, DeploymentEngine engine) {
+        ModuleMetaData module = null;
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -77,7 +79,7 @@ public class UnZipJAR implements DeploymentConstants {
                     break;
                 }
             }
-          //  zin.closeEntry();
+            //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
             e.printStackTrace();

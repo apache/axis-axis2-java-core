@@ -161,8 +161,7 @@ public abstract class OMFactory {
      * @param parent
      * @return
      */
-    public abstract SOAPFault createSOAPFault(SOAPBody parent,Exception e);
-
+    public abstract SOAPFault createSOAPFault(SOAPBody parent, Exception e);
 
 
     /**

@@ -25,7 +25,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 13, 2004
  *         12:13:11 PM
- *
  */
 public class WSInfoList implements DeploymentConstants {
     /**
@@ -61,10 +60,11 @@ public class WSInfoList implements DeploymentConstants {
      * in adding new item to jarlist it first create optimice and requird object to
      * keep those infor call WSInfo and that will be added to jarist and actual
      * jar file will be added to DeploymentEngine
-     *
+     * <p/>
      * If it is alredy exsit then it check whether it has been updated
      * then change the last update date of the wsInfo and added two entries to DeploymentEngine
      * one for New Deployment and other for undeployment
+     *
      * @param file actual jar files for either Module or service
      * @param type indicate either Service or Module
      */
@@ -116,6 +116,7 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * This method is to use to check the file exist and if so
      * it will return related wsinfo object to the file else return null;
+     *
      * @param filename
      * @return
      */
@@ -133,6 +134,7 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * comapre the last update dates of both files and if those are differ
      * that will assume as the file is been modified
+     *
      * @param file
      * @param wsInfo
      * @return
@@ -171,24 +173,24 @@ public class WSInfoList implements DeploymentConstants {
         tempvector.removeAllElements();
         String filename = "";
         boolean exist = false;
-            while (iter.hasNext()) {
-                WSInfo fileitem = (WSInfo) iter.next();
-                exist = false;
-                for (int i = 0; i < size; i++) {
-                    filename = (String) currentjars.elementAt(i);
-                    if (filename.equals(fileitem.getFilename())) {
-                        exist = true;
-                        break;
-                    }
+        while (iter.hasNext()) {
+            WSInfo fileitem = (WSInfo) iter.next();
+            exist = false;
+            for (int i = 0; i < size; i++) {
+                filename = (String) currentjars.elementAt(i);
+                if (filename.equals(fileitem.getFilename())) {
+                    exist = true;
+                    break;
                 }
-
-                if (!exist) {
-                    tempvector.add(fileitem);
-                    WSInfo wsInfo = new WSInfo(fileitem.getFilename(), fileitem.getLastmodifieddate());
-                    deplorer.addtowstoUnDeploy(wsInfo);//this is to be undeploye
-                }
-
             }
+
+            if (!exist) {
+                tempvector.add(fileitem);
+                WSInfo wsInfo = new WSInfo(fileitem.getFilename(), fileitem.getLastmodifieddate());
+                deplorer.addtowstoUnDeploy(wsInfo);//this is to be undeploye
+            }
+
+        }
 
         for (int i = 0; i < tempvector.size(); i++) {
             WSInfo fileItem = (WSInfo) tempvector.elementAt(i);

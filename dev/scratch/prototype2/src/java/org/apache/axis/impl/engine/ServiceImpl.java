@@ -27,17 +27,19 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
-public class ServiceImpl extends AbstractContainer implements Service{
+public class ServiceImpl extends AbstractContainer implements Service {
     private ExecutionChain inExecChain;
     private ExecutionChain outexecChain;
     private ExecutionChain faultExecChain;
-    
+
     public ExecutionChain getFaultExecutionChain() {
         return faultExecChain;
     }
+
     public ExecutionChain getOutputExecutionChain() {
         return outexecChain;
     }
+
     public void setFaultExecutionChain(ExecutionChain faultExecChain) {
         this.faultExecChain = faultExecChain;
     }
@@ -46,30 +48,33 @@ public class ServiceImpl extends AbstractContainer implements Service{
         this.outexecChain = outexecChain;
     }
 
-    
+
     public ExecutionChain getInputExecutionChain() {
         return inExecChain;
     }
+
     public void setInputExecutionChain(ExecutionChain execChain) {
         this.inExecChain = execChain;
 
     }
-    private Log log = LogFactory.getLog(getClass());     
+
+    private Log log = LogFactory.getLog(getClass());
     private HashMap operations = new HashMap();
     private QName name;
     private Provider provider;
-    private Handler sender;    
+    private Handler sender;
     private ClassLoader classLoader;
-    
-    public ServiceImpl(QName name){
+
+    public ServiceImpl(QName name) {
         this.name = name;
-    } 
+    }
+
     public ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
     public Operation getOperation(QName index) {
-        return (Operation)operations.get(index);
+        return (Operation) operations.get(index);
     }
 
     public int getOperationCount() {
@@ -82,7 +87,7 @@ public class ServiceImpl extends AbstractContainer implements Service{
     }
 
     public void addOperation(Operation op) {
-        operations.put(op.getName(),op);
+        operations.put(op.getName(), op);
     }
 
     public Provider getProvider() {

@@ -29,28 +29,28 @@ import org.apache.commons.logging.LogFactory;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class InOutSyncReceiver extends AbstractHandler implements Receiver {
-    protected Log log = LogFactory.getLog(getClass()); 
+    protected Log log = LogFactory.getLog(getClass());
 
     public void invoke(final MessageContext msgContext) throws AxisFault {
-        if(msgContext.isNewThreadRequired()){
+        if (msgContext.isNewThreadRequired()) {
             Runnable runner = new Runnable() {
                 public void run() {
-                    try{
+                    try {
                         send(msgContext);
-                    }catch(AxisFault e){
-                        log.error("Exception occured in new thread starting response",e);
+                    } catch (AxisFault e) {
+                        log.error("Exception occured in new thread starting response", e);
                     }
-                    
+
                 }
-            }; 
+            };
             Thread thread = new Thread(runner);
-            thread.start();           
-        }else{
+            thread.start();
+        } else {
             send(msgContext);
         }
     }
-    
-    public void send(MessageContext msgContext)throws AxisFault{
+
+    public void send(MessageContext msgContext) throws AxisFault {
         Provider provider = msgContext.getService().getProvider();
         MessageContext outMsgContext = provider.invoke(msgContext);
         Sender sender = new Sender();

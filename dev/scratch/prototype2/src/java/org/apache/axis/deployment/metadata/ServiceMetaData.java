@@ -59,7 +59,7 @@ public class ServiceMetaData implements DeploymentConstants {
 
     private String name;
 
-    private String archiveName ;
+    private String archiveName;
 
     public String getArchiveName() {
         return archiveName;
@@ -150,12 +150,12 @@ public class ServiceMetaData implements DeploymentConstants {
         return (ParameterMetaData) parameters.get(index);
     }
 
-    public void addModules(ModuleMetaData moduleMetaData){
+    public void addModules(ModuleMetaData moduleMetaData) {
         modules.add(moduleMetaData);
     }
 
-    public ModuleMetaData getModuleMetaData(int index){
-        return (ModuleMetaData)modules.get(index);
+    public ModuleMetaData getModuleMetaData(int index) {
+        return (ModuleMetaData) modules.get(index);
     }
 
     public int getParametercount() {
@@ -171,11 +171,10 @@ public class ServiceMetaData implements DeploymentConstants {
 
     }
 
-    /***
+    /**
      * This method is use to get all the handlers which are needed to
      * run the service , but Handlers which are belong to Global and Transport
      * not included here if it is requird it can be done
-     *
      */
     public HandlerMetaData[] getHandlers() throws PhaseException {
         int noofhandlers = operation.getHandlerCount() + outFlow.getHandlercount() + inFlow.getHandlercount() +
@@ -213,6 +212,7 @@ public class ServiceMetaData implements DeploymentConstants {
 
     /**
      * this method is used to get all the handers for a given phase
+     *
      * @return
      */
     public HandlerMetaData[] getFlowHandlers(String flowName) throws PhaseException {
@@ -266,9 +266,11 @@ public class ServiceMetaData implements DeploymentConstants {
         handlers = handlerChain.getOrderdHandlers();
         return handlers;
     }
+
     /**
      * to get all the global handler belong to service , and thoses handlers come form
      * modules
+     *
      * @return
      * @throws PhaseException
      */
@@ -278,15 +280,15 @@ public class ServiceMetaData implements DeploymentConstants {
         for (int i = 0; i < modules.size(); i++) {
             ModuleMetaData metaData = (ModuleMetaData) modules.elementAt(i);
             count = metaData.getInFlow().getHandlercount();
-            for(int intA=0; intA <count; intA++ ){
+            for (int intA = 0; intA < count; intA++) {
                 temphandler.add(metaData.getInFlow().getHandler(intA));
             }
         }
-        count =  temphandler.size();
-        HandlerMetaData [] globalInflow = new HandlerMetaData[count];
+        count = temphandler.size();
+        HandlerMetaData[] globalInflow = new HandlerMetaData[count];
         for (int i = 0; i < temphandler.size(); i++) {
             HandlerMetaData handlerMetaData = (HandlerMetaData) temphandler.elementAt(i);
-            globalInflow[i] =  handlerMetaData;
+            globalInflow[i] = handlerMetaData;
         }
 
         HandlerChainMetaData handlerChain = new HandlerChainMetaDataImpl();
@@ -305,15 +307,15 @@ public class ServiceMetaData implements DeploymentConstants {
         for (int i = 0; i < modules.size(); i++) {
             ModuleMetaData metaData = (ModuleMetaData) modules.elementAt(i);
             count = metaData.getOutFlow().getHandlercount();
-            for(int intA=0; intA <count; intA++ ){
+            for (int intA = 0; intA < count; intA++) {
                 temphandler.add(metaData.getOutFlow().getHandler(intA));
             }
         }
-        count =  temphandler.size();
-        HandlerMetaData [] globalOutflow = new HandlerMetaData[count];
+        count = temphandler.size();
+        HandlerMetaData[] globalOutflow = new HandlerMetaData[count];
         for (int i = 0; i < temphandler.size(); i++) {
             HandlerMetaData handlerMetaData = (HandlerMetaData) temphandler.elementAt(i);
-            globalOutflow[i] =  handlerMetaData;
+            globalOutflow[i] = handlerMetaData;
         }
 
         HandlerChainMetaData handlerChain = new HandlerChainMetaDataImpl();
@@ -331,15 +333,15 @@ public class ServiceMetaData implements DeploymentConstants {
         for (int i = 0; i < modules.size(); i++) {
             ModuleMetaData metaData = (ModuleMetaData) modules.elementAt(i);
             count = metaData.getFaultFlow().getHandlercount();
-            for(int intA=0; intA <count; intA++ ){
+            for (int intA = 0; intA < count; intA++) {
                 temphandler.add(metaData.getFaultFlow().getHandler(intA));
             }
         }
-        count =  temphandler.size();
-        HandlerMetaData [] globalfaultflow = new HandlerMetaData[count];
+        count = temphandler.size();
+        HandlerMetaData[] globalfaultflow = new HandlerMetaData[count];
         for (int i = 0; i < temphandler.size(); i++) {
             HandlerMetaData handlerMetaData = (HandlerMetaData) temphandler.elementAt(i);
-            globalfaultflow[i] =  handlerMetaData;
+            globalfaultflow[i] = handlerMetaData;
         }
 
         HandlerChainMetaData handlerChain = new HandlerChainMetaDataImpl();

@@ -1,7 +1,6 @@
 package org.apache.axis.om;
 
 
-
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -23,15 +22,17 @@ package org.apache.axis.om;
  */
 public interface OMXMLParserWrapper {
     /**
-     *  Proceed the parser one step and return the event value
+     * Proceed the parser one step and return the event value
+     *
      * @return
      * @throws org.apache.axis.om.OMException
      */
     int next() throws OMException;
 
     /**
-     *  Discard the current element
+     * Discard the current element
      * This should remove the given element and its decendants.
+     *
      * @param el
      * @throws org.apache.axis.om.OMException
      */
@@ -48,18 +49,17 @@ public interface OMXMLParserWrapper {
      * depends on the underlying implementation,an Object is returned
      * However the implementations may have restrictions in letting access to
      * the parser
+     *
      * @return
      */
     Object getParser();
 
     /**
-     *
      * @return the complete status
      */
     boolean isCompleted();
 
     /**
-     *
      * @return
      */
     public OMElement getDocumentElement();

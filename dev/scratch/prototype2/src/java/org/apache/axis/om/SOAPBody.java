@@ -62,5 +62,5 @@ public interface SOAPBody extends OMElement {
      */
     public abstract void addFault(SOAPFault soapFault) throws OMException;
 
-    
+
 }

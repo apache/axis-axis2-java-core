@@ -15,18 +15,6 @@
  */
 package org.apache.axis.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -35,84 +23,88 @@ import org.apache.axis.impl.engine.GlobalImpl;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.registry.EngineRegistryImpl;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Iterator;
+
 
 /**
- * This is conveneice API for the User who do not need to see the complexity of the 
- * Engine. 
- * //TODO this a a MOCK call things are subjected to be decided  
+ * This is conveneice API for the User who do not need to see the complexity of the
+ * Engine.
+ * //TODO this a a MOCK call things are subjected to be decided
+ *
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Call {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
-    
-    
-    public Call(){
+
+
+    public Call() {
         //TODO look for the Client XML and creatre a Engine registy
         this.registry = new EngineRegistryImpl(new GlobalImpl());
     }
-    
-    
-    public OMElement syncCall(OMElement in,URL url) throws AxisFault{
+
+
+    public OMElement syncCall(OMElement in, URL url) throws AxisFault {
         try {
             URLConnection urlConnect = url.openConnection();
             urlConnect.setDoOutput(true);
 
             SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
-            
+
             env.getBody().addChild(in);
             AxisEngine engine = new AxisEngine(registry);
             MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(env);
-           
+
             OutputStream out = urlConnect.getOutputStream();
-            msgctx.setProperty(MessageContext.TRANSPORT_DATA,out);
-            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL,url);
+            msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.REQUEST_URL, url);
             engine.send(msgctx);
-            
-            MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(),engine);
+
+            MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
             response.setServerSide(false);
             engine.receive(response);
             SOAPEnvelope envelope = response.getEnvelope();
-            
+
             SOAPBody body = envelope.getBody();
-            
+
             Iterator children = body.getChildren();
-            while(children != null && children.hasNext() ){
-                OMNode child = (OMNode)children.next();
-                if(child.getType() == OMNode.ELEMENT_NODE){
-                    OMElement element = (OMElement)child;
-                    OMNamespace ns  = element.getNamespace();
-                    if(OMConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName()) 
-                            && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getValue())){
-                          Iterator it = element.getChildren();
-                          String error = null;
-                          while(it.hasNext()){
-                              OMNode node = (OMNode)it.next();
-                              if(OMNode.TEXT_NODE == node.getType()){
-                                  error = ((OMText)node).getValue();
-                                  if(error != null){
-                                      break;
-                                  }
-                              }
-                          }
-                          throw new AxisFault(error);
+            while (children != null && children.hasNext()) {
+                OMNode child = (OMNode) children.next();
+                if (child.getType() == OMNode.ELEMENT_NODE) {
+                    OMElement element = (OMElement) child;
+                    OMNamespace ns = element.getNamespace();
+                    if (OMConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
+                            && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getValue())) {
+                        Iterator it = element.getChildren();
+                        String error = null;
+                        while (it.hasNext()) {
+                            OMNode node = (OMNode) it.next();
+                            if (OMNode.TEXT_NODE == node.getType()) {
+                                error = ((OMText) node).getValue();
+                                if (error != null) {
+                                    break;
+                                }
+                            }
+                        }
+                        throw new AxisFault(error);
                     }
-                    return (OMElement)child;
+                    return (OMElement) child;
                 }
             }
             return null;
@@ -121,44 +113,44 @@ public class Call {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
-    }    
+    }
 
-    public void asyncCall(OMElement in,URL url,final CallBack callback) throws AxisFault{
+    public void asyncCall(OMElement in, URL url, final CallBack callback) throws AxisFault {
         try {
             final URLConnection urlConnect = url.openConnection();
             final AxisEngine engine = new AxisEngine(registry);
             urlConnect.setDoOutput(true);
 
             SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
-            
+
             env.getBody().addChild(in);
-            
+
             MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(env);
-           
+
             OutputStream out = urlConnect.getOutputStream();
-            msgctx.setProperty(MessageContext.TRANSPORT_DATA,out);
-            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL,url);
-            
+            msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+
             engine.send(msgctx);
 
             Runnable runnable = new Runnable() {
                 public void run() {
                     try {
-                        log.info("Starting new Thread "); 
-                        MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(),engine);
+                        log.info("Starting new Thread ");
+                        MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
                         response.setServerSide(false);
                         engine.receive(response);
                         SOAPEnvelope envelope = response.getEnvelope();
-                        
+
                         SOAPBody body = envelope.getBody();
-                        
+
                         Iterator children = body.getChildren();
-                        while(children != null && children.hasNext() ){
-                            OMNode child = (OMNode)children.next();
-                            if(child.getType() == OMNode.ELEMENT_NODE){
-                                callback.doWork((OMElement)child);
+                        while (children != null && children.hasNext()) {
+                            OMNode child = (OMNode) children.next();
+                            if (child.getType() == OMNode.ELEMENT_NODE) {
+                                callback.doWork((OMElement) child);
                             }
                         }
                     } catch (Exception e) {
@@ -167,16 +159,16 @@ public class Call {
                 }
             };
             new Thread(runnable).start();
-            
+
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
-    }    
+    }
 
-    
-    private MessageContext createIncomingMessageContext(InputStream in,AxisEngine engine) throws AxisFault{
+
+    private MessageContext createIncomingMessageContext(InputStream in, AxisEngine engine) throws AxisFault {
         MessageContext msgContext;
         try {
             msgContext = new MessageContext(engine.getRegistry());
@@ -198,14 +190,14 @@ public class Call {
 //
 //      }
             InputStreamReader isr = new InputStreamReader(in);
-            XMLStreamReader reader =  XMLInputFactory.newInstance().createXMLStreamReader(isr);
-            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),reader);
-            msgContext.setEnvelope((SOAPEnvelope)builder.getDocumentElement());
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
+            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
-        } 
+        }
         return msgContext;
 
     }
-    
+
 }

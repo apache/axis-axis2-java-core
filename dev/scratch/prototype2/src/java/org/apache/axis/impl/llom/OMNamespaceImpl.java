@@ -27,7 +27,6 @@ public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
     private String prefix;
 
     /**
-     *
      * @param uri
      * @param prefix
      */
@@ -53,7 +52,7 @@ public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
     }
 
     public String getPrefix() {
-        return prefix;  
+        return prefix;
     }
 
     public OMNode getNextSibling() throws OMException {

@@ -117,9 +117,8 @@ public class PhaseHolder implements DeploymentConstants {
     }
 
 
-
     public HandlerMetaData[] getOrderdHandlers() throws PhaseException {
-        OrderdPhases() ;
+        OrderdPhases();
         Vector tempHander = new Vector();
         HandlerMetaData[] handlers;
         for (int i = 0; i < phaseholder.size(); i++) {

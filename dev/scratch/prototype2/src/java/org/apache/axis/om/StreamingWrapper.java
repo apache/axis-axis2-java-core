@@ -1,8 +1,8 @@
 package org.apache.axis.om;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.impl.llom.exception.OMStreamingException;
+
+import javax.xml.namespace.QName;
 
 
 /**
@@ -21,31 +21,32 @@ import org.apache.axis.impl.llom.exception.OMStreamingException;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 18, 2004
- * Time: 1:52:09 PM
- * 
+ *         Date: Nov 18, 2004
+ *         Time: 1:52:09 PM
  */
 public interface StreamingWrapper {
     /*
     ######################################################################
     Following methods are removed. they seem to be duplicates
     */
-        //int generatePullEvent();
-        //void setCursor(int eventCount);
+    //int generatePullEvent();
+    //void setCursor(int eventCount);
 
     /**
      * Allows to set parser wrapper to switch to the stream when
      * needed. Unless this switch is "on" the wrapper will always
      * cache the parsed items. If the need is there to get the pull
      * events <i>without</i> caching then this switch must be "on"
+     *
      * @param b
      */
     void setAllowSwitching(boolean b);
 
     /**
      * get the parser switching flag.
-     * @see #setAllowSwitching
+     *
      * @return
+     * @see #setAllowSwitching
      */
     boolean isAllowSwitching();
 
@@ -55,7 +56,7 @@ public interface StreamingWrapper {
     These methods are actually from the XMLStreamReader interface which are StAX!
     Unwanted ones (such as the ones that include PI's) are removed
     */
-     Object getProperty(String s) throws IllegalArgumentException;
+    Object getProperty(String s) throws IllegalArgumentException;
 
     int next() throws OMStreamingException;
 
@@ -128,7 +129,6 @@ public interface StreamingWrapper {
     String getNamespaceURI();
 
     String getPrefix();
-
 
 
 }

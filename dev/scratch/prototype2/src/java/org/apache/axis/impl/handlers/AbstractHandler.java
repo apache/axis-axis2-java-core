@@ -25,27 +25,35 @@ import javax.xml.namespace.QName;
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
-public abstract class AbstractHandler implements Handler{
+public abstract class AbstractHandler implements Handler {
     private QName name;
+
     public QName getName() {
         return name;
     }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
     }
-    public void revoke(MessageContext msgContext){
+
+    public void revoke(MessageContext msgContext) {
     }
+
     public void setName(QName name) {
         this.name = name;
     }
+
     public void addParameter(Parameter param) {
-            //TODO
+        //TODO
     }
+
     public void cleanup() throws AxisFault {
     }
+
     public Parameter getParameter(String key) {
         //TODO
         return null;
     }
+
     public void init() throws AxisFault {
     }
 }

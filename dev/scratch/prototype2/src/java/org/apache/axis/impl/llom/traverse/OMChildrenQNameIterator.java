@@ -2,6 +2,7 @@ package org.apache.axis.impl.llom.traverse;
 
 import org.apache.axis.impl.llom.OMNamedNodeImpl;
 import org.apache.axis.om.OMNode;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -19,12 +20,13 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
+ *
  * @author Eran Chinthaka - Lanka Software Foundation
  * @author Ajith Ranabahu
- * Date: Oct 13, 2004
- * Time: 11:25:29 AM
+ *         Date: Oct 13, 2004
+ *         Time: 11:25:29 AM
  */
-public class OMChildrenQNameIterator extends OMChildrenIterator{
+public class OMChildrenQNameIterator extends OMChildrenIterator {
 
 
     private QName givenQName;
@@ -36,7 +38,6 @@ public class OMChildrenQNameIterator extends OMChildrenIterator{
         super(currentChild);
         this.givenQName = givenQName;
     }
-
 
 
     /**
@@ -75,10 +76,10 @@ public class OMChildrenQNameIterator extends OMChildrenIterator{
      */
     public Object next() {
         //reset the flags
-        needToMoveForward=true;
-        isMatchingNodeFound=false;
-        nextCalled=true;
-        removeCalled=false;
+        needToMoveForward = true;
+        isMatchingNodeFound = false;
+        nextCalled = true;
+        removeCalled = false;
 
         lastChild = currentChild;
         currentChild = currentChild.getNextSibling();
@@ -86,17 +87,18 @@ public class OMChildrenQNameIterator extends OMChildrenIterator{
     }
 
     /**
-     *    Here I can not use the overriden equals method of QName, as one might want to get
+     * Here I can not use the overriden equals method of QName, as one might want to get
      * some element just by giving the localname, even though a matching element has a namespace uri as well.
      * This will not be supported in the equals method of the QName
+     *
      * @param elementQName
      * @param qNameToBeMatched
      * @return
      */
-    private boolean isQNamesMatch(QName elementQName, QName qNameToBeMatched){
+    private boolean isQNamesMatch(QName elementQName, QName qNameToBeMatched) {
 
         // if no QName was given, that means one needs all
-        if(qNameToBeMatched == null){
+        if (qNameToBeMatched == null) {
             return true;
         }
 

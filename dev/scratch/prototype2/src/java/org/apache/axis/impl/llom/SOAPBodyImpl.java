@@ -50,7 +50,7 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      */
     public SOAPFault addFault(Exception e) throws OMException {
-        SOAPFault soapFault = new SOAPFaultImpl(this,e);
+        SOAPFault soapFault = new SOAPFaultImpl(this, e);
         addFault(soapFault);
         return soapFault;
     }
@@ -98,7 +98,7 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
      * @throws org.apache.axis.om.OMException
      */
     public void addFault(SOAPFault soapFault) throws OMException {
-        if(hasSOAPFault){
+        if (hasSOAPFault) {
             throw new OMException("SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
         }
         addChild(soapFault);

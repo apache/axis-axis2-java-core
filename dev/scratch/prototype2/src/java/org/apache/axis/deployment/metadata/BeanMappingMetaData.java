@@ -18,7 +18,6 @@ package org.apache.axis.deployment.metadata;
  * @author Deepal Jayasinghe
  *         Nov 16, 2004
  *         10:37:23 AM
- *
  */
 public class BeanMappingMetaData {
 }

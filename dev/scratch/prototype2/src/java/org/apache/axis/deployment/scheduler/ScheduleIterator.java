@@ -20,7 +20,6 @@ import java.util.Date;
  * @author Deepal Jayasinghe
  *         Oct 5, 2004
  *         9:33:31 AM
- *
  */
 public interface ScheduleIterator {
 

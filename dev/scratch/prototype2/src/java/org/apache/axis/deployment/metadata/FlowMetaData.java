@@ -18,7 +18,6 @@ package org.apache.axis.deployment.metadata;
  * @author Deepal Jayasinghe
  *         Nov 19, 2004
  *         2:28:02 PM
- *
  */
 public interface FlowMetaData {
     HandlerMetaData getHandler(int index);

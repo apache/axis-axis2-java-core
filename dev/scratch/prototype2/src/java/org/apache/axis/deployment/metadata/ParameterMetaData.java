@@ -19,7 +19,6 @@ package org.apache.axis.deployment.metadata;
  * @author Deepal Jayasinghe
  *         Oct 18, 2004
  *         3:12:24 PM
- *
  */
 public class ParameterMetaData {
 

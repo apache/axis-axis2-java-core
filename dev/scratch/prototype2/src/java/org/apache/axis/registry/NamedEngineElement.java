@@ -17,9 +17,10 @@
 package org.apache.axis.registry;
 
 import javax.xml.namespace.QName;
+
 /**
- * Engine element which has a name. 
+ * Engine element which has a name.
  */
-public interface NamedEngineElement extends EngineElement{
+public interface NamedEngineElement extends EngineElement {
     public QName getName();
 }

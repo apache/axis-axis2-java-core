@@ -34,7 +34,7 @@ public class OMNodeImpl implements OMNode {
     public OMNodeImpl() {
     }
 
-    
+
     /**
      * For a node to exist there must be a parent
      *
@@ -197,7 +197,6 @@ public class OMNodeImpl implements OMNode {
     public void setPreviousSibling(OMNode previousSibling) {
         this.previousSibling = (OMNodeImpl) previousSibling;
     }
-
 
 
 }

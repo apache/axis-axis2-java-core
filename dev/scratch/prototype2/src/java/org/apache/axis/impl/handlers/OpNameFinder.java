@@ -28,39 +28,39 @@ import java.util.Iterator;
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
-public class OpNameFinder extends AbstractHandler{
+public class OpNameFinder extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         int style = msgContext.getMessageStyle();
-        if(Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL){
+        if (Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL) {
             SOAPEnvelope envelope = msgContext.getEnvelope();
             OMNode node = null;
             OMElement element = envelope.getBody();
-            if(OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())){
+            if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                 Iterator bodychilderen = element.getChildren();
-                while(bodychilderen.hasNext()){
-                    node = (OMNode)bodychilderen.next();
-                    if(node.getType() == OMNode.ELEMENT_NODE){
-                        OMElement bodyChild  = (OMElement)node;
-                    
+                while (bodychilderen.hasNext()) {
+                    node = (OMNode) bodychilderen.next();
+                    if (node.getType() == OMNode.ELEMENT_NODE) {
+                        OMElement bodyChild = (OMElement) node;
+
                         OMNamespace omns = bodyChild.getNamespace();
-    
-                        if(omns != null){
+
+                        if (omns != null) {
                             String ns = omns.getValue();
-                            if(ns != null){
-                                QName opName = new QName(ns,bodyChild.getLocalName());
+                            if (ns != null) {
+                                QName opName = new QName(ns, bodyChild.getLocalName());
                                 Service service = msgContext.getService();
                                 Operation op = service.getOperation(opName);
-                                if(op != null){
+                                if (op != null) {
                                     msgContext.setOperation(op);
-                                }else{
+                                } else {
                                     throw new AxisFault(opName + " operation not found");
                                 }
                             }
-                        }else{
-                            throw new AxisFault("SOAP Body must be NS Qualified");                            
+                        } else {
+                            throw new AxisFault("SOAP Body must be NS Qualified");
                         }
-                
-                    }    
+
+                    }
                 }
             }
         }

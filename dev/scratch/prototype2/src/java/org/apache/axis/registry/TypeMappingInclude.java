@@ -20,8 +20,12 @@ import javax.xml.namespace.QName;
 
 public interface TypeMappingInclude {
     public int getTypeMappingCount();
+
     public TypeMapping getTypeMapping(int index);
+
     public TypeMapping getTypeMapping(QName xmlType);
+
     public TypeMapping getTypeMapping(Class javaType);
+
     public void addTypeMapping(TypeMapping typeMapping);
 }

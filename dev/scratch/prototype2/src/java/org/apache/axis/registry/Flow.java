@@ -17,12 +17,15 @@
 package org.apache.axis.registry;
 
 import org.apache.axis.engine.Handler;
+
 /**
- * Represents logical collection of handlers. The order of Handlers do not have 
+ * Represents logical collection of handlers. The order of Handlers do not have
  * any symantics.
  */
-public interface Flow{
+public interface Flow {
     public int getHandlerCount();
+
     public Handler getHandler(int index);
+
     public void addHandler(Handler handler);
 }

@@ -22,7 +22,7 @@ import org.apache.axis.registry.NamedEngineElement;
 import javax.xml.namespace.QName;
 import java.io.Serializable;
 
-public interface Handler extends Serializable,NamedEngineElement {
+public interface Handler extends Serializable, NamedEngineElement {
     /**
      * Invoke is called to do the actual work of the Handler object.
      * If there is a fault during the processing of this method it is
@@ -32,20 +32,23 @@ public interface Handler extends Serializable,NamedEngineElement {
      * Invoke should rethrow any exceptions it catches, wrapped in
      * an AxisFault.
      *
-     * @param msgContext    the <code>MessageContext</code> to process with this
-     *              <code>Handler</code>.
+     * @param msgContext the <code>MessageContext</code> to process with this
+     *                   <code>Handler</code>.
      * @throws AxisFault if the handler encounters an error
      */
-    public void invoke(MessageContext msgContext) throws AxisFault ;
+    public void invoke(MessageContext msgContext) throws AxisFault;
 
     /**
      * Called when a subsequent handler throws a fault.
      *
-     * @param msgContext    the <code>MessageContext</code> to process the fault
-     *              to
+     * @param msgContext the <code>MessageContext</code> to process the fault
+     *                   to
      */
     public void revoke(MessageContext msgContext);
 
     public void setName(QName name);
+
     public QName getName();
-};
+}
+
+;

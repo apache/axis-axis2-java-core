@@ -60,7 +60,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         omFactory = OMFactory.newInstance();
     }
 
-   public int next() throws OMException {
+    public int next() throws OMException {
 
         // next can not be called more than once at one instance. and next can not be called within
         // another next
@@ -170,7 +170,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
         // Out current parser (Piccolo) does not error when a
         // namespace is used and not defined.  Check for these here
-       //todo In-insert this if needed!!!!!!
+        //todo In-insert this if needed!!!!!!
 //        if (qName.indexOf(':') >= 0 && namespaceURI.length() == 0) {
 //            throw new SAXException("Use of undefined namespace prefix: " +
 //                    qName.substring(0, qName.indexOf(':')));
@@ -200,11 +200,11 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
             if (attrUri.hashCode() != 0)
                 ns = element.resolveNamespace(attrUri, attrPrefix);
 
-            if (ns==null)
-                //todo this needs to be fixed!!!!!
-               // throw new OMException("All elements must be namespace qualified!");
+            if (ns == null)
+            //todo this needs to be fixed!!!!!
+            // throw new OMException("All elements must be namespace qualified!");
 
-            element.insertAttribute(omFactory.createOMAttribute(atts.getLocalName(i), ns, atts.getValue(i), element));
+                element.insertAttribute(omFactory.createOMAttribute(atts.getLocalName(i), ns, atts.getValue(i), element));
         }
 
         element.setComplete(false);

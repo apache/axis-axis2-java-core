@@ -25,26 +25,32 @@ import java.util.HashMap;
 public class HashedBaundle {
     private ArrayList list;
     private HashMap map;
-    public HashedBaundle(){
+
+    public HashedBaundle() {
         list = new ArrayList();
         map = new HashMap();
     }
-    public void add(Object key,Object obj){
+
+    public void add(Object key, Object obj) {
         list.add(obj);
-        map.put(key,obj);
+        map.put(key, obj);
     }
-    public Object get(Object key){
+
+    public Object get(Object key) {
         return map.get(key);
     }
-    public int getCount(){
+
+    public int getCount() {
         return list.size();
     }
-    public Object get(int index){
+
+    public Object get(int index) {
         return this.list.get(index);
     }
-    public void remove(Object key){
+
+    public void remove(Object key) {
         Object obj = map.remove(key);
         list.remove(obj);
     }
-    
+
 }

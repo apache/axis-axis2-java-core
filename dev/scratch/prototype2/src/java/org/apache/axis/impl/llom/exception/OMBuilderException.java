@@ -21,8 +21,8 @@ import org.apache.axis.om.OMException;
  * Date: Nov 22, 2004
  * Time: 10:43:32 AM
  */
-public class OMBuilderException extends OMException{
+public class OMBuilderException extends OMException {
     public OMBuilderException(String s) {
-         super(s);
+        super(s);
     }
 }

@@ -23,8 +23,6 @@
 package org.apache.axis.om;
 
 
-
-
 public interface SOAPEnvelope extends OMElement {
 
     /**
@@ -56,11 +54,10 @@ public interface SOAPEnvelope extends OMElement {
      * <CODE>OMMessage</CODE>
      * </P>
      *
-     *
      * @return the <CODE>SOAPHeader</CODE> object or <CODE>
      *         null</CODE> if there is none
      * @throws OMException if there is a problem
-     *                       obtaining the <CODE>SOAPHeader</CODE> object
+     *                     obtaining the <CODE>SOAPHeader</CODE> object
      */
     public abstract SOAPHeader getHeader() throws OMException;
 
@@ -76,7 +73,7 @@ public interface SOAPEnvelope extends OMElement {
      *         SOAPEnvelope</CODE> object or <CODE>null</CODE> if there
      *         is none
      * @throws OMException if there is a problem
-     *                       obtaining the <CODE>SOAPBody</CODE> object
+     *                     obtaining the <CODE>SOAPBody</CODE> object
      */
     public abstract SOAPBody getBody() throws OMException;
 

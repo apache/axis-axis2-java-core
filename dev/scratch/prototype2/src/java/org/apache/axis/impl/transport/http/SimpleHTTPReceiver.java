@@ -16,15 +16,6 @@
 
 package org.apache.axis.impl.transport.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -38,6 +29,13 @@ import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 
 public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Runnable {
@@ -47,8 +45,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     // Axis specific constants
     protected static String transportName = "SimpleHTTP";
     protected AxisEngine engine;
-  //  private SimpleAxisServer server;
-   // private Socket socket;
+    //  private SimpleAxisServer server;
+    // private Socket socket;
     
 
     // HTTP status codes
@@ -139,7 +137,6 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     protected static final byte basicAuth[] = "basic ".getBytes();
 
 
-    
     /**
      * @param myAxisServer
      */
@@ -158,25 +155,26 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     /**
      * Read all mime headers, returning the value of Content-Length and
      * SOAPAction.
-     * @param is         InputStream to read from
-     * @param contentType The content type.
+     *
+     * @param is              InputStream to read from
+     * @param contentType     The content type.
      * @param contentLocation The content location
-     * @param soapAction StringBuffer to return the soapAction into
-     * @param httpRequest StringBuffer for GET / POST
-     * @param cookie first cookie header (if doSessions)
-     * @param cookie2 second cookie header (if doSessions)
+     * @param soapAction      StringBuffer to return the soapAction into
+     * @param httpRequest     StringBuffer for GET / POST
+     * @param cookie          first cookie header (if doSessions)
+     * @param cookie2         second cookie header (if doSessions)
      * @return Content-Length
      */
     protected int parseHeaders(NonBlockingBufferedInputStream is,
-                             byte buf[],
-                             StringBuffer contentType,
-                             StringBuffer contentLocation,
-                             StringBuffer soapAction,
-                             StringBuffer httpRequest,
-                             StringBuffer fileName,
-                             StringBuffer cookie,
-                             StringBuffer cookie2,
-                             StringBuffer authInfo)
+                               byte buf[],
+                               StringBuffer contentType,
+                               StringBuffer contentLocation,
+                               StringBuffer soapAction,
+                               StringBuffer httpRequest,
+                               StringBuffer fileName,
+                               StringBuffer cookie,
+                               StringBuffer cookie2,
+                               StringBuffer authInfo)
 //                             MimeHeaders headers)
             throws java.io.IOException {
         int n;
@@ -321,8 +319,9 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
     /**
      * output an integer into the output stream
-     * @param out       OutputStream to be written to
-     * @param value     Integer value to be written.
+     *
+     * @param out   OutputStream to be written to
+     * @param value Integer value to be written.
      */
     protected void putInt(byte buf[], OutputStream out, int value)
             throws java.io.IOException {
@@ -355,10 +354,11 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
     /**
      * Read a single line from the input stream
-     * @param is        inputstream to read from
-     * @param b         byte array to read into
-     * @param off       starting offset into the byte array
-     * @param len       maximum number of bytes to read
+     *
+     * @param is  inputstream to read from
+     * @param b   byte array to read into
+     * @param off starting offset into the byte array
+     * @param len maximum number of bytes to read
      */
     protected int readLine(NonBlockingBufferedInputStream is, byte[] b, int off, int len)
             throws java.io.IOException {
@@ -377,9 +377,9 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         }
         return count > 0 ? count : -1;
     }
-    protected MessageContext parseTheTransport(
-        AxisEngine engine,
-        InputStream in)throws AxisFault  {
+
+    protected MessageContext parseTheTransport(AxisEngine engine,
+                                               InputStream in) throws AxisFault {
         byte buf[] = new byte[BUFSIZ];
         // create an Axis server
 
@@ -400,7 +400,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         StringBuffer contentType = new StringBuffer();
         StringBuffer contentLocation = new StringBuffer();
 
-        try{
+        try {
             // assume the best
             byte[] status = OK;
 
@@ -439,43 +439,41 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             }
 
 
-
             String filePart = fileName.toString();
-            msgContext.setProperty(MessageContext.REQUEST_URL,filePart);
+            msgContext.setProperty(MessageContext.REQUEST_URL, filePart);
             if (httpRequest.toString().equals("GET")) {
-                    throw new UnsupportedOperationException("GET not supported"); 
+                throw new UnsupportedOperationException("GET not supported");
             } else {
 
                 // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
                 // for now, do not complain if no SOAPAction at all
                 String soapActionString = soapAction.toString();
                 if (soapActionString != null) {
-                    msgContext.setProperty(MessageContext.SOAP_ACTION,soapActionString);
+                    msgContext.setProperty(MessageContext.SOAP_ACTION, soapActionString);
                 }
-                
+
 
                 InputStreamReader isr = new InputStreamReader(is);
-                XMLStreamReader reader =  XMLInputFactory.newInstance().createXMLStreamReader(isr);
-                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),reader);
-                msgContext.setEnvelope((SOAPEnvelope)builder.getDocumentElement());
+                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
+                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+                msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
 
                 EngineRegistry reg = engine.getRegistry();
-                return  msgContext;
-            }    
-            }catch(IOException e){
-                throw AxisFault.makeFault(e); 
-            } catch(XMLStreamException e){
-                throw AxisFault.makeFault(e); 
-            }   
+                return msgContext;
+            }
+        } catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
     }
 
 
     /* (non-Javadoc)
      * @see org.apache.axis.impl.transport.AbstractTransportReceiver#storeOutputInfo(org.apache.axis.context.MessageContext, java.io.OutputStream)
      */
-    protected void storeOutputInfo(
-        MessageContext msgContext,
-        OutputStream out)throws AxisFault {
+    protected void storeOutputInfo(MessageContext msgContext,
+                                   OutputStream out) throws AxisFault {
         try {
             // Send it on its way...
             out.write(HTTP);
@@ -485,8 +483,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             //We do not have any Addressing Headers to put
             //let us put the information about incoming transport
             msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
-            msgContext.setProperty(MessageContext.TRANSPORT_DATA,out);
+                    TransportSenderLocator.TRANSPORT_HTTP);
+            msgContext.setProperty(MessageContext.TRANSPORT_DATA, out);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }

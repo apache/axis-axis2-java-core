@@ -25,7 +25,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 18, 2004
  *         12:16:19 PM
- *
  */
 public class RepositoryListenerImpl implements RepositoryListener, DeploymentConstants {
 
@@ -48,9 +47,9 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * This constructor take two argumnets folder name and referance to Deployment Engine
      * Fisrt it initilize the syetm , by loading all the modules in the /modules directory
      * and also create a WSInfoList to keep infor about available modules and services
-     * @param folderName  path to parent directory that the listener should listent
-     * @param deploy_engine  refearnce to engine registry  inorder to inform the updates
      *
+     * @param folderName    path to parent directory that the listener should listent
+     * @param deploy_engine refearnce to engine registry  inorder to inform the updates
      */
     public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
         this.folderName = folderName;
@@ -94,7 +93,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsinfoList.init();
         checkModules();
-      //  checkServices();
+        //  checkServices();
         update();
     }
 
@@ -122,7 +121,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
             File dir = (File) current_jars.elementAt(0); // get first dir
             current_jars.remove(0);       // remove it
             files = dir.list();              // get list of files
-            if(files == null){
+            if (files == null) {
                 continue;
             }
             for (int i = 0; i < files.length; i++) { // iterate
@@ -138,7 +137,8 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * to check whthere a given file is  a  jar file 
+     * to check whthere a given file is  a  jar file
+     *
      * @param filename
      * @return
      */

@@ -26,34 +26,34 @@ import java.util.Vector;
 /**
  * @author hemapani@opensource.lk
  */
-public class TypeMappingIncludeImpl implements TypeMappingInclude{
+public class TypeMappingIncludeImpl implements TypeMappingInclude {
     private HashMap javamapping;
     private HashMap xmlmapping;
     private Vector mappingValues;
-    
-    public TypeMappingIncludeImpl(){
+
+    public TypeMappingIncludeImpl() {
         javamapping = new HashMap();
         xmlmapping = new HashMap();
         mappingValues = new Vector();
     }
-    
+
     public void addTypeMapping(TypeMapping typeMapping) {
-        mappingValues.add(typeMapping); 
-        javamapping.put(typeMapping.getJavaType().getName(),typeMapping); 
-        xmlmapping.put(typeMapping.getXMLType(),typeMapping);
+        mappingValues.add(typeMapping);
+        javamapping.put(typeMapping.getJavaType().getName(), typeMapping);
+        xmlmapping.put(typeMapping.getXMLType(), typeMapping);
 
     }
 
     public TypeMapping getTypeMapping(Class javaType) {
-        return (TypeMapping)javamapping.get(javaType);
+        return (TypeMapping) javamapping.get(javaType);
     }
 
     public TypeMapping getTypeMapping(int index) {
-        return (TypeMapping)mappingValues.get(index);
+        return (TypeMapping) mappingValues.get(index);
     }
 
     public TypeMapping getTypeMapping(QName xmlType) {
-        return (TypeMapping)xmlmapping.get(xmlType);
+        return (TypeMapping) xmlmapping.get(xmlType);
     }
 
     public int getTypeMappingCount() {

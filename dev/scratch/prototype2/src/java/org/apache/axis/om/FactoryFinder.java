@@ -16,11 +16,11 @@ package org.apache.axis.om;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Dec 3, 2004
- * Time: 10:16:43 AM
- *
- * This is the static factory finder. It searches for the relevant class
- * Note - It has only package access!!!
+ *         Date: Dec 3, 2004
+ *         Time: 10:16:43 AM
+ *         <p/>
+ *         This is the static factory finder. It searches for the relevant class
+ *         Note - It has only package access!!!
  */
 class FactoryFinder {
 
@@ -30,6 +30,7 @@ class FactoryFinder {
      * This needs to be improved. Currently the factory is loaded only from the default implementation
      * However provisions should be made to load a custom factory depending on the users setting
      * Say an environment variable
+     *
      * @param loader
      * @return
      */
@@ -47,7 +48,7 @@ class FactoryFinder {
             throw new OMFactoryException(e);
         }
 
-         return (OMFactory)factory;
+        return (OMFactory) factory;
 
     }
 }

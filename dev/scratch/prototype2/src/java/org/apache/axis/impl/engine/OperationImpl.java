@@ -23,21 +23,23 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-public class OperationImpl extends AbstractContainer implements Operation{
-    private Log log = LogFactory.getLog(getClass());   
+public class OperationImpl extends AbstractContainer implements Operation {
+    private Log log = LogFactory.getLog(getClass());
     private QName name;
     private Service service;
-    
+
     /**
-     * Each Operatrion must have a associated Service. The  service need to be specified 
-     * at the initialization of the Operation.  
+     * Each Operatrion must have a associated Service. The  service need to be specified
+     * at the initialization of the Operation.
+     *
      * @param name
      * @param service
      */
-    public OperationImpl(QName name,Service service){
+    public OperationImpl(QName name, Service service) {
         this.name = name;
         this.service = service;
     }
+
     public QName getName() {
         return name;
     }

@@ -17,7 +17,6 @@
 package org.apache.axis.impl.transport;
 
 
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
-
 import java.net.Socket;
 
 /**
@@ -36,10 +34,11 @@ import java.net.Socket;
  * SOAP requests via Apache's xml-axis.  This is not intended for production
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
- *
+ * <p/>
  * Note this classes uses static objects to provide a thread pool, so you should
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
+ *
  * @author Sam Ruby (ruby@us.ibm.com)
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
@@ -48,22 +47,23 @@ public abstract class AbstractTransportReceiver implements Runnable {
     protected Log log =
             LogFactory.getLog(AbstractTransportReceiver.class.getName());
     protected AxisEngine engine = null;
-    protected ServerSocket serverSocket;  
-    protected Socket socket = null;  
+    protected ServerSocket serverSocket;
+    protected Socket socket = null;
     /**
-    are we stopped?
-    latch to true if stop() is called
+     * are we stopped?
+     * latch to true if stop() is called
      */
     private boolean stopped = false;
-    
+
 
     public AbstractTransportReceiver(AxisEngine myAxisServer) {
-    	this.engine = myAxisServer;
-		
+        this.engine = myAxisServer;
+
     }
 
     /**
      * stop the server if not already told to.
+     *
      * @throws Throwable
      */
     protected void finalize() throws Throwable {
@@ -76,21 +76,21 @@ public abstract class AbstractTransportReceiver implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        try{
+        try {
             try {
                 // Accept and process requests from the socket
                 while (!stopped) {
                     try {
                         this.socket = serverSocket.accept();
-                       
+
                     } catch (java.io.InterruptedIOException iie) {
                     } catch (Exception e) {
                         log.debug(e.getMessage(), e);
                         break;
                     }
                     if (socket != null) {
-                        MessageContext msgContext = parseTheTransport(engine,socket.getInputStream());
-                        storeOutputInfo(msgContext,socket.getOutputStream());
+                        MessageContext msgContext = parseTheTransport(engine, socket.getInputStream());
+                        storeOutputInfo(msgContext, socket.getOutputStream());
                         engine.receive(msgContext);
                         this.socket.close();
                         this.socket = null;
@@ -100,8 +100,8 @@ public abstract class AbstractTransportReceiver implements Runnable {
                 log.error(e);
                 this.socket.close();
                 this.socket = null;
-            }     
-        }catch (IOException e) {
+            }
+        } catch (IOException e) {
             log.error(e);
         }
         stop();
@@ -119,7 +119,7 @@ public abstract class AbstractTransportReceiver implements Runnable {
     /**
      * Set the serverSocket this server should listen on.
      * (note : changing this will not affect a running server, but if you
-     *  stop() and then start() the server, the new socket will be used).
+     * stop() and then start() the server, the new socket will be used).
      */
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
@@ -130,19 +130,19 @@ public abstract class AbstractTransportReceiver implements Runnable {
      * Start this server as a NON-daemon.
      */
     public void start() throws Exception {
-    	run();
+        run();
     }
 
     /**
      * Stop this server. Can be called safely if the system is already stopped,
      * or if it was never started.
-     *
+     * <p/>
      * This will interrupt any pending accept().
      */
     public void stop() {
         log.info("stop called");
         //recognise use before we are live
-        if(stopped ) {
+        if (stopped) {
             return;
         }
         /*
@@ -152,7 +152,7 @@ public abstract class AbstractTransportReceiver implements Runnable {
         stopped = true;
 
         try {
-            if(serverSocket != null) {
+            if (serverSocket != null) {
                 serverSocket.close();
 //                while(socket != null){
 //                    try {
@@ -167,11 +167,12 @@ public abstract class AbstractTransportReceiver implements Runnable {
         } catch (IOException e) {
             log.info(e);
         } finally {
-            serverSocket=null;
+            serverSocket = null;
         }
         log.info("Simple Axis Server Quits");
     }
-    
-    protected abstract MessageContext parseTheTransport(AxisEngine engine, InputStream in)throws AxisFault;
-    protected abstract void storeOutputInfo(MessageContext msgctx, OutputStream out)throws AxisFault;
+
+    protected abstract MessageContext parseTheTransport(AxisEngine engine, InputStream in) throws AxisFault;
+
+    protected abstract void storeOutputInfo(MessageContext msgctx, OutputStream out) throws AxisFault;
 }

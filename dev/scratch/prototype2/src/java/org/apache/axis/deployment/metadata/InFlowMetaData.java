@@ -20,7 +20,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 21, 2004
  *         11:25:27 AM
- *
  */
 public class InFlowMetaData implements FlowMetaData {
 
@@ -32,7 +31,6 @@ public class InFlowMetaData implements FlowMetaData {
     }
 
     /**
-     *
      * @param handler
      */
 

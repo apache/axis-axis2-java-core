@@ -25,15 +25,15 @@ import java.util.Locale;
  * Date: Dec 8, 2004
  * Time: 2:02:25 PM
  */
-public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstants{
+public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstants {
 
     private Exception e;
 
-    public SOAPFaultImpl(OMElement parent,Exception e){
+    public SOAPFaultImpl(OMElement parent, Exception e) {
         super(parent);
         this.e = e;
-        this.addChild(OMFactory.newInstance().createText(this,e.getMessage()));
-          localName = SOAPFAULT_LOCAL_NAME;
+        this.addChild(OMFactory.newInstance().createText(this, e.getMessage()));
+        localName = SOAPFAULT_LOCAL_NAME;
         setNamespace(new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_NAMESPACE_PREFIX));
     }
 
@@ -42,7 +42,7 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
 //
 //    }
 
-     public SOAPFaultImpl(OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPFaultImpl(OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(SOAPFAULT_LOCAL_NAME, ns, parent, builder);
     }
 
@@ -73,10 +73,11 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
     public void setFaultString(String faultString, Locale locale) throws OMException {
         throw new UnsupportedOperationException(); //TODO implement this
     }
+
     public Exception getException() throws OMException {
-        if(e == null){
-            return new AxisFault();        
-        }else{
+        if (e == null) {
+            return new AxisFault();
+        } else {
             return e;
         }
     }

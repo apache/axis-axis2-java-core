@@ -17,12 +17,16 @@
 package org.apache.axis.registry;
 
 import org.apache.axis.engine.AxisFault;
+
 /**
- * This is the base class of all the elements in the Engine Registry Object Model. 
+ * This is the base class of all the elements in the Engine Registry Object Model.
  */
 public interface EngineElement {
-    public void init()throws AxisFault;
-    public void cleanup()throws AxisFault;
+    public void init() throws AxisFault;
+
+    public void cleanup() throws AxisFault;
+
     public Parameter getParameter(String key);
+
     public void addParameter(Parameter param);
 }

@@ -21,29 +21,40 @@ import org.apache.axis.engine.AxisFault;
 import javax.xml.namespace.QName;
 
 /**
- *  The palce where all the Globel states of Axis is kept. 
- *  All the Global states kept in the <code>EngineRegistry</code> and all the 
- *  Service states kept in the <code>MessageContext</code>. Other runtime
- *  artifacts does not keep states foward from the execution.  
+ * The palce where all the Globel states of Axis is kept.
+ * All the Global states kept in the <code>EngineRegistry</code> and all the
+ * Service states kept in the <code>MessageContext</code>. Other runtime
+ * artifacts does not keep states foward from the execution.
  */
 
 public interface EngineRegistry {
-    public Global getGlobal()throws AxisFault;
-    
-    public int getTransportCount()throws AxisFault;
-    public Transport getTransPort(QName name)throws AxisFault;
-    public Transport getTransPort(int index)throws AxisFault;
-    public void addTransport(Transport transport)throws AxisFault;
-    public void removeTransport(QName name)throws AxisFault;
-    
-    public int getServiceCount()throws AxisFault;
-    public Service getService(QName name)throws AxisFault;
-    public Service getService(int index)throws AxisFault;
-    public void addService(Service service)throws AxisFault;
-    public void removeService(QName name)throws AxisFault;
-    
-    public int getModuleCount()throws AxisFault;
-    public Module getModule(QName name)throws AxisFault;
-    public Module getModule(int index)throws AxisFault;
-    public void addMdoule(Module module)throws AxisFault;
+    public Global getGlobal() throws AxisFault;
+
+    public int getTransportCount() throws AxisFault;
+
+    public Transport getTransPort(QName name) throws AxisFault;
+
+    public Transport getTransPort(int index) throws AxisFault;
+
+    public void addTransport(Transport transport) throws AxisFault;
+
+    public void removeTransport(QName name) throws AxisFault;
+
+    public int getServiceCount() throws AxisFault;
+
+    public Service getService(QName name) throws AxisFault;
+
+    public Service getService(int index) throws AxisFault;
+
+    public void addService(Service service) throws AxisFault;
+
+    public void removeService(QName name) throws AxisFault;
+
+    public int getModuleCount() throws AxisFault;
+
+    public Module getModule(QName name) throws AxisFault;
+
+    public Module getModule(int index) throws AxisFault;
+
+    public void addMdoule(Module module) throws AxisFault;
 }

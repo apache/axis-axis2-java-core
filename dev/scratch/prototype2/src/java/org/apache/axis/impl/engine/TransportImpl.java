@@ -20,10 +20,10 @@ import org.apache.axis.registry.Transport;
 
 import javax.xml.namespace.QName;
 
-public class TransportImpl extends AbstractContainer implements Transport{
+public class TransportImpl extends AbstractContainer implements Transport {
     private QName name;
-    
-    public TransportImpl(QName name){
+
+    public TransportImpl(QName name) {
         this.name = name;
     }
 

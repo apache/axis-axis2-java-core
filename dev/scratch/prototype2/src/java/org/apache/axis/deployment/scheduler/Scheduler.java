@@ -22,7 +22,6 @@ import java.util.TimerTask;
  * @author Deepal Jayasinghe
  *         Oct 5, 2004
  *         9:48:42 AM
- *
  */
 public class Scheduler {
 
@@ -67,10 +66,11 @@ public class Scheduler {
      * Schedules the specified task for execution according to the specified schedule.
      * If times specified by the <code>ScheduleIterator</code> are in the past they are
      * scheduled for immediate execution.
+     *
      * @param schedulerTask task to be scheduled
-     * @param iterator iterator that describes the schedule
+     * @param iterator      iterator that describes the schedule
      * @throws IllegalStateException if task was already scheduled or cancelled,
-     * scheduler was cancelled, or scheduler thread terminated.
+     *                               scheduler was cancelled, or scheduler thread terminated.
      */
 
     public void schedule(SchedulerTask schedulerTask,

@@ -27,27 +27,29 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 /**
- * This class use delegeation to give the multiple inheritance effect 
- * which is prefered over the generalization. 
+ * This class use delegeation to give the multiple inheritance effect
+ * which is prefered over the generalization.
+ *
  * @author (Srinath Perera)hemapani@opensource.lk
  */
-public abstract class AbstractContainer 
-            extends AbstractEngineElement 
-            implements FlowInclude,EngineElement,
-                TypeMappingInclude,ModuleInclude {
-    private Log log = LogFactory.getLog(getClass());                    
+public abstract class AbstractContainer
+        extends AbstractEngineElement
+        implements FlowInclude, EngineElement,
+        TypeMappingInclude, ModuleInclude {
+    private Log log = LogFactory.getLog(getClass());
 
-    
-    //the work is delegated to ConcreateXXInclude classes                       
+
+    //the work is delegated to ConcreateXXInclude classes
     protected FlowInclude flowInclude;
     protected ModuleInclude modules;
     protected TypeMappingInclude typemappings;
 
-    public AbstractContainer(){
+    public AbstractContainer() {
         flowInclude = new FlowIncludeImpl();
         modules = new ModuleIncludeImpl();
         typemappings = new TypeMappingIncludeImpl();
     }
+
     /**
      * @return
      */

@@ -23,5 +23,6 @@ import org.apache.axis.om.OMElement;
 
 public interface CallBack {
     public void doWork(OMElement ele);
+
     public void reportError(Exception e);
 }

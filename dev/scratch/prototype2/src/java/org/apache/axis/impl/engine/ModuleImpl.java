@@ -23,15 +23,16 @@ import org.apache.axis.registry.TypeMapping;
 
 import javax.xml.namespace.QName;
 
-public class ModuleImpl extends AbstractEngineElement implements Module{
+public class ModuleImpl extends AbstractEngineElement implements Module {
     private Flow in;
     private Flow out;
     private Flow fault;
     private QName name;
-    
-    public ModuleImpl(QName name){
+
+    public ModuleImpl(QName name) {
         this.name = name;
     }
+
     public Flow getFaultFlow() {
         return fault;
     }
@@ -95,7 +96,7 @@ public class ModuleImpl extends AbstractEngineElement implements Module{
         // TODO Auto-generated method stub
         return 0;
     }
-    
+
     public QName getName() {
         return name;
     }

@@ -50,7 +50,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     }
 
     public short getTextType() {
-        return textType;  
+        return textType;
     }
 
     public OMNode getFirstChild() throws OMException {
@@ -70,8 +70,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     public short getType() throws OMException {
         return OMNode.TEXT_NODE;    //TODO implement this
     }
-
-
 
 
 }

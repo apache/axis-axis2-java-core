@@ -16,9 +16,8 @@ package org.apache.axis.engine;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 29, 2004
- * Time: 10:28:25 AM
- * 
+ *         Date: Nov 29, 2004
+ *         Time: 10:28:25 AM
  */
 public class EndpointReferance {
 }

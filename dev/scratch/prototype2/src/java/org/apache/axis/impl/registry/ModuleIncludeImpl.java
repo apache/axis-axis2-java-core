@@ -27,15 +27,18 @@ import java.util.Vector;
 public class ModuleIncludeImpl implements ModuleInclude {
     private Vector modules;
 
-    public ModuleIncludeImpl(){
+    public ModuleIncludeImpl() {
         this.modules = new Vector();
     }
+
     public Module getModule(int index) {
-        return (Module)modules.get(index);
+        return (Module) modules.get(index);
     }
+
     public int getModuleCount() {
-       return modules.size();
+        return modules.size();
     }
+
     public void addModule(Module module) {
         modules.add(module);
     }

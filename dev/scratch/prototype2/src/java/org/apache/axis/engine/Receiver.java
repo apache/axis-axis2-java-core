@@ -20,5 +20,5 @@ package org.apache.axis.engine;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Receiver extends Handler{
+public interface Receiver extends Handler {
 }

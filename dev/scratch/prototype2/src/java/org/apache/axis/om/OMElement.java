@@ -1,11 +1,8 @@
 package org.apache.axis.om;
 
 
-
-
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -33,6 +30,7 @@ public interface OMElement extends OMNamedNode {
     /**
      * This will add child to the element. One must preserve the order of children, in this operation
      * Tip : appending the new child is prefered
+     *
      * @param omNode
      */
     public void addChild(OMNode omNode);
@@ -41,6 +39,7 @@ public interface OMElement extends OMNamedNode {
      * This will search for children with a given QName and will return an iterator to traverse through
      * the OMNodes.
      * This QName can contain any combination of prefix, localname and URI
+     *
      * @param elementQName
      * @return
      * @throws OMException
@@ -59,11 +58,10 @@ public interface OMElement extends OMNamedNode {
      * @param uri
      * @param prefix
      * @return
-     */ 
+     */
     public OMNamespace createNamespace(String uri, String prefix);
 
     /**
-     *
      * @param namespace
      * @return
      */
@@ -83,6 +81,7 @@ public interface OMElement extends OMNamedNode {
 
     /**
      * This will help to search for an attribute with a given QName within this Element
+     *
      * @param qname
      * @return
      * @throws OMException
@@ -103,19 +102,23 @@ public interface OMElement extends OMNamedNode {
      * @param attr
      */
     public void insertAttribute(OMAttribute attr);
+
     public void removeAttribute(OMAttribute attr);
 
     public void setBuilder(OMXMLParserWrapper wrapper);
+
     public OMXMLParserWrapper getBuilder();
 
     /**
      * Set the first child
+     *
      * @param node
      */
     public void setFirstChild(OMNode node);
-    
+
     /**
      * Get the first child
+     *
      * @return
      */
     public OMNode getFirstChild();

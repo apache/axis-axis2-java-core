@@ -28,22 +28,22 @@ import org.apache.axis.registry.Service;
 import java.util.HashMap;
 
 /**
- *  The palce where all the service specific states are kept. 
- *  All the Global states kept in the <code>EngineRegistry</code> and all the 
- *  Service states kept in the <code>MessageContext</code>. Other runtime
- *  artifacts does not keep states foward from the execution.  
+ * The palce where all the service specific states are kept.
+ * All the Global states kept in the <code>EngineRegistry</code> and all the
+ * Service states kept in the <code>MessageContext</code>. Other runtime
+ * artifacts does not keep states foward from the execution.
  */
 public class MessageContext {
     private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
 //    private HashMap messages = new HashMap();
-    
-	public static final String USER_NAME = "USER";
-	public static final String PASSWARD = "PASSWD";
-	public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
+
+    public static final String USER_NAME = "USER";
+    public static final String PASSWARD = "PASSWD";
+    public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
     public static final String SOAP_ACTION = "SOAP_ACTION";
     public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
     public static final String REQUEST_URL = "REQUEST_URL";
-    
+
     private boolean processingFault = false;
     private EndpointReferance to;
     private EndpointReferance from;
@@ -65,14 +65,14 @@ public class MessageContext {
     private String messageID;
     private Operation operation;
     private boolean newThreadRequired = false;
-    
-    public MessageContext(EngineRegistry er) throws AxisFault{
+
+    public MessageContext(EngineRegistry er) throws AxisFault {
         this.globalContext = new GlobalContext(er);
         this.sessionContext = new SimpleSessionContext();
         properties = new HashMap();
     }
 
-    
+
     /**
      * @return
      */
@@ -218,8 +218,8 @@ public class MessageContext {
     /**
      * @param map
      */
-    public void setProperty(Object key,Object value) {
-        properties.put(key,value);
+    public void setProperty(Object key, Object value) {
+        properties.put(key, value);
     }
 
     /**

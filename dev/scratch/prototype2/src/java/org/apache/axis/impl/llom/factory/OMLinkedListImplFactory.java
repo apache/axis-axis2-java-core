@@ -76,7 +76,7 @@ public class OMLinkedListImplFactory extends OMFactory {
     }
 
     public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        if (!localName.equals(OMConstants.SOAPENVELOPE_LOCAL_NAME)){
+        if (!localName.equals(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
             throw new OMException("wrong name for the envelope!");
         }
         return new SOAPEnvelopeImpl(localName, ns, parent, builder);
@@ -109,8 +109,8 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPHeaderBlockImpl(localName, ns, parent, builder);
     }
 
-    public SOAPFault createSOAPFault(SOAPBody parent,Exception e) {
-        return new SOAPFaultImpl(parent,e);
+    public SOAPFault createSOAPFault(SOAPBody parent, Exception e) {
+        return new SOAPFaultImpl(parent, e);
     }
 
     public SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent, OMXMLParserWrapper builder) {
@@ -119,8 +119,8 @@ public class OMLinkedListImplFactory extends OMFactory {
 
     public SOAPEnvelope getDefaultEnvelope() {
         //Create an envelop
-        OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME,ns);
+        OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
+        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME, ns);
 
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         bodyImpl.setComplete(true);
@@ -131,7 +131,6 @@ public class OMLinkedListImplFactory extends OMFactory {
         env.addChild(headerImpl);
 
         return env;
-
 
 
     }

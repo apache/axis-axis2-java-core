@@ -122,7 +122,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * Returns an <code>Iterator</code> over all the
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
      * object.
-     *
+     * <p/>
      * Not that this will return elements containing the QName (http://schemas.xmlsoap.org/soap/envelope/, Header)
      *
      * @return an <code>Iterator</code> object over all the

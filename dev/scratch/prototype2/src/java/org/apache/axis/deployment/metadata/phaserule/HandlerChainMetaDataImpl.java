@@ -20,7 +20,6 @@ import org.apache.axis.deployment.metadata.HandlerMetaData;
  * @author Deepal Jayasinghe
  *         Nov 8, 2004
  *         1:54:13 PM
- *
  */
 public class HandlerChainMetaDataImpl implements HandlerChainMetaData {
 

@@ -26,24 +26,24 @@ import java.io.OutputStream;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class HTTPTrasnportSender extends AbstractTrasnportSender{
+public class HTTPTrasnportSender extends AbstractTrasnportSender {
     protected OutputStream out;
-    
-    public HTTPTrasnportSender(OutputStream out){
+
+    public HTTPTrasnportSender(OutputStream out) {
         this.out = out;
     }
-    
+
     protected OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault {
-        OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-        if(out == null){
+        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+        if (out == null) {
             throw new AxisFault("can not find the suffient information to find endpoint");
-        }else{
+        } else {
             return out;
         }
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext,EndpointReferance epr) {
+    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferance epr) {
         throw new UnsupportedOperationException("Addressing not suppotrted yet");
     }
 

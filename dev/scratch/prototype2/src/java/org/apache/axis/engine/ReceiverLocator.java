@@ -23,8 +23,8 @@ import org.apache.axis.impl.receivers.InOutSyncReceiver;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class ReceiverLocator {
-    public static Receiver locateReceiver(MessageContext msgCtx)throws AxisFault{
-        
+    public static Receiver locateReceiver(MessageContext msgCtx) throws AxisFault {
+
         //File wsdlFile = msgCtx.getService().getParameter("wsdlFile");
         //parse the WSDL find the patterns 
         //create a receiver

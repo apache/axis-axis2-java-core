@@ -22,6 +22,7 @@ package org.apache.axis.om;
 public interface OMNamespace extends OMNode {
 
     public boolean equals(OMNamespace ns);
+
     public boolean equals(String uri, String prefix);
 
     public boolean isDefaultNs();

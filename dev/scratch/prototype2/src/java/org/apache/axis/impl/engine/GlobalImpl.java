@@ -19,8 +19,7 @@ package org.apache.axis.impl.engine;
 import org.apache.axis.registry.Global;
 
 
-
-public class GlobalImpl extends AbstractContainer implements Global{
+public class GlobalImpl extends AbstractContainer implements Global {
     public GlobalImpl() {
     }
 

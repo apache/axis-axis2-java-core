@@ -26,27 +26,38 @@ import javax.xml.namespace.QName;
  * Runtime representation of the WSDL Service
  */
 
-public interface Service extends FlowInclude,NamedEngineElement,
-    TypeMappingInclude,ModuleInclude{
+public interface Service extends FlowInclude, NamedEngineElement,
+        TypeMappingInclude, ModuleInclude {
     public Operation getOperation(QName index);
+
     public void addOperation(Operation op);
+
     public Provider getProvider();
+
     public Handler getSender();
-    public void setProvider(Provider handler);    
+
+    public void setProvider(Provider handler);
+
     public ClassLoader getClassLoader();
-    public void setClassLoader(ClassLoader cl); 
+
+    public void setClassLoader(ClassLoader cl);
+
     /**
      * ExecutionChain gives all the Handlers (including the Global,  Transport, Service Handlers
      * This is resolved by the Deployment sub system at the deployment time)
+     *
      * @return ordered set of Handlers and Phases
      */
     public ExecutionChain getInputExecutionChain();
+
     public void setInputExecutionChain(ExecutionChain execChain);
-    
+
     public ExecutionChain getOutputExecutionChain();
+
     public void setOutExecutionChain(ExecutionChain execChain);
 
     public ExecutionChain getFaultExecutionChain();
+
     public void setFaultExecutionChain(ExecutionChain execChain);
 
 }

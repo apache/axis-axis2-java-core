@@ -23,7 +23,6 @@ import java.util.Vector;
  * @author Deepal Jayasinghe
  *         Oct 18, 2004
  *         3:16:17 PM
- *
  */
 public class HandlerMetaData {
     private Log log = LogFactory.getLog(getClass());

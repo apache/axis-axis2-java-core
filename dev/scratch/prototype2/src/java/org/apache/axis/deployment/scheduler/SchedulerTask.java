@@ -25,7 +25,6 @@ import java.util.TimerTask;
  * @author Deepal Jayasinghe
  *         Oct 5, 2004
  *         9:55:11 AM
- *
  */
 public class SchedulerTask implements Runnable, DeploymentConstants {
     final Object lock = new Object();
@@ -64,8 +63,9 @@ public class SchedulerTask implements Runnable, DeploymentConstants {
 
     /**
      * Cancels this scheduler task.
-     * <p>
+     * <p/>
      * This method may be called repeatedly; the second and subsequent calls have no effect.
+     *
      * @return true if this task was already scheduled to run
      */
 
@@ -82,11 +82,12 @@ public class SchedulerTask implements Runnable, DeploymentConstants {
 
     /**
      * Returns the <i>scheduled</i> execution time of the most recent actual execution of this task.
-     *  (If this method is invoked while task execution is in progress, the return value is the
+     * (If this method is invoked while task execution is in progress, the return value is the
      * scheduled execution time of the ongoing task execution.)
+     *
      * @return the time at which the most recent execution of this task was scheduled to occur,
-     * in the format returned by <code>Date.getTime()</code>. The return value is
-     * undefined if the task has yet to commence its first execution.
+     *         in the format returned by <code>Date.getTime()</code>. The return value is
+     *         undefined if the task has yet to commence its first execution.
      */
 
     public long scheduledExecutionTime() {

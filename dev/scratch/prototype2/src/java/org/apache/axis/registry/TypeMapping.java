@@ -23,11 +23,14 @@ import javax.xml.namespace.QName;
  */
 public interface TypeMapping {
     public QName getXMLType();
+
     public Class getJavaType();
+
     /**
-     * @param style say it is litral or encoding 
+     * @param style say it is litral or encoding
      * @return
      */
     public Class getSerializer4Type(String style);
+
     public Class getDeserailizer4Type(String style);
 }

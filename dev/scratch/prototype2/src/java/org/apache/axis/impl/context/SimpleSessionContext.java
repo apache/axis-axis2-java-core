@@ -24,12 +24,13 @@ import java.util.HashMap;
  */
 public class SimpleSessionContext implements SessionContext {
     private HashMap map = new HashMap();
+
     public Object get(Object key) {
         return map.get(key);
     }
 
     public void put(Object key, Object obj) {
-        map.put(key,obj);
+        map.put(key, obj);
 
     }
 }

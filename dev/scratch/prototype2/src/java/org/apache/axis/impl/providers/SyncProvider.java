@@ -24,9 +24,10 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
-public class SyncProvider extends AbstractHandler{
+public class SyncProvider extends AbstractHandler {
     private Provider doworkProvider;
-    public SyncProvider(Provider doworkProvider){
+
+    public SyncProvider(Provider doworkProvider) {
         this.doworkProvider = doworkProvider;
     }
 

@@ -18,10 +18,11 @@ package org.apache.axis.registry;
 
 /**
  * Executes the Handlers that should be executed  for every web Service and
- * Contians the all global elements.   
+ * Contians the all global elements.
  */
-public interface Global extends FlowInclude,EngineElement,
-    TypeMappingInclude,ModuleInclude{
+public interface Global extends FlowInclude, EngineElement,
+        TypeMappingInclude, ModuleInclude {
     public int getModuleCount();
+
     public Module getModule(int index);
 }

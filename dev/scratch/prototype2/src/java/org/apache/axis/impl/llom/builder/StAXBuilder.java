@@ -30,7 +30,7 @@ import javax.xml.stream.XMLStreamReader;
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
-public abstract class StAXBuilder  implements OMXMLParserWrapper {
+public abstract class StAXBuilder implements OMXMLParserWrapper {
     protected OMFactory ombuilderFactory;
     protected XMLStreamReader parser;
 
@@ -58,9 +58,9 @@ public abstract class StAXBuilder  implements OMXMLParserWrapper {
         this.ombuilderFactory = ombuilderFactory;
     }
 
-    protected abstract void processNamespaceData(OMElement node,boolean isSOAPElement) ;
-        //since the behaviors are different when it comes to namespaces
-        //this must be implemented differently
+    protected abstract void processNamespaceData(OMElement node, boolean isSOAPElement);
+    //since the behaviors are different when it comes to namespaces
+    //this must be implemented differently
 
     protected void processAttributes(OMElement node) {
         int attribCount = parser.getAttributeCount();
@@ -211,6 +211,7 @@ public abstract class StAXBuilder  implements OMXMLParserWrapper {
 
     /**
      * This method will be called with the XMLStreamConstants.START_ELEMENT event
+     *
      * @return
      * @throws OMException
      */
@@ -219,11 +220,12 @@ public abstract class StAXBuilder  implements OMXMLParserWrapper {
     /**
      * This should proceed the parser one step further, if parser is not completed yet.
      * If this has been called whist parser is done, then throw an OMException.
-     *
+     * <p/>
      * If the cache is set to false, then should be return the event, *without* building the OM tree.
-     *
+     * <p/>
      * If the cache is set to true, then this should handle all the events within this, and should build
      * the object structure appropriately and return the event.
+     *
      * @return
      * @throws OMException
      */

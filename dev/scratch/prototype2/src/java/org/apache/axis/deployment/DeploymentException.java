@@ -18,7 +18,6 @@ package org.apache.axis.deployment;
  * @author Deepal Jayasinghe
  *         Oct 5, 2004
  *         2:51:57 PM
- *
  */
 public class DeploymentException extends Exception {
     public DeploymentException(Throwable cause) {

@@ -23,29 +23,30 @@ import org.apache.axis.utils.HashedBaundle;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
-public class EngineRegistryImpl implements EngineRegistry{
+public class EngineRegistryImpl implements EngineRegistry {
     private HashedBaundle modules;
     private HashedBaundle transports;
     private HashedBaundle services;
     private Global global;
-    
-    public EngineRegistryImpl(Global global){
+
+    public EngineRegistryImpl(Global global) {
         this.modules = new HashedBaundle();
         this.transports = new HashedBaundle();
         this.services = new HashedBaundle();
         this.global = global;
-    
+
     }
+
     public Global getGlobal() throws AxisFault {
         return global;
     }
 
     public Module getModule(int index) throws AxisFault {
-        return (Module)modules.get(index);
+        return (Module) modules.get(index);
     }
 
     public Module getModule(QName name) throws AxisFault {
-        return (Module)modules.get(name);
+        return (Module) modules.get(name);
     }
 
     public int getModuleCount() throws AxisFault {
@@ -58,11 +59,11 @@ public class EngineRegistryImpl implements EngineRegistry{
     }
 
     public Service getService(int index) throws AxisFault {
-        return (Service)services.get(index);
+        return (Service) services.get(index);
     }
 
     public Service getService(QName name) throws AxisFault {
-        return (Service)services.get(name);
+        return (Service) services.get(name);
     }
 
     public int getServiceCount() throws AxisFault {
@@ -70,11 +71,11 @@ public class EngineRegistryImpl implements EngineRegistry{
     }
 
     public Transport getTransPort(int index) throws AxisFault {
-        return (Transport)transports.get(index);
+        return (Transport) transports.get(index);
     }
 
     public Transport getTransPort(QName name) throws AxisFault {
-        return (Transport)transports.get(name);
+        return (Transport) transports.get(name);
     }
 
     public int getTransportCount() throws AxisFault {
@@ -82,16 +83,16 @@ public class EngineRegistryImpl implements EngineRegistry{
     }
 
     public void addMdoule(Module module) throws AxisFault {
-        modules.add(module.getName(),module);
+        modules.add(module.getName(), module);
     }
 
     public void addService(Service service) throws AxisFault {
-        services.add(service.getName(),service);
+        services.add(service.getName(), service);
 
     }
 
     public void addTransport(Transport transport) throws AxisFault {
-        transports.add(transport.getName(),transport);
+        transports.add(transport.getName(), transport);
     }
 
     public void removeService(QName name) throws AxisFault {

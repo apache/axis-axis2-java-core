@@ -21,22 +21,31 @@ import org.apache.axis.registry.EngineElement;
 import org.apache.axis.registry.Parameter;
 
 import java.util.HashMap;
+
 /**
  * This is not a abstract class so the users can wrapped it.
- * @author Srinath Perera(hemapani@opensource.lk)* 
+ *
+ * @author Srinath Perera(hemapani@opensource.lk)*
  */
-public class AbstractEngineElement implements EngineElement{
+public class AbstractEngineElement implements EngineElement {
     private HashMap parameterMap;
+
     public AbstractEngineElement() {
         parameterMap = new HashMap();
     }
-    public void cleanup()throws AxisFault {}
-    public void init()throws AxisFault {}
+
+    public void cleanup() throws AxisFault {
+    }
+
+    public void init() throws AxisFault {
+    }
+
     public void addParameter(Parameter param) {
-        parameterMap.put(param.getName(),param);
+        parameterMap.put(param.getName(), param);
 
     }
+
     public Parameter getParameter(String key) {
-        return (Parameter)parameterMap.get(key);
+        return (Parameter) parameterMap.get(key);
     }
 }

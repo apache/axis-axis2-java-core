@@ -17,9 +17,9 @@
 package org.apache.axis.registry;
 
 /**
- * Logical agrigation of TypeMapping,Handlers 
+ * Logical agrigation of TypeMapping,Handlers
  */
 
-public interface Module extends FlowInclude,NamedEngineElement,TypeMappingInclude{
-    
+public interface Module extends FlowInclude, NamedEngineElement, TypeMappingInclude {
+
 }

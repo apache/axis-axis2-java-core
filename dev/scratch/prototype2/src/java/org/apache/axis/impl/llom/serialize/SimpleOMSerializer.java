@@ -25,9 +25,8 @@ import java.util.Iterator;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 18, 2004
- * Time: 4:09:19 PM
- * 
+ *         Date: Nov 18, 2004
+ *         Time: 4:09:19 PM
  */
 public class SimpleOMSerializer {
 //determines whether the seriliased output contains new line characters
@@ -52,18 +51,18 @@ public class SimpleOMSerializer {
         }
     }
 
-    private String serialize(Object o){
+    private String serialize(Object o) {
         String returnString = "";
-        OMNode node = (OMNode)o;
+        OMNode node = (OMNode) o;
         short nodeType = node.getType();
-        if (nodeType==OMNode.ELEMENT_NODE){
-            returnString = serializeElement((OMElement)node);
+        if (nodeType == OMNode.ELEMENT_NODE) {
+            returnString = serializeElement((OMElement) node);
 //        }else if (nodeType == OMNode.DOCUMENT_NODE){
 //            returnString = serializeDocment((OMMessage)node);
-        }else if (nodeType == OMNode.ATTRIBUTE_NODE){
-            returnString = serializeAttribute((OMAttribute)node);
-        }else if (nodeType == OMNode.TEXT_NODE || nodeType == OMNode.COMMENT_NODE || nodeType == OMNode.CDATA_SECTION_NODE){
-            returnString = serializeText((OMText)node);
+        } else if (nodeType == OMNode.ATTRIBUTE_NODE) {
+            returnString = serializeAttribute((OMAttribute) node);
+        } else if (nodeType == OMNode.TEXT_NODE || nodeType == OMNode.COMMENT_NODE || nodeType == OMNode.CDATA_SECTION_NODE) {
+            returnString = serializeText((OMText) node);
         }
         return returnString;
     }
@@ -73,26 +72,25 @@ public class SimpleOMSerializer {
 //    }
 
     /**
-     *
      * @param element
      * @return
      */
-    private String serializeElement(OMElement element){
+    private String serializeElement(OMElement element) {
 
         //flag to say whther this element is prefixed or not
         boolean prefixed = false;
-        String prefix="";
+        String prefix = "";
 
         //first serialize the element itself
         String returnText = "<";
 
         //add the namespace prefix
         OMNamespace ns = element.getNamespace();
-        if (ns!=null){
+        if (ns != null) {
             //add the prefix if it's availble
             prefix = ns.getPrefix();
-            if (prefix!=null){
-                returnText= returnText + prefix+":";
+            if (prefix != null) {
+                returnText = returnText + prefix + ":";
                 prefixed = true;
             }
         }
@@ -101,8 +99,8 @@ public class SimpleOMSerializer {
 
         //add the elements attributes
         Iterator attributes = element.getAttributes();
-        while (attributes.hasNext()){
-            returnText = returnText + " " + serializeAttribute((OMAttribute)attributes.next());
+        while (attributes.hasNext()) {
+            returnText = returnText + " " + serializeAttribute((OMAttribute) attributes.next());
         }
 
         //add the namespaces
@@ -111,9 +109,9 @@ public class SimpleOMSerializer {
         returnText = returnText + ">";
         //add the children
         Iterator children = element.getChildren();
-        while (children.hasNext()){
+        while (children.hasNext()) {
             Object node = children.next();
-            if (node!=null){
+            if (node != null) {
                 returnText = returnText + serialize(node);
             }
             //add the line feed if specified
@@ -123,67 +121,66 @@ public class SimpleOMSerializer {
 
         //add the closing tag
         if (prefixed)
-            returnText = returnText + "</"+prefix + ":"+element.getLocalName() + ">";
+            returnText = returnText + "</" + prefix + ":" + element.getLocalName() + ">";
         else
-            returnText = returnText + "</"+ element.getLocalName() + ">";
+            returnText = returnText + "</" + element.getLocalName() + ">";
 
         if (newLines)
-            returnText = returnText +"\n";
+            returnText = returnText + "\n";
 
         return returnText;
     }
 
     /**
-     *
      * @param text
      * @return
      */
-    private String serializeText(OMText text){
+    private String serializeText(OMText text) {
         short type = text.getType();
         String returnText = null;
-        if (type==OMNode.COMMENT_NODE){
-            returnText = "<!--"+ text.getValue()+"-->";
-        } else if (type==OMNode.CDATA_SECTION_NODE){
-            returnText=  "<![CDATA["+ text.getValue()+"]]>";
+        if (type == OMNode.COMMENT_NODE) {
+            returnText = "<!--" + text.getValue() + "-->";
+        } else if (type == OMNode.CDATA_SECTION_NODE) {
+            returnText = "<![CDATA[" + text.getValue() + "]]>";
         } else {
             returnText = text.getValue();
         }
         return returnText;
     }
+
     /**
-     *
      * @param attr
      * @return
      */
-    private String serializeAttribute(OMAttribute attr){
-        String returnText="";
+    private String serializeAttribute(OMAttribute attr) {
+        String returnText = "";
         //first check whether the attribute is associated with a namespace
         OMNamespace ns = attr.getNamespace();
-        if (ns!=null){
+        if (ns != null) {
             //add the prefix if it's availble
             String prefix = ns.getPrefix();
-            if (prefix!=null)
-                returnText= returnText + prefix+":";
+            if (prefix != null)
+                returnText = returnText + prefix + ":";
         }
         //add the local name and the value
-        returnText = returnText + attr.getLocalName() + "=\""+ attr.getValue() + "\"";
+        returnText = returnText + attr.getLocalName() + "=\"" + attr.getValue() + "\"";
         return returnText;
     }
 
 
-    private String serializeNamespace(OMNamespace namespace){
-        String returnText="";
+    private String serializeNamespace(OMNamespace namespace) {
+        String returnText = "";
 
-        if (namespace!=null){
+        if (namespace != null) {
             //add the prefix if it's availble
             String prefix = namespace.getPrefix();
 
-            if (prefix!=null)
-                returnText= returnText + "xmlns:" + prefix+"=";
+            if (prefix != null)
+                returnText = returnText + "xmlns:" + prefix + "=";
             else
                 returnText = returnText + "xmlns=";
 
-            returnText = returnText + "\""+ namespace.getValue() + "\"";
+            returnText = returnText + "\"" + namespace.getValue() + "\"";
         }
         //add the local name and the value
 

@@ -25,43 +25,43 @@ import javax.xml.namespace.QName;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class ServiceLocator {
-    public static Service locateService(MessageContext msgctx) throws AxisFault{
+    public static Service locateService(MessageContext msgctx) throws AxisFault {
         String uri = null;
-        String filePart = (String)msgctx.getProperty(MessageContext.REQUEST_URL);
-        String soapAction = (String)msgctx.getProperty(MessageContext.SOAP_ACTION);
-        
+        String filePart = (String) msgctx.getProperty(MessageContext.REQUEST_URL);
+        String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+
         if (filePart.startsWith("axis/services/")) {
             String servicePart = filePart.substring(14);
             int separator = servicePart.indexOf('/');
             if (separator > -1) {
                 uri = servicePart.substring(0, separator);
-            }else{
+            } else {
                 uri = servicePart;
             }
         }
 
         QName serviceName = null;
-        if(uri != null){
+        if (uri != null) {
             int index = uri.indexOf('?');
-            if(index > -1){
+            if (index > -1) {
                 //TODO get the opeartion name from URI as well 
                 serviceName = new QName(uri);
-            }else{
+            } else {
                 serviceName = new QName(uri);
             }
-        }else{
-            if(soapAction != null){
+        } else {
+            if (soapAction != null) {
                 serviceName = new QName(soapAction);
             }
         }
-        if(serviceName != null){
+        if (serviceName != null) {
             Service service = msgctx.getGlobalContext().getRegistry().getService(serviceName);
-            if(service != null){
+            if (service != null) {
                 return service;
-            }else{
+            } else {
                 throw new AxisFault("Service Not found");
             }
-        }else{
+        } else {
             throw new AxisFault("Both the URI and SOAP_ACTION Is Null");
         }
     }

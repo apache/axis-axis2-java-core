@@ -29,22 +29,22 @@ import java.io.OutputStream;
 public class TransportSenderLocator {
     public static final String TRANSPORT_TCP = "TRANSPORT_TCP";
     public static final String TRANSPORT_HTTP = "TRANSPORT_HTTP";
-    
-    public static TransportSender locateTransPortSender(MessageContext msgContext) throws AxisFault{
-        String type= (String)msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
-        OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-                               
-        if( TransportSenderLocator.TRANSPORT_TCP.equals(type)){
-            if(out != null){
+
+    public static TransportSender locateTransPortSender(MessageContext msgContext) throws AxisFault {
+        String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+
+        if (TransportSenderLocator.TRANSPORT_TCP.equals(type)) {
+            if (out != null) {
                 return new TCPTrasnportSender(out);
-            }else{
-                throw new AxisFault("if TCP trsport used there should be a propoerty named "+MessageContext.TRANSPORT_DATA);
+            } else {
+                throw new AxisFault("if TCP trsport used there should be a propoerty named " + MessageContext.TRANSPORT_DATA);
             }
-        }else if( TransportSenderLocator.TRANSPORT_HTTP.equals(type)){
-            if(out != null){
+        } else if (TransportSenderLocator.TRANSPORT_HTTP.equals(type)) {
+            if (out != null) {
                 return new HTTPTrasnportSender(out);
-            }else{
-                throw new AxisFault("if TCP trsport used there should be a propoerty named "+MessageContext.TRANSPORT_DATA);
+            } else {
+                throw new AxisFault("if TCP trsport used there should be a propoerty named " + MessageContext.TRANSPORT_DATA);
             }
         }
         throw new AxisFault("No tranport found");

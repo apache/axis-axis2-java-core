@@ -20,21 +20,21 @@ import org.xml.sax.ContentHandler;
  * User: Eran Chinthaka - Lanka Software Foundation
  * Date: Nov 19, 2004
  * Time: 2:20:29 PM
- *
+ * <p/>
  * From the point of view of AXIOM, we expect something from the OUT object provided by the provider.
  * Especially AXIOM expects a SAX interface from the Object AXIOM recieves.
- *
+ * <p/>
  * So this interface has to be implemented by the Object which AXIOM recieves for OUT path.
  */
 public interface OutObject {
     /**
      * This method will help to register a ContentHandler with the Object
+     *
      * @param contentHandler
      */
     public void setContentHandler(ContentHandler contentHandler);
 
     /**
-     *
      * @return
      */
 

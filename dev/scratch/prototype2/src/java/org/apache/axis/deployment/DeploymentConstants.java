@@ -32,7 +32,7 @@ public interface DeploymentConstants {
     String MODULEXML = "META-INF/module.xml";
     String PARAMETERST = "parameter";// paramater start tag
     String HANDERST = "handler";
-    String MODULEST ="module";
+    String MODULEST = "module";
     String PHASEST = "phase";
     String PHASE_ORDER = "phaseOrder";
     String TYPEMAPPINGST = "typeMapping";// typeMapping start tag
@@ -42,7 +42,7 @@ public interface DeploymentConstants {
     String OUTFLOWST = "outflow";// outflowr start tag
     String FAILTFLOWST = "faultflow";// faultflow start tag
 
-   // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
+    // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
     String MODULE_PATH = "/modules/";
     String SERVICE_PATH = "/services/";
 

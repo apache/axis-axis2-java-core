@@ -16,8 +16,6 @@
 
 package org.apache.axis.impl.transport;
 
-import java.io.OutputStream;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EndpointReferance;
@@ -26,39 +24,47 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.SOAPEnvelope;
 
+import java.io.OutputStream;
+
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class AbstractTrasnportSender extends AbstractHandler implements TransportSender{
+public abstract class AbstractTrasnportSender extends AbstractHandler implements TransportSender {
     public final void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = null;
-        if(msgContext.isProcessingFault()){
+        if (msgContext.isProcessingFault()) {
             //Means we are processing fault
-            if(msgContext.getFaultTo()!= null){
-                out = obtainOutPutStream(msgContext,msgContext.getFaultTo());
-            }else{
+            if (msgContext.getFaultTo() != null) {
+                out = obtainOutPutStream(msgContext, msgContext.getFaultTo());
+            } else {
                 out = obtainOutPutStream(msgContext);
             }
-        }else{
-            if(msgContext.getTo()!= null){
-                out = obtainOutPutStream(msgContext,msgContext.getTo());
-            }else if(msgContext.getReplyTo() != null){
-                out = obtainOutPutStream(msgContext,msgContext.getTo());
-            }else{
+        } else {
+            if (msgContext.getTo() != null) {
+                out = obtainOutPutStream(msgContext, msgContext.getTo());
+            } else if (msgContext.getReplyTo() != null) {
+                out = obtainOutPutStream(msgContext, msgContext.getTo());
+            } else {
                 out = obtainOutPutStream(msgContext);
             }
         }
         startSending();
         SOAPEnvelope envelope = msgContext.getEnvelope();
-        if(envelope != null){
+        if (envelope != null) {
             SimpleOMSerializer serializer = new SimpleOMSerializer();
-            serializer.serialize(envelope,out);
-            
+            serializer.serialize(envelope, out);
+
         }
         finalizeSending();
     }
-    protected void startSending(){}
-    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext,EndpointReferance epr) throws AxisFault;
+
+    protected void startSending() {
+    }
+
+    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferance epr) throws AxisFault;
+
     protected abstract OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault;
-    protected void finalizeSending(){}
+
+    protected void finalizeSending() {
+    }
 }

@@ -16,16 +16,14 @@
 package org.apache.axis.om;
 
 
-
-
 /**
- *     <P>An object representing the contents in the SOAP header part
- *   of the SOAP envelope. The immediate children of a <CODE>
- *   SOAPHeader</CODE> object can be represented only as <CODE>
- *   SOAPHeaderBlock</CODE> objects.</P>
- *
- *   <P>B <CODE>SOAPHeaderBlock</CODE> object can have other
- *   <CODE>OMElement</CODE> objects as its children.</P>
+ * <P>An object representing the contents in the SOAP header part
+ * of the SOAP envelope. The immediate children of a <CODE>
+ * SOAPHeader</CODE> object can be represented only as <CODE>
+ * SOAPHeaderBlock</CODE> objects.</P>
+ * <p/>
+ * <P>B <CODE>SOAPHeaderBlock</CODE> object can have other
+ * <CODE>OMElement</CODE> objects as its children.</P>
  */
 public interface SOAPHeaderBlock extends OMElement {
 
@@ -34,37 +32,42 @@ public interface SOAPHeaderBlock extends OMElement {
      * SOAPHeaderBlock</CODE> object to the specified actor. The
      * default value of an actor is: <CODE>
      * OMConstants.URI_SOAP_ACTOR_NEXT</CODE>
-     * @param  actorURI  a <CODE>String</CODE> giving
-     *     the URI of the actor to set
+     *
+     * @param actorURI a <CODE>String</CODE> giving
+     *                 the URI of the actor to set
+     * @throws java.lang.IllegalArgumentException
+     *          if
+     *          there is a problem in setting the actor.
      * @see #getActor() getActor()
-     * @throws java.lang.IllegalArgumentException if
-     *     there is a problem in setting the actor.
      */
     public abstract void setActor(String actorURI);
 
     /**
      * Returns the uri of the actor associated with this <CODE>
      * SOAPHeaderBlock</CODE> object.
-     * @return  a <CODE>String</CODE> giving the URI of the
-     *     actor
+     *
+     * @return a <CODE>String</CODE> giving the URI of the
+     *         actor
      * @see #setActor(java.lang.String) setActor(java.lang.String)
      */
     public abstract String getActor();
 
     /**
      * Sets the mustUnderstand attribute for this <CODE>
-     *   SOAPHeaderBlock</CODE> object to be on or off.
+     * SOAPHeaderBlock</CODE> object to be on or off.
+     * <p/>
+     * <P>If the mustUnderstand attribute is on, the actor who
+     * receives the <CODE>SOAPHeaderBlock</CODE> must process it
+     * correctly. This ensures, for example, that if the <CODE>
+     * SOAPHeaderBlock</CODE> object modifies the message, that
+     * the message is being modified correctly.</P>
      *
-     *   <P>If the mustUnderstand attribute is on, the actor who
-     *   receives the <CODE>SOAPHeaderBlock</CODE> must process it
-     *   correctly. This ensures, for example, that if the <CODE>
-     *   SOAPHeaderBlock</CODE> object modifies the message, that
-     *   the message is being modified correctly.</P>
-     * @param  mustUnderstand  <CODE>true</CODE> to
-     *     set the mustUnderstand attribute on; <CODE>false</CODE>
-     *     to turn if off
-     * @throws java.lang.IllegalArgumentException if
-     *     there is a problem in setting the actor.
+     * @param mustUnderstand <CODE>true</CODE> to
+     *                       set the mustUnderstand attribute on; <CODE>false</CODE>
+     *                       to turn if off
+     * @throws java.lang.IllegalArgumentException
+     *          if
+     *          there is a problem in setting the actor.
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public abstract void setMustUnderstand(boolean mustUnderstand);
@@ -72,9 +75,10 @@ public interface SOAPHeaderBlock extends OMElement {
     /**
      * Returns whether the mustUnderstand attribute for this
      * <CODE>SOAPHeaderBlock</CODE> object is turned on.
-     * @return  <CODE>true</CODE> if the mustUnderstand attribute of
-     *     this <CODE>SOAPHeaderBlock</CODE> object is turned on;
-     *     <CODE>false</CODE> otherwise
+     *
+     * @return <CODE>true</CODE> if the mustUnderstand attribute of
+     *         this <CODE>SOAPHeaderBlock</CODE> object is turned on;
+     *         <CODE>false</CODE> otherwise
      */
     public abstract boolean getMustUnderstand();
 }

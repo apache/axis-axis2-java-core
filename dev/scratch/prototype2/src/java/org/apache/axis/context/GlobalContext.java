@@ -20,16 +20,17 @@ import org.apache.axis.registry.EngineRegistry;
 import java.util.HashMap;
 
 /**
- * All the engine componets are stateless accross the executions and all the states should be kept in the 
- * Contexts, there are three context Global, Session and Message  
+ * All the engine componets are stateless accross the executions and all the states should be kept in the
+ * Contexts, there are three context Global, Session and Message
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class GlobalContext {
     private EngineRegistry registry;
     private HashMap map = new HashMap();
-    
-    
-    public GlobalContext(EngineRegistry er){
+
+
+    public GlobalContext(EngineRegistry er) {
         this.registry = er;
     }
 
@@ -38,7 +39,7 @@ public class GlobalContext {
     }
 
     public void put(String key, Object obj) {
-        map.put(key,obj);
+        map.put(key, obj);
 
     }
 

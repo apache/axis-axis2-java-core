@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package org.apache.axis.engine;
+
 //
 //import org.xml.sax.Attributes;
 //
@@ -22,6 +23,7 @@ package org.apache.axis.engine;
 ///**
 // * @author Srinath Perera(hemapani@opensource.lk)
 // */
+
 public class Constants {
     public static final int SOAP_STYLE_RPC_ENCODED = 1000;
     public static final int SOAP_STYLE_RPC_LITERAL = 1001;
@@ -30,13 +32,14 @@ public class Constants {
     public static final String APPLICATION_SCOPE = "application";
     public static final String SESSION_SCOPE = "session";
     public static final String GLOBAL_SCOPE = "global";
-    
+
     public static final String PHASE_SERVICE = "service";
     public static final String PHASE_TRANSPORT = "transport";
     public static final String PHASE_GLOBAL = "global";
 
 
 }
+
 //    public static final int SOAP_STYLE_DOC_LITRAL_UNWRAPPED = 1003;
 //    
 //    

@@ -19,7 +19,6 @@ package org.apache.axis.deployment.repository.utill;
  * @author Deepal Jayasinghe
  *         Oct 13, 2004
  *         12:06:31 PM
- *
  */
 public class WSInfo {
 

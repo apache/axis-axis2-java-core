@@ -21,12 +21,12 @@ import org.apache.axis.registry.Parameter;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class ParameterImpl implements Parameter  {
+public class ParameterImpl implements Parameter {
     private String name;
     private String value;
     private int type = TEXT_PARAMETER;
-    
-    public ParameterImpl(String name,String value) {
+
+    public ParameterImpl(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -38,6 +38,7 @@ public class ParameterImpl implements Parameter  {
     public Object getValue() {
         return value;
     }
+
     public int getParameterType() {
         return type;
     }

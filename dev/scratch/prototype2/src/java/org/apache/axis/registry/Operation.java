@@ -19,5 +19,5 @@ package org.apache.axis.registry;
 /**
  * Runtime representation of the WSDL Operation
  */
-public interface Operation extends FlowInclude,NamedEngineElement{
+public interface Operation extends FlowInclude, NamedEngineElement {
 }

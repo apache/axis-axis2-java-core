@@ -27,11 +27,11 @@ import java.util.Stack;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 18, 2004
- * Time: 2:16:09 PM
- *
- * Note  - This class also implements the streaming constants interface
- * to get access to the StAX constants
+ *         Date: Nov 18, 2004
+ *         Time: 2:16:09 PM
+ *         <p/>
+ *         Note  - This class also implements the streaming constants interface
+ *         to get access to the StAX constants
  */
 public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
@@ -110,7 +110,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @return
      */
     public String getNamespaceURI() {
@@ -128,7 +127,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @return
      */
     public boolean hasName() {
@@ -140,7 +138,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @return
      */
     public String getLocalName() {
@@ -218,7 +215,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @return
      */
     public char[] getTextCharacters() {
@@ -237,7 +233,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @return
      */
     public String getText() {
@@ -397,9 +392,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @see javax.xml.stream.XMLStreamReader#getAttributeName
      * @param i
      * @return
+     * @see javax.xml.stream.XMLStreamReader#getAttributeName
      */
     public QName getAttributeName(int i) {
         QName returnQName = null;
@@ -416,8 +411,8 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @see javax.xml.stream.XMLStreamReader#getAttributeCount
      * @return
+     * @see javax.xml.stream.XMLStreamReader#getAttributeCount
      */
     public int getAttributeCount() {
         int returnCount = 0;
@@ -496,7 +491,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
     public void close() throws OMStreamingException {
         //this doesnot mean anything with respect to the OM
-        if (!navigable){
+        if (!navigable) {
             try {
                 parser.close();
             } catch (XMLStreamException e) {
@@ -512,8 +507,10 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
     /**
      * Not implemented yet
+     *
      * @return
      * @throws org.apache.axis.impl.llom.exception.OMStreamingException
+     *
      */
     public int nextTag() throws OMStreamingException {
         return 0;
@@ -679,6 +676,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
     /**
      * helper method
+     *
      * @param it
      * @return
      */
@@ -695,6 +693,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
     /**
      * Helper method
+     *
      * @param it
      * @param index
      * @return
@@ -722,6 +721,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
 
     /**
      * Helper method
+     *
      * @param namedNode
      * @return
      */
@@ -743,7 +743,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     *
      * @param elt
      * @param index
      * @return

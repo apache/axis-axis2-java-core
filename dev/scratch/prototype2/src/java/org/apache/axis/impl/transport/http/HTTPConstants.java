@@ -24,9 +24,10 @@ package org.apache.axis.impl.transport.http;
  * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class HTTPConstants {
-    /** The MessageContext transport ID of HTTP.
-     *  (Maybe this should be more specific, like "http_servlet",
-     *   whaddya think? - todo by Jacek)
+    /**
+     * The MessageContext transport ID of HTTP.
+     * (Maybe this should be more specific, like "http_servlet",
+     * whaddya think? - todo by Jacek)
      */
 
     public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
@@ -54,8 +55,6 @@ public class HTTPConstants {
     public static final String HEADER_LOCATION = "Location";
 
 
-
-    
     public static final String REQUEST_HEADERS = "HTTP-Request-Headers";
     public static final String RESPONSE_HEADERS = "HTTP-Response-Headers";
 
@@ -72,7 +71,7 @@ public class HTTPConstants {
     public static final String HEADER_ACCEPT_APPL_SOAP = "application/soap+xml";
     public static final String HEADER_ACCEPT_MULTIPART_RELATED = "multipart/related";
     public static final String HEADER_ACCEPT_APPLICATION_DIME = "application/dime";
-    
+
 
     /**
      * Cookie headers
@@ -81,37 +80,43 @@ public class HTTPConstants {
     public static final String HEADER_COOKIE2 = "Cookie2";
     public static final String HEADER_SET_COOKIE = "Set-Cookie";
     public static final String HEADER_SET_COOKIE2 = "Set-Cookie2";
-    
-    /** Integer
-     */
-    public static String MC_HTTP_STATUS_CODE    = "transport.http.statusCode";
 
-    /** String
+    /**
+     * Integer
+     */
+    public static String MC_HTTP_STATUS_CODE = "transport.http.statusCode";
+
+    /**
+     * String
      */
     public static String MC_HTTP_STATUS_MESSAGE = "transport.http.statusMessage";
 
-    /** HttpServlet
+    /**
+     * HttpServlet
      */
-    public static String MC_HTTP_SERVLET        = "transport.http.servlet" ;
+    public static String MC_HTTP_SERVLET = "transport.http.servlet";
 
-    /** HttpServletRequest
+    /**
+     * HttpServletRequest
      */
     public static String MC_HTTP_SERVLETREQUEST = "transport.http.servletRequest";
-    /** HttpServletResponse
+    /**
+     * HttpServletResponse
      */
-    public static String MC_HTTP_SERVLETRESPONSE= "transport.http.servletResponse";
-    public static String MC_HTTP_SERVLETLOCATION= "transport.http.servletLocation";
-    public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
+    public static String MC_HTTP_SERVLETRESPONSE = "transport.http.servletResponse";
+    public static String MC_HTTP_SERVLETLOCATION = "transport.http.servletLocation";
+    public static String MC_HTTP_SERVLETPATHINFO = "transport.http.servletPathInfo";
 
 
-    /** HTTP header field values
+    /**
+     * HTTP header field values
      */
     public static final String HEADER_DEFAULT_CHAR_ENCODING = "iso-8859-1";
-    
+
     /**
      * AXIS servlet plugin parameter names.
      */
-    
+
     public static final String PLUGIN_NAME = "transport.http.plugin.pluginName";
     public static final String PLUGIN_SERVICE_NAME = "transport.http.plugin.serviceName";
     public static final String PLUGIN_IS_DEVELOPMENT = "transport.http.plugin.isDevelopment";

@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 package org.apache.axis.context;
+
 /**
- * All the engine componets are stateless accross the executions and all the states should be kept in the 
- * Contexts, there are three context Global, Session and Message  
+ * All the engine componets are stateless accross the executions and all the states should be kept in the
+ * Contexts, there are three context Global, Session and Message
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface SessionContext {
     public Object get(Object key);
-    public void put(Object key,Object obj);
+
+    public void put(Object key, Object obj);
 }

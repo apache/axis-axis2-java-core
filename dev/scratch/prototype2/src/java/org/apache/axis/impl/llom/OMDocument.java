@@ -27,7 +27,6 @@ public class OMDocument {
     private OMXMLParserWrapper parserWrapper;
 
     /**
-     *
      * @param rootElement
      * @param parserWrapper
      */
@@ -37,7 +36,6 @@ public class OMDocument {
     }
 
     /**
-     *
      * @param parserWrapper
      */
     public OMDocument(OMXMLParserWrapper parserWrapper) {
@@ -45,7 +43,7 @@ public class OMDocument {
     }
 
     public OMElement getRootElement() {
-        if(rootElement == null){
+        if (rootElement == null) {
             parserWrapper.next();
         }
         return rootElement;

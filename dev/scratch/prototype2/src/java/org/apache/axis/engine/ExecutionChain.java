@@ -22,63 +22,65 @@ import java.util.HashMap;
 import java.util.Stack;
 
 /**
- * <p>This is the ordered Collection of Phases as specified by the Server.xml file.</p> 
+ * <p>This is the ordered Collection of Phases as specified by the Server.xml file.</p>
+ *
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class ExecutionChain {
     private HashMap phases;
     private ArrayList executionList;
-    
-    public ExecutionChain(){
+
+    public ExecutionChain() {
         phases = new HashMap();
         executionList = new ArrayList();
     }
-    
-    public void addPhase(Phase phase){
-        phases.put(phase.getPhaseName(),phase);
+
+    public void addPhase(Phase phase) {
+        phases.put(phase.getPhaseName(), phase);
         executionList.add(phase);
     }
-    
-    public void addHandlerDirectly(Handler directHandler,int index){
-        phases.put(directHandler.getName(),directHandler);
-        executionList.add(index,directHandler);
+
+    public void addHandlerDirectly(Handler directHandler, int index) {
+        phases.put(directHandler.getName(), directHandler);
+        executionList.add(index, directHandler);
     }
 
-    public void addHandler(String phaseName,Handler handler,int index){
-        Phase phase = (Phase)phases.get(phaseName);
-        phase.addHandler(handler,index);
+    public void addHandler(String phaseName, Handler handler, int index) {
+        Phase phase = (Phase) phases.get(phaseName);
+        phase.addHandler(handler, index);
     }
 
-    
-    public void addHandler(String phaseName,Handler handler) throws AxisFault{
-        Phase phase = (Phase)phases.get(phaseName);
-        if(phase == null)
-            throw new AxisFault("Can't find the Phase "+phaseName);
+
+    public void addHandler(String phaseName, Handler handler) throws AxisFault {
+        Phase phase = (Phase) phases.get(phaseName);
+        if (phase == null)
+            throw new AxisFault("Can't find the Phase " + phaseName);
         phase.addHandler(handler);
     }
-    
-    public void invoke(MessageContext msgctx)throws AxisFault{
+
+    public void invoke(MessageContext msgctx) throws AxisFault {
         Stack executionStack = new Stack();
-        try{
-            for(int i = 0;i<executionList.size();i++){
-                Handler phase = (Handler)executionList.get(i);
-                if(phase != null){
+        try {
+            for (int i = 0; i < executionList.size(); i++) {
+                Handler phase = (Handler) executionList.get(i);
+                if (phase != null) {
                     executionStack.push(phase);
                     phase.invoke(msgctx);
                 }
             }
-        }catch(Exception e){
-            while(executionStack.isEmpty()){
-                Handler handler  = (Handler)executionStack.pop();
+        } catch (Exception e) {
+            while (executionStack.isEmpty()) {
+                Handler handler = (Handler) executionStack.pop();
                 handler.revoke(msgctx);
             }
             throw AxisFault.makeFault(e);
-        }    
+        }
     }
-    public void revoke(MessageContext msgctx)throws AxisFault{
-        for(int i = executionList.size()-1;i > -1;i--){
-            Phase phase = (Phase)executionList.get(i);
-            if(phase != null){
+
+    public void revoke(MessageContext msgctx) throws AxisFault {
+        for (int i = executionList.size() - 1; i > -1; i--) {
+            Phase phase = (Phase) executionList.get(i);
+            if (phase != null) {
                 phase.revoke(msgctx);
             }
         }

@@ -16,34 +16,34 @@
 
 package org.apache.axis.impl.transport.tcp;
 
-import java.io.OutputStream;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EndpointReferance;
 import org.apache.axis.impl.transport.AbstractTrasnportSender;
 
+import java.io.OutputStream;
+
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class TCPTrasnportSender extends AbstractTrasnportSender{
+public class TCPTrasnportSender extends AbstractTrasnportSender {
     protected OutputStream out;
-    
-    public TCPTrasnportSender(OutputStream out){
+
+    public TCPTrasnportSender(OutputStream out) {
         this.out = out;
     }
-    
+
     protected OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault {
-        OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-        if(out == null){
+        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+        if (out == null) {
             throw new AxisFault("can not find the suffient information to find endpoint");
-        }else{
+        } else {
             return out;
         }
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext,EndpointReferance epr) {
+    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferance epr) {
         throw new UnsupportedOperationException("Addressing not suppotrted yet");
     }
 

@@ -26,6 +26,7 @@ public class FlowIncludeImpl implements FlowInclude {
     private Flow in;
     private Flow out;
     private Flow fault;
+
     public Flow getFaultFlow() {
         return fault;
     }

@@ -19,7 +19,7 @@ import org.apache.axis.context.MessageContext;
 
 
 public class Sender {
-    public void send(MessageContext msgCtx) throws AxisFault{
+    public void send(MessageContext msgCtx) throws AxisFault {
         AxisEngine engine = new AxisEngine(msgCtx.getGlobalContext().getRegistry());
         engine.send(msgCtx);
     }

@@ -18,11 +18,10 @@ import org.apache.axis.om.OMException;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 18, 2004
- * Time: 1:54:11 PM
- * 
+ *         Date: Nov 18, 2004
+ *         Time: 1:54:11 PM
  */
-public class OMStreamingException extends OMException{
+public class OMStreamingException extends OMException {
     public OMStreamingException() {
     }
 
