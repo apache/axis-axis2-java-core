@@ -51,6 +51,14 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.0</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 	 <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-servlet</artifactId>

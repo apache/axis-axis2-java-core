@@ -74,8 +74,8 @@
 					<ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
 					<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
 					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+					<ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
+					
 				</ant:fileset> 
 				<ant:fileset dir="modules">
 					<ant:include name="**/target/axis2*.jar"/>
