@@ -17,20 +17,21 @@ package org.apache.axis.engine;
 
 //todo
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.client.Call;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
 import java.net.URL;
 
 public class CallUnregisterdServiceTest extends AbstractTestCase{
@@ -77,21 +78,30 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
         try{
             OMFactory fac = OMFactory.newInstance();
 
+            SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
             OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
             OMElement value =  fac.createOMElement("myValue",omNs) ;
             value.setValue("Isaac Assimov, the foundation Sega");
             method.addChild(value);
+            reqEnv.getBody().addChild(method);
 
             Call call = new Call();
-            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoBadXMLService");
-            OMElement omele = call.syncCall(method,url);
+            EndpointReference targetEPR = new EndpointReference(
+                AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService1");
+            call.setTo(targetEPR);
+            SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
-            assertNotNull(omele);
+            SOAPBody sb = resEnv.getBody();
+            if (sb.hasFault()) {
+                throw new AxisFault(sb.getFault().getFaultString());
+            }
+            fail("The test must fail due to wrong service Name");
+
         }catch(AxisFault e){
             tearDown();
             return;
         }
-        fail("the test must fail due ti bad service Name");    
+
     }
 }

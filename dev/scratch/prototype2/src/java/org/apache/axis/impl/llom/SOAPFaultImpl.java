@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -68,7 +69,14 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
     }
 
     public String getFaultString() {
-        throw new UnsupportedOperationException(); //TODO implement this
+        Iterator children = this.getChildren();
+        while (children.hasNext()) {
+            Object o = children.next();
+            if(o instanceof OMText && !"".equals(((OMText)o).getValue())){
+                return ((OMText)o).getValue();
+            }
+        }
+        return null;
     }
 
     public void setFaultString(String faultString, Locale locale) throws OMException {

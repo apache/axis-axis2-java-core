@@ -82,9 +82,13 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
      */
     public SOAPFault getFault() {
         Iterator soapFaultChildren = getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_LOCAL_NAME));
-        if (soapFaultChildren.hasNext()) {
-            SOAPFault soapFault = (SOAPFault) soapFaultChildren.next();
-            return soapFault;
+        while (soapFaultChildren.hasNext()) {
+            Object o = soapFaultChildren.next();
+            if (o instanceof SOAPFault) {
+                SOAPFault soapFault = (SOAPFault) o;
+                return soapFault;
+            }
+
         }
         return null;
     }

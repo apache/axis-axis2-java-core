@@ -1,37 +1,39 @@
 /*
- * Copyright 2003,2004 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2003,2004 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.engine;
 
 //todo
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.CallBack;
+import org.apache.axis.clientapi.Callback;
+import org.apache.axis.clientapi.AsyncResult;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.net.URL;
 
 public class EchoRawXMLTest extends AbstractTestCase{
@@ -44,7 +46,9 @@ public class EchoRawXMLTest extends AbstractTestCase{
     private MessageContext mc;
     private Thread thisThread = null;
     private SimpleHTTPReceiver sas;
-    
+
+    private boolean finish=false;
+
     public EchoRawXMLTest(){
         super(EchoRawXMLTest.class.getName());
     }
@@ -55,42 +59,55 @@ public class EchoRawXMLTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
-        
+
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
-        
+
         service.addOperation(operation);
-        
+
         EngineUtils.createExecutionChains(service);
         engineRegistry.addService(service);
-        
+
         sas = EngineUtils.startServer(engineRegistry);
+        finish=false;
     }
 
-    protected void tearDown() throws Exception {
-            EngineUtils.stopServer();  
-            Thread.sleep(1000);
-    }
+
+     protected void tearDown() throws Exception {
+        while(!finish){
+           Thread.sleep(500);
+        }
+        EngineUtils.stopServer();
+      }
 
 
     public void testEchoXMLSync() throws Exception{
         try{
             OMFactory fac = OMFactory.newInstance();
 
+            SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
             OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
             OMElement value =  fac.createOMElement("myValue",omNs) ;
             value.setValue("Isaac Assimov, the foundation Sega");
             method.addChild(value);
+            reqEnv.getBody().addChild(method);
 
-            Call call = new Call();
-            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
+            org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+            EndpointReference targetEPR = new EndpointReference(
+                    AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
+            call.setTo(targetEPR);
+            SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
-            OMElement omele = call.syncCall(method,url);
-            assertNotNull(omele);
+            resEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),true);
+
+            finish=true;
+
+            OMNode omNode = resEnv.getBody().getFirstChild();
+            assertNotNull(omNode);
         }catch(Exception e){
             e.printStackTrace();
             tearDown();
@@ -101,30 +118,39 @@ public class EchoRawXMLTest extends AbstractTestCase{
         try{
             OMFactory fac = OMFactory.newInstance();
 
+            SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
             OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
             OMElement value =  fac.createOMElement("myValue",omNs) ;
             value.setValue("Isaac Assimov, the foundation Sega");
             method.addChild(value);
+            reqEnv.getBody().addChild(method);
 
-            Call call = new Call();
-            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
-            
-            CallBack callback = new CallBack() {
-                public void doWork(OMElement ele) {
-                    System.out.print("got the result = " + ele +" :)");
+            org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+            EndpointReference targetEPR = new EndpointReference(
+                    AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
+            call.setTo(targetEPR);
+            call.setListenerTransport("http",true);
 
+            Callback callback = new Callback(){
+                public void onComplete(AsyncResult result){
+                    try {
+                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+                                .createXMLStreamWriter(System.out),true);
+                    } catch (XMLStreamException e) {
+                        reportError(e);
+                    }finally{
+                        finish=true;
+                    }
                 }
-                public void reportError(Exception e) {
-                    log.info("reporting error from callback !");
+                public void reportError(Exception e){
                     e.printStackTrace();
                 }
             };
-            
-            call.asyncCall(method,url,callback);
+
+            call.sendReceiveAsync(reqEnv,callback);
             log.info("send the reqest");
-            
-            Thread.sleep(1000);
+
         }catch(Exception e){
             e.printStackTrace();
             tearDown();

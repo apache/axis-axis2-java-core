@@ -31,6 +31,7 @@ public interface OMConstants {
     public static final String BODY_NAMESPACE_URI = SOAP_ENVELOPE_NAMESPACE_URI;
     public static final String BODY_LOCAL_NAME = "Body";
     public static final String BODY_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
+    public static final String BODY_FAULT_LOCAL_NAME = "Fault";
 
     // Attribute names of a SOAP Envelope
     public static final String ATTR_ACTOR = "actor";

@@ -96,7 +96,6 @@ public class Call extends AbstractCall {
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
 
-
             engine.send(msgctx);
 
         }catch (IOException e){
@@ -122,10 +121,10 @@ public class Call extends AbstractCall {
             engine.send(msgctx);
 
             //todo dose the 202 response  come throgh the same connection
+            //This is purely HTTP specific.
             MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
             response.setServerSide(false);
             engine.receive(response);
-
 
         }catch (IOException e){
             throw AxisFault.makeFault(e);
@@ -180,7 +179,6 @@ public class Call extends AbstractCall {
 
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
-          
            
            // only the transport blocked , client dose not hang
                if(blocked){

@@ -116,6 +116,11 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             element = ombuilderFactory.createSOAPHeaderBlock(elementName, null, parent, this);
             processNamespaceData(element, false);
 
+        }else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase(OMConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(OMConstants.BODY_FAULT_LOCAL_NAME)) {
+            // this is a headerblock
+            element = ombuilderFactory.createSOAPFault(null, (SOAPBody)parent, this);
+            processNamespaceData(element, false);
+
         } else {
             // this is neither of above. Just create an element
             element = ombuilderFactory.createOMElement(elementName, null, parent, this);
