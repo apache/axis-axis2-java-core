@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+Ant build file for XML document representation benchmark program. This
+version has been modified for use as a primer file for the tests. Entities
+have been added in order to ensure that all relevant portions of the code
+being tested are used by the primer file.
+
+This is a build file for use with the Ant build tool.  See
+http://jakarta.apache.org/ant/index.html for more info.  This build.xml
+file has been tested with ant version 1.2.
+
+=================================================================== -->
+
+<project name="XMLBench" default="main" basedir="..">
+
+  <!-- The directories -->
+  <property name="root" value="${basedir}" />
+  <property name="lib" value="${basedir}/lib" />
+  <property name="build" value="${basedir}/build" />
+  <property name="src" value="${build}/src" />
+  <property name="dest" value="${build}/classes" />
+  <property name="docs" value="${build}/docs" />
+
+  <!-- Other definitions -->
+  <property name="project" value="XML Document Representation Benchmark" />
+  <property name="projname" value="xmlbench" />
+  <property name="jarname" value="xmlbm" />
+  <property name="fullname" value="fullbench" />
+  <property name="packages" value="com.sosnoski.xmlbench" />
+
+  <!-- Common classpath -->
+  <path id="project-classpath">
+    <pathelement location="${dest}" />
+    <pathelement location="${lib}/jaxp.jar" />
+    <pathelement location="${lib}/xerces.jar" />
+    <pathelement location="${lib}/crimson.jar" />
+    <pathelement location="${lib}/jdom.jar" />
+    <pathelement location="${lib}/dom4j.jar" />
+    <pathelement location="${lib}/EXML.jar" />
+	<gratuitous>This is just some added text</gratuitous>
+	<gratuitous><gratuitous>Nested added text</gratuitous></gratuitous>
+	<gratuitous xmlns="http://www.gratuitous.org/a">
+		Another added text within a namespace
+		<grat:gratuitous xmlns:grat="http://www.gratuitous.org/b">
+			Nested added text with namespaces
+		</grat:gratuitous>
+	</gratuitous>
+  </path>
+
+  <!-- Delete existing class files -->
+  <target name="clean">
+    <delete>
+      <fileset dir="${dest}" includes="**/*.class" />
+    </delete>
+  </target>
+
+  <!-- Compile the benchmark program -->
+  <target name="compile">
+    <mkdir dir="${dest}"/>
+    <javac srcdir="${src}"
+		   destdir="${dest}"
+		   optimize="on"
+		   deprecation="on">
+      <classpath refid="project-classpath" />
+    </javac>
+  </target>
+
+  <!-- Build the javadocs -->
+  <target name="javadoc">
+    <mkdir dir="${docs}"/>
+    <javadoc packagenames="${packages}"
+             sourcepath="${src}"
+             destdir="${docs}"
+             author="true"
+             version="true"
+             noindex="true"
+			 nohelp="true"
+			 notree="true"
+             windowtitle="${project}"
+             doctitle="${project}"
+             bottom="&lt;table width='80%%'&gt;&lt;tr&gt;&lt;td width='50%%'&gt;&lt;p align='center'&gt;&lt;a href='http://www.sosnoski.com/' target='_top'&gt;&lt;font size='3'&gt;&lt;b&gt;Company Web Site&lt;/b&gt;&lt;/font&gt;&lt;/a&gt;&lt;/td&gt;&lt;td width='50%%'&gt;&lt;p align='center'&gt;&lt;a href='http://www.sosnoski.com/opensrc/xmlbench/index.html' target='_top'&gt;&lt;font size='3'&gt;&lt;b&gt;XML Benchmark Home&lt;/b&gt;&lt;/font&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
+    >
+      <classpath refid="project-classpath" />
+	</javadoc>
+  </target>
+
+  <!-- Build the jar files for distribution -->
+  <target name="package" depends="compile,javadoc">
+    <delete file="${lib}/${jarname}.jar" quiet="true" />
+    <delete file="${root}/${projname}.jar" quiet="true" />
+	<delete file="${root}/${fullname}.jar" quiet="true" />
+	<jar jarfile="${lib}/${jarname}.jar"
+	     basedir="${dest}" />
+    <jar jarfile="${root}/${projname}.jar">
+      <fileset dir="${build}" />
+	  <fileset dir="${lib}"
+	           includes="${jarname}.jar" />
+	</jar>
+    <jar jarfile="${root}/${fullname}.jar"
+	     basedir="${root}"
+	     excludes="**/*.txt,**/${projname}.jar,**/${fullname}.jar" />
+  </target>
+
+  <!-- Run the example program with a sample input file.  Note, when this
+       target is executed, ant may prefix the output with "[java]".  Run
+       the program with "java" directly to avoid this. -->
+  <target name="run">
+    <java classname="com.sosnoski.xmlbench.XMLBench" fork="yes">
+      <arg value="test.xml" />
+      <arg value="10" />
+      <classpath refid="project-classpath" />
+    </java>
+  </target>
+
+  <target name="main" depends="clean,compile,javadoc,package" />
+
+</project>
