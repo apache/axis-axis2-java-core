@@ -104,20 +104,20 @@ public class InteropTest_Stub {
 		Iterator childrenIter = body.getChildren();
 		while(childrenIter.hasNext()){
 			OMNode child = (OMNode) childrenIter.next();
-			if(child instanceof OMElement && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				throw new AxisFault("Fault in server side");
 			}
-			if(child instanceof OMElement && "echoStringResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "echoStringResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				response = (OMElement)child;				
 			}
 		}		
 		Iterator textChild = response.getChildren();
 		while(textChild.hasNext()){
 			OMNode  child = (OMNode) textChild.next();
-			if(child instanceof OMElement && "echoStringReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "echoStringReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				
 				OMNode val =((OMElement)child).getFirstChild();
-				if(val instanceof OMText)
+				if(val.getType() == OMNode.TEXT_NODE)
 					return new String(((OMText)val).getValue());
 				
 			}
@@ -133,10 +133,10 @@ public class InteropTest_Stub {
 		Iterator childrenIter = body.getChildren();
 		while(childrenIter.hasNext()){
 			OMNode child = (OMNode) childrenIter.next();
-			if(child instanceof OMElement && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				throw new AxisFault("Fault in server side");
 			}
-			if(child instanceof OMElement && "echoIntResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "echoIntResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				response = (OMElement)child;				
 			}
 		}
@@ -144,10 +144,10 @@ public class InteropTest_Stub {
 		Iterator textChild = response.getChildren();
 		while(textChild.hasNext()){
 			OMNode  child = (OMNode) textChild.next();
-			if(child instanceof OMElement && "echoIntReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
+			if(child.getType() == OMNode.ELEMENT_NODE && "echoIntReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				
 				OMNode val =((OMElement)child).getFirstChild();
-				if(val instanceof OMText)
+				if(val.getType() == OMNode.TEXT_NODE)
 					return new Integer(((OMText)val).getValue());
 				
 			}
