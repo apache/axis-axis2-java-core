@@ -126,7 +126,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             Object result = method.invoke(obj,parms);
 
             //TODO fix the server side  
-//            OMXMLParserWrapper parser = new OMXMLPullParserWrapper();
+//            SOAPXMLParserWrapper parser = new OMXMLPullParserWrapper();
 //            msgContext.setOutMessage(new OMMessageImpl(parser));
             return msgContext;
         }  catch (SecurityException e) {

@@ -10,14 +10,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.exception.OMStreamingException;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamedNode;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.StreamingWrapper;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

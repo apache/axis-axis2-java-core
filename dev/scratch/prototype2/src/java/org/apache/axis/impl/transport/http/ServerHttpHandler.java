@@ -28,8 +28,9 @@ import org.apache.axis.engine.ServiceLocator;
 import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.impl.encoding.Base64;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -177,8 +178,8 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
                 XmlPullParser  parser = pf.newPullParser();
                 parser.setInput(new InputStreamReader(is));
                 
-                OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser); 
-                msgContext.setEnvelope(parserWrapper.getOMEnvelope());
+                OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
+                msgContext.setEnvelope((SOAPEnvelope) parserWrapper.getRootElement());
                 EngineRegistry reg = engine.getRegistry();
                 // invoke the Axis engine
 //                    engine.recive(msgContext);

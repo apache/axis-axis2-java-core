@@ -1,5 +1,7 @@
 package org.apache.axis.om;
 
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMElement;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -17,55 +19,49 @@ package org.apache.axis.om;
  * limitations under the License.
  * <p/>
  * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 11, 2004
- * Time: 12:54:18 PM
- *
- * This will wrap the underlying parser OM uses. For example this will define and interface, so that either XPP or StAX or tStAX can be used
- *
- *
+ * Date: Dec 7, 2004
+ * Time: 10:28:21 AM
  */
 public interface OMXMLParserWrapper {
-
-    /**
-     * @return
-     * @throws OMException
-     */
-    public SOAPEnvelope getOMEnvelope() throws OMException;
-
     /**
      *  Proceed the parser one step and return the event value
      * @return
-     * @throws OMException
+     * @throws org.apache.axis.om.OMException
      */
-    public int next() throws OMException;
+    int next() throws OMException;
 
     /**
      *  Discard the current element
      * This should remove the given element and its decendants.
      * @param el
-     * @throws OMException
+     * @throws org.apache.axis.om.OMException
      */
-    public void discard(OMElement el) throws OMException;
+    void discard(OMElement el) throws OMException;
 
     /**
      * @param b
-     * @throws OMException
+     * @throws org.apache.axis.om.OMException
      */
-    public void setCache(boolean b) throws OMException;
+    void setCache(boolean b) throws OMException;
 
-/**
+    /**
      * Allows to access the underlying parser. Since the parser
      * depends on the underlying implementation,an Object is returned
      * However the implementations may have restrictions in letting access to
      * the parser
      * @return
      */
-    public Object getParser();
+    Object getParser();
 
     /**
      *
      * @return the complete status
      */
-    public boolean isCompleted();
+    boolean isCompleted();
 
+    /**
+     *
+     * @return
+     */
+    public OMElement getRootElement();
 }

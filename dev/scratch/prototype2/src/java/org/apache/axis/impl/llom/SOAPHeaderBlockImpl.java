@@ -2,8 +2,6 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.om.*;
 import org.apache.axis.om.OMConstants;
-import org.apache.axis.impl.llom.OMAttributeImpl;
-import org.apache.axis.impl.llom.OMElementImpl;
 
 
 import javax.xml.namespace.QName;

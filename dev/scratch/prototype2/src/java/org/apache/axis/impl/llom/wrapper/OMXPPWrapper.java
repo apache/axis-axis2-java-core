@@ -1,7 +1,6 @@
 package org.apache.axis.impl.llom.wrapper;
 
 import org.apache.axis.impl.llom.*;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.om.*;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -275,6 +274,10 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
 
     public boolean isCompleted() {
         return done;
+    }
+
+    public OMElement getRootElement() {
+        return getOMEnvelope();
     }
 
     public boolean isParserDone() {

@@ -61,11 +61,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         omFactory = OMFactory.newInstance();
     }
 
-    public SOAPEnvelope getOMEnvelope() throws OMException {
-        throw new UnsupportedOperationException(); //TODO implement this
-    }
-
-    public int next() throws OMException {
+   public int next() throws OMException {
 
         // next can not be called more than once at one instance. and next can not be called within
         // another next
@@ -105,6 +101,10 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public boolean isCompleted() {
+        throw new UnsupportedOperationException(); //TODO implement this
+    }
+
+    public OMElement getRootElement() {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 

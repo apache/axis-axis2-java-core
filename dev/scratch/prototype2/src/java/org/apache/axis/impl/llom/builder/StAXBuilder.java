@@ -4,6 +4,7 @@ import org.apache.axis.om.*;
 import org.apache.axis.impl.llom.OMNodeImpl;
 import org.apache.axis.impl.llom.OMTextImpl;
 import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.OMDocument;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
@@ -30,7 +31,7 @@ import javax.xml.stream.XMLStreamConstants;
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
-public abstract class StAXBuilder implements OMXMLParserWrapper {
+public abstract class StAXBuilder  implements OMXMLParserWrapper {
     protected OMFactory ombuilderFactory;
     protected XMLStreamReader parser;
 
@@ -51,9 +52,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     protected StAXBuilder(XMLStreamReader parser) {
-        this.parser = parser;
-        this.ombuilderFactory = OMFactory.newInstance();
-
+        this(OMFactory.newInstance(), parser);
     }
 
     public void setOmbuilderFactory(OMFactory ombuilderFactory) {

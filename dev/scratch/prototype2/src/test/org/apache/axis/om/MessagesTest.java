@@ -29,22 +29,22 @@ public class MessagesTest extends OMTestCase {
     }
 
     public void testMessageWithLotOfWhiteSpaces() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/whitespacedMessage.xml")).getOMEnvelope();
+        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/whitespacedMessage.xml")).getRootElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testMinimalMessage() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getOMEnvelope();
+        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getRootElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testReallyBigMessage() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/reallyReallyBigMessage.xml")).getOMEnvelope();
+        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/reallyReallyBigMessage.xml")).getRootElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testEmptyBodiedMessage() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/emtyBodymessage.xml")).getOMEnvelope();
+        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/emtyBodymessage.xml")).getRootElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 

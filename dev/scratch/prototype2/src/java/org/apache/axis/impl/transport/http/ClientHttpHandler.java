@@ -22,13 +22,10 @@ import java.net.Socket;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.ServiceLocator;
-import org.apache.axis.engine.TransportSenderLocator;
-import org.apache.axis.impl.encoding.Base64;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -121,8 +118,8 @@ public class ClientHttpHandler extends SimpleHTTPHandler{
                 XmlPullParser  parser = pf.newPullParser();
                 parser.setInput(new InputStreamReader(is));
                 
-                OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser); 
-                msgContext.setEnvelope(parserWrapper.getOMEnvelope());
+                OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
+                msgContext.setEnvelope((SOAPEnvelope) parserWrapper.getRootElement());
                 EngineRegistry reg = engine.getRegistry();
                 // invoke the Axis engine
                 
