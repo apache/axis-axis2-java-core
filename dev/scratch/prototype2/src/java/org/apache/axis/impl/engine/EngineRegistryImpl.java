@@ -34,7 +34,8 @@ public class EngineRegistryImpl implements EngineRegistry{
     private HashMap transports = new HashMap();
     private AxisGlobal global;
     private ArrayList phases;
-    
+    private ArrayList transPorts;
+
     public EngineRegistryImpl(AxisGlobal global){
         this.global = global;
         phases = new ArrayList();
@@ -83,6 +84,14 @@ public class EngineRegistryImpl implements EngineRegistry{
      */
     public void setPhases(ArrayList list) {
         phases = list;
+    }
+
+    public ArrayList getTransPorts() {
+        return transPorts;
+    }
+
+    public void setTransPorts(ArrayList transPorts) {
+        this.transPorts = transPorts;
     }
 
 }

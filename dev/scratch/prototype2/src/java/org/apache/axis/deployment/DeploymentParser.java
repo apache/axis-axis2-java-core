@@ -128,8 +128,7 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
                     } else if (TRANSPORTSTAG.equals(ST)) {
-                        ArrayList trnsportList = processTransport();
-                        serverMetaData.setTransportList(trnsportList);
+                        dpengine.getEngineRegistry().setTransPorts(processTransport());
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
