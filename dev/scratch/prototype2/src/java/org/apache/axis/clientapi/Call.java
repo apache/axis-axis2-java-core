@@ -83,9 +83,9 @@ public class Call {
      * @param envelope
      */
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
-        //todo ask srinath about this URL, frorm where I can get it :)
-        URL url = null;
         try{
+            URL url =new URL(targetEPR.getAddress());
+
             final URLConnection urlConnect;
             urlConnect = url.openConnection();
             final AxisEngine engine = new AxisEngine(registry);
@@ -107,9 +107,8 @@ public class Call {
         }
     }
     public void send(SOAPEnvelope envelope) throws AxisFault {
-        //todo ask srinath about this URL, frorm where I can get it :)
-        URL url = null;
         try{
+            URL url =new URL(targetEPR.getAddress());
             final URLConnection urlConnect;
             urlConnect = url.openConnection();
             final AxisEngine engine = new AxisEngine(registry);
@@ -138,9 +137,8 @@ public class Call {
     }
 
     public SOAPEnvelope  sendReceive(SOAPEnvelope envelope) throws AxisFault {
-        //todo ask srinath about this URL, frorm where I can get it :)
-        URL url = null;
-        try {
+        try{
+            URL url =new URL(targetEPR.getAddress());
             URLConnection urlConnect = url.openConnection();
             urlConnect.setDoOutput(true);
 
@@ -174,10 +172,9 @@ public class Call {
      * @param callback
      */
     public void sendReceiveAsync(SOAPEnvelope envelope, final CallBack callback) throws AxisFault {
-        //todo ask srinath about this URL, frorm where I can get it :)
-        URL url = null;
-        final Correlator correlator = Correlator.getInstance();
-        try {
+        try{
+            URL url =new URL(targetEPR.getAddress());
+            final Correlator correlator = Correlator.getInstance();
             final URLConnection urlConnect = url.openConnection();
             final AxisEngine engine = new AxisEngine(registry);
             urlConnect.setDoOutput(true);
