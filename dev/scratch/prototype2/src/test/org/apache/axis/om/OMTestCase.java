@@ -3,9 +3,11 @@ package org.apache.axis.om;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.*;
 import java.io.FileReader;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 
 /**
@@ -30,7 +32,7 @@ import java.io.FileReader;
 public abstract class OMTestCase extends AbstractTestCase {
 
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
-    protected  OMXMLParserWrapper builder;
+    protected  StAXSOAPModelBuilder builder;
     protected OMFactory ombuilderFactory;
 
     protected SOAPEnvelope soapEnvelope;
@@ -43,13 +45,27 @@ public abstract class OMTestCase extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        soapEnvelope = (SOAPEnvelope)getOMBuilder().getDocumentElement();
+        soapEnvelope = (SOAPEnvelope)getOMBuilder("").getDocumentElement();
     }
 
-    protected OMXMLParserWrapper getOMBuilder() throws Exception {
-        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(IN_FILE_NAME)));
+    protected StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {
+        if(fileName == "" || fileName == null){
+            fileName = IN_FILE_NAME;
+        }
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
         builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
         return builder;
+    }
+
+    protected StAXSOAPModelBuilder getOMBuilder(InputStream in) throws Exception {
+
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
+        builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+        return builder;
+    }
+
+    protected XMLStreamWriter getStAXStreamWriter(OutputStream out) throws XMLStreamException {
+        return XMLOutputFactory.newInstance().createXMLStreamWriter(out);
     }
 
 

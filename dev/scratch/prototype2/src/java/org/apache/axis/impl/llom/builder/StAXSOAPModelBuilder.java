@@ -45,7 +45,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         super(parser);
     }
 
-    public SOAPEnvelope getOMEnvelope() throws OMException {
+    public SOAPEnvelope getSOAPEnvelope() throws OMException {
         while (envelope == null && !done) {
             next();
         }
@@ -181,7 +181,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     }
 
     public OMElement getDocumentElement() {
-        return getOMEnvelope();
+        return getSOAPEnvelope();
     }
 
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {

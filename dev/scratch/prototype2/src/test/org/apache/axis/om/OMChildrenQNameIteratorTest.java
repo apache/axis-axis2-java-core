@@ -36,7 +36,7 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     OMChildrenQNameIterator omChildrenQNameIterator;
 
     protected void setUp() throws Exception {
-        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getOMEnvelope();
+        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getSOAPEnvelope();
     }
 
     protected void tearDown() throws Exception {

@@ -48,6 +48,7 @@ public class OMAttributeImpl implements OMAttribute {
         return new QName(namespaceName, localName);
     }
 
+    // -------- Getters and Setters
     public String getLocalName() {
         return localName;
     }

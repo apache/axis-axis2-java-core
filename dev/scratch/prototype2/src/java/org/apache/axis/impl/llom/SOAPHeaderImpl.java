@@ -1,7 +1,9 @@
 package org.apache.axis.impl.llom;
 
 import org.apache.axis.om.*;
+import org.apache.axis.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**
@@ -73,8 +75,20 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      *         specified actor
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
-    public Iterator examineHeaderBlocks(String actor) {
-        throw new UnsupportedOperationException(); //TODO implement this
+    public Iterator examineHeaderBlocks(String paramActor) {
+        Iterator headerBlocksIter = this.getChildren();
+
+        while (headerBlocksIter.hasNext()) {
+            Object o = headerBlocksIter.next();
+            if (o instanceof SOAPHeaderBlock) {
+                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
+                String actor = soapHeaderBlock.getActor();
+                if(actor != null && actor.equalsIgnoreCase(paramActor)){
+//                    headerBlocksIter.
+                }
+            }
+        }
+        return headerBlocksIter;
     }
 
     /**
@@ -96,7 +110,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @see #examineHeaderBlocks(String) examineHeaderBlocks(java.lang.String)
      */
     public Iterator extractHeaderBlocks(String actor) {
-        throw new UnsupportedOperationException(); //TODO implement this
+        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(), new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.ATTR_ACTOR), actor, true);
     }
 
     /**
@@ -112,7 +126,8 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      *         specified actor and are marked as MustUnderstand
      */
     public Iterator examineMustUnderstandHeaderBlocks(String actor) {
-        throw new UnsupportedOperationException(); //TODO implement this
+        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(), new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.ATTR_ACTOR), actor, false);
+
     }
 
     /**
