@@ -41,7 +41,10 @@ public class DummyOutObject implements OutObject {
 
     private void setup() {
         try {
-          parser = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setNamespaceAware(true);
+            parser = saxParserFactory.newSAXParser().getXMLReader();
+           
         } catch (Exception e) {
             e.printStackTrace();  //TODO implement this
         }

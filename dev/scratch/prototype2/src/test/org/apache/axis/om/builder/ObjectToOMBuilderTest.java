@@ -5,11 +5,14 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OutObject;
+import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
+import org.apache.axis.impl.llom.serialize.SimpleObjectOMSerializer;
+import org.apache.axis.om.*;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
+import org.xml.sax.ContentHandler;
+
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -30,28 +33,29 @@ import org.apache.axis.om.builder.dummy.DummyOutObject;
  * Date: Nov 19, 2004
  * Time: 3:54:03 PM
  */
-public class ObjectToOMBuilderTest extends TestCase{
+public class ObjectToOMBuilderTest extends TestCase {
 
-    OutObject outObject;
-    ObjectToOMBuilder objectToOMBuilder;
-    OMFactory omFactory;
+    private OutObject outObject;
+    private ObjectToOMBuilder objectToOMBuilder;
+    private OMFactory omFactory;
     private OMElement element;
+    private SimpleObjectOMSerializer serializer;
 
     protected void setUp() throws Exception {
         super.setUp();
         outObject = new DummyOutObject();
         omFactory = OMFactory.newInstance();
 
-        element = omFactory.createOMElement("Body", null);
-        objectToOMBuilder = new ObjectToOMBuilder(element, outObject);
+        OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
 
+        element = omFactory.createOMElement("Body", ns);
+        objectToOMBuilder = new ObjectToOMBuilder(element, outObject);
+        omFactory.createOMElement(null, null, element, objectToOMBuilder);
+        serializer = new SimpleObjectOMSerializer();
     }
 
-    public void testBuilding(){
-
-
+    public void testBuilding() {
         objectToOMBuilder.next();
-
         Iterator children = element.getChildren();
         while (children.hasNext()) {
             OMNode omNode = (OMNode) children.next();
@@ -61,5 +65,14 @@ public class ObjectToOMBuilderTest extends TestCase{
 
     }
 
+    public void testSerialization() throws Exception {
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+        serializer.serialize(element, writer, true);
+    }
+
+    public void testSerializationWithCacheOff() throws Exception {
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+        serializer.serialize(element, writer, false);
+    }
 
 }

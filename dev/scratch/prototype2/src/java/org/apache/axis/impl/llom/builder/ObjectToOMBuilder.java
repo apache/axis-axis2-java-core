@@ -26,10 +26,13 @@ import java.util.Vector;
  * <p/>`
  */
 public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
+
     private OutObject outObject;
     private OMElement startElement;
     private OMFactory omFactory;
     private boolean buildStarted = false;
+    private boolean cache=true;
+    private ContentHandler externalContentHandler = null;
 
     // ============= For content handler ============
     private OMNode lastNode = null;
@@ -41,12 +44,25 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     // ==============================================
 
 
+    /**
+     * This external content handler is used to switch between the actual stream and the
+     * object bulding content handler
+     */
+
+    public ContentHandler getExternalContentHandler() {
+        return externalContentHandler;
+    }
+
+    public void setExternalContentHandler(ContentHandler externalContentHandler) {
+        this.externalContentHandler = externalContentHandler;
+    }
 
     /**
      * @param startElement - this refers to the element the object should come under.
      *                     Most of the time this will be a OMBodyBlock element
      * @param outObject
      */
+
     public ObjectToOMBuilder(OMElement startElement, OutObject outObject) {
         startElement.setComplete(false);
         this.outObject = outObject;
@@ -64,6 +80,13 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         synchronized (this) {
             if (!buildStarted) {
                 buildStarted = true;
+                //if not to be cached then switch the contenthandler
+                if (!cache){
+                    if (externalContentHandler==null){
+                        throw new IllegalStateException("Cannot have a cache with an empty content handler");
+                    }
+                    outObject.setContentHandler(externalContentHandler);
+                }
                 outObject.startBuilding();
                 this.startElement.setComplete(true);
             }
@@ -89,7 +112,10 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
      * @throws OMException
      */
     public void setCache(boolean b) throws OMException {
-        throw new UnsupportedOperationException(); //TODO implement this
+        if (!cache && b){
+            throw new UnsupportedOperationException("cache cannot be reset once set");
+        }
+        cache=b;
     }
 
     public Object getParser() {
@@ -104,7 +130,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-    
+
 
     // ====================  ContentHandler Implementations ========================
 

@@ -28,6 +28,14 @@ public abstract class OMFactory {
      */
     public abstract OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
 
+//    /**
+//     * @param parent
+//     * @param object
+//     * This is used to construct the elements from an Object
+//     * @return the parent itself
+//     */
+//   public abstract OMElement createOMElement(OMElement parent,Object object);
+
     /**
      * @param parent
      * @return
