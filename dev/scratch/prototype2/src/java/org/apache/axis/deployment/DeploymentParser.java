@@ -4,7 +4,10 @@ import org.apache.axis.deployment.metadata.*;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
 

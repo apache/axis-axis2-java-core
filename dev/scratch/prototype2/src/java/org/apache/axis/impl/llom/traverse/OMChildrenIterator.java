@@ -1,8 +1,6 @@
 package org.apache.axis.impl.llom.traverse;
 
-
 import java.util.Iterator;
-
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 

@@ -1,9 +1,9 @@
 package org.apache.axis.deployment.scheduler;
 
-import org.apache.axis.deployment.listener.RepositoryListener;
-import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.deployment.listener.RepositoryListener;
+import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 
 import java.util.TimerTask;
 

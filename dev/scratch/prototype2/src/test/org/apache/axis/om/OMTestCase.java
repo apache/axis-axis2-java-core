@@ -3,9 +3,12 @@ package org.apache.axis.om;
 import java.io.FileReader;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
+import org.apache.axis.impl.llom.builder.StAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,7 +32,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 public abstract class OMTestCase extends AbstractTestCase {
 
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
-    protected OMXPPWrapper omXmlPullParserWrapper;
+    protected  OMXMLParserWrapper builder;
     protected OMFactory ombuilderFactory;
 
     protected SOAPEnvelope soapEnvelope;
@@ -42,15 +45,13 @@ public abstract class OMTestCase extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        soapEnvelope = getOMBuilder().getOMEnvelope();
+        soapEnvelope = (SOAPEnvelope)getOMBuilder().getDocumentElement();
     }
 
-    protected OMXPPWrapper getOMBuilder() throws Exception {
-        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-        parser.setInput(new FileReader(getTestResourceFile(IN_FILE_NAME)));
-        omXmlPullParserWrapper = new OMXPPWrapper(parser);
-        return omXmlPullParserWrapper;
+    protected OMXMLParserWrapper getOMBuilder() throws Exception {
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(IN_FILE_NAME)));
+        builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+        return builder;
     }
 
 

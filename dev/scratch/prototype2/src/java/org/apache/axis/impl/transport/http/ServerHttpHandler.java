@@ -15,25 +15,25 @@
  */
 package org.apache.axis.impl.transport.http;
 
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.TransportSenderLocator;
+import org.apache.axis.impl.encoding.Base64;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.registry.EngineRegistry;
+
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.ServiceLocator;
-import org.apache.axis.engine.TransportSenderLocator;
-import org.apache.axis.impl.encoding.Base64;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Service;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * @version $Rev: $ $Date: $
@@ -173,12 +173,9 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
                     TransportSenderLocator.TRANSPORT_TCP);
                 msgContext.setProperty(MessageContext.TRANSPORT_DATA,out);
 
-                XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
-                pf.setNamespaceAware(true);
-                XmlPullParser  parser = pf.newPullParser();
-                parser.setInput(new InputStreamReader(is));
-                
-                OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
+                XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new InputStreamReader(is));
+                OMXMLParserWrapper parserWrapper = new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+
                 msgContext.setEnvelope((SOAPEnvelope) parserWrapper.getDocumentElement());
                 EngineRegistry reg = engine.getRegistry();
                 // invoke the Axis engine
@@ -189,7 +186,7 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
             }    
             }catch(IOException e){
                 throw AxisFault.makeFault(e); 
-            } catch(XmlPullParserException e){
+            } catch(XMLStreamException e){
                 throw AxisFault.makeFault(e); 
             }   
     }

@@ -16,11 +16,10 @@
 
 package org.apache.axis.impl.registry;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.registry.TypeMapping;
 import org.apache.axis.registry.TypeMappingInclude;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Vector;
 

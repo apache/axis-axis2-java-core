@@ -1,10 +1,10 @@
 package org.apache.axis.impl.llom.factory;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.OMFactory;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

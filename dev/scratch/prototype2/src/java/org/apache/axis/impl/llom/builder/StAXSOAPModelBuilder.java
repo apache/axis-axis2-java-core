@@ -1,14 +1,10 @@
 package org.apache.axis.impl.llom.builder;
 
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.om.*;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.SOAPEnvelope;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -171,12 +167,18 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         return getOMEnvelope();
     }
 
-//    public String getNamespace(String arg) throws OMException {
-//        try {
-//            return parser.getNamespaceU(arg);
-//        } catch (Exception e) {
-//            throw new OMException(e);
-//        }
-//    }
+    protected void processNamespaceData(OMElement node) {
+        int namespaceCount = parser.getNamespaceCount();
+        for (int i = 0; i < namespaceCount; i++) {
+            node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
+        }
+
+        //set the own namespace
+        OMNamespace namespace = node.resolveNamespace(parser.getNamespaceURI(), parser.getPrefix());
+        if (namespace==null){
+            throw new OMException("All elements must be namespace qualified!");
+        }
+        node.setNamespace(namespace);
+    }
 
 }

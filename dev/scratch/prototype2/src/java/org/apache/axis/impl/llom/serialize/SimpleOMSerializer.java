@@ -1,7 +1,7 @@
 package org.apache.axis.impl.llom.serialize;
 
-import org.apache.axis.om.*;
 import org.apache.axis.impl.llom.exception.OMStreamingException;
+import org.apache.axis.om.*;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package org.apache.axis.deployment.scheduler;
 
-import java.util.Timer;
 import java.util.Date;
+import java.util.Timer;
 import java.util.TimerTask;
 
 /**

@@ -31,10 +31,7 @@ public class OMBodyTest extends OMTestCase implements OMConstants{
     public OMBodyTest(String testName) {
         super(testName);
     }
-
-    public static void main(String[] args) {
-    }
-
+    
     /*
      * @see TestCase#setUp()
      */
@@ -57,8 +54,8 @@ public class OMBodyTest extends OMTestCase implements OMConstants{
         System.out.println("\t checking for not-nullity ...");
         assertTrue("SOAP body has no SOAP fault", soapBody.getFault() != null);
 
-//        SimpleOMSerializer simpleOMSerializer = new SimpleOMSerializer();
-//        simpleOMSerializer.serialize(soapBody, System.out);
+        //SimpleOMSerializer simpleOMSerializer = new SimpleOMSerializer();
+        //simpleOMSerializer.serialize(soapBody, System.out);
     }
               
 }

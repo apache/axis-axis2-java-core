@@ -16,21 +16,15 @@
 
 package org.apache.axis.impl.engine;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.impl.registry.AbstractEngineElement;
 import org.apache.axis.impl.registry.FlowIncludeImpl;
 import org.apache.axis.impl.registry.ModuleIncludeImpl;
 import org.apache.axis.impl.registry.TypeMappingIncludeImpl;
-import org.apache.axis.registry.EngineElement;
-import org.apache.axis.registry.Flow;
-import org.apache.axis.registry.FlowInclude;
-import org.apache.axis.registry.Module;
-import org.apache.axis.registry.ModuleInclude;
-import org.apache.axis.registry.TypeMapping;
-import org.apache.axis.registry.TypeMappingInclude;
+import org.apache.axis.registry.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 /**
  * This class use delegeation to give the multiple inheritance effect 

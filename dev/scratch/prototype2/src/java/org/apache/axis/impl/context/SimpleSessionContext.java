@@ -15,9 +15,9 @@
  */
 package org.apache.axis.impl.context;
 
-import java.util.HashMap;
-
 import org.apache.axis.context.SessionContext;
+
+import java.util.HashMap;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

@@ -1,11 +1,11 @@
 package org.apache.axis.deployment.repository.utill;
 
-import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentConstants;
+import org.apache.axis.deployment.DeploymentEngine;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
-import java.io.File;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

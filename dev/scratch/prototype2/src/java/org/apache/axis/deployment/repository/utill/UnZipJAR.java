@@ -21,15 +21,15 @@ package org.apache.axis.deployment.repository.utill;
  *
  */
 
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.deployment.metadata.ModuleMetaData;
 import org.apache.axis.deployment.metadata.ServiceMetaData;
+
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class UnZipJAR implements DeploymentConstants {
     final int BUFFER = 2048;

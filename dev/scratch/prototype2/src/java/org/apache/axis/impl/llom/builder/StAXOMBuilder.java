@@ -1,16 +1,11 @@
 package org.apache.axis.impl.llom.builder;
 
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.impl.llom.OMDocument;
 import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -135,5 +130,16 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
 
     public OMElement getDocumentElement() {
         return document.getRootElement();
+    }
+
+    protected void processNamespaceData(OMElement node) {
+         int namespaceCount = parser.getNamespaceCount();
+        for (int i = 0; i < namespaceCount; i++) {
+            node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
+        }
+
+        //set the own namespace
+        OMNamespace namespace = node.resolveNamespace(parser.getNamespaceURI(), parser.getPrefix());
+        node.setNamespace(namespace);
     }
 }

@@ -1,6 +1,7 @@
 package org.apache.axis.om;
 
 
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>

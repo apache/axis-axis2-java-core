@@ -1,16 +1,15 @@
 package org.apache.axis.impl.llom.wrapper;
 
-import java.util.Iterator;
-import java.util.Stack;
+import org.apache.axis.impl.llom.OMNavigator;
+import org.apache.axis.impl.llom.exception.OMStreamingException;
+import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.impl.llom.OMNavigator;
-import org.apache.axis.impl.llom.exception.OMStreamingException;
-import org.apache.axis.om.*;
+import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -15,9 +15,9 @@
  */
 package org.apache.axis.impl.transport.tcp;
 
-import java.io.InputStream;
-
 import org.apache.axis.engine.AxisFault;
+
+import java.io.InputStream;
 
 /**
  * @version $Rev: $ $Date: $

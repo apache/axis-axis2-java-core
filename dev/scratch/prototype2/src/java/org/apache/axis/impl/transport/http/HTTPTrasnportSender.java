@@ -16,14 +16,14 @@
 
 package org.apache.axis.impl.transport.http;
 
-import java.io.OutputStream;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.SOAPEnvelope;
+
+import java.io.OutputStream;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

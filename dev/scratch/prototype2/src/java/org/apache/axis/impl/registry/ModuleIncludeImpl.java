@@ -16,10 +16,10 @@
 
 package org.apache.axis.impl.registry;
 
-import java.util.Vector;
-
 import org.apache.axis.registry.Module;
 import org.apache.axis.registry.ModuleInclude;
+
+import java.util.Vector;
 
 /**
  * @author hemapani@opensource.lk

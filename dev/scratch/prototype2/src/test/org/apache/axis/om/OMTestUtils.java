@@ -27,12 +27,9 @@ import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

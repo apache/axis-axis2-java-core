@@ -1,13 +1,13 @@
 package org.apache.axis.deployment.metadata;
 
-import java.util.Vector;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.metadata.phaserule.HandlerChainMetaData;
 import org.apache.axis.deployment.metadata.phaserule.HandlerChainMetaDataImpl;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Vector;
 
 //import com.thoughtworks.xstream.XStream;
 

@@ -1,20 +1,13 @@
 package org.apache.axis.impl.llom.builder;
 
-import java.util.Stack;
-import java.util.Vector;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OutObject;
+import org.apache.axis.om.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import java.util.Stack;
+import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -206,6 +199,11 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
             if (attrUri.hashCode() != 0)
                 ns = element.resolveNamespace(attrUri, attrPrefix);
+
+            if (ns==null)
+                //todo this needs to be fixed!!!!!
+               // throw new OMException("All elements must be namespace qualified!");
+
             element.insertAttribute(omFactory.createOMAttribute(atts.getLocalName(i), ns, atts.getValue(i), element));
         }
 
