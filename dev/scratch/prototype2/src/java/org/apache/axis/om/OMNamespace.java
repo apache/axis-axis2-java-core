@@ -22,10 +22,7 @@ package org.apache.axis.om;
 public interface OMNamespace {
 
     public boolean equals(String uri, String prefix);
-
     public String getPrefix();
-    public void setPrefix(String prefix);
-
     public String getName();
-    public void setName(String name);
+
 }
