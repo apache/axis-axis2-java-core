@@ -488,7 +488,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         if (ns != null) {
             prefix = ns.getPrefix();
             nameSpaceName = ns.getName();
-            if (prefix != null) {
+            if (prefix != null && nameSpaceName != null) {
                 writer.writeStartElement(prefix, this.getLocalName(), nameSpaceName);
                 if (serializeNamespace(ns, writer)) nsPushCount++;
             } else {

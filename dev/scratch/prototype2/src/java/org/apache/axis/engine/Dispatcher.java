@@ -38,7 +38,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
             int serviceIndex = 0;
             if((serviceIndex = filePart.indexOf(pattern)) > 0){
                 uri = filePart.substring(serviceIndex + pattern.length());
-                System.out.println(uri);
+
             }
 
             QName serviceName = null;

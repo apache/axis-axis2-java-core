@@ -251,7 +251,6 @@ public class DeploymentEngine implements DeploymentConstants {
                     throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
-                System.out.println("urlsToLoadFrom = " + file.getAbsolutePath());
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
                 service.setClassLoader(loader1);
                 if(! currentFileItem.getClassName().equals("")){

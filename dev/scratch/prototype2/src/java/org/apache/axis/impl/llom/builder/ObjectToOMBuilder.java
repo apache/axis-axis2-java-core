@@ -195,20 +195,22 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         String attrUri = "";
         String attrPrefix = "";
         OMNamespace ns = null;
-        for (int i = 0; i < atts.getLength(); i++) {
+        if(atts != null){
+            for (int i = 0; i < atts.getLength(); i++) {
 
-            attrUri = atts.getURI(i);
-            String attrQName = atts.getQName(i);
-            attrPrefix = (attrQName.indexOf(':') >= 0) ? attrQName.substring(0, attrQName.indexOf(':')) : "";
+                attrUri = atts.getURI(i);
+                String attrQName = atts.getQName(i);
+                attrPrefix = (attrQName.indexOf(':') >= 0) ? attrQName.substring(0, attrQName.indexOf(':')) : "";
 
-            if (attrUri.hashCode() != 0)
-                ns = element.findInScopeNamespace(attrUri, attrPrefix);
+                if (attrUri.hashCode() != 0)
+                    ns = element.findInScopeNamespace(attrUri, attrPrefix);
 
-            if (ns == null)
-            //todo this needs to be fixed!!!!!
-            // throw new OMException("All elements must be namespace qualified!");
+                if (ns == null)
+                //todo this needs to be fixed!!!!!
+                // throw new OMException("All elements must be namespace qualified!");
 
-                element.insertAttribute(atts.getLocalName(i), atts.getValue(i), ns);
+                    element.insertAttribute(atts.getLocalName(i), atts.getValue(i), ns);
+            }
         }
 
         element.setComplete(false);

@@ -69,6 +69,7 @@ public class AxisServlet extends HttpServlet{
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         try {
+            res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine  = new AxisEngine(engineRegistry);
             MessageContext msgContext = new MessageContext(engineRegistry);
             msgContext.setServerSide(true);

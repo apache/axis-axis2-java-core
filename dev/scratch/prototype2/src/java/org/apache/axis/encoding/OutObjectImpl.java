@@ -17,6 +17,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OutObject;
+import org.apache.axis.om.OMConstants;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -43,6 +44,16 @@ public class OutObjectImpl implements OutObject{
             }else if(obj instanceof Integer){
                 char[] str = obj.toString().toCharArray();
                 cHandler.characters(str,0,str.length);
+            }else if(obj instanceof String[]){
+                String[] strs = (String[])obj;
+                char[] str = null;
+                for (int i = 0; i < strs.length; i++) {
+                    cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"",null);
+                    str = strs[i].toCharArray();
+                    cHandler.characters(str,0,str.length);
+                    cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"");
+                }
+
             }else{
                 throw new OMException("Unsupported type");
             }

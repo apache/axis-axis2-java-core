@@ -75,6 +75,7 @@ public class AxisEngine {
         MessageContext context,
         AxisFault e)
         throws AxisFault {
+        e.printStackTrace();
         boolean serverSide = context.isServerSide();
         if(serverSide && !context.isProcessingFault()){    
             AxisService service = context.getService();

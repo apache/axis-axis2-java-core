@@ -44,4 +44,6 @@ public interface OMConstants {
     public static final short PUSH_TYPE_BUILDER=0;
     public static final short PULL_TYPE_BUILDER=1;
 
+    public static final String ARRAY_ITEM_NSURI = "http://axis.apache.org/encoding/Arrays";
+    public static final String ARRAY_ITEM_LOCALNAME = "item";
 }

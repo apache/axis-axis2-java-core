@@ -33,13 +33,7 @@ import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OutObject;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -125,7 +119,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             }else if(String[].class.equals(parms[i])){
                 objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
             }else{
-                throw new UnsupportedOperationException("Only int and the String supported yet");
+                throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
             } 
         }
         return objs;
@@ -163,9 +157,11 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             OMNamespace ns = fac.createOMNamespace("http://soapenc/","res");
             OMElement responseMethodName = fac.createOMElement(methodName+"Response",ns);
             responseEnvelope.getBody().addChild(responseMethodName);
-            OMElement returnelement = fac.createOMElement("return",ns);
+            OMElement returnelement = fac.createOMElement(methodName+"Return",ns);
             responseMethodName.addChild(returnelement);
+
             returnelement.setBuilder(new ObjectToOMBuilder(returnelement,outobj));
+            returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,"arrays");
             msgContext.setEnvelope(responseEnvelope);
             
             return msgContext;
