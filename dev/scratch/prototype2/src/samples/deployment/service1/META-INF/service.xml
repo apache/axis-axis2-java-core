@@ -1,62 +1,24 @@
-<service provider="org.apache.axis.impl.providers.RawXMLProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
-    <java:implementation class="Echo1" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
-
-    <!-- these are Service Parameters -->
-    <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="xsd:false">Colombo</parameter>
-
-    <module ref="module1"></module>
-    <module ref="module2"></module>
-
-
-    <!--  Service TypeMapping -->
-
-
-
-    <!--
-    Phases
-    P1 p2 p3
-    -->
-
-    <inflow>
-        <handler name="h1" class="Handler1">
+<service provider="org.apache.axis.sample.echo.EchoProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="org.apache.axis.sample.echo.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    
+   <inflow>
+        <handler name="logging" class="org.apache.axis.samples.userguide.sample3.server.LoggingHandler">
             <order phase="p1" phaseFirst="true"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
-        </handler>
-        <handler name="h2" class="Handler1"/>
-    </inflow>
+         </handler>
+   </inflow>
 
     <outflow>
-        <handler name="h3" class="Handler1">
-            <order phase="p2"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-        </handler>
     </outflow>
 
     <faultflow>
-        <handler name="h4" class="Handler1">
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
-        </handler>
-
-        <handler name="h5" class="Handler1">
-            <order phase="p1"/>
-        </handler>
-
-        <handler name="h6" class="Handler1">
-            <order phase="anyhase" phaseFirst="true" phaseLast="false"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
+        <handler name="logging2" class="org.apache.axis.samples.userguide.sample3.server.LoggingHandler">
+            
         </handler>
     </faultflow>
 
 
-    <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
-        
-    </operation>
+    <operation name="echoString" qname="echoString" style="anyStyle" use="anyUse"/>
+    <operation name="echoStringArray" qname="echoStringArray" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStruct" qname="echoEchoStruct" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStructArray" qname="echoEchoStructArray" style="anyStyle" use="anyUse"/>
 </service>
