@@ -34,6 +34,7 @@
 %>
 <head>
 <title>Axis2 Happiness Page</title>
+<link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 <body bgcolor='#ffffff'>
 <%port =request.getServerPort();%>
@@ -467,8 +468,9 @@
    %>
        <p>
        <font color="blue" >
-       Found the echo service and Axis2 is working properly, and now you can drop any web service in
-       to axis2/WEB-INF/service and check it is working.and got the following result
+       Found the echo service and Axis2 is working properly, and now you can either drop any web service in
+       to axis2/WEB-INF/service or use the upload utility in this application to upload a service
+        and check whether it's working.
        <br>
        <%= error%> </font>
        </p>
@@ -478,7 +480,7 @@
     %>
      <p>
       <font color="red" >
-     Not found echo service or Axis2 is not working properly, check whether the echo.jar is in
+     Either the echo service not found or Axis2 is not working properly. Check whether the echo.jar is in
      webapps/axis2/WEB-INF/service if it is then report the following error to the mailing list.
       <br>
      <%= error%></font>
@@ -491,21 +493,12 @@
     <%
         String servletVersion=getServletVersion();
         String xmlParser=getParserName();
-        String xmlParserLocation = getParserLocation(out);
-
     %>
     <table>
         <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
         <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
-        <tr><td>XML ParserLocation</td><td><%= xmlParserLocation %></td></tr>
+        <tr><td>Platform</td><td><%= getServletConfig().getServletContext().getServerInfo()%></td></tr>
     </table>
-<% if(xmlParser.indexOf("crimson")>=0) { %>
-    <p>
-    <b>We recommend <a href="http://xml.apache.org/xerces2-j/">Xerces 2</a>
-        over Crimson as the XML parser for Axis</b>
-    </p>
-<%    } %>
-
     <h2>Examining System Properties</h2>
 <%
     /**
@@ -528,7 +521,10 @@
     }
 %>
     <hr>
-    Platform: <%= getServletConfig().getServletContext().getServerInfo()  %>
+
+
+    <jsp:include page="include/link-footer.inc"></jsp:include>
+    <jsp:include page="include/footer.inc"></jsp:include>
 </body>
 </html>
 
