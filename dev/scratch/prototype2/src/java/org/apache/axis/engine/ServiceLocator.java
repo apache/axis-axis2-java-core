@@ -36,7 +36,7 @@ public class ServiceLocator {
             }
         }else{
             if(soapAction != null){
-                serviceName = new QName(uri);
+                serviceName = new QName(soapAction);
             }
         }
         if(serviceName != null){

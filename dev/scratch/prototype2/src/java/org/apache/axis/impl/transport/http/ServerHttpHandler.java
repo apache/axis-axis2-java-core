@@ -52,7 +52,7 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
     }
 
     
-    public MessageContext execute () throws AxisFault {
+    public MessageContext parseHTTPHeaders () throws AxisFault {
         byte buf[] = new byte[BUFSIZ];
         // create an Axis server
 
@@ -163,6 +163,7 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
                 OutputStream out = socket.getOutputStream();
                 out.write(HTTP);
                 out.write(status);
+                out.write("\n\n".getBytes());
                 log.info("status written");
                 
                 

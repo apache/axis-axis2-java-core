@@ -42,6 +42,7 @@ public class MessageContext {
 	public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
     public static final String SOAP_ACTION = "SOAP_ACTION";
     public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
+    public static final String REQUEST_URL = "REQUEST_URL";
     
     private boolean processingFault = false;
     private EndpointReferance to;

@@ -16,20 +16,14 @@
 package org.apache.axis.om;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.FileReader;
 import java.util.Iterator;
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.

@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.engine;
+package org.apache.axis.client;
 
-import org.apache.axis.registry.Flow;
+import org.apache.axis.om.OMElement;
 
 /**
- * @author Srinath Perera (hemapani@opensource.lk)
+ * @version $Rev: $ $Date: $
  */
-public class EngineUtils {
-    public static void addHandlers(Flow flow,ExecutionChain exeChain,String phaseName) throws AxisFault{
-        if(flow != null){
-            int handlerCount = flow.getHandlerCount();
-            for(int i = 0;i<handlerCount;i++){
-                exeChain.addHandler(phaseName,flow.getHandler(i));
-            }
-        }
-    }
+
+public interface CallBack {
+    public void doWork(OMElement ele);
+    public void reportError(Exception e);
 }

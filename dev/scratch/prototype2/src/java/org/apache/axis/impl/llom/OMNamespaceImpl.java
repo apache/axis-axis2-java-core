@@ -4,8 +4,6 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 
-import java.io.PrintStream;
-
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>

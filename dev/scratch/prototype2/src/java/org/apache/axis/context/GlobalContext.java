@@ -15,11 +15,9 @@
  */
 package org.apache.axis.context;
 
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.HashMap;
+
+import org.apache.axis.registry.EngineRegistry;
 
 /**
  * All the engine componets are stateless accross the executions and all the states should be kept in the 

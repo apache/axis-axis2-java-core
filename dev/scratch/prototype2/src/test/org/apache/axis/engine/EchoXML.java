@@ -15,18 +15,18 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.registry.Flow;
+import org.apache.axis.om.OMElement;
 
 /**
- * @author Srinath Perera (hemapani@opensource.lk)
+ * @version $Rev: $ $Date: $
  */
-public class EngineUtils {
-    public static void addHandlers(Flow flow,ExecutionChain exeChain,String phaseName) throws AxisFault{
-        if(flow != null){
-            int handlerCount = flow.getHandlerCount();
-            for(int i = 0;i<handlerCount;i++){
-                exeChain.addHandler(phaseName,flow.getHandler(i));
-            }
-        }
+
+public class EchoXML{
+    public EchoXML(){}
+    public OMElement echoOMElement(OMElement omEle){
+        System.out.println(omEle);
+        omEle.setLocalName(omEle.getLocalName()+"Response");
+        return omEle;
     }
+
 }

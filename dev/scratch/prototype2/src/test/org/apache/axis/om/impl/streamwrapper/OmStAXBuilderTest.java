@@ -1,18 +1,17 @@
 package org.apache.axis.om.impl.streamwrapper;
 
-import junit.framework.TestCase;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.AbstractTestCase;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileReader;
-import java.io.File;
-import java.io.FileOutputStream;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -20,6 +20,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Service;
 import org.apache.axis.registry.Parameter;
@@ -29,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 
 /**
  * This is a Simple java Provider. 
@@ -112,7 +114,8 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             
             //find the WebService method  
             Class ImplClass =obj.getClass();
-            String methodName = msgContext.getOperation().getName().getLocalPart();
+            Operation op = msgContext.getOperation();
+            String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for(int i = 0;i<methods.length;i++){
                 if(methods[i].getName().equals(methodName)){

@@ -1,6 +1,13 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFault;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

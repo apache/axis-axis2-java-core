@@ -1,20 +1,17 @@
 package org.apache.axis.om;
 
-import java.io.FileReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import junit.framework.TestCase;
-
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.AbstractTestCase;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -18,6 +18,7 @@ package org.apache.axis.impl.handlers;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Service;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
@@ -52,7 +53,12 @@ public class OpNameFinder extends AbstractHandler{
                             if(ns != null){
                                 QName opName = new QName(ns,bodyChild.getLocalName());
                                 Service service = msgContext.getService();
-                                msgContext.setOperation(service.getOperation(opName)); 
+                                Operation op = service.getOperation(opName);
+                                if(op != null){
+                                    msgContext.setOperation(op);
+                                }else{
+                                    throw new AxisFault(opName + " operation not found");
+                                }
                             }
                         }else{
                             throw new AxisFault("SOAP Body must be NS Qualified");                            

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;

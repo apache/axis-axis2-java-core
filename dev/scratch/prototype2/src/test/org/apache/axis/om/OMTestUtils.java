@@ -16,24 +16,20 @@
 
 package org.apache.axis.om;
 
-import java.io.FileReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

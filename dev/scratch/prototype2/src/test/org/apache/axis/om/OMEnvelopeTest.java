@@ -19,6 +19,12 @@
  */
 package org.apache.axis.om;
 
+import java.io.FileReader;
+
+import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 
 
 public class OMEnvelopeTest extends OMTestCase {

@@ -92,7 +92,7 @@ public class SimpleAxisServer implements Runnable {
                 }
                 if (socket != null) {
                     ServerHttpHandler worker = new ServerHttpHandler(this, socket,myAxisServer);
-                    MessageContext msgContext = worker.execute();
+                    MessageContext msgContext = worker.parseHTTPHeaders();
                     myAxisServer.recive(msgContext);
                     socket.close();
                 }
@@ -102,6 +102,7 @@ public class SimpleAxisServer implements Runnable {
         }catch (IOException e) {
             e.printStackTrace();
         }
+        stop();
         log.info("Simple Axis Server Quit");
     }
 

@@ -1,13 +1,12 @@
 package org.apache.axis.impl.llom;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
-
-import java.io.PrintStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

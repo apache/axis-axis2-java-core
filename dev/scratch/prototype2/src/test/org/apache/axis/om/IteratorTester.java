@@ -5,10 +5,8 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 
-import junit.framework.TestCase;
-
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

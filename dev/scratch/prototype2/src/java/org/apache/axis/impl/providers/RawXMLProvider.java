@@ -16,20 +16,24 @@
 
 package org.apache.axis.impl.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Service;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * This is a Simple java Provider. 
@@ -119,12 +123,20 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                     break;
                 }
             }
-
-            Object[] parms = new Object[]{msgContext.getEnvelope()};
+                
+            Iterator it = msgContext.getEnvelope().getBody().getChildren();
+            
+            Object[] parms = null;
+            if(it.hasNext()){
+                parms = new Object[]{it.next()};;
+            }
             //invoke the WebService 
-            SOAPEnvelope result = (SOAPEnvelope)method.invoke(obj,parms);
+            OMElement result = (OMElement)method.invoke(obj,parms);
             MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry());
-            msgContext1.setEnvelope(result);
+            
+            SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
+            envelope.getBody().setFirstChild(result);
+            msgContext1.setEnvelope(envelope);
             
             return msgContext1;
         }  catch (SecurityException e) {

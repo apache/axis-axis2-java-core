@@ -4,9 +4,6 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
-import org.apache.axis.impl.llom.OMNodeImpl;
-
-import java.io.PrintStream;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

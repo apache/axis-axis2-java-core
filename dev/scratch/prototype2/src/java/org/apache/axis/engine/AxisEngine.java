@@ -44,8 +44,12 @@ public class AxisEngine {
         //dispatch the service Name
         service = mc.getService();
         try{
-            ExecutionChain exeChain = service.getOutputExecutionChain();
-            exeChain.invoke(mc);
+            //what are we suppose to do in the client side 
+            //how the client side handlers are deployed ??? this is a hack and no client side handlers
+            if(mc.isServerSide() || service != null){
+                ExecutionChain exeChain = service.getOutputExecutionChain();
+                exeChain.invoke(mc);
+            }
             TransportSender ts = TransportSenderLocator.locateTransPortSender(mc);
             ts.invoke(mc);
         }catch(AxisFault e){
@@ -67,8 +71,10 @@ public class AxisEngine {
         Service service = mc.getService();
 
         try{
-            ExecutionChain exeChain = service.getInputExecutionChain();
-            exeChain.invoke(mc);
+            if(service != null){
+                ExecutionChain exeChain = service.getInputExecutionChain();
+                exeChain.invoke(mc);
+            }        
             if(mc.isServerSide()){
                 OpNameFinder finder = new OpNameFinder();
                 finder.invoke(mc);

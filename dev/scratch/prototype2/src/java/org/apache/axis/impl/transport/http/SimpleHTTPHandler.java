@@ -16,19 +16,13 @@
 
 package org.apache.axis.impl.transport.http;
 
+import java.io.OutputStream;
+
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.*;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.impl.encoding.Base64;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
 
 
 
@@ -132,11 +126,11 @@ public abstract class SimpleHTTPHandler implements Runnable {
      * Run method
      */
     
-    public abstract MessageContext execute()throws AxisFault;
+    public abstract MessageContext parseHTTPHeaders()throws AxisFault;
     
     public void run() {
         try {
-            execute();
+            parseHTTPHeaders();
         }catch(AxisFault e){
             log.error(e);
         }finally {
