@@ -239,7 +239,19 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
 <p>Apache Ant should be installed and should be available in the path. It can be checked weather Ant is properly installed by simply typing ant in the command prompt. Please refer<a href="http://ant.apache.org/"> http://ant.apache.org/</a>.</p>
 <p align="center"><img src="images/ant.jpg"></p>
-
+<h2>Building the sample</h2>
+<p>The sources that are required for the running the samples can be compiled and packaged using the following ant task provided in the build.xml.</p>
+<p>>ant compile</p>
+<p>or simply</p>
+<p>>ant</p>
+<p align="center"><img src="images/clip_image018.jpg"></img></p>
+<p>The compilation will result in building three jar files; two of which are deployable services and the other is the compiled classes required for running the samples.</p>
+<ul>
+	<li>sample1.jar – Deployable web service that will be used for Case1 and Case3 (Packaged to modules/samples/build/services)</li>
+	<li>sample1Withhandler.jar – Deployable web service that will be used for Case2 (Packaged to modules/samples/build/services)</li>
+	<li>sample1-all.jar – Compiled sources required for running the client applications (Packaged to modules/samples/build/lib)</li>
+</ul>
+<p>Once the sample is compiled once, all the required jar files for deploying and running all three Cases of the sample will be compiled and packaged.</p>
 <h2><a name="_Toc96698091"></a><a name="_Toc96697866">Sample1- Case1 : Echo Synchronous call </a></h2>
 <p>The sample1 - Case1: Echo synchronous call is intended to demonstrate the synchronous web service call in Axis2 with both the client side and client side running Axis2. In the next few steps the user will be walked through in: </p>
 <ul>
