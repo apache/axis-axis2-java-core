@@ -19,7 +19,6 @@ import java.net.URL;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.engine.EngineUtils;
 
 /**
  * @author chathura@opensource.lk
