@@ -690,12 +690,14 @@ public class OMElementImpl extends OMNamedNodeImpl
                     }
                 }
             } else {
-                throw new OMException(
-                        "Non namespace qualified elements are not allowed");
+                writer.writeStartElement(this.getLocalName());
+//                throw new OMException(
+//                        "Non namespace qualified elements are not allowed");
             }
         } else {
-            throw new OMException(
-                    "Non namespace qualified elements are not allowed");
+            writer.writeStartElement(this.getLocalName());
+//            throw new OMException(
+//                    "Non namespace qualified elements are not allowed");
         }
 
         // add the elements attributes

@@ -91,6 +91,8 @@ public class MessageContext {
      */
     private boolean processingFault = false;
 
+
+
     /**
      * Addressing Information for Axis 2
      * Following Properties will be kept inside this, these fields will be initially filled by
@@ -511,5 +513,13 @@ public class MessageContext {
     }
     public String getWSAMessageId(){
         return messageInformationHeaders.getMessageId();
+    }
+
+    public MessageInformationHeadersCollection getMessageInformationHeaders() {
+        return messageInformationHeaders;
+    }
+
+    public void setMessageInformationHeaders(MessageInformationHeadersCollection messageInformationHeaders) {
+        this.messageInformationHeaders = messageInformationHeaders;
     }
 }

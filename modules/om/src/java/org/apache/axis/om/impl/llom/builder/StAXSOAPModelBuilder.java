@@ -201,7 +201,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         } else {
 
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, parent.getNamespace(),
+            element = ombuilderFactory.createOMElement(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
         }
@@ -295,7 +295,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         // throw new OMException("All elements must be namespace qualified!");
         // }
         if (isSOAPElement) {
-            if (!node.getNamespace().getName().equals(
+            if (node.getNamespace() != null && !node.getNamespace().getName().equals(
                     OMConstants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw new OMBuilderException("invalid SOAP namespace URI");
             }
