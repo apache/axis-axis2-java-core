@@ -15,7 +15,7 @@
   <inceptionYear>2004</inceptionYear>
   <package>org.apache.axis</package>
   <logo>http://ws.apache.org/axis/images/axis.jpg</logo>
-  <description>Next Generation of Apache Axis 2.0</description>
+  <description>Axis 2.0 will be a platform for the next generation of web services / service oriented applications. To achieve this goal, we need to incorporate the latest in concepts in Web Services Architecture group and WSDL working group among others. For example, the architecture should be completely asynchronous and should support all kinds of MEP's. The platform must be very extensible (runtime, java2wsdl, wsdl2java etc) to accomodate the growing demand for different WS-* implementations. A "module" can very easily change the behaviour of existing components. For example, additional decorations can be added at runtime to the base wsdl (for example, for WSDM manageability spec). Presence of an addressing module could change the client code generated (where additional methods can be exposed) that make it easy to use addressing. One main focus is to improve the performance even in the presence of a heavy duty "security" module.</description>
   <shortDescription>Axis 2.0</shortDescription>
   <!-- the project home page -->
   <url>http://ws.apache.org/axis2/</url>
