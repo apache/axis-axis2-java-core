@@ -46,11 +46,6 @@ public abstract class AbstractTransportSender extends AbstractHandler
                     "TransportSender");
 
     /**
-     * Field outS
-     */
-    protected OutputStream outS;
-
-    /**
      * Constructor AbstractTransportSender
      */
     public AbstractTransportSender() {
@@ -101,12 +96,8 @@ public abstract class AbstractTransportSender extends AbstractHandler
                 XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter, false);
                 outputWriter.flush();
-                if (outS != null) {
-                    outS.flush();
-                } else {
                     out.flush();
-                }
-            } catch (Exception e) {
+              } catch (Exception e) {
                 throw new AxisFault("Stream error", e);
             }
         }

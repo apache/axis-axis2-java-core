@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.InetSocketAddress;
@@ -64,7 +65,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                             url.getPort());
                     socket = new Socket();
                     socket.connect(add);
-                    outS = socket.getOutputStream();
+                    OutputStream outS = socket.getOutputStream();
                     out = new BufferedWriter(new OutputStreamWriter(outS));
                     writeTransportHeaders(out, url);
                     msgContext.setProperty(
@@ -115,6 +116,11 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     protected void finalizeSending(MessageContext msgContext)
             throws AxisFault {
+        try {
+            socket.shutdownOutput();
+        } catch (IOException e) {
+            throw new AxisFault(e.getMessage(),e);
+        }
     }
 
     /**
