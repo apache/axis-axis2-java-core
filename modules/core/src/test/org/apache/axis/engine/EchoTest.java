@@ -18,13 +18,13 @@ package org.apache.axis.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class EchoTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());

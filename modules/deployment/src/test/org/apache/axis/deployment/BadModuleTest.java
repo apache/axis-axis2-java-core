@@ -16,11 +16,11 @@
  
 package org.apache.axis.deployment;
 
+import org.apache.axis.description.AxisGlobal;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import org.apache.axis.description.AxisGlobal;
 
 public class BadModuleTest extends AbstractTestCase {
     /**

@@ -22,7 +22,11 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
 

@@ -16,12 +16,6 @@
  
 package org.apache.axis.om.builder.dummy;
 
-import java.io.FileReader;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
 import org.apache.axis.testUtils.Encoder;
@@ -29,6 +23,11 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.FileReader;
 
 public class DummyOutObject implements Encoder {
     private XMLReader parser;

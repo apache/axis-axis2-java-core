@@ -16,7 +16,17 @@
  
 package org.apache.axis.deployment;
 
-import org.apache.axis.description.*;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.FlowImpl;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ParameterImpl;
+import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.phaseresolver.PhaseException;

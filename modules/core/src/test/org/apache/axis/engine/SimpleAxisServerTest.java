@@ -18,13 +18,13 @@ package org.apache.axis.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.providers.RawXMLProvider;
+
+import javax.xml.namespace.QName;
 
 public class SimpleAxisServerTest extends AbstractTestCase {
     private QName serviceName = new QName("", "EchoXMLService");

@@ -15,9 +15,6 @@
  */
  
 package encoding.sample1;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -29,6 +26,9 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.testUtils.ArrayTypeEncoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 
 public class EchoStub {
     private OMFactory fac;

@@ -16,11 +16,6 @@
  
 package encoding.sample2.benchMark;
 
-import java.lang.reflect.Method;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
@@ -34,6 +29,10 @@ import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
