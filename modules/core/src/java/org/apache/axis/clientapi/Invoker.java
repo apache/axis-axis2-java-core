@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,25 +21,49 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportReceiverLocator;
 
+/**
+ * Class Invoker
+ */
 public class Invoker implements Runnable {
+    /**
+     * Field engine
+     */
     private AxisEngine engine;
+
+    /**
+     * Field registry
+     */
     private EngineRegistry registry;
 
+    /**
+     * Field reqMsgContext
+     */
     private MessageContext reqMsgContext;
 
+    /**
+     * Field callback
+     */
     private Callback callback;
 
-    public Invoker(MessageContext msgContext,
-                   AxisEngine engine,
-                   EngineRegistry reg,
-                   Callback callback) {
+    /**
+     * Constructor Invoker
+     *
+     * @param msgContext
+     * @param engine
+     * @param reg
+     * @param callback
+     */
+    public Invoker(MessageContext msgContext, AxisEngine engine,
+                   EngineRegistry reg, Callback callback) {
         this.engine = engine;
         this.reqMsgContext = msgContext;
         this.callback = callback;
         this.registry = reg;
-
     }
 
+    /**
+     * Method run
+     */
     public void run() {
         final Correlator correlator = Correlator.getInstance();
         final String messageID = Long.toString(System.currentTimeMillis());
@@ -48,10 +72,11 @@ public class Invoker implements Runnable {
             engine.send(reqMsgContext);
             correlator.addCorrelationInfo(reqMsgContext.getMessageID(),
                     callback);
-            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties(), reqMsgContext.getSessionContext());
+            MessageContext resMsgContext =
+            new MessageContext(registry, reqMsgContext.getProperties(),
+                    reqMsgContext.getSessionContext());
             resMsgContext.setServerSide(false);
-            //            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-            //            Constants.TRANSPORT_HTTP);
+
             TransportReceiver receiver =
                     TransportReceiverLocator.locate(resMsgContext);
             receiver.invoke(resMsgContext);
@@ -63,11 +88,8 @@ public class Invoker implements Runnable {
             callback.setComplete(true);
             callback.setResult(result);
             callback.onComplete(result);
-
         } catch (Exception e) {
             callback.reportError(e);
         }
-
     }
-
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,21 @@ import org.apache.commons.logging.LogFactory;
  * Methods are the basic operations the Sync, Async messageing are build on top.
  */
 public class AxisEngine {
+    /**
+     * Field log
+     */
     private Log log = LogFactory.getLog(getClass());
+
+    /**
+     * Field registry
+     */
     private final EngineRegistry registry;
 
+    /**
+     * Constructor AxisEngine
+     *
+     * @param registry
+     */
     public AxisEngine(EngineRegistry registry) {
         log.info("Axis Engine Started");
         this.registry = registry;
@@ -69,9 +81,10 @@ public class AxisEngine {
      */
     public void receive(MessageContext context) throws AxisFault {
         try {
-            //          org.TimeRecorder.START = System.currentTimeMillis();
+
             log.info("starting the out flow");
-            //let us always start with a fresh EC
+
+            // let us always start with a fresh EC
             context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
 
@@ -81,22 +94,21 @@ public class AxisEngine {
                 log.info("Using the transport" + transport.getName());
                 chain.addPhases(transport.getPhases(EngineRegistry.INFLOW));
             }
-            //Add the phases that are are at Global scope
+
+            // Add the phases that are are at Global scope
             AxisGlobal global =
                     context.getGlobalContext().getRegistry().getGlobal();
             chain.addPhases(global.getPhases(EngineRegistry.INFLOW));
 
-            //create a Dispatch Phase and add it to the Execution Chain
+            // create a Dispatch Phase and add it to the Execution Chain
             Dispatcher dispatcher = new Dispatcher();
             Phase dispatchPhase = new Phase("DispatchPhase");
             dispatchPhase.addHandler(dispatcher);
             chain.addPhase(dispatchPhase);
 
-            //Start rolling the Service Handlers will,be added by the Dispatcher 
+            // Start rolling the Service Handlers will,be added by the Dispatcher
             chain.invoke(context);
             log.info("ending the out flow");
-            //            org.TimeRecorder.END = System.currentTimeMillis();
-            //            org.TimeRecorder.dump();
         } catch (Throwable e) {
             handleFault(context, e);
         }
@@ -118,19 +130,23 @@ public class AxisEngine {
         if (serverSide && !context.isProcessingFault()) {
             context.setProcessingFault(true);
 
-            //create a SOAP envelope with the Fault
+            // create a SOAP envelope with the Fault
             SOAPEnvelope envelope =
                     OMFactory.newInstance().getDefaultEnvelope();
-            //TODO do we need to set old Headers back?
+
+            // TODO do we need to set old Headers back?
             envelope.getBody().addFault(new AxisFault(e.getMessage(), e));
             context.setEnvelope(envelope);
-            //send the error
+
+            // send the error
             executeOutFlow(context, EngineRegistry.FAULTFLOW);
         } else if (!serverSide) {
-            //if at the client side throw the exception
+
+            // if at the client side throw the exception
             throw new AxisFault("", e);
         } else {
-            //TODO log and exit
+
+            // TODO log and exit
             log.error("Error in fault flow", e);
         }
     }
@@ -151,15 +167,18 @@ public class AxisEngine {
             ExecutionChain chain = context.getExecutionChain();
             AxisService service = context.getService();
             if (service != null) {
-                //what are we suppose to do in the client side 
-                //how the client side handlers are deployed ??? this is a hack and no client side handlers
+
+                // what are we suppose to do in the client side
+                // how the client side handlers are deployed ??? this is a hack and no client side handlers
                 chain.addPhases(service.getPhases(flow));
             } else {
                 if (context.isServerSide() && !context.isProcessingFault()) {
-                    throw new AxisFault("in Server Side there must be service object");
+                    throw new AxisFault(
+                            "in Server Side there must be service object");
                 }
             }
-            //Add the phases that are are at Global scope
+
+            // Add the phases that are are at Global scope
             AxisGlobal global =
                     context.getGlobalContext().getRegistry().getGlobal();
             chain.addPhases(global.getPhases(flow));
@@ -172,7 +191,8 @@ public class AxisEngine {
             Phase sendPhase = new Phase(Phase.SENDING_PHASE);
             sendPhase.addHandler(TransportSenderLocator.locate(context));
             chain.addPhase(sendPhase);
-            //startet rolling
+
+            // startet rolling
             chain.invoke(context);
         } catch (AxisFault error) {
             handleFault(context, error);

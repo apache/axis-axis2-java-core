@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,9 @@ import org.apache.axis.engine.AxisFault;
 
 import java.util.ArrayList;
 
+/**
+ * Interface PhasesInclude
+ */
 public interface PhasesInclude {
     /**
      * When the Phases are resolved they are added to the EngineRegistry as phases at deploy time.
@@ -27,8 +30,16 @@ public interface PhasesInclude {
      *
      * @param flow
      * @return
+     * @throws AxisFault
      */
     public ArrayList getPhases(int flow) throws AxisFault;
 
+    /**
+         * Method setPhases
+         *
+         * @param phases
+         * @param flow
+         * @throws AxisFault
+         */
     public void setPhases(ArrayList phases, int flow) throws AxisFault;
 }

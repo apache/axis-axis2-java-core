@@ -42,7 +42,6 @@ public class EchoProvider extends SimpleJavaProvider {
       MessageContext msgContext,
       Method method)
       throws AxisFault {
-      //   org.TimeRecorder.BEFORE_DESERALIZE = System.currentTimeMillis();
       XMLStreamReader xpp =
           msgContext.getSoapOperationElement().getPullParser(true);
 		Class[] parms = method.getParameterTypes();

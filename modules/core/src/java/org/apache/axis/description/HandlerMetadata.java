@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,17 +23,44 @@ import javax.xml.namespace.QName;
  * represent the deployment information about the handler
  */
 public class HandlerMetadata implements ParameterInclude {
+    /**
+     * Field parameterInclude
+     */
     private final ParameterInclude parameterInclude;
+
+    /**
+     * Field name
+     */
     private QName name;
+
+    /**
+     * Field rules
+     */
     private PhaseRule rules;
+
+    /**
+     * Field handler
+     */
     private Handler handler;
+
+    /**
+     * Field className
+     */
     private String className;
 
+    /**
+     * Constructor HandlerMetadata
+     */
     public HandlerMetadata() {
         this.parameterInclude = new ParameterIncludeImpl();
         this.rules = new PhaseRule();
     }
 
+    /**
+     * Constructor HandlerMetadata
+     *
+     * @param name
+     */
     public HandlerMetadata(QName name) {
         this();
         this.name = name;
@@ -46,10 +73,20 @@ public class HandlerMetadata implements ParameterInclude {
         return name;
     }
 
+    /**
+     * Method getRules
+     *
+     * @return
+     */
     public PhaseRule getRules() {
         return rules;
     }
 
+    /**
+     * Method setRules
+     *
+     * @param rules
+     */
     public void setRules(PhaseRule rules) {
         this.rules = rules;
     }
@@ -90,10 +127,20 @@ public class HandlerMetadata implements ParameterInclude {
         this.handler = handler;
     }
 
+    /**
+     * Method getClassName
+     *
+     * @return
+     */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * Method setClassName
+     *
+     * @param className
+     */
     public void setClassName(String className) {
         this.className = className;
     }

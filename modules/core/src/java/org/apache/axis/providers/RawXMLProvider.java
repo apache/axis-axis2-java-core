@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,16 +34,40 @@ import java.lang.reflect.Method;
  * This is a Simple java Provider.
  */
 public class RawXMLProvider extends AbstractProvider implements Provider {
+    /**
+     * Field log
+     */
     protected Log log = LogFactory.getLog(getClass());
+
+    /**
+     * Field scope
+     */
     private String scope;
+
+    /**
+     * Field method
+     */
     private Method method;
+
+    /**
+     * Field classLoader
+     */
     private ClassLoader classLoader;
 
+    /**
+     * Constructor RawXMLProvider
+     */
     public RawXMLProvider() {
         scope = Constants.APPLICATION_SCOPE;
-
     }
 
+    /**
+     * Method makeNewServiceObject
+     *
+     * @param msgContext
+     * @return
+     * @throws AxisFault
+     */
     protected Object makeNewServiceObject(MessageContext msgContext)
             throws AxisFault {
         try {
@@ -56,6 +80,13 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         }
     }
 
+    /**
+     * Method getTheImplementationObject
+     *
+     * @param msgContext
+     * @return
+     * @throws AxisFault
+     */
     public Object getTheImplementationObject(MessageContext msgContext)
             throws AxisFault {
         AxisService service = msgContext.getService();
@@ -81,15 +112,22 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         } else {
             throw new AxisFault("unknown scope " + scope);
         }
-
     }
 
+    /**
+     * Method invoke
+     *
+     * @param msgContext
+     * @return
+     * @throws AxisFault
+     */
     public MessageContext invoke(MessageContext msgContext) throws AxisFault {
         try {
-            //get the implementation class for the Web Service 
+
+            // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
 
-            //find the WebService method  
+            // find the WebService method
             Class ImplClass = obj.getClass();
             String methodName =
                     msgContext.getOperation().getName().getLocalPart();
@@ -101,20 +139,20 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                 }
             }
             Class[] parameters = method.getParameterTypes();
-            if (parameters != null
-                    && parameters.length == 1
-                    && OMElement.class.getName().equals(parameters[0].getName())) {
+            if ((parameters != null) && (parameters.length == 1)
+                    && OMElement.class.getName().equals(
+                            parameters[0].getName())) {
                 OMElement methodElement =
                         msgContext.getEnvelope().getBody().getFirstElement();
                 OMElement parmeter = methodElement.getFirstElement();
                 Object[] parms = new Object[]{parmeter};
-                //invoke the WebService 
-                OMElement result = (OMElement) method.invoke(obj, parms);
-                MessageContext msgContext1 =
-                new MessageContext(
+
+                // invoke the WebService
+                OMElement result = (OMElement) method.invoke(obj,
+                        parms);
+                MessageContext msgContext1 = new MessageContext(
                         msgContext.getGlobalContext().getRegistry(),
-                        msgContext.getProperties(),
-                        msgContext.getSessionContext());
+                        msgContext.getProperties(), msgContext.getSessionContext());
                 SOAPEnvelope envelope =
                         OMFactory.newInstance().getDefaultEnvelope();
                 envelope.getBody().setFirstChild(result);
@@ -125,12 +163,16 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                         "Raw Xml provider supports only the methods bearing the signature public OMElement "
                                 + "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
-
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }
 
+    /**
+     * Method revoke
+     *
+     * @param msgContext
+     */
     public void revoke(MessageContext msgContext) {
     }
 }

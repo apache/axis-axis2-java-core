@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,23 +31,62 @@ import java.util.Stack;
  * Should this exttends Hanlders?
  */
 public class Phase extends AbstractHandler implements Handler {
+    /**
+     * Field DISPATCH_PHASE
+     */
     public static final String DISPATCH_PHASE = "DispatchPhase";
-    public static final String SERVICE_INVOCATION = "ServiceInvocationPhase";
-    public static final String SENDING_PHASE = "SendPhase";
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "Phase");
 
+    /**
+     * Field SERVICE_INVOCATION
+     */
+    public static final String SERVICE_INVOCATION = "ServiceInvocationPhase";
+
+    /**
+     * Field SENDING_PHASE
+     */
+    public static final String SENDING_PHASE = "SendPhase";
+
+    /**
+     * Field NAME
+     */
+    public static final QName NAME = new QName("http://axis.ws.apache.org",
+                    "Phase");
+
+    /**
+     * Field phaseName
+     */
     private String phaseName;
+
+    /**
+     * Field handlers
+     */
     private ArrayList handlers;
+
+    /**
+     * Field log
+     */
     private Log log = LogFactory.getLog(getClass());
 
+    /**
+     * Constructor Phase
+     *
+     * @param phaseName
+     */
     public Phase(String phaseName) {
         handlers = new ArrayList();
         this.phaseName = phaseName;
         init(new HandlerMetadata(NAME));
     }
 
+    /**
+     * Method addHandler
+     *
+     * @param handler
+     * @param index
+     */
     public void addHandler(Handler handler, int index) {
-        log.info("Handler " + handler.getName() + "Added to place " + 1 + " At the Phase " + phaseName);
+        log.info("Handler " + handler.getName() + "Added to place " + 1
+                        + " At the Phase " + phaseName);
         handlers.add(index, handler);
     }
 
@@ -57,7 +96,8 @@ public class Phase extends AbstractHandler implements Handler {
      * @param handler
      */
     public void addHandler(Handler handler) {
-        log.info("Handler " + handler.getName() + " Added to the Phase " + phaseName);
+        log.info("Handler " + handler.getName() + " Added to the Phase "
+                        + phaseName);
         handlers.add(handler);
     }
 
@@ -73,26 +113,35 @@ public class Phase extends AbstractHandler implements Handler {
             for (int i = 0; i < handlers.size(); i++) {
                 Handler handler = (Handler) handlers.get(i);
                 if (handler != null) {
-                    log.info("Invoke the Handler " + handler.getName() + "with in the Phase " + phaseName);
+                    log.info("Invoke the Handler " + handler.getName()
+                                    + "with in the Phase " + phaseName);
                     executionStack.push(handler);
                     handler.invoke(msgctx);
                 }
             }
         } catch (Exception e) {
-            log.info("Phase " + phaseName + " failed with the " + e.getMessage());
+            log.info("Phase " + phaseName + " failed with the "
+                            + e.getMessage());
             while (!executionStack.isEmpty()) {
                 Handler handler = (Handler) executionStack.pop();
-                log.info("revoke the Handler " + handler.getName() + " with in the Phase " + phaseName);
+                log.info("revoke the Handler " + handler.getName()
+                                + " with in the Phase " + phaseName);
                 handler.revoke(msgctx);
             }
             throw AxisFault.makeFault(e);
         }
     }
 
+    /**
+     * Method revoke
+     *
+     * @param msgctx
+     */
     public void revoke(MessageContext msgctx) {
         for (int i = handlers.size() - 1; i > -1; i--) {
             Handler handler = (Handler) handlers.get(i);
-            log.info("revoke the Handler " + handler.getName() + " with in the Phase " + phaseName);
+            log.info("revoke the Handler " + handler.getName()
+                            + " with in the Phase " + phaseName);
             if (handler != null) {
                 handler.revoke(msgctx);
             }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,14 +27,32 @@ import javax.xml.namespace.QName;
  * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
 public class AxisModule implements FlowInclude, ParameterInclude {
+    /**
+     * Field name
+     */
     private QName name;
 
+    /**
+     * Field flowInclude
+     */
     private final FlowInclude flowInclude = new FlowIncludeImpl();
+
+    /**
+     * Field parameters
+     */
     private final ParameterInclude parameters = new ParameterIncludeImpl();
 
+    /**
+     * Constructor AxisModule
+     */
     public AxisModule() {
     }
 
+    /**
+     * Constructor AxisModule
+     *
+     * @param name
+     */
     public AxisModule(QName name) {
         this.name = name;
     }
@@ -109,5 +127,4 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     public void setName(QName name) {
         this.name = name;
     }
-
 }

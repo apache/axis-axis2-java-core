@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,29 +35,65 @@ import java.util.List;
  * global handler is via a modules</p>
  */
 public class AxisGlobal implements ParameterInclude, PhasesInclude {
+    /**
+     * Field paramInclude
+     */
     protected final ParameterInclude paramInclude;
+
+    /**
+     * Field phasesInclude
+     */
     protected final PhasesInclude phasesInclude;
+
+    /**
+     * Field modules
+     */
     protected final List modules;
 
-    //TODO provide a way to store name (name attribute value server.xml)
+    // TODO provide a way to store name (name attribute value server.xml)
+
+    /**
+     * Constructor AxisGlobal
+     */
     public AxisGlobal() {
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
         modules = new ArrayList();
     }
 
+    /**
+     * Method addModule
+     *
+     * @param moduleref
+     */
     public void addModule(QName moduleref) {
         modules.add(moduleref);
     }
 
+    /**
+     * Method getModules
+     *
+     * @return
+     */
     public Collection getModules() {
         return modules;
     }
 
+    /**
+     * Method getParameter
+     *
+     * @param name
+     * @return
+     */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
     }
 
+    /**
+     * Method addParameter
+     *
+     * @param param
+     */
     public void addParameter(Parameter param) {
         paramInclude.addParameter(param);
     }
@@ -79,5 +115,4 @@ public class AxisGlobal implements ParameterInclude, PhasesInclude {
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
         phasesInclude.setPhases(phases, flow);
     }
-
 }

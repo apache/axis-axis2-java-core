@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,25 +41,53 @@ import java.net.Socket;
  * you want bad things to happen at shutdown.
  */
 public class SimpleHTTPServer implements Runnable {
+    /**
+     * Field log
+     */
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+
+    /**
+     * Field engineReg
+     */
     protected EngineRegistry engineReg;
+
+    /**
+     * Field serverSocket
+     */
     protected ServerSocket serverSocket;
+
+    /**
+     * Field socket
+     */
     protected Socket socket;
+
     /**
      * are we stopped?
      * latch to true if stop() is called
      */
     private boolean stopped = false;
 
+    /**
+     * Constructor SimpleHTTPServer
+     *
+     * @param reg
+     */
     public SimpleHTTPServer(EngineRegistry reg) {
         this.engineReg = reg;
-
     }
 
+    /**
+     * Constructor SimpleHTTPServer
+     *
+     * @param dir
+     * @throws AxisFault
+     */
     public SimpleHTTPServer(String dir) throws AxisFault {
         try {
-            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac = (EngineRegistryFactory) erClass.newInstance();
+            Class erClass = Class.forName(
+                    "org.apache.axis.deployment.EngineRegistryFactoryImpl");
+            EngineRegistryFactory erfac =
+                    (EngineRegistryFactory) erClass.newInstance();
             this.engineReg = erfac.createEngineRegistry(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
@@ -85,8 +113,8 @@ public class SimpleHTTPServer implements Runnable {
         try {
             while (!stopped) {
                 try {
-                    // Accept and process requests from the socket
 
+                    // Accept and process requests from the socket
                     try {
                         socket = serverSocket.accept();
                     } catch (java.io.InterruptedIOException iie) {
@@ -109,8 +137,9 @@ public class SimpleHTTPServer implements Runnable {
                         out.write(HTTPConstants.OK);
                         out.write("\n\n".toCharArray());
                         log.info("status written");
-                        //We do not have any Addressing Headers to put
-                        //let us put the information about incoming transport
+
+                        // We do not have any Addressing Headers to put
+                        // let us put the information about incoming transport
                         msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
                                 Constants.TRANSPORT_HTTP);
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
@@ -120,7 +149,6 @@ public class SimpleHTTPServer implements Runnable {
                         HTTPTransportReceiver reciver =
                         new HTTPTransportReceiver();
                         reciver.invoke(msgContext);
-
                     }
                 } catch (Throwable e) {
                     log.error(e);
@@ -131,7 +159,6 @@ public class SimpleHTTPServer implements Runnable {
                     }
                 }
             }
-
         } catch (IOException e) {
             log.error(e);
         }
@@ -141,6 +168,8 @@ public class SimpleHTTPServer implements Runnable {
 
     /**
      * Obtain the serverSocket that that SimpleAxisServer is listening on.
+     *
+     * @return
      */
     public ServerSocket getServerSocket() {
         return serverSocket;
@@ -150,6 +179,8 @@ public class SimpleHTTPServer implements Runnable {
      * Set the serverSocket this server should listen on.
      * (note : changing this will not affect a running server, but if you
      * stop() and then start() the server, the new socket will be used).
+     *
+     * @param serverSocket
      */
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
@@ -157,6 +188,8 @@ public class SimpleHTTPServer implements Runnable {
 
     /**
      * Start this server as a NON-daemon.
+     *
+     * @throws Exception
      */
     public void start() throws Exception {
         run();
@@ -169,10 +202,12 @@ public class SimpleHTTPServer implements Runnable {
      */
     public void stop() {
         log.info("stop called");
-        //recognise use before we are live
+
+        // recognise use before we are live
         if (stopped) {
             return;
         }
+
         /*
          * Close the server socket cleanly, but avoid fresh accepts while
          * the socket is closing.
@@ -181,15 +216,16 @@ public class SimpleHTTPServer implements Runnable {
         try {
             if (serverSocket != null) {
                 serverSocket.close();
-                //                while(socket != null){
-                //                    try {
-                //                        //make sure all sockets closed by the time 
-                //                        //else we got in to lot of trouble testing
-                //                        Thread.sleep(1000);
-                //                    } catch (InterruptedException e1) {
-                //                        log.error(e1);
-                //                    }
-                //                }
+
+                // while(socket != null){
+                // try {
+                // //make sure all sockets closed by the time
+                // //else we got in to lot of trouble testing
+                // Thread.sleep(1000);
+                // } catch (InterruptedException e1) {
+                // log.error(e1);
+                // }
+                // }
             }
         } catch (IOException e) {
             log.info(e);
@@ -199,10 +235,21 @@ public class SimpleHTTPServer implements Runnable {
         log.info("Simple Axis Server Quits");
     }
 
+    /**
+     * Method getEngineReg
+     *
+     * @return
+     */
     public EngineRegistry getEngineReg() {
         return engineReg;
     }
 
+    /**
+     * Method main
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             System.out.println("SimpeHttpReciver repositoryLocation port");
@@ -218,8 +265,6 @@ public class SimpleHTTPServer implements Runnable {
             System.in.read();
         } finally {
             reciver.stop();
-
         }
     }
-
 }

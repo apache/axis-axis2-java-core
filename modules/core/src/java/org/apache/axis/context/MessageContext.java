@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,56 +38,170 @@ import java.util.Map;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext {
+    /**
+     * Field messageStyle
+     */
     private String messageStyle = WSDLService.STYLE_RPC;
 
     /**
      * Follwing are the defined properties that are stored in the message Context
      */
     public static final String USER_NAME = "USER";
+
+    /**
+     * Field PASSWORD
+     */
     public static final String PASSWORD = "PASSWD";
+
+    /**
+     * Field TRANSPORT_TYPE
+     */
     public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
+
+    /**
+     * Field SOAP_ACTION
+     */
     public static final String SOAP_ACTION = "SOAP_ACTION";
+
+    /**
+     * Field TRANSPORT_WRITER
+     */
     public static final String TRANSPORT_WRITER = "TRANSPORT_WRITER";
+
+    /**
+     * Field TRANSPORT_READER
+     */
     public static final String TRANSPORT_READER = "TRANSPORT_READER";
+
+    /**
+     * Field TRANSPORT_IN
+     */
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
+    /**
+     * Field TRANSPORT_SUCCEED
+     */
     public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
-    //public static final String REQUEST_URL = "REQUEST_URL";
 
+    // public static final String REQUEST_URL = "REQUEST_URL";
+
+    /**
+     * Field processingFault
+     */
     private boolean processingFault = false;
+
+    /**
+     * Field to
+     */
     private EndpointReference to;
+
+    /**
+     * Field from
+     */
     private EndpointReference from;
+
+    /**
+     * Field relatesTo
+     */
     private RelatesTo relatesTo;
+
+    /**
+     * Field replyTo
+     */
     private EndpointReference replyTo;
+
+    /**
+     * Field faultTo
+     */
     private EndpointReference faultTo;
 
+    /**
+     * Field chain
+     */
     private ExecutionChain chain;
+
+    /**
+     * Field transport
+     */
     private AxisTransport transport;
 
-    //there is a no use cas found to set those proprties 
-    //so declare them final    
+    // there is a no use cas found to set those proprties
+    // so declare them final
+
+    /**
+     * Field properties
+     */
     private final Map properties;
+
+    /**
+     * Field globalContext
+     */
     private final GlobalContext globalContext;
 
+    /**
+     * Field sessionContext
+     */
     private final SessionContext sessionContext;
+
+    /**
+     * Field service
+     */
     private AxisService service;
+
+    /**
+     * Field envelope
+     */
     private SOAPEnvelope envelope;
+
+    /**
+     * Field responseWritten
+     */
     private boolean responseWritten;
+
+    /**
+     * Field inFaultFlow
+     */
     private boolean inFaultFlow;
+
+    /**
+     * Field serverSide
+     */
     private boolean serverSide;
+
+    /**
+     * Field messageID
+     */
     private String messageID;
+
+    /**
+     * Field operation
+     */
     private AxisOperation operation;
+
+    /**
+     * Field newThreadRequired
+     */
     private boolean newThreadRequired = false;
+
+    /**
+     * Field xpp
+     */
     private XMLStreamReader xpp;
+
+    /**
+     * Field soapOperationElement
+     */
     private OMElement soapOperationElement;
 
     /**
-     * @param Engine            registry
+     * @param er            registry
      * @param initialProperties of the message context, should be null if no properties
      * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
-    public MessageContext(EngineRegistry er, Map initialProperties, SessionContext sessionContext) throws AxisFault {
+    public MessageContext(
+            EngineRegistry er, Map initialProperties, SessionContext sessionContext)
+            throws AxisFault {
         this.globalContext = new GlobalContext(er);
         if (sessionContext == null) {
             this.sessionContext = new SimpleSessionContext();
@@ -151,6 +265,7 @@ public class MessageContext {
     }
 
     /**
+     * @param key
      * @return
      */
     public Object getProperty(Object key) {
@@ -342,6 +457,11 @@ public class MessageContext {
         }
     }
 
+    /**
+     * Method getExecutionChain
+     *
+     * @return
+     */
     public ExecutionChain getExecutionChain() {
         return this.chain;
     }
@@ -401,5 +521,4 @@ public class MessageContext {
     public Map getProperties() {
         return properties;
     }
-
 }

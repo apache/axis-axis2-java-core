@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,18 @@ package org.apache.axis.addressing;
 
 import javax.xml.namespace.QName;
 
+/**
+ * Class ServiceName
+ */
 public class ServiceName {
+    /**
+     * Field name
+     */
     private QName name;
+
+    /**
+     * Field portName
+     */
     private String portName;
 
     /**
@@ -37,18 +47,38 @@ public class ServiceName {
         this.portName = portName;
     }
 
+    /**
+     * Method getName
+     *
+     * @return
+     */
     public QName getName() {
         return name;
     }
 
+    /**
+     * Method setName
+     *
+     * @param name
+     */
     public void setName(QName name) {
         this.name = name;
     }
 
+    /**
+     * Method getPortName
+     *
+     * @return
+     */
     public String getPortName() {
         return portName;
     }
 
+    /**
+     * Method setPortName
+     *
+     * @param portName
+     */
     public void setPortName(String portName) {
         this.portName = portName;
     }
