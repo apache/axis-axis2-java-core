@@ -15,6 +15,7 @@
  */
 package test.wsdl.wom;
 
+import test.wsdl.wombuilder.WSDL1BuilderTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -28,6 +29,7 @@ public class AllTests {
         TestSuite suite = new TestSuite("Test for test.wsdl.wom");
         //$JUnit-BEGIN$
         suite.addTestSuite(InterfaceTest.class);
+        suite.addTestSuite(WSDL1BuilderTest.class);
         //$JUnit-END$
         return suite;
     }

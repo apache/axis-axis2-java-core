@@ -22,11 +22,11 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.wsdl.wom.WSDLConstants;
-import org.apache.axis.wsdl.wom.WSDLInterface;
-import org.apache.axis.wsdl.wom.WSDLOperation;
-import org.apache.axis.wsdl.wom.impl.WSDLInterfaceImpl;
-import org.apache.axis.wsdl.wom.impl.WSDLOperationImpl;
+import org.apache.wsdl.wom.WSDLConstants;
+import org.apache.wsdl.wom.WSDLInterface;
+import org.apache.wsdl.wom.WSDLOperation;
+import org.apache.wsdl.wom.impl.WSDLInterfaceImpl;
+import org.apache.wsdl.wom.impl.WSDLOperationImpl;
 
 /**
  * @author chathura@opensource.lk
@@ -42,7 +42,7 @@ public class InterfaceTest extends TestCase {
         
         for(int j=0; j<interfaceCounter; j++){
             intfc = new WSDLInterfaceImpl();
-            intfc.setName("inteface"+j);
+            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"inteface"+j));
 	        for(int i=0; i<operationCounter; i++){
 	            op = new WSDLOperationImpl();
 	        	op.setName("op"+i+"of inteface"+j);
@@ -50,7 +50,7 @@ public class InterfaceTest extends TestCase {
 	        	intfc.setOperation("op"+i+"of inteface"+j, op);
 	        }
 	        if(j>0){
-	            intfc.addSuperInterface(new QName(WSDLConstants.WSDL2_0_NAMESPACE, array[j-1].getName()), array[j-1]);
+	            intfc.addSuperInterface(array[j-1].getName(), array[j-1]);
 	        }
 	        array[j] = intfc;
         }
@@ -97,13 +97,13 @@ public class InterfaceTest extends TestCase {
                 op.setTargetnemespace(new URI(WSDLConstants.WSDL2_0_NAMESPACE));
                 intfc.setOperation(op.getName(), op);
             }
-            intfc.setName("Interface"+i);
+            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "Interface"+i));
             array[i] = intfc;
         }
                 
         WSDLInterface inheritedInterface = new WSDLInterfaceImpl();
         for(int i=0; i< array.length; i++){
-            inheritedInterface.addSuperInterface(new QName(WSDLConstants.WSDL2_0_NAMESPACE, array[i].getName()), array[i]);
+            inheritedInterface.addSuperInterface(array[i].getName(), array[i]);
         }
         
         System.out.println(inheritedInterface.getAllOperations().size());
