@@ -247,16 +247,16 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
   <li>Deploying </li>
   <li>Running the client  </li>
 </ul>
-<<<<<<< .mine
+
 <p>It is assumed that the sample is already compiled. Please refer "Building Sample1" above.</p>
-=======
+
 <h3><strong>Building the sample </strong></h3>
 <p>Building the sample will take only one step provided that pre-conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the &quot;modules/samples&quot; directory and type </p>
 <p>&gt;ant compile </p>
 <p>and it will show the following output. </p>
 <p align="center"><img width="648" height="362" src="images/clip_image016.jpg"></p>
 <p>Now the user can actually go check for the sample1-all.jar in the lib directory and the packaged web service in the <strong>sample1.jar </strong>in the modules\samples\build\services directory. </p>
->>>>>>> .r154941
+
 <h3><strong>Deploying the sample </strong></h3>
 <p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis 2 engine at the runtime. </p>
 <p class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; <br> 
