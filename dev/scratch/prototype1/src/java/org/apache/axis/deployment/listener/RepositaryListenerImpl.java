@@ -98,7 +98,9 @@ public class RepositaryListenerImpl implements RepositaryListener, DeployCons {
             File dir = (File) current_jars.elementAt(0); // get first dir
             current_jars.remove(0);       // remove it
             files = dir.list();              // get list of files
-
+            if(files == null){
+                continue;
+            }
             for (int i = 0; i < files.length; i++) { // iterate
                 File f = new File(dir, files[i]);
                 if (f.isDirectory()) {        // see if it's a directory

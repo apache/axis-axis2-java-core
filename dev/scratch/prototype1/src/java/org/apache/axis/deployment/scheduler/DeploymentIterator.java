@@ -24,31 +24,10 @@ import java.util.Calendar;
  *
  */
 public class DeploymentIterator implements ScheduleIterator {
-
-    private int hourOfDay = 0;
-    private int minute = 0;
-    private int second = 0;
-
     private Calendar calendar = Calendar.getInstance();
-    private Date date = new Date();
 
-    public DeploymentIterator(int hourOfDay, int minute, int second) {
-        this(hourOfDay, minute, second, new Date());
-    }
+    public DeploymentIterator(){
 
-    public DeploymentIterator(int hourOfDay, int minute, int second, Date date) {
-        this.hourOfDay = hourOfDay;
-        this.minute = minute;
-        this.second = second;
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, second);
-        calendar.set(Calendar.MILLISECOND, 0);
-        if (!calendar.getTime().before(date)) {
-            // calendar.add(Calendar.MINUTE, -1);
-            calendar.add(Calendar.SECOND, -10);
-        }
     }
 
     public Date next() {

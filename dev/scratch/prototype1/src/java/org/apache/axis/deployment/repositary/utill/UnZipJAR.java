@@ -54,9 +54,10 @@ public class UnZipJAR implements DeployCons {
                 if (entry.getName().equals(SERVICEXML)) {
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
                     service = schme.parseServiceXML();
+                    break;
                 }
             }
-            zin.closeEntry();
+          //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,9 +78,10 @@ public class UnZipJAR implements DeployCons {
                 if (entry.getName().equals(MODULEXML)) {
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
                     module = schme.procesModuleXML();
+                    break;
                 }
             }
-            zin.closeEntry();
+          //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
             e.printStackTrace();

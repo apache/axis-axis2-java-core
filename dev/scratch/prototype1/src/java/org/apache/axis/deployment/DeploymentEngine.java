@@ -16,12 +16,7 @@ import org.apache.axis.engine.registry.*;
 import org.apache.axis.providers.SimpleJavaProvider;
 
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.*;
 import java.util.Vector;
 
 
@@ -48,8 +43,6 @@ import java.util.Vector;
 public class DeploymentEngine implements DeployCons {
 
     private final Scheduler scheduler = new Scheduler();
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS");
-    private final int hourOfDay, minute, second;
     /**
      * This will store all the web Services to deploye
      */
@@ -87,11 +80,6 @@ public class DeploymentEngine implements DeployCons {
      * listent.
      */
     public DeploymentEngine(String RepositaryName){
-        Date date = new Date();
-       // Calender cal = new Calnder();
-        this.hourOfDay = date.getHours();
-        this.minute = date.getMinutes();
-        this.second = date.getSeconds();
         this.folderName = RepositaryName;
     }
 
@@ -129,16 +117,11 @@ public class DeploymentEngine implements DeployCons {
 
 
     public DeploymentEngine() {
-        Date date = new Date();
-        this.hourOfDay = date.getHours();
-        this.minute = date.getMinutes();
-        this.second = date.getSeconds();
     }
 
     public void addService(ServiceMetaData serviceMetaData) throws PhaseException, AxisFault {
         servicelist.add(serviceMetaData);
         addnewService(serviceMetaData);
-        // serviceMetaData.prinData();
         System.out.println("Numbetr of service" + engineRegistry.getServiceCount());
     }
 
@@ -165,7 +148,7 @@ public class DeploymentEngine implements DeployCons {
      *
      */
     private void startSearch(DeploymentEngine engine) {
-        scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator(hourOfDay, minute, second));
+        scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
     private EngineRegistry createEngineRegistry() throws AxisFault {

@@ -1,21 +1,11 @@
 package org.apache.axis.deployment;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.mxp1.MXParserFactory;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.DeployCons;
-import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.deployment.metadata.*;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
-import org.apache.axis.deployment.metadata.ModuleMetaData;
-import org.apache.axis.deployment.metadata.*;
-import org.apache.axis.deployment.metadata.ServiceMetaData;
 
+import javax.xml.stream.*;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
 
 
 /**
@@ -59,7 +49,10 @@ public class DeploymentParser implements DeployCons {
     //to get the input stream
     private InputStream inputStream;
     // Referance to XMLPullPasrser
-    private XmlPullParser pullparser;
+
+    // private XmlPullParser pullparser;
+
+    private XMLStreamReader pullparser;
 
     /**
      * referebce to the deployment engine
@@ -76,32 +69,28 @@ public class DeploymentParser implements DeployCons {
         this.inputStream = inputStream;
         this.dpengine = engine;
         this.servicename = servicename;
-        try {
-            XmlPullParserFactory xmlPullParserFactory = MXParserFactory.newInstance();
-            xmlPullParserFactory.setNamespaceAware(true);
-            pullparser = xmlPullParserFactory.newPullParser();
-            pullparser.setInput(new InputStreamReader(inputStream));
-        } catch (Exception e) {
-            //todo handle this exception in good manner
-            e.printStackTrace();
-        }
 
+        try {
+            pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        }
     }
+
 
     public DeploymentParser(InputStream inputStream, DeploymentEngine engine){
         this.inputStream = inputStream;
         this.dpengine = engine;
         try {
-            XmlPullParserFactory xmlPullParserFactory = MXParserFactory.newInstance();
-            xmlPullParserFactory.setNamespaceAware(true);
-            pullparser = xmlPullParserFactory.newPullParser();
-            pullparser.setInput(new InputStreamReader(inputStream));
-        } catch (Exception e) {
-            //todo handle this exception in good manner
-            e.printStackTrace();
+            pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
     }
-
 
     public ServiceMetaData parseServiceXML() throws DeploymentException, PhaseException {
         //To check whether document end tag has encountered
@@ -110,28 +99,29 @@ public class DeploymentParser implements DeployCons {
 
         try {
             while (!END_DOCUMENT) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType =  pullparser.next();
+
+                //  int eventType = pullparser.getEventType();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
                     // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName();
                     if (ST.equals(serviceXMLST)) {
                         service = procesServiceXML();
                         service.setName(servicename);
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
-                } else if (eventType == XmlPullParser.END_TAG) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     // procesEndElement();
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     // processCDATA();
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // processComment();
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     // if the event is not white space processText will invoke
                     //  if(! pullparser.isWhitespace())
                     //  processText();
@@ -140,17 +130,15 @@ public class DeploymentParser implements DeployCons {
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         }
         return service;
     }
 
 
     private void processStartElement() throws DeploymentException, PhaseException {
-        String ST = pullparser.getName();
+        String ST = pullparser.getLocalName();
         if (ST.equals(serviceXMLST)) {
             ServiceMetaData service = procesServiceXML();
             service.setName(servicename);
@@ -163,31 +151,30 @@ public class DeploymentParser implements DeployCons {
      * To process server.xml
      */
     public  void procesServerXML(ServerMetaData serverMetaData ) throws DeploymentException{
-        int attribCount = pullparser.getAttributeCount();
-        if (attribCount > 0) {
-            for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i);
-                String attvalue = pullparser.getAttributeValue(i);
-                if(attname.equals(ServerMetaData.SERVERNAME)){
-                    serverMetaData.setName(attvalue);
-                }
-            }
-        }
-        boolean END_DOCUMENT = false;
-
         try {
+            boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                     break;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName(); //Staring tag name
-                    if (ST.equals(PARAMETERST)) {
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName(); //Staring tag name
+                    if(ST.equals(serverXMLST)){
+                        int attribCount = pullparser.getAttributeCount();
+                        if (attribCount > 0) {
+                            for (int i = 0; i < attribCount; i++) {
+                                String attname = pullparser.getAttributeLocalName(i);
+                                String attprifix = pullparser.getAttributePrefix(i);
+                                String attnamespace = pullparser.getAttributeNamespace(i);
+                                String attvalue = pullparser.getAttributeValue(i);
+                                if(attname.equals(ServerMetaData.SERVERNAME)){
+                                    serverMetaData.setName(attvalue);
+                                }
+                            }
+                        }
+                    }   else  if (ST.equals(PARAMETERST)) {
                         ParameterMetaData parameter = processParameter();
                         serverMetaData.appParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
@@ -201,25 +188,20 @@ public class DeploymentParser implements DeployCons {
                     }   else if (ST.equals(PHASE_ORDER)){
                         processPhaseOrder(serverMetaData);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     // this wont meet here :)
                     // and to be removed
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     // I think it is not need to support this
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // I think it is not need to support this
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     // this wont meet here :)
                     // and to be removed
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (DeploymentException e) {
             throw new DeploymentException(e);
         }
@@ -233,7 +215,7 @@ public class DeploymentParser implements DeployCons {
         ServiceMetaData service = new ServiceMetaData();
         if (attribCount == 3) {
             for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
+                String attname = pullparser.getAttributeLocalName(i);
                 String attprifix = pullparser.getAttributePrefix(i);
                 String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
@@ -258,14 +240,13 @@ public class DeploymentParser implements DeployCons {
         boolean END_DOCUMENT = false;
         try {
             while (!END_DOCUMENT) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                     break;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName(); //Staring tag name
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName(); //Staring tag name
                     if (ST.equals(PARAMETERST)) {
                         ParameterMetaData parameter = processParameter();
                         service.appParameter(parameter);
@@ -289,14 +270,14 @@ public class DeploymentParser implements DeployCons {
                         ModuleMetaData moduleMetaData = getModule();//processModule();
                         service.addModules(moduleMetaData);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     // this wont meet here :)
                     // and to be removed
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     // I think it is not need to support this
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // I think it is not need to support this
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     // this wont meet here :)
                     // and to be removed
                 } else {
@@ -304,10 +285,8 @@ public class DeploymentParser implements DeployCons {
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         }
         return service;
     }
@@ -319,12 +298,12 @@ public class DeploymentParser implements DeployCons {
      * @throws org.apache.axis.deployment.DeploymentException
      */
     private ParameterMetaData processParameter() throws DeploymentException {
-        String name = pullparser.getName();
+        String name = pullparser.getLocalName();
         ParameterMetaData parameter = new ParameterMetaData(name);
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 2) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
+                String attname = pullparser.getAttributeLocalName(i);
                 String attprifix = pullparser.getAttributePrefix(i);
                 String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
@@ -349,36 +328,30 @@ public class DeploymentParser implements DeployCons {
         //todo this should change to support xsdany
         try {
             while (!END_PARAMETER) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType =  pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
                     // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_PARAMETER = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(PARAMETERST)) {
                         END_PARAMETER = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -393,13 +366,13 @@ public class DeploymentParser implements DeployCons {
      * @throws org.apache.axis.deployment.DeploymentException
      */
     private HandlerMetaData processHandler() throws DeploymentException {
-        String name = pullparser.getName();
+        String name = pullparser.getLocalName();
         boolean ref_name = false;
         HandlerMetaData handler = new HandlerMetaData();
         int attribCount = pullparser.getAttributeCount();
 
         for (int i = 0; i < attribCount; i++) {
-            String attname = pullparser.getAttributeName(i);
+            String attname = pullparser.getAttributeLocalName(i);
             String attprifix = pullparser.getAttributePrefix(i);
             String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
             String attvalue = pullparser.getAttributeValue(i);
@@ -428,20 +401,19 @@ public class DeploymentParser implements DeployCons {
         //todo this should change to support xsdany
         try {
             while (!END_HANDLER) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
                     // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_HANDLER = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String tagnae = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(HandlerMetaData.ORDER)) {
                         attribCount = pullparser.getAttributeCount();
                         for (int i = 0; i < attribCount; i++) {
-                            String attname = pullparser.getAttributeName(i);
+                            String attname = pullparser.getAttributeLocalName(i);
                             String attprifix = pullparser.getAttributePrefix(i);
                             String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                             String attvalue = pullparser.getAttributeValue(i);
@@ -473,27 +445,25 @@ public class DeploymentParser implements DeployCons {
                         ParameterMetaData parameter = processParameter();
                         handler.addParameter(parameter);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(HANDERST)) {
                         END_HANDLER = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
                 } else {
                     //  throw new UnsupportedOperationException();
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -514,37 +484,34 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_TYPEMAPPING) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_TYPEMAPPING = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
 
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(TYPEMAPPINGST)) {
                         END_TYPEMAPPING = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -552,12 +519,12 @@ public class DeploymentParser implements DeployCons {
 
 
     private OperationMetaData processOperation() throws DeploymentException {
-        String name = pullparser.getName();
+        String name = pullparser.getLocalName();
         OperationMetaData operation = new OperationMetaData();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 4) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
+                String attname = pullparser.getAttributeLocalName(i);
                 String attprifix = pullparser.getAttributePrefix(i);
                 String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
@@ -580,16 +547,15 @@ public class DeploymentParser implements DeployCons {
 //todo this should change to support xsdany
         try {
             while (!END_OPERATION) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_OPERATION = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
                         ModuleMetaData module = processModule();
                         operation.setModule(module);
@@ -604,27 +570,25 @@ public class DeploymentParser implements DeployCons {
                         operation.setOutFlow(outFlow);
                     }
 
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(OPRATIONST)) {
                         END_OPERATION = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         }
         return operation;
     }
@@ -642,37 +606,34 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_BEANMAPPING) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType =pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_BEANMAPPING = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
 
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(BEANMAPPINGST)) {
                         END_BEANMAPPING = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         }
     }
 
@@ -683,7 +644,7 @@ public class DeploymentParser implements DeployCons {
 
         if(attribCount > 0 ){
             for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
+                String attname = pullparser.getAttributeLocalName(i);
                 String attprifix = pullparser.getAttributePrefix(i);
                 String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
@@ -697,35 +658,32 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_MODULE) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_MODULE = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
 
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(moduleXMLST)) {
                         END_MODULE = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -743,7 +701,7 @@ public class DeploymentParser implements DeployCons {
 
         if(attribCount > 0 ){
             for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeName(i);
+                String attname = pullparser.getAttributeLocalName(i);
                 String attprifix = pullparser.getAttributePrefix(i);
                 String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
@@ -771,14 +729,13 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_MODULE) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_MODULE = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName();
                     if (ST.equals(PARAMETERST)) {
                         ParameterMetaData parameter = processParameter();
                         module.addParameter(parameter);
@@ -794,28 +751,26 @@ public class DeploymentParser implements DeployCons {
                     }
                     //todo has to be implemnt this
                     // complete implenatation
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(moduleXMLST)) {
                         END_MODULE = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
-        } catch (Exception e) {
+        }catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
 
@@ -830,40 +785,38 @@ public class DeploymentParser implements DeployCons {
             while (!END_INFLOW) {
                 pullparser.next();
                 int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_INFLOW = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String tagnae = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         inFlow.addHandler(handler);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(INFLOWST)) {
                         END_INFLOW = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     //  throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
         return inFlow;
@@ -876,41 +829,38 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_OUTFLOW) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType =  pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_OUTFLOW = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String tagnae = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         outFlow.addHandler(handler);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(OUTFLOWST)) {
                         END_OUTFLOW = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     //   throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -925,41 +875,38 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_FAULTFLOW) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
 // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_FAULTFLOW = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String tagnae = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         faultFlow.addHandler(handler);
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(FAILTFLOWST)) {
                         END_FAULTFLOW = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
 //do nothing
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
 // do nothing
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     // throw new UnsupportedOperationException();
 //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
@@ -972,15 +919,14 @@ public class DeploymentParser implements DeployCons {
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_PHASEORDER) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     END_PHASEORDER = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String tagnae = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(PHASEST)) {
-                        String attname = pullparser.getAttributeName(0);
+                        String attname = pullparser.getAttributeLocalName(0);
                         String attprifix = pullparser.getAttributePrefix(0);
                         String attnamespace = pullparser.getAttributeNamespace(0); // attprifix is same as attval
                         String attvalue = pullparser.getAttributeValue(0);
@@ -989,25 +935,23 @@ public class DeploymentParser implements DeployCons {
                             server.addPhases(phase);
                         }
                     }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    String endtagname = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(PHASE_ORDER)) {
                         END_PHASEORDER = true;
                         break;
                     }
-                } else if (eventType == XmlPullParser.CDSECT) {
-                } else if (eventType == XmlPullParser.COMMENT) {
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
                 } else {
                     throw new UnsupportedOperationException();
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
     }
@@ -1038,28 +982,27 @@ public class DeploymentParser implements DeployCons {
 
         try {
             while (!END_DOCUMENT) {
-                pullparser.next();
-                int eventType = pullparser.getEventType();
-                if (eventType == XmlPullParser.START_DOCUMENT) {
+                int eventType =  pullparser.next();
+                if (eventType == XMLStreamConstants.START_DOCUMENT) {
                     // processStartDocument();
-                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    String ST = pullparser.getName();
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
                         module = processModule();
                         // module.setName(servicename);
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
-                } else if (eventType == XmlPullParser.END_TAG) {
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     // procesEndElement();
-                } else if (eventType == XmlPullParser.CDSECT) {
+                } else if (eventType == XMLStreamConstants.CDATA) {
                     // processCDATA();
-                } else if (eventType == XmlPullParser.COMMENT) {
+                } else if (eventType == XMLStreamConstants.COMMENT) {
                     // processComment();
-                } else if (eventType == XmlPullParser.TEXT) {
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     // if the event is not white space processText will invoke
                     //  if(! pullparser.isWhitespace())
                     //  processText();
@@ -1068,10 +1011,8 @@ public class DeploymentParser implements DeployCons {
                     //any other events are not interesting :)
                 }
             }
-        } catch (XmlPullParserException e) {
+        } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (IOException e) {
-            throw new DeploymentException("IO Exception", e);
         }
         return module;
     }
