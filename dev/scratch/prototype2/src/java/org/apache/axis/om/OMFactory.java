@@ -35,6 +35,17 @@ public abstract class OMFactory {
      */
     public abstract OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
+    /** This is almost the same as as createOMElement(localName,OMNamespace) method above.
+     * But some people may, for some reason, need to use the conventional method of putting a namespace.
+     * Or in other words people might not want to use the new OMNamespace.
+     * Well, this is for those people.
+     *
+     * @param localName
+     * @param namespaceURI
+     * @param namespacePrefix
+     * @return
+     */
+    public abstract OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix);
 
 
     /**

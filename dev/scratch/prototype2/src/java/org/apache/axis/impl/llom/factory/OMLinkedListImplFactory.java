@@ -55,21 +55,13 @@ public class OMLinkedListImplFactory extends OMFactory {
         return element;
     }
 
-//    public OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent) {
-//        return new OMNamedNodeImpl(localName, ns, parent);
-//    }
-//
-//    public OMNamedNode createOMNamedNode(OMElement parent) {
-//        return new OMNamedNodeImpl(parent);
-//    }
+    public OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix) {
+        return this.createOMElement(localName, this.createOMNamespace(namespaceURI,namespacePrefix));
+    }
 
     public OMNamespace createOMNamespace(String uri, String prefix) {
         return new OMNamespaceImpl(uri, prefix);
     }
-
-//    public OMNode createOMNode(OMElement parent) {
-//        return new OMNodeImpl(parent);
-//    }
 
     public OMText createText(OMElement parent, String text) {
 		OMTextImpl textNode = new OMTextImpl(parent, text);
@@ -97,10 +89,6 @@ public class OMLinkedListImplFactory extends OMFactory {
     public SOAPEnvelope createSOAPEnvelope(OMNamespace ns) {
         return new SOAPEnvelopeImpl(ns);
     }
-
-
-
-    //TODO there should be a method to create a SOAPEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) {
         return new SOAPHeaderImpl(envelope);
