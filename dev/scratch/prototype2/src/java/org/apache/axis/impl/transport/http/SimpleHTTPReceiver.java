@@ -165,7 +165,6 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      * @param httpRequest StringBuffer for GET / POST
      * @param cookie first cookie header (if doSessions)
      * @param cookie2 second cookie header (if doSessions)
-     * @param headers HTTP headers to transfer to MIME headers
      * @return Content-Length
      */
     protected int parseHeaders(NonBlockingBufferedInputStream is,
@@ -472,7 +471,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
 
     /* (non-Javadoc)
-     * @see org.apache.axis.impl.transport.AbstractTransportReciver#storeOutputInfo(org.apache.axis.context.MessageContext, java.io.OutputStream)
+     * @see org.apache.axis.impl.transport.AbstractTransportReceiver#storeOutputInfo(org.apache.axis.context.MessageContext, java.io.OutputStream)
      */
     protected void storeOutputInfo(
         MessageContext msgContext,

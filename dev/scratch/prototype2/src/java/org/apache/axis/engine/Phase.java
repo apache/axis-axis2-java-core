@@ -87,7 +87,7 @@ public class Phase extends AbstractHandler implements Handler{
         return phaseName;
     }
     /**
-     * @param name The name to set.
+     * @param phaseName The name to set.
      */
     public void setName(String phaseName) {
         this.phaseName = phaseName;

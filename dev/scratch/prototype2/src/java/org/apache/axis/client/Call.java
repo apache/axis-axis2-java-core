@@ -86,7 +86,7 @@ public class Call {
             
             MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
             reposne.setServerSide(false);
-            engine.recive(reposne);
+            engine.receive(reposne);
             SOAPEnvelope envelope = reposne.getEnvelope();
             
             SOAPBody body = envelope.getBody();
@@ -149,7 +149,7 @@ public class Call {
                         log.info("Starting new Thread "); 
                         MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
                         reposne.setServerSide(false);
-                        engine.recive(reposne);
+                        engine.receive(reposne);
                         SOAPEnvelope envelope = reposne.getEnvelope();
                         
                         SOAPBody body = envelope.getBody();

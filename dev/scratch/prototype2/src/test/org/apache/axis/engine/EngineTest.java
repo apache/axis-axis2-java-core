@@ -61,9 +61,9 @@ public class EngineTest extends TestCase{
         AxisEngine engine = new AxisEngine(engineRegistry);
         engine.send(mc);
     }
-    public void testRecive()throws Exception{
+    public void testReceive()throws Exception{
         AxisEngine engine = new AxisEngine(engineRegistry);
-        engine.recive(mc);
+        engine.receive(mc);
     }
     protected void tearDown() throws Exception {
     }

@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *  There is one engine for the Server and the Client. the send() and recive() 
+ *  There is one engine for the Server and the Client. the send() and receive()
  *  Methods are the basic operations the Sync, Async messageing are build on top.
  *  Two methods will find and execute the <code>CommonExecuter</code>'s Transport,
  *  Global,Service.  
@@ -59,7 +59,7 @@ public class AxisEngine {
         log.info("end the send()");
     }
     
-    public void recive(MessageContext mc)throws AxisFault{
+    public void receive(MessageContext mc)throws AxisFault{
         Service service = null;
         try{
             if(mc.isServerSide()){
@@ -74,13 +74,13 @@ public class AxisEngine {
             if(mc.isServerSide()){
                 OpNameFinder finder = new OpNameFinder();
                 finder.invoke(mc);
-                Receiver reciver = ReceiverLocator.locateReciver(mc);
-                reciver.invoke(mc);
+                Receiver receiver = ReceiverLocator.locateReceiver(mc);
+                receiver.invoke(mc);
             }
         }catch(AxisFault e){
             handleFault(mc,e,service);
         }
-        log.info("end the recive()");
+        log.info("end the receive()");
     }    
     
     private void sendTheMessage(MessageContext msgCtx)throws AxisFault{
@@ -93,7 +93,7 @@ public class AxisEngine {
             //TODO log and exit
             log.error("Error in fault flow",e);
         }else{
-            log.debug("recive failed",e);
+            log.debug("receive failed",e);
             mc.setProcessingFault(true);
             if(service != null){
                 ExecutionChain faultExeChain = service.getFaultExecutionChain();

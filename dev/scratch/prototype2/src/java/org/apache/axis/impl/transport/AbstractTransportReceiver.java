@@ -91,7 +91,7 @@ public abstract class AbstractTransportReceiver implements Runnable {
                     if (socket != null) {
                         MessageContext msgContext = parseTheTransport(engine,socket.getInputStream());
                         storeOutputInfo(msgContext,socket.getOutputStream());
-                        engine.recive(msgContext);
+                        engine.receive(msgContext);
                         this.socket.close();
                         this.socket = null;
                     }
