@@ -21,15 +21,10 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis.engine.registry.MockFlow;
-import org.apache.axis.engine.registry.SimpleEngineRegistry;
-import org.apache.axis.engine.registry.SimpleGlobal;
-import org.apache.axis.engine.registry.SimpleModule;
-import org.apache.axis.engine.registry.SimpleOperation;
-import org.apache.axis.engine.registry.SimpleService;
-import org.apache.axis.engine.registry.SimpleTransport;
 import org.apache.axis.engine.registry.SpeakingProvider;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Module;
+import org.apache.axis.registry.SimpleEngineRegistry;
 
 /**
  * @author hemapani@opensource.lk

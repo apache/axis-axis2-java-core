@@ -27,9 +27,8 @@ public class SpeakingHandler extends AbstractEngineElement implements Handler {
     private String message;
     private QName name;
     
-    public SpeakingHandler(){
-        
-    
+    public SpeakingHandler(QName name){
+        this.name = name;
     }
     public SpeakingHandler(String message){
         this.message = message;
