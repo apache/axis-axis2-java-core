@@ -150,6 +150,16 @@
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
 	<dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <properties>
+                <module>true</module>
+            </properties>
+		<url>http://dist.codehaus.org/stax/jars/</url>
+        </dependency>
+
+	<dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
