@@ -47,7 +47,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#addModule(javax.xml.namespace.QName)
      */
     public void addModule(QName moduleref) {
-        if( null == moduleref)return;
+        if( moduleref == null)return;
        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
        collectionModule.add(moduleref);
     }
@@ -71,7 +71,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
     public void addOperation(AxisOperation operation) {
         //todo The key has been changed from the qname to the local name because
         //todo when comparing the namespace will not be available
-        if(null != operation){
+        if(operation != null){
             this.operationsMap.put(operation.getName().getLocalPart(),operation);
         }
     }
@@ -80,7 +80,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#setClassLoader(java.lang.ClassLoader)
      */
     public void setClassLoader(ClassLoader classLoader) {
-        if(null != classLoader){
+        if(classLoader != null){
             this.setComponentProperty(CLASSLOADER_KEY, classLoader);
         }
     }
@@ -96,7 +96,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#setContextPath(java.lang.String)
      */
     public void setContextPath(String contextPath) {
-        if(null != contextPath){
+        if(contextPath != null){
             this.setComponentProperty(CONTEXTPATH_KEY, contextPath);
         }
     }
@@ -112,7 +112,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#setProvider(org.apache.axis.engine.Provider)
      */
     public void setProvider(Provider provider) {
-        if(null != provider){
+        if(provider != null){
             this.setComponentProperty(PROVIDER_KEY, provider);
         }
     }
@@ -128,7 +128,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#setStyle(javax.swing.text.Style)
      */
     public void setStyle(Style style) {
-        if(null != style){
+        if(style != null){
             this.setComponentProperty(STYLE_KEY, style);
         }
     }
@@ -163,7 +163,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.ParameterInclude#addParameter(org.apache.axis.description.Parameter)
      */
     public void addParameter(Parameter param) {
-        if(null == param) return;
+        if(param == null) return;
         ParameterIncludeImpl paramInclude =
              (ParameterIncludeImpl)this.getComponentProperty(PARAMETER_KEY);
         paramInclude.addParameter(param);
@@ -188,7 +188,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.FlowInclude#setInFlow(org.apache.axis.description.Flow)
      */
     public void setInFlow(Flow inFlow) {
-        if(null != inFlow){
+        if(inFlow != null){
             this.setComponentProperty(INFLOW_KEY, inFlow);
         }
     }
@@ -204,7 +204,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.FlowInclude#setOutFlow(org.apache.axis.description.Flow)
      */
     public void setOutFlow(Flow outFlow){
-        if(null != outFlow){
+        if(outFlow != null){
             this.setComponentProperty(OUTFLOW_KEY, outFlow);
         }
     }
@@ -220,7 +220,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.FlowInclude#setFaultFlow(org.apache.axis.description.Flow)
      */
     public void setFaultFlow(Flow faultFlow) {
-        if(null != faultFlow){
+        if(faultFlow != null){
             this.setComponentProperty(FAULTFLOW_KEY, faultFlow);
         }
     }

@@ -28,7 +28,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     /**
      * to store curreently checking jars
      */
-    private List current_jars;
+    private List currentJars;
     /**
      * Referance to a WSInfoList
      */
@@ -109,14 +109,14 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      */
     private void searchWS(String folderName, int type) {
         String files[];
-        current_jars = new ArrayList();
+        currentJars = new ArrayList();
         File root = new File(folderName);
         // adding the root folder to the vector
-        current_jars.add(root);
+        currentJars.add(root);
 
-        while (current_jars.size() > 0) {         // loop until empty
-            File dir = (File) current_jars.get(0); // get first dir
-            current_jars.remove(0);       // remove it
+        while (currentJars.size() > 0) {         // loop until empty
+            File dir = (File) currentJars.get(0); // get first dir
+            currentJars.remove(0);       // remove it
             files = dir.list();              // get list of files
             if (files == null) {
                 continue;
@@ -124,7 +124,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
             for (int i = 0; i < files.length; i++) { // iterate
                 File f = new File(dir, files[i]);
                 if (f.isDirectory()) {        // see if it's a directory
-                    current_jars.add(0, f);
+                    currentJars.add(0, f);
                 } // add dir to start of agenda
                 else if (isJarFile(f.getName())) {
                     wsinfoList.addWSInfoItem(f, type);

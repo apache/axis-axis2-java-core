@@ -18,6 +18,7 @@ package org.apache.axis.description;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -38,13 +39,13 @@ import org.apache.axis.engine.AxisFault;
 public class AxisGlobal implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
-    protected Vector modules;
+    protected List modules;
 
     //TODO provide a way to store name (name attribute value server.xml)
     public AxisGlobal(){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
-        modules = new Vector();
+        modules = new ArrayList();
     }
 
     public void addModule(QName moduleref) {

@@ -42,7 +42,7 @@ public class OpNameFinder extends AbstractHandler {
         int style = msgContext.getMessageStyle();
 
 
-        if (Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL) {
+        if (style == Constants.SOAP_STYLE_RPC_ENCODED || style == Constants.SOAP_STYLE_RPC_LITERAL) {
 			SOAPEnvelope envelope = msgContext.getEnvelope();
 			SOAPBody body = envelope.getBody();
 			OMNode node = body.getFirstChild();

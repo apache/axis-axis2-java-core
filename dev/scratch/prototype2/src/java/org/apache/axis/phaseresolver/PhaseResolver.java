@@ -1,9 +1,6 @@
 package org.apache.axis.phaseresolver;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
@@ -224,7 +221,7 @@ public class PhaseResolver {
     }
 
     public void buildGlobalChains(AxisGlobal global) throws AxisFault, PhaseException {
-        Vector modules = (Vector)global.getModules();
+        List modules = (List)global.getModules();
         int count = modules.size();
         QName moduleName;
         AxisModule module;

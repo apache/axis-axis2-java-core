@@ -26,11 +26,11 @@ import junit.framework.TestCase;
 public abstract class AbstractTestCase
 	extends TestCase 
 {
-	protected String testDir = "src/test/";
-	protected String sampleDir = "src/samples/";
-	protected String outDir = "target/generated/samples/";
-	protected String tempDir = "target/generated/temp";
-	protected String testResourceDir = "src/test-resources";
+	protected String testDir = "src" + File.separator + "test" + File.separator;
+	protected String sampleDir = "src" + File.separator + "samples"  + File.separator;
+	protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
+	protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
+	protected String testResourceDir = "src" + File.separator + "test-resources";
 
 
     /**
@@ -40,8 +40,8 @@ public abstract class AbstractTestCase
 	public String basedir = System.getProperty("basedir");
     
 	/**
-	 * Constructor.
-	 */
+     * @param testName
+     */
 	public AbstractTestCase(String testName)
 	{
 		super(testName);
