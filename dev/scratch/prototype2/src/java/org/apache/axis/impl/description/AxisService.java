@@ -120,15 +120,19 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getOperation(javax.xml.namespace.QName)
      */
     public AxisOperation getOperation(QName operationName) {
-        return (AxisOperation)this.operationsMap.get(operationName);
+        //todo The key has been changed from the qname to the local name because
+        //todo when comparing the namespace will not be available
+        return (AxisOperation)this.operationsMap.get(operationName.getLocalPart());
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#addOperation(org.apache.axis.description.AxisOperation)
      */
     public void addOperation(AxisOperation operation) {
+        //todo The key has been changed from the qname to the local name because
+        //todo when comparing the namespace will not be available
         if(null != operation){
-            this.operationsMap.put(operation.getName(),operation);
+            this.operationsMap.put(operation.getName().getLocalPart(),operation);
         }
     }
 
