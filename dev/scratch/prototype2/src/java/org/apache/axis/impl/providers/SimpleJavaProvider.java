@@ -16,10 +16,16 @@
 
 package org.apache.axis.impl.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
@@ -31,12 +37,6 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 
 
 /**
@@ -59,15 +59,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             throws AxisFault {
         try {
             AxisService service = msgContext.getService();
-            classLoader = service.getClassLoader();
-            Parameter classParm = service.getParameter("className");
-            String className = (String) classParm.getValue();
-            if (className == null)
-                throw new AxisFault("className parameter is null");
-            if (classLoader == null) {
-                classLoader = Thread.currentThread().getContextClassLoader();
-            }
-            Class implClass = Class.forName(className, true, classLoader);
+            Class implClass = service.getServiceClass(); 
             return implClass.newInstance();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

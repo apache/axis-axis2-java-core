@@ -16,12 +16,16 @@
 
 package org.apache.axis.engine;
 
-import junit.framework.TestCase;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.description.AxisService;
+import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
-import java.io.OutputStream;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.impl.description.AxisService;
 
 public class EngineTest extends TestCase{
     private QName serviceName = new QName("","EchoService");
@@ -41,7 +45,7 @@ public class EngineTest extends TestCase{
         engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         mc = new MessageContext(engineRegistry);
         AxisService service = engineRegistry.getService(serviceName);
-        mc.setProperty(MessageContext.REQUEST_URL,"/axis/services/EchoService");
+        mc.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,"/axis/services/EchoService"));
         mc.setOperation(service.getOperation(operationName));
         
         OutputStream out = System.out;

@@ -94,7 +94,8 @@ public class Call extends AbstractCall {
             OutputStream out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(targetEPR);
+
 
             engine.send(msgctx);
 
@@ -117,7 +118,7 @@ public class Call extends AbstractCall {
             OutputStream out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(targetEPR);
             engine.send(msgctx);
 
             //todo dose the 202 response  come throgh the same connection
@@ -146,7 +147,7 @@ public class Call extends AbstractCall {
             
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(targetEPR);
             engine.send(msgctx);
 
             MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
@@ -176,7 +177,7 @@ public class Call extends AbstractCall {
             msgctx.setEnvelope(envelope);
 
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(targetEPR);
           
            
            // only the transport blocked , client dose not hang

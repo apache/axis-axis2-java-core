@@ -22,9 +22,7 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
@@ -57,8 +55,7 @@ public class EchoTest extends AbstractTestCase{
         
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className",Echo.class.getName());
-        service.addParameter(classParam);
+        service.setServiceClass(Echo.class);
         service.setProvider(new SimpleJavaProvider());
 
         AxisOperation operation1 = new SimpleAxisOperationImpl(operationName1);

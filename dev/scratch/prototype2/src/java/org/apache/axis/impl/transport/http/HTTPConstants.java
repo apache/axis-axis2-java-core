@@ -121,4 +121,15 @@ public class HTTPConstants {
     public static final String PLUGIN_WRITER = "transport.http.plugin.writer";
     public static final String PLUGIN_LOG = "transport.http.plugin.log";
     public static final String PLUGIN_EXCEPTION_LOG = "transport.http.plugin.exceptionLog";
+    
+    
+    public static final byte OK[] = ("200 OK").getBytes();
+    public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();
+    public static final byte UNAUTH[] = ("401 Unauthorized").getBytes();
+    public static final byte SENDER[] = "400".getBytes();
+    public static final byte ISE[] = ("500 Internal server error").getBytes();
+    // HTTP prefix
+    public static byte HTTP[] = "HTTP/1.0 ".getBytes();
+
+
 }

@@ -16,6 +16,17 @@
 
 package org.apache.axis.impl.transport.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReferenceType;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
@@ -32,14 +43,6 @@ import org.apache.axis.transport.AbstractTransportReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
 
 public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Runnable {
     protected static Log log =
@@ -52,15 +55,6 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     // private Socket socket;
     
 
-    // HTTP status codes
-    protected static byte OK[] = ("200 OK").getBytes();
-    protected static byte NOCONTENT[] = ("202 OK\n\n").getBytes();
-    protected static byte UNAUTH[] = ("401 Unauthorized").getBytes();
-    protected static byte SENDER[] = "400".getBytes();
-    protected static byte ISE[] = ("500 Internal server error").getBytes();
-
-    // HTTP prefix
-    protected static byte HTTP[] = "HTTP/1.0 ".getBytes();
 
     // Standard MIME headers for XML payload
     protected static byte XML_MIME_STUFF[] =
@@ -423,7 +417,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
         try {
             // assume the best
-            byte[] status = OK;
+            byte[] status = HTTPConstants.OK;
 
             // assume we're not getting WSDL
             boolean doWsdl = false;
@@ -461,7 +455,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
 
             String filePart = fileName.toString();
-            msgContext.setProperty(MessageContext.REQUEST_URL, filePart);
+            msgContext.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,filePart));
+
             if (httpRequest.toString().equals("GET")) {
                 throw new UnsupportedOperationException("GET not supported");
             } else {
@@ -497,8 +492,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                                    OutputStream out) throws AxisFault {
         try {
             // Send it on its way...
-            out.write(HTTP);
-            out.write(OK);
+            out.write(HTTPConstants.HTTP);
+            out.write(HTTPConstants.OK);
             out.write("\n\n".getBytes());
             log.info("status written");
             //We do not have any Addressing Headers to put

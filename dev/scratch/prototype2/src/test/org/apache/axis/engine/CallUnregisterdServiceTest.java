@@ -24,9 +24,7 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
@@ -59,8 +57,7 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
         engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className",Echo.class.getName());
-        service.addParameter(classParam);
+        service.setServiceClass(Echo.class);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
         

@@ -37,7 +37,7 @@ public class Invoker extends AbstractCall implements Runnable {
         final Correlator correlator = Correlator.getInstance();
         final String messageID = Long.toString(System.currentTimeMillis());
         try {
-            final URL url = (URL) reqMsgContext.getProperty(MessageContext.REQUEST_URL);
+            final URL url = new URL(reqMsgContext.getTo().getAddress());
             final URLConnection urlConnect = url.openConnection();
             urlConnect.setDoOutput(true);
 

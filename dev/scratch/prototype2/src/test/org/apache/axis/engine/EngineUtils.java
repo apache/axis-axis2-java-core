@@ -28,9 +28,7 @@ import org.apache.axis.description.EchoService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.MockFlow;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
@@ -85,10 +83,8 @@ public class EngineUtils {
         service.setOutFlow(new MockFlow("service outflow",5));
         service.setFaultFlow(new MockFlow("service faultflow",1));
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.setServiceClass(EchoService.class);
         
-        Parameter classParam = new ParameterImpl("className",EchoService.class.getName());
-        service.addParameter(classParam);
-         
         service.setProvider(new SimpleJavaProvider());
         
         AxisModule m1 = new AxisModule(new QName("","A Mdoule 1"));

@@ -40,8 +40,8 @@ public class TCPTrasnportSender extends AbstractTrasnportSender {
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) {
-        throw new UnsupportedOperationException("Addressing not suppotrted yet");
+    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) throws AxisFault {
+        return obtainOutPutStream(msgContext);
     }
 
     protected void finalizeSending() {

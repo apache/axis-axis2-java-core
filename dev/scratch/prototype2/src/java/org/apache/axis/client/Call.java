@@ -15,6 +15,8 @@
  */
 package org.apache.axis.client;
 
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReferenceType;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.engine.AxisEngine;
@@ -71,7 +73,7 @@ public class Call {
             OutputStream out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,url.toString()));
             engine.send(msgctx);
 
             MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
@@ -129,7 +131,7 @@ public class Call {
             OutputStream out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,url.toString()));
 
             engine.send(msgctx);
 
@@ -181,7 +183,7 @@ public class Call {
             OutputStream out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
-            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+            msgctx.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,url.toString()));
 
             engine.send(msgctx);
             //TODO

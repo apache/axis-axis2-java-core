@@ -16,13 +16,12 @@
 
 package org.apache.axis.impl.transport.http;
 
+import java.io.OutputStream;
+
+import org.apache.axis.addressing.EndpointReferenceType;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTrasnportSender;
-import org.apache.axis.addressing.EndpointReferenceType;
-
-import java.io.OutputStream;
-import java.net.URL;
 
 public class HTTPTrasnportSender extends AbstractTrasnportSender {
     protected OutputStream out;
@@ -41,8 +40,9 @@ public class HTTPTrasnportSender extends AbstractTrasnportSender {
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) {
-       throw new UnsupportedOperationException("Addressing not suppotrted yet");
+    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) throws AxisFault {
+        //TODO this is temporay work around
+        return obtainOutPutStream(msgContext);
     }
 
     protected void finalizeSending() {

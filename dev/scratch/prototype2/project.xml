@@ -155,6 +155,15 @@
       </resources>
 
     </unitTest>
+	
+	<sourceModifications>
+        <sourceModification>
+          <className>javax.servlet.http.HttpServlet</className>
+          <excludes>
+              <exclude>org/apache/axis/impl/transport/http/AxisServlet.java</exclude>
+          </excludes>
+     	</sourceModification>
+     </sourceModifications>
 
     <resources>
       <resource>

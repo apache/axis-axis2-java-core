@@ -70,8 +70,7 @@ public class TestSendReceive extends AbstractTestCase {
 
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className", Echo.class.getName());
-        service.addParameter(classParam);
+        service.setServiceClass(Echo.class);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
 
