@@ -2,7 +2,6 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.impl.llom.OMStAXWrapper;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
@@ -33,9 +32,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     private OMNode firstChild;
     private OMXMLParserWrapper builder;
     private OMAttributeImpl firstAttribute;
-    private ArrayList namespaces = new ArrayList(5);
-    // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
-    // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
+    private ArrayList namespaces;
     private ArrayList attributes;
 
     public OMElementImpl(OMElement parent) {
@@ -121,6 +118,13 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
+
+        if (namespaces == null) {
+            namespaces = new ArrayList(5);
+            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
+            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
+
+        }
         OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
         namespaces.add(ns);
         return ns;
@@ -128,8 +132,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
 
     //TODO  correct this
     public void setValue(String value) {
-       OMText txt = OMFactory.newInstance().createText(value);
-       this.addChild(txt);
+        OMText txt = OMFactory.newInstance().createText(value);
+        this.addChild(txt);
     }
 
     /**
@@ -137,6 +141,12 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
+        if (namespaces == null) {
+            namespaces = new ArrayList(5);
+            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
+            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
+
+        }
         namespaces.add(namespace);
         return namespace;
     }
@@ -179,19 +189,45 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         }
         // check in the current element
         ListIterator namespaceListIterator = namespaces.listIterator();
-        while (namespaceListIterator.hasNext()) {
-            OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
-            if (omNamespace.equals(uri, prefix)) {
-                return omNamespace;
+        if (prefix == null) {
+            while (namespaceListIterator.hasNext()) {
+                OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
+                if (omNamespace.getName().equals(uri)) {
+                    return omNamespace;
+                }
             }
-        }
+        } else {
+            while (namespaceListIterator.hasNext()) {
+                OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
+                if (omNamespace.equals(uri, prefix)) {
+                    return omNamespace;
+                }
+            }
 
+        }
         return null;
+
     }
 
     public Iterator getAllDeclaredNamespaces() {
-        if (namespaces==null){
-            return null;
+        if (namespaces == null) {
+
+            // no namespace declared in this element.
+            // return a null iterator
+            // have to look in to this later
+            return new Iterator(){
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+
+                public boolean hasNext(){
+                    return false;
+                }
+
+                public Object next() {
+                    throw new UnsupportedOperationException(); 
+                }
+            };
         }
 
         return namespaces.listIterator();
@@ -325,7 +361,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      *
      */
     public XMLStreamReader getPullParser(boolean cacheOff) {
-        if (builder==null && cacheOff)
+        if (builder == null && cacheOff)
             throw new UnsupportedOperationException("This element was not created in a manner to be switched");
         return new OMStAXWrapper(builder, this, cacheOff);
     }
