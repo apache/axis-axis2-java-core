@@ -16,6 +16,8 @@
 
 package org.apache.axis.engine;
 
+import java.io.OutputStream;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.transport.http.TCPTrasnportSender;
 
@@ -26,12 +28,17 @@ import org.apache.axis.impl.transport.http.TCPTrasnportSender;
 public class TransportSenderLocator {
     public static final String TRANSPORT_TCP = "TRANSPORT_TCP";
     
-    public static TransportSender locateTransPortSender(MessageContext msgContext){
+    public static TransportSender locateTransPortSender(MessageContext msgContext) throws AxisFault{
         String type= (String)msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+        OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
                                
         if( TransportSenderLocator.TRANSPORT_TCP.equals(type)){
-            return new TCPTrasnportSender();
+            if(out != null){
+                return new TCPTrasnportSender(out);
+            }else{
+                throw new AxisFault("if TCP trsport used there should be a propoerty named "+MessageContext.TRANSPORT_DATA);
+            }
         }
-        return null;
+        throw new AxisFault("No tranport found");
     }
 }

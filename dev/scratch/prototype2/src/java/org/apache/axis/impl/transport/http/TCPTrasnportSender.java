@@ -20,6 +20,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMEnvelope;
 
 import java.io.OutputStream;
@@ -28,11 +29,17 @@ import java.io.OutputStream;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class TCPTrasnportSender extends AbstractHandler implements TransportSender{
-
+    protected OutputStream out;
+    
+    public TCPTrasnportSender(OutputStream out){
+        this.out = out;
+    }
+    
     public void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
         OMEnvelope envelope = msgContext.getEnvelope();
-        //TODO write OM  
+        SimpleOMSerializer serializer = new SimpleOMSerializer();
+        serializer.serialize(envelope,this.out);
     }
 
     public void revoke(MessageContext msgContext) {

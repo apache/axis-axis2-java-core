@@ -81,7 +81,7 @@ public class EchoTest extends AbstractTestCase{
     	Reader rReader = new InputStreamReader(respose);
     	char[] charBuf = new char[1024];
     	while((index = rReader.read(charBuf)) > 0){
-
+    	        System.out.println(new String(charBuf));
     	}
     	
     	in.close();
