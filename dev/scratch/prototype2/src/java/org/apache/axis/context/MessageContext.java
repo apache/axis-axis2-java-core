@@ -22,6 +22,7 @@ import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.*;
 import org.apache.axis.impl.context.SimpleSessionContext;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.addressing.EndpointReference;
 
 import java.util.HashMap;
 
@@ -43,11 +44,11 @@ public class MessageContext {
     public static final String REQUEST_URL = "REQUEST_URL";
 
     private boolean processingFault = false;
-    private EndpointReferance to;
-    private EndpointReferance from;
-    private EndpointReferance relatesTo;
-    private EndpointReferance replyTo;
-    private EndpointReferance faultTo;
+    private EndpointReference to;
+    private EndpointReference from;
+    private EndpointReference relatesTo;
+    private EndpointReference replyTo;
+    private EndpointReference faultTo;
     
     private ExecutionChain chain;
     private AxisTransport transport;
@@ -78,14 +79,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferance getFaultTo() {
+    public EndpointReference getFaultTo() {
         return faultTo;
     }
 
     /**
      * @return
      */
-    public EndpointReferance getFrom() {
+    public EndpointReference getFrom() {
         return from;
     }
 
@@ -135,14 +136,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferance getRelatesTo() {
+    public EndpointReference getRelatesTo() {
         return relatesTo;
     }
 
     /**
      * @return
      */
-    public EndpointReferance getReplyTo() {
+    public EndpointReference getReplyTo() {
         return replyTo;
     }
 
@@ -170,21 +171,21 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferance getTo() {
+    public EndpointReference getTo() {
         return to;
     }
 
     /**
      * @param referance
      */
-    public void setFaultTo(EndpointReferance referance) {
+    public void setFaultTo(EndpointReference referance) {
         faultTo = referance;
     }
 
     /**
      * @param referance
      */
-    public void setFrom(EndpointReferance referance) {
+    public void setFrom(EndpointReference referance) {
         from = referance;
     }
 
@@ -227,14 +228,14 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setRelatesTo(EndpointReferance referance) {
+    public void setRelatesTo(EndpointReference referance) {
         relatesTo = referance;
     }
 
     /**
      * @param referance
      */
-    public void setReplyTo(EndpointReferance referance) {
+    public void setReplyTo(EndpointReference referance) {
         replyTo = referance;
     }
 
@@ -256,7 +257,7 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setTo(EndpointReferance referance) {
+    public void setTo(EndpointReference referance) {
         to = referance;
     }
 

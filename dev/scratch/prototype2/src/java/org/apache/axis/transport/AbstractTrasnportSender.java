@@ -18,11 +18,11 @@ package org.apache.axis.transport;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EndpointReferance;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.addressing.EndpointReference;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -69,7 +69,7 @@ public abstract class AbstractTrasnportSender extends AbstractHandler implements
     protected void startSending() {
     }
 
-    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferance epr) throws AxisFault;
+    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReference epr) throws AxisFault;
 
     protected abstract OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault;
 
