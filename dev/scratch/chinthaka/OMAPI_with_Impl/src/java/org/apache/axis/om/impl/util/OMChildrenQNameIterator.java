@@ -71,15 +71,11 @@ public class OMChildrenQNameIterator implements Iterator {
         while (needToMoveForward) {
             if (omNode != null) {
 
-                System.out.println("Checking the current node, *" + omNode.getValue() + "*");
                 // check the current node for the criteria
                 if ((omNode instanceof OMNamedNodeImpl) && ((OMNamedNodeImpl) omNode).getQName().equals(qName)) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
-                    System.out.println("One Found");
                 } else {
-
-                    System.out.println("Moving to next Sibling ...");
                     // get the next named node
                     omNode = omNode.getNextSibling();
                     isMatchingNodeFound = needToMoveForward = !(omNode == null);

@@ -63,6 +63,7 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
     }
 
     public void detach() throws OMException {
+        
         if (parent == null)
             throw new OMException();
         if (getPreviousSibling() == null)
@@ -73,5 +74,5 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
             nextSibling.setPreviousSibling(previousSibling);
     }
 
-    
+
 }

@@ -35,6 +35,7 @@ public class OMElementTest extends TestCase {
     private OMElement root;
     private OMXmlPullParserWrapper omXmlPullParserWrapper;
 
+
     public static void main(String[] args) {
     }
 
@@ -44,6 +45,7 @@ public class OMElementTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         root = getOMBuilder().getDocument().getRootElement();
+
     }
 
     private OMXmlPullParserWrapper getOMBuilder() throws Exception {
@@ -72,13 +74,15 @@ public class OMElementTest extends TestCase {
             }
         }
         assertTrue(newChildFound);
+
+        System.out.println(" \t\t OK");
     }
 
 
     public final void testGetChildrenWithName() {
-        System.out.println("Testing getChildrenWithQName(QName) ......");
+        System.out.print("Testing getChildrenWithQName(QName) ......");
 
-       // add new child with the name TestElement
+        // add new child with the name TestElement
         OMNamespace omNamespace = OMNodeBuilder.createOMNamespace("http://opensource.lk/chinthaka", "prefix");
         root.addChild(OMNodeBuilder.createOMElement("TestElement", omNamespace, root, omXmlPullParserWrapper));
 
@@ -86,112 +90,352 @@ public class OMElementTest extends TestCase {
         int childrenCount = 0;
         while (iter.hasNext()) {
             iter.next();
-            childrenCount ++;
+            childrenCount++;
         }
 
         assertTrue("getChildrenWithName is not working properly", childrenCount == 1);
 
+        System.out.println(" \t\t OK");
+
+
     }
 
     public final void testGetChildren() {
+        System.out.print("Testing getChildren ..............");
         Iterator childrenIterator = root.getChildren();
 
+        int totalNumberOfChildren = 0;
+        int elementNodes = 0;
+        int textNodes = 0;
+        OMNode omNode;
+        short nodeType;
+        String elementLocalName;
+
         while (childrenIterator.hasNext()) {
-            OMNode omNode = (OMNode) childrenIterator.next();
-
+            omNode = (OMNode) childrenIterator.next();
+            nodeType = omNode.getType();
+            if (nodeType == OMNode.TEXT_NODE) {
+                textNodes++;
+            } else if (nodeType == OMNode.ELEMENT_NODE) {
+                elementLocalName = omNode.getValue();
+                assertTrue("No Header or Body element exists .......", (elementLocalName.equalsIgnoreCase("Header") || elementLocalName.equalsIgnoreCase("Body")));
+                elementNodes++;
+            }
+            totalNumberOfChildren++;
         }
+
+        assertEquals("Two Elements should exist", 2, elementNodes);
+        assertEquals("Three Text nodes should exist", 3, textNodes);
+        assertEquals("Five children should exist", 5, totalNumberOfChildren);
+
+        System.out.println(" \t\t OK");
+
     }
 
-    public final void testCreateNamespace() {
-        //TODO Implement createNamespace().
+    public final void testNamespaceOperations() {
+        String uri = "http://opensource.lk/chinthaka";
+        String prefix = "prefix";
+
+        System.out.print("Testing create namespace .......");
+        root.createNamespace(uri, prefix);
+        OMNamespace namespace = root.resolveNamespace(uri, prefix);
+        assertTrue("namespace has not been set properly ", namespace.equals(uri, prefix));
+        System.out.println(" \t\t OK");
+
+        System.out.print("Testing resolve namespace .......");
+        OMNamespace dummyNamespace = root.resolveNamespace("dummy uri", " dummy prefix");
+        assertTrue(dummyNamespace == null);
+        System.out.println(" \t\t OK");
+
+        System.out.print("Testing get Namespace ...");
+        namespace = root.getNamespace();
+        assertTrue(namespace.equals("http://schemas.xmlsoap.org/soap/envelope/", "soapenv"));
+        System.out.println(" \t\t\t\t OK");
+
+        System.out.print("Testing set namespace .......");
+        namespace = OMNodeBuilder.createOMNamespace(uri, prefix);
+        root.setNamespace(namespace);
+        assertTrue(root.getNamespace().equals(namespace));
+        System.out.println(" \t\t\t OK");
+
     }
 
-    public final void testResolveNamespace() {
-        //TODO Implement resolveNamespace().
-    }
 
     public final void testGetAttributeWithQName() {
-        //TODO Implement getAttributeWithQName().
+        System.out.print("Testing getAttributeWithQName ...");
+
+
+        Iterator toElementIter = getToElementIterator();
+        if (toElementIter == null) {
+            assertFalse("No To element found in the header element", true);
+        } else {
+            if (toElementIter.hasNext()) {
+                OMElement toElement = (OMElement) toElementIter.next();
+                Iterator attrubuteIter = toElement.getAttributeWithQName(new QName("http://schemas.xmlsoap.org/soap/envelope/", "mustUnderstand"));
+                if (attrubuteIter.hasNext()) {
+                    OMAttribute omAttribute = (OMAttribute) attrubuteIter.next();
+                    assertTrue(omAttribute.getLocalName().equalsIgnoreCase("mustUnderstand") && omAttribute.getValue().equals("0"));
+                }
+
+            }
+        }
+
+        System.out.println(" \t\t OK");
+
+    }
+
+    private Iterator getToElementIterator() {
+        Iterator headerElementIter = root.getChildrenWithName(new QName("http://schemas.xmlsoap.org/soap/envelope/", "Header"));
+        if (headerElementIter.hasNext()) {
+            OMElement omElement = (OMElement) headerElementIter.next();
+            return omElement.getChildrenWithName(new QName("http://schemas.xmlsoap.org/ws/2004/03/addressing", "To"));
+        }
+
+        return null;
     }
 
     public final void testGetAttributes() {
-        //TODO Implement getAttributes().
+        System.out.print("Testing getAttributes ...");
+
+        Iterator toElementIter = getToElementIterator();
+        if (toElementIter == null) {
+            assertFalse("No To element found in the header element", true);
+        } else {
+            if (toElementIter.hasNext()) {
+                OMElement toElement = (OMElement) toElementIter.next();
+                Iterator toElementAttributeIter = toElement.getAttributes();
+
+                int attribCount = 0;
+                while (toElementAttributeIter.hasNext()) {
+                    OMAttribute omAttribute = (OMAttribute) toElementAttributeIter.next();
+                    assertTrue("To element having attributes, other than mustUnderstand", omAttribute.getLocalName().equalsIgnoreCase("mustUnderstand"));
+                    attribCount++;
+                }
+
+                assertTrue("To element having more than one attribute", attribCount == 1);
+            }
+        }
+
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testInsertAttribute() {
-        //TODO Implement insertAttribute().
+        System.out.print("Testing insertAttribute ....");
+
+        Iterator toElementIter = getToElementIterator();
+        if (toElementIter == null) {
+            assertFalse("No To element found in the header element", true);
+        } else {
+            if (toElementIter.hasNext()) {
+                OMElement toElement = (OMElement) toElementIter.next();
+                toElement.insertAttribute(OMNodeBuilder.createOMAttribute("AttributeOne", null, "AttributeValueOne", toElement));
+                toElement.insertAttribute(OMNodeBuilder.createOMAttribute("AttributeTwo", null, "AttributeValueTwo", toElement));
+
+                Iterator toElementAttributeIter = toElement.getAttributes();
+                boolean attribOneFound = false;
+                boolean attribTwoFound = false;
+
+                int attribCount = 0;
+                while (toElementAttributeIter.hasNext()) {
+                    OMAttribute omAttribute = (OMAttribute) toElementAttributeIter.next();
+                    if (omAttribute.getLocalName().equalsIgnoreCase("AttributeOne")) {
+                        attribOneFound = true;
+                    } else if (omAttribute.getLocalName().equalsIgnoreCase("AttributeTwo")) {
+                        attribTwoFound = true;
+                    }
+                    attribCount++;
+
+                }
+
+                assertTrue("insertAttribute is not working properly", attribCount == 3);
+                assertTrue("Attribute insertion has not worked properly", attribOneFound && attribTwoFound);
+
+            }
+        }
+
+        System.out.println(" \t\t OK");
     }
 
     public final void testRemoveAttribute() {
-        //TODO Implement removeAttribute().
+        System.out.print("Testing insertAttribute ....");
+
+        Iterator toElementIter = getToElementIterator();
+        if (toElementIter == null) {
+            assertFalse("No To element found in the header element", true);
+        } else {
+            if (toElementIter.hasNext()) {
+                OMElement toElement = (OMElement) toElementIter.next();
+                OMAttribute omAttribute = OMNodeBuilder.createOMAttribute("AttributeOne", null, "AttributeValueOne", toElement);
+                toElement.insertAttribute(omAttribute);
+
+                Iterator toElementAttributeIter = toElement.getAttributes();
+
+                int attribCount = 0;
+                while (toElementAttributeIter.hasNext()) {
+                    toElementAttributeIter.next();
+                    attribCount++;
+                }
+                assertTrue("Attribute addition has not been done properly", attribCount == 2);
+
+                toElement.removeAttribute(omAttribute);
+
+                toElementAttributeIter = toElement.getAttributes();
+                attribCount = 0;
+                while (toElementAttributeIter.hasNext()) {
+                    toElementAttributeIter.next();
+                    attribCount++;
+                }
+                assertTrue("Attribute removal has not been done properly", attribCount == 1);
+
+            }
+        }
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testGetLocalName() {
-        //TODO Implement getLocalName().
+        System.out.print("Testing getLocalName ...");
+        assertEquals("getLocalName not working properly ..", "Envelope", root.getLocalName());
+        System.out.println(" \t\t OK");
     }
 
     public final void testSetLocalName() {
-        //TODO Implement setLocalName().
+        System.out.print("Testing setLocalName ...");
+        root.setLocalName("NewLocalName");
+        assertEquals("setLocalName not working properly ..", "NewLocalName", root.getLocalName());
+        System.out.println(" \t\t OK");
     }
 
-    public final void testGetNamespace() {
-        //TODO Implement getNamespace().
-    }
-
-    public final void testSetNamespace() {
-        //TODO Implement setNamespace().
-    }
 
     public final void testGetParent() {
-        //TODO Implement getParent().
+        System.out.print("Testing getParent ...");
+
+        Iterator rootChildrenIter = root.getChildren();
+        while (rootChildrenIter.hasNext()) {
+            OMNode omNode = (OMNode) rootChildrenIter.next();
+            assertTrue("getParent has some problems", omNode.getParent() == root);
+        }
+        System.out.println(" \t\t OK");
+
     }
 
-    public final void testSetParent() {
-        //TODO Implement setParent().
-    }
 
     public final void testGetNextSibling() {
-        //TODO Implement getNextSibling().
+        System.out.print("Testing getNextSibling ...");
+
+        Iterator rootChildrenIter = root.getChildren();
+        OMNode previousSibling = null;
+        while (rootChildrenIter.hasNext()) {
+            OMNode omNode = (OMNode) rootChildrenIter.next();
+            if (previousSibling != null) {
+                assertTrue("getNextSibling is not working properly ... ", previousSibling.getNextSibling() == omNode);
+            }
+        }
+
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testSetNextSibling() {
-        //TODO Implement setNextSibling().
+        System.out.print("Testing getNextSibling ...");
+
+        Iterator rootChildrenIter = root.getChildren();
+
+        OMNode firstChild = getNextChild(rootChildrenIter);
+        OMNode secondChild = getNextChild(rootChildrenIter);
+        OMNode thirdChild = getNextChild(rootChildrenIter);
+
+        firstChild.setNextSibling(thirdChild);
+
+        assertTrue(firstChild.getNextSibling() == thirdChild);
+        System.out.println(" \t\t OK");
+
+    }
+
+    private OMNode getNextChild(Iterator rootChildrenIter) {
+        if (rootChildrenIter.hasNext()) {
+            return (OMNode) rootChildrenIter.next();
+        }
+
+        return null;
     }
 
     public final void testGetValue() {
-        //TODO Implement getValue().
-    }
-
-    public final void testSetValue() {
-        //TODO Implement setValue().
+        System.out.print("Testing getValue ...");
+        assertEquals("Local Name is not equal to value of Element", root.getValue(), root.getLocalName());
+        System.out.println(" \t\t OK");
     }
 
     public final void testIsComplete() {
-        //TODO Implement isComplete().
-    }
+        System.out.print("Testing isComplete ...");
 
-    public final void testSetComplete() {
-        //TODO Implement setComplete().
+        Iterator rootChildrenIter = root.getChildren();
+
+        OMNode firstChild = getNextChild(rootChildrenIter);
+        getNextChild(rootChildrenIter);
+
+        assertTrue("Complete has not been set properly", firstChild.isComplete());
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testDetach() {
-        //TODO Implement detach().
+        System.out.println("Testing detach ....");
+        Iterator childrenIterator = root.getChildren();
+        while (childrenIterator.hasNext()) {
+            OMNode omNode = (OMNode) childrenIterator.next();
+            if (omNode.getType() == OMNode.TEXT_NODE) {
+                omNode.detach();
+            }
+        }
+
+        childrenIterator = root.getChildren();
+        while (childrenIterator.hasNext()) {
+            OMNode omNode = (OMNode) childrenIterator.next();
+            if (omNode.getType() == OMNode.TEXT_NODE) {
+                assertTrue("Detaching is not working", false);
+            }
+        }
+
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testInsertSiblingAfter() {
-        //TODO Implement insertSiblingAfter().
+        System.out.print("Testing insertSiblingAfter ...");
+
+        Iterator rootChildrenIter = root.getChildren();
+
+        OMNode firstChild = getNextChild(rootChildrenIter);
+        OMNode secondChild = getNextChild(rootChildrenIter);
+        OMNode thirdChild = getNextChild(rootChildrenIter);
+
+        firstChild.insertSiblingAfter(thirdChild);
+
+        assertTrue("insertSiblingAfter is not woking properly", firstChild.getNextSibling() == thirdChild);
+        System.out.println(" \t\t OK");
+
     }
 
     public final void testInsertSiblingBefore() {
-        //TODO Implement insertSiblingBefore().
+        System.out.print("Testing insertSiblingBefore  ...");
+
+        Iterator rootChildrenIter = root.getChildren();
+
+        OMNode firstChild = getNextChild(rootChildrenIter);
+        OMNode secondChild = getNextChild(rootChildrenIter);
+        OMNode thirdChild = getNextChild(rootChildrenIter);
+
+        firstChild.insertSiblingBefore(thirdChild);
+
+        assertTrue("insertSiblingBefore is not woking properly", thirdChild.getNextSibling() == firstChild);
+        System.out.println(" \t\t OK");
     }
 
     public final void testGetType() {
-        //TODO Implement getType().
+        assertTrue("Element type is not set properly ", root.getType() == OMNode.ELEMENT_NODE);
     }
 
-    public final void testSetType() {
-        //TODO Implement setType().
-    }
-
+    
 }

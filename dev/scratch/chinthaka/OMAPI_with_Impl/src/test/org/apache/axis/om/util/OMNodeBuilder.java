@@ -2,9 +2,11 @@ package org.apache.axis.om.util;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.impl.OMElementImpl;
 import org.apache.axis.om.impl.OMXmlPullParserWrapper;
 import org.apache.axis.om.impl.OMNamespaceImpl;
+import org.apache.axis.om.impl.OMAttributeImpl;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -57,7 +59,7 @@ public class OMNodeBuilder {
      * @return
      */ 
     public static OMElement createOMElement(String localName, OMNamespace namespace, OMElement parent, OMXmlPullParserWrapper pullParserWrapper){
-       return new OMElementImpl(localName, namespace, parent, pullParserWrapper);
+       return new OMElementImpl(localName, namespace, parent, pullParserWrapper); 
     }
 
     /**
@@ -69,4 +71,17 @@ public class OMNodeBuilder {
     public static OMNamespace createOMNamespace(String uri, String prefix){
         return new OMNamespaceImpl(uri, prefix);
     }
+
+    /**
+     *
+     * @param localName
+     * @param ns
+     * @param value
+     * @param parent
+     * @return
+     */
+    public static OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent){
+        return new OMAttributeImpl(localName, ns, value, parent);
+    }
+
 }
