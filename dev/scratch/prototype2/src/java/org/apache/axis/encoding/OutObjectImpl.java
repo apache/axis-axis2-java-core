@@ -25,7 +25,7 @@ public class OutObjectImpl implements OutObject{
     private ContentHandler cHandler;
     private Object obj = null;
     public OutObjectImpl(Object obj){
-    
+       this.obj = obj;
     }
     public ContentHandler getContentHandler() {
         return cHandler;

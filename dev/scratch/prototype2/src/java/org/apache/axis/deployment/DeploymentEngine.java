@@ -251,6 +251,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
+                System.out.println("urlsToLoadFrom = " + file.getAbsolutePath());
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
                 service.setClassLoader(loader1);
                 if(! currentFileItem.getClassName().equals("")){
@@ -263,9 +264,10 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 service.setServiceClass(serviceclass);
             } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage());
+                throw new AxisFault(e.getMessage(),e);
             } catch (Exception e) {
-                throw new AxisFault(e.getMessage());
+                e.printStackTrace();
+                throw new AxisFault(e.getMessage(),e);
             }
 
         }

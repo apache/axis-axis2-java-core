@@ -99,19 +99,19 @@ public class AxisServlet extends HttpServlet{
 
     protected void storeOutputInfo(MessageContext msgContext,
                                    OutputStream out) throws AxisFault {
-        try {
+//        try {
             // Send it on its way...
-            out.write(HTTPConstants.HTTP);
-            out.write(HTTPConstants.OK);
-            out.write("\n\n".getBytes());
+//            out.write(HTTPConstants.HTTP);
+//            out.write(HTTPConstants.OK);
+//            out.write("\n\n".getBytes());
             //We do not have any Addressing Headers to put
             //let us put the information about incoming transport
             msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
                     TransportSenderLocator.TRANSPORT_HTTP);
             msgContext.setProperty(MessageContext.TRANSPORT_DATA, out);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        }
+//        } catch (IOException e) {
+//            throw AxisFault.makeFault(e);
+//        }
     }
 
 

@@ -34,14 +34,11 @@ public class Dispatcher extends AbstractHandler implements Handler {
             String filePart = toEPR.getAddress();
             String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
 
-            if (filePart.startsWith("axis/services/") || filePart.startsWith("/axis/services/")) {
-                String servicePart = filePart.substring(14);
-                int separator = servicePart.indexOf('/');
-                if (separator > -1) {
-                    uri = servicePart.substring(0, separator);
-                } else {
-                    uri = servicePart;
-                }
+            String pattern = "services/";
+            int serviceIndex = 0;
+            if((serviceIndex = filePart.indexOf(pattern)) > 0){
+                uri = filePart.substring(serviceIndex + pattern.length());
+                System.out.println(uri);
             }
 
             QName serviceName = null;
@@ -71,7 +68,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     invokePhase.addHandler(ReceiverLocator.locateReceiver(msgctx));
                     chain.addPhase(invokePhase);
                 } else {
-                    throw new AxisFault("Service Not found");
+                    throw new AxisFault("Service " + serviceName + " is not found");
                 }
             }else{
                 throw new AxisFault("Both the URI and SOAP_ACTION Is Null");

@@ -128,7 +128,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
                 throw new UnsupportedOperationException("Only int and the String supported yet");
             } 
         }
-        return null;
+        return objs;
     }
 
 
@@ -165,7 +165,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             responseEnvelope.getBody().addChild(responseMethodName);
             OMElement returnelement = fac.createOMElement("return",ns);
             responseMethodName.addChild(returnelement);
-            ObjectToOMBuilder builder = new ObjectToOMBuilder(returnelement,outobj);
+            returnelement.setBuilder(new ObjectToOMBuilder(returnelement,outobj));
             msgContext.setEnvelope(responseEnvelope);
             
             return msgContext;

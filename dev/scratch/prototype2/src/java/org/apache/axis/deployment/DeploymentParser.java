@@ -201,6 +201,7 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
+
                     if (ST.equals(PARAMETERST)) {
                         Parameter parameter =  processParameter();
                         axisService.addParameter(parameter);
