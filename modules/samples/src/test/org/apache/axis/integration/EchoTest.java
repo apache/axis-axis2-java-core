@@ -161,7 +161,7 @@ public class EchoTest extends TestCase {
                     "Hello testing4",
                     "Hello testing5"};
         Class clasname =
-                Class.forName("EchoStruct", true, cl);
+                Class.forName("encoding.sample1.EchoStruct", true, cl);
         Object obj = clasname.newInstance();
 
         Method method1 =
@@ -207,7 +207,7 @@ public class EchoTest extends TestCase {
         OMElement returnelement = fac.createOMElement("param1", ns);
 
         Class encoderClass =
-                Class.forName("EchoStructEncoder",
+                Class.forName("encoding.sample1.EchoStructEncoder",
                         true,
                         cl);
         Constructor constCt =
@@ -237,7 +237,7 @@ public class EchoTest extends TestCase {
     public void testEchoStructArray() throws Exception {
         Object[] objs = new Object[10];
         Class clasname =
-                Class.forName("EchoStruct", true, cl);
+                Class.forName("encoding.sample1.EchoStruct", true, cl);
 
         for (int i = 0; i < objs.length; i++) {
 
@@ -286,7 +286,7 @@ public class EchoTest extends TestCase {
         OMElement returnelement = fac.createOMElement("param1", ns);
 
         Class encoderClass =
-                Class.forName("EchoStructEncoder",
+                Class.forName("encoding.sample1.EchoStructEncoder",
                         true,
                         cl);
         Constructor constCt =

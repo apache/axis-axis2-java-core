@@ -17,4 +17,12 @@
  */
  -->
 <project default="multiproject:install">
+ <goal name="clean">
+	    <delete dir="target"/>
+	    <delete dir="modules/core/target"/>
+            <delete dir="modules/wsdl/target"/>
+            <delete dir="modules/deployment/target"/>						
+            <delete dir="modules/samples/target"/>		
+		<delete dir="modules/om/target"/>
+</goal>
 </project>

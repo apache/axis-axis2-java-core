@@ -1,0 +1,7 @@
+<service provider="encoding.sample1.EchoProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="encoding.sample1.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    <operation name="echoString" qname="echoString" style="anyStyle" use="anyUse"/>
+    <operation name="echoStringArray" qname="echoStringArray" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStruct" qname="echoEchoStruct" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStructArray" qname="echoEchoStructArray" style="anyStyle" use="anyUse"/>
+</service>
