@@ -79,21 +79,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * Field NAVIGABLE
      */
     private static final short NAVIGABLE = 0;
-
-    /**
-     * Field SWITCH_AT_NEXT
-     */
     private static final short SWITCH_AT_NEXT = 1;
-
-    /**
-     * Field COMPLETED
-     */
     private static final short COMPLETED = 2;
-
-    /**
-     * Field SWITCHED
-     */
     private static final short SWITCHED = 3;
+    private static final short DOCUMENT_COMPLETE = 4;
+
 
     /**
      * Field state
@@ -102,8 +92,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * Field currentEvent
+     * Default set to START_DOCUMENT
      */
-    private int currentEvent = 0;
+    private int currentEvent = START_DOCUMENT;
 
     // SwitchingAllowed is set to false by default
     // this means that unless the user explicitly states
@@ -763,7 +754,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @throws XMLStreamException
      */
     public boolean hasNext() throws XMLStreamException {
-        return !(state == COMPLETED);
+        return !(state == DOCUMENT_COMPLETE);
     }
 
     /**
@@ -809,15 +800,19 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     public int next() throws XMLStreamException {
         switch (state) {
+            case DOCUMENT_COMPLETE:
+                throw new XMLStreamException("End of the document reached");
             case COMPLETED:
-                throw new OMStreamingException("Parser completed!");
+                state = DOCUMENT_COMPLETE;
+                currentEvent = END_DOCUMENT;
+                break;
             case SWITCH_AT_NEXT:
                 state = SWITCHED;
 
                 // load the parser
                 try {
                     parser = (XMLStreamReader) builder.getParser();
-                } catch (ClassCastException e) {
+                } catch (Exception e) {
                     throw new UnsupportedOperationException(
                             "incompatible parser found!");
                 }
@@ -881,6 +876,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (!switchingAllowed) {
                 if (navigator.isCompleted()) {
                     nextNode = null;
+
                 } else {
                     builder.next();
                     navigator.step();
@@ -910,7 +906,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             }
         } else {
             state = (currentEvent == END_DOCUMENT)
-                    ? COMPLETED
+                    ? DOCUMENT_COMPLETE
                     : state;
         }
     }

@@ -738,7 +738,7 @@ public class OMElementImpl extends OMNamedNodeImpl
     private void serializeNormal(XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
         serializeStartpart(writer);
-        OMNode firstChild = getFirstChild();
+        OMNode firstChild = getFirstChild();//todo
         if (firstChild != null) {
             firstChild.serialize(writer, cache);
         }
