@@ -15,17 +15,21 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLDefinitions;
-import org.apache.wsdl.WSDLInterface;
-
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLInterface;
+
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class WSDL4JtoWOMPump {
     
-    public void pump(WSDLDefinitions wsdlDefinitiios, Definition wsdl4jDefinition){
+    public void pump(WSDLDescription wsdlDefinitiios, Definition wsdl4jDefinition){
         //Copy the Definition's Attrebute Information items and pump the
         wsdlDefinitiios.setTargetNameSpace( wsdl4jDefinition.getTargetNamespace());
         //wsdl4jDefinition.getNamespace()

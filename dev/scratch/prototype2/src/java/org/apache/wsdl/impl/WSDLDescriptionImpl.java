@@ -15,19 +15,26 @@
  */
 package org.apache.wsdl.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLDefinitions;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLImport;
+import org.apache.wsdl.WSDLInclude;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLService;
 
 
 
 
-public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions    {
+/**
+ * @author chathura@opensource.lk
+ *
+ */
+public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescription    {
 
 	/**
 	 * The name token of WSDL 1.1 Definition.
@@ -62,6 +69,17 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	 * Support of multiple is backed by the requirements in the specification.
 	 */
 	private HashMap services = new HashMap();
+	
+	/**
+	 * WSDL imports
+	 */
+	private ArrayList imports = new ArrayList();
+	
+	
+	/**
+	 * WSDL Includes.
+	 */
+	private ArrayList includes = new ArrayList();
 	
 	/**
 	 * Will keep a map of all the Namespaces associated with the 
@@ -243,4 +261,53 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
         
         return (String) this.namespaces.get(prefix);
     }
+    
+    /**
+     * Returns the WSDL Imports in an <code>ArrayList</code>
+     * @return
+     */
+    public ArrayList getImports() {
+        return imports;
+    }
+    
+    /**
+     * Sets the imports as an <code>ArrayList</code>
+     * @param imports
+     */
+    public void setImports(ArrayList imports) {
+        this.imports = imports;
+    }
+    
+    /**
+     * Adds an import to the list.
+     * @param wsdlImport
+     */
+    public void addImports(WSDLImport wsdlImport){
+        this.imports.add(wsdlImport);
+    }
+    
+    /**
+     * Returns the Includes as an <code>ArrayList</code>
+     * @return
+     */    
+    public ArrayList getIncludes() {
+        return includes;
+    }
+    
+    /**
+     * Sets the includes as an <code>Arraylist</code>
+     * @param includes
+     */
+    public void setIncludes(ArrayList includes) {
+        this.includes = includes;
+    }
+    
+    /**
+     * Adds the WSDL Include to the list.
+     * @param wsdlInclude
+     */
+    public void addInclude(WSDLInclude wsdlInclude){
+        this.includes.add(wsdlInclude);
+    }
+    
 }

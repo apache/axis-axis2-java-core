@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl.wsdltowom;
+package org.apache.wsdl.impl;
+
+import org.apache.wsdl.ExtensionElement;
+import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class Parser {
+public class ExtensionElementImpl implements ExtensionElement {
 
+    private Element element;
+    
+    public Element getElement() {
+        return element;
+    }
+    public void setElement(Element element) {
+        this.element = element;
+    }
 }

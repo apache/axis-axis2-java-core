@@ -17,6 +17,10 @@ package org.apache.wsdl;
 
 import org.w3c.dom.Element;
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public interface WSDLFault extends Component{
 	public Element getElement();
 

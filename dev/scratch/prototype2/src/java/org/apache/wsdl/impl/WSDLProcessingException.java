@@ -15,6 +15,10 @@
  */
 package org.apache.wsdl.impl;
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class WSDLProcessingException extends RuntimeException {
 
     public WSDLProcessingException(String message){

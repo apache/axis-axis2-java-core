@@ -13,38 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wsdl;
+package org.apache.wsdl.impl;
+
+import org.apache.wsdl.WSDLImport;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface FaultReference extends Component{
+public class WSDLImportImpl extends ComponentImpl implements WSDLImport {
+    
+    private String location;
+    
+    private String namespace;
+    
+    
+    
     /**
-     * Returns the direction of the Fault according the MEP
+     * Gets the location URI of the Include.
      * @return
      */
-    public String getDirection();
-
+    public String getLocation() {
+        return location;
+    }
+    
     /**
-     * Sets the direction of the Fault.
-     * @param direction
+     * Sets the location URI of the Include.
+     * @param loaction
      */
-    public void setDirection(String direction);
-
-    public String getMessageLabel();
-
-    public void setMessageLabel(String messageLabel);
-
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    
     /**
-     * Returns the Fault reference.
+     * Returns the namespace URI
      * @return
      */
-    public String getRef();
-
+    public String getNamespace() {
+        return namespace;
+    }
+    
     /**
-     * Sets the Fault reference.
-     * @param ref
+     * Sets the namespace URI.
+     * @param namespace
      */
-    public void setRef(String ref);
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 }

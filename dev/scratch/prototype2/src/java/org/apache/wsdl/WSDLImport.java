@@ -13,12 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl.wsdltowom;
+package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class Parser {
+public interface WSDLImport extends Component{
+    /**
+     * Gets the location URI of the Include.
+     * @return
+     */
+    public String getLocation();
 
+    /**
+     * Sets the location URI of the Include.
+     * @param loaction
+     */
+    public void setLocation(String location);
+
+    /**
+     * Returns the namespace URI
+     * @return
+     */
+    public String getNamespace();
+
+    /**
+     * Sets the namespace URI.
+     * @param namespace
+     */
+    public void setNamespace(String namespace);
 }

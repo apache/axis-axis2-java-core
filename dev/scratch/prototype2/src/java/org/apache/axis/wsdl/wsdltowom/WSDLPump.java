@@ -15,21 +15,47 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import org.apache.wsdl.*;
-import org.apache.wsdl.impl.*;
-
-import javax.wsdl.*;
-import javax.xml.namespace.QName;
 import java.util.Iterator;
 
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Input;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.impl.MessageReferenceImpl;
+import org.apache.wsdl.impl.WSDLBindingImpl;
+import org.apache.wsdl.impl.WSDLEndpointImpl;
+import org.apache.wsdl.impl.WSDLInterfaceImpl;
+import org.apache.wsdl.impl.WSDLOperationImpl;
+import org.apache.wsdl.impl.WSDLProcessingException;
+import org.apache.wsdl.impl.WSDLServiceImpl;
+
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class WSDLPump {
 
-    private WSDLDefinitions womDefinition;
+    private WSDLDescription womDefinition;
 
     private Definition wsdl4jParsedDefinition;
 
     public WSDLPump(
-        WSDLDefinitions womDefinition,
+        WSDLDescription womDefinition,
         Definition wsdl4jParsedDefinition) {
         this.womDefinition = womDefinition;
         this.wsdl4jParsedDefinition = wsdl4jParsedDefinition;
@@ -43,7 +69,7 @@ public class WSDLPump {
     }
 
     private void populateDefinition(
-        WSDLDefinitions wsdlDefinition,
+        WSDLDescription wsdlDefinition,
         Definition wsdl4JDefinition) {
         //Go through the WSDL4J Definition and pump it to the WOM
         wsdlDefinition.setWSDL1DefinitionName(wsdl4JDefinition.getQName());
@@ -54,23 +80,25 @@ public class WSDLPump {
 		//Order of the following itmes shouldn't be changed unless you really know //
 		//what you are doing. Reason being the components that are copied(pumped)  //
 		//towards the end depend on the components that has already being pumped.  //
-		//Following Lists some of the dependencies										   //
+		//Following Lists some of the dependencies								   //
 		//1) The Binding refers to the Interface								   //
-		//1) Thw Endpoint refers tot he Bindings
+		//1) Thw Endpoint refers tot he Bindings								   //
 		// ....																	   //
 		//																		   //	
 		/////////////////////////////////////////////////////////////////////////////
 		
 		
 		
-		//////////////////////////(1)First pump the Types////////////////////////////
-		
+		//////////////////////////(1)First pump the Types////////////////////////////		
 		//Types may get changed inside the Operation pumping.
 				
-		//////////////////////////(2)Pump the Interfaces/////////////////////////////
-		
         
         
+        
+        
+        
+        
+		//////////////////////////(2)Pump the Interfaces/////////////////////////////        
         //pump the Interfaces: Get the PortTypes from WSDL4J parse OM and pump it to the 
         //WOM's WSDLInterface Components 
 
@@ -85,9 +113,10 @@ public class WSDLPump {
 
         }
 
-		//////////////////////////(3)Pump the Bindings///////////////////////////////
-		
-		
+        
+        
+        
+		//////////////////////////(3)Pump the Bindings///////////////////////////////		
         //pump the Bindings: Get the Bindings map from WSDL4J and create a new map of 
         //WSDLBinding elements
 
@@ -231,14 +260,29 @@ public class WSDLPump {
     ///////////////////////////Util Methods ////////////////////////////////////
     
     /**
-     * Will return the URI for the MEP.
+     * Will return the URI for the MEP. if null will retun the IN_OUT as default
+     * pattern.
      */
     private String getRelaventMEPForTheMessageStyle(OperationType operationType){
-    	
-		//TODO
-		throw new UnsupportedOperationException("Fill the impl");
-    	
-    	
+        
+        if(null != operationType){
+	            
+	        if(operationType.equals(OperationType.REQUEST_RESPONSE)) 
+	            return WSDLConstants.MEP_URI_IN_OUT;
+	        
+	    	if(operationType.equals(OperationType.ONE_WAY))
+	    	    return WSDLConstants.MEP_URI_IN_ONLY;
+	    	
+	    	if(operationType.equals(OperationType.NOTIFICATION))
+	    	    return WSDLConstants.MEP_URI_OUT_ONLY;
+	    	
+	    	if(operationType.equals(OperationType.SOLICIT_RESPONSE))
+	    	    return WSDLConstants.MEP_URI_OUT_IN;
+        }
+        
+        //Either operation type is null of its none of the above.
+        throw new WSDLProcessingException("Invalid Operation Type(MEP) :Operation Type should be either of REQUESTRESPONCE, ONEWAY, NOTIFICATION, SOLICITRESPONCE");
+    	    	
     }
 
 }

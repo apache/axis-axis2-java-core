@@ -19,11 +19,37 @@ import java.util.HashMap;
 
 import org.apache.wsdl.Component;
 import org.apache.wsdl.WSDLConstants;
+import org.w3c.dom.Document;
 
+
+
+
+/**
+ * @author Chathura Herath
+ *
+ */
 public class ComponentImpl implements  WSDLConstants, Component{
 
     protected HashMap componentProperties = new HashMap();
     
+    protected Document documentation = null;
+    
+    /**
+     * Returns the Documentation Element as a
+     * <code>Document</code>.
+     * @return documentation
+     */
+    public Document getDocumentation() {
+        return documentation;
+    }
+    
+    /**
+     * Will set the Documentation element for the Component.
+     * @param documentation Component Docuemntation
+     */
+    public void setDocumentation(Document documentation) {
+        this.documentation = documentation;
+    }
     /**
      * Returns the properties that are specific to this WSDL Component.
      * 

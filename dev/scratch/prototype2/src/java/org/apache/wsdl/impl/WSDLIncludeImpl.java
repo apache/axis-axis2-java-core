@@ -13,12 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl.wsdltowom;
+package org.apache.wsdl.impl;
+
+import org.apache.wsdl.WSDLInclude;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class Parser {
+public class WSDLIncludeImpl extends ComponentImpl implements WSDLInclude {
 
+    /**
+     * URI of the include Location.
+     */
+    private String loaction;
+    
+    /**
+     * Gets the location URI of the Include.
+     * @return
+     */
+    public String getLoaction() {
+        return loaction;
+    }
+    
+    /**
+     * Sets the location URI of the Include.
+     * @param loaction
+     */
+    public void setLoaction(String loaction) {
+        this.loaction = loaction;
+    }
+    
+    
 }

@@ -23,6 +23,10 @@ import javax.xml.namespace.QName;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLOperation;
 
+/**
+ * @author Chathura Herath
+ *
+ */
 public class WSDLOperationImpl extends ExtensibleComponentImpl implements WSDLOperation  {
 
 	private QName name;

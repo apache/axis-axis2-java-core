@@ -15,12 +15,17 @@
  */
 package org.apache.wsdl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 
-public interface WSDLDefinitions extends Component{
+/**
+ * @author chathura@opensource.lk
+ *
+ */
+public interface WSDLDescription {
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding. 
@@ -130,4 +135,40 @@ public interface WSDLDefinitions extends Component{
      * @return The Namespace URI for the prefix.
      */
     public String getNamespace(String prefix);
+
+    /**
+     * Returns the WSDL Imports in an <code>ArrayList</code>
+     * @return
+     */
+    public ArrayList getImports();
+
+    /**
+     * Sets the imports as an <code>ArrayList</code>
+     * @param imports
+     */
+    public void setImports(ArrayList imports);
+
+    /**
+     * Adds an import to the list.
+     * @param wsdlImport
+     */
+    public void addImports(WSDLImport wsdlImport);
+
+    /**
+     * Returns the Includes as an <code>ArrayList</code>
+     * @return
+     */
+    public ArrayList getIncludes();
+
+    /**
+     * Sets the includes as an <code>Arraylist</code>
+     * @param includes
+     */
+    public void setIncludes(ArrayList includes);
+
+    /**
+     * Adds the WSDL Include to the list.
+     * @param wsdlInclude
+     */
+    public void addInclude(WSDLInclude wsdlInclude);
 }

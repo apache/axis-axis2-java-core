@@ -16,6 +16,10 @@
 package org.apache.wsdl;
 
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public interface WSDLFeature extends Component{
 	public String getName();
 

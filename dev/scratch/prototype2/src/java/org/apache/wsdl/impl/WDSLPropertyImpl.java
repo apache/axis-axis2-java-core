@@ -17,7 +17,13 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.WSDLProperty;
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class WDSLPropertyImpl extends ComponentImpl implements WSDLProperty  {
+
+	
 	private String uri;
 	
 	//TODO replace with the  data binding object structure

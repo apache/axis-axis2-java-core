@@ -22,6 +22,10 @@ import org.apache.wsdl.ExtensibleComponent;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLProperty;
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class ExtensibleComponentImpl extends ComponentImpl implements ExtensibleComponent {
 
     

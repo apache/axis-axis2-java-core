@@ -25,6 +25,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class Utils {
     public static Document newDocument(InputStream in) throws ParserConfigurationException, SAXException, IOException{
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

@@ -15,14 +15,19 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import org.apache.wsdl.WSDLDefinitions;
-
-import javax.wsdl.WSDLException;
 import java.io.InputStream;
 
+import javax.wsdl.WSDLException;
+
+import org.apache.wsdl.WSDLDescription;
+
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public class WSDL2ToWOMBuilder implements WOMBuilder{
 
-    public WSDLDefinitions build(InputStream in ) throws WSDLException{
+    public WSDLDescription build(InputStream in ) throws WSDLException{
         
         throw new UnsupportedOperationException("Fill the imps");
         

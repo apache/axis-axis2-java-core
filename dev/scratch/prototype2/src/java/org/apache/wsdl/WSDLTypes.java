@@ -17,33 +17,38 @@ package org.apache.wsdl;
 
 import java.util.HashMap;
 
+import javax.xml.namespace.QName;
+
+
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface Component {
+public interface WSDLTypes {
     /**
-     * Returns the properties that are specific to this WSDL Component.
-     * 
-     */
-    public HashMap getComponentProperties();
-
-    /**
-     * Sets the properties of the Component if any.
-     */
-    public void setComponentProperties(HashMap properties);
-
-    /**
-     * Will set the property keyed with the relavent key
-     * @param key Key in the map
-     * @param obj Object to be put
-     */
-    public void setComponentProperty(Object key, Object obj);
-
-    /**
-     * Gets the component property
-     * @param key key for the map search.
+     * Sets the <code>ExtensionElement</code>s as a <code>HashMap</code>
      * @return
      */
-    public Object getComponentProperty(Object key);
+    public HashMap getTypes();
+
+    /**
+     * Returns all the <code>ExtensionElement</code>s as a <code>HashMap</code>
+     * @param types
+     */
+    public void setTypes(HashMap types);
+
+    /**
+     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>     * 
+     * @param qName
+     * @param element
+     */
+    public void addElement(QName qName, ExtensionElement element);
+
+    /**
+     * Will return the Element with the given <code>QName</code>
+     * Returns null if not found.
+     * @param qName
+     * @return
+     */
+    public ExtensionElement getElement(QName qName);
 }
