@@ -31,6 +31,8 @@ public interface OMNamedNode extends OMNode {
 
     public OMNamespace getNamespace() throws OMException;
 
+    public String getNamespaceName();
+
     public void setNamespace(OMNamespace namespace);
 
     

@@ -5,7 +5,9 @@ import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 
 /**
@@ -32,7 +34,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     private OMNode firstChild;
     private OMXMLParserWrapper builder;
     private OMAttributeImpl firstAttribute;
-    private OMNamespace firstNamespace;
+    private ArrayList namespaces;
 
     public OMElementImpl(OMElement parent) {
         super(parent);
@@ -49,7 +51,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent);
         this.builder = builder;
-
     }
 
     /**
@@ -109,6 +110,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         return new OMChildrenIterator(getFirstChild());
     }
 
+    // --------------------- Namespace Methods ------------------------------------------------------------
     /**
      * THis will create a namespace in the current element scope
      *
@@ -116,10 +118,16 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @param prefix
      * @return
      */
-    public OMNamespace createNamespace(String uri, String prefix) {
+    public OMNamespace declareNamespace(String uri, String prefix) {
+
+        if (namespaces == null) {
+            namespaces = new ArrayList(5);
+            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
+            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
+
+        }
         OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
-        ns.setNextSibling(firstNamespace);
-        firstNamespace = ns;
+        namespaces.add(ns);
         return ns;
     }
 
@@ -127,9 +135,14 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @param namespace
      * @return
      */
-    public OMNamespace createNamespace(OMNamespace namespace) {
-        namespace.setNextSibling(firstNamespace);
-        firstNamespace = namespace;
+    public OMNamespace declareNamespace(OMNamespace namespace) {
+        if (namespaces == null) {
+            namespaces = new ArrayList(5);
+            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
+            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
+
+        }
+        namespaces.add(namespace);
         return namespace;
     }
 
@@ -143,17 +156,49 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      * @throws org.apache.axis.om.OMException
      */
-    public OMNamespace resolveNamespace(String uri, String prefix) throws OMException {
-        OMNamespace ns = firstNamespace;
-        while (ns != null) {
-            if (ns.equals(uri, prefix))
-                return ns;
-            ns = (OMNamespace) ns.getNextSibling();
+    public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException {
+
+        // check in the current element
+        OMNamespace namespace = findDeclaredNamespace(uri,prefix);
+        if(namespace != null){
+            return namespace;
         }
+
+        // go up to check with ancestors
         if (parent != null)
-            return parent.resolveNamespace(uri, prefix);
+            return parent.findInScopeNamespace(uri, prefix);
         return null;
     }
+
+    /**
+     * This will ckeck for the namespace <B>only</B> in the current Element
+     * @param uri
+     * @param prefix
+     * @return
+     * @throws OMException
+     */
+    public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException {
+
+        if(namespaces == null){
+            return null;
+        }
+        // check in the current element
+        ListIterator namespaceListIterator = namespaces.listIterator();
+        while (namespaceListIterator.hasNext()) {
+            OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
+            if (omNamespace.equals(uri, prefix)) {
+                return omNamespace;
+            }
+        }
+
+        return null;
+    }
+
+    public ArrayList getAllDeclaredNamespaces(){
+        return namespaces;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * This will help to search for an attribute with a given QName within this Element

@@ -184,7 +184,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
         for (int i = 0; i < nameSpaces.size(); i++) {
             OMNamespace ns = (OMNamespace) nameSpaces.elementAt(i);
-            element.createNamespace(ns);
+            element.declareNamespace(ns);
         }
         nameSpaces.clear();
 
@@ -198,7 +198,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
             attrPrefix = (attrQName.indexOf(':') >= 0) ? attrQName.substring(0, attrQName.indexOf(':')) : "";
 
             if (attrUri.hashCode() != 0)
-                ns = element.resolveNamespace(attrUri, attrPrefix);
+                ns = element.findInScopeNamespace(attrUri, attrPrefix);
 
             if (ns == null)
             //todo this needs to be fixed!!!!!

@@ -67,7 +67,7 @@ public class OMTestUtils {
         }else if(ele != null && omele != null){
 
             TestCase.assertTrue(ele.getLocalName().equals(omele.getLocalName()));
-            TestCase.assertTrue(ele.getNamespaceURI().equals(omele.getNamespace().getValue()));
+            TestCase.assertTrue(ele.getNamespaceURI().equals(omele.getNamespace().getName()));
             
             Iterator it = omele.getChildren();
             

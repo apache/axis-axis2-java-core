@@ -180,7 +180,7 @@ public class SimpleOMSerializer {
             else
                 returnText = returnText + "xmlns=";
 
-            returnText = returnText + "\"" + namespace.getValue() + "\"";
+            returnText = returnText + "\"" + namespace.getName() + "\"";
         }
         //add the local name and the value
 

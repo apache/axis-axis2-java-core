@@ -90,7 +90,7 @@ public class Call {
                     OMElement element = (OMElement) child;
                     OMNamespace ns = element.getNamespace();
                     if (OMConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                            && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getValue())) {
+                            && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getName())) {
                         Iterator it = element.getChildren();
                         String error = null;
                         while (it.hasNext()) {

@@ -68,7 +68,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             OMNamespace ns = null;
             String uri = parser.getAttributeNamespace(i);
             if (uri.hashCode() != 0)
-                ns = node.resolveNamespace(uri, parser.getAttributePrefix(i));
+                ns = node.findInScopeNamespace(uri, parser.getAttributePrefix(i));
 
             //todo if the attributes are supposed to namespace qualified all the time
             //todo then this should throw an exception here

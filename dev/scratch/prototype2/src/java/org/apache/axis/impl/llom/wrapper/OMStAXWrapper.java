@@ -122,7 +122,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT || currentEvent == NAMESPACE) {
             if (navigable) {
                 OMNamespace ns = ((OMElement) lastNode).getNamespace();
-                returnStr = ns == null ? null : ns.getValue();
+                returnStr = ns == null ? null : ns.getName();
             } else {
                 returnStr = parser.getNamespaceURI();
             }
@@ -385,7 +385,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 if (attrib != null) {
                     OMNamespace nameSpace = attrib.getNamespace();
                     if (nameSpace != null) {
-                        returnString = nameSpace.getValue();
+                        returnString = nameSpace.getName();
                     }
                 }
             } else {
@@ -742,7 +742,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String localPart = namedNode.getLocalName();
         if (ns != null) {
             String prefix = ns.getPrefix();
-            String uri = ns.getValue();
+            String uri = ns.getName();
             if (prefix==null || prefix.equals(""))
                 returnName = new QName(uri, localPart);
             else

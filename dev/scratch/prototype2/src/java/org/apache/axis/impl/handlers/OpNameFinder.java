@@ -45,7 +45,7 @@ public class OpNameFinder extends AbstractHandler {
                         OMNamespace omns = bodyChild.getNamespace();
 
                         if (omns != null) {
-                            String ns = omns.getValue();
+                            String ns = omns.getName();
                             if (ns != null) {
                                 QName opName = new QName(ns, bodyChild.getLocalName());
                                 AxisService service = msgContext.getService();

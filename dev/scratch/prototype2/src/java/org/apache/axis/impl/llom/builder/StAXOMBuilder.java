@@ -135,11 +135,11 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
-            node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
+            node.declareNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
         }
 
         //set the own namespace
-        OMNamespace namespace = node.resolveNamespace(parser.getNamespaceURI(), parser.getPrefix());
+        OMNamespace namespace = node.findInScopeNamespace(parser.getNamespaceURI(), parser.getPrefix());
         node.setNamespace(namespace);
     }
 }

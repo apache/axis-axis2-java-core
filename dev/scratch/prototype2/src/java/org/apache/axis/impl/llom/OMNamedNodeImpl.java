@@ -56,6 +56,10 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
         return ns;
     }
 
+    public String getNamespaceName() {
+        return ns.getName();
+    }
+
     /**
      * @param namespace
      */
@@ -65,7 +69,7 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
 
     public QName getQName() {
-        QName qName = new QName(ns.getValue(), localName, ns.getPrefix());
+        QName qName = new QName(ns.getName(), localName, ns.getPrefix());
         return qName;
     }
 

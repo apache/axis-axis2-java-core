@@ -188,18 +188,18 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
-            node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
+            node.declareNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
         }
 
         //set the own namespace
-        OMNamespace namespace = node.resolveNamespace(parser.getNamespaceURI(), parser.getPrefix());
+        OMNamespace namespace = node.findInScopeNamespace(parser.getNamespaceURI(), parser.getPrefix());
 
         if (namespace == null) {
             throw new OMException("All elements must be namespace qualified!");
         }
 
         if (isSOAPElement) {
-            if (!namespace.getValue().equals(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI))
+            if (!namespace.getName().equals(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI))
                 throw new OMBuilderException("invalid SOAP namespace URI");
         }
 

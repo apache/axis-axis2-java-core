@@ -78,7 +78,7 @@ public class OMTest extends AbstractTestCase{
     public void isNameSpacesMissing(OMElement omeleent){
         OMNamespace omns = omeleent.getNamespace();
         assertNotNull(omns);
-        assertNotNull(omns.getValue());
+        assertNotNull(omns.getName());
         Iterator it = omeleent.getChildren();
         while(it.hasNext()){
             OMNode node = (OMNode)it.next();
@@ -115,10 +115,10 @@ public class OMTest extends AbstractTestCase{
 
 //        OMElement root= envelope;
 //
-//        OMNamespace soapenv= root.resolveNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-//        OMNamespace wsa= root.resolveNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
+//        OMNamespace soapenv= root.findInScopeNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+//        OMNamespace wsa= root.findInScopeNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
 //        if (wsa==null)
-//            wsa= root.createNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
+//            wsa= root.declareNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
 //
 //        //Assumption - A RelatesTo Element does not exist in the input document
 //        OMElement relatesTo= fac.createOMElement ("RelatesTo", wsa);
@@ -129,7 +129,7 @@ public class OMTest extends AbstractTestCase{
 //
 //        root.addChild(relatesTo);
 //
-//        QName name = new QName(wsa.getValue(),"RelatesTo",wsa.getPrefix());
+//        QName name = new QName(wsa.getName(),"RelatesTo",wsa.getPrefix());
 //
 //        Iterator children = root.getChildrenWithName(name);
 //        //this should contain only one child!

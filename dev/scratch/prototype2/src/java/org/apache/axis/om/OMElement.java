@@ -2,6 +2,7 @@ package org.apache.axis.om;
 
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -59,13 +60,13 @@ public interface OMElement extends OMNamedNode {
      * @param prefix
      * @return
      */
-    public OMNamespace createNamespace(String uri, String prefix);
+    public OMNamespace declareNamespace(String uri, String prefix);
 
     /**
      * @param namespace
      * @return
      */
-    public OMNamespace createNamespace(OMNamespace namespace);
+    public OMNamespace declareNamespace(OMNamespace namespace);
 
     /**
      * This will find a namespace with the given uri and prefix, in the scope of the docuemnt.
@@ -77,7 +78,25 @@ public interface OMElement extends OMNamedNode {
      * @return
      * @throws OMException
      */
-    public OMNamespace resolveNamespace(String uri, String prefix) throws OMException;
+    public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException;
+
+    /**
+     * This will ckeck for the namespace <B>only</B> in the current Element
+     *
+     * @param uri
+     * @param prefix
+     * @return
+     * @throws OMException
+     */
+    public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException;
+
+    /**
+     * This will provide a list of namespace defined within this Element <B>only</B>
+     *
+     * @return
+     * @throws OMException
+     */
+    public ArrayList getAllDeclaredNamespaces();
 
     /**
      * This will help to search for an attribute with a given QName within this Element

@@ -1,8 +1,6 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -23,8 +21,9 @@ import org.apache.axis.om.OMNode;
  * Date: Oct 6, 2004
  * Time: 11:43:32 AM
  */
-public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
+public class OMNamespaceImpl implements OMNamespace {
     private String prefix;
+    private String uri;
     //private String value;
 
     /**
@@ -32,31 +31,24 @@ public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
      * @param prefix
      */
     public OMNamespaceImpl(String uri, String prefix) {
-        value = uri;
+        this.uri = uri;
         this.prefix = prefix;
     }
 
 
-    public boolean equals(OMNamespace ns) {
-        return ((prefix == null && ns.getPrefix() == null) || (prefix != null && prefix.equals(ns.getPrefix())))
-                && value.equals(ns.getValue());
-    }
-
     public boolean equals(String uri, String prefix) {
         return ((prefix == null && this.prefix == null) || (prefix != null && prefix.equals(this.prefix)))
-                && value.equals(uri);
+                && uri.equals(uri);
     }
 
-
-    public boolean isDefaultNs() {
-        return prefix == null;
-    }
 
     public String getPrefix() {
         return prefix;
     }
 
-    public OMNode getNextSibling() throws OMException {
-        return nextSibling;
+    public String getName() {
+        return uri;
     }
+
+
 }

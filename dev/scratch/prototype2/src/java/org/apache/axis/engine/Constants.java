@@ -194,7 +194,7 @@ public class Constants {
 //     * @param localPart is the local part of the attribute name
 //     * @return the value of the attribute or null
 //     */
-//    public static String getValue(Attributes attributes,
+//    public static String getName(Attributes attributes,
 //                                  String [] search,
 //                                  String localPart) {
 //        if (attributes == null || attributes.getLength() == 0 || search == null || localPart == null)
@@ -206,7 +206,7 @@ public class Constants {
 //            if (attributes.getLocalName(i).equals(localPart)) {
 //                String uri = attributes.getURI(i);
 //                for (int j=0; j<search.length; j++) {
-//                    if (search[j].equals(uri)) return attributes.getValue(i);
+//                    if (search[j].equals(uri)) return attributes.getName(i);
 //                }
 //            }
 //        }
@@ -222,7 +222,7 @@ public class Constants {
 //     * @param search
 //     * @return the value of the attribute
 //     */
-//    public static String getValue(Attributes attributes,
+//    public static String getName(Attributes attributes,
 //                                  QName [] search) {
 //        if (attributes == null || search == null)
 //            return null;
@@ -231,7 +231,7 @@ public class Constants {
 //
 //        String value = null;
 //        for (int i=0; (value == null) && (i < search.length); i++) {
-//            value = attributes.getValue(search[i].getNamespaceURI(),
+//            value = attributes.getName(search[i].getNamespaceURI(),
 //                                        search[i].getLocalPart());
 //        }
 //
