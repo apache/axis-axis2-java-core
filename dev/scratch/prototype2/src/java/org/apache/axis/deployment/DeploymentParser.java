@@ -114,7 +114,7 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(serviceXMLST)) {
                         procesServiceXML(axisService);
-                        axisService.setName(new QName(archiveName));
+                        axisService.setName(new QName(getShortFileName(dpengine.getCurrentFileItem().getFile().getName())));
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
@@ -234,7 +234,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 for (int i = 0; i < attribCount; i++) {
                                     String attname = pullparser.getAttributeLocalName(i);
                                     String attvalue = pullparser.getAttributeValue(i);
-                                    axisService.setServiceClassName(attvalue);
+                                    dpengine.getCurrentFileItem().setClassName(attvalue);
                                 }
                             }
                         } else {
@@ -813,6 +813,17 @@ public class DeploymentParser implements DeploymentConstants {
             return value;
         }
         return in;
+    }
+
+    private String getShortFileName(String fileName){
+      char seperator = '.';
+        String value = null;
+        int index = fileName.indexOf(seperator);
+        if (index > 0) {
+            value = fileName.substring(0 , index);
+            return value;
+        }
+        return fileName;
     }
 
     /**

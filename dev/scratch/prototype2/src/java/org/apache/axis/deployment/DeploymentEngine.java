@@ -102,6 +102,9 @@ public class DeploymentEngine implements DeploymentConstants {
         this.serverconfigName = configFileName;
     }
 
+    public HDFileItem getCurrentFileItem() {
+        return currentFileItem;
+    }
 
     /**
      * This method should use inorder to get the referance to servermetadata
@@ -229,8 +232,8 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
-                if(! service.getServiceClassName().equals("")){
-                    serviceclass = Class.forName(service.getServiceClassName(), true, loader1);
+                if(! currentFileItem.getClassName().equals("")){
+                    serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
                 }
                 service.setServiceClass(serviceclass);
             } catch (MalformedURLException e) {

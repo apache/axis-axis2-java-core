@@ -26,6 +26,15 @@ public class HDFileItem {
 
     private File file;
     private int type;
+    private String className;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public HDFileItem(File file, int type) {
         this.file = file;
