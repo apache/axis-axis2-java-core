@@ -83,4 +83,9 @@
     		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
     		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample2"/>
     </goal>
+    
+    <!-- to transforme htmls to xdocs -->
+    <preGoal name="xdoc:jelly-transform">
+    <attainGoal name="html2xdoc"/>
+  </preGoal>
  </project>

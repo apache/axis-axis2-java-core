@@ -1,0 +1,13 @@
+<!-- Created By Eran Chinthaka -->
+<project name="Axis2.0">
+  <title>Axis2.0</title>
+  <body>
+    <links>
+      <item href="http://maven.apache.org/" name="Maven">
+      </item>
+    </links>
+    <menu name="References">
+      <item name="Architecture Guide" href="Axis 2 Architecture Guide.html" />  
+    </menu>
+  </body>
+</project>

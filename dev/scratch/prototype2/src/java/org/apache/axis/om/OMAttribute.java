@@ -22,18 +22,41 @@ import javax.xml.namespace.QName;
  */
 public interface OMAttribute {
 
+    /**
+     * @return localName
+     */
     public String getLocalName();
 
+    /**
+     * @param localName
+     */
     public void setLocalName(String localName);
 
+    /**
+     * @return
+     */
     public String getValue();
 
+    /**
+     * @param value
+     */
     public void setValue(String value);
 
+    /**
+     *
+     * @param omNamespace
+     */
     public void setOMNamespace(OMNamespace omNamespace);
 
+    /**
+     * @return OMNamespace
+     */
     public OMNamespace getNamespace();
 
+    /**
+     *
+     * @return javax.xml.namespace.QName
+     */
     public QName getQName();
 
 

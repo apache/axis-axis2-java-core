@@ -1,0 +1,492 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>Axis 2 Architecture Guide</title>
+</head>
+<body>
+<h1>Axis 2 Architecture Guide</h1>
+<h2>1.1	Introduction</h2> 
+This document describes some of the rationale of the architecture and design of Axis2. 
+<h2>1.2 Architecture overview </h2>
+<p>Axis consists of several sub components working together, as we shall see later. In this section
+We will give you an overview of how the core of Axis works.</p>
+
+<h2>1.3 Axis2 sub components</h2>
+Axis2 consists of following high level sub components, and those are described one by one in the document. 
+  <li>Engine</li>
+	<li>Engine Registry</li>
+	<li>Message Context</li>
+	<li>Deployment</li>
+	<li>Axis Object Model (AXIOM)</li>
+	<li>Handler framework and Phase rules </li>
+	<li>WSDL Object model.</li>
+	<li>Client API.</li>
+
+
+<h2>2.0 Axis Engine</h2>
+<p>The Exaction Model or the Engine in Axis terminology, addresses how the components of the Apache Axis2 is executed or how the control is passed from the component to component. The Axis Execution Model does not assume any specific "Message Exchange Patterns" or "synchronous, Asynchronous behavior" in its Execution.
+The Axis Engine is build on top of two flows they are called in-flow and out-flow respectively (in addition to that there is a flow called fault flow which is used when engine gets processing errors). Each flow encompassing set of components namely  "Handlers", "Transport Senders", "Transport Receivers", "Receivers", "Senders" and "Providers".</p>
+  <li>"Handlers" are the extension mechanism for Axis and represents an "atomic unit of execution logic" which can be configured with the deployment. Each handler is executed in the order specified by the configuration at the deployment.</li> 
+	<li>"Transport senders" and "Transport Receivers" handle the sending and receiving of a SOAP message via specific transport.</li> 
+	<li>"Senders" and "Receivers" control the Message Exchange patterns and Synchronous and Asynchronous behavior.</li>
+	<li>"Provider" take care of the real "java implementation" invocation of the Web Service (this does not mean the java object, but mean to suggest implementation of the web service in the form of java, that can be a java class, XSLT engine ECT...).</li>    
+<br>
+<img alt="engine1 (4K)" src="images/engine1.PNG" height="120" width="473" />
+<br>
+Axis2 Execution Model does not aware of the Message Exchange patterns or the Synchronous or Asynchronous Behavior and all it does is to construct inflow or out flow or both by picking the right components using WSDL or Deployment information and executing them.  
+
+
+<h2>3.0 Engine Registry</h2>
+Engine registry is the runtime registry of the current state of the Axis engine. It contains the real objects like Handlers...ect. By changing them on the runtime the user can change the engine configuration. The deployment provides the implementation of this interface. 
+
+ Srinath will complete
+<h2>4.0 Message Context</h2>
+ Srinath will complete 
+<h2>5.0 Deployment</h2>
+There are two types of deployment in Axis2, namely; service deployment and module deployment. 
+<h3>5.1 Module deployment:</h3>
+Axis 2 provides J2EE like deployment (has to create axis archive file and drop in to correct directory) for both modules and services. User can deploy a module or a service as an ".aar" file (module1.aar, service1.aar). Module hot deployment will not be supported in M1, but will be supported in later releases. When the axis engine get starts all the aar files in the WEB-INF/Repository/modules will get deployed. But if someone wants to add a new restarting of the engine is required, after putting the new .aar file in the above mentioned folder.
+
+<h3>5.2 Service Deployment </h3>
+<p>One of the key improvements introduced with Axis 2 is the capability to "hot deploy" web services. And in this M1 release only J2EE like deployment is supported that is user has to create an axis archive file including all the files that he want and drop the archive file into WEB-INF/Repository/services directory. Following three features are associated with service deployment;</p> 
+	<li>Hot Deployment </li>
+	<li>Hot un deployment </li>
+	<li>Hot update </li>
+	<p>Hot Deployment is all about the ability to of deploying new web service while the axis engine is up and running.  
+Hot un-deployment is ability to remove a web service (services) while the system is running.
+Hot update is ability deploy new version of existing web service without restarting the server. And it is handling as un -deployment followed by a hot deployment. 
+The directory structure that modules and services should deployed.</p> 
+
+	<li>WEB-INF/Repository/modules</li>
+	<li>WEB-INF/Repository/services</li>
+
+<p><i>The required directory structure for a modules archive file is as follows;</i>
+<br>m1.aar
+<br>
+    META-INF/module.xml
+    lib/
+    classes/
+</p>
+<p><i>The required directory structure for a service archive file is as follows;</i> 
+<br>s1.aar
+   <br>
+	  META-INF/service.xml
+    lib/
+    classes/
+</p>
+<br>
+<p><i>The structure of module.xml file looks like as follows; </i></p>
+<img alt="module (3K)" src="images/module.PNG" height="111" width="496" />
+<br>
+<p><i>The structure of service.xml file looks like as;</i></p>
+<img alt="service (6K)" src="images/service.PNG" height="151" width="599" />
+<br>
+<p><i>The architecture of hot deployment consists of the following components;</i></p> 
+<img alt="deploymetncomponent (7K)" src="images/deploymetncomponent.png" height="332" width="462" />
+<br>
+<ol>
+1.	Scheduler periodically invokes listener to check for updates
+</ol>
+<ol>
+2.	If Listener found an update it passes that information to the Repositary
+</ol> 
+<ol>
+3.	Repository hand over the document to DeploymentParser 
+</ol>
+<ol>
+4.	Having parsed the document, the DeploymentParser returns the corresponding object
+</ol>
+<ol>
+5.	update the toDeploy and toUnDeploy list
+</ol> 
+<ol>
+6.	inform Listener to update system
+</ol> 
+<ol>
+7.	inform DeploymentEngine to do update (both deploy and undeploy)
+</ol> 
+<br>
+<h3>5.3 Scheduler</h3>
+<p>This component itself is a thread and performs a specific task forever in given time interval. In this case it is periodically ask Listener to listen to the file system events. Here the file system is not the entire file system it is only the sub directories of WEB_INF/Repository that is modules and services.</p> 
+
+<h3>5.4 Listener</h3>
+<p>As mentioned above Listener listen to file system events, it checks both the modules and services directories. Then lists all the archive files in those two directories, next compare those against the repository to check whether new service(s) has added or any service(s) has been modified. And then it informs DeploymentEngine to execute the required methods.</p> 
+
+<h3>5.5 Repository</h3> 
+<p>Repository stores data about already deployed modules and services. At the initialization process this loads data about all the modules and services in the module and service directories. And then deploy all those loaded modules and services. The repository store data about name of the archive file and the last modified date. And it can be possible to perform following operation to Repository;</p> 
+<li>Add new entry to Repository </li>
+<li>Remove entry from Repository ,and</li> 
+<li>Modify entry in the Repository.</li>
+<p>
+Those operations correspond to Hot Deployment, Hot unDeployment and Hot Update. 
+In the add operation it check whether the entry which is going to add already in the Repository if so it ignore the operation else it will add the entry to Repository and also it would add an entry to a list maintaining in DeploymentEngine (toDeploy list). 
+In the remove operation it directly removes the entry from the repository and will adds an entry to a list maintaining in DeploymentEngine (toUnDeploy list) 
+In modify operation it will be added entry to both the list in DeploymentEngine. 
+</p> 
+<h3>5.6 DeploymentEngine</h3>
+<p>DeploymentEngine is the main component of deployment sub component. And it is the one which interact with the axis engine and engineregistry, when new service is added or removed existing service it will update the engineregistry. The deployment procedure is as follows;</p>
+<li>First check toUnDeploy list, if it is not empty then removed corresponding web service from the engineregistry.</li>
+<li>Next it checks toDeploy list if it is not empty then added</li>
+<li>Then for each and every item in the list passes to DeploymentParser and create corresponding axis service object, and then that will be added to the engineregistry.</li> 
+
+<h3>5.7 DeploymentParser</h3>
+<p>All the following three types of xml document are parsed by DeploymentParser and its underline parser is stax.</p>
+<li>server.xml</li> 
+<li>service.xml</li> 
+<li>module.xml</li>
+
+<p><i>Parsing server.xml is done as follows;</i>
+<br>
+DeploymentEngine will create an AxisGlobal object and pass that to DeploymentParser, then DeploymentParser will be modified the object according to server.xml.</p>
+
+<p><i>Parsing service.xml is done as follows;</i>
+<br>
+DeploymentEngine will create an AxisService object and passed to DeploymentParser, and then it will be updated that object according to service.xml.</p>
+
+Parsing module.xml is same as above only difference is instead of AxisService this time it passed AxisModule.   
+
+
+<p><h3>5.8 Deployment Engine initialization</h3>
+Initialization process of the DeploymentEngine is consisting of following steps;
+<li>First it check whether server.xml is located in repository directory , if it is then it load it and get it parsed , if it is not then create default server.xml and put it to the repository.</li>
+<li>Next it check whether modules and services directory are available under repository, if not it will be created them.</li> 
+<li>After parsing server.xml it will be created an AxisGlobal object.</li>
+<li>Next load all the axis archives files in both modules and services directories, parse them and create AxisService and AxisModule objects.</li>
+<li>If server.xml has references to modules then check whether those are valid modules, (it is valid if it is in the modules directory), if it not valid throws an exception else;</li> 
+<li>Build the GlobalChains (GlobalInChain , GlobalOutChain , GlobalFaultChain) using phase rules by the PhaseResolver.</li>
+<li>Next will be added all the available services and modules to engineRegistry.</li>
+<li>Finally return the engineRegistry.</li>
+</p>
+
+ <p><h3>5.9 Adding new web service</h3>
+Adding a new web service starting from putting it to service directory consists of following steps;
+<li>1.	First unzip the aar file and take its service.xml, next using DeploymentParser get it parsed.</li> 
+<li>2.	While processing the service.xml it will be created an AxisService obejct and will update that.</li>
+<li>3.	Next will be added crated object to DeploymentEngine.</li>
+<li>4.	Then by the DeploymentEngine added the service calssLoader and provider class to AxisService object.</li>
+<li>5.	Next it will be build the Handler chain, by resolving phase rules.</li>
+(It should be notice here that Handler Chain is consisting of HandlerMetadata which having all the phase rules data , and actual executable handler )
+<li>6.	Then the created object will be added to EngineRegistry.</li>
+
+<h2>6.0 AXIOM - AXIs Object Model</h2>
+<p><h3>6.1 Introduction</h3>
+AXIOM (also know as OM -Object Model) is used to refer to the new and efficient XML info set model that is developed for Axis 2. Most of the XML object model used today are based on two major methods, namely;
+</p>
+<li>1.	DOM based - where the whole document is parsed and held in the memory</li>
+<li>2.	event based (SAX like) - whole document is parsed at once, but no model in the memory is created and the user has to catch the relevant events which can not be stopped or reversed.</li>
+
+<p>AXIOM gets the best from both the options and builds a better object model on top of pull parsing methodology. It controls the phase of the parsing and builds a memory model if required of the information that's being parsed so far. That means at once instance, AXIOM has not fully built object model and rest of the information still in the stream.
+The most important feature of this OM is that it is lightweight and differed built based on StAX (JSR 173), the streaming pull parser. 
+The object model can be manipulated as any other object model (Such as jdom) but underneath, the objects will be created only when its is absolutely required. Hence this model is much more efficient.
+AXIOM interacts with outside world using the StAX API, that means it serialize and de0serialize using the StAX writer and StAX reader interfaces.
+</p>
+<img alt="OM1 (13K)" src="images/OM1.PNG" height="306" width="779" />
+<p>
+Since most of the data binding tools support SAX based interfaces, AXIOM comes with an adapter to be used between StAX and SAX.
+</p> 
+<h3>6.2 High Level Architecture</h3>
+<img alt="om2 (53K)" src="images/om2.PNG" height="409" width="709" />
+<p>
+AXIOM "sees" the XML input stream through the StAX stream reader, which is being wrapped by a builder interface provided. Current implementation has two builders, namely; 
+<li>OM Builder - this will build full XML info-set supported general XML model. But the current implementation lack the support for Processing Instructions and DTDs.</li>
+<li>SOAP Builder - this will build SOAP XML specific object model. Object model will contain SOAP-Specific objects like the SOAPEnvelope, SOAPHeader etc.</li> 
+</p>
+<p>
+Each of these builders has the support for differed building and caching. User has the option of building the memory model or not. He can control this via setting the cache on or off. </p>
+<p>
+( Since the object model is pull based, the StAX API is tightly bound to OM. To work with OM a StAX compliant parser and the API must be present in the classpath. )
+</p>
+
+<p>
+The OM API works on top of the builder interface and provides the user, may he be an engine developer, handler developer or anyone. This will provide the highest flexibility as one can change builders and object model implementations completely independent to one another.
+OM has a defined set of APIs and one can implement his own memory model based on that. Current AXIS 2, comes with a linked list based implementation of those set of APIs. (There was an effort to build another OM on a table based model. It's now on halt.) 
+Therefore one can find a factory to create OM objects, which will help to switch between different implementations of object model.
+</p>
+<img alt="om3 (37K)" src="images/om3.PNG" height="450" width="502" />
+<br>
+<h2>7.0 Handler Frame work and Phase Rules </h2>
+<h3>7.1 Phase</h3>
+<p>Phase is a logically ordered collection of handlers. And the handler inside a phase is ordered by phase rules. By using phase rules user can specify where handler should be logically placed. There are some of valid attribute associated with phase rule as listed in the following table;
+</p>
+
+<table border="1" cellpadding="1" cellspacing="1" >
+<th>Attribute Name</th><th>Value</th>
+<tr><td>Before</td><td>Can be either a handler or a phase *</td></tr>
+<tr><td>After</td><td>Can be either a handler or a phase  *</td></tr>
+<tr><td>Phase </td><td>Valid phase name **</td></tr>
+<tr><td>PhaseFirst </td><td>Boolean ***</td></tr>
+<tr><td>PhaseLast</td><td>Boolean ***</td></tr>
+</table>
+<p>* - If "before" or "after" attribute of a handler is another handler, then the referenced handler must be belong to the same phase.  And if before or after attribute is a phase , in that case there can not have phase attribute of that handler. If one of before or after is a handler other can not be a phase.</p> 
+
+<p>** - valid phase is a phase that is listed in the server.xml, if the phase name is not there then the phase name is not a valid phase.</p>
+
+<p>*** - if both PhaseFirst and PhaseLast attributes of some handler are true, in that case phase only has one handler.</p> 
+
+<p>N:B : if user going to use handles as before and attributes , then there is no need to use PahseFirst and PhaseLast  because , those are ignored by the rule engine.</p>
+
+<p><h3>7.2 Handler chain</h3>
+Handler chain is collection of phases and handlers, the order of phases in the chain is described in server.xml, and for one service it can have three handler chains;
+<li>1.	Inflow</li>
+<li>2.	Outflow</li>
+<li>3.	Faultflow.</li>
+</p>
+
+For each and every handler chain, handlers can come in different ways as follows;
+<li>Corresponding flow of service.xml</li>
+<li>If there are any references to modules then the handlers from correspondence flow.</li>
+<li>Operation specific handlers corresponding flow</li>
+<h2>8.0 WSDL Architecture.</h2>	
+
+WSDL Module of Axis2 was architected with both WSDL version 1.1 and version 2.0 Component model in mind. The entire architecture of the aforesaid Module is built around an Object Model called  
+WSDL Object Model which will be refered to as WOM here fourth. 
+
+<br/>
+<br/>
+<h3> 8.1 Overview of the Axis2 WSDL Module </h3>
+
+WSDL Module can be mainly broken down into two major functionalities:
+<ul>
+<li> Service Description Functionality.
+<li>WSDL Processing functionality(e.g. WSDL2Java, WSDL24J, Java2WSDL)
+</ul>
+Service Description will provide an API to the Axis2 Engine that will expose the sufficient statistics about the web service that has been described in the WSDL file. WSDL Processing basically involves WSDL2Java, WSDL24J, and Java2WSDL.
+Following sections will give a further overview of each of the above functionalities.
+<br/>
+<br/>
+
+<!-- An image that shows all that the 
+	WSDL2Java
+	Java2WSDL
+	Service Description -->
+
+ 
+
+<image src="images/Architecture.gif" align=”middle”>
+
+<br/>
+<br/>
+
+<h3>8.2 WOM</h3>
+WOM is engineered based on WSDL 2.0 component model, but it does not restrict its functionality to prior WSDL versions. Rather both WSDL 1.1 and WSDL 2.0 versions will be supported on top of the WOM. WOM consists of components such as Description, Interface, Service, etc, as shown in the following diagram. All those Components extend from one super interface called org.apache.wsdl.Component which will prove to be very useful in the implementation of the Service Desc.
+<br/>
+<br/>
+
+<!—a class diagram of the WOM interfaces -->
+<image src=" images/wom.PNG" align=”middle”>
+
+<br/>
+<br/>
+
+
+WOM is a runtime representation of the WSDL file and it will provide the web service description functionality. As the following diagram illustrate the WOM will be the common Object model that will be used in bothWSDL2Java and Java2WSDL functionality. This intermediary object model ease the discussion since the WSDL processing can be broken down into the following four sub modules.   
+<ul>
+<li>WOM Builder.
+<li> WSDL Emitter.
+<li> Code Generator.
+<li> Code Parser.
+</ul>
+
+<h3> 8.3 Service Description</h3>
+<p>
+Service Description (also known as Service Desc) is an API by which the necessary statistics will be made available to the Axis2 Engine at the runtime. </p>
+<p>
+The functionality of the WOM is very much similar to the functionality expected from that of the Service Desc. Both behave as runtime description of the web service. Difference is that WOM is a clean component model that is not dependent on Axis2 or any other SOAP Engine and Service Desc is the Axis2 specific description of the web service. Thus it was necessary that the Axis Service Desc to extend the WOM to incorporate the additional Axis specific deployment information such as handlers, modules, providers, etc. The actual implementation of such extensions has been achieved using the extension capability provided by the WOM itself. 
+</p>
+<p>
+As mentioned above all the Components in the WOM extend from a super interface org.apache.wsdl.Component. Service Desc makes use of the functionality provided by org.apache.wsdl.Component to interface the WOM to behave as a Service Desc. org.apache.wsdl.Component has the following class diagram.
+</p>
+<br/>
+<br/>
+<image src=" images/Component.PNG" align=”middle”>
+
+<br/>
+<br/>
+<p>
+As the diagram illustrate the Component class provides the functionality of storing properties. Since all the WSDL Components extend from this class directly or indirectly, this functionality get inherited to all the WSDL Components. The Service Desc makes use of this functionality to store Axis2 specific properties using the WOM. In that sense the Axis2 Service Desc is a wrapper to the WOM.
+</p>
+	
+Following is the Class diagram of the top level component of the description Component 
+<font face=”Courier”>org.apache.axis.description.impl.AxisService.</font>
+<br/>
+<br/>
+
+
+<image src=" images/AxisService.JPG" align=”middle”>
+
+<br/>
+<br/>
+
+org.apache.axis.description.impl.AxisService extends from the org.apache.wsdl.WSDLService and thus inherits the functionality of the org.apache.wsdl.WSDLService. The Axis2 specific properties like provider, ServiceClass are stored using the org.apache.wsdl.Component class which org.apache.wsdl.WSDLService extends from.
+
+The deployment Module will pick up the deployed service and it will build the Service Desc and deploy in the Engine Registry. There will be an underlying WOM for each Service Desc deployed in the Engine Registry.
+<br/>
+<br/>
+
+
+<image src=" images/ServiceDesc.gif" align=”middle”>
+
+<br/>
+<br/>
+
+
+<h3>8.4 WSDL Processing</h3><p>
+WSDL Processing can be identified as of operations performed on or performed using the WOM. Such definition is made possible because of the intermediary object model i.e. WOM always acts as an intermediary state. For example if WSDL2Java is considered: </p>
+WSDL2Java = WSDL-->WOM (WSDL2WOMBuilder), WOM-->Java (Code Generation Module).
+<p>
+The point to note is that the above allows the WSDL-->WOM (WSDL2WOMBuilder) to be identified as an independent module, not tied to the WSDL2Java operation. There are four such modules identified in the WSDL Processing Module of Axis2.
+</p>
+<ul>
+<li>WOM Builder.
+<li> WSDL Emitter.
+<li> Code Generator.
+<li> Code Parser.
+</ul>
+
+<h4>8.5 WOM Builder Module</h4>
+
+WOM has an external building mechanism and it gets built by an external builder. Since WOM is both WSDL 1.1 and WSDL 2.0 compliant it can get built from an either of the WSDL versions. Currently WSDL1ToWOMBuilder uses the WSDL4J for the WSDL Parsing. In that implementation the WOM gets populated from a WSDL4J object structure. Following is the class diagram of the WOM build mechanism.
+
+<!—The Figure of WOM Builder-->	
+
+<br/>
+<br/>
+
+
+<image src=" images/WomBuilder.PNG" align=”middle”>
+
+<br/>
+<br/>
+ 
+The WSDL2ToWOMBuilder is to be implemented and the WSDL24J is going to be part of this implementation.
+
+<h2>9.0 Client API.</h2>
+Types of Client programming model that Axis 2 support. 
+<li>1.	Synchronous Invocation</li>
+<li>2.	Asynchronous invocation using callback , with two way transport</li>
+<li>3.	Asynchronous invocation using callbacks, transport is also one way (Addressing information is required.)</li>  
+<br>
+The following diagram described all the invocations between subcomponents in the client side.
+<img alt="clientAPi (7K)" src="images/clientAPi.png" height="330" width="602" />
+<br>
+<p><i>Call Class consist of following methods (Call API)</i><br>
+<img alt="call (6K)" src="images/call.PNG" height="200" width="582" /></p>
+<p><i>Callback Interface</i><br>
+<img alt="callback (1K)" src="images/callback.PNG" height="59" width="499" /></p>
+<p><i>AyncResult </i><br>
+<img alt="ayncresult (1K)" src="images/ayncresult.PNG" height="59" width="499" /></p>
+
+<p><i>Correlator</i><br>
+<img alt="correlator (2K)" src="images/correlator.PNG" height="73" width="539" /></p>
+
+<p><h3>9.1 sendAsync Invocation</h3> 
+This invocation is similar to fire and forget, just send the request and dose not accept at least acknowledgment. And invocation will consist of following steps;   
+<br>
+a -> call.sendAsync(SOAPEnvelope)
+<br>
+b -> engine.send( ..)
+<br>
+c -> Send the SOAP message
+<br>
+<br>
+<i>Code Snippet: 
+</i>
+<br>
+<ul>
+call.setTargetURL(URL)<br>
+call.setAction(String)<br>
+call.sendAsync(SOAPEnvelope)<br>
+</ul>
+<br>
+<i>Sequence diagram</i><br>
+<img alt="sendAsync (3K)" src="images/sendAsync.png" height="159" width="465" />
+</p>
+<p><h3>9.2 send Invocation</h3>
+The service invocation is a void invocation. No return value, but wait for acknowledgment or SOAP Fault and it is consisting of the following steps. 
+<br>
+a -> call.send(SOAPEnvelope)<br>
+b -> engine.send( ..)<br>
+c -> Send the SOAP message<br>
+
+<br>
+<br>
+<i>Code Snippet:</i>
+<br> 
+call.setTargetURL(URL)<br>
+call.setAction(String)<br>
+call.send(SOAPEnvelope)<br>
+<br>
+Sequence diagram
+<br>
+<img alt="send (2K)" src="images/send.png" height="175" width="436" />
+</p>
+<p>
+<h3>9.3 sendReceive Invocation</h3>
+The service method has a response and the communication happens synchronously using a bi-directional protocol. Client hangs until the response (or fault) is returned. 
+<br>
+a -> call.sendReceive(SOAPEnvelope)<br>
+b- > engine.send (..)<br>
+c -> Send the SOAP message<br>
+d -> Receive the response over the synchronous transport<br>
+w -> ProviderX will be called as the last step in engine.receive(..) <br>
+e -> provider returns       <br>
+f -> Call hand over the response to the client <br>
+<br>
+<i>Code Snippet: </i><br>
+call.setTargetURL(URL)<br>
+call.setAction(String)<br>
+SOAPEnvelope env=call.sendReceive(SOAPEnvelope)<br>
+<br>
+<i>Sequence diagram</i>
+<br>
+<img alt="sendRecievce (5K)" src="images/sendRecievce.png" height="218" width="455" />
+</p>
+<p>
+<h3>9.4 sendReceiveAsync Invocation</h3>
+The service method has a response and the communication happens synchronously using a bi-directional protocol. Client DOES NOT hangs until the response (or fault) is returned. Client uses callback mechanism to retrieve the response. Call API uses threads from a thread pool for each invocation. 
+<br>
+a -> call.sendReceiveAsync (SOAPEnvelope, callbackObj)<br>
+p -> correlator.addCorrelationInfor(msgID,allbackObjRef)<br>
+b- > engine.send (..)<br>
+c -> Send the SOAP message<br>
+d -> Receive the response over the synchronous transport<br>
+w -> ProviderX will be called as the last step in engine.receive(..)<br> 
+q -> correlator.getCorrelationInfo(msgID)<br>
+g -> callbackObj.onComplet()<br><br>
+<i>Code Snippet:</i> <br>
+call.setTargetURL(URL)<br>
+call.setAction(String)<br>
+call.setListenerTransport("http", true)		<br>			
+call.sendReceiveAsync (SOAPEnvelope, Callback)<br>
+<br>
+<br>
+<i>Sequence diagram</i>  
+<br>
+<img alt="sendRecieveAsync (10K)" src="images/sendRecieveAsync.png" height="270" width="726" />
+</p>
+<p>
+<h3>9.5 sendReceiveAsync Invocation with One way transport</h3>
+The service method has a response and the communication happens asynchronously using a uni-directional protocol. Client DOES NOT hangs until the response (or fault) is returned. Client uses callback mechanism to retrieve the response. Call API uses threads from a thread pool for each invocation. 
+<br>
+a -> call.sendReceiveAsync (SOAPEnvelope, callbackObj)<br>
+p -> correlator.addCorrelationInfor(msgID,allbackObjRef)<br>
+b- > engine.send (..)<br>
+c -> Send the SOAP message<br>
+r -> Receive the response by the listener<br>
+s -> engine.receive(..)<br>
+w -> ProviderX will be called as the last step in engine.receive(..) <br>
+q -> correlator.getCorrelationInfo(msgID)<br>
+g -> callbackObj.onComplet()<br><br>
+<i>Code Snippet: </i><br>
+call.setTargetURL(URL)<br>
+call.setAction(String)<br>
+call.setListenerTransport("http", false)<br>
+call.sendReceiveAsync(SOAPEnvelope, Callback)<br>
+<br>
+<i>Sequence diagram </i><br>
+<img alt="sendRecieveWithListnere (12K)" src="images/sendRecieveWithListnere.png" height="310" width="809" />
+
+</p>
+</body>
+</html>

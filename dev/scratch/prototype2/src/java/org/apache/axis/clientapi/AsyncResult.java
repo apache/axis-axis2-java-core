@@ -24,10 +24,16 @@ import org.apache.axis.om.SOAPEnvelope;
 public class AsyncResult {
     private SOAPEnvelope result;
 
+    /**
+     * @param result
+     */
     public void setResult(SOAPEnvelope result) {
         this.result = result;
     }
 
+    /**
+     * @return SOAPEnvelope
+     */
     public SOAPEnvelope getResponseEnvelope() {
         return result;
     }
