@@ -1,5 +1,11 @@
 <html><head><title>Axis 2.0 Client API</title>
-<style></style>
+<style>
+.style1 {
+	font-family: "Courier New", Courier, mono;
+	font-size: 14px;
+	color: #990000;
+}
+</style>
 </head>
 <body>
 <h2>Introduction</h2>
@@ -59,22 +65,23 @@ any) is also sent using the response path of the HTTP connection.</p>
 <p>This is the web service client that actually utilizes the service.</p>
 <h3>Call </h3>
 <p>This is the API that the Axis client should use to invoke the web services. Followings are the methods that the client can use in this API.</p>
-<source></source><p>public void setTo(EndpointReference EPR)</p>
-<p>public void setTransportType(String transport)</p>
-<p>public void setListenerTransport(String Listenertransport, boolean useSeparateListener)</p>
-<p>public void setAction(String action)</p>
-<p>&nbsp;</p>
-<p>public void sendAsync(SOAPEnvelope envelope) throws AxisFault</p>
-<p>public void send(SOAPEnvelope envelope) throws AxisFault</p>
-<p>public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault</p>
-<p>public void sendReceiveAsync(SOAPEnvelope envelope,final Callback callback) throws AxisFault</p>
-<p>public void getTO()</p></source>
+<source>
+<pre class="style1">public void setTo(EndpointReference EPR)
+public void getTO() </pre><pre class="style1">public void setTransportType(String transport) 
+public void setListenerTransport(String Listenertransport, boolean useSeparateListener) 
+public void setAction(String action)</pre>
+ <pre class="style1">public void sendAsync(SOAPEnvelope envelope) throws AxisFault 
+ public void send(SOAPEnvelope envelope) throws AxisFault 
+ public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault 
+ public void sendReceiveAsync(SOAPEnvelope envelope,final Callback callback) throws AxisFault 
+ </pre>
+</source>
 <h3>Engine</h3>
 <p>This is Axis 2 engine and it does not make any difference whether the engine is used in the client side or the server side.&nbsp; </p>
 <h3>Correlator</h3>Correlator is required when client uses the non-blocking API to invoke a web service. Its stores callback object with a key field as messageID. This is a singleton class which consists of following two methods. 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void addCorrelationInfo(String msgid, Callback callbackObj)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Callback getCorrelationInfo(String MessageID)</p>
+<p>&nbsp;&nbsp;<span class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void addCorrelationInfo(String msgid, Callback callbackObj)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span></p>
+<p class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Callback getCorrelationInfo(String MessageID)</p>
 <h3>Listener </h3>
 <p>A separate listener is required to provide the asynchronous communication between the client and the service. That is, when the client retrieves the response (if any) using a separate transport connection, listener will act as an addressable end point to the service so that it can send the service responses directly to the listener.</p>
 <h3>ClientProvider</h3>
@@ -84,10 +91,10 @@ any) is also sent using the response path of the HTTP connection.</p>
 <h3>Robust Invocation</h3>
 <p>This invocation is mainly a one way operation. However it supports the returning faults from the service. The transport protocol used in this message pattern should be bi-directional.&nbsp; The following code snippet shows how the client can use above method of invocation and the sequence diagram shows the complete message. </p>
 <p><strong>Code Snippet</strong></p><source></source>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTo(EPR)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.send(SOAPEnvelope) </p></source>
+<p class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTo(EPR)</p>
+<p class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</p>
+<p class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</p>
+<p class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.send(SOAPEnvelope) </p></source>
 <p><strong>Message Path and Sequence Diagram</strong></p>a -&gt; call.send(SOAPEnvelope)<p>b -&gt; engine.send( ..)</p>
 <p>c -&gt; Send the SOAP message</p>
 <div align="center">
@@ -97,7 +104,7 @@ any) is also sent using the response path of the HTTP connection.</p>
 <p align=center>Figure 2- Sequence diagram corresponding to send ()</p>
 <h3>Fire and Forget Invocation</h3>
 <p>This method of invocation does not wait for any kind of response, not even for a fault. Once the request is written to the wire the method immediately returns to the client. Transport can be either unidirectional or bi-directional. Following code snippet shows how the client can use above API method and the sequence diagram shows the complete message. </p>
-<p><strong>Code Snippet</strong></p><source>&nbsp; call.setTo(EPR)<p>&nbsp;&nbsp; call.setAction(String)</p>
+<p><strong>Code Snippet</strong></p><source class="style1">&nbsp; call.setTo(EPR)<p>&nbsp;&nbsp; call.setAction(String)</p>
 <p>&nbsp;&nbsp; call.setTransportType(String)</p>
 <p>&nbsp;&nbsp; call.sendAsync(SOAPEnvelope) </p></source>
 <p><strong>Message Path and Sequence Diagram</strong></p>
@@ -106,10 +113,12 @@ any) is also sent using the response path of the HTTP connection.</p>
 <p align=center>Figure 3 – Sequence diagram corresponds to sendAsync()</p>
 <h3>Blocking Invocation of type In-Out</h3>
 <p>This invocation pattern lets the client to invoke a web service and wait till the response is received before proceeding to the next line of invocation. This is very much similar to the Call.invoke() with response types in Axis 1.1. In this approach, the transport specified should be a bi-directional transport and the response is retrieved using the same transport connection. The client will hang till the entire communication completes.</p>
-<p><strong>Code Snippet&nbsp;</strong></p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<p><strong>Code Snippet&nbsp;</strong></p>               
+<span class="style1">call.setTO(EPR)</span>
+<p class="style1"> call.setAction(String)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 </p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SOAPEnvelope env=call.sendReceive(SOAPEnvelope)</p>
+<p class="style1">call.setTransportType(String)</p>
+<p class="style1">SOAPEnvelope env=call.sendReceive(SOAPEnvelope)</p>
 <p><strong>Message Path and Sequence Diagram</strong></p>
 a -&gt; call.sendReceive(SOAPEnvelope)<pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>d -&gt; Receive the response over the synchronous transport</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>e -&gt; provider returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </pre><pre>f -&gt; Call hand over the response to the client</pre>
 <p align=center><img height=199 src="images/image008.jpg" width=439 DESIGNTIMEURL="images/image008.jpg"></p>
@@ -119,7 +128,7 @@ a -&gt; call.sendReceive(SOAPEnvelope)<pre>b- &gt; engine.send (..)</pre><pre>c 
 <p><strong>Method 1: Without a Client Side Listener</strong></p>
 <p>The communication happens using a single transport connection. With respect to the transport protocol used, the web service response is received using the same connection. However the client will not block till it receive the response. Instead it can proceed to the next line of execution by registering a Callback object.&nbsp; The following code snippet shows how the client can use above API method and the sequence diagram shows the complete message. To use this pattern client should use the value “<strong>true</strong>” for the parameter “useSeparateListener” in the setListenerTransport(..) method.</p>
 <p><strong>Code Snippet</strong></p>
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
+<pre>&nbsp;<span class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)</span></pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
 <p><strong>Message Path and Sequence Diagram</strong></p>
 <pre>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</pre><pre>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</pre><pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>d -&gt; Receive the response over the synchronous transport</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
 <div align="center">
@@ -130,14 +139,16 @@ a -&gt; call.sendReceive(SOAPEnvelope)<pre>b- &gt; engine.send (..)</pre><pre>c 
 <p>In this method client will have the usage of non-blocking API with a separate listener to accept the service response asynchronously. Outgoing transport does not wait for the response. Instead corresponding incoming message is processed by different transport, which is created by call object while it is sending the request. The correlation between the request and the response messages is achieved using a similar message ID mechanism as in WS-Addressing. Once the WS-Addressing support is implemented the client will only use &lt;wsa:MessageID&gt; and the &lt;was:RelatesTo&gt; headers to achieve the correlation. </p>
 <p>The following code snippet shows how the client can use that above API method and the sequence diagram shows the complete message. To use this pattern client should use the value “<strong>false</strong>” for the parameter “useSeparateListener” in the setListenerTransport(..) method.</p>
 <p><strong>Code Snippet</strong></p>
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="style1">call.setTO(EPR)</span></pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre class="style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
 <p><strong><u>&nbsp;</u></strong></p>
 <p><strong>Message Path and Sequence Diagram</strong></p>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)<p>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</p>
 <pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>r -&gt; Receive the response by the listener</pre><pre>s -&gt; engine.receive(..)</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
 <p align=center><img height=234 src="images/image012.jpg" width=648 DESIGNTIMEURL="images/image012.jpg"></p>
 <p align=center>Figure 6 – Sequence diagram corresponds to sendRecieveAync with one way transport.</p>
 <p><strong><u>Asynchronous invocation with one way transport</u></strong></p>
-<p>The programming model almost similar to asynchronous invocation with two way transport. Only difference is that &nbsp;for outgoing and incoming messages, it uses two engine instances, and outgoing transport dose not wait for response. Instead, corresponding incoming message is processed by different transport which is created by call object while it is sending the request. Here the Listener is the newly created transport, which is running to get the incoming message. Corresponding sequence diagram is shown in Figure 6, code snippet and message paths are described below. </p><pre>call.setTO(EPR)</pre><pre>call.setAction(String)</pre><pre>call.setListenerTransport(“http”, false)</pre><pre>call.sendReceiveAsync(SOAPEnvelope, Callback)</pre>
+<p>The programming model almost similar to asynchronous invocation with two way transport. Only difference is that &nbsp;for outgoing and incoming messages, it uses two engine instances, and outgoing transport dose not wait for response. Instead, corresponding incoming message is processed by different transport which is created by call object while it is sending the request. Here the Listener is the newly created transport, which is running to get the incoming message. Corresponding sequence diagram is shown in Figure 6, code snippet and message paths are described below. </p>
+<h3>Code Snippet </h3>
+<pre class="style1">call.setTO(EPR)</pre><pre class="style1">call.setAction(String)</pre><pre class="style1">call.setListenerTransport(“http”, false)</pre><pre class="style1">call.sendReceiveAsync(SOAPEnvelope, Callback)</pre>
 <h3>Message paths</h3><pre>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</pre><pre>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</pre><pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>r -&gt; Receive the response by the listener</pre><pre>s -&gt; engine.receive(..)</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
 <p align=center><img height=234 src="images/image013.jpg" width=648 DESIGNTIMEURL="images/image013.jpg"></p>
 <p align=center>Figure 6 – Sequence diagram corresponds to sendRecieveAync with one way transport.</p>
