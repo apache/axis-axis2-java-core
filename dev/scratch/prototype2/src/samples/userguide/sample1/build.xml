@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Feb 11, 2005 1:04:21 PM                                                        
+
+      This build file is intended to compile and run the Axis2 sample
+      provided here with the service being deployed at Tomcat or by
+      running a simple Axis2 server.   
+     
+                   
+                                                                     
+     ====================================================================== -->
+<project name="sample1" basedir="." default="compile">
+	<property name="src.dir" value="src" />
+	<property name="classes.dir" value="./classes" />
+	<property name="build.dir" value="./build" />
+	<property name="lib.dir" value="./lib" />
+	<property name="conf.dir" value="./conf"/>
+	<property name="jardrop.dir" value="services"/>	
+	<property environment="env"/>
+	<property name="AXIS_HOME" value="${env.AXIS_HOME}"/>
+	<property name="axis.serverJarDrop.dir" value="${AXIS_HOME}/WEB-INF/services"/>
+	
+	
+	
+	
+	<path id="classpath.library">
+	        <fileset dir="${AXIS_HOME}/WEB-INF/lib">
+	            <include name="**/*.jar"/>            
+	        </fileset>
+	    </path>
+		
+		<path id="classpath.client">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar"/>            
+			</fileset>
+		</path>
+		
+		<path id="classpath.runtimelibraries">
+			<path refid="classpath.library" />
+			<path refid="classpath.client" />
+		</path>
+	
+
+	
+
+	<target name="clean" description="Delete all generated files">
+		<delete dir="${classes.dir}" failonerror="false" />
+		<delete dir="${services.dir}" failonerror="false"/>
+		<delete dir="${build.dir}" failonerror="false" />
+		<delete dir="${lib.dir}" failonerror="false"/>
+	</target>
+
+	<target name="validateAxisHome">
+		<available file="${AXIS_HOME}}" type="dir" property="axis2.deployed"/>				
+	</target>
+	
+	<target name="validateSevices.dir">
+		<available  file="${AXIS_HOME}/WEB-INF/services" type="dir" property="axis2.services"/>	
+	</target>
+	
+	<target name="validateDeploymentSettings" depends="validateAxisHome" unless="validateSevices.dir">
+		<mkdir dir="${AXIS_HOME}/WEB-INF/services"/>
+	</target>
+	
+
+	<target name="createDir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${lib.dir}"/>
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${build.dir}/${jardrop.dir}"/>
+	</target>
+
+	<target name="compile" depends="clean,createDir">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" >
+			<classpath refid="classpath.library"/>
+		</javac>
+		<jar destfile="${lib.dir}/${ant.project.name}-all.jar">
+					<fileset dir="${classes.dir}"/> 
+		</jar>
+		<jar destfile="${build.dir}/${jardrop.dir}/${ant.project.name}.jar">	
+					
+					<fileset dir="${classes.dir}"> 
+						<include name="**/EchoXML.class"/>							
+					</fileset>
+					<fileset dir="${conf.dir}">
+						<include name="META-INF/service.xml"/>
+					</fileset>
+				</jar>
+		<delete dir="${classes.dir}" failonerror="false"/>
+	</target>
+	
+	
+	<target name="deploy" depends="compile,validateDeploymentSettings">
+		<copy file="${build.dir}/${jardrop.dir}/${ant.project.name}.jar" todir="${axis.serverJarDrop.dir}" overwrite="true"/>			
+	</target>
+	
+	<target name="echo" depends="compile">
+		<java classname="SynchronousClient">
+			<classpath refid="classpath.runtimelibraries"/>
+			<arg value="8080"/>
+		</java>
+	</target>
+	
+	
+</project>
+

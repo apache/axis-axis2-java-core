@@ -1,4 +1,0 @@
-<service provider="RawXMLProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
-    <java:implementation class="EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
-    <operation name="echo" qname="echo"/>
-</service>
