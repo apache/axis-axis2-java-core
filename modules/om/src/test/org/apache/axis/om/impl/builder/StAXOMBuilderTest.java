@@ -20,7 +20,7 @@ package org.apache.axis.om.impl.builder;
  * Time: 2:29:07 PM
  */
 
-import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;

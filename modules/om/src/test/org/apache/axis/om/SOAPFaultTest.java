@@ -1,7 +1,5 @@
 package org.apache.axis.om;
 
-import org.apache.axis.AbstractTestCase;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

@@ -1,6 +1,6 @@
 package org.apache.axis.om.impl.streamwrapper;
 
-import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;

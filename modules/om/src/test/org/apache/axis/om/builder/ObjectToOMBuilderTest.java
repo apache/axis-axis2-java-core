@@ -1,16 +1,22 @@
 package org.apache.axis.om.builder;
 
-import junit.framework.TestCase;
-import org.apache.axis.om.*;
-import org.apache.axis.om.builder.dummy.DummyOutObject;
-import org.apache.axis.testUtils.Encoder;
-import org.apache.axis.testUtils.ObjectToOMBuilder;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.builder.dummy.DummyOutObject;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.ObjectToOMBuilder;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

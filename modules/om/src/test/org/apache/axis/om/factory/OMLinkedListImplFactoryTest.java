@@ -17,8 +17,19 @@ package org.apache.axis.om.factory;
  * <p/>
  */
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.om.*;
+import org.apache.axis.om.AbstractTestCase;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)

@@ -15,10 +15,9 @@
  */
 package org.apache.wsdl;
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.wsdl.wsdltowom.WOMBuilderFactory;
-import org.apache.wsdl.util.Utils;
-import org.w3c.dom.Document;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
@@ -26,9 +25,10 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
+
+import org.apache.axis.wsdl.wsdltowom.WOMBuilderFactory;
+import org.apache.wsdl.util.Utils;
+import org.w3c.dom.Document;
 
 /**
  * @author chathura@opensource.lk
