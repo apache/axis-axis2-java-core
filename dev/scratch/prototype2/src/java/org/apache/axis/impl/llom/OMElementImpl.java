@@ -2,14 +2,9 @@ package org.apache.axis.impl.llom;
 
 import java.util.Iterator;
 
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMChildrenIterator;
-import org.apache.axis.om.OMChildrenQNameIterator;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
+import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.xml.utils.QName;
 
 /**

@@ -58,7 +58,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         lastNode = startElement;
         startElement.setBuilder(this);
         this.outObject.setContentHandler(this);
-        omFactory = new OMLinkedListImplFactory();
+        omFactory = OMFactory.newInstance();
     }
 
     public OMEnvelope getOMEnvelope() throws OMException {

@@ -51,7 +51,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
-        OMFactory factory = new OMLinkedListImplFactory();
+        OMFactory factory = OMFactory.newInstance();
         omStAXBuilder = new OMStAXBuilder(factory, xmlStreamReader);
         envelope = omStAXBuilder.getOMEnvelope();
         serilizer = new SimpleOMSerializer();

@@ -42,7 +42,7 @@ public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
 
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        OMStAXBuilder builder =   new OMStAXBuilder(new OMLinkedListImplFactory(),parser);
+        OMStAXBuilder builder =   new OMStAXBuilder(OMFactory.newInstance(),parser);
 
         return builder;
     }
@@ -57,7 +57,7 @@ public class OMTestUtils {
         while(it.hasNext()){
             OMNode ele = (OMNode)it.next();
             TestCase.assertNotNull("once the has next is not null, the " +
-                "eleemnt should not be null",ele);
+                "element should not be null",ele);
             
             if(ele instanceof OMElement){
                 walkThrough((OMElement)ele);

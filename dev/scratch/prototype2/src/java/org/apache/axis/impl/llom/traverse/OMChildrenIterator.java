@@ -1,5 +1,7 @@
-package org.apache.axis.om;
+package org.apache.axis.impl.llom.traverse;
 
+
+import org.apache.axis.om.OMNode;
 
 import java.util.Iterator;
 

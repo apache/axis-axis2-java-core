@@ -61,7 +61,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
 
     public OMXPPWrapper(XmlPullParser parser) {
         this.parser = parser;
-        ombuilderFactory = new OMLinkedListImplFactory();
+        ombuilderFactory = OMFactory.newInstance();
 
     }
 

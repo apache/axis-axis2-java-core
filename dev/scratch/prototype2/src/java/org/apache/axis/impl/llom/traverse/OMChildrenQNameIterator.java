@@ -1,7 +1,8 @@
-package org.apache.axis.om;
+package org.apache.axis.impl.llom.traverse;
 
 import org.apache.axis.impl.llom.OMNamedNodeImpl;
 import org.apache.axis.impl.llom.OMNodeImpl;
+import org.apache.axis.om.OMNode;
 import org.apache.xml.utils.QName;
 
 import java.util.Iterator;

@@ -41,7 +41,7 @@ public class ObjectToOMBuilderTest extends TestCase{
     protected void setUp() throws Exception {
         super.setUp();
         outObject = new DummyOutObject();
-        omFactory = new OMLinkedListImplFactory();
+        omFactory = OMFactory.newInstance();
 
         element = omFactory.createOMElement("Body", null);
         objectToOMBuilder = new ObjectToOMBuilder(element, outObject);

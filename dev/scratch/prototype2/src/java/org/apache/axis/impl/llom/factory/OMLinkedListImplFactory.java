@@ -45,6 +45,7 @@ import org.apache.axis.om.OMXMLParserWrapper;
  * Time: 2:21:13 PM
  */
 public class OMLinkedListImplFactory extends OMFactory {
+
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent) {
         return new OMAttributeImpl(localName, ns, value, parent);
     }

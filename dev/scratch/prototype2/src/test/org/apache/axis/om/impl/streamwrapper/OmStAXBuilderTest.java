@@ -46,7 +46,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        factory = new OMLinkedListImplFactory();
+        factory = OMFactory.newInstance();
         XMLStreamReader reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         builder = new OMStAXBuilder(factory,reader);

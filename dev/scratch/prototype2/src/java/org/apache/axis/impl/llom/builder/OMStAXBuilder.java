@@ -68,7 +68,7 @@ public class OMStAXBuilder implements OMXMLParserWrapper{
 
     public OMStAXBuilder(XMLStreamReader parser) {
         this.parser = parser;
-        this.ombuilderFactory = new OMLinkedListImplFactory();
+        this.ombuilderFactory = OMFactory.newInstance();
 
     }
 
