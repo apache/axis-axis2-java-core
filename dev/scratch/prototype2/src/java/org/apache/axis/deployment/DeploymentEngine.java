@@ -89,6 +89,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public DeploymentEngine(String RepositaryName) {
         this.folderName = RepositaryName;
+        this.serverconfigName = RepositaryName + "/server.xml";
     }
 
     public DeploymentEngine(String RepositaryName , String configFileName) {
