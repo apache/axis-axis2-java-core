@@ -230,4 +230,17 @@
            </ant:sourcepath>
   </ant:javadoc>
   </goal>
+  
+  <preGoal name="multiproject:site">
+    <attainGoal name="dist-src"/>
+    <attainGoal name="dist-bin"/>
+    <attainGoal name="war"/>
+    <copy todir="target/docs/api">
+		<fileset dir="target/api" />
+	</copy>
+	<copy file="target/axis2.war" tofile="target/docs/dist/axis2.war"/>
+	<copy file="target/axis2-src-M1.zip" tofile="target/docs/dist/axis2-src-M1.zip"/>
+	<copy file="target/axis2-bin-M1.zip" tofile="target/docs/dist/axis2-bin-M1.zip"/>
+	<copy file="target/axis2.war" tofile="target/docs/dist/axis2.war"/>
+  </preGoal>
 </project>
