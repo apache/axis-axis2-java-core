@@ -67,7 +67,6 @@
                   for(int i =0 ; i< values.length ; i++){
                       String s = (String)request.getParameter("arryValue" + (i+1));
                       values[i] =s==null?"":s;
-//                      values[i] = "ss" +i;
                   }
                   interopBean.setArraValue(values);
                   break;
@@ -112,7 +111,7 @@
           <tr>
           <td></td>
           <td>
-              <input type="radio" name="type" value="<%=Constants.InteropConstants.ECHO_STRING_SERVICE%>"  onclick="displayStringRow();hideStringArrayRow();hideStructRow();"  checked>Echo String</input>
+              <input type="radio"  name="type" value="<%=Constants.InteropConstants.ECHO_STRING_SERVICE%>"  onclick="displayStringRow();hideStringArrayRow();hideStructRow();"  checked>Echo String</input>
 
           </td>
           </tr>
@@ -240,7 +239,7 @@
              </tr>
              <tr>
              <td >
-              <textarea cols="55"  name="SOAPRequest" rows="20"><%= (interopBean.getRequest()==null) ? "" : interopBean.getRequest() %>
+              <textarea cols="55" disabled="true"  name="SOAPRequest" rows="20"><%= (interopBean.getRequest()==null) ? "" : interopBean.getRequest() %>
 </textarea>
              </td>
              </tr>
@@ -251,7 +250,7 @@
               <td><b>Response SOAP Message</b></td>
              </tr>
              <tr>
-             <td ><textarea cols="55" name="SOAPResponse" rows="20" ><%= (interopBean.getResponse()==null) ? "" : interopBean.getResponse() %>
+             <td ><textarea cols="55"  disabled="true" name="SOAPResponse" rows="20" ><%= (interopBean.getResponse()==null) ? "" : interopBean.getResponse() %>
 </textarea></td>
              </tr>
           </table>

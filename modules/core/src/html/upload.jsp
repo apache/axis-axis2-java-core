@@ -77,7 +77,12 @@
                 String file = new String(dataBytes);
                 String saveFile = file.substring(file.indexOf("filename=\"") + 10);
                 saveFile = saveFile.substring(0, saveFile.indexOf("\n"));
-                saveFile = saveFile.substring(saveFile.lastIndexOf("\\") + 1,saveFile.indexOf("\""));
+                if (saveFile.indexOf("\\")<0){
+                     saveFile = saveFile.substring(saveFile.lastIndexOf("/") + 1,saveFile.indexOf("\""));
+                }else{
+                     saveFile = saveFile.substring(saveFile.lastIndexOf("\\") + 1,saveFile.indexOf("\""));
+                }
+
                 saveFile = saveFile.toLowerCase();
 
                 if (!saveFile.endsWith(".jar")){
