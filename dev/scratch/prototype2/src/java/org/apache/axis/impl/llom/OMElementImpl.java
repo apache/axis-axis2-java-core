@@ -442,12 +442,22 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     private void serializeStartpart(XMLStreamWriter writer) throws XMLStreamException {
 
         String nameSpaceName = null;
+        String writer_prefix = null;
+        String prefix = null;
 
         if (ns != null) {
             nameSpaceName = ns.getName();
+            writer_prefix = writer.getPrefix(nameSpaceName);
+            prefix = ns.getPrefix();
             if (nameSpaceName != null) {
-                writer.writeStartElement( nameSpaceName, this.getLocalName());
-                serializeNamespace(ns, writer);
+                if (writer_prefix!=null){
+                    writer.writeStartElement(nameSpaceName, this.getLocalName());
+                }else{
+                    writer.writeStartElement(prefix,nameSpaceName, this.getLocalName());
+                    writer.writeNamespace(prefix, nameSpaceName);
+                    writer.setPrefix(prefix,nameSpaceName);
+                }
+
             } else {
                 throw new OMException("Non namespace qualified elements are not allowed");
 

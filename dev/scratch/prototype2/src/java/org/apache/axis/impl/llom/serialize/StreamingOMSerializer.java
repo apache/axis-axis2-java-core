@@ -75,20 +75,26 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     
+
      */
     protected void serializeElement(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
 
         String prefix = reader.getPrefix();
         String nameSpaceName = reader.getNamespaceURI();
+        String writer_prefix = writer.getPrefix(nameSpaceName);
 
         if (nameSpaceName != null) {
-            writer.writeStartElement(nameSpaceName ,reader.getLocalName() );
-            serializeNamespace(prefix, nameSpaceName, writer);
+            if (writer_prefix!=null){
+                writer.writeStartElement(nameSpaceName, reader.getLocalName());
+            }else{
+                writer.writeStartElement(prefix,nameSpaceName, reader.getLocalName());
+                writer.writeNamespace(prefix, nameSpaceName);
+                writer.setPrefix(prefix,nameSpaceName);
+            }
         } else {
             throw new OMException("Non namespace qualified elements are not allowed");
         }
-        
+
         //add attributes
         serializeAttributes(reader, writer);
         //add the namespaces
@@ -109,7 +115,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 //                namespacePrefixStack.pop();
 //        }
         writer.writeEndElement();
-       
+
     }
 
     /**
@@ -154,11 +160,11 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     private void serializeNamespace(String prefix, String URI, XMLStreamWriter writer) throws XMLStreamException {
-            String prefix1 = writer.getPrefix(URI);
-            if (prefix1==null) {
-                writer.writeNamespace(prefix, URI);
-                writer.setPrefix(prefix,URI);
-            }
+        String prefix1 = writer.getPrefix(URI);
+        if (prefix1==null) {
+            writer.writeNamespace(prefix, URI);
+            writer.setPrefix(prefix,URI);
+        }
 
     }
 
