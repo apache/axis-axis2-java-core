@@ -23,12 +23,14 @@ import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -44,44 +46,54 @@ public class InteropProvider extends SimpleJavaProvider {
 
     public Object[] deserializeParameters(MessageContext msgContext, Method method)
         throws AxisFault {
-        XMLStreamReader xpp = msgContext.getSoapOperationElement().getPullParser(true);
-        Class[] parms = method.getParameterTypes();
-        Object[] objs = new Object[parms.length];
+            try {
+            if(WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())){
+                SOAPBody body = msgContext.getEnvelope().getBody();
+                XMLStreamReader xpp = body.getPullParser(true);
+                Class[] parms = method.getParameterTypes();
+                Object[] objs = new Object[parms.length];
 
-        try {
-            int event = xpp.next();
-            while (XMLStreamConstants.START_ELEMENT != event
-                && XMLStreamConstants.END_ELEMENT != event) {
-                event = xpp.next();
-            }
-            //now we are at the opearion element event
-            event = xpp.next();
-            while (XMLStreamConstants.START_ELEMENT != event
-                && XMLStreamConstants.END_ELEMENT != event) {
-                event = xpp.next();
-            }
-            //now we are at the parameter element event
 
-            if (XMLStreamConstants.END_ELEMENT == event) {
-                return null;
-            } else {
-                for (int i = 0; i < parms.length; i++) {
-                    if (int.class.equals(parms[i])) {
-                        objs[i] = new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
-                    } else if (String.class.equals(parms[i])) {
-                        objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
-                    } else if (String[].class.equals(parms[i])) {
-                        objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
-                    } else if (SOAPStruct.class.equals(parms[i])) {
-                        SOAPStructEncoder enc = new SOAPStructEncoder();
-                        objs[i] = enc.deSerialize(xpp);
-                    }  else {
-                        throw new UnsupportedOperationException("UnSupported type "+parms[i]);
+                    int event = xpp.next();
+                    while (XMLStreamConstants.START_ELEMENT != event
+                        && XMLStreamConstants.END_ELEMENT != event) {
+                        event = xpp.next();
                     }
-                }
-                return objs;
+                    
+                    event = xpp.next();
+                    while (XMLStreamConstants.START_ELEMENT != event
+                        && XMLStreamConstants.END_ELEMENT != event) {
+                        event = xpp.next();
+                    }
+                //now we are at the parameters element event
 
+                    if (XMLStreamConstants.END_ELEMENT == event) {
+                        return null;
+                    } else {
+                        for (int i = 0; i < parms.length; i++) {
+                            if (int.class.equals(parms[i])) {
+                                objs[i] = new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
+                            } else if (String.class.equals(parms[i])) {
+                                objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
+                            } else if (String[].class.equals(parms[i])) {
+                                objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
+                            } else if (SOAPStruct.class.equals(parms[i])) {
+                                SOAPStructEncoder enc = new SOAPStructEncoder();
+                                objs[i] = enc.deSerialize(xpp);
+                            }  else {
+                                throw new UnsupportedOperationException("UnSupported type "+parms[i]);
+                            }
+                        }
+                        return objs;
+
+                    }
+                
+            }else{
+                throw new AxisFault("this Service only supports doc-lit");
             }
+            
+            
+            
         } catch (Exception e) {
             throw new AxisFault("Exception", e);
         }
@@ -131,12 +143,10 @@ public class InteropProvider extends SimpleJavaProvider {
             OMFactory fac = OMFactory.newInstance();
             SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
 
-            OMNamespace ns = fac.createOMNamespace("http://soapinterop.org/WSDLInteropTestDocLit", "res");
-            OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
-            responseEnvelope.getBody().addChild(responseMethodName);
+            OMNamespace ns = fac.createOMNamespace("http://soapinterop.org/xsd", "res");
+            OMElement returnelement = fac.createOMElement("echoStringReturn", ns);
+            responseEnvelope.getBody().addChild(returnelement);
             if(result != null){
-                OMElement returnelement = fac.createOMElement(methodName + "Return", ns);
-                responseMethodName.addChild(returnelement);
                 returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
                 returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI, "arrays");
                 returnelement.declareNamespace("http://soapinterop.org/WSDLInteropTestDocLit", "s");

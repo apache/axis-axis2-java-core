@@ -102,5 +102,5 @@ public class Constants {
     /**
      * Field METHOD_NAME_ESCAPE_CHARACTOR
      */
-    public static final char METHOD_NAME_ESCAPE_CHARACTOR = '#';
+    public static final char METHOD_NAME_ESCAPE_CHARACTOR = '?';
 }

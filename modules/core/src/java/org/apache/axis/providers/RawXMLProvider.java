@@ -23,9 +23,11 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -144,18 +146,43 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                             parameters[0].getName())) {
                 OMElement methodElement =
                         msgContext.getEnvelope().getBody().getFirstElement();
-                OMElement parmeter = methodElement.getFirstElement();
-                Object[] parms = new Object[]{parmeter};
-
-                // invoke the WebService
-                OMElement result = (OMElement) method.invoke(obj,
-                        parms);
+                        
+                OMElement parmeter = null;        
+                SOAPEnvelope envelope = null;
                 MessageContext msgContext1 = new MessageContext(
                         msgContext.getGlobalContext().getRegistry(),
                         msgContext.getProperties(), msgContext.getSessionContext());
-                SOAPEnvelope envelope =
-                        OMFactory.newInstance().getDefaultEnvelope();
-                envelope.getBody().setFirstChild(result);
+                        
+                if(WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())){
+                    parmeter = methodElement;
+                    Object[] parms = new Object[]{parmeter};
+
+                    // invoke the WebService
+                    OMElement result = (OMElement) method.invoke(obj,
+                            parms);
+                    envelope =
+                            OMFactory.newInstance().getDefaultEnvelope();
+                    envelope.getBody().setFirstChild(result);
+                
+                }else if(WSDLService.STYLE_RPC.equals(msgContext.getMessageStyle())){
+                    parmeter = methodElement.getFirstElement();
+                    Object[] parms = new Object[]{parmeter};
+
+                    // invoke the WebService
+                    OMElement result = (OMElement) method.invoke(obj,
+                            parms);
+                    OMFactory fac = OMFactory.newInstance();       
+                    envelope =
+                            OMFactory.newInstance().getDefaultEnvelope();
+
+                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
+                     OMElement responseMethodName =
+                             fac.createOMElement(methodName + "Response", ns);
+                    responseMethodName.addChild(result);
+                    envelope.getBody().addChild(responseMethodName);                            
+                }else{
+                    throw new AxisFault("Unknown style ");
+                }
                 msgContext1.setEnvelope(envelope);
                 return msgContext1;
             } else {

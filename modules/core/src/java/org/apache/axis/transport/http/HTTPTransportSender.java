@@ -114,7 +114,9 @@ public class HTTPTransportSender extends AbstractTransportSender {
     protected void finalizeSending(MessageContext msgContext,Writer writer)
             throws AxisFault {
         try {
-            socket.shutdownOutput();
+            if(socket != null){
+                socket.shutdownOutput();
+            }
         } catch (IOException e) {
             throw new AxisFault(e.getMessage(),e);
         }

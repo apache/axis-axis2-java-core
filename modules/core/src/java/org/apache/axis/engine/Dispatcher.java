@@ -70,7 +70,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
             QName operationName = null;
             if (index > 0) {
                 serviceName = new QName(serviceAndMethodStr.substring(0,
-                                index - 1));
+                                index ));
                 operationName = new QName(serviceAndMethodStr.substring(index
                                         + 1));
             } else {

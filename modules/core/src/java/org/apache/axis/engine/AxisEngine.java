@@ -15,11 +15,14 @@
  */
 package org.apache.axis.engine;
 
+
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportSenderLocator;
 import org.apache.commons.logging.Log;
@@ -131,11 +134,13 @@ public class AxisEngine {
             context.setProcessingFault(true);
 
             // create a SOAP envelope with the Fault
+            MessageContext faultContext = new MessageContext(context.getGlobalContext().getRegistry(),context.getProperties(),context.getSessionContext());
             SOAPEnvelope envelope =
                     OMFactory.newInstance().getDefaultEnvelope();
 
             // TODO do we need to set old Headers back?
-            envelope.getBody().addFault(new AxisFault(e.getMessage(), e));
+            SOAPBody body = envelope.getBody();
+            body.addFault(new AxisFault(e.getMessage(), e));
             context.setEnvelope(envelope);
 
             // send the error
@@ -195,6 +200,7 @@ public class AxisEngine {
             // startet rolling
             chain.invoke(context);
         } catch (AxisFault error) {
+            error.printStackTrace();
             handleFault(context, error);
         }
     }
