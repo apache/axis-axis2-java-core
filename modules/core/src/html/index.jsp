@@ -31,7 +31,7 @@
        	<ul>
          <li><a href="listServices">List Available services</a>
             <br/>
-            Lists all the available services.
+            Lists all the available services deployed in this server.
          </li>
          <li><a href="HappyAxis.jsp">Validate</a>
          <br/>
@@ -40,11 +40,11 @@
          </li>
          <li><a href="upload.jsp">Upload a service</a>
          <br/>
-            Upload a service. you can upload a properly packaged service here.
+            You can upload a properly packaged service here. Note : Security constraints may affect this operation.
          </li>
            <li><a href="interop.jsp">Do an interop test</a>
          <br/>
-            You can run an interop test here
+            You can run Interoperability tests here
          </li>
         </ul>
 

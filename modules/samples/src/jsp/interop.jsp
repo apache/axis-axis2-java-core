@@ -90,13 +90,12 @@
         <jsp:include page="include/header.inc"></jsp:include>
 
        	<h3>Welcome to Axis interop testing.</h3><br/>
-        <br>
         You can use this web page to do a doclit standard interop test. For more detail and test server information please visit the
         <a href="http://www.whitemesa.com/r3/interop3.html">whitemesa interop test page.</a>
         <form method="post" name="InteropTesting" action="interop.jsp">
          <table border="0" width="100%" cellspacing="1" cellpadding="1">
           <tr>
-            <td vAlign="top" align="right" class="formText">Service URL :</td>
+            <td vAlign="top" align="right" class="formText">Service Endpoint URL :</td>
             <td>
                 <input name="URL" maxlength="99" size="38" type="text" id="Name" class="textBox" value="<%= (interopBean.getURL()==null)?"":interopBean.getURL()%>">&nbsp;<small><font color="red">*</font></small>
             </td>
@@ -129,7 +128,7 @@
           </table>
 <%--           <tr>--%>
 <%--          <td>--%>
-          <table border="1" width="100%" cellspacing="1" cellpadding="1">
+          <table border="0" width="100%" cellspacing="1" cellpadding="1">
              <tr style="display:''" id="StringRow">
                <td vAlign="top" align="right" class="formText">Enter String value :</td>
                <td>
@@ -141,34 +140,33 @@
            <td>
             <table border="0" width="100%" cellspacing="1" cellpadding="1">
                 <tr>
-                   <input name="arryValue1" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                   <td><input name="arryValue1" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue2" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                 <td><input name="arryValue2" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue3" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                    <td><input name="arryValue3" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue4" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                    <td><input name="arryValue4" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue5" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                    <td>  <input name="arryValue5" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue6" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                    <td> <input name="arryValue6" maxlength="99" size="38" type="text" class="textBox"></td>
+
                 </tr>
                 <tr>
-                   <input name="arryValue7" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                <td><input name="arryValue7" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
                 <tr>
-                   <input name="arryValue8" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
-                </tr>
-                <tr>
-                   <input name="arryValue9" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
-                </tr>
-                <tr>
-                   <input name="arryValue10" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+                <td><input name="arryValue8" maxlength="99" size="38" type="text" class="textBox"></td>
+                </tr><tr>
+                <td><input name="arryValue9" maxlength="99" size="38" type="text" class="textBox"></td>
+                </tr><tr>
+                <td><input name="arryValue10" maxlength="99" size="38" type="text" class="textBox"></td>
                 </tr>
             </table>
             </td>
@@ -184,19 +182,19 @@
           <tr>
             <td vAlign="top" align="right" class="formText">String Value</td>
             <td>
-              <input name="structValue1" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+              <input name="structValue1" maxlength="99" size="38" type="text" class="textBox">&nbsp;
             </td>
           </tr>
             <tr>
             <td vAlign="top" align="right" class="formText">Integer Value</td>
             <td>
-              <input name="structValue2" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+              <input name="structValue2" maxlength="99" size="38" type="text" class="textBox">&nbsp;
             </td>
           </tr>
             <tr>
             <td vAlign="top" align="right" class="formText">Float Value</td>
             <td>
-              <input name="structValue3" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
+              <input name="structValue3" maxlength="99" size="38" type="text" class="textBox">&nbsp;
             </td>
             </td>
           </tr>
@@ -231,9 +229,9 @@
            <td>&nbsp;</td>
            </tr>
           </table>
-          <table border="1" width="100%" cellspacing="1" cellpadding="1">
+          <table border="0" width="100%" cellspacing="1" cellpadding="1">
           <tr><td>
-          <table border="1" width="100%" cellspacing="1" cellpadding="1">
+          <table border="0" width="100%" cellspacing="1" cellpadding="1">
              <tr>
               <td><b>Requst SOAP Message</b></td>
              </tr>
@@ -245,7 +243,7 @@
              </tr>
           </table></td>
           <td>
-            <table border="1" width="100%" cellspacing="1" cellpadding="1">
+            <table border="0" width="100%" cellspacing="1" cellpadding="1">
              <tr>
               <td><b>Response SOAP Message</b></td>
              </tr>
