@@ -70,8 +70,8 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * @param wsdlProperty
      */
-    public void addPorperty(WSDLProperty wsdlProperty) {
-        wsdlOperation.addPorperty(wsdlProperty);
+    public void addProperty(WSDLProperty wsdlProperty) {
+        wsdlOperation.addProperty(wsdlProperty);
     }
 
     /**
