@@ -1,37 +1,40 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
  * @author chathura@opensource.lk
  */
 public interface WSDLInterface extends ExtensibleComponent {
-
-
+    /**
+     * Method getDefinedOperations
+     *
+     * @return
+     */
     public HashMap getDefinedOperations();
 
     /**
      * Will return a map of all this <code>WSDLOperation</code>s that
      * are defined and inherited from super interfaces.
+     *
+     * @return
      */
     public HashMap getAllOperations();
 
@@ -52,6 +55,9 @@ public interface WSDLInterface extends ExtensibleComponent {
 
     /**
      * Retruns the <code>WSDLOperation</code>
+     *
+     * @param nCName
+     * @return
      */
     public WSDLOperation getOperation(String nCName);
 
@@ -60,6 +66,12 @@ public interface WSDLInterface extends ExtensibleComponent {
      */
     public HashMap getSuperInterfaces();
 
+    /**
+     * Method getSuperInterface
+     *
+     * @param qName
+     * @return
+     */
     public WSDLInterface getSuperInterface(QName qName);
 
     /**
@@ -90,7 +102,6 @@ public interface WSDLInterface extends ExtensibleComponent {
      * it will not be added. If the Operation name is null a
      * <code>WSDLProcessingException</code> will be thrown.
      *
-     * @param nCName
      * @param operation
      */
     public void setOperation(WSDLOperation operation);
@@ -115,5 +126,10 @@ public interface WSDLInterface extends ExtensibleComponent {
      */
     public String getStyleDefault();
 
+    /**
+     * Method setStyleDefault
+     *
+     * @param styleDefault
+     */
     public void setStyleDefault(String styleDefault);
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl;
 
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
@@ -33,7 +32,6 @@ public class InterfaceTest extends AbstractTestCase {
         WSDLInterface[] array = new WSDLInterface[5];
         int interfaceCounter = 5;
         int operationCounter = 5;
-
         for (int j = 0; j < interfaceCounter; j++) {
             intfc = new WSDLInterfaceImpl();
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "inteface" + j));
@@ -53,15 +51,12 @@ public class InterfaceTest extends AbstractTestCase {
         assertEquals(((WSDLOperation) array[0].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op1of inteface0"))).getName().getLocalPart(), "op1of inteface0");
         assertEquals(array[interfaceCounter - 1].getAllOperations().size(), interfaceCounter * operationCounter);
         assertEquals(interfaceCounter * operationCounter, array[interfaceCounter - 1].getAllOperations().size());
-
         Iterator iter = array[1].getAllOperations().keySet().iterator();
         while (iter.hasNext()) {
             assertNotNull(((WSDLOperation) array[interfaceCounter - 1].getAllOperations().get(iter.next())).getName());
         }
-
         for (int j = 0; j < interfaceCounter; j++) {
             for (int i = 0; i < operationCounter; i++) {
-
                 assertEquals(((WSDLOperation) array[interfaceCounter - 1].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op" + j + "of inteface" + i))).getName().getLocalPart(), "op" + j + "of inteface" + i);
             }
         }
@@ -88,12 +83,10 @@ public class InterfaceTest extends AbstractTestCase {
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "Interface" + i));
             array[i] = intfc;
         }
-
         WSDLInterface inheritedInterface = new WSDLInterfaceImpl();
         for (int i = 0; i < array.length; i++) {
             inheritedInterface.addSuperInterface(array[i]);
         }
-
         assertEquals(inheritedInterface.getAllOperations().size(), 5);
 
     }

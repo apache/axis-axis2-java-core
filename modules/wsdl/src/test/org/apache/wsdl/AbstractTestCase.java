@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl;
 
 import junit.framework.TestCase;
@@ -30,7 +29,6 @@ public abstract class AbstractTestCase
     protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
     protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
     protected String testResourceDir = "src" + File.separator + "test-resources";
-
 
     /**
      * Basedir for all file I/O. Important when running tests from
@@ -51,7 +49,6 @@ public abstract class AbstractTestCase
         outDir = new File(basedir, outDir).getAbsolutePath();
         tempDir = new File(basedir, tempDir).getAbsolutePath();
     }
-
 
     public File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl;
 
 import org.apache.axis.wsdl.wsdltowom.WOMBuilderFactory;
@@ -34,7 +33,6 @@ import java.util.Iterator;
  * @author chathura@opensource.lk
  */
 public class WOMBuilderTest extends AbstractTestCase {
-
     private WSDLDescription womDescription = null;
 
     private Definition wsdl4jDefinition = null;
@@ -59,7 +57,7 @@ public class WOMBuilderTest extends AbstractTestCase {
         this.initialize();
         assertEquals(womDescription.getServices().size(), wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getWsdlInterfaces().size(), wsdl4jDefinition.getPortTypes().size());
-        ;
+    ;
         assertEquals(womDescription.getServices().size(), wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getBindings().size(), wsdl4jDefinition.getBindings().size());
         assertEquals(womDescription.getTypes().getTypes().size(), wsdl4jDefinition.getTypes().getExtensibilityElements().size());
@@ -89,21 +87,19 @@ public class WOMBuilderTest extends AbstractTestCase {
         this.initialize();
         Iterator womServiceIterator = this.womDescription.getServices().values().iterator();
         Iterator wsdl4jServiceIterator = this.wsdl4jDefinition.getServices().values().iterator();
-
         while (womServiceIterator.hasNext() & wsdl4jServiceIterator.hasNext()) {
             WSDLService wsdlService = (WSDLService) womServiceIterator.next();
             Service wsdl4jService = (Service) wsdl4jServiceIterator.next();
             assertEquals(wsdlService.getName(), wsdl4jService.getQName());
-//            System.out.println(wsdlService.getServiceInterface());
+            //            System.out.println(wsdlService.getServiceInterface());
         }
     }
-
 
     private void operationsWaliking(WSDLOperation womOperation, Operation wsdl4jOperation) {
         assertEquals(womOperation.getName().getLocalPart(), wsdl4jOperation.getName());
         //System.out.println(((ExtensibilityElement)wsdl4jDefinition.getTypes().getExtensibilityElements().get(1)).getElementType());
-//        System.out.println(womOperation.getInputMessage().getMessageLabel());
-//        System.out.println(wsdl4jOperation.getInput().getName());
+        //        System.out.println(womOperation.getInputMessage().getMessageLabel());
+        //        System.out.println(wsdl4jOperation.getInput().getName());
         //assertEquals(womOperation.getInputMessage().getMessageLabel(), wsdl4jOperation.getInput().getName());
 
     }

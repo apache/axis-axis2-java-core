@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl.impl;
 
 import org.apache.wsdl.WSDLBinding;
@@ -33,28 +32,31 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 /**
  * @author chathura@opensource.lk
  */
-public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescription {
-
+public class WSDLDescriptionImpl extends ComponentImpl
+        implements WSDLDescription {
     /**
      * The name token of WSDL 1.1 Definition.
      */
     private QName wsdl1DefinitionName;
-    
-    //TODO local name and the naspace name to be made static or through a Constant class.
 
-    // The attrebute information items
+    // TODO local name and the naspace name to be made static or through a Constant class.
+    // The attribute information items
+    // TODO required; thus check it up
 
-    //TODO required; thus check it up
+    /**
+     * Field targetNameSpace
+     */
     private String targetNameSpace;
 
-    //private NamespaceMappings[] namespaceDefinitions;
+    // private NamespaceMappings[] namespaceDefinitions;
+    // TODO The object structure of some external xml data binding is going to be pluged here eventually.
 
-    //TODO The object structure of some external xml data binding is going to be pluged here eventually.
-
+    /**
+     * Field types
+     */
     private WSDLTypes types;
 
     /**
@@ -78,7 +80,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      */
     private ArrayList imports = new ArrayList();
 
-
     /**
      * WSDL Includes.
      */
@@ -93,21 +94,24 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding.
+     *
+     * @return
      */
     public HashMap getBindings() {
         return bindings;
     }
 
-
     /**
      * Sets the whole new set of Bindings to the WSDLDefinition.
+     *
+     * @param bindings
      */
     public void setBindings(HashMap bindings) {
-//	    if(this.bindings.size() > 0) throw new WSDLProcessingException("WSDLBimding Map already contains " +
-//	    		"one or more bindings. Trying to assign a new map will loose those Bindings.");
+
+        // if(this.bindings.size() > 0) throw new WSDLProcessingException("WSDLBimding Map already contains " +
+        // "one or more bindings. Trying to assign a new map will loose those Bindings.");
         this.bindings = bindings;
     }
-
 
     /**
      * The WSDLBinding Will be added to the map keyed  with its own QName.
@@ -118,12 +122,13 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @param binding <code>WSDLBinding</code> Object
      */
     public void addBinding(WSDLBinding binding) {
-
-        if (null == binding) return;
-
-        if (null == binding.getName())
-            throw new WSDLProcessingException("The WSDLBinding name cannot be null(Required)");
-
+        if (null == binding) {
+            return;
+        }
+        if (null == binding.getName()) {
+            throw new WSDLProcessingException(
+                    "The WSDLBinding name cannot be null(Required)");
+        }
         this.bindings.put(binding.getName(), binding);
     }
 
@@ -132,11 +137,11 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * if <code>WSDLBinding</code> is not found.
      *
      * @param qName The QName of the Binding.
+     * @return
      */
     public WSDLBinding getBinding(QName qName) {
         return (WSDLBinding) this.bindings.get(qName);
     }
-
 
     /**
      * The Interface component will be added to the map keyed with its own name.
@@ -146,13 +151,16 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @param interfaceComponent
      */
     public void addInterface(WSDLInterface interfaceComponent) {
-        if (null == interfaceComponent) return;
-        if (null == interfaceComponent.getName())
-            throw new WSDLProcessingException("PortType/Interface name cannot be null(Required) ");
-
-        this.wsdlInterfaces.put(interfaceComponent.getName(), interfaceComponent);
+        if (null == interfaceComponent) {
+            return;
+        }
+        if (null == interfaceComponent.getName()) {
+            throw new WSDLProcessingException(
+                    "PortType/Interface name cannot be null(Required) ");
+        }
+        this.wsdlInterfaces.put(interfaceComponent.getName(),
+                interfaceComponent);
     }
-
 
     /**
      * The Interface Component will be returned if it exsists,
@@ -162,15 +170,23 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return The Interface Component with the relavent QName
      */
     public WSDLInterface getInterface(QName qName) {
-
         return (WSDLInterface) this.wsdlInterfaces.get(qName);
     }
 
-
+    /**
+     * Method getServices
+     *
+     * @return
+     */
     public HashMap getServices() {
         return services;
     }
 
+    /**
+     * Method setServices
+     *
+     * @param services
+     */
     public void setServices(HashMap services) {
         this.services = services;
     }
@@ -183,9 +199,7 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      */
     public WSDLService getService(QName qName) {
         return (WSDLService) this.services.get(qName);
-
     }
-
 
     /**
      * Will add the <code>WSDLService</code> to the Map.
@@ -196,39 +210,72 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @param service
      */
     public void addService(WSDLService service) {
-        if (null == service) return;
-
-        if (null == service.getName()) throw new WSDLProcessingException("The WSDLService name cannot be null (Required)");
-
+        if (null == service) {
+            return;
+        }
+        if (null == service.getName()) {
+            throw new WSDLProcessingException(
+                    "The WSDLService name cannot be null (Required)");
+        }
         this.services.put(service.getName(), service);
     }
 
+    /**
+     * Method getTargetNameSpace
+     *
+     * @return
+     */
     public String getTargetNameSpace() {
         return targetNameSpace;
     }
 
+    /**
+     * Method setTargetNameSpace
+     *
+     * @param targetNameSpace
+     */
     public void setTargetNameSpace(String targetNameSpace) {
         this.targetNameSpace = targetNameSpace;
     }
 
+    /**
+     * Method getWsdlInterfaces
+     *
+     * @return
+     */
     public HashMap getWsdlInterfaces() {
         return wsdlInterfaces;
     }
 
+    /**
+     * Method setWsdlInterfaces
+     *
+     * @param wsdlInterfaces
+     */
     public void setWsdlInterfaces(HashMap wsdlInterfaces) {
         this.wsdlInterfaces = wsdlInterfaces;
     }
 
+    /**
+     * Method getTypes
+     *
+     * @return
+     */
     public WSDLTypes getTypes() {
         return types;
     }
 
+    /**
+     * Method setTypes
+     *
+     * @param types
+     */
     public void setTypes(WSDLTypes types) {
         this.types = types;
     }
 
     /**
-     * Gets the name attrebute of the WSDL 1.1 Definitions Element
+     * Gets the name attribute of the WSDL 1.1 Definitions Element
      *
      * @return
      */
@@ -237,7 +284,7 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
     }
 
     /**
-     * Sets the name attrebute of the WSDL 1.1 Definitions Element
+     * Sets the name attribute of the WSDL 1.1 Definitions Element
      *
      * @param wsdl1DefinitionName
      */
@@ -265,7 +312,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
         this.namespaces = namespaces;
     }
 
-
     /**
      * Will return the Namespace URI as a String if there exists an
      * Namespace URI associated with the given prefix, in the Definition
@@ -278,7 +324,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
         if (null == prefix) {
             return null;
         }
-
         return (String) this.namespaces.get(prefix);
     }
 
@@ -340,7 +385,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLDescription</code>
      */
     public WSDLDescription createDescription() {
-
         return new WSDLDescriptionImpl();
     }
 
@@ -348,7 +392,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLService</code>
      */
     public WSDLService createService() {
-
         return new WSDLServiceImpl();
     }
 
@@ -356,7 +399,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLInterface</code>
      */
     public WSDLInterface createInterface() {
-
         return new WSDLInterfaceImpl();
     }
 
@@ -364,7 +406,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLTypes</code>
      */
     public WSDLTypes createTypes() {
-
         return new WSDLTypesImpl();
     }
 
@@ -372,7 +413,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLBinding</code>
      */
     public WSDLBinding createBinding() {
-
         return new WSDLBindingImpl();
     }
 
@@ -380,7 +420,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLOperation</code>
      */
     public WSDLOperation createOperation() {
-
         return new WSDLOperationImpl();
     }
 
@@ -388,7 +427,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLEndpoint</code>
      */
     public WSDLEndpoint createEndpoint() {
-
         return new WSDLEndpointImpl();
     }
 
@@ -396,7 +434,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLFault</code>
      */
     public WSDLFault createFault() {
-
         return new WSDLFaultImpl();
     }
 
@@ -404,7 +441,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLFeature</code>
      */
     public WSDLFeature createFeature() {
-
         return new WSDLFeatureImpl();
     }
 
@@ -412,7 +448,6 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLImport</code>
      */
     public WSDLImport createImport() {
-
         return new WSDLImportImpl();
     }
 
@@ -420,14 +455,15 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
      * @return A new instance of type <code>WSDLInclude</code>
      */
     public WSDLInclude createInclude() {
-
         return new WSDLIncludeImpl();
     }
 
+    /**
+     * Method createProperty
+     *
+     * @return
+     */
     public WSDLProperty createProperty() {
-
         return new WSDLPropertyImpl();
     }
-
-
 }

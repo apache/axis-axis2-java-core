@@ -1,25 +1,23 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 /**
  * @author chathura@opensource.lk
@@ -28,11 +26,15 @@ public interface WSDLDescription extends Component {
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding.
+     *
+     * @return
      */
     public HashMap getBindings();
 
     /**
      * Sets the whole new set of Bindings to the WSDLDefinition.
+     *
+     * @param bindings
      */
     public void setBindings(HashMap bindings);
 
@@ -51,6 +53,7 @@ public interface WSDLDescription extends Component {
      * if <code>WSDLBinding</code> is not found.
      *
      * @param qName The QName of the Binding.
+     * @return
      */
     public WSDLBinding getBinding(QName qName);
 
@@ -72,8 +75,18 @@ public interface WSDLDescription extends Component {
      */
     public WSDLInterface getInterface(QName qName);
 
+    /**
+     * Method getServices
+     *
+     * @return
+     */
     public HashMap getServices();
 
+    /**
+     * Method setServices
+     *
+     * @param services
+     */
     public void setServices(HashMap services);
 
     /**
@@ -94,27 +107,57 @@ public interface WSDLDescription extends Component {
      */
     public void addService(WSDLService service);
 
+    /**
+     * Method getTargetNameSpace
+     *
+     * @return
+     */
     public String getTargetNameSpace();
 
+    /**
+     * Method setTargetNameSpace
+     *
+     * @param targetNameSpace
+     */
     public void setTargetNameSpace(String targetNameSpace);
 
+    /**
+     * Method getWsdlInterfaces
+     *
+     * @return
+     */
     public HashMap getWsdlInterfaces();
 
+    /**
+     * Method setWsdlInterfaces
+     *
+     * @param wsdlInterfaces
+     */
     public void setWsdlInterfaces(HashMap wsdlInterfaces);
 
+    /**
+     * Method getTypes
+     *
+     * @return
+     */
     public WSDLTypes getTypes();
 
+    /**
+     * Method setTypes
+     *
+     * @param types
+     */
     public void setTypes(WSDLTypes types);
 
     /**
-     * Gets the name attrebute of the WSDL 1.1 Definitions Element
+     * Gets the name attribute of the WSDL 1.1 Definitions Element
      *
      * @return
      */
     public QName getWSDL1DefinitionName();
 
     /**
-     * Sets the name attrebute of the WSDL 1.1 Definitions Element
+     * Sets the name attribute of the WSDL 1.1 Definitions Element
      *
      * @param wsdl1DefinitionName
      */
@@ -243,5 +286,10 @@ public interface WSDLDescription extends Component {
      */
     public WSDLInclude createInclude();
 
+    /**
+     * Method createProperty
+     *
+     * @return
+     */
     public WSDLProperty createProperty();
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,29 +33,42 @@ import java.io.InputStream;
  * @author chathura@opensource.lk
  */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
+    /**
+     * Method build
+     *
+     * @param in
+     * @return
+     * @throws WSDLException
+     */
     public WSDLDescription build(InputStream in) throws WSDLException {
         WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
-        WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in));
+        WSDLPump pump = new WSDLPump(wsdlDefinitions,
+                this.readInTheWSDLFile(in));
         pump.pump();
         return wsdlDefinitions;
     }
 
+    /**
+     * Method readInTheWSDLFile
+     *
+     * @param in
+     * @return
+     * @throws WSDLException
+     */
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
-        WSDLReader reader =
-                WSDLFactory.newInstance().newWSDLReader();
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         Document doc;
         try {
             doc = Utils.newDocument(in);
         } catch (ParserConfigurationException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Configuration Error", e);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser Configuration Error", e);
         } catch (SAXException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser SAX Error", e);
-
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser SAX Error", e);
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
         }
         return reader.readWSDL(null, doc);
     }
-
-
 }
