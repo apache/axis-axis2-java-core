@@ -17,6 +17,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
@@ -31,6 +32,7 @@ import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMFactory;
@@ -86,7 +88,7 @@ public class TestSendReceive extends AbstractTestCase {
     }
 
     public void testSendReceive() throws Exception {
-        
+
         SOAPEnvelope envelope = getBasicEnvelope();
         EndpointReference targetEPR = new EndpointReference(
                 AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
@@ -98,13 +100,12 @@ public class TestSendReceive extends AbstractTestCase {
 
     }
 
-    private SOAPEnvelope getBasicEnvelope() throws Exception {
-        File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
-        XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); //put the file
 
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory
-                .newInstance(), xmlStreamReader);
-        return (SOAPEnvelope) builder.getDocumentElement();
+    private SOAPEnvelope getBasicEnvelope() throws Exception {
+
+        SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
+                new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
+        return envelope;
     }
 
 }

@@ -6,33 +6,28 @@
 */
 package org.apache.axis.clientapi;
 
-import java.io.File;
-import java.io.FileReader;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.encoding.EncodingTest.Echo;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineUtils;
+import org.apache.axis.engine.Echo;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileReader;
 
 /**
  * @author Jaliya
@@ -45,11 +40,9 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
     private QName serviceName = new QName("", "EchoXMLService");
 
-    private QName operationName = new QName("http://localhost/my",
-            "echoOMElement");
+    private QName operationName = new QName("http://localhost/my", "echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+    private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private EngineRegistry engineRegistry;
 
@@ -70,13 +63,13 @@ public class TestSendReceiveAsync extends AbstractTestCase {
     }
 
 
-    protected void setUp() throws Exception {
-        engineRegistry = EngineUtils.createMockRegistry(serviceName,
-                operationName, transportName);
+     protected void setUp() throws Exception {
+        engineRegistry = EngineUtils.createMockRegistry(serviceName, operationName, transportName);
 
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.setServiceClass(Echo.class);        service.setProvider(new RawXMLProvider());
+        service.setServiceClass(Echo.class);
+        service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
 
         service.addOperation(operation);
@@ -100,7 +93,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
     public void testSendReceiveAsync() throws Exception{
 
-        SOAPEnvelope envelope=getBasicEnvelope();
+        SOAPEnvelope envelope = getBasicEnvelope();
         EndpointReference targetEPR = new EndpointReference(
                 AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
         Call call = new Call();
@@ -122,22 +115,25 @@ public class TestSendReceiveAsync extends AbstractTestCase {
                 }
             }
             public void reportError(Exception e){
-                e.printStackTrace();    
+               e.printStackTrace();
             }
         };
-
         call.sendReceiveAsync(envelope,callback);
 
     }
+    private SOAPEnvelope getBasicEnvelope() throws Exception {
 
-    private SOAPEnvelope getBasicEnvelope() throws Exception{
-        File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
-        XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(new FileReader(file)); //put the file
+           SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
+                   new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
 
-        OMXMLParserWrapper builder = OMXMLBuilderFactory
-                .createStAXSOAPModelBuilder(OMFactory.newInstance(),
-                        xmlStreamReader);
-        return (SOAPEnvelope) builder.getDocumentElement();
-    }
+        /*   File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
+           XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); //put the file
+
+           OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory
+                   .newInstance(), xmlStreamReader);
+           return (SOAPEnvelope) builder.getDocumentElement(); */
+           return envelope;
+       }
+
+
 }

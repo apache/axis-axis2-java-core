@@ -54,7 +54,7 @@ public abstract class AbstractTestCase
 		tempDir = new File(basedir,tempDir).getAbsolutePath();
 	}
 
-
+ 
     public File getTestResourceFile(String relativePath){
         return new File(testResourceDir,relativePath);
     }

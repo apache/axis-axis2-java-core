@@ -32,14 +32,14 @@ import javax.xml.stream.XMLStreamReader;
 
 public class EncodingTest extends AbstractTestCase {
 
+
     /**
      * @param testName
      */
     public EncodingTest(String testName) {
         super(testName);
     }
-    
-    
+
     public void testDeserializingInt() throws SecurityException, NoSuchMethodException, AxisFault{
         Method method = Echo.class.getMethod("echoInt",new Class[]{int.class});
         OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
@@ -100,7 +100,7 @@ public class EncodingTest extends AbstractTestCase {
         
     }
     
-    public class Echo{
+    public  class Echo{
         public int echoInt(int intVal){
             return intVal;
         }

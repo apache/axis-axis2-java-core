@@ -171,7 +171,7 @@ public class Call extends AbstractCall {
      */
     public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback) throws AxisFault {
         try{
-            URL url =new URL(targetEPR.getAddress());
+           // URL url =new URL(targetEPR.getAddress());
             AxisEngine engine = new AxisEngine(registry);
             final MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(envelope);
