@@ -28,14 +28,14 @@ import java.io.StringReader;
 
 public class OMUtil {
 
-    private String basicSOAPXML = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"> \n" +
+    private static final String basicSOAPXML = "<env:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\"> \n" +
             " <env:Header>\n" +
             " </env:Header>\n" +
             " <env:Body>\n" +
             " </env:Body>\n" +
             "</env:Envelope>";
 
-	public SOAPEnvelope getEmptySoapEnvelop(){
+	public static SOAPEnvelope getEmptySoapEnvelop(){
         XMLStreamReader parser = null;
         try {
             parser = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(basicSOAPXML));

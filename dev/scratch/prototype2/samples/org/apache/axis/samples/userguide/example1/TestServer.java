@@ -15,26 +15,23 @@
  */
 package org.apache.axis.samples.userguide.example1;
 
-import java.net.URL;
-
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.engine.EngineUtils;
 
 /**
  * @author chathura@opensource.lk
  * 
  */
-public class EchoString {
+public class TestServer {
 
-	public static void main(String[] args) throws Exception{
-		InteropTest_Stub stub =new InteropTest_Stub();
-		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
-		stub.setEnePointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		stub.echoString("does this damn think work");
+	public static void main(String[] args) throws Exception {
 		
-		
+		new SampleEnvironmentCreator().setUp();
+		Thread.sleep(150000);
 	}
 	
-	
+	protected void tearDown() throws Exception {
+        EngineUtils.stopServer();    
+        Thread.sleep(1000);
+        System.out.println("Server shuting down......");
+	}
 }
