@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.transport.http;
 
 import java.io.IOException;
@@ -20,6 +20,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.BufferedWriter;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
@@ -30,6 +33,8 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
+
+import javax.xml.stream.XMLOutputFactory;
 
 /**
  * Class HTTPTransportSender
@@ -44,7 +49,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * Field socket
      */
     private Socket socket;
-
+    private ByteArrayOutputStream outputStream;
     /**
      * Method obtainOutputStream
      *
@@ -55,29 +60,9 @@ public class HTTPTransportSender extends AbstractTransportSender {
     protected Writer obtainWriter(MessageContext msgContext)
             throws AxisFault {
         if (!msgContext.isServerSide()) {
-            EndpointReference toURL = msgContext.getTo();
-            if (toURL != null) {
-                try {
-                    URL url = new URL(toURL.getAddress());
-                    SocketAddress add = new InetSocketAddress(url.getHost(),
-                            url.getPort()==-1?80:url.getPort());
-                    socket = new Socket();
-                    socket.connect(add);
-                    OutputStream outS = socket.getOutputStream();
-                    out = new OutputStreamWriter(outS);
-                    writeTransportHeaders(out, url);
-                    msgContext.setProperty(
-                            MessageContext.TRANSPORT_READER,
-                                    new InputStreamReader(socket.getInputStream()));
-                    msgContext.setProperty(HTTPConstants.SOCKET, socket);
-                } catch (MalformedURLException e) {
-                    throw new AxisFault(e.getMessage(), e);
-                } catch (IOException e) {
-                    throw new AxisFault(e.getMessage(), e);
-                }
-            } else {
-                throw new AxisFault("to EPR must be specified");
-            }
+            //create a new byte buffer output stream
+            outputStream  = new ByteArrayOutputStream();
+            out = new OutputStreamWriter(outputStream);
         } else {
             out = (Writer) msgContext.getProperty(
                     MessageContext.TRANSPORT_WRITER);
@@ -113,13 +98,45 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     protected void finalizeSending(MessageContext msgContext,Writer writer)
             throws AxisFault {
-        try {
-            if(socket != null){
-                socket.shutdownOutput();
+
+        if (!msgContext.isServerSide()) {
+            EndpointReference toURL = msgContext.getTo();
+            if (toURL != null) {
+                try {
+                    URL url = new URL(toURL.getAddress());
+                    SocketAddress add = new InetSocketAddress(url.getHost(),
+                            url.getPort()==-1?80:url.getPort());
+                    socket = new Socket();
+                    socket.connect(add);
+                    OutputStream outS = socket.getOutputStream();
+                    byte[] bytes = outputStream.toByteArray();
+
+                    Writer realOut = new OutputStreamWriter(outS);
+                    //write header to the out put stream
+                    writeTransportHeaders(realOut, url, msgContext,bytes.length);
+                    realOut.flush();
+                    //write the content to the real output stream
+                    outS.write(bytes);
+                    outS.flush();
+
+                    msgContext.setProperty(
+                            MessageContext.TRANSPORT_READER,
+                            new InputStreamReader(socket.getInputStream()));
+                    msgContext.setProperty(HTTPConstants.SOCKET, socket);
+
+                    socket.shutdownOutput();
+
+                } catch (MalformedURLException e) {
+                    throw new AxisFault(e.getMessage(), e);
+                } catch (IOException e) {
+                    throw new AxisFault(e.getMessage(), e);
+                }
+            } else {
+                throw new AxisFault("to EPR must be specified");
             }
-        } catch (IOException e) {
-            throw new AxisFault(e.getMessage(),e);
+
         }
+
     }
 
     /**
@@ -132,14 +149,17 @@ public class HTTPTransportSender extends AbstractTransportSender {
     }
 
     /**
-         * Method writeTransportHeaders
-         *
-         * @param out
-         * @param url
-         * @throws IOException
-         */
-    protected void writeTransportHeaders(Writer out, URL url)
+     * Method writeTransportHeaders
+     *
+     * @param out
+     * @param url
+     * @param msgContext
+     * @throws IOException
+     */
+    protected void writeTransportHeaders(Writer out, URL url, MessageContext msgContext,int contentLength)
             throws IOException {
+        Object soapAction = msgContext.getProperty(MessageContext.SOAP_ACTION);
+        String soapActionString = soapAction==null?"":soapAction.toString();
         StringBuffer buf = new StringBuffer();
         buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
         buf.append("Content-Type: text/xml; charset=utf-8\n");
@@ -148,7 +168,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
         buf.append("Host: ").append(url.getHost()).append("\n");
         buf.append("Cache-Control: no-cache\n");
         buf.append("Pragma: no-cache\n");
-        buf.append("SOAPAction: \"\"\n\n");
+        buf.append("Content-Length: "+contentLength+"\n");
+        buf.append("SOAPAction: \""+soapActionString  + "\"\n\n");
         out.write(buf.toString());
     }
 }
