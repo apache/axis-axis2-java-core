@@ -478,9 +478,9 @@
         }   else {
     %>
      <p>
-      <font color="red" >
-     Not found echo service or Axis2 is not working properly, check whether the echo.jar is in
-     webapps/axis2/WEB-INF/service if it is then report the following error to the mailing list.
+      <font color="brown" >
+    You can test the deployement functionality by uploading the echo service jar, which can be found in the
+    samples directory of the axis distribution.
       <br>
      <%= error%></font>
      </p>
