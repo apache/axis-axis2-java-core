@@ -439,8 +439,8 @@ xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;
 <p>Here the org.apache.axis.providers.RawXMLProvider is the default provider for the Apache Axis2 M1, the provider can be changed by specifying the relevant parameter. Note that &lt;method-name&gt; should be replaced by the relevant method name. </p>
 <p><strong>&#149;&nbsp; Create an archive with the service.xml file and with class files </strong></p>
 <p>Compile the the Web Service implementation class and any other supporting class. Archive them in to a jar file. Place the service.xml file in the META-INF directory. </p>
-<p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a </strong>xis <strong>ar </strong>chive) </p>
-<p><strong>&#149;&nbsp; deploy the archive in the Axis2 </strong></p>
+<p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a</strong>xis <strong>ar</strong>chive) </p>
+<p><strong>&#149;&nbsp; Deploy the archive in the Axis2 </strong></p>
 <p>While the Axis2 is running copy the archive to the services folder in the repository directory or use web upload method. (in the case of a Servlet container this directory is axis/WEB-INF/services/). Axis will automatically pick the archive and deploy the service. </p>
 <p>To make this whole process user-friendly, Axis 2 is shipped with a service creation GUI tool. It is
 a "wizard interface" and also provides the facility for users to automatically create a very simple
@@ -478,7 +478,7 @@ builder.getDocumentElement();
 <br>Call call = <strong>new </strong>Call(); 
 <br>call.setTo(targetEPR); 
 <br>SOAPEnvelope responseEnv = call.sendReceive(envelope); </p> 
-<p><p class="style1">&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
+<p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
 <p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
 <p>&#149;&nbsp; call.sendRecieve() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
 <h3><a name="_Toc96698098"></a><a name="_Toc96697873">Asynchronous Client </a></h3>
