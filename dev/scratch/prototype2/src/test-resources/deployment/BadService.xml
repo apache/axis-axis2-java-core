@@ -11,7 +11,9 @@
     Phases
     P1 p2 p3
     -->
-
+    <gool>
+        this not bad
+    </gool>
     <inflow>
         <handler name="h1" class="org.apache.axis.engine.registry.SpeakingHandler">
             <order phase="p1" phaseFirst="true"/>

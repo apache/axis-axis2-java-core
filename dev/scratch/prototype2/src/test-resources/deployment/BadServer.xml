@@ -24,4 +24,7 @@
         <phase name="anyhase"/>
         <phase name="service"/>
     </phaseOrder>
+    <gool>
+        not good
+    </gool>
 </server>

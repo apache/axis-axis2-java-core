@@ -132,7 +132,7 @@ public class DeploymentParser implements DeploymentConstants {
                         for (int i = 0; i < trasports.size(); i++) {
                             dpengine.getEngineRegistry().addTransport((AxisTransport)trasports.get(i));
                         }
-                        
+
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
@@ -167,8 +167,8 @@ public class DeploymentParser implements DeploymentConstants {
         boolean END_TRANSPORTS = false;
         ArrayList transportList = new ArrayList();
         AxisTransport transport = null;
-        
-        
+
+
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_TRANSPORTS) {
@@ -228,12 +228,9 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (PROVIDERNAME.equals(attname)) {
-                    //TODO load the java clss for this
-                    //TODO  somtimes Provider should be change
-                    dpengine.getCurrentFileItem().setProvideName(attvalue);
-                    //  Provider provider = new SimpleJavaProvider();
-                    // provider. .setName(new QName(getValue(attvalue)));
-                    // axisService.setProvider(provider);
+                    if(dpengine != null && dpengine.getCurrentFileItem() != null)  {
+                        dpengine.getCurrentFileItem().setProvideName(attvalue);
+                    }
                 } else if (STYLENAME.equals(attname)) {
                     // axisService.setStyle();
                     //TODO setStyle should be handle latter
@@ -313,6 +310,8 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
 
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + ST);
                     }
                 }
             }
@@ -461,6 +460,8 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (tagnae.equals(PARAMETERST)) {
                         Parameter parameter = processParameter();
                         handler.addParameter(parameter);
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -709,6 +710,8 @@ public class DeploymentParser implements DeploymentConstants {
                     if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         inFlow.addHandler(handler);
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -745,6 +748,8 @@ public class DeploymentParser implements DeploymentConstants {
                     if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         outFlow.addHandler(handler);
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -782,6 +787,8 @@ public class DeploymentParser implements DeploymentConstants {
                     if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         faultFlow.addHandler(handler);
+                    }  else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -819,6 +826,8 @@ public class DeploymentParser implements DeploymentConstants {
                         if (ATTNAME.equals(attname)) {
                             pahseList.add(attvalue);
                         }
+                    }   else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -890,6 +899,8 @@ public class DeploymentParser implements DeploymentConstants {
                         processModule(module);
                         // module.setArchiveName(archiveName);
                         // module.setName(archiveName);
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + ST);
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
