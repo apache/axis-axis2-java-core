@@ -16,8 +16,8 @@
 
 package org.apache.axis.registry;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
@@ -27,15 +27,15 @@ import javax.xml.namespace.QName;
 public class ConcreateTypeMappingInclude implements TypeMappingInclude{
     private HashMap javamapping;
     private HashMap xmlmapping;
-    private ArrayList mappingValues;
+    private Vector mappingValues;
     
     public ConcreateTypeMappingInclude(){
         javamapping = new HashMap();
         xmlmapping = new HashMap();
-        mappingValues = new ArrayList();
+        mappingValues = new Vector();
     }
     
-    public synchronized void addTypeMapping(TypeMapping typeMapping) {
+    public void addTypeMapping(TypeMapping typeMapping) {
         mappingValues.add(typeMapping); 
         javamapping.put(typeMapping.getJavaType().getName(),typeMapping); 
         xmlmapping.put(typeMapping.getXMLType(),typeMapping);

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * @author hemapani@opensource.lk
+ * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class HashedBaundle {
     private ArrayList list;

@@ -90,7 +90,7 @@ public class AxisEngine {
         log.info("end the send()");
     }
     
-    public void recive(MessageContext mc)throws AxisFault{
+    public  void recive(MessageContext mc)throws AxisFault{
         Stack executionStack = new Stack();
         QName currentTansportName = null;
         QName currentServiceName = null;

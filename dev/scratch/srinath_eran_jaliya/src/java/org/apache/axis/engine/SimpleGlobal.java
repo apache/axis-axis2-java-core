@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+package org.apache.axis.engine;
 
-import java.util.Vector;
 
-/**
- * @author hemapani@opensource.lk
- */
-public class ConcreateModuleInclude implements ModuleInclude {
-    private Vector modules;
 
-    public ConcreateModuleInclude(){
-        this.modules = new Vector();
+public class SimpleGlobal extends ConcreateCommonExecuter implements Global{
+    public SimpleGlobal() {
     }
-    public Module getModule(int index) {
-        return (Module)modules.get(index);
-    }
-    public int getModuleCount() {
-       return modules.size();
-    }
-    public void addModule(Module module) {
-        modules.add(module);
-    }
+
 }

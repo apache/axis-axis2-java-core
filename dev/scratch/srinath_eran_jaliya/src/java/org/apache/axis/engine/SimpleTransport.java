@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+package org.apache.axis.engine;
 
-import java.util.Vector;
+import javax.xml.namespace.QName;
 
-/**
- * @author hemapani@opensource.lk
- */
-public class ConcreateModuleInclude implements ModuleInclude {
-    private Vector modules;
+public class SimpleTransport extends ConcreateCommonExecuter implements Transport{
+    private QName name;
+    
+    public SimpleTransport(QName name){
+        this.name = name;
+    }
 
-    public ConcreateModuleInclude(){
-        this.modules = new Vector();
+    public QName getName() {
+        return name;
     }
-    public Module getModule(int index) {
-        return (Module)modules.get(index);
-    }
-    public int getModuleCount() {
-       return modules.size();
-    }
-    public void addModule(Module module) {
-        modules.add(module);
-    }
+
 }

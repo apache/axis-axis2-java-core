@@ -16,7 +16,7 @@
 
 package org.apache.axis.registry;
 
-import java.util.ArrayList;
+import java.util.Vector;
 
 import org.apache.axis.Handler;
 
@@ -24,11 +24,11 @@ import org.apache.axis.Handler;
  * @author hemapani@opensource.lk
  */
 public class ConcreateFlow implements Flow {
-   protected ArrayList list = null; 
+   protected Vector list = null; 
    public ConcreateFlow(){
-        list = new ArrayList();
+        list = new Vector();
    }
-   public synchronized void addHandler(Handler handler) {
+   public void addHandler(Handler handler) {
        list.add(handler);
    }
    public Handler getHandler(int index) {
