@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Feb 11, 2005 1:04:21 PM                                                        
+
+      This build file is intended to compile and run the Axis2 sample
+      provided here with the service being deployed at Tomcat or by
+      running a simple Axis2 server.   
+     
+                   
+     Chathura                                                                
+     ====================================================================== -->
+<project name="Sample3" basedir="." default="jar">
+	<property name="src.dir" value="src" />
+	<property name="classes.dir" value="classes" />
+	<property name="build.dir" value="build" />
+	<property name="lib.dir" value="lib" />
+
+
+	<property name="root" location="../../../.." />
+
+	<path id="axis.test.classpath">
+		<path refid="maven.dependency.classpath">
+		</path>
+		<pathelement location="${root}/target/classes" />
+	</path>
+
+	<target name="clean" description="Delete all generated files">
+		<delete dir="${classes.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="validate">
+
+	</target>
+
+	<target name="createDir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+	</target>
+
+	<target name="compile" depends="validate,createDir">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpath="axis.test.classpath">
+
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+
+	</target>
+
+</project>
+
