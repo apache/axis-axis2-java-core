@@ -15,12 +15,20 @@
  */
 package org.apache.axis.engine;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
+import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Flow;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class EngineUtils {
+    public static final int TESTING_PORT = 7777;
+    public static final String FAILURE_MESSAGE = "Intentional Faliure";
+    
     public static void addHandlers(Flow flow,ExecutionChain exeChain,String phaseName) throws AxisFault{
         if(flow != null){
             int handlerCount = flow.getHandlerCount();
@@ -29,4 +37,16 @@ public class EngineUtils {
             }
         }
     }
+    
+    public static SimpleAxisServer startServer(EngineRegistry engineRegistry) throws IOException{
+        AxisEngine engine = new AxisEngine(engineRegistry);
+        ServerSocket serverSoc = new ServerSocket(TESTING_PORT);
+        SimpleAxisServer sas = new SimpleAxisServer(engine);
+        sas.setServerSocket(serverSoc);
+        Thread thisThread = new Thread(sas);
+        thisThread.setDaemon(true);
+        thisThread.start();
+        return sas;
+    }
+
 }

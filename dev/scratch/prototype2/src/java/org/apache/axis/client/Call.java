@@ -42,12 +42,15 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFault;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.crimson.tree.TextNode;
+
 
 /**
  * This is conveneice API for the User who do not need to see the complexity of the 
@@ -99,8 +102,18 @@ public class Call {
                     OMNamespace ns  = element.getNamespace();
                     if(OMConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName()) 
                             && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getValue())){
-                                //TODO handle this better
-                          throw new AxisFault(element.getValue());
+                          Iterator it = element.getChildren();
+                          String error = null;
+                          while(it.hasNext()){
+                              OMNode node = (OMNode)it.next();
+                              if(OMNode.TEXT_NODE == node.getType()){
+                                  error = ((OMText)node).getValue();
+                                  if(error != null){
+                                      break;
+                                  }
+                              }
+                          }
+                          throw new AxisFault(error);
                     }
                     return (OMElement)child;
                 }
