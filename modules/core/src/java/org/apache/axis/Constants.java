@@ -82,7 +82,7 @@ public class Constants {
     /**
      * Field TRANSPORT_SMTP
      */
-    public static final String TRANSPORT_SMTP = "smtp";
+    public static final String TRANSPORT_MAIL = "mail";
 
     /**
      * Field LISTSERVICES

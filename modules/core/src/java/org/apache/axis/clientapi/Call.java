@@ -103,7 +103,7 @@ public class Call {
      */
     public void setTransportType(String transport) throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                || Constants.TRANSPORT_SMTP.equals(transport)
+                || Constants.TRANSPORT_MAIL.equals(transport)
                 || Constants.TRANSPORT_TCP.equals(transport))) {
             this.transport = transport;
         } else {
@@ -124,7 +124,7 @@ public class Call {
             String Listenertransport, boolean useSeparateListener)
             throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                || Constants.TRANSPORT_SMTP.equals(transport)
+                || Constants.TRANSPORT_MAIL.equals(transport)
                 || Constants.TRANSPORT_TCP.equals(transport))) {
             this.Listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
@@ -186,7 +186,7 @@ public class Call {
      * @throws AxisFault
      */
     public void send(SOAPEnvelope envelope) throws AxisFault {
-        if (Constants.TRANSPORT_SMTP.equals(transport)) {
+        if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault(
                     "This invocation support only for bi-directional transport");
         } else {
@@ -249,7 +249,7 @@ public class Call {
      * @throws AxisFault
      */
     public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault {
-        if (Constants.TRANSPORT_SMTP.equals(transport)) {
+        if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault(
                     "This invocation support only for bi-directional transport");
         }
@@ -300,7 +300,7 @@ public class Call {
                 msgctx.setProperty(MessageContext.SOAP_ACTION,action);
             }
             if (useSeparateListener) {
-                if (Constants.TRANSPORT_SMTP.equals(transport)) {
+                if (Constants.TRANSPORT_MAIL.equals(transport)) {
                     throw new AxisFault(
                             "This invocation support only for bi-directional transport");
                 }

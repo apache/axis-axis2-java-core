@@ -37,6 +37,10 @@ public class TransportSenderLocator {
                 Class className =
                     Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
                 return (TransportSender) className.newInstance();
+            } else if (Constants.TRANSPORT_MAIL.equals(type)) {
+                Class className =
+                    Class.forName("org.apache.axis.transport.mail.MailTransportSender");
+                return (TransportSender) className.newInstance();
             }
         } catch (ClassNotFoundException e) {
             throw new AxisFault(e.getMessage(), e);
