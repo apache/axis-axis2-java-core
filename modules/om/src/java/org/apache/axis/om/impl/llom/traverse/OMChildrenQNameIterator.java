@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om.impl.llom.traverse;
 
 import org.apache.axis.om.OMNode;
@@ -21,12 +20,31 @@ import org.apache.axis.om.impl.llom.OMNamedNodeImpl;
 
 import javax.xml.namespace.QName;
 
+/**
+ * Class OMChildrenQNameIterator
+ */
 public class OMChildrenQNameIterator extends OMChildrenIterator {
+    /**
+     * Field givenQName
+     */
     private QName givenQName;
 
+    /**
+     * Field needToMoveForward
+     */
     private boolean needToMoveForward = true;
+
+    /**
+     * Field isMatchingNodeFound
+     */
     private boolean isMatchingNodeFound = false;
 
+    /**
+     * Constructor OMChildrenQNameIterator
+     *
+     * @param currentChild
+     * @param givenQName
+     */
     public OMChildrenQNameIterator(OMNode currentChild, QName givenQName) {
         super(currentChild);
         this.givenQName = givenQName;
@@ -42,15 +60,20 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
     public boolean hasNext() {
         while (needToMoveForward) {
             if (currentChild != null) {
+
                 // check the current node for the criteria
-                if ((currentChild instanceof OMNamedNodeImpl) &&
-                        (isQNamesMatch(((OMNamedNodeImpl) currentChild).getQName(), this.givenQName))) {
+                if ((currentChild instanceof OMNamedNodeImpl)
+                        && (isQNamesMatch(
+                                   ((OMNamedNodeImpl) currentChild).getQName(),
+                                   this.givenQName))) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {
+
                     // get the next named node
                     currentChild = currentChild.getNextSibling();
-                    isMatchingNodeFound = needToMoveForward = !(currentChild == null);
+                    isMatchingNodeFound = needToMoveForward = !(currentChild
+                                                                           == null);
                 }
             } else {
                 needToMoveForward = false;
@@ -67,7 +90,8 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
      *          iteration has no more elements.
      */
     public Object next() {
-        //reset the flags
+
+        // reset the flags
         needToMoveForward = true;
         isMatchingNodeFound = false;
         nextCalled = true;
@@ -94,16 +118,18 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
         }
 
         // if the given localname is null, whatever value this.qname has, its a match
-        boolean localNameMatch = qNameToBeMatched.getLocalPart() == null ||
-                qNameToBeMatched.getLocalPart() == "" ||
-                (elementQName != null && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
-        boolean namespaceURIMatch = qNameToBeMatched.getNamespaceURI() == null ||
-                qNameToBeMatched.getNamespaceURI() == "" ||
-                (elementQName != null && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
+        boolean localNameMatch =
+        (qNameToBeMatched.getLocalPart() == null)
+                || (qNameToBeMatched.getLocalPart() == "")
+                || ((elementQName != null)
+                               && elementQName.getLocalPart().equalsIgnoreCase(
+                                       qNameToBeMatched.getLocalPart()));
+        boolean namespaceURIMatch =
+        (qNameToBeMatched.getNamespaceURI() == null)
+                || (qNameToBeMatched.getNamespaceURI() == "")
+                || ((elementQName != null)
+                               && elementQName.getNamespaceURI().equalsIgnoreCase(
+                                       qNameToBeMatched.getNamespaceURI()));
         return localNameMatch && namespaceURIMatch;
-
-
     }
-
-
 }

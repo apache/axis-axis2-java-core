@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMConstants;
@@ -26,7 +25,14 @@ import org.apache.axis.om.SOAPFault;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
-public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants {
+/**
+ * Class SOAPBodyImpl
+ */
+public class SOAPBodyImpl extends OMElementImpl
+        implements SOAPBody, OMConstants {
+    /**
+     * Field hasSOAPFault
+     */
     private boolean hasSOAPFault = false;
 
     /**
@@ -38,16 +44,25 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
         this.localName = OMConstants.BODY_LOCAL_NAME;
     }
 
+    /**
+     * Constructor SOAPBodyImpl
+     *
+     * @param envelope
+     * @param builder
+     */
     public SOAPBodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(OMConstants.BODY_LOCAL_NAME, envelope.getNamespace(), envelope, builder);
+        super(OMConstants.BODY_LOCAL_NAME, envelope.getNamespace(), envelope,
+                builder);
     }
 
     /**
      * Creates a new <code>SOAPFault</code> object and adds it to
      * this <code>SOAPBody</code> object.
      *
+     * @param e
      * @return the new <code>SOAPFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
+     * @throws OMException
      */
     public SOAPFault addFault(Exception e) throws OMException {
         SOAPFault soapFault = new SOAPFaultImpl(this, e);
@@ -67,7 +82,9 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
         if (hasSOAPFault) {
             return true;
         } else {
-            Iterator soapFaultChildren = getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_LOCAL_NAME));
+            Iterator soapFaultChildren =
+                    getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI,
+                            SOAPFAULT_LOCAL_NAME));
             if (soapFaultChildren.hasNext()) {
                 hasSOAPFault = true;
                 return true;
@@ -84,14 +101,15 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
      *         object
      */
     public SOAPFault getFault() {
-        Iterator soapFaultChildren = getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_LOCAL_NAME));
+        Iterator soapFaultChildren =
+                getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI,
+                        SOAPFAULT_LOCAL_NAME));
         while (soapFaultChildren.hasNext()) {
             Object o = soapFaultChildren.next();
             if (o instanceof SOAPFault) {
                 SOAPFault soapFault = (SOAPFault) o;
                 return soapFault;
             }
-
         }
         return null;
     }
@@ -99,15 +117,14 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
     /**
      * @param soapFault
      * @throws org.apache.axis.om.OMException
+     * @throws OMException
      */
     public void addFault(SOAPFault soapFault) throws OMException {
         if (hasSOAPFault) {
-            throw new OMException("SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
+            throw new OMException(
+                    "SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
         }
         addChild(soapFault);
         hasSOAPFault = true;
-
     }
-
-
 }

@@ -1,40 +1,42 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+/**
+ * Interface OMNode
+ */
 public interface OMNode {
-    //==================================================================================
-
-    // Followings are the codes for node types. Extracted these from DOM API
     /**
      * The node is an <code>Element</code>.
      */
     public static final short ELEMENT_NODE = 1;
+
     /**
      * The node is an <code>Attr</code>.
      */
     public static final short ATTRIBUTE_NODE = 2;
+
     /**
      * The node is a <code>Text</code> node.
      */
     public static final short TEXT_NODE = 3;
+
     /**
      * The node is a <code>CDATASection</code>.
      */
@@ -44,12 +46,11 @@ public interface OMNode {
      * The node is a <code>Comment</code>.
      */
     public static final short COMMENT_NODE = 8;
+
     /**
      * The node is a <code>Document</code>.
      */
     public static final short DOCUMENT_NODE = 9;
-
-    //==================================================================================
 
     /**
      * This method should return the immediate parent of the node.
@@ -60,6 +61,11 @@ public interface OMNode {
      */
     public OMElement getParent() throws OMException;
 
+    /**
+     * Method setParent
+     *
+     * @param element
+     */
     public void setParent(OMElement element);
 
     /**
@@ -70,6 +76,11 @@ public interface OMNode {
      */
     public OMNode getNextSibling() throws OMException;
 
+    /**
+     * Method setNextSibling
+     *
+     * @param node
+     */
     public void setNextSibling(OMNode node);
 
     /**
@@ -83,6 +94,11 @@ public interface OMNode {
      */
     public String getValue() throws OMException;
 
+    /**
+     * Method setValue
+     *
+     * @param value
+     */
     public void setValue(String value);
 
     /**
@@ -94,6 +110,11 @@ public interface OMNode {
      */
     public boolean isComplete();
 
+    /**
+     * Method setComplete
+     *
+     * @param state
+     */
     public void setComplete(boolean state);
 
     /**
@@ -127,6 +148,12 @@ public interface OMNode {
      */
     public short getType() throws OMException;
 
+    /**
+     * Method setType
+     *
+     * @param nodeType
+     * @throws OMException
+     */
     public void setType(short nodeType) throws OMException;
 
     /**
@@ -148,6 +175,6 @@ public interface OMNode {
      * @param cache
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException;
-
+    public void serialize(XMLStreamWriter writer, boolean cache)
+            throws XMLStreamException;
 }

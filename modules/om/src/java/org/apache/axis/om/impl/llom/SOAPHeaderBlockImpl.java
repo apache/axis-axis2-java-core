@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMAttribute;
@@ -25,7 +24,11 @@ import org.apache.axis.om.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 
-public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBlock {
+/**
+ * Class SOAPHeaderBlockImpl
+ */
+public class SOAPHeaderBlockImpl extends OMElementImpl
+        implements SOAPHeaderBlock {
     /**
      * @param localName
      * @param ns
@@ -34,7 +37,16 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
         super(localName, ns);
     }
 
-    public SOAPHeaderBlockImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    /**
+     * Constructor SOAPHeaderBlockImpl
+     *
+     * @param localName
+     * @param ns
+     * @param parent
+     * @param builder
+     */
+    public SOAPHeaderBlockImpl(String localName, OMNamespace ns,
+                               OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
@@ -59,11 +71,16 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
      * @param attrValue
      */
     private void setAttribute(String attributeName, String attrValue) {
-        OMAttribute omAttribute = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
+        OMAttribute omAttribute = this.getAttributeWithQName(
+                new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
         if (omAttribute != null) {
             omAttribute.setValue(attrValue);
         } else {
-            OMAttribute attribute = new OMAttributeImpl(attributeName, new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue);
+            OMAttribute attribute = new OMAttributeImpl(
+                    attributeName,
+                    new OMNamespaceImpl(
+                            OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,
+                            OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue);
             this.insertAttribute(attribute);
         }
     }
@@ -80,29 +97,40 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
         return getAttribute(OMConstants.ATTR_ACTOR);
     }
 
+    /**
+     * Method getAttribute
+     *
+     * @param attrName
+     * @return
+     */
     private String getAttribute(String attrName) {
-        OMAttribute omAttribute = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
-        return (omAttribute != null) ? omAttribute.getValue() : null;
+        OMAttribute omAttribute = this.getAttributeWithQName(
+                new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
+        return (omAttribute != null)
+                ? omAttribute.getValue()
+                : null;
     }
 
     /**
-         * Sets the mustUnderstand attribute for this <CODE>
-         * SOAPHeaderBlock</CODE> object to be on or off.
-         * <P>If the mustUnderstand attribute is on, the actor who
-         * receives the <CODE>SOAPHeaderBlock</CODE> must process it
-         * correctly. This ensures, for example, that if the <CODE>
-         * SOAPHeaderBlock</CODE> object modifies the message, that
-         * the message is being modified correctly.</P>
-         *
-         * @param mustUnderstand <CODE>true</CODE> to
-         *                       set the mustUnderstand attribute on; <CODE>false</CODE>
-         *                       to turn if off
-         * @throws IllegalArgumentException if
-         *                                  there is a problem in setting the actor.
-         * @see #getMustUnderstand() getMustUnderstand()
-         */
+     * Sets the mustUnderstand attribute for this <CODE>
+     * SOAPHeaderBlock</CODE> object to be on or off.
+     * <P>If the mustUnderstand attribute is on, the actor who
+     * receives the <CODE>SOAPHeaderBlock</CODE> must process it
+     * correctly. This ensures, for example, that if the <CODE>
+     * SOAPHeaderBlock</CODE> object modifies the message, that
+     * the message is being modified correctly.</P>
+     *
+     * @param mustUnderstand <CODE>true</CODE> to
+     *                       set the mustUnderstand attribute on; <CODE>false</CODE>
+     *                       to turn if off
+     * @throws IllegalArgumentException if
+     *                                  there is a problem in setting the actor.
+     * @see #getMustUnderstand() getMustUnderstand()
+     */
     public void setMustUnderstand(boolean mustUnderstand) {
-        setAttribute(OMConstants.ATTR_MUSTUNDERSTAND, mustUnderstand ? "true" : "false");
+        setAttribute(OMConstants.ATTR_MUSTUNDERSTAND, mustUnderstand
+                        ? "true"
+                        : "false");
     }
 
     /**
@@ -115,7 +143,8 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
      */
     public boolean getMustUnderstand() {
         String mustUnderstand = "";
-        if ((mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND)) != null) {
+        if ((mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND))
+                != null) {
             return mustUnderstand.equalsIgnoreCase("true");
         }
         return false;

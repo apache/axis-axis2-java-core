@@ -1,25 +1,27 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.util.Iterator;
 
+/**
+ * Interface OMElement
+ */
 public interface OMElement extends OMNamedNode {
     /**
      * This will add child to the element. One must preserve the order of children, in this operation
@@ -52,6 +54,8 @@ public interface OMElement extends OMNamedNode {
     /**
      * This returns a collection of this element.
      * Children can be of types OMElement, OMText.
+     *
+     * @return
      */
     public Iterator getChildren();
 
@@ -80,7 +84,8 @@ public interface OMElement extends OMNamedNode {
      * @return
      * @throws OMException
      */
-    public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException;
+    public OMNamespace findInScopeNamespace(String uri, String prefix)
+            throws OMException;
 
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element
@@ -90,7 +95,8 @@ public interface OMElement extends OMNamedNode {
      * @return
      * @throws OMException
      */
-    public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException;
+    public OMNamespace findDeclaredNamespace(String uri, String prefix)
+            throws OMException;
 
     /**
      * This will provide a list of namespace defined within this Element <B>only</B>
@@ -121,6 +127,7 @@ public interface OMElement extends OMNamedNode {
      * in the front or at the end of set of attributes
      *
      * @param attr
+     * @return
      */
     public OMAttribute insertAttribute(OMAttribute attr);
 
@@ -131,12 +138,28 @@ public interface OMElement extends OMNamedNode {
      *                      must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
      * @return
      */
-    public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns);
+    public OMAttribute insertAttribute(String attributeName, String value,
+                                       OMNamespace ns);
 
+    /**
+     * Method removeAttribute
+     *
+     * @param attr
+     */
     public void removeAttribute(OMAttribute attr);
 
+    /**
+     * Method setBuilder
+     *
+     * @param wrapper
+     */
     public void setBuilder(OMXMLParserWrapper wrapper);
 
+    /**
+     * Method getBuilder
+     *
+     * @return
+     */
     public OMXMLParserWrapper getBuilder();
 
     /**

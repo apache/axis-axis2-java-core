@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.om;
 
 import javax.xml.namespace.QName;
@@ -40,19 +39,19 @@ import javax.xml.namespace.QName;
  */
 public interface SOAPFault extends OMElement {
     /**
-         * Sets this <CODE>SOAPFault</CODE> object with the given
-         * fault code.
-         * <P>Fault codes, which given information about the fault,
-         * are defined in the SOAP 1.1 specification.</P>
-         *
-         * @param faultCode a <CODE>QName</CODE> giving
-         *                  the fault code to be set; must be one of the fault codes
-         *                  defined in the SOAP 1.1 specification
-         * @throws OMException if there was an error in
-         *                     adding the <CODE>faultCode</CODE> to the underlying XML
-         *                     tree.
-         * @see #getFaultCode() getFaultCode()
-         */
+     * Sets this <CODE>SOAPFault</CODE> object with the given
+     * fault code.
+     * <P>Fault codes, which given information about the fault,
+     * are defined in the SOAP 1.1 specification.</P>
+     *
+     * @param faultCode a <CODE>QName</CODE> giving
+     *                  the fault code to be set; must be one of the fault codes
+     *                  defined in the SOAP 1.1 specification
+     * @throws OMException if there was an error in
+     *                     adding the <CODE>faultCode</CODE> to the underlying XML
+     *                     tree.
+     * @see #getFaultCode() getFaultCode()
+     */
     public abstract void setFaultCode(QName faultCode) throws OMException;
 
     /**
@@ -65,19 +64,19 @@ public interface SOAPFault extends OMElement {
     public abstract QName getFaultCode();
 
     /**
-         * Sets this <CODE>SOAPFault</CODE> object with the given
-         * fault actor.
-         * <P>The fault actor is the recipient in the message path who
-         * caused the fault to happen.</P>
-         *
-         * @param faultActor a <CODE>String</CODE>
-         *                   identifying the actor that caused this <CODE>
-         *                   SOAPFault</CODE> object
-         * @throws OMException if there was an error in
-         *                     adding the <CODE>faultActor</CODE> to the underlying XML
-         *                     tree.
-         * @see #getFaultActor() getFaultActor()
-         */
+     * Sets this <CODE>SOAPFault</CODE> object with the given
+     * fault actor.
+     * <P>The fault actor is the recipient in the message path who
+     * caused the fault to happen.</P>
+     *
+     * @param faultActor a <CODE>String</CODE>
+     *                   identifying the actor that caused this <CODE>
+     *                   SOAPFault</CODE> object
+     * @throws OMException if there was an error in
+     *                     adding the <CODE>faultActor</CODE> to the underlying XML
+     *                     tree.
+     * @see #getFaultActor() getFaultActor()
+     */
     public abstract void setFaultActor(String faultActor) throws OMException;
 
     /**
@@ -101,8 +100,7 @@ public interface SOAPFault extends OMElement {
      *                     tree.
      * @see #getFaultString() getFaultString()
      */
-    public abstract void setFaultString(String faultString)
-            throws OMException;
+    public abstract void setFaultString(String faultString) throws OMException;
 
     /**
      * Gets the fault string for this <CODE>SOAPFault</CODE>
@@ -120,7 +118,18 @@ public interface SOAPFault extends OMElement {
      */
     public abstract void setDetailInformation(OMNode detail);
 
+    /**
+     * Method getDetailInformation
+     *
+     * @return
+     */
     public abstract OMNode getDetailInformation();
 
+    /**
+     * Method getException
+     *
+     * @return
+     * @throws OMException
+     */
     public abstract Exception getException() throws OMException;
 }
