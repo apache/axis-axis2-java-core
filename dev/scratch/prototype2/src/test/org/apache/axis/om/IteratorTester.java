@@ -39,8 +39,7 @@ public class IteratorTester extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-		envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().
-                createXMLStreamReader(
+		envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
                         new FileReader(getTestResourceFile("soap/sample1.xml")))).getOMEnvelope();
     }
 

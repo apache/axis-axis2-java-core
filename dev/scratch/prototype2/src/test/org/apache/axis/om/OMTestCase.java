@@ -1,11 +1,11 @@
 package org.apache.axis.om;
 
-import java.io.FileReader;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.FileReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,11 +26,11 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * Date: Nov 2, 2004
  * Time: 2:15:28 PM
  */
-public class OMTestCase extends AbstractTestCase  {
+public class OMTestCase extends AbstractTestCase {
 
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
     protected OMXPPWrapper omXmlPullParserWrapper;
-protected OMFactory ombuilderFactory;
+    protected OMFactory ombuilderFactory;
 
     protected SOAPEnvelope soapEnvelope;
 
