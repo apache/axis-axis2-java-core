@@ -35,7 +35,7 @@ public class ConcreateTypeMappingInclude implements TypeMappingInclude{
         mappingValues = new ArrayList();
     }
     
-    public void addTypeMapping(TypeMapping typeMapping) {
+    public synchronized void addTypeMapping(TypeMapping typeMapping) {
         mappingValues.add(typeMapping); 
         javamapping.put(typeMapping.getJavaType().getName(),typeMapping); 
         xmlmapping.put(typeMapping.getXMLType(),typeMapping);

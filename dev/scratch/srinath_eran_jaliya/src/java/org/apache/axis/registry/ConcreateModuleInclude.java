@@ -33,7 +33,7 @@ public class ConcreateModuleInclude implements ModuleInclude {
     public int getModuleCount() {
        return modules.size();
     }
-    public void addModule(Module module) {
+    public synchronized void addModule(Module module) {
         modules.add(module);
     }
 }

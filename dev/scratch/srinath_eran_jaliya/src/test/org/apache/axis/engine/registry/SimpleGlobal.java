@@ -17,6 +17,14 @@
 package org.apache.axis.engine.registry;
 
 import org.apache.axis.engine.Global;
+import org.apache.axis.registry.CommonExecuterStateFactory;
 
 public class SimpleGlobal extends AbstractCommonExecuter implements Global{
+    /**
+     * @param state
+     */
+    public SimpleGlobal() {
+        super(CommonExecuterStateFactory.getGlobalState());
+    }
+
 }

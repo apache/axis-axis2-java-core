@@ -22,6 +22,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.engine.MessageContext;
 import org.apache.axis.engine.Operation;
+import org.apache.axis.registry.CommonExecuterStateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,6 +33,7 @@ public class SimpleOperation extends AbstractCommonExecuter implements Operation
     
     
     public SimpleOperation(QName name){
+        super(CommonExecuterStateFactory.getOperationState());
         this.name = name;
     }
     public void recive(MessageContext mc) throws AxisFault {

@@ -19,11 +19,13 @@ package org.apache.axis.engine.registry;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.Transport;
+import org.apache.axis.registry.CommonExecuterStateFactory;
 
 public class SimpleTransport extends AbstractCommonExecuter implements Transport{
     private QName name;
     
     public SimpleTransport(QName name){
+        super(CommonExecuterStateFactory.getTrasportState());
         this.name = name;
     }
 

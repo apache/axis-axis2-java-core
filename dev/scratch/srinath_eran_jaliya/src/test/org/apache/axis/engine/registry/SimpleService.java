@@ -24,6 +24,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.engine.MessageContext;
 import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Service;
+import org.apache.axis.registry.CommonExecuterStateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,6 +34,7 @@ public class SimpleService extends AbstractCommonExecuter implements Service{
     private QName name;
     
     public SimpleService(QName name){
+        super(CommonExecuterStateFactory.getServiceState());
         this.name = name;
     } 
     public ClassLoader getClassLoader() {

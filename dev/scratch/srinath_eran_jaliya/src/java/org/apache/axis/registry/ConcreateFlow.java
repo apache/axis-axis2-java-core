@@ -28,7 +28,7 @@ public class ConcreateFlow implements Flow {
    public ConcreateFlow(){
         list = new ArrayList();
    }
-   public void addHandler(Handler handler) {
+   public synchronized void addHandler(Handler handler) {
        list.add(handler);
    }
    public Handler getHandler(int index) {

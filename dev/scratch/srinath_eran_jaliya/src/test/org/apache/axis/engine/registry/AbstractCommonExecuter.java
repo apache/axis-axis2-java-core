@@ -23,9 +23,7 @@ import org.apache.axis.CommonExecutor;
 import org.apache.axis.engine.HandlerInvoker;
 import org.apache.axis.engine.MessageContext;
 import org.apache.axis.registry.AbstractEngineElement;
-import org.apache.axis.registry.ConcreateFlowInclude;
-import org.apache.axis.registry.ConcreateModuleInclude;
-import org.apache.axis.registry.ConcreateTypeMappingInclude;
+import org.apache.axis.registry.CommonExecuterState;
 import org.apache.axis.registry.EngineElement;
 import org.apache.axis.registry.Flow;
 import org.apache.axis.registry.FlowInclude;
@@ -48,17 +46,11 @@ public abstract class AbstractCommonExecuter
     private Log log = LogFactory.getLog(getClass());                    
 
     protected HandlerInvoker invoker;    
-    
-    //the work is delegated to ConcreateXXInclude classes                       
-    protected FlowInclude flowInclude;
-    protected ModuleInclude modules;
-    protected TypeMappingInclude typemappings;
+    protected CommonExecuterState state;
 
-    public AbstractCommonExecuter(){
+    public AbstractCommonExecuter(CommonExecuterState state){
         invoker = new HandlerInvoker(this);
-        flowInclude = new ConcreateFlowInclude();
-        modules = new ConcreateModuleInclude();
-        typemappings = new ConcreateTypeMappingInclude();
+        this.state = state;
     }
     
 
@@ -104,91 +96,40 @@ public abstract class AbstractCommonExecuter
     }
 
 
-    /**
-     * @return
-     */
-    public Flow getFaultFlow() {
-        return flowInclude.getFaultFlow();
-    }
 
     /**
-     * @return
+     * @param module
      */
-    public Flow getInFlow() {
-        return flowInclude.getInFlow();
-    }
-
-    /**
-     * @return
-     */
-    public Flow getOutFlow() {
-        return flowInclude.getOutFlow();
-    }
-
-    /**
-     * @param flow
-     */
-    public void setFaultFlow(Flow flow) {
-        flowInclude.setFaultFlow(flow);
-    }
-
-    /**
-     * @param flow
-     */
-    public void setInFlow(Flow flow) {
-        flowInclude.setInFlow(flow);
-    }
-
-    /**
-     * @param flow
-     */
-    public void setOutFlow(Flow flow) {
-        flowInclude.setOutFlow(flow);
+    public void addModule(Module module) {
+        state.addModule(module);
     }
 
     /**
      * @param typeMapping
      */
     public void addTypeMapping(TypeMapping typeMapping) {
-        typemappings.addTypeMapping(typeMapping);
+        state.addTypeMapping(typeMapping);
     }
 
-    /**
-     * @param javaType
-     * @return
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
      */
-    public TypeMapping getTypeMapping(Class javaType) {
-        return typemappings.getTypeMapping(javaType);
-    }
-
-    /**
-     * @param index
-     * @return
-     */
-    public TypeMapping getTypeMapping(int index) {
-        return typemappings.getTypeMapping(index);
-    }
-
-    /**
-     * @param xmlType
-     * @return
-     */
-    public TypeMapping getTypeMapping(QName xmlType) {
-        return typemappings.getTypeMapping(xmlType);
+    public boolean equals(Object obj) {
+        return state.equals(obj);
     }
 
     /**
      * @return
      */
-    public int getTypeMappingCount() {
-        return typemappings.getTypeMappingCount();
+    public Flow getFaultFlow() {
+        return state.getFaultFlow();
     }
 
     /**
-     * @param module
+     * @return
      */
-    public void addModule(Module module) {
-        modules.addModule(module);
+    public Flow getInFlow() {
+        return state.getInFlow();
     }
 
     /**
@@ -196,14 +137,87 @@ public abstract class AbstractCommonExecuter
      * @return
      */
     public Module getModule(int index) {
-        return modules.getModule(index);
+        return state.getModule(index);
     }
 
     /**
      * @return
      */
     public int getModuleCount() {
-        return modules.getModuleCount();
+        return state.getModuleCount();
+    }
+
+    /**
+     * @return
+     */
+    public Flow getOutFlow() {
+        return state.getOutFlow();
+    }
+
+    /**
+     * @param javaType
+     * @return
+     */
+    public TypeMapping getTypeMapping(Class javaType) {
+        return state.getTypeMapping(javaType);
+    }
+
+    /**
+     * @param index
+     * @return
+     */
+    public TypeMapping getTypeMapping(int index) {
+        return state.getTypeMapping(index);
+    }
+
+    /**
+     * @param xmlType
+     * @return
+     */
+    public TypeMapping getTypeMapping(QName xmlType) {
+        return state.getTypeMapping(xmlType);
+    }
+
+    /**
+     * @return
+     */
+    public int getTypeMappingCount() {
+        return state.getTypeMappingCount();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return state.hashCode();
+    }
+
+    /**
+     * @param flow
+     */
+    public void setFaultFlow(Flow flow) {
+        state.setFaultFlow(flow);
+    }
+
+    /**
+     * @param flow
+     */
+    public void setInFlow(Flow flow) {
+        state.setInFlow(flow);
+    }
+
+    /**
+     * @param flow
+     */
+    public void setOutFlow(Flow flow) {
+        state.setOutFlow(flow);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return state.toString();
     }
 
 }

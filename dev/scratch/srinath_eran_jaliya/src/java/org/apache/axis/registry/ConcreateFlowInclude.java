@@ -35,15 +35,15 @@ public class ConcreateFlowInclude implements FlowInclude {
         return out;
     }
 
-    public void setFaultFlow(Flow flow) {
+    public synchronized void setFaultFlow(Flow flow) {
         this.fault = flow;
     }
 
-    public void setInFlow(Flow flow) {
+    public synchronized void setInFlow(Flow flow) {
         this.in = flow;
     }
 
-    public void setOutFlow(Flow flow) {
+    public synchronized void setOutFlow(Flow flow) {
         this.out = flow;
     }
 }
