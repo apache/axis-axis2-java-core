@@ -1,0 +1,67 @@
+<title>How To Build Axis Project's Website</title><h1>How To Build Axis Project's Website</h1>
+<h2>Installing Maven</h2>
+<p>The Axis 2.0 website build system solely depends
+<a href="http://maven.apache.org/">Maven</a>.Specifically the build has been 
+tested to work with Maven version 1.0.1. To install Maven download the 
+distributions and follow the instructions in their documentation. Make sure you 
+don't forget to put MAVEN_HOME/bin directory in the path. </p>
+<h2>Checking out Axis 2.0</h2>
+<p>Checkout latest source from
+<a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java">here</a> 
+using your favorite svn client. If you are a committer get a commiter check out 
+from <a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java">
+here</a>.</p>
+<h2>Running the build</h2>
+<div align="center">
+	<table border="1" style="border-collapse: collapse" width="56%" id="table1">
+		<tr>
+			<td width="176" align="center"><b>Target</b></td>
+			<td align="center"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td width="176">maven clean</td>
+			<td>Deletes the 'target' directory in all projects. Target directory contains the stuff created during build, site, etc., </td>
+		</tr>
+		<tr>
+			<td width="176">maven</td>
+			<td>Build all modules and run the tests in Axis 2.0</td>
+		</tr>
+		<tr>
+			<td width="176">maven multiproject:site</td>
+			<td>Create the site for the Master project only </td>
+		</tr>
+		<tr>
+			<td width="176">maven multiproject:site </td>
+			<td>Builds the whole site </td>
+		</tr>
+		<tr>
+		  <td>maven war </td>
+		  <td>Build the war</td>
+	  </tr>
+		<tr>
+		  <td>maven war-withsamples </td>
+		  <td>build the war with the default samples and interop tests </td>
+	  </tr>
+		<tr>
+		  <td>maven dist-src </td>
+		  <td>Creates the source distribution </td>
+	  </tr>
+		<tr>
+		  <td>maven dist-bin </td>
+		  <td>Creates the binary distribution </td>
+	  </tr>
+	</table>
+</div>
+<h2>FAQ</h2>
+<ol>
+	<li>How can I update a document in the site ?<br> Get a commiter check out. 
+	All the documents are in html format under the xdocs folder, and you can 
+	change only the documents found under this folder. Change the relevant file 
+	and run maven &quot;html2xdoc:transform&quot;. New documentation will be available 
+	under target folder.</li>
+	<li>How can I add a new document<br>Put the new document in xdocs folder. 
+	Change the navigation.xml found under the xdocs folder to put a link to the 
+	newly added document. Re-generate the site.</li>
+</ol>
+<p>&nbsp;</p>
+<p align="right">-- Eran Chinthaka</p>

@@ -1,0 +1,7 @@
+<service provider="interop.doclit.InteropProvider" style="doc" contextPath="services">
+    <java:implementation class="interop.doclit.WSDLInteropTestDocLitPortType" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    <operation name="echoString"/>
+    <operation name="echoStringArray"/>
+    <operation name="echoStruct"/>
+    <operation name="echoVoid"/>
+</service>

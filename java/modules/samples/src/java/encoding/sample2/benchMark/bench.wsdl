@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:soap-bench" xmlns:impl="urn:soap-bench" xmlns:intf="urn:soap-bench" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<!--WSDL created by Apache Axis version: 1.2RC1
+Built on Sep 29, 2004 (08:29:40 EDT)-->
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:soap-bench">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_xsd_int">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:int[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_xsd_double">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:double[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="receiveDoublesResponse">
+
+      <wsdl:part name="receiveDoublesReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendStringsResponse">
+
+      <wsdl:part name="sendStringsReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendIntsResponse">
+
+      <wsdl:part name="sendIntsReturn" type="impl:ArrayOf_xsd_int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoDoublesRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_double"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoDoublesResponse">
+
+      <wsdl:part name="echoDoublesReturn" type="impl:ArrayOf_xsd_double"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="receiveDoublesRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_double"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringsRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendDoublesResponse">
+
+      <wsdl:part name="sendDoublesReturn" type="impl:ArrayOf_xsd_double"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="receiveIntsResponse">
+
+      <wsdl:part name="receiveIntsReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendIntsRequest">
+
+      <wsdl:part name="in0" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoVoidResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="echoIntsRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendStringsRequest">
+
+      <wsdl:part name="in0" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="receiveIntsRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="receiveStringsResponse">
+
+      <wsdl:part name="receiveStringsReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringsResponse">
+
+      <wsdl:part name="echoStringsReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoIntsResponse">
+
+      <wsdl:part name="echoIntsReturn" type="impl:ArrayOf_xsd_int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="receiveStringsRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendDoublesRequest">
+
+      <wsdl:part name="in0" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoVoidRequest">
+
+   </wsdl:message>
+
+   <wsdl:portType name="Benchmark1PortType">
+
+      <wsdl:operation name="echoVoid">
+
+         <wsdl:input name="echoVoidRequest" message="impl:echoVoidRequest"/>
+
+         <wsdl:output name="echoVoidResponse" message="impl:echoVoidResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoStrings" parameterOrder="in0">
+
+         <wsdl:input name="echoStringsRequest" message="impl:echoStringsRequest"/>
+
+         <wsdl:output name="echoStringsResponse" message="impl:echoStringsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoInts" parameterOrder="in0">
+
+         <wsdl:input name="echoIntsRequest" message="impl:echoIntsRequest"/>
+
+         <wsdl:output name="echoIntsResponse" message="impl:echoIntsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoDoubles" parameterOrder="in0">
+
+         <wsdl:input name="echoDoublesRequest" message="impl:echoDoublesRequest"/>
+
+         <wsdl:output name="echoDoublesResponse" message="impl:echoDoublesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveStrings" parameterOrder="in0">
+
+         <wsdl:input name="receiveStringsRequest" message="impl:receiveStringsRequest"/>
+
+         <wsdl:output name="receiveStringsResponse" message="impl:receiveStringsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveInts" parameterOrder="in0">
+
+         <wsdl:input name="receiveIntsRequest" message="impl:receiveIntsRequest"/>
+
+         <wsdl:output name="receiveIntsResponse" message="impl:receiveIntsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveDoubles" parameterOrder="in0">
+
+         <wsdl:input name="receiveDoublesRequest" message="impl:receiveDoublesRequest"/>
+
+         <wsdl:output name="receiveDoublesResponse" message="impl:receiveDoublesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendStrings" parameterOrder="in0">
+
+         <wsdl:input name="sendStringsRequest" message="impl:sendStringsRequest"/>
+
+         <wsdl:output name="sendStringsResponse" message="impl:sendStringsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendInts" parameterOrder="in0">
+
+         <wsdl:input name="sendIntsRequest" message="impl:sendIntsRequest"/>
+
+         <wsdl:output name="sendIntsResponse" message="impl:sendIntsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendDoubles" parameterOrder="in0">
+
+         <wsdl:input name="sendDoublesRequest" message="impl:sendDoublesRequest"/>
+
+         <wsdl:output name="sendDoublesResponse" message="impl:sendDoublesResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="soap-benchSoapBinding" type="impl:Benchmark1PortType">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="echoVoid">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoVoidRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoVoidResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoStrings">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoStringsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoStringsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoInts">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoIntsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoIntsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoDoubles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoDoublesRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoDoublesResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveStrings">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="receiveStringsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="receiveStringsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveInts">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="receiveIntsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="receiveIntsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="receiveDoubles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="receiveDoublesRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="receiveDoublesResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendStrings">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendStringsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendStringsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendInts">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendIntsRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendIntsResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendDoubles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendDoublesRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendDoublesResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:soap-bench"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="Benchmark1PortTypeService">
+
+      <wsdl:port name="soap-bench" binding="impl:soap-benchSoapBinding">
+
+         <wsdlsoap:address location="http://localhost:8080/axis2/services/soap-bench"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

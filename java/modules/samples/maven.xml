@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
+
+<project default="jar"
+    xmlns:j="jelly:core"
+    xmlns:maven="jelly:maven"
+    xmlns:deploy="deploy"
+    xmlns:ant="jelly:ant">
+    <postGoal name="test:compile">
+        <attainGoal name="samples"/>
+    </postGoal> 
+    <goal name="samples">
+    	<!-- encoding sample1 -->
+		<mkdir  dir="target/test-resources/samples/services"/>
+		<mkdir  dir="target/jar-code/sample1"/>
+		<mkdir  dir="target/jar-code/sample1/META-INF"/>
+       <copy todir="target/jar-code/sample1">
+			<fileset dir="target/classes/">
+				<include name="encoding/sample1/**/*.class"/>
+			</fileset>
+		</copy>
+		<copy file="src/java/encoding/sample1/service.xml" tofile="target/jar-code/sample1/META-INF/service.xml"/>
+		<jar jarfile="target/test-resources/samples/services/echo.jar" basedir="target/jar-code/sample1" >
+			<include name="**" />
+		</jar>
+	    <!-- encoding sample1 -->
+		<mkdir  dir="target/jar-code/sample2"/>
+		<mkdir  dir="target/jar-code/sample2/META-INF"/>
+       <copy todir="target/jar-code/sample2">
+			<fileset dir="target/classes/">
+				<include name="encoding/sample2/**/*.class"/>
+			</fileset>
+		</copy>
+		<copy file="src/java/encoding/sample2/benchMark/service.xml" tofile="target/jar-code/sample2/META-INF/service.xml"/>
+		<jar jarfile="target/test-resources/samples/services/soap-bench.jar" basedir="target/jar-code/sample2" >
+			<include name="**" />
+		</jar>
+		<!-- userguide sample1 -->
+		<mkdir  dir="target/jar-code/sample3"/>
+		<mkdir  dir="target/jar-code/sample3/META-INF"/>
+       <copy todir="target/jar-code/sample3">
+			<fileset dir="target/classes/">
+				<include name="userguide/sample1/**/*.class"/>
+			</fileset>
+		</copy>
+		<copy file="conf/service.xml" tofile="target/jar-code/sample3/META-INF/service.xml"/> 
+		<jar jarfile="target/test-resources/samples/services/sample1.jar" basedir="target/jar-code/sample3" >
+			<include name="**" />
+		</jar>
+
+		<!-- interop sample -->
+		<mkdir  dir="target/jar-code/sample4"/>
+		<mkdir  dir="target/jar-code/sample4/META-INF"/>
+       <copy todir="target/jar-code/sample4">
+			<fileset dir="target/classes/">
+				<include name="interop/doclit/**/*.class"/>
+			</fileset>
+		</copy>
+		<copy file="src/java/interop/doclit/service.xml" tofile="target/jar-code/sample4/META-INF/service.xml"/> 
+		<jar jarfile="target/test-resources/samples/services/interop-doclit.jar" basedir="target/jar-code/sample4" >
+			<include name="**" />
+		</jar>
+
+    </goal>
+ </project>

@@ -1,0 +1,16 @@
+<service provider="encoding.sample2.benchMark.BenchProvider" style="rpc" contextPath="services">
+    <java:implementation class="encoding.sample2.benchMark.Benchmark1Impl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    <operation name="echoVoid"/>
+    <operation name="echoStrings"/>
+    <operation name="echoInts"/>
+    <operation name="echoDoubles"/>
+    <operation name="echoBase64"/>
+    <operation name="receiveStrings"/>
+    <operation name="receiveInts"/>
+    <operation name="receiveDoubles"/>
+    <operation name="receiveBase64"/>
+    <operation name="sendStrings"/>
+    <operation name="sendInts"/>
+    <operation name="sendDoubles"/>
+    <operation name="sendBase64"/>
+</service>

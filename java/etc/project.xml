@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+<name>Axis2.0</name>
+  <pomVersion>3</pomVersion>
+  <!-- a unique name for this project -->
+
+  <groupId>axis</groupId>
+  
+  
+  <currentVersion>M1</currentVersion>
+  
+  <!-- details about the organization that 'owns' the project -->
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+    <logo>http://www.apache.org/images/asf-logo.gif</logo>
+  </organization>
+  
+  <inceptionYear>2004</inceptionYear>
+  <package>org.apache.axis</package>
+  <logo>http://ws.apache.org/axis/images/axis.jpg</logo>
+  <description>Axis 2.0 will be a platform for the next generation of web services / service oriented applications. To achieve this goal, we need to incorporate the latest in concepts in Web Services Architecture group and WSDL working group among others. For example, the architecture should be completely asynchronous and should support all kinds of MEP's. The platform must be very extensible (runtime, java2wsdl, wsdl2java etc) to accomodate the growing demand for different WS-* implementations. A "module" can very easily change the behaviour of existing components. For example, additional decorations can be added at runtime to the base wsdl (for example, for WSDM manageability spec). Presence of an addressing module could change the client code generated (where additional methods can be exposed) that make it easy to use addressing. One main focus is to improve the performance even in the presence of a heavy duty "security" module.</description>
+  <shortDescription>Axis 2.0</shortDescription>
+  <!-- the project home page -->
+  <url>http://ws.apache.org/axis2/</url>
+  <issueTrackingUrl>http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
+  <siteAddress>ws.apache.org/axis2</siteAddress>
+  <siteDirectory>/www/axi2.ws.apache.org/</siteDirectory>
+  <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
+	<repository>
+        <connection>scm:subversion:http://svn.apache.org/repos/asf/webservices/axis/trunk</connection>
+        <developerConnection>scm:subversion:https://svn.apache.org/repos/asf/webservices/axis/trunk</developerConnection>
+        <url>http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN</url>
+    </repository>
+  <mailingLists>
+    <mailingList>
+      <name>Axis Developer List</name>
+      <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
+    </mailingList>
+  </mailingLists>
+
+  <!-- ========== -->
+  <!-- Developers -->
+  <!-- ========== -->
+  
+  <developers>
+    <developer>
+      <name>Davanum Srinivas</name>
+      <id>dims</id>
+      <email>dims@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Sanjiva Weerawarana</name>
+      <id>sanjiva</id>
+      <email>sanjiva@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Glen Daniels</name>
+      <id>gdaniels</id>
+      <email>gdaniels@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Aleksander Slominski</name>
+      <id>alek</id>
+      <email>aslom@cs.indiana.edu</email>
+      <organization>Indiana University Extreme! Computing Lab</organization>
+    </developer>
+    <developer>
+      <name>Farhaan Mohideen</name>
+      <id>farhaan</id>
+      <email>farhaan@opensource.lk</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Srinath Perera</name>
+      <id>hemapani</id>
+      <email>hemapani@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Eran Chinthaka</name>
+      <id>chinthaka</id>
+      <email>chinthaka@apache.org</email>
+      <organization>LSF / Eurocenter DDC</organization>
+    </developer>
+    <developer>
+      <name>Dasarath Weerathunga</name>
+      <id>dasarath</id>
+      <email>dasarath@opensource.lk</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Jaliya Ekanayake</name>
+      <id>jaliya</id>
+      <email>jaliya@opensource.lk</email>
+      <organization>Virtusa / LSF</organization>
+    </developer>
+    <developer>
+      <name>Chathura Herath</name>
+      <id>chathura</id>
+      <email>chathura@opensource.lk</email>
+      <organization>LSF/MIT</organization>
+    </developer>
+    <developer>
+	  <name>Deepal Jayasinghe</name>
+      <id>deepal</id>
+      <email>deepal@apache.org</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Ajith Ranabahu</name>
+      <id>ajith</id>
+      <email>ajith@apache.org</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Changshin Lee</name>
+      <id>ias</id>
+      <email>iasandcb@hotmail.com</email>
+      <organization>Tmax Soft, Korea</organization>
+    </developer>
+    <developer>
+      <name>Rajith Priyanga</name>
+      <id>priyanga</id>
+      <email>priyanga@opensource.lk</email>
+      <organization>LSF</organization>
+    </developer>
+  </developers>
+
+  
+  
+  <!-- build information for the project -->
+  <build>
+    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+
+    <unitTest>
+    
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+	    <exclude>**/*Util*.java</exclude>
+		<exclude>**/*MessageWithServerTest.java</exclude> 
+		<!-- <exclude>**/*TransportDeploymentTest.java</exclude>  -->
+		<!-- <exclude>**/*BuildERWithDeploymentTest.java</exclude>  -->
+      </excludes>
+     <includes>
+        <include>**/*Test.java</include>
+      </includes> 
+      
+     <resources>
+         <resource>
+             <directory>${basedir}/src/test-resources</directory>
+          </resource>
+          <resource>
+        	<directory>conf</directory>
+       			 <includes>
+          			<include>**/*.properties</include>
+        		</includes>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          	<include>**/*.properties</include>
+          	<include>**/*.xml</include>
+        </includes>
+      </resource>
+     </resources>
+    </unitTest>
+    
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+ 
+    <!-- ======= -->
+    <!-- Reports -->
+    <!-- ======= -->
+
+    <reports>
+        <report>maven-license-plugin</report>
+        <report>maven-checkstyle-plugin</report>
+        <report>maven-pmd-plugin</report>
+        <!-- <report>maven-simian-plugin</report> -->
+        <report>maven-jdepend-plugin</report>
+        <report>maven-jxr-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-junit-report-plugin</report>
+        <report>maven-clover-plugin</report>
+    </reports>
+    
+</project>
+

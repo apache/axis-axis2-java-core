@@ -1,0 +1,47 @@
+<!-- Created By Eran Chinthaka -->
+<project name="Axis2.0">
+  <title>Axis 2.0</title>
+  <body>
+     
+    <menu name="Axis 2.0">
+      <item name="Introduction" href="intro.html"/>
+      
+      <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
+      
+      <item name="Get Invloved">
+      	<item name="Overview" href="overview.html"/>
+      	<item name="SVN Repository" href="svn.html"/>
+      	<item name="Guide Lines" href="guidelines.html"/>
+      	<item name="Reference Library" href="refLib.html"/>
+      	<item name="Mailing Lists" href="mail-lists.html"/>
+      	<item name="How to build site" href="siteHowTo.html"/>
+      </item>
+      
+      <item name="References">
+        <item name="Documentation" href="docs.html" />
+      	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
+      	<item name="User Guide" href="userguide.html" />
+      	<item name="AXIOM Tutorial" href="OMTutorial.html" /> 
+      	<item name="Client API Tutorial" href="ClientAPI.html" />
+      	<item name="Complete API" href="api/index.html" />      	     	
+      </item>
+      
+      <item name="Downloads">
+      	<item name="Releases" href="releases.html" /> 
+      	<item name="Interim Drops" href="interim.html" />
+      	<item name="Source Code" href="cvs-usage.html" />  
+      </item>
+      <item name="Modules">
+      	<item name="Core" href="multiproject/axis2-core/index.html" /> 
+      	<item name="Deployment" href="multiproject/axis2-deployment/index.html" />
+      	<item name="OM" href="multiproject/axis2-om/index.html" /> 
+      	<item name="WSDL" href="multiproject/axis2-wsdl/index.html" />
+      	<item name="Samples" href="multiproject/axis2-samples/index.html" /> 
+      </item> 
+       
+    </menu>
+    
+    
+    
+  </body>
+</project>

@@ -1,0 +1,19 @@
+<module name="module1" class="module1.java">
+    <inflow>
+        <handler name="h1" class="org.apache.axis.registry.Handler3">
+            <order phase="global" phaseFirst="true"/>
+        </handler>
+        <handler name="h2" class="org.apache.axis.registry.Handler3"/>
+    </inflow>
+
+    <outflow>
+        <handler name="h3" class="org.apache.axis.registry.Handler3">
+            <order phase="global"/>
+        </handler>
+    </outflow>
+
+    <faultflow>
+        <handler name="h4" class="org.apache.axis.registry.Handler3">
+        </handler>
+    </faultflow>
+</module>

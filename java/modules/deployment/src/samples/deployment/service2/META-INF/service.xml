@@ -1,0 +1,45 @@
+<service provider="org.apache.axis.providers.RawXMLProvider" style="rpc" contextPath="services">
+    <java:implementation class="Echo2" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+
+    <!-- these are Service Parameters -->
+    <parameter name="para1" locked="xsd:true">10</parameter>
+    <parameter name="para2" locked="xsd:false">Colombo</parameter>
+
+    <module ref="module1"></module>
+    <module ref="module2"></module>
+
+
+    <!--  Service TypeMapping -->
+
+    <!--
+    Phases
+    P1 p2 p3
+    -->
+
+    <inflow>
+        <handler name="h1" class="Handler2">
+            <order phase="service" phaseFirst="true"/>
+        </handler>
+        <handler name="h2" class="Handler2"/>
+    </inflow>
+
+    <outflow>
+        <handler name="h3" class="Handler2">
+            <order phase="service"/>
+        </handler>
+    </outflow>
+
+    <faultflow>
+        <handler name="h4" class="Handler2">
+        </handler>
+
+        <handler name="h5" class="Handler2">
+            <order phase="service"/>
+        </handler>
+
+        <handler name="h6" class="Handler2">
+            <order phase="service" phaseFirst="true" phaseLast="false"/>
+        </handler>
+    </faultflow>
+    <operation name="opname"/>
+</service>

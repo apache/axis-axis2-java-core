@@ -1,0 +1,7 @@
+<service provider="encoding.sample1.EchoProvider" style="rpc" contextPath="services">
+    <java:implementation class="encoding.sample1.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    <operation name="echoString"/>
+    <operation name="echoStringArray"/>
+    <operation name="echoEchoStruct"/>
+    <operation name="echoEchoStructArray"/>
+</service>

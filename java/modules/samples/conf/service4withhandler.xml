@@ -1,0 +1,23 @@
+<service provider="org.apache.axis.providers.RawXMLProvider" style="rpc" contextPath="services">
+    <java:implementation class="userguide.sample1.EchoXML" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    
+ <inflow>
+        <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
+        <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
+            <order phase="Logging"/>            
+        </handler>        
+    </inflow>
+
+    <outflow>
+        
+    </outflow>
+
+    <faultflow>
+        <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
+        <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
+            <order phase="Logging"/>            
+        </handler>
+    </faultflow>    
+    
+    <operation name="echo" qname="echo"/>
+</service>
