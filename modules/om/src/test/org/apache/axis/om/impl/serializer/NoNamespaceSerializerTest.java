@@ -15,22 +15,22 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * 
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+*/
 
 public class NoNamespaceSerializerTest extends TestCase {
 
@@ -40,6 +40,14 @@ public class NoNamespaceSerializerTest extends TestCase {
             "      <accountNo href=\"#id0\"/>\n" +
             "   </ns1:getBalance>\n" +
             " </soapenv:Body></soapenv:Envelope>";
+                                                                     
+    private String xmlText2 = "<purchase-order xmlns=\"http://openuri.org/easypo\">\n" +
+            "  <customer>\n" +
+            "    <name>Gladys Kravitz</name>\n" +
+            "    <address>Anytown, PA</address>\n" +
+            "  </customer>\n" +
+            "  <date>2005-03-06T14:06:12.697+06:00</date>\n" +
+            "</purchase-order>";
 
     private String xmlTextTwo = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "<soapenv:Body>\n" +
@@ -51,9 +59,14 @@ public class NoNamespaceSerializerTest extends TestCase {
     private XMLStreamReader readerOne;
     private XMLStreamReader readerTwo;
     private XMLStreamWriter writer;
+
+    private OMXMLParserWrapper builder;
+    // private File tempFile;
+
     private OMXMLParserWrapper builderOne;
     private OMXMLParserWrapper builderTwo;
     // private File tempFile;
+
 
 
     protected void setUp() throws Exception {
@@ -66,6 +79,7 @@ public class NoNamespaceSerializerTest extends TestCase {
         builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerOne);
         builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerTwo);
     }
+
 
 //    public void testSerilizationWithCacheOff() throws Exception {
 //        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
@@ -81,6 +95,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 //        writer.flush();
 //    }
 
+
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
         env.serialize(writer, true);
@@ -90,8 +105,27 @@ public class NoNamespaceSerializerTest extends TestCase {
         OMElement accountNo = balanceElement.getFirstElement();
         assertEquals("Deafualt namespace of children has not been set properly", accountNo.getNamespaceName(), "http://localhost:8081/axis/services/BankPort/");
 
-        writer.flush();
     }
 
+    public void submitPurchaseOrderTest()
+            throws Exception {
+        OMFactory omFactory = OMFactory.newInstance();
+        SOAPEnvelope env = omFactory.getDefaultEnvelope();
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(omFactory,XMLInputFactory.newInstance().
+                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
+        env.getBody().addChild(builder.getDocumentElement());
 
-}
+        XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+        //env.getBody().addChild(builder.getDocumentElement());
+        env.serialize(xmlStreamWriter, false);
+       // env.serialize(xmlStreamWriter, true);
+
+        xmlStreamWriter.flush();
+
+    }
+    public void testSerilizationWithCacheOn() throws Exception{
+       SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
+       env.serialize(writer,true);
+       writer.flush();
+    }
+    }
