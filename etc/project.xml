@@ -19,7 +19,7 @@
   <inceptionYear>2004</inceptionYear>
   <package>org.apache.axis</package>
   <logo>http://ws.apache.org/axis/images/axis.jpg</logo>
-  <description> Axis2 is an effort to re-design and totally re-implement both Axis/Java and (eventually) Axis/C++ on a new architecture. Evolving from the now standard "handler chain" model which Axis1 pioneered, Axis2 is developing a more flexible pipeline architecture which can yet be managed and packaged in a more organized manner. This new design acknowledges the maturing of the Web services space â__ in terms of new protocols such as WS-ReliableMessaging, WS-Security and WS-Addressing that are built on top of the base SOAP system. At the time Axis1 was designed, while it was fully expected that other protocols such as WS-ReliableMessaging would be built on top of it, there was not a proper extension architecture defined to enable clean composition of such layers. Thus, one of the key motivations for Axis2 is to provide a clean and simple environment for like Apache Sandesha [4] and Apache WSS4J [5] to layer on top of the base SOAP system. Another driving force for Axis2 as well as the move away from RPC oriented Web services towards more document-oriented, message style asynchronous service interactions. The Axis2 project is centered on a new representation for SOAP messages called AXIOM (AXIs Object Model). AXIOM consists of two parts: a complete XML Infoset representation and a SOAP Infoset representation on top of that. The XML Infoset representation provides a JDOM-like simple API but is built on a deferred model via a StAX-based (Streaming API for XML) pull parsing API. A key feature of AXIOM is that it allows one to stop building the XML tree and just access the pull stream directly; thus enabling both maximum flexibility and maximum performance. This approach allows us to support multiple levels of abstraction for consuming and offering Web services: using plain AXIOM, using generated code and statically data-bound data types and so on. At the time of Axis1's design, RPC-style, synchronous, request-response interactions were the order of the day for Web services. Today service interactions are much more message-oriented and exploit many different message exchange patterns. The Axis2 engine architecture is careful to not build in any assumptions of request-response patterns to ensure that it can be used easily to support arbitrary message exchange patterns.</description>
+  <description> Axis2 is an effort to re-design and totally re-implement both Axis/Java and (eventually) Axis/C++ on a new architecture. Evolving from the now standard "handler chain" model which Axis1 pioneered, Axis2 is developing a more flexible pipeline architecture which can yet be managed and packaged in a more organized manner. This new design acknowledges the maturing of the Web services space ï¿½__ in terms of new protocols such as WS-ReliableMessaging, WS-Security and WS-Addressing that are built on top of the base SOAP system. At the time Axis1 was designed, while it was fully expected that other protocols such as WS-ReliableMessaging would be built on top of it, there was not a proper extension architecture defined to enable clean composition of such layers. Thus, one of the key motivations for Axis2 is to provide a clean and simple environment for like Apache Sandesha [4] and Apache WSS4J [5] to layer on top of the base SOAP system. Another driving force for Axis2 as well as the move away from RPC oriented Web services towards more document-oriented, message style asynchronous service interactions. The Axis2 project is centered on a new representation for SOAP messages called AXIOM (AXIs Object Model). AXIOM consists of two parts: a complete XML Infoset representation and a SOAP Infoset representation on top of that. The XML Infoset representation provides a JDOM-like simple API but is built on a deferred model via a StAX-based (Streaming API for XML) pull parsing API. A key feature of AXIOM is that it allows one to stop building the XML tree and just access the pull stream directly; thus enabling both maximum flexibility and maximum performance. This approach allows us to support multiple levels of abstraction for consuming and offering Web services: using plain AXIOM, using generated code and statically data-bound data types and so on. At the time of Axis1's design, RPC-style, synchronous, request-response interactions were the order of the day for Web services. Today service interactions are much more message-oriented and exploit many different message exchange patterns. The Axis2 engine architecture is careful to not build in any assumptions of request-response patterns to ensure that it can be used easily to support arbitrary message exchange patterns.</description>
   <shortDescription>Axis 2.0</shortDescription>
   <!-- the project home page -->
   <url>http://ws.apache.org/axis2/</url>
@@ -170,20 +170,20 @@
       
      <resources>
          <resource>
-             <directory>${basedir}/src/test-resources</directory>
+             	<directory>${basedir}/test-resources</directory>
           </resource>
           <resource>
-        	<directory>conf</directory>
+        		<directory>conf</directory>
        			 <includes>
           			<include>**/*.properties</include>
         		</includes>
       </resource>
       <resource>
-        <directory>src/java</directory>
-        <includes>
-          	<include>**/*.properties</include>
-          	<include>**/*.xml</include>
-        </includes>
+       	 	<directory>src</directory>
+        	<includes>
+          		<include>**/*.properties</include>
+          		<include>**/*.xml</include>
+        	</includes>
       </resource>
      </resources>
     </unitTest>
@@ -196,7 +196,7 @@
         </includes>
       </resource>
       <resource>
-        <directory>src/java</directory>
+        <directory>src</directory>
         <includes>
           <include>**/*.properties</include>
           <include>**/*.xml</include>

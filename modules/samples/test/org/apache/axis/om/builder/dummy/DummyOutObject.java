@@ -31,7 +31,7 @@ import java.io.FileReader;
 
 public class DummyOutObject implements Encoder {
     private XMLReader parser;
-    String fileName = "src/test-resources/soapmessage.xml";
+    String fileName = "test-resources/soapmessage.xml";
 
 
     public DummyOutObject() throws SAXException, ParserConfigurationException {
