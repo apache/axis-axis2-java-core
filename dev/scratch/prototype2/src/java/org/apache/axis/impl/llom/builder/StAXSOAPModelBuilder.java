@@ -109,7 +109,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     throw new OMBuilderException("Header Body wrong order!");
                 }
                 headerPresent = true;
-                element = ombuilderFactory.createSOAPHeader(elementName, null, parent, this);
+                element = ombuilderFactory.createSOAPHeader((SOAPEnvelope)parent, this);
 				//envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
             } else if (elementName.equals(OMConstants.BODY_LOCAL_NAME)) {
@@ -117,7 +117,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     throw new OMBuilderException("Multiple body elements encountered");
                 }
                 bodyPresent = true;
-                element = ombuilderFactory.createSOAPBody(elementName, null, parent, this);
+                element = ombuilderFactory.createSOAPBody((SOAPEnvelope)parent, this);
 				//envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
             } else {

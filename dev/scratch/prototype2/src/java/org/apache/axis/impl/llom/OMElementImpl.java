@@ -69,8 +69,9 @@ public class OMElementImpl
      * @param ns
      * @param parent
      */
-    public OMElementImpl(OMElement parent) {
+    protected OMElementImpl(OMElement parent) {
         super(parent);
+        this.done = true;
     }
 
     public OMElementImpl(String localName, OMNamespace ns) {

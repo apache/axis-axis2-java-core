@@ -36,24 +36,15 @@ public abstract class OMFactory {
     public abstract OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
+
     /**
-     * @param localName
-     * @param ns
-     * @param parent
+     *
+     * @param uri
+     * @param prefix
      * @return
      */
-   /// public abstract OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent);
-
-//    /**
-//     * @param parent
-//     * @return
-//     */
-//    public abstract OMNamedNode createOMNamedNode(OMElement parent);
-
     public abstract OMNamespace createOMNamespace(String uri, String prefix);
 
-
-//    public abstract OMNode createOMNode(OMElement parent);
 
     /**
      * @param parent
@@ -75,13 +66,12 @@ public abstract class OMFactory {
     public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
 
     /**
-     * @param localName
-     * @param ns
-     * @param parent
+     *
+     * @param envelope
      * @param builder
      * @return
      */
-    public abstract SOAPBody createSOAPBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope, OMXMLParserWrapper builder);
 
 
     /**
@@ -102,13 +92,12 @@ public abstract class OMFactory {
     public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
 
     /**
-     * @param localName
-     * @param ns
-     * @param parent
+     *
+     * @param envelope
      * @param builder
      * @return
      */
-    public abstract SOAPHeader createSOAPHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope, OMXMLParserWrapper builder);
 
 
     /**

@@ -44,8 +44,8 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 
     }
 
-    public SOAPHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, ns, parent, builder);
+    public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+        super(OMConstants.HEADER_LOCAL_NAME, envelope == null ? null : envelope.getNamespace(), envelope, builder);
     }
 
     /**

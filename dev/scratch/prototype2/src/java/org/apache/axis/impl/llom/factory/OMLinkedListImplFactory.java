@@ -83,12 +83,11 @@ public class OMLinkedListImplFactory extends OMFactory {
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope) {
     	SOAPBody soapBody = new SOAPBodyImpl(envelope);
-    	soapBody.setComplete(true);
         return soapBody;
     }
 
-    public SOAPBody createSOAPBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new SOAPBodyImpl(localName, ns, parent, builder);
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+        return new SOAPBodyImpl(envelope, builder);
     }
 
     public SOAPEnvelope createSOAPEnvelope(OMNamespace ns, OMXMLParserWrapper builder) {
@@ -99,18 +98,16 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPEnvelopeImpl(ns);
     }
 
-    public SOAPEnvelope createOMEnvelope(OMXMLParserWrapper parserWrapper) {
-        throw new UnsupportedOperationException(); //TODO implement this
-    }
 
-    //TODO there should be a method to create an SOAPEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
+
+    //TODO there should be a method to create a SOAPEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) {
         return new SOAPHeaderImpl(envelope);
     }
 
-    public SOAPHeader createSOAPHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new SOAPHeaderImpl(localName, ns, parent, builder);
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+        return new SOAPHeaderImpl(envelope, builder);
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns) {
@@ -135,7 +132,6 @@ public class OMLinkedListImplFactory extends OMFactory {
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
 
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
-        bodyImpl.setComplete(true);
         env.addChild(bodyImpl);
 		//env.setBody(bodyImpl);
         SOAPHeaderImpl headerImpl = new SOAPHeaderImpl(env);

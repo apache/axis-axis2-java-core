@@ -43,8 +43,8 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
         this.localName = OMConstants.BODY_LOCAL_NAME;
     }
 
-    public SOAPBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, ns, parent, builder);
+    public SOAPBodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+        super(OMConstants.BODY_LOCAL_NAME, envelope.getNamespace(), envelope, builder);
     }
 
     /**
