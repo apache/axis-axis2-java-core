@@ -1,6 +1,5 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.metadata.phaserule.PhaseResolver;

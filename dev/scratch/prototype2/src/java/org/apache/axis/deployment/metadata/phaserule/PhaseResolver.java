@@ -1,13 +1,13 @@
 package org.apache.axis.deployment.metadata.phaserule;
 
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
@@ -32,6 +32,7 @@ import java.util.Vector;
  *         5:27:11 PM
  */
 public class PhaseResolver {
+
     private EngineRegistry engineRegistry ;
     private AxisService axisService;
     private PhaseHolder phaseHolder ;
@@ -46,7 +47,7 @@ public class PhaseResolver {
 
     public void buildchains() throws PhaseException, AxisFault {
         for(int i =1 ; i < 4 ; i++) {
-                buildExcutionChains(i);
+            buildExcutionChains(i);
 
         }
 

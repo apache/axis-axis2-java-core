@@ -2,10 +2,10 @@ package org.apache.axis.deployment.metadata.phaserule;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.AxisService;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Phase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -126,48 +126,46 @@ public class PhaseHolder implements DeploymentConstants {
         OrderdPhases();
         Vector tempHander = new Vector();
         HandlerMetaData[] handlers;
-        for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
-            handlers = phase.getOrderedHandlers();
 
-            for (int j = 0; j < handlers.length; j++) {
-                tempHander.add(handlers[j]);
-            }
-
-        }
-        HandlerMetaData[] handler = new HandlerMetaData[tempHander.size()];
-
-        for (int i = 0; i < tempHander.size(); i++) {
-            handler[i] = (HandlerMetaData) tempHander.elementAt(i);
-
-        }
         switch (chainType) {
             case 1 : {
                 ExecutionChain inChain =  new ExecutionChain();//       service.getExecutableInChain();
-                for (int i = 0; i < handler.length; i++) {
-                    HandlerMetaData handlerMetaData = handler[i];
-                    inChain.addHandler(handlerMetaData.getHandler());
-                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                for (int i = 0; i < phaseholder.size(); i++) {
+                    PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                    Phase axisPhase = new Phase(phase.getName());
+                    handlers = phase.getOrderedHandlers();
+                    for (int j = 0; j < handlers.length; j++) {
+                        axisPhase.addHandler(handlers[j].getHandler());
+                    }
+                    inChain.addPhase(axisPhase);
                 }
-                service.setExecutableInChain(inChain);
+               service.setExecutableInChain(inChain);
                 break;
             }
             case 2 : {
                 ExecutionChain outChain =new ExecutionChain();// service.getExecutableOutChain();
-                for (int i = 0; i < handler.length; i++) {
-                    HandlerMetaData handlerMetaData = handler[i];
-                    outChain.addHandler(handlerMetaData.getHandler());
-                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                for (int i = 0; i < phaseholder.size(); i++) {
+                    PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                    Phase axisPhase = new Phase(phase.getName());
+                    handlers = phase.getOrderedHandlers();
+                    for (int j = 0; j < handlers.length; j++) {
+                        axisPhase.addHandler(handlers[j].getHandler());
+                    }
+                    outChain.addPhase(axisPhase);
                 }
                 service.setExecutableOutChain(outChain);
                 break;
             }
             case 3 : {
                 ExecutionChain faultChain = new ExecutionChain();//service.getExecutableFaultChain();
-                for (int i = 0; i < handler.length; i++) {
-                    HandlerMetaData handlerMetaData = handler[i];
-                    faultChain.addHandler(handlerMetaData.getHandler());
-                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                for (int i = 0; i < phaseholder.size(); i++) {
+                    PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                    Phase axisPhase = new Phase(phase.getName());
+                    handlers = phase.getOrderedHandlers();
+                    for (int j = 0; j < handlers.length; j++) {
+                        axisPhase.addHandler(handlers[j].getHandler());
+                    }
+                    faultChain.addPhase(axisPhase);
                 }
                 service.setExecutableFaultChain(faultChain);
                 break;
