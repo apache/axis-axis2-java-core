@@ -15,45 +15,43 @@
  */
 package org.apache.axis.impl.handlers;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
-
-import javax.xml.namespace.QName;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public abstract class AbstractHandler implements Handler {
-    private QName name;
+    protected HandlerMetaData handlerDesc;
+    
+    public AbstractHandler(){
+    }
 
     public QName getName() {
-        return name;
+        return handlerDesc.getName();
     }
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-    }
+    public abstract void invoke(MessageContext msgContext) throws AxisFault;
 
     public void revoke(MessageContext msgContext) {
     }
 
-    public void setName(QName name) {
-        this.name = name;
-    }
 
-    public void addParameter(Parameter param) {
-        //TODO
-    }
-
+ 
     public void cleanup() throws AxisFault {
     }
 
-    public Parameter getParameter(String key) {
-        //TODO
-        return null;
+
+    public Parameter getParameter(String name) {
+        return handlerDesc.getParameter(name);
     }
 
-    public void init() throws AxisFault {
+    public void init(HandlerMetaData handlerdesc) {
+        this.handlerDesc = handlerdesc;
     }
 }

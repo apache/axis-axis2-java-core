@@ -1,24 +1,5 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.*;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.repository.utill.HDFileItem;
-import org.apache.axis.deployment.repository.utill.UnZipJAR;
-import org.apache.axis.deployment.repository.utill.WSInfo;
-import org.apache.axis.deployment.scheduler.DeploymentIterator;
-import org.apache.axis.deployment.scheduler.Scheduler;
-import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.engine.*;
-import org.apache.axis.description.*;
-import org.apache.axis.impl.description.*;
-import org.apache.axis.impl.engine.*;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,6 +8,45 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.deployment.metadata.FlowMetaData;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.ModuleMetaData;
+import org.apache.axis.deployment.metadata.OperationMetaData;
+import org.apache.axis.deployment.metadata.ParameterMetaData;
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.ServiceMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.repository.utill.HDFileItem;
+import org.apache.axis.deployment.repository.utill.UnZipJAR;
+import org.apache.axis.deployment.repository.utill.WSInfo;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
+import org.apache.axis.deployment.scheduler.Scheduler;
+import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.description.SimpleAxisServiceImpl;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -192,154 +212,155 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addnewService(ServiceMetaData serviceMetaData) throws AxisFault, PhaseException {
-        QName serviceName = new QName(serviceMetaData.getName());
-        int count = 0;
-
-        FlowImpl serviceinflow = new FlowImpl();
-        FlowImpl serviceoutflow = new FlowImpl();
-        FlowImpl servicefaultflow = new FlowImpl();
-
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
-        service.setInFlow(serviceinflow);
-        service.setOutFlow(serviceoutflow);
-        service.setFaultFlow(servicefaultflow);
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-
-
-        ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
-        /**
-         * ****************************************************************************
-         * ****************************************************************************
-         * Adding service inflow detail
-         */
-        count = serviceMetaData.getInFlow().getHandlercount();
-        addFlowHandlers(serviceinflow, count, serviceMetaData.getInFlow(), serviceClassLoader);
-
-        /**
-         * ****************************************************************************
-         * ****************************************************************************
-         * Adding service outflow detail
-         */
-        count = serviceMetaData.getOutFlow().getHandlercount();
-        addFlowHandlers(serviceoutflow, count, serviceMetaData.getOutFlow(), serviceClassLoader);
-
-        /**
-         * ****************************************************************************
-         * ****************************************************************************
-         * Adding service fault detail
-         */
-        count = serviceMetaData.getFaultFlow().getHandlercount();
-        addFlowHandlers(servicefaultflow, count, serviceMetaData.getFaultFlow(), serviceClassLoader);
-
-        /**
-         * ****************************************************************************
-         * ****************************************************************************
-         * Adding service parameters
-         */
-        count = serviceMetaData.getParametercount();
-        for (int j = 0; j < count; j++) {
-            ParameterMetaData paraMD = serviceMetaData.getParameter(j);
-            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-            service.addParameter(parameter);
-        }
-
-        /**
-         * ****************************************************************************
-         * ****************************************************************************
-         * setting  service provider
-         */
-        service.setProvider(new SimpleJavaProvider());
-
-        OperationMetaData oprationmd = serviceMetaData.getOperation();
-        ModuleMetaData modulemd = oprationmd.getModule();
-
-        /**
-         * adding parametrs to module
-         */
-        AxisModule module = new AxisModule(new QName(modulemd.getRef()));
-        service.addModule(module.getName());
-        count = modulemd.getParameterCount();
-
-        for (int j = 0; j < count; j++) {
-            ParameterMetaData paraMD = modulemd.getParameter(j);
-            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-            module.addParameter(parameter);
-        }
-
-        FlowImpl operationinflow = new FlowImpl();
-        count = oprationmd.getInFlow().getHandlercount();
-        addFlowHandlers(operationinflow, count, oprationmd.getInFlow(), serviceClassLoader);
-
-        FlowImpl operationutflow = new FlowImpl();
-        count = oprationmd.getOutFlow().getHandlercount();
-        addFlowHandlers(operationutflow, count, oprationmd.getOutFlow(), serviceClassLoader);
-
-        FlowImpl operationfaultflow = new FlowImpl();
-        count = oprationmd.getFaultFlow().getHandlercount();
-        addFlowHandlers(operationfaultflow, count, oprationmd.getFaultFlow(), serviceClassLoader);
-
-
-        QName opname = new QName(oprationmd.getName());
-        AxisOperation operation = new SimpleAxisOperationImpl(opname);
-
-        service.addOperation(operation);
-
-
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        inchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-
-        /**
-         * todo in this implematation all the handers in the servcie
-         * i have asume as one phase bt that is not the case
-         * I have to modify that getting all the pahse and
-         * accooding tp that i have to create phases
-         */
-        Phase inservicephase = new Phase(Constants.PHASE_SERVICE);
-        HandlerMetaData[] handlerMetaDatas = serviceMetaData.getFlowHandlers(INFLOWST);
-        for (int i = 0; i < handlerMetaDatas.length; i++) {
-            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-            handler.setName(new QName(handlerMetaData.getName()));
-            inservicephase.addHandler(handler);
-        }
-        inchain.addPhase(inservicephase);
-
-
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        outchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-
-        Phase outservicephase = new Phase(Constants.PHASE_SERVICE);
-        handlerMetaDatas = serviceMetaData.getFlowHandlers(OUTFLOWST);
-        for (int i = 0; i < handlerMetaDatas.length; i++) {
-            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-            handler.setName(new QName(handlerMetaData.getName()));
-            outservicephase.addHandler(handler);
-        }
-        outchain.addPhase(outservicephase);
-
-
-        ExecutionChain faultchain = new ExecutionChain();
-        faultchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        faultchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-
-        Phase faultservicephase = new Phase(Constants.PHASE_SERVICE);
-        handlerMetaDatas = serviceMetaData.getFlowHandlers(FAILTFLOWST);
-        for (int i = 0; i < handlerMetaDatas.length; i++) {
-            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-            handler.setName(new QName(handlerMetaData.getName()));
-            faultservicephase.addHandler(handler);
-        }
-        outchain.addPhase(faultservicephase);
-
-        service.setExecutableInChain(inchain);
-        service.setExecutableOutChain(outchain);
-        service.setExecutableFaultChain(faultchain);
-
-        engineRegistry.addService(service);
+//        QName serviceName = new QName(serviceMetaData.getName());
+//        int count = 0;
+//
+//        FlowImpl serviceinflow = new FlowImpl();
+//        FlowImpl serviceoutflow = new FlowImpl();
+//        FlowImpl servicefaultflow = new FlowImpl();
+//
+//        AxisService service = new SimpleAxisServiceImpl(serviceName);
+//        service.setInFlow(serviceinflow);
+//        service.setOutFlow(serviceoutflow);
+//        service.setFaultFlow(servicefaultflow);
+//        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+//
+//
+//        ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
+//        /**
+//         * ****************************************************************************
+//         * ****************************************************************************
+//         * Adding service inflow detail
+//         */
+//        count = serviceMetaData.getInFlow().getHandlercount();
+//        addFlowHandlers(serviceinflow, count, serviceMetaData.getInFlow(), serviceClassLoader);
+//
+//        /**
+//         * ****************************************************************************
+//         * ****************************************************************************
+//         * Adding service outflow detail
+//         */
+//        count = serviceMetaData.getOutFlow().getHandlercount();
+//        addFlowHandlers(serviceoutflow, count, serviceMetaData.getOutFlow(), serviceClassLoader);
+//
+//        /**
+//         * ****************************************************************************
+//         * ****************************************************************************
+//         * Adding service fault detail
+//         */
+//        count = serviceMetaData.getFaultFlow().getHandlercount();
+//        addFlowHandlers(servicefaultflow, count, serviceMetaData.getFaultFlow(), serviceClassLoader);
+//
+//        /**
+//         * ****************************************************************************
+//         * ****************************************************************************
+//         * Adding service parameters
+//         */
+//        count = serviceMetaData.getParametercount();
+//        for (int j = 0; j < count; j++) {
+//            ParameterMetaData paraMD = serviceMetaData.getParameter(j);
+//            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
+//            service.addParameter(parameter);
+//        }
+//
+//        /**
+//         * ****************************************************************************
+//         * ****************************************************************************
+//         * setting  service provider
+//         */
+//        service.setProvider(new SimpleJavaProvider());
+//
+//        OperationMetaData oprationmd = serviceMetaData.getOperation();
+//        ModuleMetaData modulemd = oprationmd.getModule();
+//
+//        /**
+//         * adding parametrs to module
+//         */
+//        AxisModule module = new AxisModule(new QName(modulemd.getRef()));
+//        service.addModule(module.getName());
+//        count = modulemd.getParameterCount();
+//
+//        for (int j = 0; j < count; j++) {
+//            ParameterMetaData paraMD = modulemd.getParameter(j);
+//            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
+//            module.addParameter(parameter);
+//        }
+//
+//        FlowImpl operationinflow = new FlowImpl();
+//        count = oprationmd.getInFlow().getHandlercount();
+//        addFlowHandlers(operationinflow, count, oprationmd.getInFlow(), serviceClassLoader);
+//
+//        FlowImpl operationutflow = new FlowImpl();
+//        count = oprationmd.getOutFlow().getHandlercount();
+//        addFlowHandlers(operationutflow, count, oprationmd.getOutFlow(), serviceClassLoader);
+//
+//        FlowImpl operationfaultflow = new FlowImpl();
+//        count = oprationmd.getFaultFlow().getHandlercount();
+//        addFlowHandlers(operationfaultflow, count, oprationmd.getFaultFlow(), serviceClassLoader);
+//
+//
+//        QName opname = new QName(oprationmd.getName());
+//        AxisOperation operation = new SimpleAxisOperationImpl(opname);
+//
+//        service.addOperation(operation);
+//
+//
+//        ExecutionChain inchain = new ExecutionChain();
+//        inchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
+//        inchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
+//
+//        /**
+//         * todo in this implematation all the handers in the servcie
+//         * i have asume as one phase bt that is not the case
+//         * I have to modify that getting all the pahse and
+//         * accooding tp that i have to create phases
+//         */
+//        Phase inservicephase = new Phase(Constants.PHASE_SERVICE);
+//        HandlerMetaData[] handlerMetaDatas = serviceMetaData.getFlowHandlers(INFLOWST);
+//        for (int i = 0; i < handlerMetaDatas.length; i++) {
+//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
+//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
+//            //TODO
+//            //handler.setName(new QName(handlerMetaData.getName()));
+//            inservicephase.addHandler(handler);
+//        }
+//        inchain.addPhase(inservicephase);
+//
+//
+//        ExecutionChain outchain = new ExecutionChain();
+//        outchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
+//        outchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
+//
+//        Phase outservicephase = new Phase(Constants.PHASE_SERVICE);
+//        handlerMetaDatas = serviceMetaData.getFlowHandlers(OUTFLOWST);
+//        for (int i = 0; i < handlerMetaDatas.length; i++) {
+//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
+//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
+//            handler.setName(new QName(handlerMetaData.getName()));
+//            outservicephase.addHandler(handler);
+//        }
+//        outchain.addPhase(outservicephase);
+//
+//
+//        ExecutionChain faultchain = new ExecutionChain();
+//        faultchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
+//        faultchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
+//
+//        Phase faultservicephase = new Phase(Constants.PHASE_SERVICE);
+//        handlerMetaDatas = serviceMetaData.getFlowHandlers(FAILTFLOWST);
+//        for (int i = 0; i < handlerMetaDatas.length; i++) {
+//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
+//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
+//            handler.setName(new QName(handlerMetaData.getName()));
+//            faultservicephase.addHandler(handler);
+//        }
+//        outchain.addPhase(faultservicephase);
+//
+//        service.setExecutableInChain(inchain);
+//        service.setExecutableOutChain(outchain);
+//        service.setExecutableFaultChain(faultchain);
+//
+//        engineRegistry.addService(service);
     }
 
 
@@ -350,30 +371,30 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param count
      */
     private void addFlowHandlers(Flow flow, int count, FlowMetaData flowmetadata, ClassLoader parent) throws AxisFault {
-        for (int j = 0; j < count; j++) {
-            //todo handle exception in properway
-            HandlerMetaData handlermd = flowmetadata.getHandler(j);
-            Class handlerClass = null;
-            Handler handler;
-            handlerClass = getHandlerClass(handlermd.getClassName(), currentFileItem.getFile(), parent);
-            try {
-                handler = (Handler) handlerClass.newInstance();
-            } catch (InstantiationException e) {
-                throw new AxisFault(e.getMessage());
-            } catch (IllegalAccessException e) {
-                throw new AxisFault(e.getMessage());
-            }
-            handler.setName(new QName(handlermd.getName()));
-            int paracount = handlermd.getParacount();
-            for (int k = 0; k < paracount; k++) {
-                ParameterMetaData paraMD = handlermd.getParameter(k);
-                //todo check with srinath whether this is correct
-//FIXME 
-//                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-//                handler.addParameter(parameter);
-            }
-            flow.addHandler(handler);
-        }
+//        for (int j = 0; j < count; j++) {
+//            //todo handle exception in properway
+//            HandlerMetaData handlermd = flowmetadata.getHandler(j);
+//            Class handlerClass = null;
+//            Handler handler;
+//            handlerClass = getHandlerClass(handlermd.getClassName(), currentFileItem.getFile(), parent);
+//            try {
+//                handler = (Handler) handlerClass.newInstance();
+//            } catch (InstantiationException e) {
+//                throw new AxisFault(e.getMessage());
+//            } catch (IllegalAccessException e) {
+//                throw new AxisFault(e.getMessage());
+//            }
+//            handler.setName(new QName(handlermd.getName()));
+//            int paracount = handlermd.getParacount();
+//            for (int k = 0; k < paracount; k++) {
+//                ParameterMetaData paraMD = handlermd.getParameter(k);
+//                //todo check with srinath whether this is correct
+////FIXME 
+////                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
+////                handler.addParameter(parameter);
+//            }
+//            flow.addHandler(handler);
+//        }
     }
 
 

@@ -16,11 +16,10 @@
 
 package org.apache.axis.impl.description;
 
-import org.apache.axis.description.Flow;
-import org.apache.axis.engine.Handler;
-
-
 import java.util.Vector;
+
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
 
 /**
  * @author hemapani@opensource.lk
@@ -30,11 +29,11 @@ public class FlowImpl implements Flow {
    public FlowImpl(){
         list = new Vector();
    }
-   public void addHandler(Handler handler) {
+   public void addHandler(HandlerMetaData handler) {
        list.add(handler);
    }
-   public Handler getHandler(int index) {
-       return (Handler)list.get(index);
+   public HandlerMetaData getHandler(int index) {
+       return (HandlerMetaData)list.get(index);
    }
    public int getHandlerCount() {
        return list.size();

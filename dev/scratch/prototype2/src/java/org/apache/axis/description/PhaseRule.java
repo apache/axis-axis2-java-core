@@ -13,34 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.impl.registry;
-
-import org.apache.axis.registry.Parameter;
-
+package org.apache.axis.description;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class ParameterImpl implements Parameter {
-    private String name;
-    private String value;
-    private int type = TEXT_PARAMETER;
-
-    public ParameterImpl(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public int getParameterType() {
-        return type;
-    }
+public class PhaseRule {
 
 }

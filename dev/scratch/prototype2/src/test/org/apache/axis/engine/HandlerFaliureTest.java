@@ -74,12 +74,12 @@ public class HandlerFaliureTest extends AbstractTestCase{
         AxisService service = new SimpleAxisServiceImpl(serviceName);
         
         Flow flow = new FlowImpl();
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(culprit);
-        flow.addHandler(new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,culprit);
+        EngineUtils.addHandler(flow,new SpeakingHandler());
         service.setInFlow(flow);
         
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
@@ -115,21 +115,21 @@ public class HandlerFaliureTest extends AbstractTestCase{
         AxisService service = new SimpleAxisServiceImpl(serviceName);
         
         Flow flow = new FlowImpl();
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
         service.setInFlow(flow);
         
         
         flow = new FlowImpl();
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(new SpeakingHandler());
-        flow.addHandler(culprit);
-        flow.addHandler(new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,new SpeakingHandler());
+        EngineUtils.addHandler(flow,culprit);
+        EngineUtils.addHandler(flow,new SpeakingHandler());
         service.setInFlow(flow);
         
         service.setClassLoader(Thread.currentThread().getContextClassLoader());

@@ -23,6 +23,6 @@ import org.apache.axis.engine.Handler;
  */
 public interface Flow{
     public int getHandlerCount();
-    public Handler getHandler(int index);
-    public void addHandler(Handler handler);
+    public HandlerMetaData getHandler(int index);
+    public void addHandler(HandlerMetaData handler);
 }
