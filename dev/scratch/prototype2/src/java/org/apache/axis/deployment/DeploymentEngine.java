@@ -2,7 +2,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaseresolver.PhaseException;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;

@@ -1,6 +1,6 @@
 package org.apache.axis.deployment.metadata;
 
-import org.apache.axis.deployment.metadata.phaseresolver.PhaseMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.description.HandlerMetaData;
 

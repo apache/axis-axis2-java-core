@@ -1,8 +1,8 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaseresolver.PhaseException;
-import org.apache.axis.deployment.metadata.phaseresolver.PhaseMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
