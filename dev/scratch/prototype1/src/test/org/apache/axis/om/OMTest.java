@@ -15,21 +15,20 @@
  */
 package org.apache.axis.om;
 
+import junit.framework.TestCase;
+import org.apache.axis.om.impl.SOAPMessageImpl;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
+import org.apache.axis.om.soap.SOAPMessage;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
-import org.apache.axis.om.impl.SOAPMessageImpl;
-import org.apache.axis.om.soap.SOAPMessage;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import junit.framework.TestCase;
-
 /**
+ * This test case tests the basic expectations of the engine from the OM.
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class OMTest extends TestCase{
@@ -43,7 +42,7 @@ public class OMTest extends TestCase{
         XmlPullParser  parser = pf.newPullParser();
         parser.setInput(new InputStreamReader(in));
         
-        OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
+        OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
         omdoc = parserWrapper.getSOAPMessage();
     }
 
@@ -52,9 +51,9 @@ public class OMTest extends TestCase{
      * Sometime the hasNext() in the childeren iterator is true yet the next() is null
      */
 
-//    public void testNullInChilderen(){
-//        isNullChildrenAreThere(omdoc.getDocumentElement());
-//    }
+    public void testNullInChilderen(){
+        isNullChildrenAreThere(omdoc.getEnvelope());
+    }
     
     /**
      * the document is completly namesapce qulified so all the OMElements got to have namespace values not null
@@ -87,9 +86,5 @@ public class OMTest extends TestCase{
                 isNameSpacesMissing((OMElement)node);
             }
         }
-    }
-    protected void tearDown() throws Exception {
-        // TODO Auto-generated method stub
-        super.tearDown();
     }
 }

@@ -1,7 +1,7 @@
 package org.apache.axis.om;
 
 import junit.framework.TestCase;
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.soap.SOAPMessage;
 import org.xmlpull.v1.XmlPullParser;
@@ -30,13 +30,26 @@ import java.io.FileReader;
  */
 public class OMTestCase extends TestCase  {
 
-    protected static final String IN_FILE_NAME = "src/test-resources/soapmessage.xml";
-    protected OMXMLPullParserWrapper omXmlPullParserWrapper;
+    protected static final String IN_FILE_NAME = "src/test-resources/soap/soapmessage.xml";
+    protected OMXPPWrapper omXmlPullParserWrapper;
 
     protected SOAPMessage soapMessage;
     protected SOAPEnvelope soapEnvelope;
+
+
     protected void setUp() throws Exception {
-        soapMessage = OMTestUtils.getOMBuilder(IN_FILE_NAME).getSOAPMessage();
+        super.setUp();
+        soapMessage = getOMBuilder().getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
     }
+
+    protected OMXPPWrapper getOMBuilder() throws Exception {
+        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+        parser.setInput(new FileReader(IN_FILE_NAME));
+        omXmlPullParserWrapper = new OMXPPWrapper(parser);
+        return omXmlPullParserWrapper;
+    }
+
+
 }

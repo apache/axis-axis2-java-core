@@ -19,9 +19,10 @@ package org.apache.axis.om;
 import java.io.FileReader;
 import java.util.Iterator;
 
+
 import junit.framework.TestCase;
 
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -29,11 +30,11 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class OMTestUtils {
-    public static OMXMLPullParserWrapper getOMBuilder(String file) throws Exception {
+    public static OMXPPWrapper getOMBuilder(String file) throws Exception {
         XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.setInput(new FileReader(file));
-        OMXMLPullParserWrapper omXmlPullParserWrapper = new OMXMLPullParserWrapper(parser);
+        OMXPPWrapper omXmlPullParserWrapper = new OMXPPWrapper(parser);
         return omXmlPullParserWrapper;
     }
     
