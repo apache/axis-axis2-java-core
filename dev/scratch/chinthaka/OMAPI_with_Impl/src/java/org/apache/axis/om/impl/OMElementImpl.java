@@ -1,6 +1,7 @@
 package org.apache.axis.om.impl;
 
 import org.apache.axis.om.*;
+import org.apache.axis.om.impl.util.OMChildrenIterator;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -83,7 +84,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * Children can be of types OMElement, OMText.
      */
     public Iterator getChildren() {
-        return null;  //TODO implement this
+        return new OMChildrenIterator(firstChild);
     }
 
     /**
@@ -137,7 +138,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public Iterator getAttributes() {
-        return null;  //TODO implement this
+       return new OMChildrenIterator(getFirstAttribute());
     }
 
     /**
