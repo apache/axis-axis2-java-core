@@ -15,8 +15,6 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -30,6 +28,8 @@ import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
+
+import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase{
     private EngineRegistry reg;

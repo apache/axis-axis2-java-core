@@ -16,15 +16,14 @@ package org.apache.axis.om;
  * limitations under the License.
  */
 
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
 public class OMChildrenQNameIteratorTest extends AbstractTestCase {
 

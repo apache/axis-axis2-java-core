@@ -1,18 +1,14 @@
 package org.apache.axis.om.builder;
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
 import org.apache.axis.impl.llom.serialize.SimpleObjectOMSerializer;
 import org.apache.axis.om.*;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
-import org.xml.sax.ContentHandler;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

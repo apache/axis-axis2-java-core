@@ -16,14 +16,14 @@
 
 package org.apache.axis.description;
 
-import java.lang.reflect.Method;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.providers.AbstractProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.lang.reflect.Method;
 
 public class SpeakingProvider extends AbstractProvider implements Provider {
     private Log log = LogFactory.getLog(getClass());

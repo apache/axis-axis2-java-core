@@ -1,12 +1,11 @@
 package org.apache.axis.om;
 
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

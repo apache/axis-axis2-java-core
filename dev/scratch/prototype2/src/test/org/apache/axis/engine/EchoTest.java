@@ -16,8 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
@@ -31,6 +29,8 @@ import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class EchoTest extends AbstractTestCase{
     private Log log = LogFactory.getLog(getClass());

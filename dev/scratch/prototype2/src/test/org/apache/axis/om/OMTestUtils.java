@@ -16,21 +16,17 @@
 
 package org.apache.axis.om;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import junit.framework.TestCase;
-
-import org.apache.axis.impl.llom.builder.StAXBuilder;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Iterator;
 
 public class OMTestUtils {
 

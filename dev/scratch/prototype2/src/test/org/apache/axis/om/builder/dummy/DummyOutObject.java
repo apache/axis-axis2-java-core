@@ -1,15 +1,14 @@
 package org.apache.axis.om.builder.dummy;
 
-import java.io.FileReader;
-import java.io.IOException;
-
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.axis.om.OutObject;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.SAXParserFactory;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

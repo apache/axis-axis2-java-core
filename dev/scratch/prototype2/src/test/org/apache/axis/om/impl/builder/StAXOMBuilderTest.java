@@ -21,8 +21,8 @@ package org.apache.axis.om.impl.builder;
  */
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;

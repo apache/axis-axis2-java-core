@@ -19,9 +19,9 @@
  */
 package org.apache.axis.om;
 
-import java.io.File;
-
 import org.apache.axis.engine.AxisFault;
+
+import java.io.File;
 
 
 public class BadInputTest extends OMTestCase {

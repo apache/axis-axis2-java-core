@@ -15,13 +15,12 @@
  */
 package org.apache.wsdl;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLOperationImpl;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 public class InterfaceTest extends AbstractTestCase {
     public InterfaceTest(String testName) {

@@ -15,14 +15,14 @@
  */
 package org.apache.axis.encoding;
 
-import java.lang.reflect.Method;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+
+import java.lang.reflect.Method;
 
 
 public class EncodingTest extends AbstractTestCase {

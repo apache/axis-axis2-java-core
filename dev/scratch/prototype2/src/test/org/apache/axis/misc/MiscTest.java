@@ -15,13 +15,13 @@
  */
 package org.apache.axis.misc;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.GlobalContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.context.SimpleSessionContext;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class MiscTest extends AbstractTestCase {
 

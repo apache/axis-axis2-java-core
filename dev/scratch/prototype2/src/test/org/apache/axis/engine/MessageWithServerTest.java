@@ -16,21 +16,15 @@
 package org.apache.axis.engine;
 
 //todo
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.net.Socket;
 
 public class MessageWithServerTest extends AbstractTestCase{
     private Log log = LogFactory.getLog(getClass());

@@ -16,10 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.context.MessageContext;
@@ -36,6 +32,9 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.net.URL;
 
 public class CallUnregisterdServiceTest extends AbstractTestCase{
     private Log log = LogFactory.getLog(getClass());
