@@ -13,50 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis;
 
-import java.io.File;
-
 import junit.framework.TestCase;
+
+import java.io.File;
 
 /**
  * Abstract base class for test cases.
  */
 public abstract class AbstractTestCase
-	extends TestCase 
-{
-	protected String testDir = "src" + File.separator + "test" + File.separator;
-	protected String sampleDir = "src" + File.separator + "samples"  + File.separator;
-	protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
-	protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
-	protected String testResourceDir = "src" + File.separator + "test-resources";
+        extends TestCase {
+    protected String testDir = "src" + File.separator + "test" + File.separator;
+    protected String sampleDir = "src" + File.separator + "samples" + File.separator;
+    protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
+    protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
+    protected String testResourceDir = "src" + File.separator + "test-resources";
 
 
     /**
-	 * Basedir for all file I/O. Important when running tests from
-	 * the reactor.
-	 */
-	public String basedir = System.getProperty("basedir");
-    
-	/**
+     * Basedir for all file I/O. Important when running tests from
+     * the reactor.
+     */
+    public String basedir = System.getProperty("basedir");
+
+    /**
      * @param testName
      */
-	public AbstractTestCase(String testName)
-	{
-		super(testName);
-		if(basedir == null){
-			basedir = new File(".").getAbsolutePath();
-		}
-		testDir = new File(basedir,testDir).getAbsolutePath();
-		sampleDir = new File(basedir,sampleDir).getAbsolutePath();
-		outDir = new File(basedir,outDir).getAbsolutePath();
-		tempDir = new File(basedir,tempDir).getAbsolutePath();
-	}
+    public AbstractTestCase(String testName) {
+        super(testName);
+        if (basedir == null) {
+            basedir = new File(".").getAbsolutePath();
+        }
+        testDir = new File(basedir, testDir).getAbsolutePath();
+        sampleDir = new File(basedir, sampleDir).getAbsolutePath();
+        outDir = new File(basedir, outDir).getAbsolutePath();
+        tempDir = new File(basedir, tempDir).getAbsolutePath();
+    }
 
- 
-    public File getTestResourceFile(String relativePath){
-        return new File(testResourceDir,relativePath);
+
+    public File getTestResourceFile(String relativePath) {
+        return new File(testResourceDir, relativePath);
     }
 }
 

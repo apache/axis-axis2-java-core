@@ -28,7 +28,7 @@ public class SimpleTypeEncodingUtils {
 
 
     public static String[] deserializeStringArray(XMLStreamReader xpp)
-        throws AxisFault {
+            throws AxisFault {
         ArrayList strings = new ArrayList();
 
         try {
@@ -55,32 +55,32 @@ public class SimpleTypeEncodingUtils {
     }
 
     public static String deserializeStringWithWiteSpaces(XMLStreamReader xpp)
-        throws AxisFault {
-                StringBuffer value = new StringBuffer();
-                try {
-                    int event = xpp.getEventType();
-                    while(XMLStreamConstants.START_ELEMENT != event){
-                        event = xpp.next();
-                    }
-                    event = xpp.next();
-                    while(XMLStreamConstants.END_ELEMENT != event){
-                        if(XMLStreamConstants.CHARACTERS == event){
-                            value.append(xpp.getText());
-                        }
-                        event = xpp.next();
-                    }
-                } catch (XMLStreamException e) {
-                    throw AxisFault.makeFault(e);
+            throws AxisFault {
+        StringBuffer value = new StringBuffer();
+        try {
+            int event = xpp.getEventType();
+            while (XMLStreamConstants.START_ELEMENT != event) {
+                event = xpp.next();
+            }
+            event = xpp.next();
+            while (XMLStreamConstants.END_ELEMENT != event) {
+                if (XMLStreamConstants.CHARACTERS == event) {
+                    value.append(xpp.getText());
                 }
-                if(value.length() == 0){
-                    return null;
-                }else{
-                    return value.toString();        
-                }
+                event = xpp.next();
+            }
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
         }
-        
+        if (value.length() == 0) {
+            return null;
+        } else {
+            return value.toString();
+        }
+    }
+
     public static String deserializeString(XMLStreamReader xpp)
-        throws AxisFault {
+            throws AxisFault {
         String value = null;
         try {
             int event = xpp.getEventType();
@@ -90,7 +90,7 @@ public class SimpleTypeEncodingUtils {
             event = xpp.next();
             while (XMLStreamConstants.END_ELEMENT != event) {
                 if (XMLStreamConstants.CHARACTERS == event
-                    && !xpp.isWhiteSpace()) {
+                        && !xpp.isWhiteSpace()) {
                     value = xpp.getText();
                 }
                 event = xpp.next();
@@ -109,7 +109,7 @@ public class SimpleTypeEncodingUtils {
         return Integer.parseInt(val);
     }
 
-     public static double deserializeDouble(XMLStreamReader xpp) throws AxisFault {
+    public static double deserializeDouble(XMLStreamReader xpp) throws AxisFault {
         String val = deserializeString(xpp);
         if (val == null) {
             throw new AxisFault("Number format exception value is null");
@@ -118,7 +118,7 @@ public class SimpleTypeEncodingUtils {
     }
 
     public static int[] deserializeIntArray(XMLStreamReader xpp)
-        throws AxisFault {
+            throws AxisFault {
         ArrayList ints = new ArrayList();
 
         try {
@@ -127,7 +127,7 @@ public class SimpleTypeEncodingUtils {
             while (true) {
                 if (XMLStreamConstants.START_ELEMENT == event) {
                     String stringValue = deserializeString(xpp);
-                    if (stringValue==null){
+                    if (stringValue == null) {
                         throw new AxisFault("Wrong type of argument");
                     }
                     ints.add(stringValue);
@@ -141,7 +141,7 @@ public class SimpleTypeEncodingUtils {
             int intCount = ints.size();
             int[] intVals = new int[intCount];
             for (int i = 0; i < intCount; i++) {
-                intVals[i] =  Integer.parseInt(ints.get(i).toString());
+                intVals[i] = Integer.parseInt(ints.get(i).toString());
             }
             return intVals;
         } catch (XMLStreamException e) {
@@ -151,47 +151,45 @@ public class SimpleTypeEncodingUtils {
     }
 
     public static double[] deserializeDoubleArray(XMLStreamReader xpp)
-           throws AxisFault {
-           ArrayList doubles = new ArrayList();
+            throws AxisFault {
+        ArrayList doubles = new ArrayList();
 
-           try {
-               int event = xpp.next();
-
-               while (true) {
-                   if (XMLStreamConstants.START_ELEMENT == event) {
-                       String stringValue = deserializeString(xpp);
-                       if (stringValue==null){
-                           throw new AxisFault("Wrong type of argument");
-                       }
-                       doubles.add(stringValue);
-                   } else if (XMLStreamConstants.END_ELEMENT == event) {
-                       break;
-                   } else if (XMLStreamConstants.END_DOCUMENT == event) {
-                       throw new AxisFault("premature end of file");
-                   }
-                   event = xpp.next();
-               }
-               int doubleCount = doubles.size();
-               double[] doubleVals = new double[doubleCount];
-               for (int i = 0; i < doubleCount; i++) {
-                   doubleVals[i] =  Double.parseDouble(doubles.get(i).toString());
-               }
-               return doubleVals;
-           } catch (XMLStreamException e) {
-               throw AxisFault.makeFault(e);
-           }
-
-       }
-
-    public static void serialize(
-        XMLStreamWriter out,
-        QName elementName,
-        String value)
-        throws AxisFault {
         try {
-            out.writeStartElement(
-                elementName.getNamespaceURI(),
-                elementName.getLocalPart());
+            int event = xpp.next();
+
+            while (true) {
+                if (XMLStreamConstants.START_ELEMENT == event) {
+                    String stringValue = deserializeString(xpp);
+                    if (stringValue == null) {
+                        throw new AxisFault("Wrong type of argument");
+                    }
+                    doubles.add(stringValue);
+                } else if (XMLStreamConstants.END_ELEMENT == event) {
+                    break;
+                } else if (XMLStreamConstants.END_DOCUMENT == event) {
+                    throw new AxisFault("premature end of file");
+                }
+                event = xpp.next();
+            }
+            int doubleCount = doubles.size();
+            double[] doubleVals = new double[doubleCount];
+            for (int i = 0; i < doubleCount; i++) {
+                doubleVals[i] = Double.parseDouble(doubles.get(i).toString());
+            }
+            return doubleVals;
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+
+    }
+
+    public static void serialize(XMLStreamWriter out,
+                                 QName elementName,
+                                 String value)
+            throws AxisFault {
+        try {
+            out.writeStartElement(elementName.getNamespaceURI(),
+                    elementName.getLocalPart());
             out.writeCharacters(value);
             out.writeEndElement();
         } catch (XMLStreamException e) {

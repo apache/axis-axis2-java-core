@@ -31,31 +31,31 @@ public class MiscTest extends AbstractTestCase {
     public MiscTest(String testName) {
         super(testName);
     }
-    
-    public void testSessionContext(){
+
+    public void testSessionContext() {
         SessionContext sc = new SimpleSessionContext();
         String key = "Hello";
-        Object val  = new Object();
-        sc.put(key,val);
-        assertEquals(sc.get(key),val);
+        Object val = new Object();
+        sc.put(key, val);
+        assertEquals(sc.get(key), val);
     }
-    
-    public void testGlobalContext(){
+
+    public void testGlobalContext() {
         GlobalContext gc = new GlobalContext(null);
         String key = "Hello";
-        Object val  = new Object();
-        gc.put(key,val);
-        assertEquals(gc.get(key),val);
+        Object val = new Object();
+        gc.put(key, val);
+        assertEquals(gc.get(key), val);
         gc.setRegistry(null);
         assertNull(null);
     }
 
 
-    public void testAxisFault(){
+    public void testAxisFault() {
         Exception e = new InvocationTargetException(new Exception());
-        assertNotSame(AxisFault.makeFault(e),e);
-        
+        assertNotSame(AxisFault.makeFault(e), e);
+
         e = new AxisFault();
     }
-    
+
 }

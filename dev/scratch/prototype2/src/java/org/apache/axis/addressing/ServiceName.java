@@ -23,15 +23,13 @@ public class ServiceName {
     private String portName;
 
     /**
-     *
      * @param name
      */
     public ServiceName(QName name) {
-        this.name = name; 
+        this.name = name;
     }
 
     /**
-     *
      * @param name
      * @param portName
      */

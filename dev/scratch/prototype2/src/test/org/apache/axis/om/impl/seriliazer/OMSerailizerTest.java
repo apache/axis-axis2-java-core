@@ -1,14 +1,5 @@
 package org.apache.axis.om.impl.seriliazer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
@@ -17,6 +8,13 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 
 /**
@@ -57,7 +55,7 @@ public class OMSerailizerTest extends AbstractTestCase {
     public void testRawSerializer() throws Exception {
         StreamingOMSerializer serializer = new StreamingOMSerializer();
         //serializer.setNamespacePrefixStack(new Stack());
-        serializer.serialize(reader,writer);
+        serializer.serialize(reader, writer);
 
     }
 
@@ -69,7 +67,7 @@ public class OMSerailizerTest extends AbstractTestCase {
         serializer.serialize(env.getPullParser(false), writer);
     }
 
-     public void testElementPullStream1WithCacheOff() throws Exception {
+    public void testElementPullStream1WithCacheOff() throws Exception {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();

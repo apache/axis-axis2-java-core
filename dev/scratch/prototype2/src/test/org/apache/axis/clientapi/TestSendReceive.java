@@ -10,12 +10,6 @@
  */
 package org.apache.axis.clientapi;
 
-import java.io.FileReader;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -30,9 +24,13 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import java.io.FileReader;
 
 public class TestSendReceive extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
@@ -77,27 +75,24 @@ public class TestSendReceive extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
-        EngineUtils.stopServer();  
+        EngineUtils.stopServer();
     }
 
     public void testSendReceive() throws Exception {
 
         SOAPEnvelope envelope = getBasicEnvelope();
-        EndpointReference targetEPR = new EndpointReference(
-                AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
+        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
         SOAPEnvelope responseEnv = call.sendReceive(envelope);
-        responseEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
-                System.out),true);
+        responseEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out), true);
 
     }
 
 
     private SOAPEnvelope getBasicEnvelope() throws Exception {
 
-        SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
-                new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
+        SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
         return envelope;
     }
 

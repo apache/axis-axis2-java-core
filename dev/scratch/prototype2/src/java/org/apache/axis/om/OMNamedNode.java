@@ -31,5 +31,5 @@ public interface OMNamedNode extends OMNode {
 
     public void setNamespace(OMNamespace namespace);
 
-    
+
 }

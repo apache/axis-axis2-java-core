@@ -1,10 +1,9 @@
 package org.apache.axis.om;
 
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -46,6 +45,7 @@ public interface OMElement extends OMNamedNode {
 
     /**
      * This will return the first matched child, return null if none found
+     *
      * @param elementQName
      * @return
      * @throws OMException
@@ -128,11 +128,10 @@ public interface OMElement extends OMNamedNode {
     public OMAttribute insertAttribute(OMAttribute attr);
 
     /**
-     *
      * @param attributeName
      * @param value
-     * @param ns - the namespace has to be one of the in scope namespace. i.e. the passed namespace
-     * must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
+     * @param ns            - the namespace has to be one of the in scope namespace. i.e. the passed namespace
+     *                      must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
      * @return
      */
     public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns);
@@ -160,6 +159,7 @@ public interface OMElement extends OMNamedNode {
     /**
      * Returns the pull parser that will generate the pull
      * events relevant to THIS element
+     *
      * @param cacheOff
      * @return
      */

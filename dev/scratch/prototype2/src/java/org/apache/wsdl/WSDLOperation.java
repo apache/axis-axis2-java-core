@@ -21,10 +21,9 @@ import java.util.List;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLOperation  extends ExtensibleComponent{
-    
+public interface WSDLOperation extends ExtensibleComponent {
+
 
     public List getInfaults();
 
@@ -60,5 +59,5 @@ public interface WSDLOperation  extends ExtensibleComponent{
 
     public String getTargetnemespace();
 
-    
+
 }

@@ -1,10 +1,9 @@
 package org.apache.axis.phaseresolver;
 
 
+import org.apache.axis.description.HandlerMetaData;
 
 import java.util.ArrayList;
-
-import org.apache.axis.description.HandlerMetaData;
 
 
 /**
@@ -128,7 +127,7 @@ public class PhaseMetaData {
 
         }
         */
-         phaseHandlers.add(handler);
+        phaseHandlers.add(handler);
 
     }
 

@@ -19,26 +19,28 @@ import org.apache.wsdl.WSDLFeature;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLFeatureImpl extends ComponentImpl implements WSDLFeature {
 
-	
-	private String name;
-	
-	private boolean required;
-	
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public boolean isRequired() {
-		return required;
-	}
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
+
+    private String name;
+
+    private boolean required;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 }

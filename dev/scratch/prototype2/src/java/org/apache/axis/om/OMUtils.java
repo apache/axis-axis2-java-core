@@ -19,23 +19,23 @@ import java.util.Iterator;
 
 
 public class OMUtils {
-    public static OMElement getFirstChildElement(OMElement omele){
+    public static OMElement getFirstChildElement(OMElement omele) {
         OMElement childElement = null;
         OMNode child = null;
-        if(omele != null){
+        if (omele != null) {
             Iterator it = omele.getChildren();
-            if(it.hasNext()){
-                child = (OMNode)it.next();
-                while(OMNode.ELEMENT_NODE != child.getType()){
-                    if(it.hasNext()){
-                        child = (OMNode)it.next();
-                    }else{
+            if (it.hasNext()) {
+                child = (OMNode) it.next();
+                while (OMNode.ELEMENT_NODE != child.getType()) {
+                    if (it.hasNext()) {
+                        child = (OMNode) it.next();
+                    } else {
                         break;
                     }
                 }
-                childElement = (OMElement)child;
+                childElement = (OMElement) child;
             }
-            
+
         }
         return childElement;
     }

@@ -19,18 +19,17 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface MessageReference  extends ExtensibleComponent{
+public interface MessageReference extends ExtensibleComponent {
     public String getDirection();
 
     public void setDirection(String direction);
 
 
-	/**
-	 * This Element refers to the actual message that will get transported. This Element 
-	 * Abstracts all the Message Parts that was defined in the WSDL 1.1.
-	 */
+    /**
+     * This Element refers to the actual message that will get transported. This Element
+     * Abstracts all the Message Parts that was defined in the WSDL 1.1.
+     */
     public QName getElement();
 
     public void setElement(QName element);

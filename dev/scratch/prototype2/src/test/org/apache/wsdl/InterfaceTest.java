@@ -27,76 +27,75 @@ public class InterfaceTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testGetAllOperations(){
-        WSDLOperation op ;
+    public void testGetAllOperations() {
+        WSDLOperation op;
         WSDLInterface intfc;
         WSDLInterface[] array = new WSDLInterface[5];
         int interfaceCounter = 5;
         int operationCounter = 5;
-        
-        for(int j=0; j<interfaceCounter; j++){
+
+        for (int j = 0; j < interfaceCounter; j++) {
             intfc = new WSDLInterfaceImpl();
-            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"inteface"+j));
-	        for(int i=0; i<operationCounter; i++){
-	            op = new WSDLOperationImpl();
-	        	op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op"+i+"of inteface"+j));
-	        	assertNotNull(op.getName());
-	        	intfc.setOperation(op);
-	        }
-	        if(j>0){
-	            intfc.addSuperInterface(array[j-1]);
-	        }
-	        array[j] = intfc;
+            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "inteface" + j));
+            for (int i = 0; i < operationCounter; i++) {
+                op = new WSDLOperationImpl();
+                op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op" + i + "of inteface" + j));
+                assertNotNull(op.getName());
+                intfc.setOperation(op);
+            }
+            if (j > 0) {
+                intfc.addSuperInterface(array[j - 1]);
+            }
+            array[j] = intfc;
         }
         //System.out.println(array[0].getAllOperations().size());
-        assertEquals(((WSDLOperation)array[0].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op0of inteface0"))).getName().getLocalPart(),"op0of inteface0" );
-        assertEquals(((WSDLOperation)array[0].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op1of inteface0"))).getName().getLocalPart(),"op1of inteface0" );
-        assertEquals(array[interfaceCounter-1].getAllOperations().size(), interfaceCounter*operationCounter );
-        assertEquals(interfaceCounter*operationCounter,array[interfaceCounter-1].getAllOperations().size());
-        
+        assertEquals(((WSDLOperation) array[0].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op0of inteface0"))).getName().getLocalPart(), "op0of inteface0");
+        assertEquals(((WSDLOperation) array[0].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op1of inteface0"))).getName().getLocalPart(), "op1of inteface0");
+        assertEquals(array[interfaceCounter - 1].getAllOperations().size(), interfaceCounter * operationCounter);
+        assertEquals(interfaceCounter * operationCounter, array[interfaceCounter - 1].getAllOperations().size());
+
         Iterator iter = array[1].getAllOperations().keySet().iterator();
-        while(iter.hasNext()){
-           assertNotNull(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(iter.next())).getName());
+        while (iter.hasNext()) {
+            assertNotNull(((WSDLOperation) array[interfaceCounter - 1].getAllOperations().get(iter.next())).getName());
         }
-                
-        for(int j=0; j<interfaceCounter; j++){
-            for(int i=0; i<operationCounter; i++){
-                
-                assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op"+j+"of inteface"+i))).getName().getLocalPart(),"op"+j+"of inteface"+i );
+
+        for (int j = 0; j < interfaceCounter; j++) {
+            for (int i = 0; i < operationCounter; i++) {
+
+                assertEquals(((WSDLOperation) array[interfaceCounter - 1].getAllOperations().get(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op" + j + "of inteface" + i))).getName().getLocalPart(), "op" + j + "of inteface" + i);
             }
         }
 
     }
-    
-    /***
-     * When a interface inherit two or more Interfaces the inherited operation 
+
+    /**
+     * When a interface inherit two or more Interfaces the inherited operation
      * who have the same QName should be the same Operation.
-     *
      */
-    public void testInheritedOperationResolution()throws Exception {
-        WSDLOperation op ;
+    public void testInheritedOperationResolution() throws Exception {
+        WSDLOperation op;
         WSDLInterface intfc;
         WSDLInterface[] array = new WSDLInterface[5];
         int interfaceCounter = 5;
         int operationCounter = 5;
-        for(int i= 0; i< interfaceCounter; i++){
+        for (int i = 0; i < interfaceCounter; i++) {
             intfc = new WSDLInterfaceImpl();
-            for(int j=0; j< operationCounter; j++){
+            for (int j = 0; j < operationCounter; j++) {
                 op = new WSDLOperationImpl();
-                op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "operation"+j));                
+                op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "operation" + j));
                 intfc.setOperation(op);
             }
-            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "Interface"+i));
+            intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "Interface" + i));
             array[i] = intfc;
         }
-                
+
         WSDLInterface inheritedInterface = new WSDLInterfaceImpl();
-        for(int i=0; i< array.length; i++){
+        for (int i = 0; i < array.length; i++) {
             inheritedInterface.addSuperInterface(array[i]);
         }
-        
-        assertEquals(inheritedInterface.getAllOperations().size(),5);
-        
+
+        assertEquals(inheritedInterface.getAllOperations().size(), 5);
+
     }
 }
 

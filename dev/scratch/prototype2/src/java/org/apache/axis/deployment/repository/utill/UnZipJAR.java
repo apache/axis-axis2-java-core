@@ -16,16 +16,16 @@ package org.apache.axis.deployment.repository.utill;
  * limitations under the License.
  */
 
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
+
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class UnZipJAR implements DeploymentConstants {
     //final int BUFFER = 2048;
@@ -55,15 +55,15 @@ public class UnZipJAR implements DeploymentConstants {
             }
             //  zin.closeEntry();
             zin.close();
-            if(! foundServiceXML){
-              throw new DeploymentException("service.xml not found");
+            if (!foundServiceXML) {
+                throw new DeploymentException("service.xml not found");
             }
         } catch (Exception e) {
-           throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
     }
 
-    public void unzipModule(String filename, DeploymentEngine engine,AxisModule module) throws DeploymentException {
+    public void unzipModule(String filename, DeploymentEngine engine, AxisModule module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
         String strArchive = filename;
@@ -81,8 +81,8 @@ public class UnZipJAR implements DeploymentConstants {
             }
             //  zin.closeEntry();
             zin.close();
-            if(! foundmoduleXML){
-              throw new DeploymentException("module.xml not found");
+            if (!foundmoduleXML) {
+                throw new DeploymentException("module.xml not found");
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());

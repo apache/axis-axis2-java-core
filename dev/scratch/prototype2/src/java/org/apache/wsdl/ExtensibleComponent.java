@@ -20,14 +20,14 @@ import java.util.List;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface ExtensibleComponent extends Component{
+public interface ExtensibleComponent extends Component {
     /**
      * Will add a <code>WSDLFeature</code> to the feature list.
-     * If feature is null it will not be added. 
-     * 
+     * If feature is null it will not be added.
+     * <p/>
      * <code>ExtensibleComponent</code>
+     *
      * @param feature
      */
     public void addFeature(WSDLFeature feature);
@@ -35,7 +35,7 @@ public interface ExtensibleComponent extends Component{
     /**
      * Will return the <code>WSDLFeature</code>s. If there aren't
      * any features an empty list will be returned.
-     *     
+     *
      * @return
      */
     public List getFeatures();
@@ -43,12 +43,14 @@ public interface ExtensibleComponent extends Component{
     /**
      * Wll add the property to the component properties. If the property is null it will
      * not be added.
+     *
      * @param wsdlProperty
      */
     public void addPorperty(WSDLProperty wsdlProperty);
 
     /**
      * Returns the Component Properties. If none exist an empty list will be returned.
+     *
      * @return
      */
     public List getProperties();

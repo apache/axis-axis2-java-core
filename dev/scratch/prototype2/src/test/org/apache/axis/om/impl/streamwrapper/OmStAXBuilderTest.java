@@ -1,19 +1,18 @@
 package org.apache.axis.om.impl.streamwrapper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,11 +28,10 @@ import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-public class OmStAXBuilderTest extends AbstractTestCase{
+public class OmStAXBuilderTest extends AbstractTestCase {
 
-    private OMFactory factory =null;
+    private OMFactory factory = null;
     private OMXMLParserWrapper builder;
     private File tempFile;
 
@@ -45,17 +43,17 @@ public class OmStAXBuilderTest extends AbstractTestCase{
         factory = OMFactory.newInstance();
         XMLStreamReader reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory,reader);
+        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory, reader);
         tempFile = File.createTempFile("temp", "xml");
     }
 
-    public void testStaxBuilder()throws Exception{
+    public void testStaxBuilder() throws Exception {
 
-        SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
+        SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
         assertNotNull(envelope);
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
 //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        envelope.serialize(writer,true);
+        envelope.serialize(writer, true);
 
 
     }

@@ -19,9 +19,9 @@
  */
 package org.apache.axis.addressing;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
+
+import javax.xml.namespace.QName;
 
 
 public class EndpointReferenceTypeTest extends TestCase {
@@ -65,30 +65,30 @@ public class EndpointReferenceTypeTest extends TestCase {
 
     public void testGetAndSetReferenceProperties() {
         AnyContentType anyContentType = new AnyContentType();
-        for(int i=0; i < 10; i++){
-           anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i), "value "+i*100);
+        for (int i = 0; i < 10; i++) {
+            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i), "value " + i * 100);
         }
         endpointReference.setReferenceProperties(anyContentType);
 
         AnyContentType retrievedAnyContentType = endpointReference.getReferenceProperties();
-        for(int i=0; i < 10; i++){
-           String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i));
-            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value "+i*100);
+        for (int i = 0; i < 10; i++) {
+            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i));
+            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value " + i * 100);
         }
 
     }
 
     public void testGetAndSetReferenceParameters() {
-       AnyContentType anyContentType = new AnyContentType();
-        for(int i=0; i < 10; i++){
-           anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i), "value "+i*50);
+        AnyContentType anyContentType = new AnyContentType();
+        for (int i = 0; i < 10; i++) {
+            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i), "value " + i * 50);
         }
         endpointReference.setReferenceParameters(anyContentType);
 
         AnyContentType retrievedAnyContentType = endpointReference.getReferenceParameters();
-        for(int i=0; i < 10; i++){
-           String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i));
-            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value "+i*50);
+        for (int i = 0; i < 10; i++) {
+            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i));
+            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value " + i * 50);
         }
     }
 

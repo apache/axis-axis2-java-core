@@ -27,71 +27,67 @@ import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WOMBuilderFactory {
 
     public static final int WSDL11 = 1;
     public static final int wsdl20 = 2;
-    
-    
-    public static WOMBuilder getBuilder(int wsdlDocumentType) throws WSDLException{
-    	
-    	if(wsdlDocumentType == WSDL11){
-    		return new WSDL1ToWOMBuilder();
-    	}
-    	if(wsdlDocumentType == wsdl20){
-    		return new WSDL2ToWOMBuilder();
-    	}
-    	throw new WSDLException(WSDLException.INVALID_WSDL, "The document type specified is not valid");
+
+
+    public static WOMBuilder getBuilder(int wsdlDocumentType) throws WSDLException {
+
+        if (wsdlDocumentType == WSDL11) {
+            return new WSDL1ToWOMBuilder();
+        }
+        if (wsdlDocumentType == wsdl20) {
+            return new WSDL2ToWOMBuilder();
+        }
+        throw new WSDLException(WSDLException.INVALID_WSDL, "The document type specified is not valid");
     }
-    
-        
-    
-    public static WOMBuilder getBuilder(InputStream in) throws WSDLException{
+
+
+    public static WOMBuilder getBuilder(InputStream in) throws WSDLException {
         // Load the wsdl as a DOM
         Document doc;
-        try{
+        try {
             doc = Utils.newDocument(in);
-        }
-        catch(ParserConfigurationException e){
+        } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Configuration Exception", e);
-        }
-        catch(IOException e1){
+        } catch (IOException e1) {
             throw new WSDLException(WSDLException.PARSER_ERROR, "WSDL Document read error", e1);
-        }
-        catch(SAXException e2){
+        } catch (SAXException e2) {
             throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Exception", e2);
         }
         
         
         //Check the target namespace of the WSDL and determine the WSDL version.
         int version = getWSDLVersion(doc);
-        
-        if(version == WSDL11){
-            return (WOMBuilder)new WSDL1ToWOMBuilder();
+
+        if (version == WSDL11) {
+            return (WOMBuilder) new WSDL1ToWOMBuilder();
+        } else if (version == wsdl20) {
+            return (WOMBuilder) new WSDL2ToWOMBuilder();
         }
-        else if(version == wsdl20){
-            return (WOMBuilder)new WSDL2ToWOMBuilder();
-        }
-        
-        throw new WSDLException(WSDLException.OTHER_ERROR,"Unable to Figure out the WSDL vesion of the Document");
+
+        throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
     }
+
     /**
-     * Will return an int that will represent the wsdl version and the int will correspond to the static 
+     * Will return an int that will represent the wsdl version and the int will correspond to the static
      * variables defined in this class.
-     * @param doc 
+     *
+     * @param doc
      * @return
      * @throws WSDLException If the version cannot be determined
      */
-    private static int getWSDLVersion(Document doc) throws WSDLException{
+    private static int getWSDLVersion(Document doc) throws WSDLException {
         //TODO check weather the namespaces are correct and the / problem too
-        if(WSDLConstants.WSDL2_0_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())){
+        if (WSDLConstants.WSDL2_0_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())) {
             return wsdl20;
-        }else if(WSDLConstants.WSDL1_1_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())){
+        } else if (WSDLConstants.WSDL1_1_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())) {
             return WSDL11;
         }
-        
+
         throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
     }
 }

@@ -1,16 +1,9 @@
 package org.apache.axis.om.impl.llom;
 
-import java.util.Iterator;
+import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
-
+import java.util.Iterator;
 
 
 /**

@@ -21,5 +21,6 @@ package org.apache.axis.clientapi;
  */
 public interface Callback {
     void onComplete(AsyncResult result);
+
     void reportError(Exception e);
 }

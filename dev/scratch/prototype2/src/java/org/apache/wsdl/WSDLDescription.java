@@ -22,12 +22,11 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLDescription extends Component{
+public interface WSDLDescription extends Component {
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
-     * of the Binding. 
+     * of the Binding.
      */
     public HashMap getBindings();
 
@@ -39,8 +38,9 @@ public interface WSDLDescription extends Component{
     /**
      * The WSDLBinding Will be added to the map keyed  with its own QName.
      * If the WSDLBinding is null it will not be added.
-     * If the WSDLBinding is not null and  Binding name is null then 
+     * If the WSDLBinding is not null and  Binding name is null then
      * WSDLProcessingException will be thrown
+     *
      * @param binding <code>WSDLBinding</code> Object
      */
     public void addBinding(WSDLBinding binding);
@@ -48,6 +48,7 @@ public interface WSDLDescription extends Component{
     /**
      * Retrives the <code>WSDLBinding</code> by its QName. Wil return null
      * if <code>WSDLBinding</code> is not found.
+     *
      * @param qName The QName of the Binding.
      */
     public WSDLBinding getBinding(QName qName);
@@ -56,15 +57,17 @@ public interface WSDLDescription extends Component{
      * The Interface component will be added to the map keyed with its own name.
      * If the Interface is null it will not be added.
      * If the interface name is null an WSDLProcessingException will be thrown
+     *
      * @param interfaceComponent
      */
     public void addInterface(WSDLInterface interfaceComponent);
 
     /**
-     * The Interface Component will be returned if it exsists, 
+     * The Interface Component will be returned if it exsists,
      * otherwise null will be returned.
+     *
      * @param qName qName of the Interface.
-     * @return The Interface Component with the relavent QName 
+     * @return The Interface Component with the relavent QName
      */
     public WSDLInterface getInterface(QName qName);
 
@@ -74,8 +77,9 @@ public interface WSDLDescription extends Component{
 
     /**
      * Will return the <code>WSDLService </code> if found otherwise return null.
+     *
      * @param qName <code>QName</code> of the Service
-     * @return The Service with the relavent QName 
+     * @return The Service with the relavent QName
      */
     public WSDLService getService(QName qName);
 
@@ -84,6 +88,7 @@ public interface WSDLDescription extends Component{
      * If object is null it will not be added.
      * If the <code>WSDLService</code> name is null a <code>WSDLProcessingException</code>
      * will be thrown.(its required)
+     *
      * @param service
      */
     public void addService(WSDLService service);
@@ -101,13 +106,15 @@ public interface WSDLDescription extends Component{
     public void setTypes(WSDLTypes types);
 
     /**
-     * Gets the name attrebute of the WSDL 1.1 Definitions Element 
+     * Gets the name attrebute of the WSDL 1.1 Definitions Element
+     *
      * @return
      */
     public QName getWSDL1DefinitionName();
 
     /**
      * Sets the name attrebute of the WSDL 1.1 Definitions Element
+     *
      * @param wsdl1DefinitionName
      */
     public void setWSDL1DefinitionName(QName wsdl1DefinitionName);
@@ -115,6 +122,7 @@ public interface WSDLDescription extends Component{
     /**
      * Will return all the Namespaces associated with the Definition
      * Component and will be keyed by the Napespace Prefix.
+     *
      * @return
      */
     public HashMap getNamespaces();
@@ -122,14 +130,16 @@ public interface WSDLDescription extends Component{
     /**
      * Sets the Namespaces associated with the Difinition Component
      * and they should be keyed by its Namespace Prefix.
+     *
      * @param namespaces
      */
     public void setNamespaces(HashMap namespaces);
 
     /**
-     * Will return the Namespace URI as a String if there exists an 
+     * Will return the Namespace URI as a String if there exists an
      * Namespace URI associated with the given prefix, in the Definition
      * Component, Will return null if not found.
+     *
      * @param prefix Prefix defined in the Definitions elemet in the WSDL file
      * @return The Namespace URI for the prefix.
      */
@@ -137,102 +147,97 @@ public interface WSDLDescription extends Component{
 
     /**
      * Returns the WSDL Imports in an <code>ArrayList</code>
+     *
      * @return
      */
     public ArrayList getImports();
 
     /**
      * Sets the imports as an <code>ArrayList</code>
+     *
      * @param imports
      */
     public void setImports(ArrayList imports);
 
     /**
      * Adds an import to the list.
+     *
      * @param wsdlImport
      */
     public void addImports(WSDLImport wsdlImport);
 
     /**
      * Returns the Includes as an <code>ArrayList</code>
+     *
      * @return
      */
     public ArrayList getIncludes();
 
     /**
      * Sets the includes as an <code>Arraylist</code>
+     *
      * @param includes
      */
     public void setIncludes(ArrayList includes);
 
     /**
      * Adds the WSDL Include to the list.
+     *
      * @param wsdlInclude
      */
     public void addInclude(WSDLInclude wsdlInclude);
 
     /**
-     * 
      * @return A new instance of type <code>WSDLDescription</code>
      */
     public WSDLDescription createDescription();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLService</code>
      */
     public WSDLService createService();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLInterface</code>
      */
     public WSDLInterface createInterface();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLTypes</code>
      */
     public WSDLTypes createTypes();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLBinding</code>
      */
     public WSDLBinding createBinding();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLOperation</code>
      */
     public WSDLOperation createOperation();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLEndpoint</code>
      */
     public WSDLEndpoint createEndpoint();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLFault</code>
      */
     public WSDLFault createFault();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLFeature</code>
      */
     public WSDLFeature createFeature();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLImport</code>
      */
     public WSDLImport createImport();
 
     /**
-     * 
      * @return A new instance of type <code>WSDLInclude</code>
      */
     public WSDLInclude createInclude();

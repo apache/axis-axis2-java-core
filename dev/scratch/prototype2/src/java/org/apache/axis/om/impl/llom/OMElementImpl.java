@@ -1,28 +1,19 @@
 package org.apache.axis.om.impl.llom;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -103,7 +94,7 @@ public class OMElementImpl
 
         // first try to find a namespace from the scope
         String namespaceURI = qname.getNamespaceURI();
-        if (!"".equals(namespaceURI) ) {
+        if (!"".equals(namespaceURI)) {
             ns = findInScopeNamespace(qname.getNamespaceURI(), qname.getPrefix());
         } else {
             if (parent != null) {

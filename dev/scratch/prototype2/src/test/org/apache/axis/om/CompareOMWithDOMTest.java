@@ -15,43 +15,41 @@
  */
 package org.apache.axis.om;
 
-import java.io.File;
+import org.apache.axis.AbstractTestCase;
+import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.axis.AbstractTestCase;
-import org.w3c.dom.Document;
+import java.io.File;
 
 /**
  * @version $Rev: $ $Date: $
  */
 
-public class CompareOMWithDOMTest extends AbstractTestCase{
+public class CompareOMWithDOMTest extends AbstractTestCase {
     /**
      * @param testName
      */
     public CompareOMWithDOMTest(String testName) {
         super(testName);
     }
-    
-    public void testAllMessagesInSOAP() throws OMException, Exception{
-        File dir = new File(testResourceDir,"soap");
+
+    public void testAllMessagesInSOAP() throws OMException, Exception {
+        File dir = new File(testResourceDir, "soap");
         File[] files = dir.listFiles();
-        if(files != null){
-            for(int i = 0;i<files.length;i++){
-                if(files[i].isFile() && files[i].getName().endsWith(".xml")){
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile() && files[i].getName().endsWith(".xml")) {
                     System.out.println("files = " + files[i].getAbsolutePath());
-                    SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            files[i]).getDocumentElement();
+                    SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(files[i]).getDocumentElement();
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setNamespaceAware(true);
                     DocumentBuilder builder = dbf.newDocumentBuilder();
                     Document doc = builder.parse(files[i].getAbsolutePath());
-                    OMTestUtils.compare(doc.getDocumentElement(),soapEnvelope);
+                    OMTestUtils.compare(doc.getDocumentElement(), soapEnvelope);
                 }
             }
-        
+
         }
     }
 }

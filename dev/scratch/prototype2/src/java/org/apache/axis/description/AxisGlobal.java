@@ -15,43 +15,43 @@
  */
 package org.apache.axis.description;
 
+import org.apache.axis.engine.AxisFault;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.engine.AxisFault;
-
 /**
- * <p>This holds the information shown in the global scope. The information are all 
- * that not goes in to the Transport or a Service. This has two types of Info. </p> 
+ * <p>This holds the information shown in the global scope. The information are all
+ * that not goes in to the Transport or a Service. This has two types of Info. </p>
  * <ol>
- *  <li>parameters<li>
- *  <li>ordered phases<li> 
- *  <li>names of modules that are ref by the server.xml file, real modues are in the 
- *      Registry.<li>
- * <ol>  
- * <p>Note: handlers in the server.xml file are not suported for M1, only way to put a 
- * global handler is via a modules</p>  
+ * <li>parameters<li>
+ * <li>ordered phases<li>
+ * <li>names of modules that are ref by the server.xml file, real modues are in the
+ * Registry.<li>
+ * <ol>
+ * <p>Note: handlers in the server.xml file are not suported for M1, only way to put a
+ * global handler is via a modules</p>
  */
-public class AxisGlobal implements ParameterInclude,PhasesInclude {
+public class AxisGlobal implements ParameterInclude, PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
     protected List modules;
 
     //TODO provide a way to store name (name attribute value server.xml)
-    public AxisGlobal(){
+    public AxisGlobal() {
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
         modules = new ArrayList();
     }
 
     public void addModule(QName moduleref) {
-       modules.add(moduleref);
+        modules.add(moduleref);
     }
+
     public Collection getModules() {
-       return modules;
+        return modules;
     }
 
     public Parameter getParameter(String name) {

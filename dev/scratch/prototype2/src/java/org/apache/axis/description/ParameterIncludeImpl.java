@@ -20,16 +20,18 @@ import java.util.HashMap;
 
 public class ParameterIncludeImpl implements ParameterInclude {
     protected HashMap parmeters;
-    public ParameterIncludeImpl(){
+
+    public ParameterIncludeImpl() {
         parmeters = new HashMap();
     }
+
     public void addParameter(Parameter param) {
-        if(param != null){
-            parmeters.put(param.getName(),param);
+        if (param != null) {
+            parmeters.put(param.getName(), param);
         }
     }
 
     public Parameter getParameter(String name) {
-        return (Parameter)parmeters.get(name);
+        return (Parameter) parmeters.get(name);
     }
 }

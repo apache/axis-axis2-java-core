@@ -20,20 +20,21 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.om.OMFactory;
 
-public class MessageContextTest extends AbstractTestCase{
+public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
         super(testName);
     }
-    public void testMesssageContext() throws AxisFault{
+
+    public void testMesssageContext() throws AxisFault {
         EngineRegistry er = new EngineRegistryImpl(new AxisGlobal());
-        MessageContext msgctx = new MessageContext(er,null);
-        
+        MessageContext msgctx = new MessageContext(er, null);
+
         msgctx.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());
         assertNotNull(msgctx.getEnvelope());
-        
+
         msgctx.setFaultTo(null);
         assertNull(msgctx.getFaultTo());
-        
+
         msgctx.setFrom(null);
         assertNull(msgctx.getFrom());
 
@@ -42,7 +43,7 @@ public class MessageContextTest extends AbstractTestCase{
 
         msgctx.setReplyTo(null);
         assertNull(msgctx.getReplyTo());
-        
+
         msgctx.setMessageID(null);
         assertNull(msgctx.getMessageID());
     }

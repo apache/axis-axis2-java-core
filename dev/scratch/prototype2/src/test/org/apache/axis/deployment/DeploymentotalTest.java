@@ -1,12 +1,11 @@
 package org.apache.axis.deployment;
 
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.phaseresolver.PhaseException;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -22,12 +21,12 @@ import org.apache.axis.phaseresolver.PhaseException;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 public class DeploymentotalTest extends TestCase {
     EngineRegistry er;
-    public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
-        String filename = "./target/test-resources/deployment" ;
+
+    public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
+        String filename = "./target/test-resources/deployment";
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         er = deploymentEngine.start();
 //       try {

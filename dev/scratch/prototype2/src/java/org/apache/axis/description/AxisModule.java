@@ -19,18 +19,18 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 /**
- * <p>This holds the information about a Module. </p> 
+ * <p>This holds the information about a Module. </p>
  * <ol>
- *  <li>parameters<li>
- *  <li>handlers<li> 
+ * <li>parameters<li>
+ * <li>handlers<li>
  * <ol>
  * <p>Handler are registered once they are avlible but they avalibe to all services if server.xml
- * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>  
+ * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
-public class AxisModule implements FlowInclude,ParameterInclude{
-    
+public class AxisModule implements FlowInclude, ParameterInclude {
+
     private QName name;
-    
+
 
     private FlowInclude flowInclude = new FlowIncludeImpl();
     private ParameterInclude parameters = new ParameterIncludeImpl();

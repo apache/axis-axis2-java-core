@@ -16,28 +16,21 @@
 
 package org.apache.axis.engine;
 
-import java.io.OutputStream;
+import junit.framework.TestCase;
+import org.apache.axis.context.MessageContext;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
-
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.transport.TransportSenderLocator;
-
-public class EngineTest extends TestCase{
-    private QName serviceName = new QName("","EchoService");
-    private QName operationName = new QName("","echoVoid");
-    private QName transportName = new QName("","NullTransport");
+public class EngineTest extends TestCase {
+    private QName serviceName = new QName("", "EchoService");
+    private QName operationName = new QName("", "echoVoid");
+    private QName transportName = new QName("", "NullTransport");
     private EngineRegistry engineRegistry;
     private MessageContext mc;
-    
+
     public EngineTest() {
     }
-    
+
     public EngineTest(String arg0) {
         super(arg0);
     }
@@ -55,7 +48,7 @@ public class EngineTest extends TestCase{
 //        out.flush();
 //    }
 
-    public void testSend()throws Exception{
+    public void testSend() throws Exception {
 //        AxisEngine engine = new AxisEngine(engineRegistry);
 //        engine.send(mc);
     }

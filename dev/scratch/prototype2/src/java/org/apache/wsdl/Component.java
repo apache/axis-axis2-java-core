@@ -19,12 +19,10 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface Component {
     /**
      * Returns the properties that are specific to this WSDL Component.
-     * 
      */
     public HashMap getComponentProperties();
 
@@ -35,6 +33,7 @@ public interface Component {
 
     /**
      * Will set the property keyed with the relavent key
+     *
      * @param key Key in the map
      * @param obj Object to be put
      */
@@ -42,6 +41,7 @@ public interface Component {
 
     /**
      * Gets the component property
+     *
      * @param key key for the map search.
      * @return
      */

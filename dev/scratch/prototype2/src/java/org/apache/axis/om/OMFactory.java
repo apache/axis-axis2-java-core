@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
  * This will help to create OM API object. This will ease the switching from one OM impl to another.
  */
 public abstract class OMFactory {
-	/**
+    /**
      * @param localName
      * @param ns
      * @return
@@ -37,7 +37,8 @@ public abstract class OMFactory {
      */
     public abstract OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
-    /** This is almost the same as as createOMElement(localName,OMNamespace) method above.
+    /**
+     * This is almost the same as as createOMElement(localName,OMNamespace) method above.
      * But some people may, for some reason, need to use the conventional method of putting a namespace.
      * Or in other words people might not want to use the new OMNamespace.
      * Well, this is for those people.
@@ -53,14 +54,14 @@ public abstract class OMFactory {
      * QName(localPart),
      * QName(namespaceURI, localPart) - a prefix will be assigned to this
      * QName(namespaceURI, localPart, prefix)
+     *
      * @param qname
      * @return
      */
-    public abstract OMElement createOMElement(QName qname, OMElement parent) throws OMException ;
+    public abstract OMElement createOMElement(QName qname, OMElement parent) throws OMException;
 
 
     /**
-     *
      * @param uri
      * @param prefix
      * @return
@@ -88,7 +89,6 @@ public abstract class OMFactory {
     public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
 
     /**
-     *
      * @param envelope
      * @param builder
      * @return
@@ -114,7 +114,6 @@ public abstract class OMFactory {
     public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
 
     /**
-     *
      * @param envelope
      * @param builder
      * @return

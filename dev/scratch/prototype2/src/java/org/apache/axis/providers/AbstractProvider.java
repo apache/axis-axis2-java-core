@@ -15,16 +15,16 @@
  */
 package org.apache.axis.providers;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.Provider;
+
+import javax.xml.namespace.QName;
 
 /**
  * This is the Absract provider. It is just a another handler. the
  * protected abstract methods are only for the sake of braking down the logic
  */
-public abstract class AbstractProvider implements Provider{
+public abstract class AbstractProvider implements Provider {
     protected QName name;
 
     public QName getName() {

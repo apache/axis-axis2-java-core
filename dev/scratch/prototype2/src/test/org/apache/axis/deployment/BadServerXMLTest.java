@@ -1,11 +1,11 @@
 package org.apache.axis.deployment;
 
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.description.AxisGlobal;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.AxisGlobal;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -33,10 +33,10 @@ public class BadServerXMLTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testBadServerXML()  {
+    public void testBadServerXML() {
         try {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/BadServer.xml"));
-            DeploymentParser parser = new  DeploymentParser(in, null);
+            DeploymentParser parser = new DeploymentParser(in, null);
             AxisGlobal glabl = new AxisGlobal();
             parser.procesServerXML(glabl);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
@@ -45,7 +45,7 @@ public class BadServerXMLTest extends AbstractTestCase {
         } catch (DeploymentException e) {
             return;
         } catch (Exception e) {
-            return ;
+            return;
         }
 
     }

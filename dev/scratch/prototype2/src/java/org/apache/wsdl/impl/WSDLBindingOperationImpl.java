@@ -23,42 +23,47 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLBindingOperationImpl extends ExtensibleComponentImpl implements WSDLBindingOperation {
 
     private QName name;
-    
+
     private WSDLOperation operation;
-    
+
     private WSDLBindingMessageReference input;
-    
+
     private WSDLBindingMessageReference output;
-    
-    
+
+
     public WSDLBindingMessageReference getInput() {
         return input;
     }
+
     public void setInput(WSDLBindingMessageReference input) {
         this.input = input;
     }
+
     public WSDLOperation getOperation() {
         return operation;
     }
+
     public void setOperation(WSDLOperation operation) {
         this.operation = operation;
     }
+
     public WSDLBindingMessageReference getOutput() {
         return output;
     }
+
     public void setOutput(WSDLBindingMessageReference output) {
         this.output = output;
     }
-    
-    
+
+
     public QName getName() {
         return name;
     }
+
     public void setName(QName name) {
         this.name = name;
     }

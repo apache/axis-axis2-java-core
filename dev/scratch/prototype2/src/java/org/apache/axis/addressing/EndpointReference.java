@@ -35,13 +35,10 @@ public class EndpointReference {
     private ServiceName serviceName;
 
     /**
-     *
-     * @param messageInformationHeaderType
-     * this can be one of the followings
-     * AddressingConstants.WSA_FROM
-     * AddressingConstants.WSA_REPLY_TO
-     * AddressingConstants.WSA_FAULT_TO
-     * 
+     * @param messageInformationHeaderType this can be one of the followings
+     *                                     AddressingConstants.WSA_FROM
+     *                                     AddressingConstants.WSA_REPLY_TO
+     *                                     AddressingConstants.WSA_FAULT_TO
      * @param address
      */
     public EndpointReference(String messageInformationHeaderType, String address) {

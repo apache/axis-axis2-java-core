@@ -18,18 +18,7 @@ package org.apache.axis.om.factory;
  */
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMTestUtils;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.*;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)
@@ -121,7 +110,6 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             SOAPEnvelope soapEnvelope = omFactory.createSOAPEnvelope(soapNamespace, OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")));
             assertTrue("SOAPEnvelope with a builder should start with done = false ", !soapEnvelope.isComplete());
             assertTrue("This SOAPEnvelope must have a builder ", soapEnvelope.getBuilder() instanceof OMXMLParserWrapper);
-
 
 
         } catch (Exception e) {

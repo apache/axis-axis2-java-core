@@ -17,29 +17,32 @@ package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLImport extends Component{
+public interface WSDLImport extends Component {
     /**
      * Gets the location URI of the Include.
+     *
      * @return
      */
     public String getLocation();
 
     /**
      * Sets the location URI of the Include.
+     *
      * @param loaction
      */
     public void setLocation(String location);
 
     /**
      * Returns the namespace URI
+     *
      * @return
      */
     public String getNamespace();
 
     /**
      * Sets the namespace URI.
+     *
      * @param namespace
      */
     public void setNamespace(String namespace);

@@ -17,5 +17,5 @@ package org.apache.axis.transport;
 
 import org.apache.axis.handlers.AbstractHandler;
 
-public abstract class TransportReciver extends AbstractHandler{
+public abstract class TransportReciver extends AbstractHandler {
 }

@@ -25,72 +25,78 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class WSDLServiceImpl extends ComponentImpl implements WSDLService   {
+public class WSDLServiceImpl extends ComponentImpl implements WSDLService {
 
     /**
      * The QName that identifies the Service. This namespace of the QName
      * should be the target namespace defined in the Definitions component.
      */
     private QName name;
-    
-      
+
+
     /**
      * The Interface that this Service is an instance of.
      */
     private WSDLInterface serviceInterface;
-    
+
     /**
      * 
      */
     private HashMap endpoints = new HashMap();
-    
-    
+
+
     public HashMap getEndpoints() {
         return endpoints;
     }
+
     public void setEndpoints(HashMap endpoints) {
         this.endpoints = endpoints;
     }
-    
+
     /**
      * Will add a WSDLEndpoint object to the WOM keyed with qname;
      */
-    public void setEndpoint(WSDLEndpoint endpoint){
+    public void setEndpoint(WSDLEndpoint endpoint) {
         this.endpoints.put(endpoint.getName(), endpoint);
     }
-    
+
     /**
-	 * Endpoint will be retrived by its qname.
-	 * @param qname qname of the Service
-	 * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
-	 */
-	public WSDLService getEndpoint(QName qName){
-	    WSDLService temp = (WSDLService)this.endpoints.get(qName);
-	    if(null == temp) throw new WSDLProcessingException("Service not found for NCName "+qName);
-	    return temp;
-	}
+     * Endpoint will be retrived by its qname.
+     *
+     * @param qname qname of the Service
+     * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found.
+     */
+    public WSDLService getEndpoint(QName qName) {
+        WSDLService temp = (WSDLService) this.endpoints.get(qName);
+        if (null == temp) throw new WSDLProcessingException("Service not found for NCName " + qName);
+        return temp;
+    }
+
     public QName getName() {
         return name;
     }
+
     public void setName(QName name) {
         this.name = name;
     }
+
     /**
-     * If the Name of the <code>WSDLService</code> is not set a 
+     * If the Name of the <code>WSDLService</code> is not set a
      * <code>WSDLProcessingException</code> will be thrown.
+     *
      * @return Target Namespace as a <code>String</code>
      */
     public String getNamespace() {
-        if(null == this.name) throw new WSDLProcessingException("Target Namespace not set and the Service Name is null");
-        
-        return this.name.getNamespaceURI();       
+        if (null == this.name) throw new WSDLProcessingException("Target Namespace not set and the Service Name is null");
+
+        return this.name.getNamespaceURI();
     }
-    
+
     public WSDLInterface getServiceInterface() {
         return serviceInterface;
     }
+
     public void setServiceInterface(WSDLInterface serviceInterface) {
         this.serviceInterface = serviceInterface;
     }

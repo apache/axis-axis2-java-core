@@ -16,7 +16,7 @@
 package org.apache.axis.description;
 
 
-public class ParameterImpl implements Parameter  {
+public class ParameterImpl implements Parameter {
     private String name;
     private String value;
     private boolean locked;
@@ -54,6 +54,7 @@ public class ParameterImpl implements Parameter  {
     public Object getValue() {
         return value;
     }
+
     public int getParameterType() {
         return type;
     }

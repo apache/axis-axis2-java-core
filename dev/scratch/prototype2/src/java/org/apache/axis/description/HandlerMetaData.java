@@ -15,30 +15,30 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.engine.Handler;
+
+import javax.xml.namespace.QName;
 
 /**
  * represent the deployment information about the handler
  */
-public class HandlerMetaData implements ParameterInclude{
-    private  ParameterInclude parameterInclude;
+public class HandlerMetaData implements ParameterInclude {
+    private ParameterInclude parameterInclude;
     private QName name;
     private PhaseRule rules;
     private Handler handler;
     private String className;
 
 
-    public HandlerMetaData(){
-       this.parameterInclude = new ParameterIncludeImpl();
-       this.rules = new PhaseRule();
+    public HandlerMetaData() {
+        this.parameterInclude = new ParameterIncludeImpl();
+        this.rules = new PhaseRule();
     }
 
-	public HandlerMetaData(QName name){
-		this();
-		this.name = name;
-	}
+    public HandlerMetaData(QName name) {
+        this();
+        this.name = name;
+    }
 
     /**
      * @return

@@ -19,7 +19,6 @@ import org.apache.wsdl.WSDLBindingMessageReference;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class WSDLBindingMessageReferenceImpl extends ExtensibleComponentImpl implements WSDLBindingMessageReference {
 

@@ -22,14 +22,13 @@ import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class WSDL2ToWOMBuilder implements WOMBuilder{
+public class WSDL2ToWOMBuilder implements WOMBuilder {
 
-    public WSDLDescription build(InputStream in ) throws WSDLException{
-        
+    public WSDLDescription build(InputStream in) throws WSDLException {
+
         throw new UnsupportedOperationException("Fill the imps");
-        
-        
+
+
     }
 }

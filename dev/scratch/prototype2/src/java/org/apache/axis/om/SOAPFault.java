@@ -118,9 +118,11 @@ public interface SOAPFault extends OMElement {
 
     /**
      * This will set the given omnode under the detail element of SOAP fault
+     *
      * @param detail
      */
     public abstract void setDetailInformation(OMNode detail);
+
     public abstract OMNode getDetailInformation();
 
 

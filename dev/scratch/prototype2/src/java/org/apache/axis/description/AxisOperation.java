@@ -16,8 +16,9 @@
 package org.apache.axis.description;
 
 import org.apache.wsdl.WSDLOperation;
+
 /**
- * for the time been operation can have only the parameters 
+ * for the time been operation can have only the parameters
  */
-public interface AxisOperation extends WSDLOperation,ParameterInclude  {
+public interface AxisOperation extends WSDLOperation, ParameterInclude {
 }

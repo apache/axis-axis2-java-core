@@ -1,11 +1,11 @@
 package org.apache.axis.om.impl.llom;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -30,7 +30,10 @@ public class OMNodeImpl implements OMNode {
     protected String value;
     protected boolean done = false;
     protected short nodeType;
-    public OMNodeImpl(){}
+
+    public OMNodeImpl() {
+    }
+
     /**
      * For a node to exist there must be a parent
      *
@@ -38,7 +41,7 @@ public class OMNodeImpl implements OMNode {
      */
 
     public OMNodeImpl(OMElement parent) {
-        if (parent != null && parent.getType() == OMNode.ELEMENT_NODE){
+        if (parent != null && parent.getType() == OMNode.ELEMENT_NODE) {
             this.parent = (OMElementImpl) parent;
         }
     }
@@ -195,6 +198,6 @@ public class OMNodeImpl implements OMNode {
     }
 
     public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
-       //Do nothing. Relevant children will put relevant things here
+        //Do nothing. Relevant children will put relevant things here
     }
 }

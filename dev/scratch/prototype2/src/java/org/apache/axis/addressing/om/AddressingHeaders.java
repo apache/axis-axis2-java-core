@@ -31,6 +31,7 @@ public class AddressingHeaders {
 
     /**
      * Addressing Header MUST have a to and an action
+     *
      * @param wsaTo
      * @param action
      */
@@ -39,8 +40,8 @@ public class AddressingHeaders {
         this.action = action;
     }
 
-    public void toOM(SOAPHeader soapHeader){
-        
+    public void toOM(SOAPHeader soapHeader) {
+
     }
 
     // ------------------- Setters and Getters --------------------------------------
@@ -102,7 +103,6 @@ public class AddressingHeaders {
 
 
     // --------------------------------------------------------------------------------------------
-
 
 
 }

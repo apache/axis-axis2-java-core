@@ -1,13 +1,13 @@
 package org.apache.axis.deployment;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.phaseresolver.PhaseException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -35,8 +35,8 @@ public class TransportDeploymentTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testTransports() throws AxisFault, PhaseException, DeploymentException, XMLStreamException  {
-        DeploymentEngine engine = new DeploymentEngine(testResourceDir+ "/deployment","server-transport.xml");
+    public void testTransports() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
+        DeploymentEngine engine = new DeploymentEngine(testResourceDir + "/deployment", "server-transport.xml");
         engine.start();
         EngineRegistry er = engine.getEngineRegistry();
         AxisTransport transport = er.getTransport(new QName("http"));

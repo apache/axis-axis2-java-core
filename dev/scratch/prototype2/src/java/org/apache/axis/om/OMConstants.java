@@ -46,11 +46,11 @@ public interface OMConstants {
     public static final String SOAPFAULT_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
 
     //OMBuilder constants
-    public static final short PUSH_TYPE_BUILDER=0;
-    public static final short PULL_TYPE_BUILDER=1;
+    public static final short PUSH_TYPE_BUILDER = 0;
+    public static final short PULL_TYPE_BUILDER = 1;
 
     public static final String ARRAY_ITEM_NSURI = "http://axis.apache.org/encoding/Arrays";
     public static final String ARRAY_ITEM_LOCALNAME = "item";
     public static final String ARRAY_ITEM_NS_PREFIX = "arrays";
-    public static final String ARRAY_ITEM_QNAME = OMConstants.ARRAY_ITEM_NS_PREFIX + ':' +OMConstants.ARRAY_ITEM_LOCALNAME;
+    public static final String ARRAY_ITEM_QNAME = OMConstants.ARRAY_ITEM_NS_PREFIX + ':' + OMConstants.ARRAY_ITEM_LOCALNAME;
 }

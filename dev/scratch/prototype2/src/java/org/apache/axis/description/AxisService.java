@@ -15,54 +15,53 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
-import javax.swing.text.Style;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
+import javax.swing.text.Style;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
-public class AxisService extends WSDLServiceImpl implements WSDLService,ParameterInclude,FlowInclude,PhasesInclude , DescriptionConstants{
+
+public class AxisService extends WSDLServiceImpl implements WSDLService, ParameterInclude, FlowInclude, PhasesInclude, DescriptionConstants {
 
     protected HashMap operationsMap = new HashMap();
 
-    public AxisService(){
-        this.setComponentProperty(MODULEREF_KEY,new ArrayList());
+    public AxisService() {
+        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
     }
-    
-    public AxisService(QName qName){
+
+    public AxisService(QName qName) {
         this();
-        this.setName(qName);        
+        this.setName(qName);
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#addModule(javax.xml.namespace.QName)
      */
     public void addModule(QName moduleref) {
-        if( moduleref == null)return;
-       Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
-       collectionModule.add(moduleref);
+        if (moduleref == null) return;
+        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        collectionModule.add(moduleref);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#getModules()
      */
     public Collection getModules() {
-        return (Collection)this.getComponentProperty(MODULEREF_KEY);
+        return (Collection) this.getComponentProperty(MODULEREF_KEY);
     }
 
     public AxisOperation getOperation(QName operationName) {
         //todo The key has been changed from the qname to the local name because
         //todo when comparing the namespace will not be available
-        return (AxisOperation)this.operationsMap.get(operationName.getLocalPart());
+        return (AxisOperation) this.operationsMap.get(operationName.getLocalPart());
     }
 
     /* (non-Javadoc)
@@ -71,8 +70,8 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
     public void addOperation(AxisOperation operation) {
         //todo The key has been changed from the qname to the local name because
         //todo when comparing the namespace will not be available
-        if(operation != null){
-            this.operationsMap.put(operation.getName().getLocalPart(),operation);
+        if (operation != null) {
+            this.operationsMap.put(operation.getName().getLocalPart(), operation);
         }
     }
 
@@ -80,7 +79,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#setClassLoader(java.lang.ClassLoader)
      */
     public void setClassLoader(ClassLoader classLoader) {
-        if(classLoader != null){
+        if (classLoader != null) {
             this.setComponentProperty(CLASSLOADER_KEY, classLoader);
         }
     }
@@ -89,14 +88,14 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getClassLoader()
      */
     public ClassLoader getClassLoader() {
-        return (ClassLoader)this.getComponentProperty(CLASSLOADER_KEY);
+        return (ClassLoader) this.getComponentProperty(CLASSLOADER_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#setContextPath(java.lang.String)
      */
     public void setContextPath(String contextPath) {
-        if(contextPath != null){
+        if (contextPath != null) {
             this.setComponentProperty(CONTEXTPATH_KEY, contextPath);
         }
     }
@@ -105,14 +104,14 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getContextPath()
      */
     public String getContextPath() {
-        return (String)this.getComponentProperty(CONTEXTPATH_KEY);
+        return (String) this.getComponentProperty(CONTEXTPATH_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#setProvider(org.apache.axis.engine.Provider)
      */
     public void setProvider(Provider provider) {
-        if(provider != null){
+        if (provider != null) {
             this.setComponentProperty(PROVIDER_KEY, provider);
         }
     }
@@ -121,14 +120,14 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getProvider()
      */
     public Provider getProvider() {
-        return (Provider)this.getComponentProperty(PROVIDER_KEY);
+        return (Provider) this.getComponentProperty(PROVIDER_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#setStyle(javax.swing.text.Style)
      */
     public void setStyle(Style style) {
-        if(style != null){
+        if (style != null) {
             this.setComponentProperty(STYLE_KEY, style);
         }
     }
@@ -137,35 +136,35 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getStyle()
      */
     public Style getStyle() {
-        return (Style)this.getComponentProperty(STYLE_KEY);
+        return (Style) this.getComponentProperty(STYLE_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.PhasesInclude#getPhases(java.util.ArrayList, int)
      */
-    public void setPhases(ArrayList phases, int flow) throws AxisFault{
-        if(phases == null) return;
+    public void setPhases(ArrayList phases, int flow) throws AxisFault {
+        if (phases == null) return;
         PhasesIncludeImpl phaseInclude =
-            (PhasesIncludeImpl)this.getComponentProperty(PHASES_KEY);
+                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
         phaseInclude.setPhases(phases, flow);
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.axis.description.PhasesInclude#getPhases(int)
      */
-    public ArrayList getPhases(int flow) throws AxisFault{
+    public ArrayList getPhases(int flow) throws AxisFault {
         PhasesIncludeImpl phaseInclude =
-            (PhasesIncludeImpl)this.getComponentProperty(PHASES_KEY);
-        return(ArrayList)phaseInclude.getPhases(flow);
+                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
+        return (ArrayList) phaseInclude.getPhases(flow);
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.axis.description.ParameterInclude#addParameter(org.apache.axis.description.Parameter)
      */
     public void addParameter(Parameter param) {
-        if(param == null) return;
+        if (param == null) return;
         ParameterIncludeImpl paramInclude =
-             (ParameterIncludeImpl)this.getComponentProperty(PARAMETER_KEY);
+                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
         paramInclude.addParameter(param);
     }
 
@@ -173,22 +172,22 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.ParameterInclude#getParameter(java.lang.String)
      */
     public Parameter getParameter(String name) {
-        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl)this.getComponentProperty(PARAMETER_KEY);
-        return (Parameter)paramInclude.getParameter(name);
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+        return (Parameter) paramInclude.getParameter(name);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.FlowInclude#getInFlow()
      */
     public Flow getInFlow() {
-        return (Flow)this.getComponentProperty(INFLOW_KEY);
+        return (Flow) this.getComponentProperty(INFLOW_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.FlowInclude#setInFlow(org.apache.axis.description.Flow)
      */
     public void setInFlow(Flow inFlow) {
-        if(inFlow != null){
+        if (inFlow != null) {
             this.setComponentProperty(INFLOW_KEY, inFlow);
         }
     }
@@ -197,14 +196,14 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.FlowInclude#getOutFlow()
      */
     public Flow getOutFlow() {
-        return (Flow)this.getComponentProperty(OUTFLOW_KEY);
+        return (Flow) this.getComponentProperty(OUTFLOW_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.FlowInclude#setOutFlow(org.apache.axis.description.Flow)
      */
-    public void setOutFlow(Flow outFlow){
-        if(outFlow != null){
+    public void setOutFlow(Flow outFlow) {
+        if (outFlow != null) {
             this.setComponentProperty(OUTFLOW_KEY, outFlow);
         }
     }
@@ -213,25 +212,25 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.FlowInclude#getFaultFlow()
      */
     public Flow getFaultFlow() {
-        return (Flow)this.getComponentProperty(FAULTFLOW_KEY);
+        return (Flow) this.getComponentProperty(FAULTFLOW_KEY);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.FlowInclude#setFaultFlow(org.apache.axis.description.Flow)
      */
     public void setFaultFlow(Flow faultFlow) {
-        if(faultFlow != null){
+        if (faultFlow != null) {
             this.setComponentProperty(FAULTFLOW_KEY, faultFlow);
         }
     }
-    
+
     public void setServiceClass(Class serviceclass) {
-        if(serviceclass != null)
+        if (serviceclass != null)
             this.setComponentProperty(DescriptionConstants.SERVICE_CLASS, serviceclass);
     }
 
     public Class getServiceClass() {
-        return (Class)this.getComponentProperty(DescriptionConstants.SERVICE_CLASS);
+        return (Class) this.getComponentProperty(DescriptionConstants.SERVICE_CLASS);
     }
 
     public HashMap getOperations() {

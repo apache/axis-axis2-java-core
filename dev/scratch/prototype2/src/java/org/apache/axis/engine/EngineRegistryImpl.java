@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-
-public class EngineRegistryImpl implements EngineRegistry{
+public class EngineRegistryImpl implements EngineRegistry {
     private HashMap modules = new HashMap();
     private HashMap services = new HashMap();
     private HashMap transports = new HashMap();
@@ -34,7 +33,7 @@ public class EngineRegistryImpl implements EngineRegistry{
     private ArrayList phases;
 
 
-    public EngineRegistryImpl(AxisGlobal global){
+    public EngineRegistryImpl(AxisGlobal global) {
         this.global = global;
         phases = new ArrayList();
     }
@@ -44,11 +43,11 @@ public class EngineRegistryImpl implements EngineRegistry{
     }
 
     public synchronized void addMdoule(AxisModule module) throws AxisFault {
-        modules.put(module.getName(),module);
+        modules.put(module.getName(), module);
     }
 
-    public synchronized  void addService(AxisService service) throws AxisFault {
-        services.put(service.getName(),service);
+    public synchronized void addService(AxisService service) throws AxisFault {
+        services.put(service.getName(), service);
     }
 
     public AxisGlobal getGlobal() throws AxisFault {
@@ -56,24 +55,24 @@ public class EngineRegistryImpl implements EngineRegistry{
     }
 
     public AxisModule getModule(QName name) throws AxisFault {
-        return (AxisModule)modules.get(name);
+        return (AxisModule) modules.get(name);
     }
 
     public AxisService getService(QName name) throws AxisFault {
-        return (AxisService)services.get(name);
+        return (AxisService) services.get(name);
     }
 
-    public  synchronized void removeService(QName name) throws AxisFault {
+    public synchronized void removeService(QName name) throws AxisFault {
         services.remove(name);
     }
-    
-    public AxisTransport getTransport(QName name) throws AxisFault {
-         return (AxisTransport)transports.get(name);
-     }
 
-    public synchronized  void addTransport(AxisTransport transport) throws AxisFault {
-        transports.put(transport.getName(),transport);
-     }
+    public AxisTransport getTransport(QName name) throws AxisFault {
+        return (AxisTransport) transports.get(name);
+    }
+
+    public synchronized void addTransport(AxisTransport transport) throws AxisFault {
+        transports.put(transport.getName(), transport);
+    }
 
     public HashMap getTransports() throws AxisFault {
         return transports;

@@ -1,24 +1,16 @@
 package org.apache.axis.om.impl.seriliazer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.*;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 
 /**
@@ -40,7 +32,8 @@ public class ElementSerializerTest extends AbstractTestCase {
     private XMLStreamReader reader;
     private XMLStreamWriter writer;
     private OMXMLParserWrapper builder;
-    private  File tempFile;
+    private File tempFile;
+
     public ElementSerializerTest(String testName) {
         super(testName);
     }
@@ -48,35 +41,35 @@ public class ElementSerializerTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
-        tempFile = File.createTempFile("temp","xml");
+        tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile));
-         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),reader);
+        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), reader);
     }
 
-    public void testElementSerilization() throws Exception{
+    public void testElementSerilization() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serialize(writer,true);
+        elt.serialize(writer, true);
 
     }
 
-    public void testElementSerilizationCacheOff() throws Exception{
+    public void testElementSerilizationCacheOff() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serialize(writer,false);
+        elt.serialize(writer, false);
 
     }
 
-    public void testElementSerilizationChild() throws Exception{
+    public void testElementSerilizationChild() throws Exception {
         OMElement elt = builder.getDocumentElement();
         OMNode node = elt.getFirstChild().getNextSibling();
-        node.serialize(writer,true);
+        node.serialize(writer, true);
 
     }
 
-    public void testElementSerilizationSOAPBodyCacheOff() throws Exception{
-        SOAPEnvelope env = (SOAPEnvelope)builder.getDocumentElement();
+    public void testElementSerilizationSOAPBodyCacheOff() throws Exception {
+        SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         OMNode node = env.getBody();
-        node.serialize(writer,false);
+        node.serialize(writer, false);
     }
 
     public void testElement() throws Exception {
@@ -84,49 +77,49 @@ public class ElementSerializerTest extends AbstractTestCase {
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
-        body.serialize(writer,true);
+        body.serialize(writer, true);
     }
 
     public void testCompleteElement() throws Exception {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        env.serialize(writer,true);
+        env.serialize(writer, true);
     }
 
     public void testDualNamespaces1() throws Exception {
         OMFactory factory = OMFactory.newInstance();
-        OMNamespace ns1 = factory.createOMNamespace("bar","x");
-        OMNamespace ns2 = factory.createOMNamespace("bar","y");
+        OMNamespace ns1 = factory.createOMNamespace("bar", "x");
+        OMNamespace ns2 = factory.createOMNamespace("bar", "y");
 
-        OMElement root = factory.createOMElement("root",ns1);
-        OMElement elt11 = factory.createOMElement("foo1",ns1);
-        OMElement elt12 = factory.createOMElement("foo2",ns1);
-        OMElement elt21 = factory.createOMElement("yuck",ns2);
-        OMElement elt22 = factory.createOMElement("yuck",ns2);
+        OMElement root = factory.createOMElement("root", ns1);
+        OMElement elt11 = factory.createOMElement("foo1", ns1);
+        OMElement elt12 = factory.createOMElement("foo2", ns1);
+        OMElement elt21 = factory.createOMElement("yuck", ns2);
+        OMElement elt22 = factory.createOMElement("yuck", ns2);
 
         elt11.addChild(elt21);
         elt12.addChild(elt22);
         root.addChild(elt11);
         root.addChild(elt12);
-        root.serialize(writer,true);
+        root.serialize(writer, true);
     }
 
     public void testDualNamespaces2() throws Exception {
         OMFactory factory = OMFactory.newInstance();
 
-        OMNamespace ns1 = factory.createOMNamespace("bar","x");
-        OMElement root = factory.createOMElement("root",ns1);
-        OMNamespace ns2 = root.declareNamespace("bar","y");
-        OMElement elt1 = factory.createOMElement("foo",ns1);
-        OMElement elt2 = factory.createOMElement("yuck",ns2);
-        OMText txt1 = factory.createText(elt2,"blah");
+        OMNamespace ns1 = factory.createOMNamespace("bar", "x");
+        OMElement root = factory.createOMElement("root", ns1);
+        OMNamespace ns2 = root.declareNamespace("bar", "y");
+        OMElement elt1 = factory.createOMElement("foo", ns1);
+        OMElement elt2 = factory.createOMElement("yuck", ns2);
+        OMText txt1 = factory.createText(elt2, "blah");
 
         elt2.addChild(txt1);
         elt1.addChild(elt2);
         root.addChild(elt1);
 
-        root.serialize(writer,true);
+        root.serialize(writer, true);
     }
 
     protected void tearDown() throws Exception {

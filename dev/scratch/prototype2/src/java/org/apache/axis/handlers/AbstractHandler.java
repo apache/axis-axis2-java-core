@@ -15,20 +15,20 @@
  */
 package org.apache.axis.handlers;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 
+import javax.xml.namespace.QName;
+
 public abstract class AbstractHandler implements Handler {
     private static HandlerMetaData EMPTY_HANDLER_METADATA = new HandlerMetaData();
     protected HandlerMetaData handlerDesc;
-    
-    public AbstractHandler(){
-    	handlerDesc = EMPTY_HANDLER_METADATA;
+
+    public AbstractHandler() {
+        handlerDesc = EMPTY_HANDLER_METADATA;
     }
 
     public QName getName() {
@@ -39,7 +39,6 @@ public abstract class AbstractHandler implements Handler {
     }
 
 
- 
     public void cleanup() throws AxisFault {
     }
 

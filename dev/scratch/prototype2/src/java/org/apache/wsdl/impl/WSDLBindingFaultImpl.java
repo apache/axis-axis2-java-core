@@ -21,16 +21,16 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLBindingFaultImpl extends ExtensibleComponentImpl implements WSDLBindingFault {
 
     private QName ref;
-    
-    
+
+
     public QName getRef() {
         return ref;
     }
+
     public void setRef(QName ref) {
         this.ref = ref;
     }

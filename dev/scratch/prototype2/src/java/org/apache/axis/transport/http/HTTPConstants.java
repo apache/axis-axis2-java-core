@@ -32,7 +32,7 @@ public class HTTPConstants {
     public static final String RESPONSE_WORD = "RESPONSE_WORD";
     public static final String RESPONSE_ACK_CODE_VAL = "202";
     public static final String SOCKET = "SOCKET";
-    
+
 
     public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
     public static final String HEADER_PROTOCOL_11 = "HTTP/1.1";
@@ -129,8 +129,8 @@ public class HTTPConstants {
     public static final String PLUGIN_WRITER = "transport.http.plugin.writer";
     public static final String PLUGIN_LOG = "transport.http.plugin.log";
     public static final String PLUGIN_EXCEPTION_LOG = "transport.http.plugin.exceptionLog";
-    
-    
+
+
     public static final char OK[] = ("200 OK").toCharArray();
     public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();
     public static final byte UNAUTH[] = ("401 Unauthorized").getBytes();

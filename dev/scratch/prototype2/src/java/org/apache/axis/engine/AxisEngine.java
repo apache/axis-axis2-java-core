@@ -22,7 +22,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.transport.*;
+import org.apache.axis.transport.TransportSenderLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,22 +40,22 @@ public class AxisEngine {
     }
 
     public void send(MessageContext context) throws AxisFault {
-        executeOutFlow(context,EngineRegistry.OUTFLOW);
+        executeOutFlow(context, EngineRegistry.OUTFLOW);
         log.info("end the send()");
     }
 
     public void receive(MessageContext context) throws AxisFault {
         try {
-  //          org.TimeRecorder.START = System.currentTimeMillis();
-			log.info("starting the out flow");
-			//let us always start with a fresh EC
+            //          org.TimeRecorder.START = System.currentTimeMillis();
+            log.info("starting the out flow");
+            //let us always start with a fresh EC
             context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
             
             // Receiving is always a matter of running the transport handlers first
             AxisTransport transport = context.getTransport();
             if (transport != null) {
-            	log.info("Using the transport" + transport.getName());
+                log.info("Using the transport" + transport.getName());
                 chain.addPhases(transport.getPhases(EngineRegistry.INFLOW));
             }
             //Add the phases that are are at Global scope
@@ -70,7 +70,7 @@ public class AxisEngine {
             
             //Start rolling the Service Handlers will,be added by the Dispatcher 
             chain.invoke(context);
-			log.info("ending the out flow");
+            log.info("ending the out flow");
 //            org.TimeRecorder.END = System.currentTimeMillis();
 //            org.TimeRecorder.dump();
         } catch (Throwable e) {
@@ -78,35 +78,34 @@ public class AxisEngine {
         }
     }
 
-    private void handleFault(
-        MessageContext context,
-        Throwable e)
-        throws AxisFault {
+    private void handleFault(MessageContext context,
+                             Throwable e)
+            throws AxisFault {
         boolean serverSide = context.isServerSide();
-		log.error("Error Ocurred", e);
-        if(serverSide && !context.isProcessingFault()){    
+        log.error("Error Ocurred", e);
+        if (serverSide && !context.isProcessingFault()) {
             AxisService service = context.getService();
             context.setProcessingFault(true);
             
             //create a SOAP envelope with the Fault
             SOAPEnvelope envelope =
-                OMFactory.newInstance().getDefaultEnvelope();
+                    OMFactory.newInstance().getDefaultEnvelope();
             //TODO do we need to set old Headers back?
-            envelope.getBody().addFault(new AxisFault("",e));
+            envelope.getBody().addFault(new AxisFault("", e));
             context.setEnvelope(envelope);
             //send the error
-            executeOutFlow(context,EngineRegistry.FAULTFLOW);
-        }else if (!serverSide){
+            executeOutFlow(context, EngineRegistry.FAULTFLOW);
+        } else if (!serverSide) {
             //if at the client side throw the exception
-            throw new AxisFault("",e);
-        }else{
+            throw new AxisFault("", e);
+        } else {
             //TODO log and exit
             log.error("Error in fault flow", e);
         }
     }
 
 
-    private void executeOutFlow(MessageContext context,int flow) throws AxisFault{
+    private void executeOutFlow(MessageContext context, int flow) throws AxisFault {
         try {
             context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
@@ -116,16 +115,16 @@ public class AxisEngine {
                 //what are we suppose to do in the client side 
                 //how the client side handlers are deployed ??? this is a hack and no client side handlers
                 chain.addPhases(service.getPhases(flow));
-            }else{
-                if(context.isServerSide() && !context.isProcessingFault()){
+            } else {
+                if (context.isServerSide() && !context.isProcessingFault()) {
                     throw new AxisFault("in Server Side there must be service object");
                 }
             }
             //Add the phases that are are at Global scope
             AxisGlobal global = context.getGlobalContext().getRegistry().getGlobal();
             chain.addPhases(global.getPhases(flow));
-            
-                        // Receiving is always a matter of running the transport handlers first
+
+            // Receiving is always a matter of running the transport handlers first
             AxisTransport transport = context.getTransport();
             if (transport != null) {
                 chain.addPhases(transport.getPhases(flow));

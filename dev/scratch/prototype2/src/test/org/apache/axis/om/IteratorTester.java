@@ -1,12 +1,11 @@
 package org.apache.axis.om;
 
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -23,7 +22,7 @@ import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class IteratorTester extends AbstractTestCase{
+public class IteratorTester extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
 
@@ -32,15 +31,14 @@ public class IteratorTester extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
-                new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getSOAPEnvelope();
+        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getSOAPEnvelope();
     }
 
     protected void tearDown() throws Exception {
         envelope = null;
     }
 
-    public void testIterator(){
+    public void testIterator() {
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
 
@@ -52,9 +50,9 @@ public class IteratorTester extends AbstractTestCase{
 
 
     /**
-     *test the remove exception behavior
+     * test the remove exception behavior
      */
-    public void testIteratorRemove1(){
+    public void testIteratorRemove1() {
 
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
@@ -70,14 +68,14 @@ public class IteratorTester extends AbstractTestCase{
     }
 
     /**
-     *test the remove exception behavior, consecutive remove calls
+     * test the remove exception behavior, consecutive remove calls
      */
-    public void testIteratorRemove2(){
+    public void testIteratorRemove2() {
 
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
 
-        if (iter.hasNext()){
+        if (iter.hasNext()) {
             iter.next();
         }
 
@@ -96,29 +94,30 @@ public class IteratorTester extends AbstractTestCase{
     /**
      * Remove all!
      */
-    public void testIteratorRemove3(){
+    public void testIteratorRemove3() {
 
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
 
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             iter.next();
             iter.remove();
         }
 
-        iter=elt.getChildren();
+        iter = elt.getChildren();
 
-        if(iter.hasNext()){
+        if (iter.hasNext()) {
             fail("No children should remain after removing all!");
         }
 
 
     }
+
     /**
-     *test whether the children count reduces.
+     * test whether the children count reduces.
      */
 
-    public void testIteratorRemove4(){
+    public void testIteratorRemove4() {
 
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
@@ -127,7 +126,7 @@ public class IteratorTester extends AbstractTestCase{
 
 
         while (iter.hasNext()) {
-            assertNotNull( (OMNode) iter.next());
+            assertNotNull((OMNode) iter.next());
             firstChildrenCount++;
         }
 
@@ -139,24 +138,14 @@ public class IteratorTester extends AbstractTestCase{
         //reset the iterator
         iter = elt.getChildren(); //reset the iterator
         while (iter.hasNext()) {
-            assertNotNull((OMNode)iter.next());
+            assertNotNull((OMNode) iter.next());
             secondChildrenCount++;
         }
 
 
-        assertEquals("children count must reduce from 1",firstChildrenCount-1,secondChildrenCount);
+        assertEquals("children count must reduce from 1", firstChildrenCount - 1, secondChildrenCount);
 
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

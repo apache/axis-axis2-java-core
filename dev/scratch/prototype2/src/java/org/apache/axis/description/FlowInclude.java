@@ -19,10 +19,15 @@ package org.apache.axis.description;
 public interface FlowInclude {
     //Flow include
     public Flow getInFlow();
+
     public void setInFlow(Flow inFlow);
+
     public Flow getOutFlow();
+
     public void setOutFlow(Flow outFlow);
+
     public Flow getFaultFlow();
+
     public void setFaultFlow(Flow faultFlow);
 
 }

@@ -21,17 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlowImpl implements Flow {
-   protected List list;
-   public FlowImpl(){
+    protected List list;
+
+    public FlowImpl() {
         list = new ArrayList();
-   }
-   public void addHandler(HandlerMetaData handler) {
-       list.add(handler);
-   }
-   public HandlerMetaData getHandler(int index) {
-       return (HandlerMetaData)list.get(index);
-   }
-   public int getHandlerCount() {
-       return list.size();
-   }
+    }
+
+    public void addHandler(HandlerMetaData handler) {
+        list.add(handler);
+    }
+
+    public HandlerMetaData getHandler(int index) {
+        return (HandlerMetaData) list.get(index);
+    }
+
+    public int getHandlerCount() {
+        return list.size();
+    }
 }

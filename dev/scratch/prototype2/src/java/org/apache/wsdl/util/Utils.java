@@ -32,19 +32,19 @@ import java.util.Iterator;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class Utils {
-    public static Document newDocument(InputStream in) throws ParserConfigurationException, SAXException, IOException{
+    public static Document newDocument(InputStream in) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
         return db.parse(in);
     }
-    
-    public static WSDLTypes buildWSDL2ComplientMessageType(Message message){
-    	Iterator messageTypeIterator = message.getParts().values().iterator();
-    	if(1 == message.getParts().size() && messageTypeIterator.hasNext()){
-    		Part part = (Part)messageTypeIterator.next();
-    		/// new WSDLTypesImpl().set
-    	}
-    	return null;
+
+    public static WSDLTypes buildWSDL2ComplientMessageType(Message message) {
+        Iterator messageTypeIterator = message.getParts().values().iterator();
+        if (1 == message.getParts().size() && messageTypeIterator.hasNext()) {
+            Part part = (Part) messageTypeIterator.next();
+            /// new WSDLTypesImpl().set
+        }
+        return null;
     }
 }

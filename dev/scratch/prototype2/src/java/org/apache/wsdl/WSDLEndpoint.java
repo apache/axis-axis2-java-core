@@ -20,15 +20,14 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLEndpoint extends Component{
+public interface WSDLEndpoint extends Component {
     public WSDLBinding getBinding();
 
     public void setBinding(WSDLBinding binding);
 
     public QName getName();
-    
+
     public void setName(QName name);
 
 }

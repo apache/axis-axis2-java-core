@@ -25,13 +25,13 @@ public class TransportReciverLocator {
     public static final String TRANSPORT_HTTP = "http";
 
     public static TransportReciver locate(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         String type =
-            (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+                (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
         if (TransportReciverLocator.TRANSPORT_HTTP.equals(type)) {
             return new HTTPTransportReciver();
-        }else{
-            throw new AxisFault("No tranport found");        
+        } else {
+            throw new AxisFault("No tranport found");
         }
     }
 }

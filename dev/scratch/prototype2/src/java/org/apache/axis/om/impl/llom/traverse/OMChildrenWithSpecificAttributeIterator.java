@@ -1,10 +1,10 @@
 package org.apache.axis.om.impl.llom.traverse;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -48,9 +48,9 @@ public class OMChildrenWithSpecificAttributeIterator extends OMChildrenIterator 
                 if (attr != null && attr.getValue().equalsIgnoreCase(attributeValue)) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
-                }else{
+                } else {
                     currentChild = currentChild.getNextSibling();
-                needToMoveForward = !(currentChild == null);
+                    needToMoveForward = !(currentChild == null);
                 }
             } else {
                 // get the next named node

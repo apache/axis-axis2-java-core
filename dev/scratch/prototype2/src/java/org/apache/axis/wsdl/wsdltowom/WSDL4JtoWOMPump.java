@@ -25,24 +25,23 @@ import javax.wsdl.PortType;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDL4JtoWOMPump {
-    
-    public void pump(WSDLDescription wsdlDefinitiios, Definition wsdl4jDefinition){
+
+    public void pump(WSDLDescription wsdlDefinitiios, Definition wsdl4jDefinition) {
         //Copy the Definition's Attrebute Information items and pump the
-        wsdlDefinitiios.setTargetNameSpace( wsdl4jDefinition.getTargetNamespace());
+        wsdlDefinitiios.setTargetNameSpace(wsdl4jDefinition.getTargetNamespace());
         //wsdl4jDefinition.getNamespace()
         //top level components
     }
-    
-    private void pumpInterface(WSDLInterface wsdlInterface, PortType wsdl4jPortType){
+
+    private void pumpInterface(WSDLInterface wsdlInterface, PortType wsdl4jPortType) {
         // Copy The PortType Info to WSDLInterface info.
     }
-    
-    
-    private void pumpBinding(WSDLBinding wsdlBinding, Binding wsdl4jBinding){
-        
+
+
+    private void pumpBinding(WSDLBinding wsdlBinding, Binding wsdl4jBinding) {
+
     }
 
 }

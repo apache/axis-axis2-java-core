@@ -17,11 +17,13 @@
 package org.apache.axis.description;
 
 /**
- * Represents logical collection of handlers. The order of Handlers do not have 
+ * Represents logical collection of handlers. The order of Handlers do not have
  * any symantics.
  */
-public interface Flow{
+public interface Flow {
     public int getHandlerCount();
+
     public HandlerMetaData getHandler(int index);
+
     public void addHandler(HandlerMetaData handler);
 }

@@ -15,15 +15,15 @@
  */
 package org.apache.axis.engine;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.phaseresolver.PhaseException;
 
+import javax.xml.stream.XMLStreamException;
+
 
 public class EngineRegistryFactory {
-    public static EngineRegistry createEngineRegistry(String file)throws AxisFault{
+    public static EngineRegistry createEngineRegistry(String file) throws AxisFault {
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();

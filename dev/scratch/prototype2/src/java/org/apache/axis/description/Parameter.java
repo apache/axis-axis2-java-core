@@ -18,13 +18,19 @@ package org.apache.axis.description;
 
 public interface Parameter {
     public static int TEXT_PARAMETER = 0;
-    public static int DOM_PARAMETER = 1; 
-    
+    public static int DOM_PARAMETER = 1;
+
     public String getName();
+
     public Object getValue();
-    public void setName(String name) ;
+
+    public void setName(String name);
+
     public void setValue(String value);
+
     public boolean isLocked();
+
     public void setLocked(boolean value);
+
     public int getParameterType();
 }

@@ -16,13 +16,6 @@
 
 package org.apache.axis.transport;
 
-import java.io.OutputStream;
-import java.io.Writer;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetaData;
@@ -32,46 +25,49 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.OutputStream;
+import java.io.Writer;
+
 /**
  */
 public abstract class AbstractTransportSender
-    extends AbstractHandler
-    implements TransportSender {
+        extends AbstractHandler
+        implements TransportSender {
     private Log log = LogFactory.getLog(getClass());
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "TransportSender");
+            new QName("http://axis.ws.apache.org", "TransportSender");
     protected OutputStream outS;
+
     public AbstractTransportSender() {
         init(new HandlerMetaData(NAME));
     }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         Writer out = null;
         if (msgContext.isProcessingFault()) {
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {
-                log.info(
-                    "Obtain the output stream to send the fault flow to "
+                log.info("Obtain the output stream to send the fault flow to "
                         + msgContext.getFaultTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getFaultTo());
             } else {
-                log.info(
-                    "Obtain the output stream to send the fault flow to ANONYMOUS");
+                log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         } else {
             if (msgContext.getTo() != null) {
-                log.info(
-                    "Obtain the output stream to send to To flow to "
+                log.info("Obtain the output stream to send to To flow to "
                         + msgContext.getTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
-                log.info(
-                    "Obtain the output stream to send to ReplyTo flow to "
+                log.info("Obtain the output stream to send to ReplyTo flow to "
                         + msgContext.getReplyTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else {
-                log.info(
-                    "Obtain the output stream to send the fault flow to ANONYMOUS");
+                log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         }
@@ -82,7 +78,7 @@ public abstract class AbstractTransportSender
             try {
                 // org.TimeRecorder.BEFORE_SERIALIZE = System.currentTimeMillis();
                 outputWriter =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                        XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter, false);
                 outputWriter.flush();
                 if (outS != null) {
@@ -103,15 +99,14 @@ public abstract class AbstractTransportSender
     protected void startSending(MessageContext msgContext) throws AxisFault {
     }
 
-    protected abstract Writer obtainOutputStream(
-        MessageContext msgContext,
-        EndpointReference epr)
-        throws AxisFault;
+    protected abstract Writer obtainOutputStream(MessageContext msgContext,
+                                                 EndpointReference epr)
+            throws AxisFault;
 
     protected abstract Writer obtainOutputStream(MessageContext msgContext)
-        throws AxisFault;
+            throws AxisFault;
 
     protected void finalizeSending(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
     }
 }

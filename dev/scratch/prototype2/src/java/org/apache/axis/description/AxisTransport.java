@@ -15,28 +15,27 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
+import org.apache.axis.engine.AxisFault;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.engine.AxisFault;
+import java.util.ArrayList;
 
 /**
  * Represents a transport deployed in AXis2
  */
-public class AxisTransport implements ParameterInclude,PhasesInclude,FlowInclude {
+public class AxisTransport implements ParameterInclude, PhasesInclude, FlowInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
     private FlowInclude flowInclude;
-    protected QName name; 
-    
-    public AxisTransport(QName name){
+    protected QName name;
+
+    public AxisTransport(QName name) {
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
         flowInclude = new FlowIncludeImpl();
         this.name = name;
     }
-    
+
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
     }

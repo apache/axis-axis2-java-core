@@ -28,7 +28,7 @@ public class TransportSenderLocator {
     public static TransportSender locate(MessageContext msgContext) throws AxisFault {
         String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
         if (TransportSenderLocator.TRANSPORT_HTTP.equals(type)) {
-                return new HTTPTransportSender();
+            return new HTTPTransportSender();
         }
         throw new AxisFault("No tranport found");
     }

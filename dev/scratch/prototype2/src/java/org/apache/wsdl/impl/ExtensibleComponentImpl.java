@@ -24,63 +24,66 @@ import java.util.List;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class ExtensibleComponentImpl extends ComponentImpl implements ExtensibleComponent {
 
-    
+
     private List features = null;
-    
+
     private List properties = null;
-    
+
     /**
      * Will add a <code>WSDLFeature</code> to the feature list.
-     * If feature is null it will not be added. 
-     * 
+     * If feature is null it will not be added.
+     * <p/>
      * <code>ExtensibleComponent</code>
+     *
      * @param feature
      */
-    public void addFeature(WSDLFeature feature){
-        if(null == this.features) this.features = new LinkedList();
-        
-        if(null == feature) return ;
-        
+    public void addFeature(WSDLFeature feature) {
+        if (null == this.features) this.features = new LinkedList();
+
+        if (null == feature) return;
+
         this.features.add(feature);
     }
+
     /**
      * Will return the <code>WSDLFeature</code>s. If there aren't
      * any features an empty list will be returned.
-     *     
+     *
      * @return
      */
-    public List getFeatures(){
-        if(null == this.features) return new LinkedList();
+    public List getFeatures() {
+        if (null == this.features) return new LinkedList();
         return this.features;
     }
-    
+
     /**
      * Wll add the property to the component properties. If the property is null it will
      * not be added.
+     *
      * @param wsdlProperty
      */
-    public void addPorperty(WSDLProperty wsdlProperty){
-        if(null == this.properties) this.properties = new LinkedList();
-        
-        if(null == wsdlProperty) return;
-        
+    public void addPorperty(WSDLProperty wsdlProperty) {
+        if (null == this.properties) this.properties = new LinkedList();
+
+        if (null == wsdlProperty) return;
+
         this.features.add(wsdlProperty);
-                
+
     }
-    
+
     /**
      * Returns the Component Properties. If none exist an empty list will be returned.
+     *
      * @return
      */
-    public List getProperties(){
-        
-        if(null == this.properties) return new LinkedList();
-        
+    public List getProperties() {
+
+        if (null == this.properties) return new LinkedList();
+
         return this.properties;
     }
-    
+
 }

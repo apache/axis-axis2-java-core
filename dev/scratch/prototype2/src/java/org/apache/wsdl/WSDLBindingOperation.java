@@ -20,11 +20,10 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLBindingOperation extends ExtensibleComponent{
-    
-    
+public interface WSDLBindingOperation extends ExtensibleComponent {
+
+
     public WSDLBindingMessageReference getInput();
 
     public void setInput(WSDLBindingMessageReference input);
@@ -36,8 +35,8 @@ public interface WSDLBindingOperation extends ExtensibleComponent{
     public WSDLBindingMessageReference getOutput();
 
     public void setOutput(WSDLBindingMessageReference output);
-    
-    public QName getName() ;
-    
-    public void setName(QName name) ;
+
+    public QName getName();
+
+    public void setName(QName name);
 }

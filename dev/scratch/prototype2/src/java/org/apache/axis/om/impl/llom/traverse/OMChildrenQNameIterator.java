@@ -1,9 +1,9 @@
 package org.apache.axis.om.impl.llom.traverse;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.impl.llom.OMNamedNodeImpl;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

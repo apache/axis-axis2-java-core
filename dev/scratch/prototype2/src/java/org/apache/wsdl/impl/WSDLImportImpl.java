@@ -19,42 +19,44 @@ import org.apache.wsdl.WSDLImport;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLImportImpl extends ComponentImpl implements WSDLImport {
-    
+
     private String location;
-    
+
     private String namespace;
-    
-    
-    
+
+
     /**
      * Gets the location URI of the Include.
+     *
      * @return
      */
     public String getLocation() {
         return location;
     }
-    
+
     /**
      * Sets the location URI of the Include.
+     *
      * @param loaction
      */
     public void setLocation(String location) {
         this.location = location;
     }
-    
+
     /**
      * Returns the namespace URI
+     *
      * @return
      */
     public String getNamespace() {
         return namespace;
     }
-    
+
     /**
      * Sets the namespace URI.
+     *
      * @param namespace
      */
     public void setNamespace(String namespace) {

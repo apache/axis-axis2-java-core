@@ -6,13 +6,6 @@
 */
 package org.apache.axis.clientapi;
 
-import java.io.FileReader;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -27,15 +20,20 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileReader;
+
 /**
  * @author Jaliya
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class TestSendReceiveAsync extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
@@ -54,7 +52,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
     private SimpleHTTPServer sas;
 
-    private boolean finish=false;
+    private boolean finish = false;
 
     /**
      * @param testName
@@ -65,7 +63,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
     }
 
 
-     protected void setUp() throws Exception {
+    protected void setUp() throws Exception {
         engineRegistry = EngineUtils.createMockRegistry(serviceName, operationName, transportName);
 
         AxisService service = new AxisService(serviceName);
@@ -84,49 +82,49 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
     protected void tearDown() throws Exception {
 
-        while(!finish){
+        while (!finish) {
             Thread.sleep(500);
         }
-        EngineUtils.stopServer();  
+        EngineUtils.stopServer();
 
 
     }
 
 
-    public void testSendReceiveAsync() throws Exception{
+    public void testSendReceiveAsync() throws Exception {
 
         SOAPEnvelope envelope = getBasicEnvelope();
-        EndpointReference targetEPR = new EndpointReference(
-                AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
+        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
-        call.setListenerTransport("http",true);
+        call.setListenerTransport("http", true);
 
-        Callback callback = new Callback(){
-            public void onComplete(AsyncResult result){
+        Callback callback = new Callback() {
+            public void onComplete(AsyncResult result) {
 
                 try {
-                   result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out),true);
+                    result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(System.out), true);
                 } catch (XMLStreamException e) {
                     reportError(e);
 
 
-                }finally{
-                    finish=true;
+                } finally {
+                    finish = true;
                 }
             }
-            public void reportError(Exception e){
-               e.printStackTrace();
+
+            public void reportError(Exception e) {
+                e.printStackTrace();
             }
         };
-        call.sendReceiveAsync(envelope,callback);
+        call.sendReceiveAsync(envelope, callback);
 
     }
+
     private SOAPEnvelope getBasicEnvelope() throws Exception {
 
-           SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
-                   new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
+        SOAPEnvelope envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("clientapi/SimpleSOAPEnvelope.xml")))).getSOAPEnvelope();
 
         /*   File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
            XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); //put the file
@@ -134,8 +132,8 @@ public class TestSendReceiveAsync extends AbstractTestCase {
            OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory
                    .newInstance(), xmlStreamReader);
            return (SOAPEnvelope) builder.getDocumentElement(); */
-           return envelope;
-       }
+        return envelope;
+    }
 
 
 }

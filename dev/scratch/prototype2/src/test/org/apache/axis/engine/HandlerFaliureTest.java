@@ -17,44 +17,32 @@ package org.apache.axis.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.description.SimpleAxisOperationImpl;
-import org.apache.axis.description.SpeakingHandler;
+import org.apache.axis.description.*;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 
 public class HandlerFaliureTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
-    
+
 
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
-    
+
     public HandlerFaliureTest() {
         super(HandlerFaliureTest.class.getName());
     }
@@ -91,9 +79,9 @@ public class HandlerFaliureTest extends AbstractTestCase {
 
         UtilServer.start();
         UtilServer.deployService(service);
-        try{
-	        callTheService();
-        }finally{
+        try {
+            callTheService();
+        } finally {
             UtilServer.unDeployService(serviceName);
             UtilServer.stop();
         }
@@ -131,12 +119,12 @@ public class HandlerFaliureTest extends AbstractTestCase {
         EngineUtils.createExecutionChains(service);
         UtilServer.start();
         UtilServer.deployService(service);
-		try{
-			callTheService();
-		}finally{
+        try {
+            callTheService();
+        } finally {
             UtilServer.unDeployService(serviceName);
             UtilServer.stop();
-		}
+        }
     }
 
 
@@ -159,7 +147,7 @@ public class HandlerFaliureTest extends AbstractTestCase {
 
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
-			EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (EngineUtils.TESTING_PORT )+ "/axis/services/EchoXMLService");
+            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (EngineUtils.TESTING_PORT) + "/axis/services/EchoXMLService");
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
@@ -174,7 +162,7 @@ public class HandlerFaliureTest extends AbstractTestCase {
             assertTrue((e.getMessage().indexOf(EngineUtils.FAILURE_MESSAGE)) > 0);
             return;
         }
-       
+
     }
 
     private Handler culprit = new AbstractHandler() {

@@ -16,7 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
@@ -26,23 +25,24 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class EchoTest extends AbstractTestCase{
+import javax.xml.namespace.QName;
+
+public class EchoTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("","EchoXMLService");
-    private QName operationName1 = new QName("http://localhost/my","echoInt");
-    private QName operationName2 = new QName("http://localhost/my","echoString");
-    private QName transportName = new QName("http://localhost/my","NullTransport");
+    private QName serviceName = new QName("", "EchoXMLService");
+    private QName operationName1 = new QName("http://localhost/my", "echoInt");
+    private QName operationName2 = new QName("http://localhost/my", "echoString");
+    private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
-    
-    public EchoTest(){
+
+    public EchoTest() {
         super(EchoTest.class.getName());
     }
 
@@ -53,7 +53,7 @@ public class EchoTest extends AbstractTestCase{
     protected void setUp() throws Exception {
         AxisGlobal global = new AxisGlobal();
         engineRegistry = new org.apache.axis.engine.EngineRegistryImpl(global);
-        
+
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
@@ -61,23 +61,23 @@ public class EchoTest extends AbstractTestCase{
 
         AxisOperation operation1 = new SimpleAxisOperationImpl(operationName1);
         service.addOperation(operation1);
-        
+
         AxisOperation operation2 = new SimpleAxisOperationImpl(operationName2);
         service.addOperation(operation2);
 
         EngineUtils.createExecutionChains(service);
         engineRegistry.addService(service);
-        
+
         sas = EngineUtils.startServer(engineRegistry);
     }
 
     protected void tearDown() throws Exception {
-            EngineUtils.stopServer();    
-            Thread.sleep(1000);
+        EngineUtils.stopServer();
+        Thread.sleep(1000);
     }
 
 
-    public void testInt() throws Exception{
+    public void testInt() throws Exception {
 //        try{
 //            OMFactory fac = OMFactory.newInstance();
 //
@@ -97,7 +97,8 @@ public class EchoTest extends AbstractTestCase{
 //            throw e;
 //        }    
     }
-    public void testString() throws Exception{
+
+    public void testString() throws Exception {
 //        try{
 //            OMFactory fac = OMFactory.newInstance();
 //

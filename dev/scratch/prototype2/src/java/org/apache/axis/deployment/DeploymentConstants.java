@@ -56,7 +56,7 @@ public interface DeploymentConstants {
     String ATTNAME = "name";
     String ATTLOCKED = "locked";
 
-   // for operatiins
+    // for operatiins
     String ATQNAME = "name";
     String ATUSE = "use";
 
@@ -74,6 +74,6 @@ public interface DeploymentConstants {
     String JAVAIMPL = "implementation";
 
     String TRANSPORTSTAG = "transports";
-    String TRANSPORTTAG ="transport";
+    String TRANSPORTTAG = "transport";
 
 }

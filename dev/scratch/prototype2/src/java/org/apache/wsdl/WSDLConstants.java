@@ -17,24 +17,23 @@ package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface WSDLConstants {
 
     public static final String WSDL2_0_NAMESPACE =
-        "http://www.w3.org/2004/03/wsdl";
+            "http://www.w3.org/2004/03/wsdl";
 
     public static final String WSDL1_1_NAMESPACE =
-        "http://schemas.xmlsoap.org/wsdl/";
+            "http://schemas.xmlsoap.org/wsdl/";
 
     public static final String[] WSDL_NAMESPACES =
-        { WSDL2_0_NAMESPACE, WSDL1_1_NAMESPACE };
+            {WSDL2_0_NAMESPACE, WSDL1_1_NAMESPACE};
 
-	//TODO Verify weather the value is right with the spec.
+    //TODO Verify weather the value is right with the spec.
 	
     public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
-    
-	//TODO Verify weather the value is right with the spec. 
+
+    //TODO Verify weather the value is right with the spec.
     
     public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
     
@@ -43,20 +42,20 @@ public interface WSDLConstants {
     //////////////////////////////////////////////////////////////////
     
     public static final String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
-    
-    public static final String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";                                                 
-    
+
+    public static final String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
+
     public static final String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
-    
+
     public static final String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
-    
+
     public static final String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
-    
+
     public static final String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
-    
+
     public static final String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
-    
+
     public static final String MEP_URI_OUT_OPTIONL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
-    
-        
+
+
 }

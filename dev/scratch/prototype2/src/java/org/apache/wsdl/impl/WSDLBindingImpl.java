@@ -25,70 +25,71 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding   {
+public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding {
 
-	private QName name;
-	
-	private WSDLInterface boundInterface;
-	
-	private HashMap bindingFaults = new HashMap();
-	
-	private HashMap bindingOperations = new HashMap();
-	
-	
-	
-	 
-	
-	
-	public WSDLInterface getBoundInterface() {
-		return boundInterface;
-	}
-	public void setBoundInterface(WSDLInterface boundInterface) {
-		this.boundInterface = boundInterface;
-	}
-	
-	public QName getName() {
-		return name;
-	}
-	public void setName(QName name) {
-		this.name = name;
-	}
-	
-	public String getTargetNameSpace() {
-		return this.name.getLocalPart();
-	}
-	
-	
-   
+    private QName name;
+
+    private WSDLInterface boundInterface;
+
+    private HashMap bindingFaults = new HashMap();
+
+    private HashMap bindingOperations = new HashMap();
+
+
+    public WSDLInterface getBoundInterface() {
+        return boundInterface;
+    }
+
+    public void setBoundInterface(WSDLInterface boundInterface) {
+        this.boundInterface = boundInterface;
+    }
+
+    public QName getName() {
+        return name;
+    }
+
+    public void setName(QName name) {
+        this.name = name;
+    }
+
+    public String getTargetNameSpace() {
+        return this.name.getLocalPart();
+    }
+
+
     public HashMap getBindingFaults() {
         return bindingFaults;
     }
+
     public void setBindingFaults(HashMap bindingFaults) {
         this.bindingFaults = bindingFaults;
     }
+
     public HashMap getBindingOperations() {
         return bindingOperations;
     }
+
     public void setBindingOperations(HashMap bindingOperations) {
         this.bindingOperations = bindingOperations;
     }
-	public void addBindingOperation(WSDLBindingOperation bindingOperation){
-	    if(null != bindingOperation)
-	        this.bindingOperations.put(bindingOperation.getName(), bindingOperation);
-	}
-	public WSDLBindingOperation getBindingOperation(QName qName){
-	    return (WSDLBindingOperation)this.bindingOperations.get(qName);
-	}
-	
-	public void addBindingFaults(WSDLBindingFault bindingFault){
-	    if(null != bindingFault)
-	        this.bindingFaults.put(bindingFault.getRef(), bindingFault);	    
-	}
-	
-	public WSDLBindingFault getBindingFault(QName ref){
-	    return (WSDLBindingFault)this.bindingFaults.get(ref);	    
-	}
-	
+
+    public void addBindingOperation(WSDLBindingOperation bindingOperation) {
+        if (null != bindingOperation)
+            this.bindingOperations.put(bindingOperation.getName(), bindingOperation);
+    }
+
+    public WSDLBindingOperation getBindingOperation(QName qName) {
+        return (WSDLBindingOperation) this.bindingOperations.get(qName);
+    }
+
+    public void addBindingFaults(WSDLBindingFault bindingFault) {
+        if (null != bindingFault)
+            this.bindingFaults.put(bindingFault.getRef(), bindingFault);
+    }
+
+    public WSDLBindingFault getBindingFault(QName ref) {
+        return (WSDLBindingFault) this.bindingFaults.get(ref);
+    }
+
 }

@@ -21,23 +21,25 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface WSDLTypes {
     /**
      * Sets the <code>ExtensionElement</code>s as a <code>HashMap</code>
+     *
      * @return
      */
     public HashMap getTypes();
 
     /**
      * Returns all the <code>ExtensionElement</code>s as a <code>HashMap</code>
+     *
      * @param types
      */
     public void setTypes(HashMap types);
 
     /**
-     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>     * 
+     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>     *
+     *
      * @param qName
      * @param element
      */
@@ -46,6 +48,7 @@ public interface WSDLTypes {
     /**
      * Will return the Element with the given <code>QName</code>
      * Returns null if not found.
+     *
      * @param qName
      * @return
      */

@@ -20,8 +20,6 @@
 package org.apache.axis.om;
 
 
-
-
 public class OMEnvelopeTest extends OMTestCase {
     public OMEnvelopeTest(String testName) {
         super(testName);
@@ -30,14 +28,15 @@ public class OMEnvelopeTest extends OMTestCase {
     protected void setUp() throws Exception {
         super.setUp();
     }
+
     public void testGetHeader1() {
         SOAPHeader header = soapEnvelope.getHeader();
-        assertTrue("Header information retrieved not correct", ( header != null && header.getLocalName().equalsIgnoreCase("Header")) );
+        assertTrue("Header information retrieved not correct", (header != null && header.getLocalName().equalsIgnoreCase("Header")));
     }
 
     public void testGetBody1() {
         SOAPBody body = soapEnvelope.getBody();
-        assertTrue("Header information retrieved not correct", ( body != null && body.getLocalName().equalsIgnoreCase("Body")) );
+        assertTrue("Header information retrieved not correct", (body != null && body.getLocalName().equalsIgnoreCase("Body")));
     }
 
     private SOAPEnvelope getSecondEnvelope() throws Exception {
@@ -46,21 +45,21 @@ public class OMEnvelopeTest extends OMTestCase {
 
     public void testGetHeader2() throws Exception {
         SOAPHeader header = getSecondEnvelope().getHeader();
-        assertTrue("Header information retrieved not correct", ( header != null && header.getLocalName().equalsIgnoreCase("Header")) );
+        assertTrue("Header information retrieved not correct", (header != null && header.getLocalName().equalsIgnoreCase("Header")));
     }
 
     public void testGetBody2() throws Exception {
         SOAPBody body = getSecondEnvelope().getBody();
-        assertTrue("Header information retrieved not correct", ( body != null && body.getLocalName().equalsIgnoreCase("Body")) );
+        assertTrue("Header information retrieved not correct", (body != null && body.getLocalName().equalsIgnoreCase("Body")));
     }
 
-    public void testDefaultEnveleope(){
+    public void testDefaultEnveleope() {
 
         SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
         assertNotNull(env);
 
-        assertNotNull("Header should not be null",env.getHeader());
-        assertNotNull("Body should not be null",env.getBody());
+        assertNotNull("Header should not be null", env.getHeader());
+        assertNotNull("Body should not be null", env.getBody());
 
     }
 

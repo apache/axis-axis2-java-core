@@ -19,36 +19,40 @@ import org.apache.wsdl.WSDLProperty;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class WDSLPropertyImpl extends ComponentImpl implements WSDLProperty  {
+public class WDSLPropertyImpl extends ComponentImpl implements WSDLProperty {
 
-	
-	private String uri;
-	
-	//TODO replace with the  data binding object structure
-	private Object constraint;
-	
-	//TODO replace with the  data binding object structure
-	private Object value;
-	
-	
-	public Object getConstraint() {
-		return constraint;
-	}
-	public void setConstraint(Object constraint) {
-		this.constraint = constraint;
-	}
-	public String getName() {
-		return uri;
-	}
-	public void setName(String uri) {
-		this.uri = uri;
-	}
-	public Object getValue() {
-		return value;
-	}
-	public void setValue(Object value) {
-		this.value = value;
-	}
+
+    private String uri;
+
+    //TODO replace with the  data binding object structure
+    private Object constraint;
+
+    //TODO replace with the  data binding object structure
+    private Object value;
+
+
+    public Object getConstraint() {
+        return constraint;
+    }
+
+    public void setConstraint(Object constraint) {
+        this.constraint = constraint;
+    }
+
+    public String getName() {
+        return uri;
+    }
+
+    public void setName(String uri) {
+        this.uri = uri;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

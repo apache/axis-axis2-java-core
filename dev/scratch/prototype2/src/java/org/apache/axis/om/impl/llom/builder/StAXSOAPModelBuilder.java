@@ -1,21 +1,14 @@
 package org.apache.axis.om.impl.llom.builder;
 
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis.om.impl.llom.exception.OMBuilderException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -39,7 +32,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     private SOAPEnvelopeImpl envelope;
     private boolean headerPresent = false;
     private boolean bodyPresent = false;
-	private Log log = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * element level 1 = envelope level
@@ -83,7 +76,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         //fill in the attributes
         processAttributes(node);
-		log.info("Build the OMElelment {" + node.getNamespaceName()+ '}' + node.getLocalName() + "By the StaxSOAPModelBuilder");
+        log.info("Build the OMElelment {" + node.getNamespaceName() + '}' + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
 
@@ -95,7 +88,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
                 throw new OMException("First Element must contain the local name, " + OMConstants.SOAPENVELOPE_LOCAL_NAME);
             }
-            envelope = (SOAPEnvelopeImpl)ombuilderFactory.createSOAPEnvelope(null, this);
+            envelope = (SOAPEnvelopeImpl) ombuilderFactory.createSOAPEnvelope(null, this);
             element = (OMElementImpl) envelope;
             processNamespaceData(element, true);
 
@@ -109,16 +102,16 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     throw new OMBuilderException("Header Body wrong order!");
                 }
                 headerPresent = true;
-                element = ombuilderFactory.createSOAPHeader((SOAPEnvelope)parent, this);
-				//envelope.setHeader((SOAPHeader)element);
+                element = ombuilderFactory.createSOAPHeader((SOAPEnvelope) parent, this);
+                //envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
             } else if (elementName.equals(OMConstants.BODY_LOCAL_NAME)) {
                 if (bodyPresent) {
                     throw new OMBuilderException("Multiple body elements encountered");
                 }
                 bodyPresent = true;
-                element = ombuilderFactory.createSOAPBody((SOAPEnvelope)parent, this);
-				//envelope.setBody((SOAPBody)element);
+                element = ombuilderFactory.createSOAPBody((SOAPEnvelope) parent, this);
+                //envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
             } else {
                 throw new OMBuilderException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
@@ -129,9 +122,9 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             element = ombuilderFactory.createSOAPHeaderBlock(elementName, null, parent, this);
             processNamespaceData(element, false);
 
-        }else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase(OMConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(OMConstants.BODY_FAULT_LOCAL_NAME)) {
+        } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase(OMConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(OMConstants.BODY_FAULT_LOCAL_NAME)) {
             // this is a headerblock
-            element = ombuilderFactory.createSOAPFault(null, (SOAPBody)parent, this);
+            element = ombuilderFactory.createSOAPFault(null, (SOAPBody) parent, this);
             processNamespaceData(element, false);
 
         } else {

@@ -65,6 +65,7 @@ public interface OMXMLParserWrapper {
      * Returns the type of the builder.
      * Can be either the
      * PUSH_TYPE_BUILDER or PULL_TYPE_BUILDER
+     *
      * @return
      */
     short getBuilderType();
@@ -72,13 +73,15 @@ public interface OMXMLParserWrapper {
     /**
      * Registers an external content handler. Especially useful for
      * push type builders. will throw an unsupportedOperationExcveption if
-     * such handler registration is not supported     
+     * such handler registration is not supported
+     *
      * @param obj
      */
     void registerExternalContentHandler(Object obj);
 
     /**
      * get the registered external content handler
+     *
      * @return
      */
     Object getRegisteredContentHandler();

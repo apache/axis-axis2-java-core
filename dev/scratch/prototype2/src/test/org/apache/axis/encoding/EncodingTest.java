@@ -15,19 +15,18 @@
  */
 package org.apache.axis.encoding;
 
-import java.lang.reflect.Method;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.lang.reflect.Method;
 
 
 public class EncodingTest extends AbstractTestCase {
@@ -40,70 +39,71 @@ public class EncodingTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testDeserializingInt() throws SecurityException, NoSuchMethodException, AxisFault{
-        Method method = Echo.class.getMethod("echoInt",new Class[]{int.class});
-        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+    public void testDeserializingInt() throws SecurityException, NoSuchMethodException, AxisFault {
+        Method method = Echo.class.getMethod("echoInt", new Class[]{int.class});
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my", "my");
         OMFactory omfac = OMFactory.newInstance();
-        OMElement omel = omfac.createOMElement("value",omNs);
+        OMElement omel = omfac.createOMElement("value", omNs);
         omel.addChild(omfac.createText("1234"));
-        
-        deserialize(method,omel.getPullParser(false));
+
+        deserialize(method, omel.getPullParser(false));
     }
 
 
-    public void testDeserializingString() throws SecurityException, NoSuchMethodException, AxisFault{
-        Method method = Echo.class.getMethod("echoInt",new Class[]{int.class});
-        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+    public void testDeserializingString() throws SecurityException, NoSuchMethodException, AxisFault {
+        Method method = Echo.class.getMethod("echoInt", new Class[]{int.class});
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my", "my");
         OMFactory omfac = OMFactory.newInstance();
-        OMElement omel = omfac.createOMElement("value",omNs);
+        OMElement omel = omfac.createOMElement("value", omNs);
         omel.addChild(omfac.createText("1234"));
-        
-        deserialize(method,omel.getPullParser(false));
+
+        deserialize(method, omel.getPullParser(false));
     }
-    
-    
-    public void testDeserializingStringArray() throws SecurityException, NoSuchMethodException, AxisFault{
-        Method method = Echo.class.getMethod("echoStringArray",new Class[]{String[].class});
-        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+
+
+    public void testDeserializingStringArray() throws SecurityException, NoSuchMethodException, AxisFault {
+        Method method = Echo.class.getMethod("echoStringArray", new Class[]{String[].class});
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my", "my");
         OMFactory omfac = OMFactory.newInstance();
-        OMElement omel = omfac.createOMElement("Array",omNs);
-        
-        for(int i = 0;i<5;i++){
-            OMElement temp = omfac.createOMElement("val",omNs);
+        OMElement omel = omfac.createOMElement("Array", omNs);
+
+        for (int i = 0; i < 5; i++) {
+            OMElement temp = omfac.createOMElement("val", omNs);
             temp.addChild(omfac.createText(String.valueOf(i)));
             omel.addChild(temp);
         }
-        
-        deserialize(method,omel.getPullParser(false));
+
+        deserialize(method, omel.getPullParser(false));
     }
 
-    public void testDeserializingStringArrayVal() throws SecurityException, NoSuchMethodException, AxisFault, XMLStreamException, FactoryConfigurationError{
-        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+    public void testDeserializingStringArrayVal() throws SecurityException, NoSuchMethodException, AxisFault, XMLStreamException, FactoryConfigurationError {
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my", "my");
         OMFactory omfac = OMFactory.newInstance();
-        OMElement omel = omfac.createOMElement("Array",omNs);
-        
-        for(int i = 0;i<5;i++){
-            OMElement temp = omfac.createOMElement("val",omNs);
+        OMElement omel = omfac.createOMElement("Array", omNs);
+
+        for (int i = 0; i < 5; i++) {
+            OMElement temp = omfac.createOMElement("val", omNs);
             temp.addChild(omfac.createText(String.valueOf(i)));
             omel.addChild(temp);
         }
-        
-        omel.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),true);
+
+        omel.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out), true);
         XMLStreamReader xpp = omel.getPullParser(false);
         String[] strs = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
-        for(int i = 0;i<strs.length;i++){
+        for (int i = 0; i < strs.length; i++) {
             System.out.println(strs[i]);
         }
-        
+
     }
-    public void deserialize(Method method,XMLStreamReader xpp) throws AxisFault{
+
+    public void deserialize(Method method, XMLStreamReader xpp) throws AxisFault {
         Class[] parms = method.getParameterTypes();
         Object[] objs = new Object[parms.length];
 
         for (int i = 0; i < parms.length; i++) {
             if (int.class.equals(parms[i])) {
                 objs[i] =
-                    new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
+                        new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
             } else if (String.class.equals(parms[i])) {
                 objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
             } else if (String[].class.equals(parms[i])) {
@@ -114,13 +114,14 @@ public class EncodingTest extends AbstractTestCase {
         }
 
     }
-    
-    
-    public  class Echo{
-        public int echoInt(int intVal){
+
+
+    public class Echo {
+        public int echoInt(int intVal) {
             return intVal;
         }
-        public String[] echoStringArray(String[] in){
+
+        public String[] echoStringArray(String[] in) {
             return in;
         }
     }

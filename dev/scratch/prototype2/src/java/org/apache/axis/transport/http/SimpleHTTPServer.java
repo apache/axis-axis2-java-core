@@ -16,14 +16,6 @@
 
 package org.apache.axis.transport.http;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
@@ -31,6 +23,10 @@ import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.transport.TransportSenderLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -101,11 +97,11 @@ public class SimpleHTTPServer implements Runnable {
                             throw new AxisFault("Engine Must be null");
                         }
                         Writer out =
-                            new OutputStreamWriter(socket.getOutputStream());
+                                new OutputStreamWriter(socket.getOutputStream());
                         Reader in =
-                            new InputStreamReader(socket.getInputStream());
+                                new InputStreamReader(socket.getInputStream());
                         MessageContext msgContext =
-                            new MessageContext(this.engineReg, null);
+                                new MessageContext(this.engineReg, null);
                         msgContext.setServerSide(true);
 
                         out.write(HTTPConstants.HTTP);
@@ -114,17 +110,14 @@ public class SimpleHTTPServer implements Runnable {
                         log.info("status written");
                         //We do not have any Addressing Headers to put
                         //let us put the information about incoming transport
-                        msgContext.setProperty(
-                            MessageContext.TRANSPORT_TYPE,
-                            TransportSenderLocator.TRANSPORT_HTTP);
-                        msgContext.setProperty(
-                            MessageContext.TRANSPORT_WRITER,
-                            out);
-                        msgContext.setProperty(
-                            MessageContext.TRANSPORT_READER,
-                            in);
+                        msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+                                TransportSenderLocator.TRANSPORT_HTTP);
+                        msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
+                                out);
+                        msgContext.setProperty(MessageContext.TRANSPORT_READER,
+                                in);
                         HTTPTransportReciver reciver =
-                            new HTTPTransportReciver();
+                                new HTTPTransportReciver();
                         reciver.invoke(msgContext);
 
                     }

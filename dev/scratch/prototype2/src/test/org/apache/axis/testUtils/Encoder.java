@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.axis.testUtils;
 
-import javax.xml.stream.XMLStreamReader;
+package org.apache.axis.testUtils;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-
 import org.xml.sax.ContentHandler;
 
+import javax.xml.stream.XMLStreamReader;
 
-public interface Encoder{
-	public Object deSerialize(XMLStreamReader xpp)throws AxisFault;
-	public void setObject(Object obj);
-    public void serialize(ContentHandler contentHandler)throws OMException ;
+
+public interface Encoder {
+    public Object deSerialize(XMLStreamReader xpp) throws AxisFault;
+
+    public void setObject(Object obj);
+
+    public void serialize(ContentHandler contentHandler) throws OMException;
 }

@@ -14,7 +14,7 @@ package org.apache.axis.addressing.miheaders;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p/>
  * This will map to the was:relatsTo
  */
 public class RelatesTo {

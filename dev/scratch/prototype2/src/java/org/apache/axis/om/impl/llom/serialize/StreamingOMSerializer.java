@@ -1,12 +1,13 @@
 package org.apache.axis.om.impl.llom.serialize;
 
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMSerializer;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMSerializer;
 //import java.util.Stack;
 
 
@@ -27,11 +28,11 @@ import org.apache.axis.om.OMSerializer;
  */
 public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
-   /* The behavior of the serializer is such that it returns when it encounters the
-    starting element for the second time. The depth variable tracks the depth of the
-    serilizer and tells it when to return.
-    Note that it is assumed that this serilization starts on an Element
-   */
+    /* The behavior of the serializer is such that it returns when it encounters the
+     starting element for the second time. The depth variable tracks the depth of the
+     serilizer and tells it when to return.
+     Note that it is assumed that this serilization starts on an Element
+    */
     private int depth = 0;
 
     public void serialize(Object obj, XMLStreamWriter writer) throws XMLStreamException {
@@ -50,7 +51,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
             if (event == START_ELEMENT) {
                 serializeElement(reader, writer);
-                depth ++;
+                depth++;
             } else if (event == ATTRIBUTE) {
                 serializeAttributes(reader, writer);
             } else if (event == CHARACTERS) {
@@ -69,7 +70,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
                     //this is eaten
                 }
             }
-            if (depth==0) break;
+            if (depth == 0) break;
         }
     }
 
@@ -83,18 +84,18 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
         String writer_prefix = writer.getPrefix(nameSpaceName);
 
         if (nameSpaceName != null) {
-            if (writer_prefix!=null){
+            if (writer_prefix != null) {
                 writer.writeStartElement(nameSpaceName, reader.getLocalName());
-            }else{
-                if (prefix!=null){
-                        writer.writeStartElement(prefix, reader.getLocalName(),nameSpaceName);
-                        writer.writeNamespace(prefix, nameSpaceName);
-                        writer.setPrefix(prefix,nameSpaceName);
-                    }else{
-                        writer.writeStartElement(nameSpaceName,reader.getLocalName());
-                        writer.writeDefaultNamespace(nameSpaceName);
-                        writer.setDefaultNamespace(nameSpaceName);
-                    }
+            } else {
+                if (prefix != null) {
+                    writer.writeStartElement(prefix, reader.getLocalName(), nameSpaceName);
+                    writer.writeNamespace(prefix, nameSpaceName);
+                    writer.setPrefix(prefix, nameSpaceName);
+                } else {
+                    writer.writeStartElement(nameSpaceName, reader.getLocalName());
+                    writer.writeDefaultNamespace(nameSpaceName);
+                    writer.setDefaultNamespace(nameSpaceName);
+                }
             }
         } else {
             throw new OMException("Non namespace qualified elements are not allowed");
@@ -166,9 +167,9 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
     private void serializeNamespace(String prefix, String URI, XMLStreamWriter writer) throws XMLStreamException {
         String prefix1 = writer.getPrefix(URI);
-        if (prefix1==null) {
+        if (prefix1 == null) {
             writer.writeNamespace(prefix, URI);
-            writer.setPrefix(prefix,URI);
+            writer.setPrefix(prefix, URI);
         }
 
     }

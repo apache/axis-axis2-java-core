@@ -1,10 +1,5 @@
 package org.apache.axis.clientapi;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
@@ -20,6 +15,11 @@ import org.apache.axis.transport.TransportSenderLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -34,11 +34,11 @@ import org.apache.commons.logging.LogFactory;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *         Dec 16, 2004
- *         12:28:00 PM
+ * <p/>
+ * Dec 16, 2004
+ * 12:28:00 PM
  */
-public class Call  {
+public class Call {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
     private EndpointReference targetEPR;
@@ -59,14 +59,17 @@ public class Call  {
     /**
      * todo
      * inoder to have asyn support for tansport , it shoud call this method
+     *
      * @param transport
      */
     public void setListenerTransport(String transport, boolean blocked) {
         this.blocked = blocked;
         this.transport = transport;
     }
+
     /**
      * todo
+     *
      * @param action
      */
     public void setAction(String action) {
@@ -76,6 +79,7 @@ public class Call  {
     /**
      * Fire and forget MEP
      * todo
+     *
      * @param envelope
      */
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
@@ -88,14 +92,13 @@ public class Call  {
             final AxisEngine engine = new AxisEngine(registry);
             urlConnect.setDoOutput(true);
 
-            MessageContext msgctx = new MessageContext(registry,null);
+            MessageContext msgctx = new MessageContext(registry, null);
             msgctx.setEnvelope(envelope);
 
             out = urlConnect.getOutputStream();
             msgctx.setProperty(MessageContext.TRANSPORT_WRITER, out);
-            msgctx.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
 
             engine.send(msgctx);
@@ -110,28 +113,27 @@ public class Call  {
             }
         }
     }
+
     public void send(SOAPEnvelope envelope) throws AxisFault {
         try {
             final AxisEngine engine = new AxisEngine(registry);
 
-            MessageContext msgctx = new MessageContext(registry,null);
+            MessageContext msgctx = new MessageContext(registry, null);
             msgctx.setEnvelope(envelope);
 
-            msgctx.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
             engine.send(msgctx);
 
             //todo dose the 202 response  come throgh the same connection
             //This is purely HTTP specific.
             //Handle the HTTP 202 respose
-            MessageContext response = new MessageContext(registry,msgctx.getProperties());
+            MessageContext response = new MessageContext(registry, msgctx.getProperties());
 
             response.setServerSide(false);
-            response.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            response.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             TransportReciver reciver = TransportReciverLocator.locate(response);
             reciver.invoke(response);
         } catch (IOException e) {
@@ -144,22 +146,20 @@ public class Call  {
         try {
 
             AxisEngine engine = new AxisEngine(registry);
-            MessageContext msgctx = new MessageContext(registry,null);
+            MessageContext msgctx = new MessageContext(registry, null);
             msgctx.setEnvelope(envelope);
 
-            msgctx.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
 
             engine.send(msgctx);
 
-            MessageContext response = new MessageContext(registry,msgctx.getProperties());
+            MessageContext response = new MessageContext(registry, msgctx.getProperties());
 
             response.setServerSide(false);
-            response.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            response.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             TransportReciver reciver = TransportReciverLocator.locate(response);
             reciver.invoke(response);
             SOAPEnvelope resenvelope = response.getEnvelope();
@@ -173,30 +173,27 @@ public class Call  {
     }
 
     /**
-     *
      * @param envelope
      * @param callback
      */
-    public void sendReceiveAsync(
-        SOAPEnvelope envelope,
-        final Callback callback)
-        throws AxisFault {
+    public void sendReceiveAsync(SOAPEnvelope envelope,
+                                 final Callback callback)
+            throws AxisFault {
         try {
             // URL url =new URL(targetEPR.getAddress());
             AxisEngine engine = new AxisEngine(registry);
-            final MessageContext msgctx = new MessageContext(registry,null);
+            final MessageContext msgctx = new MessageContext(registry, null);
             msgctx.setEnvelope(envelope);
 
-            msgctx.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
 
             // only the transport blocked , client dose not hang
             if (blocked) {
                 //TODO This shoudld be taken from a pool of inovkers.
                 Invoker invoker =
-                    new Invoker(msgctx, engine, registry, callback);
+                        new Invoker(msgctx, engine, registry, callback);
                 Thread th = new Thread(invoker);
                 th.start();
             } else {

@@ -19,5 +19,6 @@ package org.apache.axis.description;
 public interface ParameterInclude {
     //parameters
     public void addParameter(Parameter param);
+
     public Parameter getParameter(String name);
 }

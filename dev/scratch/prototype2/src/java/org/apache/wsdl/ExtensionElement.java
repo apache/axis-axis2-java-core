@@ -19,14 +19,13 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface ExtensionElement {
     public Element getElement();
 
     public void setElement(Element element);
-    
+
     public boolean isRequired();
-    
+
     public void setRequired(boolean required);
 }

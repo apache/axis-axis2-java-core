@@ -14,7 +14,7 @@ package org.apache.axis.addressing;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p/>
  * This will hold all the constants related WS-Addressing
  */
 public interface AddressingConstants {
@@ -26,6 +26,6 @@ public interface AddressingConstants {
     public static final String WSA_FROM = "From";
     public static final String WSA_REPLY_TO = "ReplyTo";
     public static final String WSA_FAULT_TO = "FaultTo";
-    
+
 
 }

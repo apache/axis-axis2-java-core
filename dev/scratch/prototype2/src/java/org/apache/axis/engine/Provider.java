@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 package org.apache.axis.engine;
-import java.io.Serializable;
 
 import org.apache.axis.context.MessageContext;
+
+import java.io.Serializable;
 
 
 /**
  * This Provider is the workhorse who locate the implementation of the Web Service and
  * invoke the Web Service.
  */
-public interface Provider extends Serializable{
-    public MessageContext invoke(MessageContext msgCtx)throws AxisFault;
+public interface Provider extends Serializable {
+    public MessageContext invoke(MessageContext msgCtx) throws AxisFault;
 
 }    

@@ -15,21 +15,20 @@
  */
 package org.apache.axis.description;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
+import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.List;
+
 public class SimpleAxisOperationImpl implements AxisOperation {
     protected WSDLOperation wsdlOperation;
     protected ParameterInclude parameters;
-    
+
     /**
      * 
      */
@@ -38,7 +37,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         parameters = new ParameterIncludeImpl();
     }
 
-     public SimpleAxisOperationImpl(QName name) {
+    public SimpleAxisOperationImpl(QName name) {
         wsdlOperation = new WSDLOperationImpl();
         wsdlOperation.setName(name);
         parameters = new ParameterIncludeImpl();
@@ -176,6 +175,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     public void setMessageExchangePattern(String messageExchangePattern) {
         wsdlOperation.setMessageExchangePattern(messageExchangePattern);
     }
+
     /**
      * @param key
      * @param obj
@@ -198,7 +198,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setInputMessage(inputMessage);
     }
 
-   
+
     /**
      * @param name
      */
@@ -234,6 +234,5 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setStyle(style);
     }
 
-    
 
 }

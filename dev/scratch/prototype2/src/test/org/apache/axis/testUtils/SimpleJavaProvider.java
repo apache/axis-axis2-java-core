@@ -16,12 +16,6 @@
 
 package org.apache.axis.testUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
@@ -29,14 +23,15 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.providers.AbstractProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * This is a Simple java Provider.
@@ -46,7 +41,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     protected Log log = LogFactory.getLog(getClass());
     protected String scope;
     protected Method method;
-   // protected ClassLoader classLoader;
+    // protected ClassLoader classLoader;
 
     public SimpleJavaProvider() {
         scope = Constants.APPLICATION_SCOPE;
@@ -54,7 +49,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     }
 
     protected Object makeNewServiceObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
             AxisService service = msgContext.getService();
             Class implClass = service.getServiceClass();
@@ -65,7 +60,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     }
 
     public Object getTheImplementationObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         AxisService service = msgContext.getService();
         QName serviceName = service.getName();
         if (Constants.APPLICATION_SCOPE.equals(scope)) {
@@ -92,20 +87,19 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
 
     }
 
-    public Object[] deserializeParameters(
-        MessageContext msgContext,
-        Method method)
-        throws AxisFault {
+    public Object[] deserializeParameters(MessageContext msgContext,
+                                          Method method)
+            throws AxisFault {
         //   org.TimeRecorder.BEFORE_DESERALIZE = System.currentTimeMillis();
         XMLStreamReader xpp =
-            msgContext.getSoapOperationElement().getPullParser(true);
+                msgContext.getSoapOperationElement().getPullParser(true);
         Class[] parms = method.getParameterTypes();
         Object[] objs = new Object[parms.length];
 
         for (int i = 0; i < parms.length; i++) {
-            if (int.class.equals(parms[i])|| Integer.class.equals(parms[i])) {
+            if (int.class.equals(parms[i]) || Integer.class.equals(parms[i])) {
                 objs[i] =
-                    new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
+                        new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
             } else if (String.class.equals(parms[i])) {
                 objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
             } else if (String[].class.equals(parms[i])) {
@@ -148,17 +142,15 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
 
             OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
             OMElement responseMethodName =
-                fac.createOMElement(methodName + "Response", ns);
+                    fac.createOMElement(methodName + "Response", ns);
             responseEnvelope.getBody().addChild(responseMethodName);
             OMElement returnelement =
-                fac.createOMElement(methodName + "Return", ns);
+                    fac.createOMElement(methodName + "Return", ns);
             responseMethodName.addChild(returnelement);
 
-            returnelement.setBuilder(
-                new ObjectToOMBuilder(returnelement, outobj));
-            returnelement.declareNamespace(
-                OMConstants.ARRAY_ITEM_NSURI,
-                OMConstants.ARRAY_ITEM_NS_PREFIX);
+            returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
+            returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,
+                    OMConstants.ARRAY_ITEM_NS_PREFIX);
             msgContext.setEnvelope(responseEnvelope);
 
             return msgContext;

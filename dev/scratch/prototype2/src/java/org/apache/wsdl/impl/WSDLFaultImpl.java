@@ -20,25 +20,27 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLFaultImpl extends ComponentImpl implements WSDLFault {
-	
-	//TODO its a NCName so parse it. and this is required
-	private String name;
-	
-	private Element element;
 
-	public Element getElement() {
-		return element;
-	}
-	public void setElement(Element element) {
-		this.element = element;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+    //TODO its a NCName so parse it. and this is required
+    private String name;
+
+    private Element element;
+
+    public Element getElement() {
+        return element;
+    }
+
+    public void setElement(Element element) {
+        this.element = element;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

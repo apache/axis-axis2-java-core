@@ -17,17 +17,18 @@ package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface FaultReference extends Component{
+public interface FaultReference extends Component {
     /**
      * Returns the direction of the Fault according the MEP
+     *
      * @return
      */
     public String getDirection();
 
     /**
      * Sets the direction of the Fault.
+     *
      * @param direction
      */
     public void setDirection(String direction);
@@ -38,12 +39,14 @@ public interface FaultReference extends Component{
 
     /**
      * Returns the Fault reference.
+     *
      * @return
      */
     public String getRef();
 
     /**
      * Sets the Fault reference.
+     *
      * @param ref
      */
     public void setRef(String ref);

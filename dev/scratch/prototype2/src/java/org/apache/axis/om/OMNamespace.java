@@ -19,7 +19,9 @@ package org.apache.axis.om;
 public interface OMNamespace {
 
     public boolean equals(String uri, String prefix);
+
     public String getPrefix();
+
     public String getName();
 
 }

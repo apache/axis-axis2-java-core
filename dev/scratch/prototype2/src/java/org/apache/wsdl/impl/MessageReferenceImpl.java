@@ -22,52 +22,53 @@ import javax.xml.namespace.QName;
 
 /**
  * @author Chathura Herath
- *
  */
-public class MessageReferenceImpl  extends ExtensibleComponentImpl implements MessageReference  {
+public class MessageReferenceImpl extends ExtensibleComponentImpl implements MessageReference {
 
-			
-	//Referes to the MEP the Message relates to.
-	private String messageLabel;
-	
-	// Can be "in" or "out" depending on the element name being "input" or "output" respectively; 
-	private String Direction;
-	
-	
-	//TODO Do we need it "Message content model"
-	
-	
-	private QName element;
-	
-	
-	
-	public String getDirection() {
-		return Direction;
-	}
-	public void setDirection(String direction) {
-		Direction = direction;
-	}
-	
-	/**
-	 * Returns an Element which refers to the actual message that will get transported. This Element 
-	 * Abstracts all the Message Parts that was defined in the WSDL 1.1.
-	 */
-	public QName getElement() {
-		return element;
-	}
-	
-	
-	/**
-	 * Sets the Element that will Abstract the actual message. All the parts defined in WSDL 1.1
-	 * per message should be Encapsulated in this Element.
-	 */
-	public void setElement(QName element) {
-		this.element = element;
-	}
-	public String getMessageLabel() {
-		return messageLabel;
-	}
-	public void setMessageLabel(String messageLabel) {
-		this.messageLabel = messageLabel;
-	}
+
+    //Referes to the MEP the Message relates to.
+    private String messageLabel;
+
+    // Can be "in" or "out" depending on the element name being "input" or "output" respectively;
+    private String Direction;
+
+
+    //TODO Do we need it "Message content model"
+
+
+    private QName element;
+
+
+    public String getDirection() {
+        return Direction;
+    }
+
+    public void setDirection(String direction) {
+        Direction = direction;
+    }
+
+    /**
+     * Returns an Element which refers to the actual message that will get transported. This Element
+     * Abstracts all the Message Parts that was defined in the WSDL 1.1.
+     */
+    public QName getElement() {
+        return element;
+    }
+
+
+    /**
+     * Sets the Element that will Abstract the actual message. All the parts defined in WSDL 1.1
+     * per message should be Encapsulated in this Element.
+     */
+    public void setElement(QName element) {
+        this.element = element;
+    }
+
+    public String getMessageLabel() {
+        return messageLabel;
+    }
+
+    public void setMessageLabel(String messageLabel) {
+        this.messageLabel = messageLabel;
+    }
 }

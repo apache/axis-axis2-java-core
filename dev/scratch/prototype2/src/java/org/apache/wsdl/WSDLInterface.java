@@ -22,15 +22,14 @@ import java.util.List;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLInterface extends ExtensibleComponent{
-    
+public interface WSDLInterface extends ExtensibleComponent {
+
 
     public HashMap getDefinedOperations();
 
     /**
-     * Will return a map of all this <code>WSDLOperation</code>s that 
+     * Will return a map of all this <code>WSDLOperation</code>s that
      * are defined and inherited from super interfaces.
      */
     public HashMap getAllOperations();
@@ -63,8 +62,9 @@ public interface WSDLInterface extends ExtensibleComponent{
     public WSDLInterface getSuperInterface(QName qName);
 
     /**
-     * The Targetnamespace is that of the namespace URI of the QName of 
-     * this component. 
+     * The Targetnamespace is that of the namespace URI of the QName of
+     * this component.
+     *
      * @return URI as a String if the name is set otherwise will return null.
      */
     public String getTargetnamespace();
@@ -86,8 +86,9 @@ public interface WSDLInterface extends ExtensibleComponent{
 
     /**
      * The operation is added by its ncname. If operation is null
-     * it will not be added. If the Operation name is null a 
+     * it will not be added. If the Operation name is null a
      * <code>WSDLProcessingException</code> will be thrown.
+     *
      * @param nCName
      * @param operation
      */
@@ -99,14 +100,16 @@ public interface WSDLInterface extends ExtensibleComponent{
     public void setSuperInterfaces(HashMap list);
 
     /**
-     * The Inteface will be added to the list of super interfaces keyed with 
-     * the QName. 
+     * The Inteface will be added to the list of super interfaces keyed with
+     * the QName.
+     *
      * @param interfaceComponent WSDLInterface Object
      */
     public void addSuperInterface(WSDLInterface interfaceComponent);
 
     /**
      * Will return the StyleDefault if exist , otherwise will return null
+     *
      * @return
      */
     public String getStyleDefault();

@@ -31,24 +31,23 @@ import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
-    
-    public WSDLDescription build(InputStream in)throws WSDLException{
-        
+
+    public WSDLDescription build(InputStream in) throws WSDLException {
+
         WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
-        
+
         WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in));
         pump.pump();
-        
+
         return wsdlDefinitions;
     }
-    
-    private Definition readInTheWSDLFile(InputStream in) throws WSDLException{
-        
+
+    private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
+
         WSDLReader reader =
-            WSDLFactory.newInstance().newWSDLReader();
+                WSDLFactory.newInstance().newWSDLReader();
         Document doc;
         try {
             doc = Utils.newDocument(in);
@@ -56,13 +55,13 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
             throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Configuration Error", e);
         } catch (SAXException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR, "Parser SAX Error", e);
-            
+
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
         }
-        
+
         return reader.readWSDL(null, doc);
     }
-    
-    
+
+
 }

@@ -17,7 +17,6 @@ package org.apache.axis.description;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface DescriptionConstants {
     public static final String EXECUTION_CHAIN_KEY = "EXECUTION_CHAIN_KEY";

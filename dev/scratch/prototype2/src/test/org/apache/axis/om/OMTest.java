@@ -15,22 +15,22 @@
  */
 package org.apache.axis.om;
 
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-
 /**
  * This test case tests the basic expectations of the engine from the OM.
  */
-public class OMTest extends AbstractTestCase{
+public class OMTest extends AbstractTestCase {
     private SOAPEnvelope envelope;
     private OMFactory fac;
+
     /**
      * Constructor.
      */
@@ -42,63 +42,63 @@ public class OMTest extends AbstractTestCase{
         File file = getTestResourceFile("soap/sample1.xml");
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
         fac = OMFactory.newInstance();
-        OMXMLParserWrapper builder = new StAXSOAPModelBuilder(fac,parser);
+        OMXMLParserWrapper builder = new StAXSOAPModelBuilder(fac, parser);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
     }
 
-    
+
     /**
      * Sometime the hasNext() in the childeren iterator is true yet the next() is null
      */
 
-    public void testNullInChilderen(){
+    public void testNullInChilderen() {
         isNullChildrenThere(envelope);
     }
-    
+
     /**
      * the envelope is completly namesapce qulified so all the OMElements got to have namespace values not null
-     *
      */
-    public void test4MissingNamespaces(){
+    public void test4MissingNamespaces() {
         isNameSpacesMissing(envelope);
     }
-    
-    public void isNullChildrenThere(OMElement omeleent){
+
+    public void isNullChildrenThere(OMElement omeleent) {
         Iterator it = omeleent.getChildren();
-        while(it.hasNext()){
-            OMNode node = (OMNode)it.next();
+        while (it.hasNext()) {
+            OMNode node = (OMNode) it.next();
             assertNotNull(node);
-            if(node.getType() == OMNode.ELEMENT_NODE){
-                isNullChildrenThere((OMElement)node);
+            if (node.getType() == OMNode.ELEMENT_NODE) {
+                isNullChildrenThere((OMElement) node);
             }
         }
     }
 
-    public void isNameSpacesMissing(OMElement omeleent){
+    public void isNameSpacesMissing(OMElement omeleent) {
         OMNamespace omns = omeleent.getNamespace();
         assertNotNull(omns);
         assertNotNull(omns.getName());
         Iterator it = omeleent.getChildren();
-        while(it.hasNext()){
-            OMNode node = (OMNode)it.next();
-            
-            if(node != null && node.getType() == OMNode.ELEMENT_NODE){
-                isNameSpacesMissing((OMElement)node);
+        while (it.hasNext()) {
+            OMNode node = (OMNode) it.next();
+
+            if (node != null && node.getType() == OMNode.ELEMENT_NODE) {
+                isNameSpacesMissing((OMElement) node);
             }
         }
     }
 
-     public void testRootNotCompleteInPartialBuild() throws Exception {
-         assertFalse("Root should not be complete",envelope.isComplete());
+    public void testRootNotCompleteInPartialBuild() throws Exception {
+        assertFalse("Root should not be complete", envelope.isComplete());
     }
 
     /**
      * Assumption - The fed XML has at least two children under the root element
+     *
      * @throws Exception
      */
     public void testFirstChildDetach() throws Exception {
-        OMElement root= envelope;
-        assertFalse("Root should not be complete",root.isComplete());
+        OMElement root = envelope;
+        assertFalse("Root should not be complete", root.isComplete());
         OMNode oldFirstChild = root.getFirstChild();
         assertNotNull(oldFirstChild);
         oldFirstChild.detach();
@@ -106,7 +106,7 @@ public class OMTest extends AbstractTestCase{
         OMNode newFirstChild = root.getFirstChild();
         assertNotNull(newFirstChild);
 
-        assertNotSame(oldFirstChild,newFirstChild);
+        assertNotSame(oldFirstChild, newFirstChild);
     }
 
     //todo this is wrong correct this

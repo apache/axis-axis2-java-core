@@ -19,7 +19,7 @@ import javax.xml.stream.XMLStreamWriter;
  * limitations under the License.
  */
 public interface OMSerializer {
-    void serialize(Object obj,XMLStreamWriter writer) throws XMLStreamException ;
+    void serialize(Object obj, XMLStreamWriter writer) throws XMLStreamException;
 //    Stack getNamespacePrefixStack();
 //    void setNamespacePrefixStack(Stack namespacePrefixStack); 
 

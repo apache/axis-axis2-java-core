@@ -16,8 +16,6 @@
 
 package org.apache.axis.engine;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisService;
@@ -25,14 +23,17 @@ import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.handlers.OpNameFinder;
 
+import javax.xml.namespace.QName;
+
 public class Dispatcher extends AbstractHandler implements Handler {
-	public static final QName NAME = new QName("http://axis.ws.apache.org","Disapatcher");
-	public Dispatcher(){
-		init(new HandlerMetaData(NAME));
-	}
-	
-    public void invoke(MessageContext msgctx) throws AxisFault{
-        if(msgctx.isServerSide()){
+    public static final QName NAME = new QName("http://axis.ws.apache.org", "Disapatcher");
+
+    public Dispatcher() {
+        init(new HandlerMetaData(NAME));
+    }
+
+    public void invoke(MessageContext msgctx) throws AxisFault {
+        if (msgctx.isServerSide()) {
             String uri = null;
             EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
@@ -40,7 +41,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
 
             String pattern = "services/";
             int serviceIndex = 0;
-            if((serviceIndex = filePart.indexOf(pattern)) > 0){
+            if ((serviceIndex = filePart.indexOf(pattern)) > 0) {
                 uri = filePart.substring(serviceIndex + pattern.length());
 
             }
@@ -60,7 +61,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
                 }
             }
             if (serviceName != null) {
-            	EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
+                EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
                 AxisService service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
@@ -68,17 +69,17 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
                     //add invoke Phase
-                    Phase invokePhase = new Phase(Phase.SERVICE_INVOCATION);                    
+                    Phase invokePhase = new Phase(Phase.SERVICE_INVOCATION);
                     invokePhase.addHandler(new OpNameFinder());
                     invokePhase.addHandler(ReceiverLocator.locateReceiver(msgctx));
                     chain.addPhase(invokePhase);
                 } else {
                     throw new AxisFault("Service " + serviceName + " is not found");
                 }
-            }else{
+            } else {
                 throw new AxisFault("Both the URI and SOAP_ACTION Is Null");
             }
-        }else{
+        } else {
             //TODO client side service Dispatch ,, What this really mean?
         }
     }

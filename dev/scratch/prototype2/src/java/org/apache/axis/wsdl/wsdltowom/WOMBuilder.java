@@ -22,9 +22,8 @@ import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface WOMBuilder {
 
-    public WSDLDescription build(InputStream in)throws WSDLException;
+    public WSDLDescription build(InputStream in) throws WSDLException;
 }

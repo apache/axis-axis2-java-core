@@ -1,12 +1,12 @@
 package org.apache.axis.deployment.listener;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.repository.utill.WSInfoList;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -90,7 +90,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsinfoList.init();
         checkModules();
-        checkServices(); 
+        checkServices();
         update();
     }
 

@@ -27,11 +27,10 @@ public class Invoker implements Runnable {
 
     private Callback callback;
 
-    public Invoker(
-        MessageContext msgContext,
-        AxisEngine engine,
-        EngineRegistry reg,
-        Callback callback) {
+    public Invoker(MessageContext msgContext,
+                   AxisEngine engine,
+                   EngineRegistry reg,
+                   Callback callback) {
         this.engine = engine;
         this.reqMsgContext = msgContext;
         this.callback = callback;
@@ -47,25 +46,23 @@ public class Invoker implements Runnable {
             reqMsgContext.setMessageID(messageID);
 
             engine.send(reqMsgContext);
-            correlator.addCorrelationInfo(
-                reqMsgContext.getMessageID(),
-                callback);
+            correlator.addCorrelationInfo(reqMsgContext.getMessageID(),
+                    callback);
 
-            MessageContext resMsgContext = new MessageContext(registry,reqMsgContext.getProperties());
+            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties());
 
             resMsgContext.setServerSide(false);
-            resMsgContext.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
+            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+                    TransportSenderLocator.TRANSPORT_HTTP);
             TransportReciver reciver =
-                TransportReciverLocator.locate(resMsgContext);
+                    TransportReciverLocator.locate(resMsgContext);
             reciver.invoke(resMsgContext);
 
             AsyncResult result = new AsyncResult();
             result.setResult(resMsgContext.getEnvelope());
             resMsgContext.setMessageID(messageID);
             callback =
-                correlator.getCorrelationInfo(resMsgContext.getMessageID());
+                    correlator.getCorrelationInfo(resMsgContext.getMessageID());
             callback.onComplete(result);
 
         } catch (Exception e) {

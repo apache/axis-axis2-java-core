@@ -28,7 +28,7 @@ public class AsyncResult {
         this.result = result;
     }
 
-    public SOAPEnvelope getResponseEnvelope(){
+    public SOAPEnvelope getResponseEnvelope() {
         return result;
     }
 

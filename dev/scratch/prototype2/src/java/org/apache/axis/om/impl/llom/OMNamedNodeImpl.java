@@ -1,11 +1,11 @@
 package org.apache.axis.om.impl.llom;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -27,12 +27,12 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
     protected OMNamespace ns;
     protected String localName;
-    
-    public OMNamedNodeImpl(OMElement parent){
-        super(parent);
-    } 
 
-	public OMNamedNodeImpl(String localName, OMNamespace ns, OMElement parent) {
+    public OMNamedNodeImpl(OMElement parent) {
+        super(parent);
+    }
+
+    public OMNamedNodeImpl(String localName, OMNamespace ns, OMElement parent) {
         super(parent);
         this.localName = localName;
         this.ns = ns;
@@ -48,21 +48,21 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
     public OMNamespace getNamespace() throws OMException {
 
-        if (ns == null && parent != null){
+        if (ns == null && parent != null) {
             ns = parent.getNamespace();
         }
 
-        if(ns == null)
+        if (ns == null)
             throw new OMException("all elements in a soap message must be namespace qualified");
-        
+
         return ns;
     }
 
     public String getNamespaceName() {
-    	if(ns != null){
-			return ns.getName();    	
-    	}
-		return null;
+        if (ns != null) {
+            return ns.getName();
+        }
+        return null;
     }
 
     /**

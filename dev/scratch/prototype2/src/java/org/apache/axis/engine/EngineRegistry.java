@@ -17,47 +17,53 @@
 package org.apache.axis.engine;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
- *  The palce where all the Globel states of Axis is kept. 
- *  All the Global states kept in the <code>EngineRegistry</code> and all the 
- *  Service states kept in the <code>MessageContext</code>. Other runtime
- *  artifacts does not keep states foward from the execution.  
+ * The palce where all the Globel states of Axis is kept.
+ * All the Global states kept in the <code>EngineRegistry</code> and all the
+ * Service states kept in the <code>MessageContext</code>. Other runtime
+ * artifacts does not keep states foward from the execution.
  */
 
 public interface EngineRegistry {
     public static final int INFLOW = 10003;
     public static final int OUTFLOW = 10004;
-    public static final int FAULTFLOW = 10005; 
+    public static final int FAULTFLOW = 10005;
 
-    public AxisGlobal getGlobal()throws AxisFault;
-    
-    public AxisService getService(QName name)throws AxisFault;
-    public void addService(AxisService service)throws AxisFault;
-    public void removeService(QName name)throws AxisFault;
-    
+    public AxisGlobal getGlobal() throws AxisFault;
+
+    public AxisService getService(QName name) throws AxisFault;
+
+    public void addService(AxisService service) throws AxisFault;
+
+    public void removeService(QName name) throws AxisFault;
+
     /**
-     * Modules is read only as they can not deployed while runing 
+     * Modules is read only as they can not deployed while runing
      */
-    public AxisModule getModule(QName name)throws AxisFault;
-    public void addMdoule(AxisModule module)throws AxisFault;
-    
+    public AxisModule getModule(QName name) throws AxisFault;
+
+    public void addMdoule(AxisModule module) throws AxisFault;
+
     public AxisTransport getTransport(QName name) throws AxisFault;
+
     public void addTransport(AxisTransport transport) throws AxisFault;
+
     public HashMap getTransports() throws AxisFault;
+
     /**
      * Ordred list of phases
      */
     public ArrayList getPhases();
+
     public HashMap getServices();
 
 //    public ArrayList getTransPorts() ;

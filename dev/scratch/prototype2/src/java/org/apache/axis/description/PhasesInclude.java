@@ -15,20 +15,22 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-
 import org.apache.axis.engine.AxisFault;
+
+import java.util.ArrayList;
 
 
 public interface PhasesInclude {
     /**
      * When the Phases are resolved they are added to the EngineRegistry as phases at deploy time.
-     * At the runtime they are used to create the ExecutionChain at the runtime whic resides in the 
+     * At the runtime they are used to create the ExecutionChain at the runtime whic resides in the
      * MessageContext.
+     *
      * @param flow
      * @return
      */
-    
-    public ArrayList getPhases(int flow)throws AxisFault;
-    public void setPhases(ArrayList phases,int flow)throws AxisFault;
+
+    public ArrayList getPhases(int flow) throws AxisFault;
+
+    public void setPhases(ArrayList phases, int flow) throws AxisFault;
 }

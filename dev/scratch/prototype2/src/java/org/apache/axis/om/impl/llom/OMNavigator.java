@@ -100,7 +100,7 @@ public class OMNavigator {
                 next = null;
 
         } else {
-            OMNode nextSibling = ((OMNodeImpl)next).nextSibling;
+            OMNode nextSibling = ((OMNodeImpl) next).nextSibling;
             OMNode parent = next.getParent();
 
             if (nextSibling != null)
@@ -134,16 +134,19 @@ public class OMNavigator {
 
     /**
      * the navigable status
+     *
      * @return
      */
     public boolean isNavigable() {
         if (end)
             return false;
-        else return !(next == null);
+        else
+            return !(next == null);
     }
 
     /**
      * The completed status
+     *
      * @return
      */
     public boolean isCompleted() {

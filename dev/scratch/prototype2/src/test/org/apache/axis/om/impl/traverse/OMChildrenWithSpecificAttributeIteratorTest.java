@@ -19,17 +19,16 @@
  */
 package org.apache.axis.om.impl.traverse;
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMTestCase;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 
 public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase implements OMConstants {
@@ -102,7 +101,7 @@ public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase impl
         int childrenCount = 0;
         while (soapHeaderChildrenIter.hasNext()) {
             Object o = soapHeaderChildrenIter.next();
-             childrenCount++;
+            childrenCount++;
         }
 
         assertEquals("OMChildrenWithSpecificAttributeIterator with detach true, not working properly", childrenCount, 6); // here this 6 includes white spaces as OMText

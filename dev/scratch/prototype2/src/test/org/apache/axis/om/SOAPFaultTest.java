@@ -1,11 +1,11 @@
 package org.apache.axis.om;
 
+import org.apache.axis.AbstractTestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.AbstractTestCase;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -23,7 +23,7 @@ import org.apache.axis.AbstractTestCase;
  * limitations under the License.
  * <p/>
  */
-public class SOAPFaultTest extends AbstractTestCase{
+public class SOAPFaultTest extends AbstractTestCase {
     private SOAPEnvelope soapEnvelope;
     private XMLStreamWriter writer;
 
@@ -37,26 +37,24 @@ public class SOAPFaultTest extends AbstractTestCase{
     protected void setUp() throws Exception {
         super.setUp();
         writer = XMLOutputFactory.newInstance().
-                            createXMLStreamWriter(System.out);
+                createXMLStreamWriter(System.out);
     }
 
-    public void testSOAPFault() throws Exception{
-            soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getDocumentElement();
-            SOAPBody soapBody = soapEnvelope.getBody();
+    public void testSOAPFault() throws Exception {
+        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getDocumentElement();
+        SOAPBody soapBody = soapEnvelope.getBody();
 
-            SOAPFault soapFault = OMFactory.newInstance().createSOAPFault(soapBody, new Exception("Something has gone wrong som where !!"));
-            soapBody.addFault(soapFault);
+        SOAPFault soapFault = OMFactory.newInstance().createSOAPFault(soapBody, new Exception("Something has gone wrong som where !!"));
+        soapBody.addFault(soapFault);
 
-            soapFault.setFaultCode(new QName("http://opensource.lk", "Axis", "SOAP-ENV"));
-            assertEquals("faultcode returned is incorrect", soapFault.getFaultCode().getLocalPart(), "Axis");
-            assertEquals("faultcode returned is incorrect", soapFault.getFaultCode().getPrefix(), "SOAP-ENV");
+        soapFault.setFaultCode(new QName("http://opensource.lk", "Axis", "SOAP-ENV"));
+        assertEquals("faultcode returned is incorrect", soapFault.getFaultCode().getLocalPart(), "Axis");
+        assertEquals("faultcode returned is incorrect", soapFault.getFaultCode().getPrefix(), "SOAP-ENV");
 
-            soapFault.setFaultActor("Neo");
-            assertEquals("faultactor returned is incorrect", soapFault.getFaultActor(), "Neo");
+        soapFault.setFaultActor("Neo");
+        assertEquals("faultactor returned is incorrect", soapFault.getFaultActor(), "Neo");
 
-            
 
- 
     }
 
     private void print() throws XMLStreamException {

@@ -16,14 +16,14 @@
 
 package org.apache.axis.transport;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.util.Map;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPTransportReciver;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Map;
 
 public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
 
@@ -33,7 +33,7 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
 
     public void testServerHaeders() throws Exception {
         String message =
-            "POST /axis2/services/echo HTTP/1.0\n"
+                "POST /axis2/services/echo HTTP/1.0\n"
                 + "Content-Type: text/xml; charset=utf-8\n"
                 + "Accept: application/soap+xml, application/dime, multipart/related, text/*\n"
                 + "User-Agent: Axis/1.2RC1\n"
@@ -44,26 +44,24 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Content-Length: 73507\n\nee rwewebtewbeww";
         StringReader reader = new StringReader(message);
         HTTPTransportReciver reciver = new HTTPTransportReciver();
-        
+
         Map map = reciver.parseTheHeaders(reader, true);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.0");
-        assertEquals(
-            map.get(HTTPConstants.REQUEST_URI),
-            "/axis2/services/echo");
-        assertEquals(
-            map.get("Accept"),
-            "application/soap+xml, application/dime, multipart/related, text/*");
+        assertEquals(map.get(HTTPConstants.REQUEST_URI),
+                "/axis2/services/echo");
+        assertEquals(map.get("Accept"),
+                "application/soap+xml, application/dime, multipart/related, text/*");
         assertEquals(map.get("User-Agent"), "Axis/1.2RC1");
         assertEquals(map.get("Host"), "127.0.0.1:8081");
         assertEquals(map.get("Cache-Control"), "no-cache");
         assertEquals(map.get("Pragma"), "no-cache");
         assertEquals(map.get("Content-Length"), "73507");
-        assertEquals(reader.read(),'e');
+        assertEquals(reader.read(), 'e');
     }
 
     public void testClientHeaders() throws Exception {
         String message =
-            "HTTP/1.1 200 OK\n"
+                "HTTP/1.1 200 OK\n"
                 + "Content-Type: text/xml;charset=utf-8\n"
                 + "Date: Sat, 12 Feb 2005 10:39:39 GMT\n"
                 + "Server: Apache-Coyote/1.1\n"
@@ -79,13 +77,13 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
         assertEquals(map.get("Date"), "Sat, 12 Feb 2005 10:39:39 GMT");
         assertEquals(map.get("Server"), "Apache-Coyote/1.1");
         assertEquals(map.get("Connection"), "close");
-        assertEquals(reader.read(),'A');
+        assertEquals(reader.read(), 'A');
     }
 
     public void testWrongClientHeaders() throws AxisFault {
         try {
             String message =
-                "HTTP/1.1 200 OK\n"
+                    "HTTP/1.1 200 OK\n"
                     + "Content-Type: text/xml;charset=utf-8\n"
                     + "Date: Sat, 12 Feb 2005 10:39:39 GMT\n"
                     + "Server: Apache-Coyote/1.1\n"

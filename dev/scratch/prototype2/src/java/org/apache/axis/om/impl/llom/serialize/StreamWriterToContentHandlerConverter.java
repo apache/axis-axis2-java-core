@@ -1,14 +1,14 @@
 package org.apache.axis.om.impl.llom.serialize;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -70,9 +70,9 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
-         try {
-            writer.writeNamespace(prefix,uri);
-            writer.setPrefix(prefix,uri);
+        try {
+            writer.writeNamespace(prefix, uri);
+            writer.setPrefix(prefix, uri);
         } catch (XMLStreamException e) {
             throw new SAXException(e);
         }
@@ -86,31 +86,30 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
         }
     }
 
-    private String getPrefix(String qName){
-        if (qName!=null){
-            return qName.substring(0,qName.indexOf(":"));
+    private String getPrefix(String qName) {
+        if (qName != null) {
+            return qName.substring(0, qName.indexOf(":"));
         }
         return null;
     }
-    
-    
-    
+
+
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         try {
-            log.info("writing element {"+namespaceURI+'}'+ localName +" directly to stream ");
-            
+            log.info("writing element {" + namespaceURI + '}' + localName + " directly to stream ");
+
             String prefix = getPrefix(qName);
             //it is only the prefix we want to learn from the QName! so we can get rid of the 
             //spliting QName
-            if (prefix ==null){
-                writer.writeStartElement(namespaceURI,localName);            
-            }else{
-                writer.writeStartElement(prefix,localName,namespaceURI);            
+            if (prefix == null) {
+                writer.writeStartElement(namespaceURI, localName);
+            } else {
+                writer.writeStartElement(prefix, localName, namespaceURI);
             }
-            if (atts!=null){
+            if (atts != null) {
                 int attCount = atts.getLength();
                 for (int i = 0; i < attCount; i++) {
-                    
+
                     writer.writeAttribute(atts.getURI(i),
                             localName,
                             atts.getValue(i));

@@ -21,25 +21,26 @@ import org.apache.axis.om.OMElement;
  * @version $Rev: $ $Date: $
  */
 
-public class Echo{
-    public Echo(){}
-    
-    public void echoVoid(){
+public class Echo {
+    public Echo() {
+    }
+
+    public void echoVoid() {
         System.out.println("echo Service Called");
     }
- 
-    
-    public OMElement echoOMElement(OMElement omEle){
-        omEle.setLocalName(omEle.getLocalName()+"Response");
+
+
+    public OMElement echoOMElement(OMElement omEle) {
+        omEle.setLocalName(omEle.getLocalName() + "Response");
         return omEle;
     }
-    
-    public String echoString(String in){
+
+    public String echoString(String in) {
         return in;
     }
-    
-    public int echoInt(int in){
+
+    public int echoInt(int in) {
         return in;
     }
-    
+
 }

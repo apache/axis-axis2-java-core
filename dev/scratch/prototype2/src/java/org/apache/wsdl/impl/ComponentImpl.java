@@ -22,64 +22,66 @@ import org.w3c.dom.Document;
 import java.util.HashMap;
 
 
-
-
 /**
  * @author Chathura Herath
- *
  */
-public class ComponentImpl implements  WSDLConstants, Component{
+public class ComponentImpl implements WSDLConstants, Component {
 
     protected HashMap componentProperties = new HashMap();
-    
+
     protected Document documentation = null;
-    
+
     /**
      * Returns the Documentation Element as a
      * <code>Document</code>.
+     *
      * @return documentation
      */
     public Document getDocumentation() {
         return documentation;
     }
-    
+
     /**
      * Will set the Documentation element for the Component.
+     *
      * @param documentation Component Docuemntation
      */
     public void setDocumentation(Document documentation) {
         this.documentation = documentation;
     }
+
     /**
      * Returns the properties that are specific to this WSDL Component.
-     * 
      */
     public HashMap getComponentProperties() {
         return componentProperties;
     }
+
     /**
      * Sets the properties of the Component if any.
      */
     public void setComponentProperties(HashMap properties) {
         this.componentProperties = properties;
     }
-    
+
     /**
      * Will set the property keyed with the relavent key
+     *
      * @param key Key in the map
      * @param obj Object to be put
      */
-    public void setComponentProperty(Object key, Object obj){
+    public void setComponentProperty(Object key, Object obj) {
         this.componentProperties.put(key, obj);
     }
-    
+
     /**
      * Gets the component property
+     *
      * @param key key for the map search.
      * @return
      */
-    public Object getComponentProperty(Object key){
+    public Object getComponentProperty(Object key) {
         return this.componentProperties.get(key);
     }
-       
+
 }

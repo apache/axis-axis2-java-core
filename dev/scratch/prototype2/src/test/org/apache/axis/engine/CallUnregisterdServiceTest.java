@@ -16,7 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
@@ -24,28 +23,25 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class CallUnregisterdServiceTest extends AbstractTestCase{
+import javax.xml.namespace.QName;
+
+public class CallUnregisterdServiceTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("","EchoXMLService");
-    private QName operationName = new QName("http://localhost/my","echoOMElement");
-    private QName transportName = new QName("http://localhost/my","NullTransport");
+    private QName serviceName = new QName("", "EchoXMLService");
+    private QName operationName = new QName("http://localhost/my", "echoOMElement");
+    private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
-    
-    public CallUnregisterdServiceTest(){
+
+    public CallUnregisterdServiceTest() {
         super(CallUnregisterdServiceTest.class.getName());
     }
 
@@ -62,21 +58,20 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
     }
 
 
-    public void testEchoXMLSync() throws Exception{
-        try{
+    public void testEchoXMLSync() throws Exception {
+        try {
             OMFactory fac = OMFactory.newInstance();
 
-            SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
-            OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
-            OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
-            OMElement value =  fac.createOMElement("myValue",omNs) ;
+            SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+            OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+            OMElement method = fac.createOMElement("echoOMElement", omNs);
+            OMElement value = fac.createOMElement("myValue", omNs);
             value.setValue("Isaac Assimov, the foundation Sega");
             method.addChild(value);
             reqEnv.getBody().addChild(method);
 
             Call call = new Call();
-            EndpointReference targetEPR = new EndpointReference(
-                AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService1");
+            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService1");
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
@@ -86,7 +81,7 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
             }
             fail("The test must fail due to wrong service Name");
 
-        }catch(AxisFault e){
+        } catch (AxisFault e) {
             tearDown();
             return;
         }

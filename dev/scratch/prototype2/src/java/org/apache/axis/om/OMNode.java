@@ -122,6 +122,7 @@ public interface OMNode {
 
     /**
      * This is to get the type of node, as this is the super class of all the nodes
+     *
      * @return
      * @throws OMException
      */
@@ -131,23 +132,24 @@ public interface OMNode {
 
     /**
      * get the previous sibling
+     *
      * @return
      */
     public OMNode getPreviousSibling();
 
     /**
      * Set the previous sibling
+     *
      * @param previousSibling
      */
     public void setPreviousSibling(OMNode previousSibling);
 
-    
+
     /**
-     * 
      * @param writer
      * @param cache
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException ;
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException;
 
 }

@@ -16,71 +16,67 @@
 
 package org.apache.axis.transport.http;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.URL;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.*;
+
 public class HTTPTransportSender extends AbstractTransportSender {
-    protected  Writer out;
+    protected Writer out;
     private Socket socket;
-    
+
 
     protected Writer obtainOutputStream(MessageContext msgContext)
-        throws AxisFault {
-            
-            if (!msgContext.isServerSide()) {
-                EndpointReference toURL = msgContext.getTo();
-                
-                if(toURL != null){
-                    try {
-                        URL url = new URL(toURL.getAddress());
-                        SocketAddress add = new InetSocketAddress(url.getHost(),url.getPort());
-                        socket = new Socket();
-                        socket.connect(add);
-                        
-                        StringBuffer buf = new StringBuffer();
-                        buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
-                        buf.append("Content-Type: text/xml; charset=utf-8\n");                        buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
-                        buf.append("Host: ").append(url.getHost()).append("\n");
-                        buf.append("Cache-Control: no-cache\n");
-                        buf.append("Pragma: no-cache\n");
-                        buf.append("SOAPAction: \"\"\n\n");
-                        outS = socket.getOutputStream();
-                        out = new OutputStreamWriter(outS);
-                        out.write(buf.toString().toCharArray());
+            throws AxisFault {
+
+        if (!msgContext.isServerSide()) {
+            EndpointReference toURL = msgContext.getTo();
+
+            if (toURL != null) {
+                try {
+                    URL url = new URL(toURL.getAddress());
+                    SocketAddress add = new InetSocketAddress(url.getHost(), url.getPort());
+                    socket = new Socket();
+                    socket.connect(add);
+
+                    StringBuffer buf = new StringBuffer();
+                    buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
+                    buf.append("Content-Type: text/xml; charset=utf-8\n");
+                    buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
+                    buf.append("Host: ").append(url.getHost()).append("\n");
+                    buf.append("Cache-Control: no-cache\n");
+                    buf.append("Pragma: no-cache\n");
+                    buf.append("SOAPAction: \"\"\n\n");
+                    outS = socket.getOutputStream();
+                    out = new OutputStreamWriter(outS);
+                    out.write(buf.toString().toCharArray());
 
 //                        URLConnection connection = url.openConnection();
 //                                                connection.setDoOutput(true);
 //                        out = new OutputStreamWriter(connection.getOutputStream());
 
-                        msgContext.setProperty(MessageContext.TRANSPORT_READER,new InputStreamReader(socket.getInputStream()));
-                        msgContext.setProperty(HTTPConstants.SOCKET,socket);
-                    } catch (MalformedURLException e) {
-                        throw new AxisFault(e.getMessage(),e);
-                    } catch (IOException e) {
-                        throw new AxisFault(e.getMessage(),e);
-                    }
-                    
-                }else{
-                    throw new AxisFault("to EPR must be specified");
+                    msgContext.setProperty(MessageContext.TRANSPORT_READER, new InputStreamReader(socket.getInputStream()));
+                    msgContext.setProperty(HTTPConstants.SOCKET, socket);
+                } catch (MalformedURLException e) {
+                    throw new AxisFault(e.getMessage(), e);
+                } catch (IOException e) {
+                    throw new AxisFault(e.getMessage(), e);
                 }
-            
-            }else{
-                out =
-                    (Writer) msgContext.getProperty(
-                        MessageContext.TRANSPORT_WRITER);
+
+            } else {
+                throw new AxisFault("to EPR must be specified");
             }
+
+        } else {
+            out =
+                    (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+        }
 
         if (out == null) {
             throw new AxisFault("can not find the suffient information to find endpoint");
@@ -90,18 +86,17 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     }
 
-    protected Writer obtainOutputStream(
-        MessageContext msgContext,
-        EndpointReference epr)
-        throws AxisFault {
+    protected Writer obtainOutputStream(MessageContext msgContext,
+                                        EndpointReference epr)
+            throws AxisFault {
         //TODO this is temporay work around
         return obtainOutputStream(msgContext);
     }
 
-    protected void finalizeSending(MessageContext msgContext)throws AxisFault {
+    protected void finalizeSending(MessageContext msgContext) throws AxisFault {
     }
 
-    protected void startSending(MessageContext msgContext)throws AxisFault {
+    protected void startSending(MessageContext msgContext) throws AxisFault {
 
         //      Content-Type: text/xml; charset=utf-8
         //      Accept: application/soap+xml, application/dime, multipart/related, text/*

@@ -126,7 +126,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (TRANSPORTSTAG.equals(ST)) {
                         ArrayList trasports = processTransport();
                         for (int i = 0; i < trasports.size(); i++) {
-                            dpengine.getEngineRegistry().addTransport((AxisTransport)trasports.get(i));
+                            dpengine.getEngineRegistry().addTransport((AxisTransport) trasports.get(i));
                         }
 
                     } else if (TYPEMAPPINGST.equals(ST)) {
@@ -143,10 +143,10 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
-                        ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
-                    } else if(SERVERST.equals(ST)){
+                        ((EngineRegistryImpl) dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
+                    } else if (SERVERST.equals(ST)) {
                         //TODO process attributes
-                    }  else {
+                    } else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
                     }
                 }
@@ -180,11 +180,11 @@ public class DeploymentParser implements DeploymentConstants {
                             transport = new AxisTransport(new QName(attvalue));
                             transportList.add(transport);
                         }
-                    }else if (transport != null && PARAMETERST.equals(tagnae)) {
-                        Parameter parameter =  processParameter();
+                    } else if (transport != null && PARAMETERST.equals(tagnae)) {
+                        Parameter parameter = processParameter();
                         transport.addParameter(parameter);
                         //axisService. .appParameter(parameter);
-                    }  else if (transport != null && INFLOWST.equals(tagnae)) {
+                    } else if (transport != null && INFLOWST.equals(tagnae)) {
                         Flow inFlow = processInFlow();
                         transport.setInFlow(inFlow);
                     } else if (transport != null && OUTFLOWST.equals(tagnae)) {
@@ -193,8 +193,8 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (transport != null && FAILTFLOWST.equals(tagnae)) {
                         Flow faultFlow = processFaultFlow();
                         transport.setFaultFlow(faultFlow);
-                    } else{
-                        throw new DeploymentException("Unknown element "+ tagnae);
+                    } else {
+                        throw new DeploymentException("Unknown element " + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -224,7 +224,7 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (PROVIDERNAME.equals(attname)) {
-                    if(dpengine != null && dpengine.getCurrentFileItem() != null)  {
+                    if (dpengine != null && dpengine.getCurrentFileItem() != null) {
                         dpengine.getCurrentFileItem().setProvideName(attvalue);
                     }
                 } else if (STYLENAME.equals(attname)) {
@@ -237,7 +237,7 @@ public class DeploymentParser implements DeploymentConstants {
                 }
             }
         } else
-            throw new DeploymentException("Bad arguments" +  axisService.getName());
+            throw new DeploymentException("Bad arguments" + axisService.getName());
 
         //*********************************************************************************************//
         // This is to process remainng part of the document
@@ -256,11 +256,11 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName(); //Staring tag name
 
                     if (PARAMETERST.equals(ST)) {
-                        Parameter parameter =  processParameter();
+                        Parameter parameter = processParameter();
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
-                    } else if (JAVAIMPL.equals(ST)){
-                        if(JAVAST.equals(pullparser.getNamespaceURI())){
+                    } else if (JAVAIMPL.equals(ST)) {
+                        if (JAVAST.equals(pullparser.getNamespaceURI())) {
                             attribCount = pullparser.getAttributeCount();
                             if (attribCount > 0) {
                                 for (int i = 0; i < attribCount; i++) {
@@ -271,7 +271,7 @@ public class DeploymentParser implements DeploymentConstants {
                         } else {
                             throw new UnsupportedOperationException("Illegal namespace");
                         }
-                    }else if (TYPEMAPPINGST.equals(ST)) {
+                    } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
                         //  processTypeMapping();
@@ -280,7 +280,7 @@ public class DeploymentParser implements DeploymentConstants {
                         // todo this should implemnt latter
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
-                        AxisOperation  operation = processOperation();
+                        AxisOperation operation = processOperation();
                         axisService.addOperation(operation);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
@@ -298,7 +298,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (REF.equals(attname)) {
-                                    if(dpengine.getModule(new QName(attvalue)) == null){
+                                    if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
                                     } else
                                         axisService.addModule(new QName(attvalue));
@@ -319,8 +319,6 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-
-
     private Parameter processParameter() throws DeploymentException {
         Parameter parameter = new ParameterImpl();
         int attribCount = pullparser.getAttributeCount();
@@ -328,7 +326,7 @@ public class DeploymentParser implements DeploymentConstants {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (ATTNAME.equals(attname)){
+                if (ATTNAME.equals(attname)) {
                     parameter.setName(attvalue);
                 } else if (ATTLOCKED.equals(attname)) {
                     String boolval = getValue(attvalue);
@@ -783,7 +781,7 @@ public class DeploymentParser implements DeploymentConstants {
                     if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         faultFlow.addHandler(handler);
-                    }  else {
+                    } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -822,7 +820,7 @@ public class DeploymentParser implements DeploymentConstants {
                         if (ATTNAME.equals(attname)) {
                             pahseList.add(attvalue);
                         }
-                    }   else {
+                    } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -864,15 +862,16 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * This method is used to retrive service name form the arechive file name
      * if the archive file name is service1.aar , then axis service name would be service1
+     *
      * @param fileName
      * @return
      */
-    private String getAxisServiceName(String fileName){
+    private String getAxisServiceName(String fileName) {
         char seperator = '.';
         String value = null;
         int index = fileName.indexOf(seperator);
         if (index > 0) {
-            value = fileName.substring(0 , index);
+            value = fileName.substring(0, index);
             return value;
         }
         return fileName;

@@ -21,9 +21,8 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLService extends Component{
+public interface WSDLService extends Component {
     public HashMap getEndpoints();
 
     public void setEndpoints(HashMap endpoints);
@@ -35,8 +34,9 @@ public interface WSDLService extends Component{
 
     /**
      * Endpoint will be retrived by its qName.
+     *
      * @param qName qName of the Service
-     * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
+     * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found.
      */
     public WSDLService getEndpoint(QName qName);
 
@@ -45,8 +45,9 @@ public interface WSDLService extends Component{
     public void setName(QName name);
 
     /**
-     * If the Name of the <code>WSDLService</code> is not set a 
+     * If the Name of the <code>WSDLService</code> is not set a
      * <code>WSDLProcessingException</code> will be thrown.
+     *
      * @return Target Namespace as a <code>String</code>
      */
     public String getNamespace();

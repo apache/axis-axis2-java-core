@@ -16,7 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisOperation;
@@ -24,15 +23,17 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.providers.RawXMLProvider;
 
-public class SimpleAxisServerTest extends AbstractTestCase{
-    private QName serviceName = new QName("","EchoXMLService");
-    private QName operationName = new QName("http://localhost/my","echoOMElement");
-    private QName transportName = new QName("http://localhost/my","NullTransport");
+import javax.xml.namespace.QName;
+
+public class SimpleAxisServerTest extends AbstractTestCase {
+    private QName serviceName = new QName("", "EchoXMLService");
+    private QName operationName = new QName("http://localhost/my", "echoOMElement");
+    private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private EngineRegistry engineRegistry;
     private AxisEngine engine;
 
-    public SimpleAxisServerTest(){
+    public SimpleAxisServerTest() {
         super(SimpleAxisServerTest.class.getName());
     }
 
@@ -41,18 +42,18 @@ public class SimpleAxisServerTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
+        engineRegistry = EngineUtils.createMockRegistry(serviceName, operationName, transportName);
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
-        
+
         service.addOperation(operation);
-        
+
         EngineUtils.createExecutionChains(service);
         engineRegistry.addService(service);
-        
+
         engine = new AxisEngine(engineRegistry);
     }
 
@@ -60,14 +61,14 @@ public class SimpleAxisServerTest extends AbstractTestCase{
     }
 
 
-    public void testEchoXMLSync() throws Exception{
+    public void testEchoXMLSync() throws Exception {
         EngineUtils.startServer(engineRegistry);
-        EngineUtils.stopServer();  
+        EngineUtils.stopServer();
         Thread.sleep(1000);
         EngineUtils.startServer(engineRegistry);
-        EngineUtils.stopServer();  
+        EngineUtils.stopServer();
         Thread.sleep(1000);
         EngineUtils.startServer(engineRegistry);
-        EngineUtils.stopServer();  
+        EngineUtils.stopServer();
     }
 }

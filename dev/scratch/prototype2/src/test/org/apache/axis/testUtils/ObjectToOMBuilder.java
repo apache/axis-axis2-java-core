@@ -1,22 +1,15 @@
 package org.apache.axis.testUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -59,7 +52,6 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
 
-
     /**
      * @param startElement - this refers to the element the object should come under.
      *                     Most of the time this will be a OMBodyBlock element
@@ -87,11 +79,11 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
                     if (externalContentHandler == null) {
                         throw new IllegalStateException("Cannot have no cache with an empty content handler");
                     }
-					outObject.serialize(externalContentHandler);
-                }else{
-					outObject.serialize(this);
+                    outObject.serialize(externalContentHandler);
+                } else {
+                    outObject.serialize(this);
                 }
-                
+
                 this.startElement.setComplete(true);
             }
         }
@@ -180,7 +172,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-        log.info("Building OM for Element {"+namespaceURI+'}'+ localName +" for the ObjectPusher");
+        log.info("Building OM for Element {" + namespaceURI + '}' + localName + " for the ObjectPusher");
         if (localName.length() == 0)
             localName = qName;
 
@@ -205,7 +197,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         String attrUri = "";
         String attrPrefix = "";
         OMNamespace ns = null;
-        if(atts != null){
+        if (atts != null) {
             for (int i = 0; i < atts.getLength(); i++) {
 
                 attrUri = atts.getURI(i);
@@ -244,7 +236,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
     public void registerExternalContentHandler(Object obj) {
         if (obj instanceof ContentHandler)
-            this.externalContentHandler = (ContentHandler)obj;
+            this.externalContentHandler = (ContentHandler) obj;
         else
             throw new IllegalArgumentException("Attempt to register wrong type of content handler");
     }

@@ -16,8 +16,6 @@
 
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
@@ -25,13 +23,17 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class SpeakingHandler1  extends AbstractHandler implements Handler {
+import javax.xml.namespace.QName;
+
+public class SpeakingHandler1 extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private String message;
     private QName name;
+
     public SpeakingHandler1(String message) {
-       this.message = message;
+        this.message = message;
     }
+
     public QName getName() {
         return name;
     }

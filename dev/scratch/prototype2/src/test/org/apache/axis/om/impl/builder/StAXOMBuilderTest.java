@@ -20,11 +20,6 @@ package org.apache.axis.om.impl.builder;
  * Time: 2:29:07 PM
  */
 
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
@@ -32,6 +27,10 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
 public class StAXOMBuilderTest extends AbstractTestCase {
     StAXOMBuilder stAXOMBuilder;
@@ -56,15 +55,15 @@ public class StAXOMBuilderTest extends AbstractTestCase {
         assertTrue(" Name of the root element is wrong", rootElement.getLocalName().equalsIgnoreCase("Root"));
         // get the first OMElement child
         OMNode omnode = rootElement.getFirstChild();
-        while(omnode instanceof OMText){
+        while (omnode instanceof OMText) {
             omnode = omnode.getNextSibling();
         }
 
-        Iterator children = ((OMElement)omnode).getChildren();
+        Iterator children = ((OMElement) omnode).getChildren();
         int childrenCount = 0;
         while (children.hasNext()) {
             OMNode node = (OMNode) children.next();
-            if(node instanceof OMElement)
+            if (node instanceof OMElement)
                 childrenCount++;
         }
         assertTrue(childrenCount == 5);

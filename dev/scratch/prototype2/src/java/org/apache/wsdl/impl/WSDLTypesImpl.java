@@ -23,46 +23,49 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
-    
+
     private HashMap extensionElements = new HashMap();
 
     /**
      * Sets the <code>ExtensionElement</code>s as a <code>HashMap</code>
+     *
      * @return
      */
     public HashMap getTypes() {
         return extensionElements;
     }
-    
+
     /**
      * Returns all the <code>ExtensionElement</code>s as a <code>HashMap</code>
+     *
      * @param types
      */
     public void setTypes(HashMap types) {
         this.extensionElements = types;
     }
-    
+
     /**
-     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>     * 
+     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>     *
+     *
      * @param qName
      * @param element
      */
-    public void addElement(QName qName, ExtensionElement element){
-        
+    public void addElement(QName qName, ExtensionElement element) {
+
         this.extensionElements.put(qName, element);
     }
-    
+
     /**
      * Will return the Element with the given <code>QName</code>
      * Returns null if not found.
+     *
      * @param qName
      * @return
      */
-    public ExtensionElement getElement(QName qName){
-        return (ExtensionElement)this.extensionElements.get(qName);
+    public ExtensionElement getElement(QName qName) {
+        return (ExtensionElement) this.extensionElements.get(qName);
     }
-    
+
 }

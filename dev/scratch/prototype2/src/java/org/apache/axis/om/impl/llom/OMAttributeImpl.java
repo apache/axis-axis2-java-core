@@ -1,12 +1,11 @@
 package org.apache.axis.om.impl.llom;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMNamespace;
+
+import javax.xml.namespace.QName;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -44,7 +43,7 @@ public class OMAttributeImpl implements OMAttribute {
         return matcher.replaceAll(QUOTE_ENTITY);
     }
 
-    public QName getQName(){
+    public QName getQName() {
         String namespaceName = namespace != null ? namespace.getName() : null;
         return new QName(namespaceName, localName);
     }
@@ -66,14 +65,13 @@ public class OMAttributeImpl implements OMAttribute {
         this.value = value;
     }
 
-    public void setOMNamespace(OMNamespace omNamespace){
+    public void setOMNamespace(OMNamespace omNamespace) {
         this.namespace = omNamespace;
     }
 
-    public OMNamespace getNamespace(){
+    public OMNamespace getNamespace() {
         return namespace;
     }
-
 
 
 }

@@ -21,9 +21,8 @@ import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLBinding extends ExtensibleComponent{
+public interface WSDLBinding extends ExtensibleComponent {
     public WSDLInterface getBoundInterface();
 
     public void setBoundInterface(WSDLInterface boundInterface);

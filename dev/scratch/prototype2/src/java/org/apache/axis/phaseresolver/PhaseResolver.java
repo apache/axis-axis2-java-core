@@ -1,17 +1,11 @@
 package org.apache.axis.phaseresolver;
 
-import java.util.*;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -27,14 +21,12 @@ import org.apache.axis.engine.EngineRegistry;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 public class PhaseResolver {
 
-    private EngineRegistry engineRegistry ;
+    private EngineRegistry engineRegistry;
     private AxisService axisService;
-    private PhaseHolder phaseHolder ;
-
+    private PhaseHolder phaseHolder;
 
 
     /**
@@ -44,13 +36,13 @@ public class PhaseResolver {
         this.engineRegistry = engineRegistry;
     }
 
-    public PhaseResolver(EngineRegistry engineRegistry, AxisService axisService ) {
+    public PhaseResolver(EngineRegistry engineRegistry, AxisService axisService) {
         this.engineRegistry = engineRegistry;
         this.axisService = axisService;
     }
 
     public void buildchains() throws PhaseException, AxisFault {
-        for(int i =1 ; i < 4 ; i++) {
+        for (int i = 1; i < 4; i++) {
             buildExcutionChains(i);
 
         }
@@ -60,14 +52,15 @@ public class PhaseResolver {
     /**
      * this opeartion is used to build all the three cahins ,
      * so type varible is used to difrenciate them
-     *  type = 1 inflow
-     *  type = 2 out flow
-     *  type = 3 fault flow
+     * type = 1 inflow
+     * type = 2 out flow
+     * type = 3 fault flow
+     *
      * @param type
      * @throws AxisFault
      */
-    private  void buildExcutionChains(int type) throws AxisFault, PhaseException {
-        int flowtype =  type;
+    private void buildExcutionChains(int type) throws AxisFault, PhaseException {
+        int flowtype = type;
         ArrayList allHandlers = new ArrayList();
         // int count = server.getModuleCount();
         //  QName moduleName;
@@ -105,32 +98,35 @@ public class PhaseResolver {
         // service module handlers
         Collection collection = axisService.getModules();
         Iterator itr = collection.iterator();
-        while(itr.hasNext()){
-            QName moduleref = (QName)itr.next();
+        while (itr.hasNext()) {
+            QName moduleref = (QName) itr.next();
             // }
             // Vector modules = (Vector)axisService.getModules();
             // for (int i = 0; i < modules.size(); i++) {
             //   QName moduleref = (QName) modules.elementAt(i);
             module = engineRegistry.getModule(moduleref);
-            switch (flowtype){
-                case 1 : {
-                    flow = module.getInFlow();
-                    break;
-                }
-                case  2 : {
-                    flow = module.getOutFlow();
-                    break;
-                }
-                case 3 : {
-                    flow = module.getFaultFlow();
-                    break;
-                }
+            switch (flowtype) {
+                case 1:
+                    {
+                        flow = module.getInFlow();
+                        break;
+                    }
+                case 2:
+                    {
+                        flow = module.getOutFlow();
+                        break;
+                    }
+                case 3:
+                    {
+                        flow = module.getFaultFlow();
+                        break;
+                    }
             }
-            if(flow != null ){
-                for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
                     HandlerMetaData metadata = flow.getHandler(j);
                     //todo change this in properway
-                    if (metadata.getRules().getPhaseName().equals("") ){
+                    if (metadata.getRules().getPhaseName().equals("")) {
                         metadata.getRules().setPhaseName("service");
                     }
                     allHandlers.add(metadata);
@@ -138,31 +134,34 @@ public class PhaseResolver {
             }
         }
 
-        switch (flowtype){
-            case 1 : {
-                flow = axisService.getInFlow();
-                break;
-            }
-            case  2 : {
-                flow = axisService.getOutFlow();
-                break;
-            }
-            case 3 : {
-                flow = axisService.getFaultFlow();
-                break;
-            }
+        switch (flowtype) {
+            case 1:
+                {
+                    flow = axisService.getInFlow();
+                    break;
+                }
+            case 2:
+                {
+                    flow = axisService.getOutFlow();
+                    break;
+                }
+            case 3:
+                {
+                    flow = axisService.getFaultFlow();
+                    break;
+                }
         }
-        if(flow != null ){
-            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+        if (flow != null) {
+            for (int j = 0; j < flow.getHandlerCount(); j++) {
                 HandlerMetaData metadata = flow.getHandler(j);
                 //todo change this in properway
-                if (metadata.getRules().getPhaseName().equals("")){
+                if (metadata.getRules().getPhaseName().equals("")) {
                     metadata.getRules().setPhaseName("service");
                 }
                 allHandlers.add(metadata);
             }
         }
-        phaseHolder = new PhaseHolder(engineRegistry,axisService);
+        phaseHolder = new PhaseHolder(engineRegistry, axisService);
 
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.get(i);
@@ -172,12 +171,12 @@ public class PhaseResolver {
 
     }
 
-    public void buildTranspotsChains() throws PhaseException  {
+    public void buildTranspotsChains() throws PhaseException {
         try {
             HashMap transports = engineRegistry.getTransports();
             Collection coltrnsport = transports.values();
             for (Iterator iterator = coltrnsport.iterator(); iterator.hasNext();) {
-                AxisTransport   transport = (AxisTransport)iterator.next();
+                AxisTransport transport = (AxisTransport) iterator.next();
                 buildTransportChains(transport);
             }
         } catch (AxisFault axisFault) {
@@ -186,70 +185,76 @@ public class PhaseResolver {
 
     }
 
-    private void buildTransportChains(AxisTransport   transport) throws PhaseException {
+    private void buildTransportChains(AxisTransport transport) throws PhaseException {
         Flow flow = null;
-        for(int type =1 ; type <4 ; type ++){
-            phaseHolder = new PhaseHolder(engineRegistry,null);
-            switch(type){
-                case 1 : {
-                    flow = transport.getInFlow();
-                    break;
-                }
-                case 2 : {
-                    flow = transport.getOutFlow();
-                    break;
-                }
-                case 3 : {
-                    flow = transport.getFaultFlow();
-                    break;
-                }
+        for (int type = 1; type < 4; type++) {
+            phaseHolder = new PhaseHolder(engineRegistry, null);
+            switch (type) {
+                case 1:
+                    {
+                        flow = transport.getInFlow();
+                        break;
+                    }
+                case 2:
+                    {
+                        flow = transport.getOutFlow();
+                        break;
+                    }
+                case 3:
+                    {
+                        flow = transport.getFaultFlow();
+                        break;
+                    }
             }
-            if(flow != null ){
-                for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
                     HandlerMetaData metadata = flow.getHandler(j);
                     //todo change this in properway
-                    if (metadata.getRules().getPhaseName().equals("")){
+                    if (metadata.getRules().getPhaseName().equals("")) {
                         metadata.getRules().setPhaseName("transport");
                     }
                     phaseHolder.addHandler(metadata);
 
                 }
             }
-         phaseHolder.buildTransportChain(transport, type);
+            phaseHolder.buildTransportChain(transport, type);
         }
 
     }
 
     public void buildGlobalChains(AxisGlobal global) throws AxisFault, PhaseException {
-        List modules = (List)global.getModules();
+        List modules = (List) global.getModules();
         int count = modules.size();
         QName moduleName;
         AxisModule module;
         Flow flow = null;
-        for(int type = 1 ; type < 4 ; type ++){
-            phaseHolder = new PhaseHolder(engineRegistry,null);
-            for(int intA=0 ; intA < count; intA ++){
-                moduleName = (QName)modules.get(intA);
+        for (int type = 1; type < 4; type++) {
+            phaseHolder = new PhaseHolder(engineRegistry, null);
+            for (int intA = 0; intA < count; intA++) {
+                moduleName = (QName) modules.get(intA);
                 module = engineRegistry.getModule(moduleName);
-                switch (type){
-                    case 1 : {
-                        flow = module.getInFlow();
-                        break;
-                    }
-                    case  2 : {
-                        flow = module.getOutFlow();
-                        break;
-                    }
-                    case 3 : {
-                        flow = module.getFaultFlow();
-                        break;
-                    }
+                switch (type) {
+                    case 1:
+                        {
+                            flow = module.getInFlow();
+                            break;
+                        }
+                    case 2:
+                        {
+                            flow = module.getOutFlow();
+                            break;
+                        }
+                    case 3:
+                        {
+                            flow = module.getFaultFlow();
+                            break;
+                        }
                 }
-                if(flow != null ){
-                    for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                if (flow != null) {
+                    for (int j = 0; j < flow.getHandlerCount(); j++) {
                         HandlerMetaData metadata = flow.getHandler(j);
                         //todo change this in properway
-                        if (metadata.getRules().getPhaseName().equals("")){
+                        if (metadata.getRules().getPhaseName().equals("")) {
                             metadata.getRules().setPhaseName("global");
                         }
                         phaseHolder.addHandler(metadata);

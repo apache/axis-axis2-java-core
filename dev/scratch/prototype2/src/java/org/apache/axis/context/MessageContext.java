@@ -28,10 +28,9 @@ import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 
+import javax.xml.stream.XMLStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * The palce where all the service specific states are kept.
@@ -58,7 +57,7 @@ public class MessageContext {
     private RelatesTo relatesTo;
     private EndpointReference replyTo;
     private EndpointReference faultTo;
-    
+
     private ExecutionChain chain;
     private AxisTransport transport;
 
@@ -82,7 +81,7 @@ public class MessageContext {
     public MessageContext(EngineRegistry er, Map initialProperties) throws AxisFault {
         this.globalContext = new GlobalContext(er);
         this.sessionContext = new SimpleSessionContext();
-        if(initialProperties == null){
+        if (initialProperties == null) {
             initialProperties = new HashMap();
         }
         properties = initialProperties;
@@ -233,7 +232,6 @@ public class MessageContext {
     }
 
     /**
-     *
      * @param key
      * @param value
      */
@@ -340,9 +338,9 @@ public class MessageContext {
     public void setMessageStyle(int i) {
         messageStyle = i;
     }
-    
 
-     public ExecutionChain getExecutionChain() {
+
+    public ExecutionChain getExecutionChain() {
         return this.chain;
     }
 
@@ -368,33 +366,33 @@ public class MessageContext {
         this.transport = transport;
     }
 
-	/**
-	 * @return
-	 */
-	public XMLStreamReader getXpp() {
-		return xpp;
-	}
+    /**
+     * @return
+     */
+    public XMLStreamReader getXpp() {
+        return xpp;
+    }
 
-	/**
-	 * @param reader
-	 */
-	public void setXpp(XMLStreamReader reader) {
-		xpp = reader;
-	}
+    /**
+     * @param reader
+     */
+    public void setXpp(XMLStreamReader reader) {
+        xpp = reader;
+    }
 
-	/**
-	 * @return
-	 */
-	public OMElement getSoapOperationElement() {
-		return soapOperationElement;
-	}
+    /**
+     * @return
+     */
+    public OMElement getSoapOperationElement() {
+        return soapOperationElement;
+    }
 
-	/**
-	 * @param element
-	 */
-	public void setSoapOperationElement(OMElement element) {
-		soapOperationElement = element;
-	}
+    /**
+     * @param element
+     */
+    public void setSoapOperationElement(OMElement element) {
+        soapOperationElement = element;
+    }
 
     /**
      * @return

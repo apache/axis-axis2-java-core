@@ -1,14 +1,6 @@
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -45,7 +37,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
         super(SOAPENVELOPE_LOCAL_NAME, ns);
     }
 
-        /**
+    /**
      * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
      * SOAPEnvelope</CODE> object.
      * <p/>
@@ -63,18 +55,18 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
 //	    	while(header == null && body == null){
 //	    		builder.next();
 //	    	}
-//		}	  
-		OMNode node = getFirstChild();
-		while(node != null){
-			if(node != null && node.getType() == OMNode.ELEMENT_NODE){
-				OMElement element = (OMElement)node;
-				if(OMConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())){
-					return (SOAPHeader)element;
-				}
-			}
-			node = node.getNextSibling();
-		}
-		return null;
+//		}
+        OMNode node = getFirstChild();
+        while (node != null) {
+            if (node != null && node.getType() == OMNode.ELEMENT_NODE) {
+                OMElement element = (OMElement) node;
+                if (OMConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())) {
+                    return (SOAPHeader) element;
+                }
+            }
+            node = node.getNextSibling();
+        }
+        return null;
     }
 
     /**
@@ -92,8 +84,8 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
      *                                        obtaining the <CODE>SOAPBody</CODE> object
      */
     public SOAPBody getBody() throws OMException {
-    	//Look at this . this code forces the OM  to build the whole thing because 
-    	//the iterator needs to stay <i>ahead</i> one node.We need to do this manually
+        //Look at this . this code forces the OM  to build the whole thing because
+        //the iterator needs to stay <i>ahead</i> one node.We need to do this manually
 //    	if(builder != null){
 //			while( body == null){
 //				builder.next();
@@ -103,17 +95,17 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
 
 //    	return body;
 
-		OMNode node = getFirstChild();
-		while(node != null){
-			if(node != null && node.getType() == OMNode.ELEMENT_NODE){
-				OMElement element = (OMElement)node;
-				if(OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())){
-					return (SOAPBody)element;
-				}
-			}
-			node = node.getNextSibling();
-		}
-		return null;
+        OMNode node = getFirstChild();
+        while (node != null) {
+            if (node != null && node.getType() == OMNode.ELEMENT_NODE) {
+                OMElement element = (OMElement) node;
+                if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                    return (SOAPBody) element;
+                }
+            }
+            node = node.getNextSibling();
+        }
+        return null;
 //        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
 //        SOAPBody soapBody = null;
 //        if (bodyIterator.hasNext()) {

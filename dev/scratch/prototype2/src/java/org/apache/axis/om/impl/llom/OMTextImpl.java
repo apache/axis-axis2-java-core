@@ -1,13 +1,9 @@
 package org.apache.axis.om.impl.llom;
 
+import org.apache.axis.om.*;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -28,8 +24,8 @@ import org.apache.axis.om.OMText;
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     protected short textType = TEXT_NODE;
-    
-	public OMTextImpl(OMElement parent, String text) {
+
+    public OMTextImpl(OMElement parent, String text) {
         super(parent);
         setValue(text);
         done = true;

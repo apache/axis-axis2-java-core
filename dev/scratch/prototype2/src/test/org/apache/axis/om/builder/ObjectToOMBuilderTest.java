@@ -1,22 +1,16 @@
 package org.apache.axis.om.builder;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
 import junit.framework.TestCase;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -52,8 +46,8 @@ public class ObjectToOMBuilderTest extends TestCase {
         OMFactory omFactory = OMFactory.newInstance();
         OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
         element = omFactory.createOMElement("Body", ns);
-        new ObjectToOMBuilder(element,outObject);
-        tempFile = File.createTempFile("temp","xml");
+        new ObjectToOMBuilder(element, outObject);
+        tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
 
     }
@@ -69,7 +63,6 @@ public class ObjectToOMBuilderTest extends TestCase {
     public void testSerialization() throws Exception {
         element.serialize(writer, true);
     }
-
 
 
     protected void tearDown() throws Exception {

@@ -20,9 +20,9 @@ import javax.xml.namespace.QName;
  * One must implement relevant constructors for the class implementing this interface
  * all the things like namespace, parent, value, etc., that should come in this are defined in base classes
  */
-public interface OMAttribute{
+public interface OMAttribute {
 
-   public String getLocalName();
+    public String getLocalName();
 
     public void setLocalName(String localName);
 

@@ -19,14 +19,13 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLFault extends Component{
-	public Element getElement();
+public interface WSDLFault extends Component {
+    public Element getElement();
 
-	public void setElement(Element element);
+    public void setElement(Element element);
 
-	public String getName();
+    public String getName();
 
-	public void setName(String name);
+    public void setName(String name);
 }

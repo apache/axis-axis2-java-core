@@ -1,23 +1,14 @@
 package org.apache.axis.om.impl.llom;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
+import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPFault;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -78,9 +69,9 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
                     return new QName("", strings[1], strings[0]);
                 }
             }
-        }else {
+        } else {
             faultCodeElement = (OMElementImpl) this.getChildWithName(new QName(this.ns.getName(), OMConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns.getPrefix()));
-            if(faultCodeElement != null){
+            if (faultCodeElement != null) {
                 return this.getFaultCode();
             }
         }
@@ -106,9 +97,9 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
                 }
             }
 
-        }else {
+        } else {
             faultActorElement = (OMElementImpl) this.getChildWithName(new QName(this.ns.getName(), OMConstants.SOAPFAULT_ACTOR_LOCAL_NAME, this.ns.getPrefix()));
-            if(faultActorElement != null){
+            if (faultActorElement != null) {
                 return this.getFaultString();
             }
         }
@@ -134,9 +125,9 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
                     return ((OMText) o).getValue();
                 }
             }
-        }else {
+        } else {
             faultStringElement = (OMElementImpl) this.getChildWithName(new QName(this.ns.getName(), OMConstants.SOAPFAULT_STRING_LOCAL_NAME, this.ns.getPrefix()));
-            if(faultStringElement != null){
+            if (faultStringElement != null) {
                 return this.getFaultString();
             }
         }
@@ -162,9 +153,9 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
                     return (OMNode) o;
                 }
             }
-        }else {
+        } else {
             detailElement = (OMElementImpl) this.getChildWithName(new QName(this.ns.getName(), OMConstants.SOAPFAULT_DETAIL_LOCAL_NAME, this.ns.getPrefix()));
-            if(detailElement != null){
+            if (detailElement != null) {
                 return this.getDetailInformation();
             }
         }
@@ -174,22 +165,22 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
 
     public Exception getException() throws OMException {
         if (e == null) {
-           
-                OMNode detailsInformationNode = this.getDetailInformation();
-                if (detailsInformationNode instanceof OMElement) {
-                    try {
-                        StringWriter sw = new StringWriter();
-                        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(sw);
-                        ((OMElement) detailsInformationNode).serialize(writer, true);
-                        writer.flush();
-                        return new Exception(sw.toString());
-                    } catch (XMLStreamException e1) {
-                        throw new OMException("Exception in StAX Writer", e1);
-                    }
-                } else if (detailsInformationNode instanceof OMText) {
 
-                    return new Exception(((OMText) detailsInformationNode).getValue());
+            OMNode detailsInformationNode = this.getDetailInformation();
+            if (detailsInformationNode instanceof OMElement) {
+                try {
+                    StringWriter sw = new StringWriter();
+                    XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(sw);
+                    ((OMElement) detailsInformationNode).serialize(writer, true);
+                    writer.flush();
+                    return new Exception(sw.toString());
+                } catch (XMLStreamException e1) {
+                    throw new OMException("Exception in StAX Writer", e1);
                 }
+            } else if (detailsInformationNode instanceof OMText) {
+
+                return new Exception(((OMText) detailsInformationNode).getValue());
+            }
 
         } else {
             return e;

@@ -16,10 +16,6 @@
 
 package org.apache.axis.providers;
 
-import java.lang.reflect.Method;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisService;
@@ -32,6 +28,9 @@ import org.apache.axis.om.OMUtils;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
 
 /**
  * This is a Simple java Provider.
@@ -55,18 +54,17 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         try {
             AxisService service = msgContext.getService();
             classLoader = service.getClassLoader();
-            Class implClass = service.getServiceClass(); 
+            Class implClass = service.getServiceClass();
             return implClass.newInstance();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }
 
-    public Object getTheImplementationObject(
-            MessageContext msgContext)throws AxisFault{
-            AxisService service = msgContext.getService();
-            QName serviceName = service.getName();
-        if(Constants.APPLICATION_SCOPE.equals(scope)){
+    public Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
+        AxisService service = msgContext.getService();
+        QName serviceName = service.getName();
+        if (Constants.APPLICATION_SCOPE.equals(scope)) {
             return makeNewServiceObject(msgContext);
         } else if (Constants.SESSION_SCOPE.equals(scope)) {
             SessionContext sessionContext = msgContext.getSessionContext();
@@ -91,7 +89,6 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     }
 
 
-
     public MessageContext invoke(MessageContext msgContext) throws AxisFault {
         try {
             //get the implementation class for the Web Service 
@@ -107,14 +104,14 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                     break;
                 }
             }
-            
+
             OMElement methodElement = OMUtils.getFirstChildElement(msgContext.getEnvelope().getBody());
             OMElement parmeter = OMUtils.getFirstChildElement(methodElement);
 
             Object[] parms = new Object[]{parmeter};
             //invoke the WebService 
             OMElement result = (OMElement) method.invoke(obj, parms);
-            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry(),msgContext.getProperties());
+            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry(), msgContext.getProperties());
 
             SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
             envelope.getBody().setFirstChild(result);
@@ -123,7 +120,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
             return msgContext1;
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
-        } 
+        }
     }
 
     public void revoke(MessageContext msgContext) {

@@ -21,26 +21,27 @@ import org.apache.wsdl.WSDLEndpoint;
 import javax.xml.namespace.QName;
 
 
-
 /**
  * @author chathura@opensource.lk
- *
  */
-public class WSDLEndpointImpl extends  ComponentImpl implements WSDLEndpoint {
+public class WSDLEndpointImpl extends ComponentImpl implements WSDLEndpoint {
 
     private QName name;
-    
+
     private WSDLBinding binding;
-    
+
     public WSDLBinding getBinding() {
         return binding;
     }
+
     public void setBinding(WSDLBinding binding) {
         this.binding = binding;
     }
+
     public QName getName() {
         return name;
     }
+
     public void setName(QName name) {
         this.name = name;
     }

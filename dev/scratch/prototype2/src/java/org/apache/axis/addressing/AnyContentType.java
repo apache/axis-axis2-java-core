@@ -31,11 +31,11 @@ public class AnyContentType {
         valueHolder = new HashMap(5);
     }
 
-    public void addReferenceValue(QName name, String value){
+    public void addReferenceValue(QName name, String value) {
         valueHolder.put(name, value);
     }
 
-    public String getReferenceValue(QName name){
+    public String getReferenceValue(QName name) {
         return (String) valueHolder.get(name);
     }
 }

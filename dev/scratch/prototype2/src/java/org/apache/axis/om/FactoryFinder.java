@@ -14,13 +14,14 @@ package org.apache.axis.om;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *         This is the static factory finder. It searches for the relevant class
- *         Note - It has only package access!!!
+ * <p/>
+ * This is the static factory finder. It searches for the relevant class
+ * Note - It has only package access!!!
  */
 class FactoryFinder {
 
     private static final String DEFAULT_CLASS_NAME = "org.apache.axis.om.impl.llom.factory.OMLinkedListImplFactory";
+
     /**
      * This needs to be improved. Currently the factory is loaded only from the default implementation
      * However provisions should be made to load a custom factory depending on the users setting

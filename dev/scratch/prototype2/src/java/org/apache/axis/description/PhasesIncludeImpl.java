@@ -15,40 +15,40 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
+import java.util.ArrayList;
+
 /**
- * Util class to implements the Phases include with delegation 
+ * Util class to implements the Phases include with delegation
  */
-public class PhasesIncludeImpl implements PhasesInclude{
+public class PhasesIncludeImpl implements PhasesInclude {
     private ArrayList inflow;
     private ArrayList outflow;
     private ArrayList faultflow;
-    
+
     public ArrayList getPhases(int flow) throws AxisFault {
-        if(flow == EngineRegistry.INFLOW){
+        if (flow == EngineRegistry.INFLOW) {
             return inflow;
-        }else if(flow == EngineRegistry.OUTFLOW){
+        } else if (flow == EngineRegistry.OUTFLOW) {
             return outflow;
-        }else if(flow == EngineRegistry.FAULTFLOW){
+        } else if (flow == EngineRegistry.FAULTFLOW) {
             return faultflow;
-        }else{
+        } else {
             throw new AxisFault("Unknown type flow ");
         }
 
     }
 
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        if(flow == EngineRegistry.INFLOW){
+        if (flow == EngineRegistry.INFLOW) {
             inflow = phases;
-        }else if(flow == EngineRegistry.OUTFLOW){
-            outflow= phases;
-        }else if(flow == EngineRegistry.FAULTFLOW){
+        } else if (flow == EngineRegistry.OUTFLOW) {
+            outflow = phases;
+        } else if (flow == EngineRegistry.FAULTFLOW) {
             faultflow = phases;
-        }else{
+        } else {
             throw new AxisFault("Unknown type flow ");
         }
     }
