@@ -20,7 +20,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.Parameter;
@@ -88,7 +88,7 @@ public class TestSendReceive extends AbstractTestCase {
     public void testSendReceive() throws Exception {
         
         SOAPEnvelope envelope = getBasicEnvelope();
-        EndpointReferenceType targetEPR = new EndpointReferenceType(
+        EndpointReference targetEPR = new EndpointReference(
                 AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);

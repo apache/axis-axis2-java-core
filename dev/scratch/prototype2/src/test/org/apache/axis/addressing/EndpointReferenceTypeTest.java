@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 public class EndpointReferenceTypeTest extends TestCase {
 
-    EndpointReferenceType endpointReferenceType;
+    EndpointReference endpointReference;
     private String headerType = AddressingConstants.WSA_FROM;
     private String address = "htttp://wwww.openource.lk/~chinthaka";
 
@@ -39,28 +39,28 @@ public class EndpointReferenceTypeTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        endpointReferenceType = new EndpointReferenceType(headerType, address);
+        endpointReference = new EndpointReference(headerType, address);
     }
 
     public void testGetAndSetMessageInformationHeaderType() {
-        assertEquals("MessageInformationHeaderType not set properly in the constructor", headerType, endpointReferenceType.getMessageInformationHeaderType());
+        assertEquals("MessageInformationHeaderType not set properly in the constructor", headerType, endpointReference.getMessageInformationHeaderType());
 
-        endpointReferenceType.setMessageInformationHeaderType(AddressingConstants.WSA_REPLY_TO);
-        assertEquals("MessageInformationHeaderType not set properly in the setter method", AddressingConstants.WSA_REPLY_TO, endpointReferenceType.getMessageInformationHeaderType());
+        endpointReference.setMessageInformationHeaderType(AddressingConstants.WSA_REPLY_TO);
+        assertEquals("MessageInformationHeaderType not set properly in the setter method", AddressingConstants.WSA_REPLY_TO, endpointReference.getMessageInformationHeaderType());
     }
 
     public void testGetAndSetAddress() {
-        assertEquals("Address not set properly in the constructor", address, endpointReferenceType.getAddress());
+        assertEquals("Address not set properly in the constructor", address, endpointReference.getAddress());
 
         String newAddress = "http://www.axis2.com";
-        endpointReferenceType.setAddress(newAddress);
-        assertEquals("Address not set properly in the setter method", newAddress, endpointReferenceType.getAddress());
+        endpointReference.setAddress(newAddress);
+        assertEquals("Address not set properly in the setter method", newAddress, endpointReference.getAddress());
     }
 
     public void testGetAndSetPortType() {
         QName portType = new QName("www.someport.com", "port");
-        endpointReferenceType.setPortType(portType);
-        assertEquals("PortType not set/get properly", portType, endpointReferenceType.getPortType());
+        endpointReference.setPortType(portType);
+        assertEquals("PortType not set/get properly", portType, endpointReference.getPortType());
     }
 
     public void testGetAndSetReferenceProperties() {
@@ -68,9 +68,9 @@ public class EndpointReferenceTypeTest extends TestCase {
         for(int i=0; i < 10; i++){
            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i), "value "+i*100);
         }
-        endpointReferenceType.setReferenceProperties(anyContentType);
+        endpointReference.setReferenceProperties(anyContentType);
 
-        AnyContentType retrievedAnyContentType = endpointReferenceType.getReferenceProperties();
+        AnyContentType retrievedAnyContentType = endpointReference.getReferenceProperties();
         for(int i=0; i < 10; i++){
            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i));
             assertEquals("Input value differs from what is taken out from AnyContentType", value, "value "+i*100);
@@ -83,9 +83,9 @@ public class EndpointReferenceTypeTest extends TestCase {
         for(int i=0; i < 10; i++){
            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i), "value "+i*50);
         }
-        endpointReferenceType.setReferenceParameters(anyContentType);
+        endpointReference.setReferenceParameters(anyContentType);
 
-        AnyContentType retrievedAnyContentType = endpointReferenceType.getReferenceParameters();
+        AnyContentType retrievedAnyContentType = endpointReference.getReferenceParameters();
         for(int i=0; i < 10; i++){
            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/"+i, ""+i));
             assertEquals("Input value differs from what is taken out from AnyContentType", value, "value "+i*50);
@@ -94,13 +94,13 @@ public class EndpointReferenceTypeTest extends TestCase {
 
     public void testGetAndSetServiceName() {
         ServiceName serviceName = new ServiceName(new QName("www.someservicename.org", "service"));
-        endpointReferenceType.setServiceName(serviceName);
-        ServiceName retrievedServiceName = endpointReferenceType.getServiceName();
+        endpointReference.setServiceName(serviceName);
+        ServiceName retrievedServiceName = endpointReference.getServiceName();
         assertEquals("ServiceName name has not been get/set properly", serviceName.getName(), retrievedServiceName.getName());
 
         serviceName = new ServiceName(new QName("www.someservicename.org", "service"), "portName");
-        endpointReferenceType.setServiceName(serviceName);
-        retrievedServiceName = endpointReferenceType.getServiceName();
+        endpointReference.setServiceName(serviceName);
+        retrievedServiceName = endpointReference.getServiceName();
         assertEquals("ServiceName name has not been get/set properly", serviceName.getName(), retrievedServiceName.getName());
         assertEquals("ServiceName portName has not been get/set properly", serviceName.getPortName(), retrievedServiceName.getPortName());
     }

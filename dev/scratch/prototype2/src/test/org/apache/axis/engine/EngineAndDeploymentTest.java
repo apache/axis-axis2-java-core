@@ -19,7 +19,7 @@ import java.net.URL;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMElement;
@@ -55,7 +55,7 @@ public class EngineAndDeploymentTest extends AbstractTestCase{
             
             Call call = new Call();
             URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
-            call.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,url.toString()));
+            call.setTo(new EndpointReference(AddressingConstants.WSA_TO,url.toString()));
             OMElement omele = call.sendReceive(envelope);
             assertNotNull(omele);
     }
