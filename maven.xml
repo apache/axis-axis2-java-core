@@ -209,17 +209,16 @@
   </ant:javadoc>
   </goal>
   
-  <preGoal name="multiproject:site">
+  <!-- preGoal name="multiproject:site">
     
     <attainGoal name="war"/>
     <attainGoal name="javadoc-gen"/>
-    <!-- attainGoal name="pdf"/ -->
+    
     <copy todir="target/docs/api">
 		<fileset dir="target/apidocs" />
 	</copy>
 	<copy file="target/axis2.war" tofile="target/docs/dist/axis2.war"/>
-	<!-- copy file="target/pdf/axis2.pdf" tofile="target/docs/axis2.pdf"/>
-	<ant:delete dir="target/pdf"/ -->
-  </preGoal>
+	
+  </preGoal -->
 </project>
 

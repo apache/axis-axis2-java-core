@@ -334,6 +334,7 @@ public class OMElementImpl extends OMNamedNodeImpl
 
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element
+     * This can also be used to retrieve the prefix of a known namespace URI
      *
      * @param uri
      * @param prefix
@@ -345,7 +346,7 @@ public class OMElementImpl extends OMNamedNodeImpl
         if (namespaces == null) {
             return null;
         }
-        if (prefix == null) {
+        if (prefix == null || "".equals("")) {
             Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace =

@@ -19,6 +19,7 @@ import javax.xml.namespace.QName;
 
 /**
  * Class EndpointReference
+ * TODO : Policy has not been integrated to this
  */
 public class EndpointReference {
     /**
@@ -30,7 +31,7 @@ public class EndpointReference {
     private String messageInformationHeaderType;
 
     /**
-     * Field address
+     * Required property. may be a logical address or identifier for the service endpoint
      */
     private String address;
 

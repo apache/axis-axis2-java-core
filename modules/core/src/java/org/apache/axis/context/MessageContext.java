@@ -16,6 +16,7 @@
 package org.apache.axis.context;
 
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -91,42 +92,18 @@ public class MessageContext {
     private boolean processingFault = false;
 
     /**
-     * Field to
+     * Addressing Information for Axis 2
+     * Following Properties will be kept inside this, these fields will be initially filled by
+     * the transport. Then later a addressing handler will make relevant changes to this, if addressing
+     * information is present in the SOAP header.
      */
-    private EndpointReference to;
 
-    /**
-     * Field from
-     */
-    private EndpointReference from;
+    MessageInformationHeadersCollection messageInformationHeaders;
 
-    /**
-     * Field relatesTo
-     */
-    private RelatesTo relatesTo;
 
-    /**
-     * Field replyTo
-     */
-    private EndpointReference replyTo;
-
-    /**
-     * Field faultTo
-     */
-    private EndpointReference faultTo;
-
-    /**
-     * Field chain
-     */
     private ExecutionChain chain;
 
-    /**
-     * Field transport
-     */
     private AxisTransport transport;
-
-    // there is a no use cas found to set those proprties
-    // so declare them final
 
     /**
      * Field properties
@@ -213,20 +190,21 @@ public class MessageContext {
         }
         properties = initialProperties;
         chain = new ExecutionChain();
+        messageInformationHeaders = new MessageInformationHeadersCollection();
     }
 
     /**
      * @return
      */
     public EndpointReference getFaultTo() {
-        return faultTo;
+        return messageInformationHeaders.getFaultTo();
     }
 
     /**
      * @return
      */
     public EndpointReference getFrom() {
-        return from;
+        return messageInformationHeaders.getFrom();
     }
 
     /**
@@ -276,14 +254,14 @@ public class MessageContext {
      * @return
      */
     public RelatesTo getRelatesTo() {
-        return relatesTo;
+        return messageInformationHeaders.getRelatesTo();
     }
 
     /**
      * @return
      */
     public EndpointReference getReplyTo() {
-        return replyTo;
+        return messageInformationHeaders.getReplyTo();
     }
 
     /**
@@ -311,21 +289,21 @@ public class MessageContext {
      * @return
      */
     public EndpointReference getTo() {
-        return to;
+        return messageInformationHeaders.getTo();
     }
 
     /**
-     * @param referance
+     * @param reference
      */
-    public void setFaultTo(EndpointReference referance) {
-        faultTo = referance;
+    public void setFaultTo(EndpointReference reference) {
+        messageInformationHeaders.setFaultTo(reference);
     }
 
     /**
-     * @param referance
+     * @param reference
      */
-    public void setFrom(EndpointReference referance) {
-        from = referance;
+    public void setFrom(EndpointReference reference) {
+        messageInformationHeaders.setFrom(reference);
     }
 
     /**
@@ -365,17 +343,17 @@ public class MessageContext {
     }
 
     /**
-     * @param referance
+     * @param reference
      */
-    public void setRelatesTo(RelatesTo referance) {
-        relatesTo = referance;
+    public void setRelatesTo(RelatesTo reference) {
+        messageInformationHeaders.setRelatesTo(reference);
     }
 
     /**
      * @param referance
      */
     public void setReplyTo(EndpointReference referance) {
-        replyTo = referance;
+        messageInformationHeaders.setReplyTo(referance);
     }
 
     /**
@@ -396,7 +374,7 @@ public class MessageContext {
      * @param referance
      */
     public void setTo(EndpointReference referance) {
-        to = referance;
+        messageInformationHeaders.setTo(referance);
     }
 
     /**
@@ -520,5 +498,18 @@ public class MessageContext {
      */
     public Map getProperties() {
         return properties;
+    }
+
+    public void setWSAAction(String actionURI){
+        messageInformationHeaders.setAction(actionURI);
+    }
+    public String getWSAAction(){
+        return messageInformationHeaders.getAction();
+    }
+    public void setWSAMessageId(String messageID){
+        messageInformationHeaders.setMessageId(messageID);
+    }
+    public String getWSAMessageId(){
+        return messageInformationHeaders.getMessageId();
     }
 }

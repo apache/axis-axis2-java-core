@@ -19,6 +19,9 @@ package org.apache.axis.addressing;
  * Interface AddressingConstants
  */
 public interface AddressingConstants {
+
+    public static final String WSA_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+    
     /**
      * Field WSA_MESSAGE_ID
      */
