@@ -44,10 +44,6 @@ public class HDFileItem {
         return type;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public File getFile() {
         return file;
     }

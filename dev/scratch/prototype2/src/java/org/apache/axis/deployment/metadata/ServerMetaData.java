@@ -64,10 +64,7 @@ public class ServerMetaData {
     }
 
     public Parameter getParameter(int index) {
-        if (index <= parameterCount) {
-            return (Parameter) parameters.get(index);
-        } else
-            return null;
+        return (Parameter) parameters.get(index);
     }
 
     public int getParameterCount() {
@@ -79,23 +76,13 @@ public class ServerMetaData {
         handlerCount++;
     }
 
-    public HandlerMetaData getHandler(int index) {
-        if (index <= handlerCount) {
-            return (HandlerMetaData) handlers.get(index);
-        } else
-            return null;
-    }
-
     public void addModule(QName moduleName) {
         modules.add(moduleName);
         moduleCount++;
     }
 
     public QName getModule(int index) {
-        if (index < moduleCount) {
-            return (QName) modules.get(index);
-        } else
-            return null;
+        return (QName) modules.get(index);
     }
 
     public int getModuleCount() {

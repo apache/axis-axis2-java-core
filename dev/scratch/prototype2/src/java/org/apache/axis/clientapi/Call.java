@@ -189,6 +189,11 @@ public class Call {
         }
     }
 
+    /**
+     *
+     * @param envelope
+     * @param callback
+     */
     public void sendReceiveAsync(SOAPEnvelope envelope, CallBack callback){
       //todo implement this
     }
