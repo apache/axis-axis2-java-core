@@ -15,31 +15,23 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.ExtensionElement;
-import org.w3c.dom.Element;
+import javax.xml.namespace.QName;
+
+import org.apache.wsdl.WSDLBindingFault;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class ExtensionElementImpl implements ExtensionElement {
+public class WSDLBindingFaultImpl extends ExtensibleComponentImpl implements WSDLBindingFault {
 
-    private Element element;
-    
-    private boolean required;
+    private QName ref;
     
     
-    
-    public boolean isRequired() {
-        return required;
+    public QName getRef() {
+        return ref;
     }
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-    public Element getElement() {
-        return element;
-    }
-    public void setElement(Element element) {
-        this.element = element;
+    public void setRef(QName ref) {
+        this.ref = ref;
     }
 }

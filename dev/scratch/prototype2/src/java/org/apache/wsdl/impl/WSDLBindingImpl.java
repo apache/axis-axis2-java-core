@@ -15,29 +15,28 @@
  */
 package org.apache.wsdl.impl;
 
-import java.net.URI;
-import java.util.List;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
+import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLInterface;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding  {
+public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding   {
 
 	private QName name;
 	
-	private URI targetNameSpace;
-	
 	private WSDLInterface boundInterface;
 	
-	private List faults;
+	private HashMap bindingFaults = new HashMap();
 	
-	private List operations;
+	private HashMap bindingOperations = new HashMap();
 	
 	
 	
@@ -50,28 +49,47 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBind
 	public void setBoundInterface(WSDLInterface boundInterface) {
 		this.boundInterface = boundInterface;
 	}
-	public List getFaults() {
-		return faults;
-	}
-	public void setFaults(List faults) {
-		this.faults = faults;
-	}
+	
 	public QName getName() {
 		return name;
 	}
 	public void setName(QName name) {
 		this.name = name;
 	}
-	public List getOperations() {
-		return operations;
+	
+	public String getTargetNameSpace() {
+		return this.name.getLocalPart();
 	}
-	public void setOperations(List operations) {
-		this.operations = operations;
+	
+	
+   
+    public HashMap getBindingFaults() {
+        return bindingFaults;
+    }
+    public void setBindingFaults(HashMap bindingFaults) {
+        this.bindingFaults = bindingFaults;
+    }
+    public HashMap getBindingOperations() {
+        return bindingOperations;
+    }
+    public void setBindingOperations(HashMap bindingOperations) {
+        this.bindingOperations = bindingOperations;
+    }
+	public void addBindingOperation(WSDLBindingOperation bindingOperation){
+	    if(null != bindingOperation)
+	        this.bindingOperations.put(bindingOperation.getName(), bindingOperation);
 	}
-	public URI getTargetNameSpace() {
-		return targetNameSpace;
+	public WSDLBindingOperation getBindingOperation(QName qName){
+	    return (WSDLBindingOperation)this.bindingOperations.get(qName);
 	}
-	public void setTargetNameSpace(URI targetNameSpace) {
-		this.targetNameSpace = targetNameSpace;
+	
+	public void addBindingFaults(WSDLBindingFault bindingFault){
+	    if(null != bindingFault)
+	        this.bindingFaults.put(bindingFault.getRef(), bindingFault);	    
 	}
+	
+	public WSDLBindingFault getBindingFault(QName ref){
+	    return (WSDLBindingFault)this.bindingFaults.get(ref);	    
+	}
+	
 }

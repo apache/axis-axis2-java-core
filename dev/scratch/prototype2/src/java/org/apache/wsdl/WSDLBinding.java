@@ -15,8 +15,7 @@
  */
 package org.apache.wsdl;
 
-import java.net.URI;
-import java.util.List;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
@@ -26,25 +25,29 @@ import javax.xml.namespace.QName;
  *
  */
 public interface WSDLBinding extends ExtensibleComponent{
-   
-
     public WSDLInterface getBoundInterface();
 
     public void setBoundInterface(WSDLInterface boundInterface);
-
-    public List getFaults();
-
-    public void setFaults(List faults);
 
     public QName getName();
 
     public void setName(QName name);
 
-    public List getOperations();
+    public String getTargetNameSpace();
 
-    public void setOperations(List operations);
+    public HashMap getBindingFaults();
 
-    public URI getTargetNameSpace();
+    public void setBindingFaults(HashMap bindingFaults);
 
-    public void setTargetNameSpace(URI targetNameSpace);
+    public HashMap getBindingOperations();
+
+    public void setBindingOperations(HashMap bindingOperations);
+
+    public void addBindingOperation(WSDLBindingOperation bindingOperation);
+
+    public WSDLBindingOperation getBindingOperation(QName qName);
+
+    public void addBindingFaults(WSDLBindingFault bindingFault);
+
+    public WSDLBindingFault getBindingFault(QName ref);
 }

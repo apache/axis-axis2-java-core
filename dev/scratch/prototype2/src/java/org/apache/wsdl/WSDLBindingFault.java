@@ -13,33 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wsdl.impl;
+package org.apache.wsdl;
 
-import org.apache.wsdl.ExtensionElement;
-import org.w3c.dom.Element;
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class ExtensionElementImpl implements ExtensionElement {
+public interface WSDLBindingFault {
+    public QName getRef();
 
-    private Element element;
-    
-    private boolean required;
-    
-    
-    
-    public boolean isRequired() {
-        return required;
-    }
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-    public Element getElement() {
-        return element;
-    }
-    public void setElement(Element element) {
-        this.element = element;
-    }
+    public void setRef(QName ref);
 }

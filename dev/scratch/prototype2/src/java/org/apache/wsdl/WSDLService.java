@@ -30,16 +30,16 @@ public interface WSDLService extends Component{
     public void setEndpoints(HashMap endpoints);
 
     /**
-     * Will add a WSDLEndpoint object to the WOM keyed with NCName;
+     * Will add a WSDLEndpoint object to the WOM keyed with qname;
      */
-    public void setEndpoint(WSDLEndpoint endpoint, String nCName);
+    public void setEndpoint(WSDLEndpoint endpoint);
 
     /**
-     * Endpoint will be retrived by its NCName.
-     * @param nCName NCName of the Service
+     * Endpoint will be retrived by its qName.
+     * @param qName qName of the Service
      * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
      */
-    public WSDLService getEndpoint(String nCName);
+    public WSDLService getEndpoint(QName qName);
 
     public QName getName();
 

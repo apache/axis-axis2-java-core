@@ -56,20 +56,20 @@ public class WSDLServiceImpl extends ComponentImpl implements WSDLService   {
     }
     
     /**
-     * Will add a WSDLEndpoint object to the WOM keyed with NCName;
+     * Will add a WSDLEndpoint object to the WOM keyed with qname;
      */
-    public void setEndpoint(WSDLEndpoint endpoint, String nCName){
-        this.endpoints.put(nCName, endpoint);
+    public void setEndpoint(WSDLEndpoint endpoint){
+        this.endpoints.put(endpoint.getName(), endpoint);
     }
     
     /**
-	 * Endpoint will be retrived by its NCName.
-	 * @param nCName NCName of the Service
+	 * Endpoint will be retrived by its qname.
+	 * @param qname qname of the Service
 	 * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
 	 */
-	public WSDLService getEndpoint(String nCName){
-	    WSDLService temp = (WSDLService)this.endpoints.get(nCName);
-	    if(null == temp) throw new WSDLProcessingException("Service not found for NCName "+nCName);
+	public WSDLService getEndpoint(QName qName){
+	    WSDLService temp = (WSDLService)this.endpoints.get(qName);
+	    if(null == temp) throw new WSDLProcessingException("Service not found for NCName "+qName);
 	    return temp;
 	}
     public QName getName() {

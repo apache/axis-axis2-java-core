@@ -25,4 +25,8 @@ public interface ExtensionElement {
     public Element getElement();
 
     public void setElement(Element element);
+    
+    public boolean isRequired();
+    
+    public void setRequired(boolean required);
 }

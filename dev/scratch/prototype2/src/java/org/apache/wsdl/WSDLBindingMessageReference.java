@@ -13,33 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wsdl.impl;
-
-import org.apache.wsdl.ExtensionElement;
-import org.w3c.dom.Element;
+package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class ExtensionElementImpl implements ExtensionElement {
+public interface WSDLBindingMessageReference extends ExtensibleComponent{
+    public String getDirection();
 
-    private Element element;
-    
-    private boolean required;
-    
-    
-    
-    public boolean isRequired() {
-        return required;
-    }
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-    public Element getElement() {
-        return element;
-    }
-    public void setElement(Element element) {
-        this.element = element;
-    }
+    public void setDirection(String direction);
+
+    public String getMessageLabel();
+
+    public void setMessageLabel(String messageLabel);
 }
