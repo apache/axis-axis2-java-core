@@ -29,8 +29,13 @@
 <%!
     public void jspInit(){
         ServletContext context = this.getServletConfig().getServletContext();
-        String repoDir = context.getRealPath("/WEB-INF"+ DeploymentConstants.SERVICE_PATH);
-        deploymentDirectory = new File(repoDir);
+        File repoDir = new File(context.getRealPath("/WEB-INF"));
+        File serviceDir = new File(repoDir,DeploymentConstants.SERVICE_PATH);
+
+        if (!serviceDir.exists()) {
+            serviceDir.mkdir();
+        }
+        deploymentDirectory = serviceDir;
     }
 
     protected static final String SUBMIT_NAME = "upload";
