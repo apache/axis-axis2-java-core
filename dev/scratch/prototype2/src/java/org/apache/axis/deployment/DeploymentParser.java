@@ -99,7 +99,7 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(SERVICEXMLST)) {
                         procesServiceXML(axisService);
-                        axisService.setName(new QName(getShortFileName(dpengine.getCurrentFileItem().getFile().getName())));
+                        axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getFile().getName())));
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
@@ -856,7 +856,13 @@ public class DeploymentParser implements DeploymentConstants {
         return in;
     }
 
-    private String getShortFileName(String fileName){
+    /**
+     * This method is used to retrive service name form the arechive file name
+     * if the archive file name is service1.aar , then axis service name would be service1
+     * @param fileName
+     * @return
+     */
+    private String getAxisServiceName(String fileName){
         char seperator = '.';
         String value = null;
         int index = fileName.indexOf(seperator);

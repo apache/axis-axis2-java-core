@@ -112,7 +112,8 @@ public class DeploymentEngine implements DeploymentConstants {
                 try {
                     serverConf.createNewFile();
                     FileOutputStream out = new FileOutputStream(serverConf);
-                    byte[] buf = new byte[512];
+                    int BUFSIZE = 512; // since only a test file going to load , the size has selected
+                    byte[] buf = new byte[BUFSIZE];
                     int read;
                     while((read = in.read(buf)) > 0){
                         out.write(buf,0,read);

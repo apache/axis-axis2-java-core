@@ -28,7 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class UnZipJAR implements DeploymentConstants {
-    final int BUFFER = 2048;
+    //final int BUFFER = 2048;
 
     /**
      * This method will unzipService the given jar or aar.
