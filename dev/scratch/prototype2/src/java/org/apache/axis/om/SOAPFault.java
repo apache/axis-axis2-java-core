@@ -15,11 +15,9 @@
 
 package org.apache.axis.om;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.engine.AxisFault;
-
 import java.util.Locale;
+
+import javax.xml.namespace.QName;
 
 
 /**

@@ -1,7 +1,5 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMElement;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -268,7 +268,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @throws org.apache.axis.om.OMException
      */
     public String getValue() throws OMException {
-        return localName;
+        throw new UnsupportedOperationException();
     }
 
     /**

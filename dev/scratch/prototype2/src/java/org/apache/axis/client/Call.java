@@ -45,11 +45,9 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.crimson.tree.TextNode;
 
 
 /**

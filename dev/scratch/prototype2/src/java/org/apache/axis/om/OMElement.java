@@ -3,8 +3,9 @@ package org.apache.axis.om;
 
 
 
-import javax.xml.namespace.QName;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

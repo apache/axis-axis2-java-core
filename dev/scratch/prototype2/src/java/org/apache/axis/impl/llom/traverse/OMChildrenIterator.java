@@ -1,10 +1,10 @@
 package org.apache.axis.impl.llom.traverse;
 
 
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMException;
-
 import java.util.Iterator;
+
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNode;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

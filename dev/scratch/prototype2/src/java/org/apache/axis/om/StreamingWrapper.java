@@ -1,8 +1,8 @@
 package org.apache.axis.om;
 
-import org.apache.axis.impl.llom.exception.OMStreamingException;
-
 import javax.xml.namespace.QName;
+
+import org.apache.axis.impl.llom.exception.OMStreamingException;
 
 
 /**
