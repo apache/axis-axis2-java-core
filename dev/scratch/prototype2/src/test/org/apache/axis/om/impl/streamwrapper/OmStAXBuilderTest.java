@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.AbstractTestCase;
 
@@ -37,7 +37,7 @@ import java.io.FileOutputStream;
 public class OmStAXBuilderTest extends AbstractTestCase{
 
     private OMFactory factory =null;
-    private OMStAXBuilder builder;
+    private StAXSOAPModelBuilder builder;
     private SimpleOMSerializer serilizer;
     private File tempFile;
 
@@ -49,7 +49,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
         factory = OMFactory.newInstance();
         XMLStreamReader reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
-        builder = new OMStAXBuilder(factory,reader);
+        builder = new StAXSOAPModelBuilder(factory,reader);
         serilizer = new SimpleOMSerializer();
 
         tempFile = File.createTempFile("temp", "xml");

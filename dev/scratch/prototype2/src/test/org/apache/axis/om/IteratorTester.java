@@ -7,7 +7,7 @@ import javax.xml.stream.XMLInputFactory;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.AbstractTestCase;
 
 /**
@@ -39,7 +39,7 @@ public class IteratorTester extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-		envelope = new OMStAXBuilder(XMLInputFactory.newInstance().
+		envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().
                 createXMLStreamReader(
                         new FileReader(getTestResourceFile("soap/sample1.xml")))).getOMEnvelope();
     }

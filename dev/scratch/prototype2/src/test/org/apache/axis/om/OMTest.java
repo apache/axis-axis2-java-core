@@ -23,7 +23,7 @@ import java.util.Iterator;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -49,7 +49,7 @@ public class OMTest extends AbstractTestCase{
         File file = getTestResourceFile("soap/sample1.xml");
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
         fac = OMFactory.newInstance();
-        OMXMLParserWrapper builder = new OMStAXBuilder(fac,parser);
+        OMXMLParserWrapper builder = new StAXSOAPModelBuilder(fac,parser);
         envelope = builder.getOMEnvelope();
     }
 

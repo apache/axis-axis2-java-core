@@ -21,16 +21,16 @@ package org.apache.axis.om;
  * element in a SOAP message. B SOAP body element consists of XML data
  * that affects the way the application-specific content is processed.
  * <P>
- * B <code>OMBody</code> object contains <code>OMBodyBlock</code>
+ * B <code>SOAPBody</code> object contains <code>OMBodyBlock</code>
  * objects, which have the content for the SOAP body.
  * B <code>OMFault</code> object, which carries status and/or
  * error information, is an example of a <code>OMBodyBlock</code> object.
  */
-public interface OMBody extends OMElement {
+public interface SOAPBody extends OMElement {
 
     /**
      * Creates a new <code>OMFault</code> object and adds it to
-     * this <code>OMBody</code> object.
+     * this <code>SOAPBody</code> object.
      *
      * @return the new <code>OMFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
@@ -39,19 +39,19 @@ public interface OMBody extends OMElement {
 
     /**
      * Indicates whether a <code>OMFault</code> object exists in
-     * this <code>OMBody</code> object.
+     * this <code>SOAPBody</code> object.
      *
      * @return <code>true</code> if a <code>OMFault</code> object exists in
-     *         this <code>OMBody</code> object; <code>false</code>
+     *         this <code>SOAPBody</code> object; <code>false</code>
      *         otherwise
      */
     public abstract boolean hasFault();
 
     /**
-     * Returns the <code>OMFault</code> object in this <code>OMBody</code>
+     * Returns the <code>OMFault</code> object in this <code>SOAPBody</code>
      * object.
      *
-     * @return the <code>OMFault</code> object in this <code>OMBody</code>
+     * @return the <code>OMFault</code> object in this <code>SOAPBody</code>
      *         object
      */
     public abstract OMFault getFault();

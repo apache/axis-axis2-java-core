@@ -27,17 +27,17 @@ import java.util.Iterator;
  * Date: Oct 29, 2004
  * Time: 3:41:59 PM
  */
-public class OMEnvelopeImpl extends OMElementImpl implements OMEnvelope {
+public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope {
 
     /**
      *
      * @param builder
      */
-    public OMEnvelopeImpl(OMXMLParserWrapper builder){
+    public SOAPEnvelopeImpl(OMXMLParserWrapper builder){
          super("",null,null,builder);
     }
 
-    public OMEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
@@ -45,7 +45,7 @@ public class OMEnvelopeImpl extends OMElementImpl implements OMEnvelope {
      * @param localName
      * @param ns
      */
-    public OMEnvelopeImpl(String localName, OMNamespace ns) {
+    public SOAPEnvelopeImpl(String localName, OMNamespace ns) {
         super(localName, ns);
     }
 
@@ -71,50 +71,50 @@ public class OMEnvelopeImpl extends OMElementImpl implements OMEnvelope {
     }
 
     /**
-     * Returns the <CODE>OMHeader</CODE> object for this <CODE>
-     * OMEnvelope</CODE> object.
+     * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
+     * SOAPEnvelope</CODE> object.
      * <p/>
-     * <P> This OMHeader will just be a container for all the headers in the
+     * <P> This SOAPHeader will just be a container for all the headers in the
      * <CODE>OMMessage</CODE>
      * </P>
      *
-     * @return the <CODE>OMHeader</CODE> object or <CODE>
+     * @return the <CODE>SOAPHeader</CODE> object or <CODE>
      *         null</CODE> if there is none
      * @throws org.apache.axis.om.OMException if there is a problem
-     *                                        obtaining the <CODE>OMHeader</CODE> object
+     *                                        obtaining the <CODE>SOAPHeader</CODE> object
      */
-    public OMHeader getHeader() throws OMException {
+    public SOAPHeader getHeader() throws OMException {
         Iterator headerIterator = this.getChildrenWithName(new QName(OMConstants.HEADER_NAMESPACEURI, OMConstants.HEADER_LOCAL_NAME));
-        OMHeader omHeader = null;
+        SOAPHeader soapHeader = null;
         if (headerIterator.hasNext()) {
-            omHeader = (OMHeader) headerIterator.next();
+            soapHeader = (SOAPHeader) headerIterator.next();
         }
 
-        return omHeader;
+        return soapHeader;
     }
 
     /**
-     * Returns the <CODE>OMBody</CODE> object associated with
-     * this <CODE>OMEnvelope</CODE> object.
+     * Returns the <CODE>SOAPBody</CODE> object associated with
+     * this <CODE>SOAPEnvelope</CODE> object.
      * <p/>
-     * <P> This OMBody will just be a container for all the BodyElements in the
+     * <P> This SOAPBody will just be a container for all the BodyElements in the
      * <CODE>OMMessage</CODE>
      * </P>
      *
-     * @return the <CODE>OMBody</CODE> object for this <CODE>
-     *         OMEnvelope</CODE> object or <CODE>null</CODE> if there
+     * @return the <CODE>SOAPBody</CODE> object for this <CODE>
+     *         SOAPEnvelope</CODE> object or <CODE>null</CODE> if there
      *         is none
      * @throws org.apache.axis.om.OMException if there is a problem
-     *                                        obtaining the <CODE>OMBody</CODE> object
+     *                                        obtaining the <CODE>SOAPBody</CODE> object
      */
-    public OMBody getBody() throws OMException {
+    public SOAPBody getBody() throws OMException {
         Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
-        OMBody omBody = null;
+        SOAPBody soapBody = null;
         if (bodyIterator.hasNext()) {
-            omBody = (OMBody) bodyIterator.next();
+            soapBody = (SOAPBody) bodyIterator.next();
         }
 
-        return omBody;
+        return soapBody;
     }
 
 

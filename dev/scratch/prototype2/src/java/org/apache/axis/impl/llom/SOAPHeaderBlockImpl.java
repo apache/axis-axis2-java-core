@@ -28,23 +28,23 @@ import java.util.Iterator;
  * Date: Nov 2, 2004
  * Time: 3:19:20 PM
  */
-public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
+public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBlock {
 
     /**
      * @param localName
      * @param ns
      */
-    public OMHeaderBlockImpl(String localName, OMNamespace ns) {
+    public SOAPHeaderBlockImpl(String localName, OMNamespace ns) {
         super(localName, ns);
     }
 
-    public OMHeaderBlockImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeaderBlockImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
     /**
      * Sets the actor associated with this <CODE>
-     * OMHeaderBlock</CODE> object to the specified actor. The
+     * SOAPHeaderBlock</CODE> object to the specified actor. The
      * default value of an actor is: <CODE>
      * OMConstants.URI_SOAP_ACTOR_NEXT</CODE>
      *
@@ -75,7 +75,7 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
 
     /**
      * Returns the uri of the actor associated with this <CODE>
-     * OMHeaderBlock</CODE> object.
+     * SOAPHeaderBlock</CODE> object.
      *
      * @return a <CODE>String</CODE> giving the URI of the
      *         actor
@@ -95,12 +95,12 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
 
     /**
      * Sets the mustUnderstand attribute for this <CODE>
-     * OMHeaderBlock</CODE> object to be on or off.
+     * SOAPHeaderBlock</CODE> object to be on or off.
      * <p/>
      * <P>If the mustUnderstand attribute is on, the actor who
-     * receives the <CODE>OMHeaderBlock</CODE> must process it
+     * receives the <CODE>SOAPHeaderBlock</CODE> must process it
      * correctly. This ensures, for example, that if the <CODE>
-     * OMHeaderBlock</CODE> object modifies the message, that
+     * SOAPHeaderBlock</CODE> object modifies the message, that
      * the message is being modified correctly.</P>
      *
      * @param mustUnderstand <CODE>true</CODE> to
@@ -116,10 +116,10 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
 
     /**
      * Returns whether the mustUnderstand attribute for this
-     * <CODE>OMHeaderBlock</CODE> object is turned on.
+     * <CODE>SOAPHeaderBlock</CODE> object is turned on.
      *
      * @return <CODE>true</CODE> if the mustUnderstand attribute of
-     *         this <CODE>OMHeaderBlock</CODE> object is turned on;
+     *         this <CODE>SOAPHeaderBlock</CODE> object is turned on;
      *         <CODE>false</CODE> otherwise
      */
     public boolean getMustUnderstand() {

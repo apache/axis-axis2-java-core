@@ -1,4 +1,4 @@
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -20,7 +20,7 @@ import org.apache.axis.om.OMEnvelope;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class Echo1 {
-    public OMEnvelope echo(OMEnvelope in){
+    public SOAPEnvelope echo(SOAPEnvelope in){
         return in;
-    }    
+    }
 }

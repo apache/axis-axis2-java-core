@@ -25,7 +25,7 @@ package org.apache.axis.om;
 
 
 
-public interface OMEnvelope extends OMElement {
+public interface SOAPEnvelope extends OMElement {
 
     /**
      * Creates a new <CODE>Name</CODE> object initialized with the
@@ -49,36 +49,36 @@ public interface OMEnvelope extends OMElement {
 
 
     /**
-     * Returns the <CODE>OMHeader</CODE> object for this <CODE>
-     * OMEnvelope</CODE> object.
+     * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
+     * SOAPEnvelope</CODE> object.
      * <p/>
-     * <P> This OMHeader will just be a container for all the headers in the
+     * <P> This SOAPHeader will just be a container for all the headers in the
      * <CODE>OMMessage</CODE>
      * </P>
      *
      *
-     * @return the <CODE>OMHeader</CODE> object or <CODE>
+     * @return the <CODE>SOAPHeader</CODE> object or <CODE>
      *         null</CODE> if there is none
      * @throws OMException if there is a problem
-     *                       obtaining the <CODE>OMHeader</CODE> object
+     *                       obtaining the <CODE>SOAPHeader</CODE> object
      */
-    public abstract OMHeader getHeader() throws OMException;
+    public abstract SOAPHeader getHeader() throws OMException;
 
     /**
-     * Returns the <CODE>OMBody</CODE> object associated with
-     * this <CODE>OMEnvelope</CODE> object.
+     * Returns the <CODE>SOAPBody</CODE> object associated with
+     * this <CODE>SOAPEnvelope</CODE> object.
      * <p/>
-     * <P> This OMBody will just be a container for all the BodyElements in the
+     * <P> This SOAPBody will just be a container for all the BodyElements in the
      * <CODE>OMMessage</CODE>
      * </P>
      *
-     * @return the <CODE>OMBody</CODE> object for this <CODE>
-     *         OMEnvelope</CODE> object or <CODE>null</CODE> if there
+     * @return the <CODE>SOAPBody</CODE> object for this <CODE>
+     *         SOAPEnvelope</CODE> object or <CODE>null</CODE> if there
      *         is none
      * @throws OMException if there is a problem
-     *                       obtaining the <CODE>OMBody</CODE> object
+     *                       obtaining the <CODE>SOAPBody</CODE> object
      */
-    public abstract OMBody getBody() throws OMException;
+    public abstract SOAPBody getBody() throws OMException;
 
 
 }

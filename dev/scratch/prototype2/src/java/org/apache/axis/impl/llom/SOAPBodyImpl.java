@@ -21,26 +21,26 @@ import org.apache.axis.om.*;
  * Date: Nov 2, 2004
  * Time: 4:29:00 PM
  */
-public class OMBodyImpl extends OMElementImpl implements OMBody {
+public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
 
 
 
     /**
      * @param envelope
      */
-    public OMBodyImpl(OMEnvelope envelope) {
+    public SOAPBodyImpl(SOAPEnvelope envelope) {
         super(envelope);
         this.ns = envelope.getNamespace();
         this.localName = OMConstants.BODY_LOCAL_NAME;
     }
 
-    public OMBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
     /**
      * Creates a new <code>OMFault</code> object and adds it to
-     * this <code>OMBody</code> object.
+     * this <code>SOAPBody</code> object.
      *
      * @return the new <code>OMFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
@@ -51,10 +51,10 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
 
     /**
      * Indicates whether a <code>OMFault</code> object exists in
-     * this <code>OMBody</code> object.
+     * this <code>SOAPBody</code> object.
      *
      * @return <code>true</code> if a <code>OMFault</code> object exists in
-     *         this <code>OMBody</code> object; <code>false</code>
+     *         this <code>SOAPBody</code> object; <code>false</code>
      *         otherwise
      */
     public boolean hasFault() {
@@ -62,10 +62,10 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
     }
 
     /**
-     * Returns the <code>OMFault</code> object in this <code>OMBody</code>
+     * Returns the <code>OMFault</code> object in this <code>SOAPBody</code>
      * object.
      *
-     * @return the <code>OMFault</code> object in this <code>OMBody</code>
+     * @return the <code>OMFault</code> object in this <code>SOAPBody</code>
      *         object
      */
     public OMFault getFault() {

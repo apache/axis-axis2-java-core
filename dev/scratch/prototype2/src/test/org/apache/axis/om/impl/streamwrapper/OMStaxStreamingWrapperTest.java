@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.wrapper.OMStAXWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.AbstractTestCase;
@@ -41,7 +41,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
-    private OMStAXBuilder omStAXBuilder;
+    private StAXSOAPModelBuilder staxSOAPModelBuilder;
     private File tempFile;
 
     public OMStaxStreamingWrapperTest(String testName) {
@@ -52,8 +52,8 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         OMFactory factory = OMFactory.newInstance();
-        omStAXBuilder = new OMStAXBuilder(factory, xmlStreamReader);
-        envelope = omStAXBuilder.getOMEnvelope();
+        staxSOAPModelBuilder = new StAXSOAPModelBuilder(factory, xmlStreamReader);
+        envelope = staxSOAPModelBuilder.getOMEnvelope();
         serilizer = new SimpleOMSerializer();
 
         tempFile = File.createTempFile("temp","xml");
@@ -66,7 +66,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         serilizer.serialize(envelope, new FileOutputStream(tempFile));
 
         //now the OM is fully created. Create the wrapper and see
-        OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
+        OMStAXWrapper wrapper = new OMStAXWrapper(staxSOAPModelBuilder, envelope);
 
         while (wrapper.hasNext()) {
             int event = wrapper.next();
@@ -79,7 +79,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         assertNotNull(envelope);
 
         //now the OM is not fully created. Create the wrapper and see
-        OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
+        OMStAXWrapper wrapper = new OMStAXWrapper(staxSOAPModelBuilder, envelope);
         while (wrapper.hasNext()) {
             int event = wrapper.next();
             assertTrue(event>0);
@@ -89,7 +89,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     public void testWrapperHalfOMWithCacheOff() {
         assertNotNull(envelope);
         //now the OM is not fully created. Create the wrapper and see
-        OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
+        OMStAXWrapper wrapper = new OMStAXWrapper(staxSOAPModelBuilder, envelope);
         //set the switching allowed flag
         wrapper.setAllowSwitching(true);
         while (wrapper.hasNext()) {

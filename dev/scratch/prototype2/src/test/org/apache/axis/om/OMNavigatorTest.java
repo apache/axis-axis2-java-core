@@ -11,7 +11,7 @@ import javax.xml.stream.XMLStreamReader;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.OMNavigator;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.AbstractTestCase;
@@ -40,7 +40,7 @@ public class OMNavigatorTest extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
-    private OMStAXBuilder builder;
+    private StAXSOAPModelBuilder builder;
     private File tempFile;
 
     public OMNavigatorTest(String testName) {
@@ -51,7 +51,7 @@ public class OMNavigatorTest extends AbstractTestCase {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         OMFactory factory = OMFactory.newInstance();
-        builder = new OMStAXBuilder(factory, xmlStreamReader);
+        builder = new StAXSOAPModelBuilder(factory, xmlStreamReader);
         envelope = builder.getOMEnvelope();
         serilizer = new SimpleOMSerializer();
 

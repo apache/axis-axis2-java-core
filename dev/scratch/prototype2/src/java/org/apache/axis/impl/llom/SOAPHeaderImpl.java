@@ -2,7 +2,7 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.om.*;
 import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMHeaderBlockImpl;
+import org.apache.axis.impl.llom.SOAPHeaderBlockImpl;
 
 import java.util.Iterator;
 
@@ -25,13 +25,13 @@ import java.util.Iterator;
  * Date: Nov 2, 2004
  * Time: 2:45:24 PM
  */
-public class OMHeaderImpl extends OMElementImpl implements OMHeader {
+public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 
 
     /**
      * @param envelope
      */
-    public OMHeaderImpl(OMEnvelope envelope) {
+    public SOAPHeaderImpl(SOAPEnvelope envelope) {
         super(envelope);
         //set the namespaces
         this.ns = envelope.getNamespace();
@@ -39,42 +39,42 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
 
     }
 
-    public OMHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
     /**
-     * Creates a new <CODE>OMHeaderBlock</CODE> object
+     * Creates a new <CODE>SOAPHeaderBlock</CODE> object
      * initialized with the specified name and adds it to this
-     * <CODE>OMHeader</CODE> object.
+     * <CODE>SOAPHeader</CODE> object.
      *
-     * @return the new <CODE>OMHeaderBlock</CODE> object that
-     *         was inserted into this <CODE>OMHeader</CODE>
+     * @return the new <CODE>SOAPHeaderBlock</CODE> object that
+     *         was inserted into this <CODE>SOAPHeader</CODE>
      *         object
      * @throws org.apache.axis.om.OMException if a SOAP error occurs
      */
-    public OMHeaderBlock addHeaderBlock(String localName, OMNamespace ns) throws OMException {
-        OMHeaderBlock omHeaderBlock = new OMHeaderBlockImpl(localName, ns);
-        this.addChild(omHeaderBlock);
-        omHeaderBlock.setComplete(true);
-        return omHeaderBlock;
+    public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns) throws OMException {
+        SOAPHeaderBlock soapHeaderBlock = new SOAPHeaderBlockImpl(localName, ns);
+        this.addChild(soapHeaderBlock);
+        soapHeaderBlock.setComplete(true);
+        return soapHeaderBlock;
     }
 
     /**
-     * Returns a list of all the <CODE>OMHeaderBlock</CODE>
-     * objects in this <CODE>OMHeader</CODE> object that have the
+     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
+     * objects in this <CODE>SOAPHeader</CODE> object that have the
      * the specified actor. An actor is a global attribute that
      * indicates the intermediate parties to whom the message should
      * be sent. An actor receives the message and then sends it to
      * the next actor. The default actor is the ultimate intended
      * recipient for the message, so if no actor attribute is
-     * included in a <CODE>OMHeader</CODE> object, the message is
+     * included in a <CODE>SOAPHeader</CODE> object, the message is
      * sent to its ultimate destination.
      *
      * @param actor a <CODE>String</CODE> giving the
      *              URI of the actor for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
-     *         OMHeaderBlock</CODE> objects that contain the
+     *         SOAPHeaderBlock</CODE> objects that contain the
      *         specified actor
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
@@ -83,20 +83,20 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
     }
 
     /**
-     * Returns a list of all the <CODE>OMHeaderBlock</CODE>
-     * objects in this <CODE>OMHeader</CODE> object that have
+     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
+     * objects in this <CODE>SOAPHeader</CODE> object that have
      * the the specified actor and detaches them from this <CODE>
-     * OMHeader</CODE> object.
+     * SOAPHeader</CODE> object.
      * <p/>
      * <P>This method allows an actor to process only the parts of
-     * the <CODE>OMHeader</CODE> object that apply to it and to
+     * the <CODE>SOAPHeader</CODE> object that apply to it and to
      * remove them before passing the message on to the next
      * actor.
      *
      * @param actor a <CODE>String</CODE> giving the
      *              URI of the actor for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
-     *         OMHeaderBlock</CODE> objects that contain the
+     *         SOAPHeaderBlock</CODE> objects that contain the
      *         specified actor
      * @see #examineHeaderBlocks(String) examineHeaderBlocks(java.lang.String)
      */
@@ -106,14 +106,14 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
 
     /**
      * Returns an <code>Iterator</code> over all the
-     * <code>OMHeaderBlock</code> objects in this <code>OMHeader</code>
+     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
      * object that have the specified actor and that have a MustUnderstand
      * attribute whose value is equivalent to <code>true</code>.
      *
      * @param actor a <code>String</code> giving the URI of the actor for which
      *              to search
      * @return an <code>Iterator</code> object over all the
-     *         <code>OMHeaderBlock</code> objects that contain the
+     *         <code>SOAPHeaderBlock</code> objects that contain the
      *         specified actor and are marked as MustUnderstand
      */
     public Iterator examineMustUnderstandHeaderBlocks(String actor) {
@@ -122,14 +122,14 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
 
     /**
      * Returns an <code>Iterator</code> over all the
-     * <code>OMHeaderBlock</code> objects in this <code>OMHeader</code>
+     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
      * object.
      *
      * Not that this will return elements containing the QName (http://schemas.xmlsoap.org/soap/envelope/, Header)
      *
      * @return an <code>Iterator</code> object over all the
-     *         <code>OMHeaderBlock</code> objects contained by this
-     *         <code>OMHeader</code>
+     *         <code>SOAPHeaderBlock</code> objects contained by this
+     *         <code>SOAPHeader</code>
      */
     public Iterator examineAllHeaderBlocks() {
         return this.getChildrenWithName(null);
@@ -137,12 +137,12 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
 
     /**
      * Returns an <code>Iterator</code> over all the
-     * <code>OMHeaderBlock</code> objects in this <code>OMHeader </code>
-     * object and detaches them from this <code>OMHeader</code> object.
+     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader </code>
+     * object and detaches them from this <code>SOAPHeader</code> object.
      *
      * @return an <code>Iterator</code> object over all the
-     *         <code>OMHeaderBlock</code> objects contained by this
-     *         <code>OMHeader</code>
+     *         <code>SOAPHeaderBlock</code> objects contained by this
+     *         <code>SOAPHeader</code>
      */
     public Iterator extractAllHeaderBlocks() {
         throw new UnsupportedOperationException(); //TODO implement this

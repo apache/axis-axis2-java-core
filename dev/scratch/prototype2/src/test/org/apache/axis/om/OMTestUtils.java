@@ -23,7 +23,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,7 +42,7 @@ public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
 
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        OMStAXBuilder builder =   new OMStAXBuilder(OMFactory.newInstance(),parser);
+        StAXSOAPModelBuilder builder =   new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
 
         return builder;
     }
