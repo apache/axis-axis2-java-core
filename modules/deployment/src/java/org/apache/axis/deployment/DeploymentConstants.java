@@ -75,6 +75,8 @@ public interface DeploymentConstants {
 
     String TRANSPORTSTAG = "transports";
     String TRANSPORTTAG ="transport";
+    String TRANSPORTSENDER = "transportSender";
+    String TRANSPORTRECEIVER = "transportReceiver";
 
 
     String HOTDEPLOYMENT = "hotdeployment";

@@ -96,11 +96,11 @@ public class DeploymentEngine implements DeploymentConstants {
         this(RepositaryName,"server.xml");
 
     }
-   /**
-    * this constructor is used to deploy a web service programatically, by using classLoader
-    * and InputStream
-    * @param engineRegistry
-    */
+    /**
+     * this constructor is used to deploy a web service programatically, by using classLoader
+     * and InputStream
+     * @param engineRegistry
+     */
     public DeploymentEngine(EngineRegistry engineRegistry) {
         this.engineRegistry = engineRegistry;
     }
@@ -269,6 +269,14 @@ public class DeploymentEngine implements DeploymentConstants {
             String value = (String) para.getValue();
             if("true".equals(value)){
                 Class temp = serviceMetaData.getServiceClass();
+                try {
+                    Thread servie = (Thread)temp.newInstance();
+                    servie.start();
+                } catch (InstantiationException e) {
+                    throw new AxisFault(e.getMessage());
+                } catch (IllegalAccessException e) {
+                    throw new AxisFault(e.getMessage());
+                }
 
             }
         }
