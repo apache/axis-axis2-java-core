@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -8,7 +9,7 @@ import java.io.Writer;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class Collecter {
-    private int waitingCount = 0;
+
     private int sucsess = 0;
 
     private static Writer writer = null;
@@ -28,14 +29,8 @@ public class Collecter {
         index++;
     }
 
-    public synchronized void waitForMe() {
-        waitingCount++;
 
-    }
     public synchronized void printResult() throws IOException {
-        if (waitingCount > 1) {
-            waitingCount--;
-        } else {
             int failed = 0;
             long totel = 0;
 
@@ -56,7 +51,14 @@ public class Collecter {
             System.out.println(result);
             writer.write(result);
             writer.flush();
-        }
+            String file = "result/"+System.currentTimeMillis()+".txt";
+            Writer w = new FileWriter(file);
+            
+            w.write(result+"\n");
+            for (int i = 0; i < results.length; i++) {
+                w.write(results[i]+"\n");
+            }
+            w.close();            
     }
 
 }

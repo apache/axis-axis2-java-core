@@ -40,7 +40,7 @@ public class LoadTest implements Runnable {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        c.waitForMe();
+        Waiter.waitForMe();
         try {
             for (int i = 0; i < numberOfRequests; i++) {
                 try {
@@ -62,11 +62,7 @@ public class LoadTest implements Runnable {
             }
 
         } finally {
-            try {
-                c.printResult();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Waiter.release();
         }
 
         System.out.println("Thread " + no + " stop");

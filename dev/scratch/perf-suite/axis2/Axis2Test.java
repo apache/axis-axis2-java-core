@@ -20,7 +20,7 @@ import java.net.URL;
 public class Axis2Test {
 
     public static void main(String[] args) throws IOException {
-        Writer writer = new FileWriter("results.txt",true);
+        Writer writer = new FileWriter("result/results.txt",true);
         PrintWriter pw = new PrintWriter(writer);
         StructArraySampler sampler = new StructArraySampler(new URL(Constants.AXIS2_URL));
         TestSuite suite = new TestSuite(sampler,pw,"[Client=\"Axis2\" Server=\"Axis2\"]EchoStruct test");

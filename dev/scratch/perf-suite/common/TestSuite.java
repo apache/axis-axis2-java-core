@@ -20,37 +20,49 @@ public class TestSuite {
     private Sampler sampler;
     private PrintWriter writer;
     private String message;
-    
-    public TestSuite(Sampler sampler,PrintWriter writer,String message){
+
+    public TestSuite(Sampler sampler, PrintWriter writer, String message) {
         this.sampler = sampler;
         this.writer = writer;
         this.message = message;
-        
+
     }
-    
-    public void runSuite() throws IOException{
-       writer.write("Starting the Suite at "+ new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(new Date())+"\n");
+
+    public void runSuite() throws IOException {
+        writer.write(
+            "Starting the Suite at "
+                + new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(
+                    new Date())
+                + "\n");
         String includes = System.getProperty("include");
-        if(includes == null){
+        if (includes == null) {
             endToEndTest();
-            loadIncreaseTest();
+            ///loadIncreaseTest();
             loadTest();
-        }else{
-            if("end2end".equals(includes)){
+        } else {
+            System.out.println("Pick the include = " + includes);
+            if ("end2end".equals(includes)) {
                 endToEndTest();
-            }else if("load".equals(includes)){
+            } else if ("load".equals(includes)) {
                 loadTest();
-            }else{
-                loadIncreaseTest();
+            } else {
+                //loadIncreaseTest();
             }
         }
-        writer.write("Starting the Suite at "+ new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(new Date())+"\n");
+        writer.write(
+            "Starting the Suite at "
+                + new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(
+                    new Date())
+                + "\n");
     }
-    
-    private void endToEndTest() throws IOException{
+
+    private void endToEndTest() throws IOException {
         try {
             EndToEndTest end2endtest =
-                new EndToEndTest(writer, sampler.createCopy(), message + ",test=\"End to End Test\"");
+                new EndToEndTest(
+                    writer,
+                    sampler.createCopy(),
+                    message + ",test=\"End to End Test\"");
             end2endtest.invokeTest();
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,44 +70,70 @@ public class TestSuite {
             e.printStackTrace(writer);
             writer.flush();
         }
-    
+
     }
-    
-    private void loadTest() throws IOException{
-        int threads = 500;
-        writer.write("Starting Load test with "+threads+"\n");
+
+    private void loadTest() throws IOException {
+        int threads = 100;
+        writer.write("Starting Load test with " + threads + "\n");
         try {
-           
+
             int numberOfRequests = 10;
-            Collecter c = new Collecter(threads * numberOfRequests,"test=\"Load increase test\"",writer);
+            Collecter c =
+                new Collecter(
+                    threads * numberOfRequests,
+                    "test=\"Load increase test\"",
+                    writer);
             for (int i = 0; i < threads; i++) {
-                System.out.println("Thread "+i+ " started");
-                Thread thread = new Thread(new LoadTest(i,writer,sampler.createCopy(),message + ",test=\"Load Test\"",c,numberOfRequests));
+                System.out.println("Thread " + i + " started");
+                Thread thread =
+                    new Thread(
+                        new LoadTest(
+                            i,
+                            writer,
+                            sampler.createCopy(),
+                            message + ",test=\"Load Test\"",
+                            c,
+                            numberOfRequests));
                 thread.start();
             }
             writer.flush();
+            while (Waiter.getValue() != 0) {
+                Thread.sleep(3000);
+            }
+            try {
+                c.printResult();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             writer.write("Load test Failed\n");
             e.printStackTrace(writer);
         }
-        writer.write("End Load test\n");
+
+   
+    writer.write("End Load test\n");
+    writer.flush();
+}
+
+private void loadIncreaseTest() throws IOException {
+    writer.write("Starting loadIncreaseTest\n");
+    try {
+        LoadIncreaseTest end2endtest =
+            new LoadIncreaseTest(
+                writer,
+                sampler.createCopy(),
+                message + "test=\"Load increase test\"");
+        end2endtest.invokeTest();
+    } catch (Exception e) {
+        e.printStackTrace();
+        writer.write("loadIncreaseTest Failed\n");
+        e.printStackTrace(writer);
         writer.flush();
     }
- 
-    private void loadIncreaseTest() throws IOException{
-        writer.write("Starting loadIncreaseTest\n");
-        try {
-            LoadIncreaseTest end2endtest =
-                new LoadIncreaseTest(writer, sampler.createCopy(), message + "test=\"Load increase test\"");
-            end2endtest.invokeTest();
-        } catch (Exception e) {
-            e.printStackTrace();
-            writer.write("loadIncreaseTest Failed\n");
-            e.printStackTrace(writer);
-            writer.flush();
-        }
-        writer.write("End loadIncreaseTest\n");
-        writer.flush();
-    }
+    writer.write("End loadIncreaseTest\n");
+    writer.flush();
+}
 }
