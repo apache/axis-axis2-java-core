@@ -36,16 +36,15 @@
 <title>Axis2 Happiness Page</title>
 </head>
 <body bgcolor='#ffffff'>
+<%port =request.getServerPort();%>
 <%!
-
     /*
      * Happiness tests for axis. These look at the classpath and warn if things
      * are missing. Normally addng this much code in a JSP page is mad
      * but here we want to validate JSP compilation too, and have a drop-in
      * page for easy re-use
      */
-
-
+    int port = 0;
     /**
      * Get a string providing install information.
      * TODO: make this platform aware and give specific hints
@@ -356,7 +355,7 @@
                 new EndpointReference(
                     AddressingConstants.WSA_TO,
                     "http://127.0.0.1:"
-                        + (8080)
+                        + (port)
                         + "/axis2/services/echo");    //listServices       /axis2/services/service1
             Call call = new Call();
             call.setTo(targetEPR);
