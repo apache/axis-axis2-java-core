@@ -185,8 +185,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (hotdeployment) {
             startSearch(this);
         } else {
-            RepositoryListenerImpl repository =
-                    new RepositoryListenerImpl(folderName, this);
+            new RepositoryListenerImpl(folderName, this);
         }
         try {
             valideServerModule();

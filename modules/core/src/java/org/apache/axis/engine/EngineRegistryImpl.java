@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.engine;
 
 import java.util.ArrayList;
@@ -50,9 +50,9 @@ public class EngineRegistryImpl implements EngineRegistry {
      * Field transports
      */
     private final HashMap transports = new HashMap();
-    
+
     private final HashMap transportsIn = new HashMap();
-    
+
     private final HashMap transportsOut = new HashMap();
 
     /**
@@ -63,7 +63,9 @@ public class EngineRegistryImpl implements EngineRegistry {
     /**
      * Field phases
      */
-    private ArrayList phases;
+    private ArrayList inPhases;
+    private ArrayList outPhases;
+    private ArrayList faultPhases;
 
     /**
      * Constructor EngineRegistryImpl
@@ -72,7 +74,9 @@ public class EngineRegistryImpl implements EngineRegistry {
      */
     public EngineRegistryImpl(AxisGlobal global) throws AxisFault {
         this.global = global;
-        phases = new ArrayList();
+        inPhases = new ArrayList();
+        outPhases = new ArrayList();
+        faultPhases = new ArrayList();
         errornesServices = new Hashtable();
     }
 
@@ -151,7 +155,7 @@ public class EngineRegistryImpl implements EngineRegistry {
         services.remove(name);
     }
 
- 
+
 
 
     public AxisTransportIn getTransportIn(QName name) throws AxisFault {
@@ -201,17 +205,28 @@ public class EngineRegistryImpl implements EngineRegistry {
         return transports;
     }
 
-    /**
-     * @return
-     */
-    public ArrayList getPhases() {
-        return phases;
+    public void setInPhases(ArrayList inPhases) {
+        this.inPhases = inPhases;
     }
 
-    /**
-     * @param list
-     */
-    public void setPhases(ArrayList list) {
-        phases = list;
+    public void setOutPhases(ArrayList outPhases) {
+        this.outPhases = outPhases;
     }
+
+    public void setFaultPhases(ArrayList faultPhases) {
+        this.faultPhases = faultPhases;
+    }
+
+    public ArrayList getInPhases() {
+        return inPhases;
+    }
+
+    public ArrayList getOutPhases() {
+        return outPhases;
+    }
+
+    public ArrayList getFaultPhases() {
+        return faultPhases;
+    }
+  
 }

@@ -19,10 +19,22 @@
         </faultflow>
     </transportSender>
 
-    <phaseOrder>
+    <phaseOrder type="inflow">
         <phase name="global"/>
         <phase name="transport"/>
-        <phase name="module"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="outflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="faultflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
         <phase name="service"/>
     </phaseOrder>
 </server>

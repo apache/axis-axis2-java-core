@@ -23,6 +23,10 @@ import java.util.ArrayList;
  * Class PhaseMetadata
  */
 public class PhaseMetadata {
+
+    public static final int IN_FLOW = 1;
+    public static final int OUT_FLOW = 2;
+    public static final int FAULT_FLOW = 3;
     /**
      * Field BOTH_BEFORE_AFTER
      */
@@ -115,13 +119,11 @@ public class PhaseMetadata {
     public void setPhaseFirst(HandlerMetadata phaseFirst)
             throws PhaseException {
         if (phasefirstset) {
-            throw new PhaseException(
-                    "PhaseFirst alredy has been set, cannot have two phaseFirst Handler for same phase "
+            throw new PhaseException("PhaseFirst alredy has been set, cannot have two phaseFirst Handler for same phase "
                     + this.name);
         } else {
             if (getBeforeAfter(phaseFirst) != ANYWHERE) {
-                throw new PhaseException(
-                        "Handler with PhaseFirst can not have any before or after proprty error in "
+                throw new PhaseException("Handler with PhaseFirst can not have any before or after proprty error in "
                         + phaseFirst.getName());
             } else {
                 this.phaseFirst = phaseFirst;
@@ -147,13 +149,11 @@ public class PhaseMetadata {
      */
     public void setPhaseLast(HandlerMetadata phaseLast) throws PhaseException {
         if (phaselastset) {
-            throw new PhaseException(
-                    "PhaseLast already has been set, cannot have two PhaseLast Handler for same phase "
+            throw new PhaseException("PhaseLast already has been set, cannot have two PhaseLast Handler for same phase "
                     + this.name);
         } else {
             if (getBeforeAfter(phaseLast) != ANYWHERE) {
-                throw new PhaseException(
-                        "Handler with PhaseLast property can not have any before or after property error in "
+                throw new PhaseException("Handler with PhaseLast property can not have any before or after property error in "
                         + phaseLast.getName());
             } else {
                 this.phaseLast = phaseLast;
@@ -202,6 +202,7 @@ public class PhaseMetadata {
     public String getName() {
         return name;
     }
+
     /**
      * Method getOrderedHandlers
      *
@@ -248,7 +249,7 @@ public class PhaseMetadata {
     private void orderHandlers() throws PhaseException {
         validatebefore();
         validateafter();
-        arrangeHanders();
+        arrangeHandlers();
         phaseHandlers.clear();
         phaseHandlers = orderHanders;
     }
@@ -301,11 +302,11 @@ public class PhaseMetadata {
     }
 
     /**
-     * Method arrangeHanders
+     * Method arrangeHandlers
      *
      * @throws PhaseException
      */
-    private void arrangeHanders() throws PhaseException {
+    private void arrangeHandlers() throws PhaseException {
         int count = 0;
         int before_after = 0;
         boolean status = false;
@@ -318,7 +319,7 @@ public class PhaseMetadata {
             }
             status = false;
             if (count > phaseHandlers.size()) {
-                throw new PhaseException("Invalid pahse rule for "  + handler.getName());
+                throw new PhaseException("Invalid pahse rule for " + handler.getName());
             }
             before_after = getBeforeAfter(handler);
             switch (before_after) {
@@ -358,7 +359,7 @@ public class PhaseMetadata {
                         break;
                     }
             }
-            if(! status){
+            if (!status) {
                 count++;
             }
         }
@@ -374,10 +375,8 @@ public class PhaseMetadata {
     private int getBeforeAfter(HandlerMetadata handler) throws PhaseException {
         if ((!handler.getRules().getBefore().equals(""))
                 && (!handler.getRules().getAfter().equals(""))) {
-            if (handler.getRules().getBefore().equals(
-                    handler.getRules().getAfter())) {
-                throw new PhaseException(
-                        "Both before and after cannot be the same for this handler"
+            if (handler.getRules().getBefore().equals(handler.getRules().getAfter())) {
+                throw new PhaseException("Both before and after cannot be the same for this handler"
                         + handler.getName());
             }
             return BOTH_BEFORE_AFTER;
@@ -461,21 +460,19 @@ public class PhaseMetadata {
          * just add the entery to vector
          */
         if ((getPhaseFirst() != null) && (getPhaseLast() != null)) {
-            if ((getPhaseFirst().getName().getLocalPart().equals(
-                    handler.getRules().getAfter()))
-                    && (getPhaseLast().getName().getLocalPart().equals(
-                            handler.getRules().getBefore()))) {
+            if ((getPhaseFirst().getName().getLocalPart().equals(handler.getRules().getAfter()))
+                    && (getPhaseLast().getName().getLocalPart().equals(handler.getRules().getBefore()))) {
                 orderHanders.add(handler);
                 return true;
             }
         }
 
-        if(getPhaseFirst() != null &&
-                (getPhaseFirst().getName().getLocalPart().equals(handler.getRules().getAfter()))){
+        if (getPhaseFirst() != null &&
+                (getPhaseFirst().getName().getLocalPart().equals(handler.getRules().getAfter()))) {
             after = 0;
         }
-        if(getPhaseLast() != null &&
-                (getPhaseLast().getName().getLocalPart().equals(handler.getRules().getBefore()))){
+        if (getPhaseLast() != null &&
+                (getPhaseLast().getName().getLocalPart().equals(handler.getRules().getBefore()))) {
             before = orderHanders.size();
         }
 
@@ -483,8 +480,7 @@ public class PhaseMetadata {
             HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
             if (handler.getRules().getAfter().equals(temphandler.getName().getLocalPart())) {
                 after = i;
-            } else if (handler.getRules().getBefore().equals(
-                    temphandler.getName())) {
+            } else if (handler.getRules().getBefore().equals(temphandler.getName())) {
                 before = i;
             }
             if ((after >= 0) && (before >= 0)) {
@@ -493,7 +489,7 @@ public class PhaseMetadata {
                     throw new PhaseException("incorrect handler order for "
                             + handler.getName());
                 } else {
-                    if(after + 1 <= orderHanders.size()){
+                    if (after + 1 <= orderHanders.size()) {
                         orderHanders.add(after + 1, handler);
                     } else
                         orderHanders.add(after, handler);

@@ -55,6 +55,7 @@ public interface DeploymentConstants {
     // for parameters
     String ATTNAME = "name";
     String ATTLOCKED = "locked";
+    String TYPE = "type";
 
     // for operatiins
     String ATQNAME = "name";

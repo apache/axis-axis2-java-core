@@ -103,13 +103,17 @@ public interface EngineRegistry {
      * @throws AxisFault
      */
     public HashMap getTransports() throws AxisFault;
-
     /**
-     * Ordred list of phases
-     *
-     * @return
+     * To store the order of the phases
+     * @param inPhases
      */
-    public ArrayList getPhases();
+    public void setInPhases(ArrayList inPhases);
+    public void setOutPhases(ArrayList outPhases);
+    public void setFaultPhases(ArrayList faultPhases);
+
+    public ArrayList getInPhases();
+    public ArrayList getOutPhases();
+    public ArrayList getFaultPhases();
 
     /**
      * Method getServices

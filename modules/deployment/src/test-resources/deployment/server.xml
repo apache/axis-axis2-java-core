@@ -24,7 +24,20 @@
         <parameter name="para4" locked="xsd:false">LSF</parameter>
     </module>
    -->
-    <phaseOrder>
+
+    <phaseOrder type="inflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="outflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="faultflow">
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>

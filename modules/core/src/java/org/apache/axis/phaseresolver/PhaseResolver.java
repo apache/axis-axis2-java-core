@@ -20,11 +20,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class PhaseResolver
@@ -141,17 +137,17 @@ public class PhaseResolver {
             // QName moduleref = (QName) modules.elementAt(i);
             module = engineRegistry.getModule(moduleref);
             switch (flowtype) {
-                case 1:
+                case PhaseMetadata.IN_FLOW:
                     {
                         flow = module.getInFlow();
                         break;
                     }
-                case 2:
+                case PhaseMetadata.OUT_FLOW:
                     {
                         flow = module.getOutFlow();
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
                         flow = module.getFaultFlow();
                         break;
@@ -170,17 +166,17 @@ public class PhaseResolver {
             }
         }
         switch (flowtype) {
-            case 1:
+            case PhaseMetadata.IN_FLOW:
                 {
                     flow = axisService.getInFlow();
                     break;
                 }
-            case 2:
+            case PhaseMetadata.OUT_FLOW:
                 {
                     flow = axisService.getOutFlow();
                     break;
                 }
-            case 3:
+            case PhaseMetadata.FAULT_FLOW:
                 {
                     flow = axisService.getFaultFlow();
                     break;
@@ -198,6 +194,7 @@ public class PhaseResolver {
             }
         }
         phaseHolder = new PhaseHolder(engineRegistry, axisService);
+        phaseHolder.setFlowType(flowtype);
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetadata handlerMetaData =
                     (HandlerMetadata) allHandlers.get(i);
@@ -236,13 +233,14 @@ public class PhaseResolver {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
             phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder.setFlowType(type);
             switch (type) {
-                case 1:
+                case PhaseMetadata.IN_FLOW:
                     {
                         flow = transport.getInFlow();
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
                         flow = transport.getFaultFlow();
                         break;
@@ -275,13 +273,14 @@ public class PhaseResolver {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
             phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder.setFlowType(type);
             switch (type) {
-                case 2:
+                case PhaseMetadata.OUT_FLOW:
                     {
                         flow = transport.getOutFlow();
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
                         flow = transport.getFaultFlow();
                         break;
@@ -318,21 +317,22 @@ public class PhaseResolver {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
             phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder.setFlowType(type);
             for (int intA = 0; intA < count; intA++) {
                 moduleName = (QName) modules.get(intA);
                 module = engineRegistry.getModule(moduleName);
                 switch (type) {
-                    case 1:
+                    case PhaseMetadata.IN_FLOW:
                         {
                             flow = module.getInFlow();
                             break;
                         }
-                    case 2:
+                    case PhaseMetadata.OUT_FLOW:
                         {
                             flow = module.getOutFlow();
                             break;
                         }
-                    case 3:
+                    case PhaseMetadata.FAULT_FLOW:
                         {
                             flow = module.getFaultFlow();
                             break;

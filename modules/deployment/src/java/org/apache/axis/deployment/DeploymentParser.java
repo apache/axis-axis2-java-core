@@ -144,7 +144,27 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
-                        ((EngineRegistryImpl) dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
+                       int attribCount = pullparser.getAttributeCount();
+                        if (attribCount > 0) {
+                            for (int i = 0; i < attribCount; i++) {
+                                String attname = pullparser.getAttributeLocalName(i);
+                                String attvalue = pullparser.getAttributeValue(i);
+                                if (TYPE.equals(attname)) {
+                                    if(INFLOWST.equals(attvalue)){
+                                        dpengine.getEngineRegistry().setInPhases(processPhaseOrder());
+                                    }   else if (OUTFLOWST.equals(attvalue)){
+                                         dpengine.getEngineRegistry().setOutPhases(processPhaseOrder());
+                                    }  else if (FAILTFLOWST.equals(attvalue)){
+                                          dpengine.getEngineRegistry().setFaultPhases(processPhaseOrder());
+                                    }  else {
+                                         throw new DeploymentException("un defined flow type  "  + ST);
+                                    }
+                                }
+                            }
+                        } else {
+                            throw new DeploymentException("Flow type is a required attribute in "  + ST);
+                        }
+                        //((EngineRegistryImpl) dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
                     } else if (SERVERST.equals(ST)) {
                         //TODO process attributes
                     } else {

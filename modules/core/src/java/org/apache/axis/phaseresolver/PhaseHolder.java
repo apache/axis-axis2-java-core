@@ -15,7 +15,10 @@
 */
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.*;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
@@ -49,6 +52,12 @@ public class PhaseHolder {
      */
     private final AxisService service;
 
+    private ArrayList inPhases;
+    private ArrayList outPhases;
+    private ArrayList faultPhases;
+
+    private int flowType = -1;
+
     /**
      * Constructor PhaseHolder
      *
@@ -58,6 +67,53 @@ public class PhaseHolder {
     public PhaseHolder(EngineRegistry registry, AxisService serviceIN) {
         this.registry = registry;
         this.service = serviceIN;
+        fillFlowPhases();
+    }
+
+    public void setFlowType(int flowType) {
+        switch (flowType) {
+            case PhaseMetadata.IN_FLOW:
+                {
+                    phaseholder = inPhases;
+                    break;
+                }
+            case PhaseMetadata.OUT_FLOW:
+                {
+                    phaseholder = outPhases;
+                    break;
+                }
+            case PhaseMetadata.FAULT_FLOW:
+                {
+                    phaseholder = faultPhases;
+                    break;
+                }
+        }
+        this.flowType = flowType;
+    }
+
+    private void fillFlowPhases() {
+        inPhases = new ArrayList();
+        outPhases = new ArrayList();
+        faultPhases = new ArrayList();
+
+        ArrayList tempPhases = registry.getInPhases();
+        for (int i = 0; i < tempPhases.size(); i++) {
+            String name = (String) tempPhases.get(i);
+            PhaseMetadata pm = new PhaseMetadata(name);
+            inPhases.add(pm);
+        }
+        tempPhases = registry.getOutPhases();
+        for (int i = 0; i < tempPhases.size(); i++) {
+            String name = (String) tempPhases.get(i);
+            PhaseMetadata pm = new PhaseMetadata(name);
+            outPhases.add(pm);
+        }
+        tempPhases = registry.getFaultPhases();
+        for (int i = 0; i < tempPhases.size(); i++) {
+            String name = (String) tempPhases.get(i);
+            PhaseMetadata pm = new PhaseMetadata(name);
+            faultPhases.add(pm);
+        }
     }
 
     /**
@@ -77,23 +133,6 @@ public class PhaseHolder {
     }
 
     /**
-     * Method isPhaseExistinER
-     *
-     * @param phaseName
-     * @return
-     */
-    private boolean isPhaseExistinER(String phaseName) {
-        ArrayList pahselist = registry.getPhases();
-        for (int i = 0; i < pahselist.size(); i++) {
-            String pahse = (String) pahselist.get(i);
-            if (pahse.equals(phaseName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Method addHandler
      *
      * @param handler
@@ -104,17 +143,24 @@ public class PhaseHolder {
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
-            if (isPhaseExistinER(phaseName)) {
-                PhaseMetadata newpPhase = new PhaseMetadata(phaseName);
-                addPhase(newpPhase);
-                newpPhase.addHandler(handler);
-            } else {
-                throw new PhaseException("Invalid Phase ," + phaseName
-                        + "for the handler "
-                        + handler.getName()
-                        + " dose not exit in server.xml");
-            }
+            throw new PhaseException("Invalid Phase ," + phaseName
+                    + "for the handler "
+                    + handler.getName()
+                    + " dose not exit in server.xml or refering to phase in diffrent flow");
         }
+        /*
+        else {
+        if (isPhaseExistinER(phaseName)) {
+        PhaseMetadata newpPhase = new PhaseMetadata(phaseName);
+        addPhase(newpPhase);
+        newpPhase.addHandler(handler);
+        } else {
+        throw new PhaseException("Invalid Phase ," + phaseName
+        + "for the handler "
+        + handler.getName()
+        + " dose not exit in server.xml");
+        }
+        }*/
     }
 
     /**
@@ -142,52 +188,9 @@ public class PhaseHolder {
         return null;
     }
 
-    /**
-     * Method OrderThePhases
-     */
-    private void OrderThePhases() {
-        // todo complete this using phaseorder
-        PhaseMetadata[] phase = new PhaseMetadata[phaseholder.size()];
-        for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetadata tempphase = (PhaseMetadata) phaseholder.get(i);
-            phase[i] = tempphase;
-        }
-        phase = getOrderPhases(phase);
-
-        // remove all items inorder to rearrange them
-        phaseholder.clear();
-        for (int i = 0; i < phase.length; i++) {
-            PhaseMetadata phaseMetaData = phase[i];
-            phaseholder.add(phaseMetaData);
-        }
-    }
-
-    /**
-     * Method getOrderPhases
-     *
-     * @param phasesmetadats
-     * @return
-     */
-    private PhaseMetadata[] getOrderPhases(PhaseMetadata[] phasesmetadats) {
-        PhaseMetadata[] tempphase = new PhaseMetadata[phasesmetadats.length];
-        int count = 0;
-        ArrayList pahselist = registry.getPhases();
-        for (int i = 0; i < pahselist.size(); i++) {
-            String phasemetadata = (String) pahselist.get(i);
-            for (int j = 0; j < phasesmetadats.length; j++) {
-                PhaseMetadata tempmetadata = phasesmetadats[j];
-                if (tempmetadata.getName().equals(phasemetadata)) {
-                    tempphase[count] = tempmetadata;
-                    count++;
-                }
-            }
-        }
-        return tempphase;
-    }
-
     public ArrayList getOrderHandler() throws PhaseException {
         ArrayList handlerList = new ArrayList();
-        OrderThePhases();
+        //OrderThePhases();
         HandlerMetadata[] handlers;
         for (int i = 0; i < phaseholder.size(); i++) {
             PhaseMetadata phase =
@@ -198,7 +201,7 @@ public class PhaseHolder {
             }
 
         }
-        return  handlerList;
+        return handlerList;
     }
 
 
@@ -215,11 +218,11 @@ public class PhaseHolder {
      */
     public void getOrderedHandlers(int chainType) throws PhaseException {
         try {
-            OrderThePhases();
+            //OrderThePhases();
 
             HandlerMetadata[] handlers;
             switch (chainType) {
-                case 1:
+                case PhaseMetadata.IN_FLOW:
                     {
                         ArrayList inChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -235,7 +238,7 @@ public class PhaseHolder {
                         service.setPhases(inChain, EngineRegistry.INFLOW);
                         break;
                     }
-                case 2:
+                case PhaseMetadata.OUT_FLOW:
                     {
                         ArrayList outChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -251,9 +254,9 @@ public class PhaseHolder {
                         service.setPhases(outChain, EngineRegistry.OUTFLOW);
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
-                        ArrayList faultChain = new ArrayList();  
+                        ArrayList faultChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
@@ -277,13 +280,13 @@ public class PhaseHolder {
     public void buildTransportChain(PhasesInclude trnsport, int chainType)
             throws PhaseException {
         try {
-            OrderThePhases();
+            //OrderThePhases();
 
             HandlerMetadata[] handlers;
             Class handlerClass = null;
             Handler handler;
             switch (chainType) {
-                case 1:
+                case PhaseMetadata.IN_FLOW:
                     {
                         ArrayList inChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -293,8 +296,7 @@ public class PhaseHolder {
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
-                                    handlerClass = Class.forName(
-                                            handlers[j].getClassName(), true,
+                                    handlerClass = Class.forName(handlers[j].getClassName(), true,
                                             Thread.currentThread().getContextClassLoader());
                                     handler =
                                             (Handler) handlerClass.newInstance();
@@ -314,7 +316,7 @@ public class PhaseHolder {
                         trnsport.setPhases(inChain, EngineRegistry.INFLOW);
                         break;
                     }
-                case 2:
+                case PhaseMetadata.OUT_FLOW:
                     {
                         ArrayList outChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -324,8 +326,7 @@ public class PhaseHolder {
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
-                                    handlerClass = Class.forName(
-                                            handlers[j].getClassName(), true,
+                                    handlerClass = Class.forName(handlers[j].getClassName(), true,
                                             Thread.currentThread().getContextClassLoader());
                                     handler =
                                             (Handler) handlerClass.newInstance();
@@ -345,7 +346,7 @@ public class PhaseHolder {
                         trnsport.setPhases(outChain, EngineRegistry.OUTFLOW);
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
                         ArrayList faultChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -355,8 +356,7 @@ public class PhaseHolder {
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
-                                    handlerClass = Class.forName(
-                                            handlers[j].getClassName(), true,
+                                    handlerClass = Class.forName(handlers[j].getClassName(), true,
                                             Thread.currentThread().getContextClassLoader());
                                     handler =
                                             (Handler) handlerClass.newInstance();
@@ -393,10 +393,10 @@ public class PhaseHolder {
     public void buildGlobalChain(AxisGlobal axisGlobal, int chainType)
             throws PhaseException {
         try {
-            OrderThePhases();
+            //OrderThePhases();
             HandlerMetadata[] handlers;
             switch (chainType) {
-                case 1:
+                case PhaseMetadata.IN_FLOW:
                     {
                         ArrayList inChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -412,7 +412,7 @@ public class PhaseHolder {
                         axisGlobal.setPhases(inChain, EngineRegistry.INFLOW);
                         break;
                     }
-                case 2:
+                case PhaseMetadata.OUT_FLOW:
                     {
                         ArrayList outChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
@@ -428,7 +428,7 @@ public class PhaseHolder {
                         axisGlobal.setPhases(outChain, EngineRegistry.OUTFLOW);
                         break;
                     }
-                case 3:
+                case PhaseMetadata.FAULT_FLOW:
                     {
                         ArrayList faultChain = new ArrayList();
                         for (int i = 0; i < phaseholder.size(); i++) {
