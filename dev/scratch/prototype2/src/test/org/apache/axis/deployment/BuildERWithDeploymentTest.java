@@ -16,13 +16,14 @@
 package org.apache.axis.deployment;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.engine.AxisFault;
+import org.apache.axis.description.Flow;
 import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.engine.Provider;
+import org.apache.axis.impl.providers.RawXMLProvider;
 
 
 public class BuildERWithDeploymentTest extends AbstractTestCase{
@@ -33,7 +34,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase{
         super(testName);
     }
 
-    public void testDeployment() throws AxisFault, PhaseException, DeploymentException, XMLStreamException{
+    public void testDeployment() throws Exception{
         String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = deploymentEngine.start();
@@ -42,5 +43,24 @@ public class BuildERWithDeploymentTest extends AbstractTestCase{
         
         AxisService service = er.getService(new QName("echo"));
         assertNotNull(service);
+        Provider provider = service.getProvider();
+        assertNotNull(provider);
+        assertTrue(provider instanceof RawXMLProvider);
+        ClassLoader cl = service.getClassLoader();
+        assertNotNull(cl);
+        Class.forName("org.apache.axis.engine.Echo",true,cl);
+        assertNotNull(service.getName());
+        assertEquals(service.getContextPath(),"axis/service/echo");
+        
+        Flow flow = service.getFaultFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        flow = service.getInFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        flow = service.getOutFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        assertNull(service.getParameter("hello"));
+        
+        AxisOperation op = service.getOperation(new QName("echo"));
+        assertNotNull(op);
     }
 }
