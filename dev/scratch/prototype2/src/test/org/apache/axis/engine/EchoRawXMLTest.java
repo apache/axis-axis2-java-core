@@ -61,7 +61,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
+        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         
         AxisService service = new SimpleAxisServiceImpl(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());

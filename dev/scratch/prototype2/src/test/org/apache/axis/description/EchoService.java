@@ -1,4 +1,4 @@
-package org.apache.axis.registry;
+package org.apache.axis.description;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -27,6 +27,7 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.Parameter;
+import org.apache.axis.description.SpeakingHandler;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
@@ -37,7 +38,6 @@ import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.registry.SpeakingHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,7 +66,7 @@ public class HandlerFaliureTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
+        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
     }
     
     

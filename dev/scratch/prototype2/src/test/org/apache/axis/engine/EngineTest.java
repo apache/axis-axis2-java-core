@@ -43,7 +43,7 @@ public class EngineTest extends TestCase{
         super(arg0);
     }
     protected void setUp() throws Exception {
-        engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
+        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         mc = new MessageContext(engineRegistry);
         AxisService service = engineRegistry.getService(serviceName);
         mc.setProperty(MessageContext.REQUEST_URL,"/axis/services/EchoService");

@@ -16,7 +16,6 @@
 
 package org.apache.axis.description;
 
-import org.apache.axis.engine.Handler;
 /**
  * Represents logical collection of handlers. The order of Handlers do not have 
  * any symantics.

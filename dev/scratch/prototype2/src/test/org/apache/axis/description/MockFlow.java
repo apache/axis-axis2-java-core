@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+package org.apache.axis.description;
 
 import org.apache.axis.description.Flow;
 import org.apache.axis.engine.EngineUtils;

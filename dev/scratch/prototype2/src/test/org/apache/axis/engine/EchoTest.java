@@ -51,7 +51,7 @@ public class EchoTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
+        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         sas = EngineUtils.startServer(engineRegistry);
     }
 

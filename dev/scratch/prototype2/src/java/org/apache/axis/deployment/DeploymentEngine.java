@@ -1,28 +1,5 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.*;
-import org.apache.axis.deployment.metadata.HandlerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.repository.utill.HDFileItem;
-import org.apache.axis.deployment.repository.utill.UnZipJAR;
-import org.apache.axis.deployment.repository.utill.WSInfo;
-import org.apache.axis.deployment.scheduler.DeploymentIterator;
-import org.apache.axis.deployment.scheduler.Scheduler;
-import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.*;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.impl.description.FlowImpl;
-import org.apache.axis.impl.description.ParameterImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
-import org.apache.axis.impl.engine.EngineRegistryImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +8,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.deployment.metadata.FlowMetaData;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.ModuleMetaData;
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.repository.utill.HDFileItem;
+import org.apache.axis.deployment.repository.utill.UnZipJAR;
+import org.apache.axis.deployment.repository.utill.WSInfo;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
+import org.apache.axis.deployment.scheduler.Scheduler;
+import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.SimpleAxisServiceImpl;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**

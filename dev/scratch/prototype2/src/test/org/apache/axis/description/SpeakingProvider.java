@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+package org.apache.axis.description;
 
 import java.lang.reflect.Method;
 

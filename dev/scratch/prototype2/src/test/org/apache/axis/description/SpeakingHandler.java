@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
 
@@ -25,12 +25,12 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class SpeakingHandler1  extends AbstractHandler implements Handler {
+public class SpeakingHandler extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private String message;
     private QName name;
-    public SpeakingHandler1(String message) {
-       this.message = message;
+    public SpeakingHandler() {
+       this.message = "Hi I amtesting ";
     }
     public QName getName() {
         return name;
