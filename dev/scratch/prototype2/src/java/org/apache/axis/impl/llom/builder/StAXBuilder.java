@@ -58,7 +58,7 @@ public abstract class StAXBuilder  implements OMXMLParserWrapper {
         this.ombuilderFactory = ombuilderFactory;
     }
 
-    protected abstract void processNamespaceData(OMElement node) ;
+    protected abstract void processNamespaceData(OMElement node,boolean isSOAPElement) ;
         //since the behaviors are different when it comes to namespaces
         //this must be implemented differently
 

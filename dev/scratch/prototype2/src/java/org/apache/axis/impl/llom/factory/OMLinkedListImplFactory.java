@@ -76,7 +76,11 @@ public class OMLinkedListImplFactory extends OMFactory {
     }
 
     public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+        if (!localName.equals(OMConstants.SOAPENVELOPE_LOCAL_NAME)){
+            throw new OMException("wrong name for the envelope!");
+        }
         return new SOAPEnvelopeImpl(localName, ns, parent, builder);
+
     }
 
     public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns) {
@@ -117,17 +121,17 @@ public class OMLinkedListImplFactory extends OMFactory {
         //Create an envelop
         OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME,ns);
-        
+
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         bodyImpl.setComplete(true);
         env.addChild(bodyImpl);
-        
+
         SOAPHeaderImpl headerImpl = new SOAPHeaderImpl(env);
         headerImpl.setComplete(true);
         env.addChild(headerImpl);
-        
+
         return env;
-        
+
 
 
     }

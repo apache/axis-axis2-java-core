@@ -60,7 +60,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         }
 
         //create the namespaces
-        processNamespaceData(node);
+        processNamespaceData(node,false);
 
         //fill in the attributes
         processAttributes(node);
@@ -132,8 +132,8 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         return document.getRootElement();
     }
 
-    protected void processNamespaceData(OMElement node) {
-         int namespaceCount = parser.getNamespaceCount();
+    protected void processNamespaceData(OMElement node,boolean isSOAPElement) {
+        int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
         }

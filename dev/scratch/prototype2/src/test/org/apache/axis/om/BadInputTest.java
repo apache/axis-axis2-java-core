@@ -24,121 +24,120 @@ import java.io.File;
 import org.apache.axis.engine.AxisFault;
 
 
-
-
 public class BadInputTest extends OMTestCase {
 
-    File dir = new File(testResourceDir,"badsoap");
+    File dir = new File(testResourceDir, "badsoap");
 
     public BadInputTest(String testName) {
         super(testName);
     }
 
-    public void testBodyNotQualified()throws Exception{
+    //done
+    public void testBodyNotQualified() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"bodyNotQualified.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "bodyNotQualified.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-            
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            //we are OK!
+            return;
+        } catch (AxisFault e) {
+            //we are OK here too!
+            return;
         }
 
     }
 
-    public void testEnvelopeMissing()throws Exception{
+
+    //done
+    public void testEnvelopeMissing() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"envelopeMissing.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "envelopeMissing.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
-    public void testhaederBodyWrongOrder()throws Exception{
+    //done
+    public void testHeaderBodyWrongOrder() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"haederBodyWrongOrder.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "haederBodyWrongOrder.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
-    public void testNotnamespaceQualified()throws Exception{
+    //done
+    public void testNotnamespaceQualified() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"notnamespaceQualified.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "notnamespaceQualified.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
-    public void testTwoBodymessage()throws Exception{
+    //done
+    public void testTwoBodymessage() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"twoBodymessage.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "twoBodymessage.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
-    public void testTwoheaders()throws Exception{
+    //done
+    public void testTwoheaders() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"twoheaders.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "twoheaders.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
-    public void testWrongSoapNs() throws Exception{
+    //done
+    public void testWrongSoapNs() throws Exception {
         try {
             SOAPEnvelope soapEnvelope =
-                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir,"wrongSoapNs.xml")).getDocumentElement();
+                    (SOAPEnvelope) OMTestUtils.getOMBuilder(new File(dir, "wrongSoapNs.xml")).getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
+            fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }catch(AxisFault e){
-            e.printStackTrace();
-            System.out.println(e);
+            return;
+        } catch (AxisFault e) {
+            return;
         }
-        fail("this must failed gracefully with OMException or AxisFault");
+
     }
 
 //    public void testAllMessagesInBadSOAP() throws OMException, Exception{

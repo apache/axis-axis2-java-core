@@ -41,6 +41,7 @@ public class CompareOMWithDOMTest extends AbstractTestCase{
         if(files != null){
             for(int i = 0;i<files.length;i++){
                 if(files[i].isFile() && files[i].getName().endsWith(".xml")){
+                    System.out.println("files = " + files[i].getAbsolutePath());
                     SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(
                             files[i]).getDocumentElement();
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

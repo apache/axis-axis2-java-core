@@ -1,6 +1,7 @@
 package org.apache.axis.impl.llom.builder;
 
 import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.exception.OMBuilderException;
 import org.apache.axis.om.*;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -27,9 +28,11 @@ import javax.xml.stream.XMLStreamReader;
  *         <p/>
  *         Note - OM navigator has been removed to simplify the build process
  */
-public class StAXSOAPModelBuilder extends StAXBuilder{
+public class StAXSOAPModelBuilder extends StAXBuilder {
 
     private SOAPEnvelope envelope;
+    private boolean headerPresent = false;
+    private boolean bodyPresent = false;
 
     /**
      * element level 1 = envelope level
@@ -58,20 +61,18 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         String elementName = parser.getLocalName();
 
         if (lastNode == null) {
-            envelope = ombuilderFactory.createSOAPEnvelope(elementName, null, null, this);
-            node = (OMElementImpl) envelope;
+           node = constructNode(null,elementName,true);
         } else if (lastNode.isComplete()) {
-            node = constructNode(lastNode.getParent(), elementName);
+            node = constructNode(lastNode.getParent(), elementName,false);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
-            node = constructNode((OMElement) lastNode, elementName);
+            node = constructNode((OMElement) lastNode, elementName,false);
             e.setFirstChild(node);
         }
 
-        //create the namespaces
-        processNamespaceData(node);
+
 
         //fill in the attributes
         processAttributes(node);
@@ -79,30 +80,47 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         return node;
     }
 
-    private OMElement constructNode(OMElement parent, String elementName) {
+    private OMElement constructNode(OMElement parent, String elementName,boolean isEnvelope) {
 
         OMElement element = null;
-        if (elementLevel == 2) {
-            //todo Where would the sibling links come to these    
+        if (isEnvelope){
+
+            envelope = ombuilderFactory.createSOAPEnvelope(elementName, null, null, this);
+            element = (OMElementImpl) envelope;
+            processNamespaceData(element,true);
+
+        }else  if (elementLevel == 2) {
             // this is either a header or a body
-            if (elementName.equalsIgnoreCase("Header")) {
-                //since its level 2 parent MUST be the envelope
+            if (elementName.equals(OMConstants.HEADER_LOCAL_NAME)) {
+                if (headerPresent) {
+                    throw new OMBuilderException("Multiple headers encountered!");
+                }
+                if (bodyPresent) {
+                    throw new OMBuilderException("Header Body wrong order!");
+                }
+                headerPresent = true;
                 element = ombuilderFactory.createSOAPHeader(elementName, null, parent, this);
-            } else if (elementName.equalsIgnoreCase("Body")) {
-                //since its level 2 parent MUST be the envelope
+                processNamespaceData(element,true);
+            } else if (elementName.equals(OMConstants.BODY_LOCAL_NAME)) {
+                if (bodyPresent) {
+                    throw new OMBuilderException("Multiple body elements encountered");
+                }
+                bodyPresent = true;
                 element = ombuilderFactory.createSOAPBody(elementName, null, parent, this);
+                processNamespaceData(element,true);
             } else {
-                // can there be Elements other than Header and Body in Envelope. If yes, what are they and is it YAGNI ??
-                throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
+                throw new OMBuilderException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
             }
 
-        } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase("Header")) {
+        } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase(OMConstants.HEADER_LOCAL_NAME)) {
             // this is a headerblock
-            element = ombuilderFactory.createSOAPHeaderBlock(elementName, null, parent, this);//todo NS is required here
+            element = ombuilderFactory.createSOAPHeaderBlock(elementName, null, parent, this);
+            processNamespaceData(element,false);
 
         } else {
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, null, parent, this);//todo put the name
+            element = ombuilderFactory.createOMElement(elementName, null, parent, this);
+            processNamespaceData(element,false);
         }
 
         return element;
@@ -167,7 +185,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         return getOMEnvelope();
     }
 
-    protected void processNamespaceData(OMElement node) {
+    protected void processNamespaceData(OMElement node,boolean isSOAPElement) {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.createNamespace(parser.getNamespaceURI(i), parser.getNamespacePrefix(i));
@@ -175,9 +193,16 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
 
         //set the own namespace
         OMNamespace namespace = node.resolveNamespace(parser.getNamespaceURI(), parser.getPrefix());
-        if (namespace==null){
+
+        if (namespace == null) {
             throw new OMException("All elements must be namespace qualified!");
         }
+
+        if (isSOAPElement){
+            if (!namespace.getValue().equals(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI))
+                 throw new OMBuilderException("invalid SOAP namespace URI");
+        }
+
         node.setNamespace(namespace);
     }
 
