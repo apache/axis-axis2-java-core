@@ -35,7 +35,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase{
     }
 
     public void testDeployment() throws Exception{
-        String filename = "./target/test-resources" ;
+        String filename = "./target/test-resources/deployment" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = deploymentEngine.start();
         assertNotNull(er);

@@ -45,6 +45,7 @@ public interface DeploymentConstants {
     String JWS_EXTENSION = ".jws";
 
     String SERVICETAG = "service";
+    String SERVERST = "server";
 
     // for serviemetadat
     String PROVIDERNAME = "provider";

@@ -2,7 +2,7 @@
     <parameter name="para123" locked="xsd:true">10</parameter>
     <parameter name="para245" locked="xsd:false">Colombo</parameter>
     <!--  Module TypeMapping -->
-    <typeMapping>Type mappping should come here</typeMapping>
+    
     <inflow>
         <handler name="h1" class="org.apache.axis.registry.Handler3">
             <order phase="p1" phaseFirst="true"/>

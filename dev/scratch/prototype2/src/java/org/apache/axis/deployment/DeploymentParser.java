@@ -46,14 +46,12 @@ import java.util.ArrayList;
  * parse a given document
  */
 public class DeploymentParser implements DeploymentConstants {
-    //server.xml starting tag
-    private static final String serverXMLST = "server";
     //module.xml strating tag
     private static final String moduleXMLST = "module";
     // service.xml strating tag
     private static final String serviceXMLST = "service";
     //to get the input stream
-    private InputStream inputStream;
+    private InputStream inputStream = null;
     // Referance to XMLPullPasrser
 
     // private XmlPullParser pullparser;
@@ -77,27 +75,14 @@ public class DeploymentParser implements DeploymentConstants {
         this.inputStream = inputStream;
         this.dpengine = engine;
         this.archiveName = fileName;
-
-        //   try {
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        //   } catch (XMLStreamException e) {
-        //      e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        //  } catch (FactoryConfigurationError factoryConfigurationError) {
-        //     factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        // }
     }
 
 
     public DeploymentParser(InputStream inputStream, DeploymentEngine engine) throws XMLStreamException {
         this.inputStream = inputStream;
         this.dpengine = engine;
-        //  try {
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        // } catch (XMLStreamException e) {
-        //    e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        // } catch (FactoryConfigurationError factoryConfigurationError) {
-        //    factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        //}
     }
 
     public void parseServiceXML(AxisService axisService) throws DeploymentException, PhaseException {
@@ -144,7 +129,7 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
-                        processTypeMapping();
+                       throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (ST.equals(MODULEST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
@@ -158,6 +143,10 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else if (ST.equals(PHASE_ORDER)) {
                       ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
+                    } else if(ST.equals(SERVERST)){
+                         //TODO process attributes
+                    }  else {
+                        throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
                     }
                 }
             }
@@ -219,7 +208,6 @@ public class DeploymentParser implements DeploymentConstants {
                             attribCount = pullparser.getAttributeCount();
                             if (attribCount > 0) {
                                 for (int i = 0; i < attribCount; i++) {
-                                    String attname = pullparser.getAttributeLocalName(i);
                                     String attvalue = pullparser.getAttributeValue(i);
                                     dpengine.getCurrentFileItem().setClassName(attvalue);
                                 }
@@ -276,7 +264,6 @@ public class DeploymentParser implements DeploymentConstants {
 
 
     private Parameter processParameter() throws DeploymentException {
-        String name = pullparser.getLocalName();
         Parameter parameter = new ParameterImpl();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 2) {  // there should be two attributes
@@ -619,6 +606,8 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (ST.equals(OUTFLOWST)) {
                         Flow outFlow = processOutFlow();
                         module.setOutFlow(outFlow);
+                    } else {
+                        throw new UnsupportedOperationException(ST + "elment is not allowed in module.xml");
                     }
                     //todo has to be implemnt this
                     // complete implenatation

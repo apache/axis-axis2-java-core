@@ -1,15 +1,5 @@
 package org.apache.axis.deployment;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Vector;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;
@@ -20,7 +10,6 @@ import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
@@ -30,6 +19,15 @@ import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 /**
@@ -314,20 +312,6 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (ClassNotFoundException e) {
             throw new AxisFault(e.getMessage());
         }
-
-//        try {
-//            Handler handler = (Handler) handlerClass.newInstance();
-//            MessageContext msgContext = null;
-//            try {
-//                handler.invoke(msgContext);
-//            } catch (AxisFault axisFault) {
-//                throw new AxisFault(axisFault.getMessage());
-//            }
-//        } catch (InstantiationException e) {
-//            throw new AxisFault(e.getMessage());
-//        } catch (IllegalAccessException e) {
-//            throw new AxisFault(e.getMessage());
-//        }
         return handlerClass;
     }
 

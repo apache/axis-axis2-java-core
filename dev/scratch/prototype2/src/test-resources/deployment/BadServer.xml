@@ -1,6 +1,13 @@
 <server name ="AxisJava2.0" >
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
+    <handler name="h1" class="org.apache.axis.engine.registry.SpeakingHandler">
+        <order phase="p1" phaseFirst="true"/>
+        <parameter name="para8" locked="xsd:true">123</parameter>
+        <parameter name="para9" locked="xsd:true">456</parameter>
+        <parameter name="para10" locked="xsd:true">789</parameter>
+    </handler>
+    <handler name="h2" class="org.apache.axis.engine.registry.SpeakingHandler"/>
     <module ref="module1"> </module>
   <!--
     <module ref="uri">
@@ -18,4 +25,3 @@
         <phase name="service"/>
     </phaseOrder>
 </server>
-
