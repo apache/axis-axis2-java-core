@@ -18,19 +18,19 @@ package org.apache.axis.impl.transport.http;
 
 import java.io.OutputStream;
 
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.AbstractTrasnportSender;
+import org.apache.axis.transport.AbstractTransportSender;
 
-public class HTTPTrasnportSender extends AbstractTrasnportSender {
+public class HTTPTransportSender extends AbstractTransportSender {
     protected OutputStream out;
 
-    public HTTPTrasnportSender(OutputStream out) {
+    public HTTPTransportSender(OutputStream out) {
         this.out = out;
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault {
+    protected OutputStream obtainOutputStream(MessageContext msgContext) throws AxisFault {
         OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_DATA);
         if (out == null) {
             throw new AxisFault("can not find the suffient information to find endpoint");
@@ -40,9 +40,9 @@ public class HTTPTrasnportSender extends AbstractTrasnportSender {
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) throws AxisFault {
+    protected OutputStream obtainOutputStream(MessageContext msgContext, EndpointReference epr) throws AxisFault {
         //TODO this is temporay work around
-        return obtainOutPutStream(msgContext);
+        return obtainOutputStream(msgContext);
     }
 
     protected void finalizeSending() {

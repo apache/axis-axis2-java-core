@@ -16,7 +16,7 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.handlers.AbstractHandler;
@@ -30,7 +30,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
     public void invoke(MessageContext msgctx) throws AxisFault{
         if(msgctx.isServerSide()){
             String uri = null;
-            EndpointReferenceType toEPR = msgctx.getTo();
+            EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
             String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
 

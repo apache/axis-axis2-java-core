@@ -21,7 +21,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -30,24 +30,24 @@ import java.io.OutputStream;
 
 /**
  */
-public abstract class AbstractTrasnportSender extends AbstractHandler implements TransportSender {
+public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
 
     public final void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = null;
         if (msgContext.isProcessingFault()) {
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {
-                out = obtainOutPutStream(msgContext, msgContext.getFaultTo());
+                out = obtainOutputStream(msgContext, msgContext.getFaultTo());
             } else {
-                out = obtainOutPutStream(msgContext);
+                out = obtainOutputStream(msgContext);
             }
         } else {
             if (msgContext.getTo() != null) {
-                out = obtainOutPutStream(msgContext, msgContext.getTo());
+                out = obtainOutputStream(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
-                out = obtainOutPutStream(msgContext, msgContext.getTo());
+                out = obtainOutputStream(msgContext, msgContext.getTo());
             } else {
-                out = obtainOutPutStream(msgContext);
+                out = obtainOutputStream(msgContext);
             }
         }
         startSending();
@@ -67,9 +67,9 @@ public abstract class AbstractTrasnportSender extends AbstractHandler implements
     protected void startSending() {
     }
 
-    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) throws AxisFault;
+    protected abstract OutputStream obtainOutputStream(MessageContext msgContext, EndpointReference epr) throws AxisFault;
 
-    protected abstract OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault;
+    protected abstract OutputStream obtainOutputStream(MessageContext msgContext) throws AxisFault;
 
     protected void finalizeSending() {
     }

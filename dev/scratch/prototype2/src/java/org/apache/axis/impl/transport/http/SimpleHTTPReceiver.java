@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
@@ -453,7 +453,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
 
             String filePart = fileName.toString();
-            msgContext.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,filePart));
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,filePart));
 
             if (httpRequest.toString().equals("GET")) {
                 throw new UnsupportedOperationException("GET not supported");

@@ -17,7 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.transport.http.HTTPTrasnportSender;
+import org.apache.axis.impl.transport.http.HTTPTransportSender;
 import org.apache.axis.impl.transport.tcp.TCPTrasnportSender;
 
 import java.io.OutputStream;
@@ -39,7 +39,7 @@ public class TransportSenderLocator {
             }
         } else if (TransportSenderLocator.TRANSPORT_HTTP.equals(type)) {
             if (out != null) {
-                return new HTTPTrasnportSender(out);
+                return new HTTPTransportSender(out);
             } else {
                 throw new AxisFault("if TCP trsport used there should be a propoerty named " + MessageContext.TRANSPORT_DATA);
             }

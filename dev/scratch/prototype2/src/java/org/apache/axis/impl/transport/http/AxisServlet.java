@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -73,7 +73,7 @@ public class AxisServlet extends HttpServlet{
             MessageContext msgContext = new MessageContext(engineRegistry);
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
-            msgContext.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,filePart));
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,filePart));
             
             String soapActionString = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             if (soapActionString != null) {

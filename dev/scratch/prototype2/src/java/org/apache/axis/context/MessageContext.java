@@ -22,7 +22,7 @@ import org.apache.axis.engine.*;
 import org.apache.axis.impl.context.SimpleSessionContext;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 
 import java.util.HashMap;
@@ -38,18 +38,18 @@ public class MessageContext {
 //    private HashMap messages = new HashMap();
 
     public static final String USER_NAME = "USER";
-    public static final String PASSWARD = "PASSWD";
+    public static final String PASSWORD = "PASSWD";
     public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
     public static final String SOAP_ACTION = "SOAP_ACTION";
     public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
     //public static final String REQUEST_URL = "REQUEST_URL";
 
     private boolean processingFault = false;
-    private EndpointReferenceType to;
-    private EndpointReferenceType from;
+    private EndpointReference to;
+    private EndpointReference from;
     private RelatesTo relatesTo;
-    private EndpointReferenceType replyTo;
-    private EndpointReferenceType faultTo;
+    private EndpointReference replyTo;
+    private EndpointReference faultTo;
     
     private ExecutionChain chain;
     private AxisTransport transport;
@@ -63,7 +63,7 @@ public class MessageContext {
     private AxisService service;
     private SOAPEnvelope envelope;
     private boolean responseWritten;
-    private boolean infaultFlow;
+    private boolean inFaultFlow;
     private boolean serverSide;
     private String messageID;
     private AxisOperation operation;
@@ -80,14 +80,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferenceType getFaultTo() {
+    public EndpointReference getFaultTo() {
         return faultTo;
     }
 
     /**
      * @return
      */
-    public EndpointReferenceType getFrom() {
+    public EndpointReference getFrom() {
         return from;
     }
 
@@ -101,8 +101,8 @@ public class MessageContext {
     /**
      * @return
      */
-    public boolean isInfaultFlow() {
-        return infaultFlow;
+    public boolean isInFaultFlow() {
+        return inFaultFlow;
     }
 
     /**
@@ -144,7 +144,7 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferenceType getReplyTo() {
+    public EndpointReference getReplyTo() {
         return replyTo;
     }
 
@@ -172,29 +172,29 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndpointReferenceType getTo() {
+    public EndpointReference getTo() {
         return to;
     }
 
     /**
      * @param referance
      */
-    public void setFaultTo(EndpointReferenceType referance) {
+    public void setFaultTo(EndpointReference referance) {
         faultTo = referance;
     }
 
     /**
      * @param referance
      */
-    public void setFrom(EndpointReferenceType referance) {
+    public void setFrom(EndpointReference referance) {
         from = referance;
     }
 
     /**
      * @param b
      */
-    public void setInfaultFlow(boolean b) {
-        infaultFlow = b;
+    public void setInFaultFlow(boolean b) {
+        inFaultFlow = b;
     }
 
     /**
@@ -238,7 +238,7 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setReplyTo(EndpointReferenceType referance) {
+    public void setReplyTo(EndpointReference referance) {
         replyTo = referance;
     }
 
@@ -260,7 +260,7 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setTo(EndpointReferenceType referance) {
+    public void setTo(EndpointReference referance) {
         to = referance;
     }
 

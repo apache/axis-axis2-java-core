@@ -1,6 +1,6 @@
 package org.apache.axis.addressing.om;
 
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.om.SOAPHeader;
 
@@ -21,10 +21,10 @@ import org.apache.axis.om.SOAPHeader;
  */
 public class AddressingHeaders {
 
-    private EndpointReferenceType wsaTo;
-    private EndpointReferenceType wsaFrom;
-    private EndpointReferenceType wsaReply;
-    private EndpointReferenceType wsaFaultTo;
+    private EndpointReference wsaTo;
+    private EndpointReference wsaFrom;
+    private EndpointReference wsaReply;
+    private EndpointReference wsaFaultTo;
     private String action;
     private String messageId;
     private RelatesTo relatesTo;
@@ -34,7 +34,7 @@ public class AddressingHeaders {
      * @param wsaTo
      * @param action
      */
-    public AddressingHeaders(EndpointReferenceType wsaTo, String action) {
+    public AddressingHeaders(EndpointReference wsaTo, String action) {
         this.wsaTo = wsaTo;
         this.action = action;
     }
@@ -44,35 +44,35 @@ public class AddressingHeaders {
     }
 
     // ------------------- Setters and Getters --------------------------------------
-    public EndpointReferenceType getWsaTo() {
+    public EndpointReference getWsaTo() {
         return wsaTo;
     }
 
-    public void setWsaTo(EndpointReferenceType wsaTo) {
+    public void setWsaTo(EndpointReference wsaTo) {
         this.wsaTo = wsaTo;
     }
 
-    public EndpointReferenceType getWsaFrom() {
+    public EndpointReference getWsaFrom() {
         return wsaFrom;
     }
 
-    public void setWsaFrom(EndpointReferenceType wsaFrom) {
+    public void setWsaFrom(EndpointReference wsaFrom) {
         this.wsaFrom = wsaFrom;
     }
 
-    public EndpointReferenceType getWsaReply() {
+    public EndpointReference getWsaReply() {
         return wsaReply;
     }
 
-    public void setWsaReply(EndpointReferenceType wsaReply) {
+    public void setWsaReply(EndpointReference wsaReply) {
         this.wsaReply = wsaReply;
     }
 
-    public EndpointReferenceType getWsaFaultTo() {
+    public EndpointReference getWsaFaultTo() {
         return wsaFaultTo;
     }
 
-    public void setWsaFaultTo(EndpointReferenceType wsaFaultTo) {
+    public void setWsaFaultTo(EndpointReference wsaFaultTo) {
         this.wsaFaultTo = wsaFaultTo;
     }
 

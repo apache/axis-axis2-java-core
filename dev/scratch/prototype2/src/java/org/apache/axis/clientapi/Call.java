@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.engine.AxisEngine;
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 public class Call extends AbstractCall {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
-    private EndpointReferenceType targetEPR;
+    private EndpointReference targetEPR;
     private boolean blocked;
     private String transport;
     private String action;
@@ -50,7 +50,7 @@ public class Call extends AbstractCall {
         this.registry = new EngineRegistryImpl(new AxisGlobal());
     }
 
-    public void setTo(EndpointReferenceType EPR){
+    public void setTo(EndpointReference EPR){
         this.targetEPR = EPR;
 
     }
