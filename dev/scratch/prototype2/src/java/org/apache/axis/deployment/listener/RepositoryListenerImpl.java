@@ -89,7 +89,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsinfoList.init();
         checkModules();
-        //  checkServices();
+        checkServices(); 
         update();
     }
 

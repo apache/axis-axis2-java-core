@@ -26,10 +26,10 @@ import javax.xml.stream.XMLStreamException;
 public class DeploymentotalTest extends TestCase {
     EngineRegistry er = null;
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
-       String filename = "./target/test-resources/deployment" ;
+        String filename = "./target/test-resources/deployment" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         er = deploymentEngine.start();
-        try {
+       try {
             Thread.sleep(11000);
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
