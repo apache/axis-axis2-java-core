@@ -3,10 +3,6 @@
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
 
-    <module ref="module1"></module>
-    <module ref="module2"></module>
-
-
     <!--  Service TypeMapping -->
     <typeMapping>Type mappping should come here</typeMapping>
     <beanMapping>bean mappping should come here</beanMapping>
@@ -55,11 +51,6 @@
 
 
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
-        <module ref="uri">
-            <parameter name="para3" locked="xsd:true">10</parameter>
-            <parameter name="para4" locked="xsd:false">LSF</parameter>
-        </module>
-
         <inflow>
             <handler name="h7" class="org.apache.axis.engine.registry.SpeakingHandler"/>
         </inflow>
