@@ -41,11 +41,21 @@ public class ModuleMetaData {
     private String className;
     private String name;
 
+    private String archiveName ;
+
     private Vector parameters = new Vector();
 
     public ModuleMetaData() {
         //just to clear the vector
         parameters.removeAllElements();
+    }
+
+    public String getArchiveName() {
+        return archiveName;
+    }
+
+    public void setArchiveName(String archiveName) {
+        this.archiveName = archiveName;
     }
 
     public String getClassName() {

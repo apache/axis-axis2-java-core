@@ -58,17 +58,17 @@ public class DeploymentParser implements DeploymentConstants {
      * referebce to the deployment engine
      */
     private DeploymentEngine dpengine;
-    private String servicename;
+    private String archiveName;
     /**
      * constructor to parce service.xml
      * @param inputStream
      * @param engine
-     * @param servicename
+     * @param fileName
      */
-    public DeploymentParser(InputStream inputStream, DeploymentEngine engine, String servicename) throws XMLStreamException {
+    public DeploymentParser(InputStream inputStream, DeploymentEngine engine, String fileName) throws XMLStreamException {
         this.inputStream = inputStream;
         this.dpengine = engine;
-        this.servicename = servicename;
+        this.archiveName = fileName;
 
      //   try {
             pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
@@ -107,7 +107,8 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(serviceXMLST)) {
                         service = procesServiceXML();
-                        service.setName(servicename);
+                        service.setName(archiveName);
+                        service.setArchiveName(archiveName);
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
@@ -826,7 +827,8 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
                         module = processModule();
-                        // module.setName(servicename);
+                        module.setArchiveName(archiveName);
+                        // module.setName(archiveName);
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng

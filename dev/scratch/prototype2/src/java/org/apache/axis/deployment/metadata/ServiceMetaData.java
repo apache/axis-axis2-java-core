@@ -57,6 +57,16 @@ public class ServiceMetaData implements DeploymentConstants {
 
     private String name;
 
+    private String archiveName ;
+
+    public String getArchiveName() {
+        return archiveName;
+    }
+
+    public void setArchiveName(String archiveName) {
+        this.archiveName = archiveName;
+    }
+
     public String getName() {
         return name;
     }

@@ -23,11 +23,11 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.registry.AbstractEngineElement;
 
-public class Handler1 extends AbstractEngineElement implements Handler {
+public class Handler3 extends AbstractEngineElement implements Handler {
     private String message;
     private QName name;
-    public Handler1() {
-       this.message = "inside service 1 ";
+    public Handler3() {
+       this.message = "inside Module 1";
     }
     public QName getName() {
         return name;

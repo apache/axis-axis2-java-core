@@ -53,4 +53,7 @@ public class HDFileItem {
         this.type = type;
     }
 
+    public File getFile() {
+        return file;
+    }
 }

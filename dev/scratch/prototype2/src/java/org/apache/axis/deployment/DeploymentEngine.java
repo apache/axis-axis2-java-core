@@ -1,21 +1,7 @@
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis.deployment.metadata.FlowMetaData;
-import org.apache.axis.deployment.metadata.HandlerMetaData;
-import org.apache.axis.deployment.metadata.ModuleMetaData;
-import org.apache.axis.deployment.metadata.OperationMetaData;
-import org.apache.axis.deployment.metadata.ParameterMetaData;
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.ServiceMetaData;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.deployment.metadata.*;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
@@ -23,28 +9,27 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Constants;
-import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.engine.Global;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Operation;
-import org.apache.axis.engine.Phase;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.Transport;
-import org.apache.axis.impl.engine.GlobalImpl;
-import org.apache.axis.impl.engine.ModuleImpl;
-import org.apache.axis.impl.engine.OperationImpl;
-import org.apache.axis.impl.engine.ServiceImpl;
-import org.apache.axis.impl.engine.TransportImpl;
+import org.apache.axis.engine.*;
+import org.apache.axis.impl.engine.*;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.impl.registry.FlowImpl;
 import org.apache.axis.impl.registry.ParameterImpl;
-import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Flow;
 import org.apache.axis.registry.Module;
 import org.apache.axis.registry.Parameter;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Vector;
 
 
 /**
@@ -99,6 +84,9 @@ public class DeploymentEngine implements DeploymentConstants {
      * This to keep a referance to serverMetaData object
      */
     private static ServerMetaData server = new ServerMetaData();
+
+
+    private HDFileItem currentFileItem = null ;
 
     /**
      * This the constructor which is used by Engine inorder to start
@@ -235,7 +223,7 @@ public class DeploymentEngine implements DeploymentConstants {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
 
 
-        ClassLoader serviceClassLoader = service.getClassLoader();
+        ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
         /**
          * ****************************************************************************
          * ****************************************************************************
@@ -332,7 +320,7 @@ public class DeploymentEngine implements DeploymentConstants {
         HandlerMetaData[] handlerMetaDatas = serviceMetaData.getFlowHandlers(INFLOWST);
         for (int i = 0; i < handlerMetaDatas.length; i++) {
             HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHanderMetaData(handlerMetaData, serviceClassLoader);
+            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
             handler.setName(new QName(handlerMetaData.getName()));
             inservicephase.addHandler(handler);
         }
@@ -347,7 +335,7 @@ public class DeploymentEngine implements DeploymentConstants {
         handlerMetaDatas = serviceMetaData.getFlowHandlers(OUTFLOWST);
         for (int i = 0; i < handlerMetaDatas.length; i++) {
             HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHanderMetaData(handlerMetaData, serviceClassLoader);
+            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
             handler.setName(new QName(handlerMetaData.getName()));
             outservicephase.addHandler(handler);
         }
@@ -362,7 +350,7 @@ public class DeploymentEngine implements DeploymentConstants {
         handlerMetaDatas = serviceMetaData.getFlowHandlers(FAILTFLOWST);
         for (int i = 0; i < handlerMetaDatas.length; i++) {
             HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-            Handler handler = castHanderMetaData(handlerMetaData, serviceClassLoader);
+            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
             handler.setName(new QName(handlerMetaData.getName()));
             faultservicephase.addHandler(handler);
         }
@@ -381,26 +369,19 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param flow
      * @param count
      */
-    private void addFlowHandlers(Flow flow, int count, FlowMetaData flowmetadata, ClassLoader serviceClassLoader) throws AxisFault {
+    private void addFlowHandlers(Flow flow, int count, FlowMetaData flowmetadata, ClassLoader parent) throws AxisFault {
         for (int j = 0; j < count; j++) {
             //todo handle exception in properway
             HandlerMetaData handlermd = flowmetadata.getHandler(j);
             Class handlerClass = null;
             Handler handler;
-            try {
-                handlerClass = Class.forName(handlermd.getClassName(), true, serviceClassLoader);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                throw new AxisFault();
-            }
+            handlerClass = getHandlerClass(handlermd.getClassName(),currentFileItem.getFile(),parent);
             try {
                 handler = (Handler)handlerClass.newInstance();
             } catch (InstantiationException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                throw new AxisFault();
+                throw new AxisFault(e.getMessage());
             } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                throw new AxisFault();
+                throw new AxisFault(e.getMessage());
             }
             handler.setName(new QName(handlermd.getName()));
             int paracount = handlermd.getParacount();
@@ -412,6 +393,43 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             flow.addHandler(handler);
         }
+    }
+
+
+    public Class getHandlerClass(String className, File file , ClassLoader parent) throws AxisFault {
+        Class handlerClass = null;
+        if(file != null){
+            URL[] urlsToLoadFrom = new URL[0];
+            try {
+                if(!file.exists()){
+                    throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
+                }
+                urlsToLoadFrom = new URL[]{file.toURL()};
+            } catch (MalformedURLException e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            }
+            URLClassLoader loader1 = new URLClassLoader(urlsToLoadFrom,parent);
+
+            try {
+                handlerClass = Class.forName(className, true, loader1);
+            } catch (ClassNotFoundException e) {
+                throw new AxisFault(e.getMessage());
+            }
+        }
+        try {
+            Handler handler = (Handler)handlerClass.newInstance();
+            MessageContext msgContext = null ;
+            try {
+                handler.invoke(msgContext);
+            } catch (AxisFault axisFault) {
+                throw new AxisFault(axisFault.getMessage());
+            }
+        } catch (InstantiationException e) {
+            throw new AxisFault(e.getMessage());
+        } catch (IllegalAccessException e) {
+            throw new AxisFault(e.getMessage());
+        }
+        return handlerClass;
     }
 
 
@@ -457,22 +475,16 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws AxisFault
      */
-    private Handler castHanderMetaData(HandlerMetaData handlerMetaData, ClassLoader serviceClassLoader) throws AxisFault {
+    private Handler castHandlerMetaData(HandlerMetaData handlerMetaData, ClassLoader serviceClassLoader) throws AxisFault {
         Class handlerClass = null;
         Handler handler;
-        try {
-            handlerClass = Class.forName(handlerMetaData.getClassName(), true, serviceClassLoader);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            throw new AxisFault();
-        }
+        // handlerClass = Class.forName(handlerMetaData.getClassName(), true, serviceClassLoader);
+        handlerClass = getHandlerClass(handlerMetaData.getClassName(), currentFileItem.getFile(),serviceClassLoader);//Class.forName(handlerMetaData.getClassName(), true, serviceClassLoader);
         try {
             handler = (Handler) handlerClass.newInstance();
         } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             throw new AxisFault();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             throw new AxisFault();
         }
         return handler;
@@ -499,17 +511,17 @@ public class DeploymentEngine implements DeploymentConstants {
         //todo complete this
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
-                HDFileItem fileItem = (HDFileItem) wsToDeploy.elementAt(i);
-                int type = fileItem.getType();
+                currentFileItem = (HDFileItem) wsToDeploy.elementAt(i);
+                int type = currentFileItem.getType();
                 UnZipJAR unZipJAR = new UnZipJAR();
                 switch (type){
                     case SERVICE: {
                         ServiceMetaData service = new ServiceMetaData();
-                        service = unZipJAR.unzipService(fileItem.getAbsolutePath(), this);
+                        service = unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this);
                         try {
                             if (service != null){
                                 addService(service);
-                                System.out.println("Deployement WS Name  " + fileItem.getName());
+                                System.out.println("Deployement WS Name  " + currentFileItem.getName());
                             }
                         } catch (PhaseException e) {
                             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
@@ -519,11 +531,11 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                     case MODULE : {
                         ModuleMetaData metaData = new ModuleMetaData();
-                        metaData = unZipJAR.unzipModule(fileItem.getAbsolutePath(), this);
+                        metaData = unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this);
                         try {
                             if(metaData != null){
                                 addModule(metaData);
-                                System.out.println("Moduel WS Name  " + fileItem.getName() + " modulename :" + metaData.getName());
+                                System.out.println("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                             }
                         } catch (AxisFault axisFault) {
                             axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
