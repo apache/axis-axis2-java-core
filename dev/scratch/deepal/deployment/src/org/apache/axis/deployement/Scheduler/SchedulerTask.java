@@ -28,7 +28,8 @@ import java.util.Date;
 public class SchedulerTask implements Runnable {
     final Object lock = new Object();
 
-    private  FilesLoader filesLoader = new FilesLoader();
+    private String filename = "D:/Axis 2.0/projects/Deployement/test-data/" ;
+    private  FilesLoader filesLoader = new FilesLoader(filename);
 
     int state = VIRGIN;
     static final int VIRGIN = 0;

@@ -44,7 +44,7 @@ public class HotDeployementTest {
     }
 
     public static void main(String[] args) {
-        HotDeployementTest alarmClock = new HotDeployementTest(7, 0, 0);
+        HotDeployementTest alarmClock = new HotDeployementTest(10, 0, 0);
         alarmClock.start();
     }
 }

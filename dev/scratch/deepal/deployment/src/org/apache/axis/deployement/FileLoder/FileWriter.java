@@ -1,5 +1,8 @@
 package org.apache.axis.deployement.FileLoder;
 
+import org.apache.axis.deployement.FileLoder.utill.FileList;
+import org.apache.axis.deployement.FileLoder.utill.FileItem;
+
 import java.util.Vector;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
@@ -27,7 +30,7 @@ import java.io.FileOutputStream;
 public class FileWriter {
 
     private String filename = "./resource/Deploye.txt";
-    public void writeToFile(Vector invect){
+    public void writeToFile(){
         {
             FileOutputStream out; // declare a file output object
             PrintStream p; // declare a print stream object
@@ -36,11 +39,12 @@ public class FileWriter {
                 // Create a new file output stream
                 out = new FileOutputStream(filename);
                 p = new PrintStream( out );
+                Vector invect = FileList.getJarlist();
                 int size = invect.size();
-                String tempnaem;
+                FileItem tempnaem;
                 for (int i = 0; i < size; i++) {
-                    tempnaem = (String) invect.get(i);
-                    p.println(tempnaem);
+                    tempnaem = (FileItem) invect.get(i);
+                    p.println(tempnaem.getFilename());
                 }
                 p.close();
             }
