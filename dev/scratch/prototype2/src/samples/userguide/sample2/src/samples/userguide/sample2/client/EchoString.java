@@ -37,7 +37,7 @@ public class EchoString {
 		InteropTest_Stub clientStub = new InteropTest_Stub();
 		URL url= null;
 		try {
-			url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis/services/sample2");
+			url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis2/services/sample2");
 		} catch (MalformedURLException e) {
 			
 			e.printStackTrace();
@@ -52,10 +52,10 @@ public class EchoString {
 			
 		} catch (AxisFault e1) {
 			
-			e1.printStackTrace();
+			e1.printStackTrace();                            
 		}
 		
-		System.out.println("Message sent and the client thread sleep till the resonce ....");		
+		System.out.println("Message sent and the client thread sleep till the responce ....");		
 		Thread.sleep(6000);
 		
 	}

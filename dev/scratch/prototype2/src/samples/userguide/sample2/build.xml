@@ -50,11 +50,11 @@
 	</target>
 	
 	<target name="validateSevices.dir">
-		<available  file="${env.CATALINA_HOME}/webapps/axis2/services" type="dir" property="axis2.services"/>	
+		<available  file="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services" type="dir" property="axis2.services"/>	
 	</target>
 	
 	<target name="validateDeploymentSettings" depends="validateTomcatHome" unless="validateSevices.dir">
-		<mkdir dir="${env.CATALINA_HOME}/webapps/axis2/services"/>
+		<mkdir dir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services"/>
 	</target>
 	
 

@@ -37,7 +37,7 @@ public class EchoStringCallbackHandler implements Callback {
 	}
 
 	public void reportError(Exception e) {
-		System.out.println("An Error Pccured !!!");
+		System.out.println("An Error Occured !!!");
 		e.printStackTrace();
 
 	}

@@ -41,7 +41,7 @@ public class EchoInt {
 		InteropTest_Stub clientStub = new InteropTest_Stub();
 		URL url= null;
 		try {
-			url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis/services/sample2");
+			url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis2/services/sample2");
 		} catch (MalformedURLException e) {
 			
 			e.printStackTrace();
