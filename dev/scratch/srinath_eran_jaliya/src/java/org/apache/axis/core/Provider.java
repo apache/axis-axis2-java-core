@@ -15,7 +15,6 @@
  */
 package org.apache.axis.core;
 
-import javax.xml.namespace.QName;
 
 /**
  * This Provider is the workhorse who locate the implementation of the Web Service and 

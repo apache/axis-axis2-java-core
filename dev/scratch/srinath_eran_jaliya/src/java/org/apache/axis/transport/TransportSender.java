@@ -17,12 +17,9 @@ package org.apache.axis.transport;
 
 import java.io.OutputStream;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.core.AxisFault;
 import org.apache.axis.core.Handler;
 import org.apache.axis.core.context.MessageContext;
-import org.apache.axis.core.registry.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.soap.SOAPMessage;
 

@@ -24,6 +24,7 @@ import org.apache.axis.core.Handler;
 import org.apache.axis.core.context.MessageContext;
 
 /**
+ * <p>This is the ordered Collection of Phases as specified by the Server.xml file.</p> 
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class ExecutionChain {

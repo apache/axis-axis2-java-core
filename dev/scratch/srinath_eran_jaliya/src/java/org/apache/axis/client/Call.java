@@ -16,6 +16,8 @@
 package org.apache.axis.client;
 
 /**
+ * This is conveneice API for the User who do not need to see the complexity of the 
+ * Engine.  
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Call {

@@ -18,7 +18,6 @@ package org.apache.axis.core;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.core.context.MessageContext;
 import org.apache.axis.core.registry.AbstractEngineElement;
 import org.apache.axis.core.registry.ConcreateFlowInclude;
 import org.apache.axis.core.registry.ConcreateModuleInclude;

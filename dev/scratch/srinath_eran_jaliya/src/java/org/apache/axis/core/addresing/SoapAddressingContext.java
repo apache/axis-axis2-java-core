@@ -16,6 +16,9 @@
 package org.apache.axis.core.addresing;
 
 /**
+ * <p>This holds the Addressing information. It is initiated by the tranport layer and the 
+ * Handlers may chage them. depend on the it's value the Transport senders choose to change the 
+ * Transport.</p>
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class SoapAddressingContext {

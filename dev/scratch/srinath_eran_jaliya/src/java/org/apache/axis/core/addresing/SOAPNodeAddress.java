@@ -16,6 +16,7 @@
 package org.apache.axis.core.addresing;
 
 /**
+ * <p>represnts a address of a SOAP Node</a>
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class SOAPNodeAddress {

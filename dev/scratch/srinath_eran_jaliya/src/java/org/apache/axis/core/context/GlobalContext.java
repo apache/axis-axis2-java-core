@@ -22,6 +22,8 @@ import org.apache.axis.core.aysnc.MessageQueue;
 import org.apache.axis.core.registry.EngineRegistry;
 
 /**
+ * All the engine componets are stateless accross the executions and all the states should be kept in the 
+ * Contexts, there are three context Global, Session and Message  
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class GlobalContext {

@@ -286,7 +286,7 @@ public class SimpleAxisWorker implements Runnable {
                     parser.setInput(new InputStreamReader(is));
                     
                     OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
-                    msgContext.setInMessage(new SOAPMessageImpl(parserWrapper));
+                    msgContext.setInMessage(parserWrapper.getSOAPMessage());
                     EngineRegistry reg = engine.getRegistry();
                     // invoke the Axis engine
                     engine.recive(msgContext);

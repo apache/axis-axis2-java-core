@@ -18,7 +18,6 @@ package org.apache.axis.core;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.core.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

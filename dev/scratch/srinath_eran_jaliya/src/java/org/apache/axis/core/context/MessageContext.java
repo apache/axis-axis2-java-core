@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.core.Constants;
 import org.apache.axis.core.registry.EngineRegistry;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.om.soap.SOAPMessage;
 import org.apache.axis.transport.TransportSender;
 /**
@@ -34,30 +33,6 @@ import org.apache.axis.transport.TransportSender;
 public class MessageContext {
     private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
     private HashMap messages = new HashMap();
-    /**
-     * @return Returns the faultOut.
-     */
-    public SerializationContext getFaultOut() {
-        return faultOut;
-    }
-    /**
-     * @param faultOut The faultOut to set.
-     */
-    public void setFaultOut(SerializationContext faultOut) {
-        this.faultOut = faultOut;
-    }
-    /**
-     * @return Returns the sourceOut.
-     */
-    public SerializationContext getSourceOut() {
-        return sourceOut;
-    }
-    /**
-     * @param sourceOut The sourceOut to set.
-     */
-    public void setSourceOut(SerializationContext sourceOut) {
-        this.sourceOut = sourceOut;
-    }
 	public static String USER_NAME = "USER";
 	public static String PASSWARD = "PASSWD";
 	
@@ -66,8 +41,6 @@ public class MessageContext {
         globalContext = new GlobalContext(er);
         sessionContext = new SimpleSessionContext();
     }
-    private SerializationContext sourceOut;
-    private SerializationContext faultOut;
     
     private boolean processingFault = false;
     private QName currentTansport = null; 
