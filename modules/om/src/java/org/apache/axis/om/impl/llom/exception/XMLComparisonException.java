@@ -1,9 +1,4 @@
-package org.apache.axis.om.util;
-
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMTestCase;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.impl.llom.util.XMLComparator;
+package org.apache.axis.om.impl.llom.exception;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -21,23 +16,20 @@ import org.apache.axis.om.impl.llom.util.XMLComparator;
  * the License.
  * <p/>
  */
-public class XMLComparatorTest extends OMTestCase{
+public class XMLComparisonException extends Exception {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-    public XMLComparatorTest(String testName) {
-        super(testName);
+   
+    public XMLComparisonException(String message) {
+        super(message);
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    public XMLComparisonException(Throwable cause) {
+        super(cause);
     }
 
-    public void testCompare() throws Exception {
-        StAXSOAPModelBuilder omBuilder = getOMBuilder("");
-        XMLComparator xmlComparator = new XMLComparator();
-        assertTrue(xmlComparator.compare(omBuilder.getDocumentElement(), omBuilder.getDocumentElement()));
-
-
+    public XMLComparisonException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -127,7 +127,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     private OMElement constructNode(OMElement parent, String elementName,
                                     boolean isEnvelope) {
         OMElement element = null;
-        if (isEnvelope) {
+        if (parent == null) {
             if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
                 throw new OMException("First Element must contain the local name, "
                         + OMConstants.SOAPENVELOPE_LOCAL_NAME);
