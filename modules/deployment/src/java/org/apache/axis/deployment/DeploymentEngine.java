@@ -191,7 +191,8 @@ public class DeploymentEngine implements DeploymentConstants {
         if(hotdeployment){
             startSearch(this);
         } else {
-            RepositoryListenerImpl repository = new RepositoryListenerImpl(folderName,this);
+            RepositoryListenerImpl repository = 
+                    new RepositoryListenerImpl(folderName,this);
         }
         valideServerModule() ;
         return engineRegistry;
@@ -418,11 +419,12 @@ public class DeploymentEngine implements DeploymentConstants {
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
-                            throw new RuntimeException(de);
+                            log.info("DeploymentException  " + de);
                         } catch (AxisFault axisFault) {
+                            log.info("AxisFault  " + axisFault);
                             throw new RuntimeException(axisFault);
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            log.info("Exception  " + e);
                         } finally {
                             currentFileItem = null;
                         }
@@ -434,9 +436,9 @@ public class DeploymentEngine implements DeploymentConstants {
                             addNewModule(metaData);
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
-                            throw new RuntimeException(e);
+                            log.info("DeploymentException  " + e);
                         } catch (AxisFault axisFault) {
-                            throw new RuntimeException(axisFault);
+                            log.info("AxisFault  " + axisFault);
                         } finally {
                             currentFileItem = null;
                         }
@@ -464,7 +466,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }catch(AxisFault e){
-            throw new RuntimeException(e.getMessage());
+            log.info("AxisFault " + e);
         }
         wsToUnDeploy.clear();
     }
