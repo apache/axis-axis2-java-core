@@ -1,49 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
-    <complexType name="parameter">
-            <attribute name="name" type="xsd:NCName" use="required"/>
-            <attribute name="locked" type="xsd:boolean" use="optional" default="false"/>
-            <attribute name="value" type="xsd:string" use="optional"/>
-    </complexType>
-
-    <complexType name="handler">
-    	<choice>
-    		<attribute name="ref" type="xsd:NCName" use="required"/>
-    		<all>
-	    		<attribute name="name" type="xsd:NCName" use="required"/>
-	    		<attribute name="class" type="xsd:string" use="required"/>
-    			<element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
-    			<element ref="wsdd:order" minOccurs="0" maxOccurs="unbounded"/>
-    		</all>
-    	</choice>
-    </complexType>
-
-   <complexType name="order">
-   		<choice>
-   			<all>
-	            <attribute name="before" type="xsd:anyURI" use="optional"/>
-	            <attribute name="after" type="xsd:anyURI" use="optional"/>
-			</all>
-   			<all>
-	            <attribute name="phase" type="xsd:anyURI" use="required"/>
-	            <attribute name="phaseFirst" type="xsd:anyURI" use="optional"/>
-	            <attribute name="phaseLast" type="xsd:anyURI" use="optional"/>
-			</all
-		</choice>				            
-    </complexType>
-    
-        <complexType name="inflow">
-    		<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-    </complexType>
-        <complexType name="outflow">
-    		<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-    </complexType>
-        <complexType name="faultflow">
-    		<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-    </complexType>
-        <complexType name="typemapping">
-    		<!-- todo specify this -->
-    </complexType>
-    
-    
+<schema xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.apache.org/axis/wsdd/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+	<element name="parameter">
+		<complexType>
+			<attribute name="name" type="xsd:NCName" use="required"/>
+			<attribute name="locked" type="xsd:boolean" use="optional" default="false"/>
+			<attribute name="value" type="xsd:string" use="optional"/>
+		</complexType>
+	</element>
+		<element name="handler">
+		<complexType>
+			<sequence>
+				<element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="name" type="xsd:NCName" use="required"/>
+			<attribute name="class" type="xsd:string" use="required"/>
+		</complexType>
+	</element>
+	<element name="inflow">
+		<complexType>
+			<sequence>
+				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="outflow">
+		<complexType>
+			<sequence>
+				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="faultflow">
+		<complexType>
+			<sequence>
+				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+		</complexType>
+	</element>
 </schema>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:java="http://ws.apache.org/axis2/deployment/java" targetNamespace="http://ws.apache.org/axis2/deployment/java" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="implementation">
+		<xs:annotation>
+			<xs:documentation>Java implementation element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="class" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://xml.apache.org/axis/wsdd/" 
-		xmlns:wsdd="http://xml.apache.org/axis/wsdd/" 
-		xmlns="http://www.w3.org/2001/XMLSchema"
-		xmlns:java="http://ws.apache.org/axis2/deployment/java" 
-		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-		elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
-    <include schemaLocation = "common.xsd" />
-    <complexType name="module">
-    		<choice>
-	            <attribute name="ref" type="xsd:NCName" use="required"/>
-	            <all>
-		            <element ref="wsdd:operation" minOccurs="1" maxOccurs="unbounded"/>
-		            <element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
-		            <element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
-		            <element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
-		            <element ref="wsdd:typemapping" minOccurs="0" maxOccurs="unbounded"/>
-		            <element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>		            
-				</all>		            
-    </complexType>
- </schema>
-
- 
+<schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:java="http://ws.apache.org/axis2/deployment/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+	 <include schemaLocation = "common.xsd" />
+		<element name="module">
+		<complexType>
+			<sequence>
+				<element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
+				<element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
+				<element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
+				<element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="ref" type="xsd:NCName" use="required"/>
+		</complexType>
+	</element>
+</schema>
