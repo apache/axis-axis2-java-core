@@ -25,13 +25,13 @@ public class InteropStubTest extends TestCase{
     private static String OPENLINK_ENDPOINT = "http://demo.openlinksw.com/r3/DocLit";
 
 
-    private void testEchoString(String endpoint,String soapAction){
+    private void testEchoString(String endpoint,String soapAction) throws Exception{
         InteropStub stub = new InteropStub(endpoint);
         stub.setSOAPAction(soapAction==null?"":soapAction);
         String echoValue = "Hello World";
         assertEquals(stub.echoString(echoValue),echoValue);
     }
-    private void testEchoStringArray(String endpoint,String soapAction){
+    private void testEchoStringArray(String endpoint,String soapAction) throws Exception{
         InteropStub stub = new InteropStub(endpoint);
         stub.setSOAPAction(soapAction==null?"":soapAction);
         String[] echoValueArray = new String[20];
@@ -48,7 +48,7 @@ public class InteropStubTest extends TestCase{
         }
     }
 
-    private void testEchoStruct(String endpoint,String soapAction){
+    private void testEchoStruct(String endpoint,String soapAction) throws Exception{
         InteropStub stub = new InteropStub(endpoint);
         stub.setSOAPAction(soapAction==null?"":soapAction);
 
@@ -63,13 +63,13 @@ public class InteropStubTest extends TestCase{
 
     }
 
-    public void testASPEndPoint(){
+    public void testASPEndPoint() throws Exception{
         testEchoString(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
         testEchoStringArray(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
         testEchoStruct(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
 
     }
-    public void testOpenlinkEndPoint(){
+    public void testOpenlinkEndPoint()throws Exception{
         testEchoString(OPENLINK_ENDPOINT,null);
         testEchoStringArray(OPENLINK_ENDPOINT,null);
         testEchoStruct(OPENLINK_ENDPOINT,null);

@@ -78,8 +78,8 @@ public class InteropStub {
         return factory.getDefaultEnvelope();
     }
 
-    public SOAPStruct echoStruct(SOAPStruct inputEchoStruct){
-        try{
+    public SOAPStruct echoStruct(SOAPStruct inputEchoStruct) throws Exception{
+
 
             OMElement echoStructElementNode = factory.createOMElement("echoStructParam",interopNS);
 
@@ -119,20 +119,12 @@ public class InteropStub {
 
             return soapStructure;
 
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return null;
-
 
     }
 
 
-    public String[] echoStringArray(String[] input){
-        try {
+    public String[] echoStringArray(String[] input) throws Exception{
+
 
             OMElement echoStringArrayParamElementNode = factory.createOMElement("echoStringArrayParam",interopNS);
             OMElement echoStringArrayElement;
@@ -163,16 +155,10 @@ public class InteropStub {
             return SimpleTypeEncodingUtils.deserializeStringArray(elt.getPullParser(false));
 
 
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
-    public String echoString(String input){
-        try {
+    public String echoString(String input) throws Exception{
 
             OMElement echoStringParamElementNode = factory.createOMElement("echoStringParam",interopNS);
             OMText echoStringTextNode = factory.createText(echoStringParamElementNode,input);
@@ -197,13 +183,7 @@ public class InteropStub {
 
             return elt.getFirstChild().getValue();
 
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
-        return null;
     }
 
 
