@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
  * represent the deployment information about the handler
  */
 public class HandlerMetadata implements ParameterInclude {
-    private ParameterInclude parameterInclude;
+    private final ParameterInclude parameterInclude;
     private QName name;
     private PhaseRule rules;
     private Handler handler;

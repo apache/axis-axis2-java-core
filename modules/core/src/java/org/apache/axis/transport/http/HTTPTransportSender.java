@@ -50,23 +50,10 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     SocketAddress add = new InetSocketAddress(url.getHost(), url.getPort());
                     socket = new Socket();
                     socket.connect(add);
-
-                    StringBuffer buf = new StringBuffer();
-                    buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
-                    buf.append("Content-Type: text/xml; charset=utf-8\n");
-                    buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
-                    buf.append("Host: ").append(url.getHost()).append("\n");
-                    buf.append("Cache-Control: no-cache\n");
-                    buf.append("Pragma: no-cache\n");
-                    buf.append("SOAPAction: \"\"\n\n");
+                    
                     outS = socket.getOutputStream();
                     out = new BufferedWriter(new OutputStreamWriter(outS));
-                    out.write(buf.toString().toCharArray());
-
-//                        URLConnection connection = url.openConnection();
-//                                                connection.setDoOutput(true);
-//                        out = new OutputStreamWriter(connection.getOutputStream());
-
+                    writeTransportHeaders(out,url);
                     msgContext.setProperty(MessageContext.TRANSPORT_READER, new BufferedReader(new InputStreamReader(socket.getInputStream())));
                     msgContext.setProperty(HTTPConstants.SOCKET, socket);
                 } catch (MalformedURLException e) {
@@ -103,15 +90,17 @@ public class HTTPTransportSender extends AbstractTransportSender {
     }
 
     protected void startSending(MessageContext msgContext) throws AxisFault {
-
-        //      Content-Type: text/xml; charset=utf-8
-        //      Accept: application/soap+xml, application/dime, multipart/related, text/*
-        //      User-Agent: Axis/1.2RC1
-        //      Host: 127.0.0.1:8081
-        //      Cache-Control: no-cache
-        //      Pragma: no-cache
-        //      SOAPAction: ""
-
     }
-
+    
+    protected void writeTransportHeaders(Writer out,URL url) throws IOException{
+        StringBuffer buf = new StringBuffer();
+            buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
+            buf.append("Content-Type: text/xml; charset=utf-8\n");
+            buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
+            buf.append("Host: ").append(url.getHost()).append("\n");
+            buf.append("Cache-Control: no-cache\n");
+            buf.append("Pragma: no-cache\n");
+            buf.append("SOAPAction: \"\"\n\n");
+            out.write(buf.toString().toCharArray());
+    }
 }

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlowImpl implements Flow {
-    protected List list;
+    protected final List list;
 
     public FlowImpl() {
         list = new ArrayList();

@@ -237,7 +237,7 @@ public class DeploymentParser implements DeploymentConstants {
                         dpengine.getCurrentFileItem().setProvideName(attvalue);
                     }
                 } else if (STYLENAME.equals(attname)) {
-                    // axisService.setStyle();
+                    axisService.setStyle(attvalue);
                     //TODO setStyle should be handle latter
                 } else if (CONTEXTPATHNAME.equals(attname)) {
                     axisService.setContextPath(getValue(attvalue));

@@ -16,7 +16,11 @@
  
 package org.apache.axis.context;
 
-import org.apache.axis.Constants;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.AxisOperation;
@@ -27,10 +31,8 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.wsdl.WSDLService;
 
-import javax.xml.stream.XMLStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The palce where all the service specific states are kept.
@@ -39,7 +41,7 @@ import java.util.Map;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext {
-    private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
+    private String messageStyle = WSDLService.STYLE_RPC;
     
     /**
      *  Follwing are the defined properties that are stored in the message Context 
@@ -70,7 +72,7 @@ public class MessageContext {
     private final Map properties;
     private final GlobalContext globalContext;
 
-    private SessionContext sessionContext;
+    private final SessionContext sessionContext;
     private AxisService service;
     private SOAPEnvelope envelope;
     private boolean responseWritten;
@@ -94,6 +96,8 @@ public class MessageContext {
         this.globalContext = new GlobalContext(er);
         if(sessionContext == null){
             this.sessionContext = new SimpleSessionContext();
+        }else{
+            this.sessionContext = sessionContext;
         }
         
         if (initialProperties == null) {
@@ -333,25 +337,22 @@ public class MessageContext {
         this.service = service;
     }
 
-    /**
-     * @param context
-     */
-    public void setSessionContext(SessionContext context) {
-        sessionContext = context;
-    }
+
 
     /**
      * @return
      */
-    public int getMessageStyle() {
+    public String getMessageStyle() {
         return messageStyle;
     }
 
     /**
      * @param i
      */
-    public void setMessageStyle(int i) {
-        messageStyle = i;
+    public void setMessageStyle(String i) {
+        if(i != null){
+            messageStyle = i;
+        }
     }
 
 

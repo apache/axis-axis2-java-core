@@ -22,6 +22,9 @@ import java.util.HashMap;
  * @author chathura@opensource.lk
  */
 public interface WSDLService extends Component {
+    public static final String STYLE_RPC = "rpc";
+    public static final String STYLE_DOC = "doc";
+    public static final String STYLE_MSG = "msg";
     /**
      * Method getEndpoints
      *

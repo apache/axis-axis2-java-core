@@ -19,7 +19,6 @@ import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -68,22 +67,9 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      * @throws OMException
      */
     public SOAPHeader getHeader() throws OMException {
-
-        // if(builder != null){
-        // while(header == null && body == null){
-        // builder.next();
-        // }
-        // }
-        OMNode node = getFirstChild();
-        while (node != null) {
-            if ((node != null) && (node.getType() == OMNode.ELEMENT_NODE)) {
-                OMElement element = (OMElement) node;
-                if (OMConstants.HEADER_LOCAL_NAME.equals(
-                        element.getLocalName())) {
-                    return (SOAPHeader) element;
-                }
-            }
-            node = node.getNextSibling();
+        OMElement element = getFirstElement();
+        if (OMConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())) {
+            return (SOAPHeader) element;
         }
         return null;
     }
@@ -103,16 +89,14 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      * @throws OMException
      */
     public SOAPBody getBody() throws OMException {
-        OMNode node = getFirstChild();
-        while (node != null) {
-            if ((node != null) && (node.getType() == OMNode.ELEMENT_NODE)) {
-                OMElement element = (OMElement) node;
-                if (OMConstants.BODY_LOCAL_NAME.equals(
-                        element.getLocalName())) {
-                    return (SOAPBody) element;
-                }
+        OMElement element = getFirstElement();
+        if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+            return (SOAPBody) element;
+        }else{
+            element = element.getNextSiblingElement();
+            if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                return (SOAPBody) element;
             }
-            node = node.getNextSibling();
         }
         return null;
     }

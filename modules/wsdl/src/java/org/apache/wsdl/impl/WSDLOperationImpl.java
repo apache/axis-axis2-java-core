@@ -62,7 +62,7 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
     /**
      * Field style
      */
-    private int style;
+    private String style;
 
     /**
      * Field safety
@@ -195,21 +195,11 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
         this.safety = safe;
     }
 
-    /**
-     * Method getStyle
-     *
-     * @return
-     */
-    public int getStyle() {
+    public String getStyle() {
         return style;
     }
 
-    /**
-     * Method setStyle
-     *
-     * @param style
-     */
-    public void setStyle(int style) {
+    public void setStyle(String style) {
         this.style = style;
     }
 

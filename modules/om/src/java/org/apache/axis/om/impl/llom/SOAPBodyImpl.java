@@ -16,14 +16,12 @@
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFault;
-
-import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 /**
  * Class SOAPBodyImpl
@@ -34,7 +32,7 @@ public class SOAPBodyImpl extends OMElementImpl
      * Field hasSOAPFault
      */
     private boolean hasSOAPFault = false;
-
+    
     /**
      * @param envelope
      */
@@ -82,15 +80,16 @@ public class SOAPBodyImpl extends OMElementImpl
         if (hasSOAPFault) {
             return true;
         } else {
-            Iterator soapFaultChildren =
-                    getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI,
-                            SOAPFAULT_LOCAL_NAME));
-            if (soapFaultChildren.hasNext()) {
+            OMElement element = getFirstElement();
+            if(element != null 
+                && SOAPFAULT_LOCAL_NAME.equals(element.getLocalName()) 
+                && SOAPFAULT_NAMESPACE_URI.equals(element.getNamespaceName())){
                 hasSOAPFault = true;
                 return true;
+            }else{
+                return false;
             }
         }
-        return false;
     }
 
     /**
@@ -101,14 +100,15 @@ public class SOAPBodyImpl extends OMElementImpl
      *         object
      */
     public SOAPFault getFault() {
-        Iterator soapFaultChildren =
-                getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI,
-                        SOAPFAULT_LOCAL_NAME));
-        while (soapFaultChildren.hasNext()) {
-            Object o = soapFaultChildren.next();
-            if (o instanceof SOAPFault) {
-                SOAPFault soapFault = (SOAPFault) o;
-                return soapFault;
+        if(hasSOAPFault){
+            OMElement element = getFirstElement();
+            if(element != null 
+                && SOAPFAULT_LOCAL_NAME.equals(element.getLocalName()) 
+                && SOAPFAULT_NAMESPACE_URI.equals(element.getNamespaceName())){
+                hasSOAPFault = true;
+                return (SOAPFault)element;
+            }else{
+                return null;
             }
         }
         return null;

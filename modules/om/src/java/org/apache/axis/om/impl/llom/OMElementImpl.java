@@ -787,5 +787,32 @@ public class OMElementImpl extends OMNamedNodeImpl
     private String getNextNamespacePrefix() {
         return "ns" + ++noPrefixNamespaceCounter;
     }
-}
 
+    public OMElement getFirstElement() {
+        OMNode node = getFirstChild();
+        while(node != null){
+            if(node.getType() == OMNode.ELEMENT_NODE){
+                return (OMElement)node;
+            }else{
+                node = node.getNextSibling();
+            }
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.om.OMElement#getNextSiblingElement()
+     */
+    public OMElement getNextSiblingElement() throws OMException {
+        OMNode node = getNextSibling();
+        while(node != null){
+            if(node.getType() == OMNode.ELEMENT_NODE){
+                return (OMElement)node;
+            }else{
+                node = node.getNextSibling();
+            }
+        }
+        return null;
+    }
+
+}

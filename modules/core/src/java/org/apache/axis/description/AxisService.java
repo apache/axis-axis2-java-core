@@ -16,21 +16,24 @@
  
 package org.apache.axis.description;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import javax.swing.text.Style;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 
 public class AxisService extends WSDLServiceImpl implements WSDLService, ParameterInclude, FlowInclude, PhasesInclude, DescriptionConstants {
-
-    protected HashMap operationsMap = new HashMap();
+    /**
+     * TODO this should be in the WSDLInterface, yet we want it to have in the the 
+     * Services, so we put this here for M1 until we foud better way to do that
+     */
+    protected final HashMap operationsMap = new HashMap();
 
     public AxisService() {
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
@@ -127,7 +130,7 @@ public class AxisService extends WSDLServiceImpl implements WSDLService, Paramet
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#setStyle(javax.swing.text.Style)
      */
-    public void setStyle(Style style) {
+    public void setStyle(String style) {
         if (style != null) {
             this.setComponentProperty(STYLE_KEY, style);
         }
@@ -136,8 +139,8 @@ public class AxisService extends WSDLServiceImpl implements WSDLService, Paramet
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#getStyle()
      */
-    public Style getStyle() {
-        return (Style) this.getComponentProperty(STYLE_KEY);
+    public String getStyle() {
+        return (String) this.getComponentProperty(STYLE_KEY);
     }
 
     /* (non-Javadoc)
@@ -237,5 +240,4 @@ public class AxisService extends WSDLServiceImpl implements WSDLService, Paramet
     public HashMap getOperations() {
         return operationsMap;
     }
-
 }

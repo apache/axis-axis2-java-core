@@ -25,9 +25,9 @@ import java.util.ArrayList;
  * Represents a transport deployed in AXis2
  */
 public class AxisTransport implements ParameterInclude, PhasesInclude, FlowInclude {
-    protected ParameterInclude paramInclude;
-    protected PhasesInclude phasesInclude;
-    private FlowInclude flowInclude;
+    protected final ParameterInclude paramInclude;
+    protected final PhasesInclude phasesInclude;
+    private final FlowInclude flowInclude;
     protected QName name;
 
     public AxisTransport(QName name) {

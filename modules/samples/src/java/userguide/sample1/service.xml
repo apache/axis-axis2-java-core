@@ -1,4 +1,4 @@
-<service provider="org.apache.axis.providers.RawXMLProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+<service provider="org.apache.axis.providers.RawXMLProvider" style="rpc" contextPath="services">
     <java:implementation class="userguide.sample1.EchoXML" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
-    <operation name="echo" qname="echo"/>
+    <operation name="echo"/>
 </service>

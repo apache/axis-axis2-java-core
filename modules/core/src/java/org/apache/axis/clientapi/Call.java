@@ -16,6 +16,9 @@
  
 package org.apache.axis.clientapi;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -30,12 +33,6 @@ import org.apache.axis.transport.TransportReciver;
 import org.apache.axis.transport.TransportReciverLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class Call {
     private EngineRegistry registry;
@@ -103,20 +100,12 @@ public class Call {
      * @param envelope
      */
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
-        OutputStream out = null;
+        Writer out = null;
         try {
-            URL url = new URL(targetEPR.getAddress());
-
-            final URLConnection urlConnect;
-            urlConnect = url.openConnection();
             final AxisEngine engine = new AxisEngine(registry);
-            urlConnect.setDoOutput(true);
-
             MessageContext msgctx = new MessageContext(registry, null, null);
             msgctx.setEnvelope(envelope);
-
-            out = urlConnect.getOutputStream();
-            msgctx.setProperty(MessageContext.TRANSPORT_WRITER, out);
+            msgctx.setTo(targetEPR);
             msgctx.setProperty(
                     MessageContext.TRANSPORT_TYPE,
                     Constants.TRANSPORT_HTTP);

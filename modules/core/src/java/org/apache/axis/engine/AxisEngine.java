@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AxisEngine {
     private Log log = LogFactory.getLog(getClass());
-    private EngineRegistry registry;
+    private final EngineRegistry registry;
 
     public AxisEngine(EngineRegistry registry) {
         log.info("Axis Engine Started");

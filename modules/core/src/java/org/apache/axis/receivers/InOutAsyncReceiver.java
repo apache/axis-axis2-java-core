@@ -15,7 +15,9 @@
  */
  
 package org.apache.axis.receivers;
-
+/**
+ * This is takes care of the IN-OUT sync MEP in the server side
+ */
 public class InOutAsyncReceiver {
 
 }

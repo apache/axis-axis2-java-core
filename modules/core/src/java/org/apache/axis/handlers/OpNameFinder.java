@@ -13,66 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.handlers;
 
-import org.apache.axis.Constants;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.wsdl.WSDLService;
 
-import javax.xml.namespace.QName;
 
 public class OpNameFinder extends AbstractHandler {
 
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "OpNameFinder");
-
+    public static final QName NAME =
+        new QName("http://axis.ws.apache.org", "OpNameFinder");
 
     public OpNameFinder() {
         init(new HandlerMetadata(NAME));
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        int style = msgContext.getMessageStyle();
-
-
-        if (style == Constants.SOAP_STYLE_RPC_ENCODED || style == Constants.SOAP_STYLE_RPC_LITERAL) {
+        String style = msgContext.getMessageStyle();
+        if (style.equals(WSDLService.STYLE_RPC)) {
             SOAPEnvelope envelope = msgContext.getEnvelope();
             SOAPBody body = envelope.getBody();
-            OMNode node = body.getFirstChild();
-            while (node != null) {
-                int type = node.getType();
-                if (type == OMNode.ELEMENT_NODE) {
-                    OMElement bodyChild = (OMElement) node;
-                    msgContext.setSoapOperationElement(bodyChild);
-                    OMNamespace omns = bodyChild.getNamespace();
-                    if (omns != null) {
-                        String ns = omns.getName();
-                        if (ns != null) {
-                            QName opName = new QName(ns, bodyChild.getLocalName());
-                            AxisService service = msgContext.getService();
-                            AxisOperation op = service.getOperation(opName);
-                            if (op != null) {
-                                msgContext.setOperation(op);
-                            } else {
-                                throw new AxisFault(opName + " operation not found");
-                            }
-                            break;
-                        }
 
-                    } else {
-                        throw new AxisFault("SOAP Body must be NS Qualified");
-                    }
-                }
-                node = node.getNextSibling();
+            OMElement bodyChild = body.getFirstElement();
+            msgContext.setSoapOperationElement(bodyChild);
+            QName opName =
+                new QName(
+                    bodyChild.getNamespaceName(),
+                    bodyChild.getLocalName());
+            AxisService service = msgContext.getService();
+            AxisOperation op = service.getOperation(opName);
+            if (op != null) {
+                msgContext.setOperation(op);
+            } else {
+                throw new AxisFault(opName + " operation not found");
             }
+
         }
     }
 }

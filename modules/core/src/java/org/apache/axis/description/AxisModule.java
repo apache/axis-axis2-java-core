@@ -33,8 +33,8 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private QName name;
 
 
-    private FlowInclude flowInclude = new FlowIncludeImpl();
-    private ParameterInclude parameters = new ParameterIncludeImpl();
+    private final FlowInclude flowInclude = new FlowIncludeImpl();
+    private final ParameterInclude parameters = new ParameterIncludeImpl();
 
     public AxisModule() {
     }

@@ -20,7 +20,7 @@ package org.apache.axis.description;
 import java.util.HashMap;
 
 public class ParameterIncludeImpl implements ParameterInclude {
-    protected HashMap parmeters;
+    protected final HashMap parmeters;
 
     public ParameterIncludeImpl() {
         parmeters = new HashMap();

@@ -36,9 +36,9 @@ import java.util.List;
  * global handler is via a modules</p>
  */
 public class AxisGlobal implements ParameterInclude, PhasesInclude {
-    protected ParameterInclude paramInclude;
-    protected PhasesInclude phasesInclude;
-    protected List modules;
+    protected final ParameterInclude paramInclude;
+    protected final PhasesInclude phasesInclude;
+    protected final List modules;
 
     //TODO provide a way to store name (name attribute value server.xml)
     public AxisGlobal() {

@@ -16,6 +16,10 @@
  
 package org.apache.axis.receivers;
 
+/**
+ * This is takes care of the IN MEP in the server side
+ */
+
 public class INReceiver {
 
 }

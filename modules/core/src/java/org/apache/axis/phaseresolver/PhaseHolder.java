@@ -41,8 +41,8 @@ public class PhaseHolder {
     /**
      * Referance to ServerMetaData inorder to get information about phases.
      */
-    private EngineRegistry registry;// = new  ServerMetaData();
-    private AxisService service;
+    private final EngineRegistry registry;// = new  ServerMetaData();
+    private final AxisService service;
 
 
     public PhaseHolder(EngineRegistry registry, AxisService serviceIN) {

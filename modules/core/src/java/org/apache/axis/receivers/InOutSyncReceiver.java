@@ -28,10 +28,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
+/**
+ * This is takes care of the IN-OUT Async MEP in the server side
+ */
 public class InOutSyncReceiver extends AbstractHandler implements Receiver {
     protected Log log = LogFactory.getLog(getClass());
     public static final QName NAME = new QName("http://axis.ws.apache.org", "InOutSyncReceiver");
-
 
     public InOutSyncReceiver() {
         init(new HandlerMetadata(NAME));

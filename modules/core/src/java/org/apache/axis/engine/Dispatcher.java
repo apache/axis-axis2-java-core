@@ -16,12 +16,16 @@
  
 package org.apache.axis.engine;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.handlers.OpNameFinder;
+import org.apache.wsdl.WSDLService;
+
 
 import javax.xml.namespace.QName;
 
@@ -34,37 +38,52 @@ public class Dispatcher extends AbstractHandler implements Handler {
 
     public void invoke(MessageContext msgctx) throws AxisFault {
         if (msgctx.isServerSide()) {
-            String uri = null;
             EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
             String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
 
-            String pattern = "services/";
-            int serviceIndex = 0;
-            if ((serviceIndex = filePart.indexOf(pattern)) > 0) {
-                uri = filePart.substring(serviceIndex + pattern.length());
+            int index = filePart.lastIndexOf('/');
+            String serviceAndMethodStr = null;
+            if (index > 0) {
+                serviceAndMethodStr = filePart.substring(index + 1);
 
             }
+
+            if(serviceAndMethodStr == null){
+                serviceAndMethodStr = soapAction;
+            }
+            
+            index = serviceAndMethodStr.lastIndexOf(Constants.METHOD_NAME_ESCAPE_CHARACTOR);
 
             QName serviceName = null;
-            if (uri != null) {
-                int index = uri.indexOf('?');
-                if (index > -1) {
-                    //TODO get the opeartion name from URI as well 
-                    serviceName = new QName(uri);
-                } else {
-                    serviceName = new QName(uri);
-                }
-            } else {
-                if (soapAction != null) {
-                    serviceName = new QName(soapAction);
-                }
+            QName operationName = null;
+            if (index > 0) {
+                serviceName = new QName(serviceAndMethodStr.substring(0,index - 1));
+                operationName = new QName(serviceAndMethodStr.substring(index + 1));
+            }else{
+                serviceName = new QName(serviceAndMethodStr);
             }
+                
             if (serviceName != null) {
                 EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
                 AxisService service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
+                    msgctx.setMessageStyle(service.getStyle());
+                    if(!WSDLService.STYLE_RPC.equals(msgctx.getMessageStyle())){
+                        if(operationName != null){
+                            AxisOperation op = service.getOperation(operationName);
+                            if(op != null){
+                                msgctx.setOperation(op);
+                            }else{
+                                throw new AxisFault("Operation not found " + operationName);
+                            }
+                        }else{
+                            throw new AxisFault("Operation Name not specifed");
+                        }
+                    }
+                    
+                    
                     //let add the Handlers 
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));

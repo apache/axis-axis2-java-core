@@ -27,10 +27,10 @@ import java.util.HashMap;
 
 
 public class EngineRegistryImpl implements EngineRegistry {
-    private HashMap modules = new HashMap();
-    private HashMap services = new HashMap();
-    private HashMap transports = new HashMap();
-    private AxisGlobal global;
+    private final HashMap modules = new HashMap();
+    private final HashMap services = new HashMap();
+    private final HashMap transports = new HashMap();
+    private final AxisGlobal global;
     private ArrayList phases;
 
 

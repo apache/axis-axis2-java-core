@@ -175,6 +175,19 @@ public interface OMElement extends OMNamedNode {
      * @return
      */
     public OMNode getFirstChild();
+    
+    /**
+     * Convienace extention of the getFristChild
+     * @return
+     */
+    
+    public OMElement getFirstElement();
+
+    /**
+      * Convienace extention of the getNextSibling
+      * @return
+      */
+    public OMElement getNextSiblingElement() throws OMException;
 
     /**
      * Returns the pull parser that will generate the pull

@@ -32,8 +32,8 @@ import java.util.Stack;
  * </p>
  */
 public class ExecutionChain {
-    private HashMap phases;
-    private ArrayList executionList;
+    private final HashMap phases;
+    private final ArrayList executionList;
     private Log log = LogFactory.getLog(getClass());
 
     public ExecutionChain() {

@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimpleAxisOperationImpl implements AxisOperation {
-    protected WSDLOperation wsdlOperation;
-    protected ParameterInclude parameters;
+    protected final WSDLOperation wsdlOperation;
+    protected final ParameterInclude parameters;
 
     /**
      * 
@@ -148,7 +148,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * @return
      */
-    public int getStyle() {
+    public String getStyle() {
         return wsdlOperation.getStyle();
     }
 
@@ -231,7 +231,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * @param style
      */
-    public void setStyle(int style) {
+    public void setStyle(String style) {
         wsdlOperation.setStyle(style);
     }
 

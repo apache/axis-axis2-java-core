@@ -34,7 +34,7 @@ import java.util.List;
 
 public class PhaseResolver {
 
-    private EngineRegistry engineRegistry;
+    private final EngineRegistry engineRegistry;
     private AxisService axisService;
     private PhaseHolder phaseHolder;
 

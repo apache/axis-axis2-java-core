@@ -120,19 +120,8 @@ public interface WSDLOperation extends ExtensibleComponent {
      */
     public void setSafety(boolean safe);
 
-    /**
-     * Method getStyle
-     *
-     * @return
-     */
-    public int getStyle();
-
-    /**
-     * Method setStyle
-     *
-     * @param style
-     */
-    public void setStyle(int style);
+    public String getStyle();
+    public void setStyle(String style);
 
     /**
      * Method getTargetnemespace
