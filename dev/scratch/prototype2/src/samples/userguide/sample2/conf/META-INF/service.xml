@@ -1,0 +1,28 @@
+<service provider="org.apache.axis.testUtils.SimpleJavaProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="samples.userguide.sample2.server.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+
+    <!-- these are Service Parameters -->
+    <!--
+    <parameter name="para1" locked="xsd:true">10</parameter>
+    <parameter name="para2" locked="xsd:false">Colombo</parameter>
+
+    <module ref="module1"></module>
+    <module ref="module2"></module>
+-->
+
+    <!--  Service TypeMapping -->
+
+
+
+    <!--
+    Phases
+    P1 p2 p3
+    -->
+
+    
+
+
+    <operation name="echoInt" qname="http://localhost/my:echoInt"/>
+    <operation name="echoString" qname="http://localhost/my:echoString"/>
+    
+</service>

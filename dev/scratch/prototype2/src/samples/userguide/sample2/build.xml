@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Feb 11, 2005 1:04:21 PM                                                        
+
+      This build file is intended to compile and run the Axis2 sample
+      provided here with the service being deployed at Tomcat or by
+      running a simple Axis2 server.   
+     
+                   
+     Chathura                                                                
+     ====================================================================== -->
+<project name="sample2" basedir="." default="jar">
+	<property name="src.dir" value="src" />
+	<property name="classes.dir" value="./classes" />
+	<property name="build.dir" value="./build" />
+	<property name="lib.dir" value="./lib" />
+	<property name="conf.dir" value="./conf"/>
+	<property name="jardrop.dir" value="services"/>
+	<property name="server.jardrop.relative.dir" value="webapps/axis2/WEB-INF/services"/>
+	<property environment="env"/>
+	
+	
+	
+	
+	<path id="classpath.library">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>            
+        </fileset>
+    </path>
+	
+	<path id="classpath.classes">
+		<pathelement location="${classes.dir}"/>
+	</path>
+	
+	<path id="classpath.runtimelibraries">
+		<pathelement path="classpath.classes"/>
+	</path>
+	
+
+	
+
+	<target name="clean" description="Delete all generated files">
+		<delete dir="${classes.dir}" />
+		<delete dir="${services.dir}" failonerror="false"/>
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="validateTomcatHome">
+		<available file="${env.CATALINA_HOME}/webapps/axis2" type="dir" property="axis2.deployed"/>				
+	</target>
+	
+	<target name="validateSevices.dir">
+		<available  file="${env.CATALINA_HOME}/webapps/axis2/services" type="dir" property="axis2.services"/>	
+	</target>
+	
+	<target name="validateDeploymentSettings" depends="validateTomcatHome" unless="validateSevices.dir">
+		<mkdir dir="${env.CATALINA_HOME}/webapps/axis2/services"/>
+	</target>
+	
+
+	<target name="createDir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${build.dir}/${jardrop.dir}"/>
+	</target>
+
+	<target name="compile" depends="createDir">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" >
+			<classpath refid="classpath.library"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="clean,compile">
+		<jar destfile="${build.dir}/${jardrop.dir}/${ant.project.name}.jar">	
+			
+			<fileset dir="${classes.dir}"> 
+				<include name="**/EchoImpl.class"/>		
+				<include name="**/LoggingHandler.class"/>					
+			</fileset>
+			<fileset dir="${conf.dir}">
+				<include name="META-INF/service.xml"/>
+			</fileset>
+		</jar>
+		<jar destfile="${lib.dir}/${ant.project.name}-all.jar">
+			<fileset dir="${classes.dir}"/> 
+		</jar>
+	</target>
+	
+	<target name="deploy" depends="jar,validateDeploymentSettings">
+		<copy file="${build.dir}/${jardrop.dir}/${ant.project.name}.jar" todir="${env.CATALINA_HOME}/${server.jardrop.relative.dir}" overwrite="true"/>			
+	</target>
+	
+	<target name="echoString" depends="compile">
+		<java classname="samples.userguide.sample2.client.EchoString">
+			<classpath refid="classpath.library"/>
+			<arg value="8080"/>
+			<arg value="Hi Axis2 this is to test the EchoString(to change the string look in the build file)"/>
+		</java>
+	</target>
+	
+	<target name="echoInt" depends="compile">
+			<java classname="samples.userguide.sample2.client.EchoInt">
+				<classpath refid="classpath.library"/>
+				<arg value="8080"/>
+				<arg value="329"/>
+			</java>
+		</target>
+	
+</project>
+
