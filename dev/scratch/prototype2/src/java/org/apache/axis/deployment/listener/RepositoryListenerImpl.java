@@ -114,7 +114,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         // adding the root folder to the vector
         currentJars.add(root);
 
-        while (currentJars.size() > 0) {         // loop until empty
+        while (currentJars.size() > 0)  {        // loop until empty
             File dir = (File) currentJars.get(0); // get first dir
             currentJars.remove(0);       // remove it
             files = dir.list();              // get list of files

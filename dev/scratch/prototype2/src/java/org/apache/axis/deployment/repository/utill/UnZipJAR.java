@@ -53,7 +53,6 @@ public class UnZipJAR implements DeploymentConstants {
                     break;
                 }
             }
-            //  zin.closeEntry();
             zin.close();
             if (!foundServiceXML) {
                 throw new DeploymentException("service.xml not found");
@@ -67,7 +66,7 @@ public class UnZipJAR implements DeploymentConstants {
         // get attribute values
         boolean foundmoduleXML = false;
         String strArchive = filename;
-        ZipInputStream zin;
+        ZipInputStream zin = null;
         try {
             zin = new ZipInputStream(new FileInputStream(strArchive));
             ZipEntry entry;
@@ -79,7 +78,7 @@ public class UnZipJAR implements DeploymentConstants {
                     break;
                 }
             }
-            //  zin.closeEntry();
+           //  zin.closeEntry();
             zin.close();
             if (!foundmoduleXML) {
                 throw new DeploymentException("module.xml not found");

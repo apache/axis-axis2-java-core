@@ -51,4 +51,8 @@ public class WSInfo {
     public void setLastmodifieddate(long lastmodifieddate) {
         this.lastmodifieddate = lastmodifieddate;
     }
+
+    public int getType() {
+        return type;
+    }
 }

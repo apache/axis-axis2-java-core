@@ -75,14 +75,16 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        WSInfo tempWSInfo = getFileItem(file.getName());
-                        if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
-                            tempWSInfo.setLastmodifieddate(file.lastModified());
-                            WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), SERVICE);
-                            deplorer.addtowstoUnDeploy(wsInfo);  // add entry to undeploy list
-                            HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
-                            deplorer.addtowsToDeploy(hdFileItem);   // add entry to deploylist
+                        if(deplorer.isHotupdate()) {
+                            WSInfo tempWSInfo = getFileItem(file.getName());
+                            if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
+                                tempWSInfo.setLastmodifieddate(file.lastModified());
+                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), SERVICE);
+                                deplorer.addtowstoUnDeploy(wsInfo);  // add entry to undeploy list
+                                HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
+                                deplorer.addtowsToDeploy(hdFileItem);   // add entry to deploylist
 
+                            }
                         }
                     }
                     break;
@@ -95,14 +97,16 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, MODULE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        WSInfo tempWSInfo = getFileItem(file.getName());
-                        if (isModified(file, tempWSInfo)) {
-                            tempWSInfo.setLastmodifieddate(file.lastModified());
-                            WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), MODULE);
-                            deplorer.addtowstoUnDeploy(wsInfo);   // add entry to undeploy list
-                            HDFileItem hdFileItem = new HDFileItem(file, MODULE);
-                            deplorer.addtowsToDeploy(hdFileItem); // add entry to deploylist
+                        if(deplorer.isHotupdate()) {
+                            WSInfo tempWSInfo = getFileItem(file.getName());
+                            if (isModified(file, tempWSInfo)) {
+                                tempWSInfo.setLastmodifieddate(file.lastModified());
+                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), MODULE);
+                                deplorer.addtowstoUnDeploy(wsInfo);   // add entry to undeploy list
+                                HDFileItem hdFileItem = new HDFileItem(file, MODULE);
+                                deplorer.addtowsToDeploy(hdFileItem); // add entry to deploylist
 
+                            }
                         }
                     }
                     break;
@@ -201,8 +205,8 @@ public class WSInfoList implements DeploymentConstants {
      *
      */
     public void update() {
+        checkForUndeploye();
         if(deplorer.isHotupdate()) {
-            checkForUndeploye();
             deplorer.doUnDeploye();
         }
         deplorer.doDeploy();

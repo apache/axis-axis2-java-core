@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
-    private final Scheduler scheduler = new Scheduler();
+    private static Scheduler scheduler;
 
     private boolean hotdeployment = true;   //to do hot deployment or not
     private boolean hotupdate = true;  // to do hot update or not
@@ -210,7 +210,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 hotupdate =false;
 
         }
-
     }
 
     /**
@@ -241,6 +240,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * inorder to perform Hot deployment and so on..
      */
     private void startSearch(DeploymentEngine engine) {
+        scheduler =new Scheduler();
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
@@ -412,6 +412,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
+                            System.out.println("ok");
                         } catch (DeploymentException de) {
                             throw new RuntimeException(de);
                         } catch (AxisFault axisFault) {
@@ -450,9 +451,11 @@ public class DeploymentEngine implements DeploymentConstants {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
-                    serviceName = getAxisServiceName(wsInfo.getFilename());
-                    engineRegistry.removeService(new QName(serviceName));
-                    log.info("UnDeployement WS Name  " + wsInfo.getFilename());
+                    if(wsInfo.getType()==SERVICE) {
+                        serviceName = getAxisServiceName(wsInfo.getFilename());
+                        engineRegistry.removeService(new QName(serviceName));
+                        log.info("UnDeployement WS Name  " + wsInfo.getFilename());
+                    }
                 }
 
             }
