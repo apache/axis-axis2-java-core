@@ -16,15 +16,34 @@
 package org.apache.axis.samples.utils;
 
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMException;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
-/**
- * @author chathura@opensource.lk
- * 
- */
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.StringReader;
+
+
 public class OMUtil {
-	
-	public static SOAPEnvelope getEmptySoapEnvelop(){
-		throw new UnsupportedOperationException("To be implemented");
+
+    private String basicSOAPXML = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"> \n" +
+            " <env:Header>\n" +
+            " </env:Header>\n" +
+            " <env:Body>\n" +
+            " </env:Body>\n" +
+            "</env:Envelope>";
+
+	public SOAPEnvelope getEmptySoapEnvelop(){
+        XMLStreamReader parser = null;
+        try {
+            parser = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(basicSOAPXML));
+        } catch (XMLStreamException e) {
+            throw new OMException("Exception in StAX parser", e);
+        }
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+        return builder.getSOAPEnvelope();
 	}
 
 }
