@@ -154,9 +154,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                         
                 OMElement parmeter = null;        
                 SOAPEnvelope envelope = null;
-                MessageContext msgContext1 = new MessageContext(
-                        msgContext.getGlobalContext().getRegistry(),
-                        msgContext.getProperties(), msgContext.getSessionContext(),msgContext.getTransportIn(),msgContext.getTransportOut());
+                MessageContext msgContext1 = new MessageContext(msgContext);
                         
                 if(WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())){
                     parmeter = methodElement;
