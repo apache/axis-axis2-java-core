@@ -38,7 +38,7 @@
 	</target>
 	
 	<target name="init">
-		<uptodate property="jars.uptodate" targetfile="${jar.dir}/echo.jar">
+		<uptodate property="jars.uptodate" targetfile="${jar.dir}/service2.jar">
 			<srcfiles dir="${src}">
 				<include name="**/*.java"/>
 				<include name="**/*.xml"/>

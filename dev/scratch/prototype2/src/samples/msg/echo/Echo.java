@@ -1,4 +1,4 @@
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMElement;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -17,7 +17,7 @@ import org.apache.axis.om.SOAPEnvelope;
  */
 
 public class Echo {
-    public SOAPEnvelope echo(SOAPEnvelope in){
+    public OMElement echo(OMElement in){
         return in;
     }    
 }

@@ -9,6 +9,7 @@
     xmlns:ant="jelly:ant">
     <preGoal name="test:test">
         <j:jelly xmlns="jelly:ant">
+	        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/msg/echo"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service1"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service2"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module1"/>

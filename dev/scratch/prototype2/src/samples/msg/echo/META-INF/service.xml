@@ -1,9 +1,7 @@
-<service 
-	provider="org.apache.axis.providers.RawXMLProvider" 
-	style="msg">
-	<java:implementation class="Echo1"/>
-    <inflow>
-        <handler name="h1" class="Handler2"/>
-     </inflow>
+<service  style="xsd:msg" contextPath="axis/service/echo">
+	<java:implementation
+         provider="org.apache.axis.impl.providers.RawXMLProvider"
+         class="org.apache.axis.engine.Echo"
+         xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
     <operation name="echo"/>
 </service>
