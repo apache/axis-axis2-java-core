@@ -138,17 +138,17 @@ public class AxisEngine {
             handleFault(context, error);
         }
     }
-    /**
-     * @return Returns the registry.
-     */
-    public EngineRegistry getRegistry() {
-        return registry;
-    }
-
-    /**
-     * @param registry The registry to set.
-     */
-    public void setRegistry(EngineRegistry registry) {
-        this.registry = registry;
-    }
+//    /**
+//     * @return Returns the registry.
+//     */
+//    public EngineRegistry getRegistry() {
+//        return registry;
+//    }
+//
+//    /**
+//     * @param registry The registry to set.
+//     */
+//    public void setRegistry(EngineRegistry registry) {
+//        this.registry = registry;
+//    }
 }

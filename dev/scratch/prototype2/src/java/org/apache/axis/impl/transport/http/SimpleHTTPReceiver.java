@@ -16,62 +16,60 @@
 
 package org.apache.axis.impl.transport.http;
 
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.TransportSenderLocator;
-import org.apache.axis.impl.llom.builder.StAXBuilder;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.transport.AbstractTransportReceiver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
-public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Runnable {
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.engine.TransportSenderLocator;
+import org.apache.axis.impl.llom.builder.StAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.transport.AbstractTransportReceiver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class SimpleHTTPReceiver
+    extends AbstractTransportReceiver
+    implements Runnable {
     protected static Log log =
-            LogFactory.getLog(SimpleHTTPReceiver.class.getName());
+        LogFactory.getLog(SimpleHTTPReceiver.class.getName());
 
     protected static String transportName = "SimpleHTTP";
-    
-
 
     // Standard MIME headers for XML payload
     protected static byte XML_MIME_STUFF[] =
-            ("\r\nContent-Type: text/xml; charset=utf-8\r\n" +
-            "Content-Length: ").getBytes();
+        ("\r\nContent-Type: text/xml; charset=utf-8\r\n" + "Content-Length: ")
+            .getBytes();
 
     // Standard MIME headers for HTML payload
     protected static byte HTML_MIME_STUFF[] =
-            ("\r\nContent-Type: text/html; charset=utf-8\r\n" +
-            "Content-Length: ").getBytes();
+        ("\r\nContent-Type: text/html; charset=utf-8\r\n" + "Content-Length: ")
+            .getBytes();
 
     // Mime/Content separator
     protected static byte SEPARATOR[] = "\r\n\r\n".getBytes();
 
     // Tiddly little response
-//    protected static final String responseStr =
-//            "<html><head><title>SimpleAxisServer</title></head>" +
-//            "<body><h1>SimpleAxisServer</h1>" +
-//            Messages.getEnvelope("reachedServer00") +
-//            "</html>";
-//    protected static byte cannedHTMLResponse[] = responseStr.getBytes();
+    //    protected static final String responseStr =
+    //            "<html><head><title>SimpleAxisServer</title></head>" +
+    //            "<body><h1>SimpleAxisServer</h1>" +
+    //            Messages.getEnvelope("reachedServer00") +
+    //            "</html>";
+    //    protected static byte cannedHTMLResponse[] = responseStr.getBytes();
 
     // ASCII character mapping to lower case
     protected static final byte[] toLower = new byte[256];
@@ -94,11 +92,13 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     protected static final int lenLen = lenHeader.length;
 
     // mime header for content type
-    protected static final byte typeHeader[] = (HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase() + ": ").getBytes();
+    protected static final byte typeHeader[] =
+        (HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase() + ": ").getBytes();
     protected static final int typeLen = typeHeader.length;
 
     // mime header for content location
-    protected static final byte locationHeader[] = (HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase() + ": ").getBytes();
+    protected static final byte locationHeader[] =
+        (HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase() + ": ").getBytes();
     protected static final int locationLen = locationHeader.length;
 
     // mime header for soap action
@@ -129,38 +129,30 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     // "Basic" auth string
     protected static final byte basicAuth[] = "basic ".getBytes();
 
-
     /**
      * @param myAxisServer
      */
     public SimpleHTTPReceiver(EngineRegistry reg) {
         super(reg);
     }
-    
+
     public SimpleHTTPReceiver(String dir) throws AxisFault {
+        EngineRegistry er = EngineRegistryFactory.createEngineRegistry(dir);
         try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(dir);
-            EngineRegistry er = deploymentEngine.start();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-				throw new AxisFault("Thread interuptted",e1);
-            }
-            this.engineReg = er;
-        } catch (PhaseException e) {
-            throw AxisFault.makeFault(e);
-        } catch (DeploymentException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            throw new AxisFault("Thread interuptted", e1);
         }
+        this.engineReg = er;
+
     }
 
     /**
      * The main workhorse method.
      */
 
-    protected void invokeMethodFromGet(String methodName, String args) throws Exception {
+    protected void invokeMethodFromGet(String methodName, String args)
+        throws Exception {
 
     }
 
@@ -177,18 +169,19 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      * @param cookie2         second cookie header (if doSessions)
      * @return Content-Length
      */
-    protected int parseHeaders(NonBlockingBufferedInputStream is,
-                               byte buf[],
-                               StringBuffer contentType,
-                               StringBuffer contentLocation,
-                               StringBuffer soapAction,
-                               StringBuffer httpRequest,
-                               StringBuffer fileName,
-                               StringBuffer cookie,
-                               StringBuffer cookie2,
-                               StringBuffer authInfo)
-//                             MimeHeaders headers)
-            throws java.io.IOException {
+    protected int parseHeaders(
+        NonBlockingBufferedInputStream is,
+        byte buf[],
+        StringBuffer contentType,
+        StringBuffer contentLocation,
+        StringBuffer soapAction,
+        StringBuffer httpRequest,
+        StringBuffer fileName,
+        StringBuffer cookie,
+        StringBuffer cookie2,
+        StringBuffer authInfo)
+    //                             MimeHeaders headers)
+    throws java.io.IOException {
         int n;
         int len = 0;
 
@@ -223,12 +216,14 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 fileName.append(c);
             }
         } else {
-            throw new java.io.IOException("Cannot handle non-GET, non-POST request");
+            throw new java.io.IOException(
+                "Cannot handle non-GET, non-POST request");
         }
 
         while ((n = readLine(is, buf, 0, buf.length)) > 0) {
 
-            if ((n <= 2) && (buf[0] == '\n' || buf[0] == '\r') && (len > 0)) break;
+            if ((n <= 2) && (buf[0] == '\n' || buf[0] == '\r') && (len > 0))
+                break;
 
             // RobJ gutted the previous logic; it was too hard to extend for more headers.
             // Now, all it does is search forwards for ": " in the buf,
@@ -237,7 +232,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 
             // First, search forwards for ": "
             int endHeaderIndex = 0;
-            while (endHeaderIndex < n && toLower[buf[endHeaderIndex]] != headerEnder[0]) {
+            while (endHeaderIndex < n
+                && toLower[buf[endHeaderIndex]] != headerEnder[0]) {
                 endHeaderIndex++;
             }
             endHeaderIndex += 2;
@@ -254,10 +250,10 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 while ((++i < n) && (buf[i] >= '0') && (buf[i] <= '9')) {
                     len = (len * 10) + (buf[i] - '0');
                 }
-//                headers.addHeader(HTTPConstants.HEADER_CONTENT_LENGTH, String.valueOf(len));
+                //                headers.addHeader(HTTPConstants.HEADER_CONTENT_LENGTH, String.valueOf(len));
 
-            } else if (endHeaderIndex == actionLen
-                    && matches(buf, actionHeader)) {
+            } else if (
+                endHeaderIndex == actionLen && matches(buf, actionHeader)) {
 
                 soapAction.delete(0, soapAction.length());
                 // skip initial '"'
@@ -265,39 +261,47 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 while ((++i < n) && (buf[i] != '"')) {
                     soapAction.append((char) (buf[i] & 0x7f));
                 }
-//                headers.addHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"" + soapAction.toString() + "\"");
+                //                headers.addHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"" + soapAction.toString() + "\"");
 
             } else if (endHeaderIndex == authLen && matches(buf, authHeader)) {
                 if (matches(buf, endHeaderIndex, basicAuth)) {
                     i += basicAuth.length;
                     while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
-                        if (buf[i] == ' ') continue;
+                        if (buf[i] == ' ')
+                            continue;
                         authInfo.append((char) (buf[i] & 0x7f));
                     }
-//                    headers.addHeader(HTTPConstants.HEADER_AUTHORIZATION, new String(basicAuth) + authInfo.toString());
+                    //                    headers.addHeader(HTTPConstants.HEADER_AUTHORIZATION, new String(basicAuth) + authInfo.toString());
                 } else {
-                    throw new java.io.IOException("Bad authentication type (I can only handle \"Basic\")");
+                    throw new java.io.IOException(
+                        "Bad authentication type (I can only handle \"Basic\")");
                 }
-            } else if (endHeaderIndex == locationLen && matches(buf, locationHeader)) {
+            } else if (
+                endHeaderIndex == locationLen
+                    && matches(buf, locationHeader)) {
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
-                    if (buf[i] == ' ') continue;
+                    if (buf[i] == ' ')
+                        continue;
                     contentLocation.append((char) (buf[i] & 0x7f));
                 }
-//                headers.addHeader(HTTPConstants.HEADER_CONTENT_LOCATION, contentLocation.toString());
+                //                headers.addHeader(HTTPConstants.HEADER_CONTENT_LOCATION, contentLocation.toString());
             } else if (endHeaderIndex == typeLen && matches(buf, typeHeader)) {
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
-                    if (buf[i] == ' ') continue;
+                    if (buf[i] == ' ')
+                        continue;
                     contentType.append((char) (buf[i] & 0x7f));
                 }
-//                headers.addHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentLocation.toString());
+                //                headers.addHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentLocation.toString());
             } else {
-                String customHeaderName = new String(buf, 0, endHeaderIndex - 2);
+                String customHeaderName =
+                    new String(buf, 0, endHeaderIndex - 2);
                 StringBuffer customHeaderValue = new StringBuffer();
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
-                    if (buf[i] == ' ') continue;
+                    if (buf[i] == ' ')
+                        continue;
                     customHeaderValue.append((char) (buf[i] & 0x7f));
                 }
-//                headers.addHeader(customHeaderName, customHeaderValue.toString());
+                //                headers.addHeader(customHeaderName, customHeaderValue.toString());
             }
 
         }
@@ -336,7 +340,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      * @param value Integer value to be written.
      */
     protected void putInt(byte buf[], OutputStream out, int value)
-            throws java.io.IOException {
+        throws java.io.IOException {
         int len = 0;
         int offset = buf.length;
 
@@ -372,8 +376,12 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      * @param off starting offset into the byte array
      * @param len maximum number of bytes to read
      */
-    protected int readLine(NonBlockingBufferedInputStream is, byte[] b, int off, int len)
-            throws java.io.IOException {
+    protected int readLine(
+        NonBlockingBufferedInputStream is,
+        byte[] b,
+        int off,
+        int len)
+        throws java.io.IOException {
         int count = 0, c;
 
         while ((c = is.read()) != -1) {
@@ -381,26 +389,31 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 b[off++] = (byte) c;
                 count++;
             }
-            if (count == len) break;
+            if (count == len)
+                break;
             if ('\n' == c) {
-                int peek = is.peek(); //If the next line begins with tab or space then this is a continuation.
-                if (peek != ' ' && peek != '\t') break;
+                int peek = is.peek();
+                //If the next line begins with tab or space then this is a continuation.
+                if (peek != ' ' && peek != '\t')
+                    break;
             }
         }
         return count > 0 ? count : -1;
     }
 
-    protected MessageContext parseTheTransport(AxisEngine engine,
-                                               InputStream in) throws AxisFault {
+    protected MessageContext parseTheTransport(
+        AxisEngine engine,
+        InputStream in)
+        throws AxisFault {
         byte buf[] = new byte[BUFSIZ];
         // create an Axis server
 
-        MessageContext msgContext = new MessageContext(engine.getRegistry());
+        MessageContext msgContext = new MessageContext(this.engineReg);
         msgContext.setServerSide(true);
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =
-                new NonBlockingBufferedInputStream();
+            new NonBlockingBufferedInputStream();
 
         // buffers for the headers we care about
         StringBuffer soapAction = new StringBuffer();
@@ -429,10 +442,18 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             // read headers
             is.setInputStream(in);
             // parse all headers into hashtable
-            int contentLength = parseHeaders(is, buf, contentType,
-                    contentLocation, soapAction,
-                    httpRequest, fileName,
-                    cookie, cookie2, authInfo);
+            int contentLength =
+                parseHeaders(
+                    is,
+                    buf,
+                    contentType,
+                    contentLocation,
+                    soapAction,
+                    httpRequest,
+                    fileName,
+                    cookie,
+                    cookie2,
+                    authInfo);
             is.setContentLength(contentLength);
 
             int paramIdx = fileName.toString().indexOf('?');
@@ -440,7 +461,6 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 // Got params
                 String params = fileName.substring(paramIdx + 1);
                 fileName.setLength(paramIdx);
-
 
                 if ("wsdl".equalsIgnoreCase(params))
                     doWsdl = true;
@@ -450,9 +470,9 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 }
             }
 
-
             String filePart = fileName.toString();
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,filePart));
+            msgContext.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO, filePart));
 
             if (httpRequest.toString().equals("GET")) {
                 throw new UnsupportedOperationException("GET not supported");
@@ -462,16 +482,19 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
                 // for now, do not complain if no SOAPAction at all
                 String soapActionString = soapAction.toString();
                 if (soapActionString != null) {
-                    msgContext.setProperty(MessageContext.SOAP_ACTION, soapActionString);
+                    msgContext.setProperty(
+                        MessageContext.SOAP_ACTION,
+                        soapActionString);
                 }
 
-
                 InputStreamReader isr = new InputStreamReader(is);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
-                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
-                msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+                XMLStreamReader reader =
+                    XMLInputFactory.newInstance().createXMLStreamReader(isr);
+                StAXBuilder builder =
+                    new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+                msgContext.setEnvelope(
+                    (SOAPEnvelope) builder.getDocumentElement());
 
-                EngineRegistry reg = engine.getRegistry();
                 return msgContext;
             }
         } catch (IOException e) {
@@ -481,12 +504,11 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         }
     }
 
-
     /* (non-Javadoc)
      * @see org.apache.axis.impl.transport.AbstractTransportReceiver#storeOutputInfo(org.apache.axis.context.MessageContext, java.io.OutputStream)
      */
-    protected void storeOutputInfo(MessageContext msgContext,
-                                   OutputStream out) throws AxisFault {
+    protected void storeOutputInfo(MessageContext msgContext, OutputStream out)
+        throws AxisFault {
         try {
             // Send it on its way...
             out.write(HTTPConstants.HTTP);
@@ -495,34 +517,33 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             log.info("status written");
             //We do not have any Addressing Headers to put
             //let us put the information about incoming transport
-            msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                    TransportSenderLocator.TRANSPORT_HTTP);
+            msgContext.setProperty(
+                MessageContext.TRANSPORT_TYPE,
+                TransportSenderLocator.TRANSPORT_HTTP);
             msgContext.setProperty(MessageContext.TRANSPORT_DATA, out);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
     }
 
- 
-    
-    public static void main(String[] args) throws Exception{
-		if(args.length != 2){
-			System.out.println("SimpeHttpReciver repositoryLocation port");
-		}
-		SimpleHTTPReceiver reciver = new SimpleHTTPReceiver(args[0]);
-		
-		ServerSocket serverSoc = null;
-		serverSoc = new ServerSocket(Integer.parseInt(args[1]));
-		reciver.setServerSocket(serverSoc);
-		Thread thread = new Thread(reciver);
-		thread.setDaemon(true);
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            System.out.println("SimpeHttpReciver repositoryLocation port");
+        }
+        SimpleHTTPReceiver reciver = new SimpleHTTPReceiver(args[0]);
 
-		try {
-			thread.start();
-			System.in.read();
-		} finally {
-			reciver.stop();
-				
-		}
+        ServerSocket serverSoc = null;
+        serverSoc = new ServerSocket(Integer.parseInt(args[1]));
+        reciver.setServerSocket(serverSoc);
+        Thread thread = new Thread(reciver);
+        thread.setDaemon(true);
+
+        try {
+            thread.start();
+            System.in.read();
+        } finally {
+            reciver.stop();
+
+        }
     }
 }

@@ -15,26 +15,27 @@
  */
 package org.apache.axis.clientapi;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 
 public abstract class AbstractCall {
-    public MessageContext createIncomingMessageContext(InputStream in, AxisEngine engine) throws AxisFault {
+    public MessageContext createIncomingMessageContext(InputStream in, EngineRegistry reg) throws AxisFault {
         MessageContext msgContext;
         try {
-            msgContext = new MessageContext(engine.getRegistry());
+            msgContext = new MessageContext(reg);
             InputStreamReader isr = new InputStreamReader(in);
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
             StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);

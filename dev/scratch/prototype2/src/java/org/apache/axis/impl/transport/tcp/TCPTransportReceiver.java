@@ -46,13 +46,12 @@ public class TCPTransportReceiver extends AbstractTransportReceiver {
                                                InputStream in)
             throws AxisFault {
         try {
-            MessageContext msgContext = new MessageContext(engine.getRegistry());
+            MessageContext msgContext = new MessageContext(this.engineReg);
             InputStreamReader isr = new InputStreamReader(in);
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
             StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
 
-            EngineRegistry reg = engine.getRegistry();
             return msgContext;
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);

@@ -13,6 +13,7 @@ package org.apache.axis.clientapi;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.EngineRegistry;
 
 import java.io.OutputStream;
 import java.net.URL;
@@ -21,15 +22,17 @@ import java.net.URLConnection;
 public class Invoker extends AbstractCall implements Runnable {
 
     private AxisEngine engine = null;
+    private EngineRegistry registry = null;
 
     private MessageContext reqMsgContext = null;
 
     private Callback callback = null;
 
-    public Invoker(MessageContext msgContext, AxisEngine engine, Callback callback) {
+    public Invoker(MessageContext msgContext, AxisEngine engine,EngineRegistry reg, Callback callback) {
         this.engine = engine;
         this.reqMsgContext = msgContext;
         this.callback = callback;
+        this.registry = reg;
 
     }
 
@@ -49,7 +52,7 @@ public class Invoker extends AbstractCall implements Runnable {
             correlator.addCorrelationInfo(reqMsgContext.getMessageID(), callback);
 
             MessageContext resMsgContext = createIncomingMessageContext(
-                    urlConnect.getInputStream(), engine);
+                    urlConnect.getInputStream(), registry);
             resMsgContext.setServerSide(false);
             engine.receive(resMsgContext);
 
