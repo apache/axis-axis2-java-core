@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.samples.userguide.server;
+package org.apache.axis.samples.userguide.sample2.server;
 
 import java.io.FileReader;
 import java.net.URL;
