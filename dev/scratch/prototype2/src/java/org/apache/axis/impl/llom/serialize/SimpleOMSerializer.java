@@ -3,8 +3,8 @@ package org.apache.axis.impl.llom.serialize;
 
 import org.apache.axis.om.*;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
 import java.util.Vector;
 

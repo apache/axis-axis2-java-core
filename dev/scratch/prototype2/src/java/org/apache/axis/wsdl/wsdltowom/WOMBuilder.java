@@ -15,11 +15,10 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import java.io.InputStream;
+import org.apache.wsdl.WSDLDefinitions;
 
 import javax.wsdl.WSDLException;
-
-import org.apache.wsdl.WSDLDefinitions;
+import java.io.InputStream;
 
 public interface WOMBuilder {
 

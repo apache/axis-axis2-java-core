@@ -15,13 +15,12 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 import org.apache.axis.impl.description.PhasesIncludeImpl;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * Represents a transport deployed in AXis2

@@ -15,34 +15,12 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import java.util.Iterator;
+import org.apache.wsdl.*;
+import org.apache.wsdl.impl.*;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Output;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import javax.wsdl.*;
 import javax.xml.namespace.QName;
-
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDefinitions;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.impl.MessageReferenceImpl;
-import org.apache.wsdl.impl.WSDLBindingImpl;
-import org.apache.wsdl.impl.WSDLEndpointImpl;
-import org.apache.wsdl.impl.WSDLInterfaceImpl;
-import org.apache.wsdl.impl.WSDLOperationImpl;
-import org.apache.wsdl.impl.WSDLProcessingException;
-import org.apache.wsdl.impl.WSDLServiceImpl;
+import java.util.Iterator;
 
 public class WSDLPump {
 

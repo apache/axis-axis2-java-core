@@ -3,12 +3,12 @@ package org.apache.axis.impl.llom;
 import org.apache.axis.impl.llom.exception.OMStreamingException;
 import org.apache.axis.om.*;
 
-import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.Location;
 import java.util.Iterator;
 import java.util.Stack;
 

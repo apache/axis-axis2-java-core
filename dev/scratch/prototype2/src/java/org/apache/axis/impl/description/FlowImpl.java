@@ -16,10 +16,10 @@
 
 package org.apache.axis.impl.description;
 
-import java.util.Vector;
-
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
+
+import java.util.Vector;
 
 public class FlowImpl implements Flow {
    protected Vector list = null; 

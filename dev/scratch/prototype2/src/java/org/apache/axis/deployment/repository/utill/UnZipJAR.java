@@ -16,15 +16,15 @@ package org.apache.axis.deployment.repository.utill;
  * limitations under the License.
  */
 
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
+
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class UnZipJAR implements DeploymentConstants {
     final int BUFFER = 2048;

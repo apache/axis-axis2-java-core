@@ -15,16 +15,15 @@
  */
 package org.apache.axis.impl.engine;
 
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 public class EngineRegistryImpl implements EngineRegistry{
     private HashMap modules = new HashMap();

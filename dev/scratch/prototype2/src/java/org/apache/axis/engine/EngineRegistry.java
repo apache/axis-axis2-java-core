@@ -17,12 +17,12 @@
 package org.apache.axis.engine;
 
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
+
+import javax.xml.namespace.QName;
 
 /**
  *  The palce where all the Globel states of Axis is kept. 

@@ -15,13 +15,12 @@
  */
 package org.apache.axis.description;
 
-import java.util.Collection;
+import org.apache.axis.engine.Provider;
+import org.apache.wsdl.WSDLService;
 
 import javax.swing.text.Style;
 import javax.xml.namespace.QName;
-
-import org.apache.axis.engine.Provider;
-import org.apache.wsdl.WSDLService;
+import java.util.Collection;
 
 /**
  * <p>represent a implemented web service</p>

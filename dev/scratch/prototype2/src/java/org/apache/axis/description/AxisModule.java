@@ -15,10 +15,10 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.impl.description.FlowIncludeImpl;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
+
+import javax.xml.namespace.QName;
 
 /**
  * <p>This holds the information about a Module. </p> 

@@ -15,11 +15,6 @@
  */
 package org.apache.axis.impl.description;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
@@ -28,6 +23,10 @@ import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.impl.WSDLOperationImpl;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.List;
 
 public class SimpleAxisOperationImpl implements AxisOperation {
     protected WSDLOperation wsdlOperation;

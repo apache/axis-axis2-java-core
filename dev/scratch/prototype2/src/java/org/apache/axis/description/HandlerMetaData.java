@@ -15,10 +15,10 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
+
+import javax.xml.namespace.QName;
 
 /**
  * represent the deployment information about the handler

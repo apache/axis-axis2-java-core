@@ -15,10 +15,10 @@
  */
 package org.apache.axis.impl.description;
 
-import java.util.HashMap;
-
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
+
+import java.util.HashMap;
 
 public class ParameterIncludeImpl implements ParameterInclude {
     protected HashMap parmeters;

@@ -1,7 +1,6 @@
 package org.apache.axis.phaseresolver;
 
 import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.phaseresolver.PhaseException;
 
 import java.util.Vector;
 

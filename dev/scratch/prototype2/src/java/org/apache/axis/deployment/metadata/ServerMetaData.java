@@ -1,8 +1,8 @@
 package org.apache.axis.deployment.metadata;
 
-import org.apache.axis.phaseresolver.PhaseMetaData;
-import org.apache.axis.description.*;
 import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.phaseresolver.PhaseMetaData;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
