@@ -19,7 +19,6 @@ package org.apache.axis.transport.http;
 
 
 import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -77,7 +76,6 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-    	 System.out.println("request accepted");
         // Accept and process requests from the socket
         while (!stopped) {
             Socket socket = null;
@@ -86,7 +84,7 @@ public class SimpleAxisServer implements Runnable {
                
             } catch (java.io.InterruptedIOException iie) {
             } catch (Exception e) {
-                log.debug(Messages.getMessage("exception00"), e);
+                log.debug(e.getMessage(), e);
                 break;
             }
             if (socket != null) {
@@ -94,7 +92,7 @@ public class SimpleAxisServer implements Runnable {
                 worker.run();
             }
         }
-        log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
+        log.info("Simple Axis Server Quit");
     }
 
 
@@ -144,12 +142,12 @@ public class SimpleAxisServer implements Runnable {
                 serverSocket.close();
             }
         } catch (IOException e) {
-            log.info(Messages.getMessage("exception00"), e);
+            log.info(e);
         } finally {
             serverSocket=null;
         }
 
-        log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
+        log.info("Simple Axis Server Quits");
 
     }
 

@@ -15,8 +15,6 @@
  */
 package org.apache.axis.encoding ;
 
-import org.apache.axis.utils.Messages;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -66,7 +64,7 @@ public class Base64 {
             obuf[wp] = (byte)(b2 << 6 & 0xc0 | b3 & 0x3f);
             return 3;
         default:
-            throw new RuntimeException(Messages.getMessage("internalError00"));
+            throw new RuntimeException("Internal error");
         }
     }
 

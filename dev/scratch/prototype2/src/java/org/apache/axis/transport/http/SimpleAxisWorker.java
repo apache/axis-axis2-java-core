@@ -22,7 +22,6 @@ import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -48,11 +47,11 @@ public class SimpleAxisWorker implements Runnable {
     private static String transportName = "SimpleHTTP";
 
     // HTTP status codes
-    private static byte OK[] = ("200 " + Messages.getMessage("ok00")).getBytes();
-    private static byte NOCONTENT[] = ("202 " + Messages.getMessage("ok00") + "\n\n").getBytes();
-    private static byte UNAUTH[] = ("401 " + Messages.getMessage("unauth00")).getBytes();
+    private static byte OK[] = ("200 OK").getBytes();
+    private static byte NOCONTENT[] = ("202 OK\n\n").getBytes();
+    private static byte UNAUTH[] = ("401 Unauthorized").getBytes();
     private static byte SENDER[] = "400".getBytes();
-    private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
+    private static byte ISE[] = ("500 Internal server error").getBytes();
 
     // HTTP prefix
     private static byte HTTP[] = "HTTP/1.0 ".getBytes();
@@ -210,10 +209,6 @@ public class SimpleAxisWorker implements Runnable {
                     String params = fileName.substring(paramIdx + 1);
                     fileName.setLength(paramIdx);
 
-                    log.debug(Messages.getMessage("filename00",
-                            fileName.toString()));
-                    log.debug(Messages.getMessage("params00",
-                            params));
 
                     if ("wsdl".equalsIgnoreCase(params))
                         doWsdl = true;
@@ -252,10 +247,6 @@ public class SimpleAxisWorker implements Runnable {
                         authBuf.append((char) (decoded[i] & 0x7f));
                     }
 
-                    if (log.isDebugEnabled()) {
-                        log.debug(Messages.getMessage("user00",
-                                userBuf.toString()));
-                    }
 
                     msgContext.setProperty(MessageContext.USER_NAME,userBuf.toString());
                     msgContext.setProperty(MessageContext.PASSWARD,pwBuf.toString());
@@ -316,7 +307,7 @@ public class SimpleAxisWorker implements Runnable {
             // out.write(response);
             
         } catch (Exception e) {
-            log.info(Messages.getMessage("exception00"), e);
+            log.info(e);
         } finally {
             try {
                 if (socket != null) socket.close();
@@ -361,7 +352,7 @@ public class SimpleAxisWorker implements Runnable {
         n = this.readLine(is, buf, 0, buf.length);
         if (n < 0) {
             // nothing!
-            throw new java.io.IOException(Messages.getMessage("unexpectedEOS00"));
+            throw new java.io.IOException("Unexpected end of stream");
         }
 
         // which does it begin with?
@@ -378,7 +369,6 @@ public class SimpleAxisWorker implements Runnable {
                     break;
                 fileName.append(c);
             }
-            log.debug(Messages.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
@@ -388,9 +378,8 @@ public class SimpleAxisWorker implements Runnable {
                     break;
                 fileName.append(c);
             }
-            log.debug(Messages.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
         } else {
-            throw new java.io.IOException(Messages.getMessage("badRequest00"));
+            throw new java.io.IOException("Cannot handle non-GET, non-POST request");
         }
 
         while ((n = readLine(is, buf, 0, buf.length)) > 0) {
@@ -443,8 +432,7 @@ public class SimpleAxisWorker implements Runnable {
                     }
 //                    headers.addHeader(HTTPConstants.HEADER_AUTHORIZATION, new String(basicAuth) + authInfo.toString());
                 } else {
-                    throw new java.io.IOException(
-                            Messages.getMessage("badAuth00"));
+                    throw new java.io.IOException("Bad authentication type (I can only handle \"Basic\")");
                 }
             } else if (endHeaderIndex == locationLen && matches(buf, locationHeader)) {
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
