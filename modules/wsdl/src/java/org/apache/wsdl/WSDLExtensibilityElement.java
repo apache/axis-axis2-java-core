@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 /**
  * @author chathura@opensource.lk
  */
-public interface ExtensionElement {
+public interface WSDLExtensibilityElement {
     /**
      * Method getElement
      *

@@ -15,8 +15,9 @@
  */
 package org.apache.wsdl;
 
-import javax.xml.namespace.QName;
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
@@ -42,7 +43,7 @@ public interface WSDLTypes {
      * @param qName
      * @param element
      */
-    public void addElement(QName qName, ExtensionElement element);
+    public void addElement(QName qName, WSDLExtensibilityElement element);
 
     /**
      * Will return the Element with the given <code>QName</code>
@@ -51,5 +52,5 @@ public interface WSDLTypes {
      * @param qName
      * @return
      */
-    public ExtensionElement getElement(QName qName);
+    public WSDLExtensibilityElement getElement(QName qName);
 }

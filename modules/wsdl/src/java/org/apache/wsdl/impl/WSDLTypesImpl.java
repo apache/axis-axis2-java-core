@@ -15,11 +15,12 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.ExtensionElement;
-import org.apache.wsdl.WSDLTypes;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLTypes;
 
 /**
  * @author chathura@opensource.lk
@@ -54,7 +55,7 @@ public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
      * @param qName
      * @param element
      */
-    public void addElement(QName qName, ExtensionElement element) {
+    public void addElement(QName qName, WSDLExtensibilityElement element) {
         this.extensionElements.put(qName, element);
     }
 
@@ -65,7 +66,7 @@ public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
      * @param qName
      * @return
      */
-    public ExtensionElement getElement(QName qName) {
-        return (ExtensionElement) this.extensionElements.get(qName);
+    public WSDLExtensibilityElement getElement(QName qName) {
+        return (WSDLExtensibilityElement) this.extensionElements.get(qName);
     }
 }

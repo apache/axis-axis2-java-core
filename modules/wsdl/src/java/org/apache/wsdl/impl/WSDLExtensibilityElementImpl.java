@@ -15,13 +15,13 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.ExtensionElement;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
  */
-public class ExtensionElementImpl implements ExtensionElement {
+public class WSDLExtensibilityElementImpl implements WSDLExtensibilityElement {
     /**
      * Field element
      */
