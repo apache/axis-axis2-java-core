@@ -41,6 +41,21 @@ public class InteropStub {
     private String endpointURL;
     private String SOAPAction;
 
+    //these are special attributes to provide the input and output SOAP envelopes
+    private SOAPEnvelope sentEnvelope;
+    private SOAPEnvelope recvdEnvelope;
+
+    public SOAPEnvelope getSentEnvelope() {
+        return sentEnvelope;
+    }
+
+
+    public SOAPEnvelope getRecvdEnvelope() {
+        return recvdEnvelope;
+    }
+
+
+
     public String getSOAPAction() {
         return SOAPAction;
     }
@@ -83,7 +98,9 @@ public class InteropStub {
             SOAPEnvelope sendEnvelope = getEmptyEnvelop();
             sendEnvelope.getBody().addChild(echoStructElementNode);
 
+            this.sentEnvelope = sendEnvelope;
             SOAPEnvelope returnEnvelope = getSyncResult(sendEnvelope);
+            this.recvdEnvelope = returnEnvelope;
 
             SOAPBody SOAPBody = returnEnvelope.getBody();
             if (SOAPBody.hasFault()){
@@ -128,7 +145,9 @@ public class InteropStub {
             SOAPEnvelope sendEnvelope = getEmptyEnvelop();
             sendEnvelope.getBody().addChild(echoStringArrayParamElementNode);
 
+            this.sentEnvelope = sendEnvelope;
             SOAPEnvelope returnEnvelope = getSyncResult(sendEnvelope);
+            this.recvdEnvelope = returnEnvelope;
 
 
             SOAPBody SOAPBody = returnEnvelope.getBody();
@@ -162,7 +181,9 @@ public class InteropStub {
             SOAPEnvelope sendEnvelope = getEmptyEnvelop();
             sendEnvelope.getBody().addChild(echoStringParamElementNode);
 
+            this.sentEnvelope = sendEnvelope;
             SOAPEnvelope returnEnvelope = getSyncResult(sendEnvelope);
+            this.recvdEnvelope = returnEnvelope;
 
             SOAPBody SOAPBody = returnEnvelope.getBody();
             if (SOAPBody.hasFault()){

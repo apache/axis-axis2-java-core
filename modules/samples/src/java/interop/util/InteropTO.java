@@ -1,4 +1,4 @@
-package org.apache.axis.interop.util;
+package interop.util;
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,5 +1,7 @@
+<%@ page import="interop.util.Constants,
+                 interop.doclit.InteropRequestHandler"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="interopBean" scope="request" class="org.apache.axis.interop.util.InteropTO" />
+<jsp:useBean id="interopBean" scope="request" class="interop.util.InteropTO" />
 <jsp:setProperty name="interopBean" property="*" />
 
 
@@ -55,55 +57,35 @@
     <%
       if (request.getParameter("submit") != null) {
           int type = interopBean.getType();
+          System.out.println("type = " + type);
           switch(type){
-              case 1: {
+              case Constants.InteropConstants.ECHO_STRING_SERVICE: {
                    interopBean.setStringValue((String)request.getParameter("StringValue"));
                   break;
               }
-              case 2: {
+              case Constants.InteropConstants.ECHO_STRING_ARRAY_SERVICE: {
                   String [] values = new String[10];
-                  for(int i =1 ; i<= 10 ; i++){
-                     values[i] =(String)request.getParameter("arryValue" + i);
+                  for(int i =0 ; i< 9 ; i++){
+                     values[i] =(String)request.getParameter("arryValue" + (i+1));
+                      System.out.println("values[i] = " + values[i]);
                   }
                   interopBean.setArraValue(values);
                   break;
               }
-              case 3 : {
+              case Constants.InteropConstants.ECHO_STRUCT_SERVICE : {
                   interopBean.setStructString((String)request.getParameter("structValue1"));
                   interopBean.setStructint(Integer.parseInt(request.getParameter("structValue2")));
                   interopBean.setStructfloat(Float.parseFloat(request.getParameter("structValue3")));
                   break;
               }
           }
-          interopBean.setRequest(" <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-"   <soapenv:Header></soapenv:Header>\n" +
-"   <soapenv:Body>\n" +
-"      <itop:echoStructParam xmlns:itop=\"http://soapinterop.org/xsd\">\n" +
-"         <itop:varString>Hello</itop:varString>\n" +
-"         <itop:varInt>12</itop:varInt>\n" +
-"         <itop:varFloat>22.22</itop:varFloat>\n" +
-"      </itop:echoStructParam>\n" +
-"   </soapenv:Body></soapenv:Envelope>");
-          interopBean.setResponse(" <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-"   <soapenv:Header></soapenv:Header>\n" +
-"   <soapenv:Body>\n" +
-"      <itop:echoStructParam xmlns:itop=\"http://soapinterop.org/xsd\">\n" +
-"         <itop:varString>Hello</itop:varString>\n" +
-"         <itop:varInt>12</itop:varInt>\n" +
-"         <itop:varFloat>22.22</itop:varFloat>\n" +
-"      </itop:echoStructParam>\n" +
-"   </soapenv:Body></soapenv:Envelope>");
-          interopBean.printMe();
+        new InteropRequestHandler().handleInteropRequest(interopBean);
       }
     %>
 
 
-
-
-
-
-
         <jsp:include page="include/header.inc"></jsp:include>
+
        	<h3>Welcome to Axis interop testing.</h3><br/>
         <br>
         <form method="post" name="InteropTesting" action="index.jsp">
@@ -124,18 +106,19 @@
           <tr>
           <td></td>
           <td>
-              <input type="radio" name="type" value="1"  onclick="displayStringRow();hideStringArrayRow();hideStructRow();"  checked>Echo String</input>
+              <input type="radio" name="type" value="<%=Constants.InteropConstants.ECHO_STRING_SERVICE%>"  onclick="displayStringRow();hideStringArrayRow();hideStructRow();"  checked>Echo String</input>
+
           </td>
           </tr>
            <tr>
            <td></td>
             <td>
-              <input type="radio" name="type" onclick="hideStringRow(); displayStringArrayRow();hideStructRow();"  value="2">Echo String Array</input>
+              <input type="radio" name="type" onclick="hideStringRow(); displayStringArrayRow();hideStructRow();"  value="<%=Constants.InteropConstants.ECHO_STRING_ARRAY_SERVICE%>">Echo String Array</input>
           </td>
           </tr>
            <tr><td></td>
            <td>
-              <input type="radio" name="type" onclick="hideStringRow();hideStringArrayRow();displayStructRow();" value="3">Echo strct</input>
+              <input type="radio" name="type" onclick="hideStringRow();hideStringArrayRow();displayStructRow();" value="<%=Constants.InteropConstants.ECHO_STRUCT_SERVICE%>">Echo Struct</input>
           </td>
           </tr>
           </table>
