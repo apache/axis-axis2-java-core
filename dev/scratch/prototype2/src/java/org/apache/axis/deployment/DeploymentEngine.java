@@ -542,7 +542,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         try {
                             if (service != null){
                                 addService(service);
-                                System.out.println("Deployement WS Name  " + currentFileItem.getName());
+                                log.info("Deployement WS Name  " + currentFileItem.getName());
                             }
                         } catch (PhaseException e) {
                             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
@@ -556,7 +556,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         try {
                             if(metaData != null){
                                 addModule(metaData);
-                                System.out.println("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
+                                log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                             }
                         } catch (AxisFault axisFault) {
                             axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
@@ -573,7 +573,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (wsToUnDeploy.size() > 0) {
             for (int i = 0; i < wsToUnDeploy.size(); i++) {
                 WSInfo wsInfo = (WSInfo) wsToUnDeploy.elementAt(i);
-                System.out.println("UnDeployement WS Name  " + wsInfo.getFilename());
+                log.info("UnDeployement WS Name  " + wsInfo.getFilename());
             }
 
         }
