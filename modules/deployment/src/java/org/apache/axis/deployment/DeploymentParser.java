@@ -228,13 +228,15 @@ public class DeploymentParser implements DeploymentConstants {
      */
     private void procesServiceXML(AxisService axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
-        if (attribCount == 3) {
+        boolean proviceFound = false;
+        if (attribCount >= 1) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (PROVIDERNAME.equals(attname)) {
                     if (dpengine != null && dpengine.getCurrentFileItem() != null) {
                         dpengine.getCurrentFileItem().setProvideName(attvalue);
+                        proviceFound = true;
                     }
                 } else if (STYLENAME.equals(attname)) {
                     axisService.setStyle(attvalue);
@@ -244,6 +246,9 @@ public class DeploymentParser implements DeploymentConstants {
                 } else {
                     throw new DeploymentException("Bad arguments for the service" + axisService.getName());
                 }
+            }
+            if(!proviceFound ){
+               throw new DeploymentException("Provider class has not been specified");
             }
         } else
             throw new DeploymentException("Bad arguments" + axisService.getName());
