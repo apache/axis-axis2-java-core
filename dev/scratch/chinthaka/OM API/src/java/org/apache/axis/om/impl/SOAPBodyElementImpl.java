@@ -1,4 +1,9 @@
-package org.apache.axis.om;
+package org.apache.axis.om.impl;
+
+import org.apache.axis.om.soap.SOAPBodyElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.soap.SOAPBodyElement;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -16,22 +21,23 @@ package org.apache.axis.om;
  * limitations under the License.
  * <p/>
  * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:47:19 AM
+ * Date: Nov 8, 2004
+ * Time: 1:09:37 PM
  */
-public class OMException extends RuntimeException {
-    public OMException() {
+public class SOAPBodyElementImpl extends OMElementImpl implements SOAPBodyElement{
+
+    /**
+     *
+     * @param localName
+     * @param ns
+     * @param parent
+     * @param builder
+     */
+    public SOAPBodyElementImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+        super(localName, ns, parent, builder);
     }
 
-    public OMException(String message) {
-        super(message);
-    }
-
-    public OMException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public OMException(Throwable cause) {
-        super(cause);
+    public SOAPBodyElementImpl(String localName, OMNamespace ns) {
+        super(localName, ns);
     }
 }
