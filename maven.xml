@@ -27,11 +27,11 @@
 		</goal>
 
 
-    <goal name="war" prereqs="jar">
+    <goal name="war" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
         <mkdir dir="target"/>
-		<war destfile="target/axis2.war" webxml="src/conf/web.xml">
-		  <fileset dir="src/html"/>
+		<war destfile="target/axis2.war" webxml="modules/src/conf/web.xml">
+		  <fileset dir="modules/core/src/html"/>
 		  <lib dir="${maven.repo.local}/stax/jars/">
 		    <include name="stax-api-1.0.jar"/>
 		    <include name="stax-1.1.1-dev.jar"/>		    
@@ -60,17 +60,17 @@
 		  <lib dir="modules/samples/target/">
 		    <include name="axis2*.jar"/>
 		  </lib>  
-		<classes dir="src/conf">
+		<classes dir="modules/core/src/conf">
       		    <include name="*.properties"/>
 		</classes>
 		</war>
     </goal>
     
-    <goal name="war-withsamples" prereqs="jar">
+    <goal name="war-withsamples" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
-                <war destfile="target/axis2.war" webxml="src/conf/web.xml">
-                  <fileset dir="src/html"/>
-                  <webinf dir="target/test-resources/samples"/>
+               <war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
+                  <fileset dir="modules/core/src/html"/>
+                  <webinf dir="modules/samples/target/test-resources/samples"/>
                   <lib dir="${maven.repo.local}/stax/jars/">
                     <include name="stax-api-1.0.jar"/>
                     <include name="stax-1.1.1-dev.jar"/>
@@ -99,7 +99,7 @@
 				  <lib dir="modules/samples/target/">
 				    <include name="axis2*.jar"/>
 				  </lib>  
-				<classes dir="src/conf">
+				<classes dir="modules/core/src/conf">
 		      		    <include name="*.properties"/>
 				</classes>
                 </war>
