@@ -237,14 +237,17 @@ public class OMElementImpl extends OMNamedNodeImpl
         if ((firstChild == null) && !done) {
             builder.next();
         }
+
+
+        child.setParent(this);
+
         child.setPreviousSibling(null);
         child.setNextSibling(firstChild);
         if (firstChild != null) {
             OMNodeImpl firstChildImpl = (OMNodeImpl) firstChild;
             firstChildImpl.setPreviousSibling(child);
         }
-        child.setParent(this);
-        firstChild = child;
+        this.setFirstChild(child);
     }
 
     /**

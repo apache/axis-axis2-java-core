@@ -17,6 +17,7 @@ package org.apache.axis.addressing;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Class AnyContentType
@@ -57,5 +58,9 @@ public class AnyContentType {
      */
     public String getReferenceValue(QName name) {
         return (String) valueHolder.get(name);
+    }
+
+    public Iterator getKeys(){
+        return valueHolder.keySet().iterator();
     }
 }

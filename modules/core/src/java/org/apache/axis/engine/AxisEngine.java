@@ -149,7 +149,7 @@ public class AxisEngine {
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
 
-            // send the error
+             // send the error
             executeOutFlow(faultContext, EngineRegistry.FAULTFLOW);
         } else if (!serverSide) {
 

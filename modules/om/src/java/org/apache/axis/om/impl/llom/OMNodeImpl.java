@@ -91,7 +91,15 @@ public abstract class OMNodeImpl implements OMNode {
      * @param element
      */
     public void setParent(OMElement element) {
+
+        if( ((OMElement)this.parent) == element){
+            return;
+        }
+
         if (element instanceof OMNodeImpl) {
+            if(this.parent != null){
+                this.detach();
+            }
             this.parent = (OMElementImpl) element;
         }
     }

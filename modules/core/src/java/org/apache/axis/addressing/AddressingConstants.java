@@ -68,4 +68,5 @@ public interface AddressingConstants {
     public static final String EPR_REFERENCE_PARAMETERS = "ReferenceParameters";
     public static final String EPR_PORT_TYPE = "PortType";
     public static final String EPR_SERVICE_NAME = "ServiceName";
+    public static final String EPR_SERVICE_NAME_PORT_NAME = "PortName";
 }

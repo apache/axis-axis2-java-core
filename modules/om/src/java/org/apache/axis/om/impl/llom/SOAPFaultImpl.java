@@ -77,8 +77,7 @@ public class SOAPFaultImpl extends OMElementImpl
         this.e = e;
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        this.setDetailInformation(OMFactory.newInstance().createText(this,
-                        sw.getBuffer().toString()));
+        this.setDetailInformation(OMFactory.newInstance().createText(sw.getBuffer().toString()));
     }
 
     /**
@@ -230,16 +229,16 @@ public class SOAPFaultImpl extends OMElementImpl
     /**
      * Method setDetailInformation
      *
-     * @param detail
+     * @param detailInformation
      */
-    public void setDetailInformation(OMNode detail) {
+    public void setDetailInformation(OMNode detailInformation) {
         if (detailElement != null) {
             detailElement.detach();
         }
         detailElement =
         new OMElementImpl(OMConstants.SOAPFAULT_DETAIL_LOCAL_NAME, this.ns);
         this.addChild(detailElement);
-        detailElement.addChild(detail);
+        detailElement.addChild(detailInformation);
     }
 
     /**
@@ -263,7 +262,7 @@ public class SOAPFaultImpl extends OMElementImpl
                             this.ns.getName(), OMConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
                             this.ns.getPrefix()));
             if (detailElement != null) {
-                return this.getDetailInformation();
+                return detailElement;
             }
         }
         return null;
