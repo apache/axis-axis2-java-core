@@ -66,7 +66,7 @@ import org.apache.axis.registry.Parameter;
  *         12:33:17 PM
  *
  */
-public class DeploymentEngine implements DeployCons {
+public class DeploymentEngine implements DeploymentConstants {
 
     private final Scheduler scheduler = new Scheduler();
     /**

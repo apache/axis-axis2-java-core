@@ -24,7 +24,7 @@ package org.apache.axis.deployment;
 /**
  * DeployCons interface is to keep constent value required for Deployemnt
  */
-public interface DeployCons {
+public interface DeploymentConstants {
     int SERVICE = 0; // if it is a servise
     int MODULE = 1; // if it is a module
 

@@ -2,7 +2,7 @@ package org.apache.axis.deployment.metadata.phaserule;
 
 import java.util.Vector;
 
-import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.metadata.HandlerMetaData;
 import org.apache.axis.deployment.metadata.ServerMetaData;
@@ -32,7 +32,7 @@ import org.apache.axis.deployment.metadata.ServerMetaData;
 /**
  * This class hold all the phases found in the service.xml and server.xml
  */
-public class PhaseHolder implements DeployCons {
+public class PhaseHolder implements DeploymentConstants {
 
     private Vector phaseholder = new Vector();
 

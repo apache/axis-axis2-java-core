@@ -1,7 +1,7 @@
 package org.apache.axis.deployment.listener;
 
 import org.apache.axis.deployment.repository.utill.WSInfoList;
-import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 
 import java.util.Vector;
@@ -27,7 +27,7 @@ import java.io.File;
  *         12:16:19 PM
  *
  */
-public class RepositaryListenerImpl implements RepositaryListener, DeployCons {
+public class RepositoryListenerImpl implements RepositoryListener, DeploymentConstants {
 
     /**
      * to store curreently checking jars
@@ -40,7 +40,7 @@ public class RepositaryListenerImpl implements RepositaryListener, DeployCons {
 
     private String folderName;
 
-    public RepositaryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
+    public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsinfoList = new WSInfoList(deploy_engine);
         // wsinfoList.init();

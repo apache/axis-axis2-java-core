@@ -1,7 +1,7 @@
 package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.DeploymentConstants;
 
 import java.util.Iterator;
 import java.util.Vector;
@@ -27,7 +27,7 @@ import java.io.File;
  *         12:13:11 PM
  *
  */
-public class WSInfoList implements DeployCons {
+public class WSInfoList implements DeploymentConstants {
     /**
      * This is to store all the jar files in a specified folder (WEB_INF)
      */

@@ -19,6 +19,6 @@ package org.apache.axis.impl.receivers;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class INReciver {
+public class InOutAsyncReceiver {
 
 }

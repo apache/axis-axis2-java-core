@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class InOutSyncReciver extends AbstractHandler implements Receiver {
+public class InOutSyncReceiver extends AbstractHandler implements Receiver {
     protected Log log = LogFactory.getLog(getClass()); 
 
     public void invoke(final MessageContext msgContext) throws AxisFault {

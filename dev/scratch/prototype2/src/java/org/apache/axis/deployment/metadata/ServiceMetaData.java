@@ -2,7 +2,7 @@ package org.apache.axis.deployment.metadata;
 
 import java.util.Vector;
 
-import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.metadata.phaserule.HandlerChainMetaData;
 import org.apache.axis.deployment.metadata.phaserule.HandlerChainMetaDataImpl;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
@@ -34,7 +34,7 @@ import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 /**
  * actual service class which is to deserilize ServiceMetaData.xml
  */
-public class ServiceMetaData implements DeployCons {
+public class ServiceMetaData implements DeploymentConstants {
 
     public static String PROVIDERNAME = "provider";
     public static String STYLENAME = "style";

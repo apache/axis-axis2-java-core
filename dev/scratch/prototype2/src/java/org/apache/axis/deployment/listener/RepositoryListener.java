@@ -25,7 +25,7 @@ package org.apache.axis.deployment.listener;
  * RepositaryListener is no listent to a specific folder whether the folder is
  * update eg: remove , added or modified files
  */
-public interface RepositaryListener {
+public interface RepositoryListener {
 
     /**
      * this method is to check whether new module is added (or modules)

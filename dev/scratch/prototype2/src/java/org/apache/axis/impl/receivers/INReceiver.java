@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
-
+package org.apache.axis.impl.receivers;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Reciver extends Handler{
+public class INReceiver {
+
 }

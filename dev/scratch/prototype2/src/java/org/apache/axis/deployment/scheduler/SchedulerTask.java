@@ -1,8 +1,8 @@
 package org.apache.axis.deployment.scheduler;
 
-import org.apache.axis.deployment.listener.RepositaryListener;
-import org.apache.axis.deployment.listener.RepositaryListenerImpl;
-import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.listener.RepositoryListener;
+import org.apache.axis.deployment.listener.RepositoryListenerImpl;
+import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 
 import java.util.TimerTask;
@@ -27,10 +27,10 @@ import java.util.TimerTask;
  *         9:55:11 AM
  *
  */
-public class SchedulerTask implements Runnable, DeployCons {
+public class SchedulerTask implements Runnable, DeploymentConstants {
     final Object lock = new Object();
 
-    private RepositaryListener wsListener;
+    private RepositoryListener wsListener;
 
     int state = VIRGIN;
     static final int VIRGIN = 0;
@@ -46,7 +46,7 @@ public class SchedulerTask implements Runnable, DeployCons {
     public SchedulerTask(DeploymentEngine deploy_engine, String folderName) {
         //     String filename = FOLDE_NAME; //"D:/Axis 2.0/projects/Deployement/test-data" ;
         //  private  FilesLoader filesLoader = new FilesLoader(filename);
-        wsListener = new RepositaryListenerImpl(folderName, deploy_engine);
+        wsListener = new RepositoryListenerImpl(folderName, deploy_engine);
     }
 
     /**
@@ -58,7 +58,7 @@ public class SchedulerTask implements Runnable, DeployCons {
     }
 
     private void soundAlarm() {
-        ((RepositaryListenerImpl) wsListener).startListent();
+        ((RepositoryListenerImpl) wsListener).startListent();
         //filesLoader.searchFolder();
     }
 

@@ -39,7 +39,7 @@ import java.io.InputStream;
  * this class implements DeployCons to get some constant values need to
  * parse a given document
  */
-public class DeploymentParser implements DeployCons {
+public class DeploymentParser implements DeploymentConstants {
     //server.xml starting tag
     private static final String serverXMLST = "server";
     //module.xml strating tag

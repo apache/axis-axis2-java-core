@@ -17,7 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.receivers.InOutSyncReciver;
+import org.apache.axis.impl.receivers.InOutSyncReceiver;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -28,6 +28,6 @@ public class ReceiverLocator {
         //File wsdlFile = msgCtx.getService().getParameter("wsdlFile");
         //parse the WSDL find the patterns 
         //create a reciver
-        return new InOutSyncReciver();
+        return new InOutSyncReceiver();
     }
 }
