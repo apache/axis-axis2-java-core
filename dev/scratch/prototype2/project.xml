@@ -81,7 +81,7 @@
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
-		<exclude>**/*EchoRawXMLTest.java</exclude>
+		<!-- <exclude>**/*EchoRawXMLTest.java</exclude> -->
       </excludes>
       <includes>
         <include>**/*Test.java</include>

@@ -43,10 +43,11 @@ import java.net.Socket;
  * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
  */
 public class SimpleAxisServer implements Runnable {
-    protected static Log log =
+    protected Log log =
             LogFactory.getLog(SimpleAxisServer.class.getName());
-    private static AxisEngine myAxisServer = null;
-    private ServerSocket serverSocket;    
+    private AxisEngine engine = null;
+    private ServerSocket serverSocket;  
+    private Socket socket = null;  
     /**
     are we stopped?
     latch to true if stop() is called
@@ -55,10 +56,9 @@ public class SimpleAxisServer implements Runnable {
     
 
     public SimpleAxisServer(AxisEngine myAxisServer) {
-    	SimpleAxisServer.myAxisServer = myAxisServer;
+    	this.engine = myAxisServer;
 		
     }
-
 
     /**
      * stop the server if not already told to.
@@ -69,10 +69,6 @@ public class SimpleAxisServer implements Runnable {
         super.finalize();
     }
 
-
-
-
-
     /**
      * Accept requests from a given TCP port and send them through the
      * Axis engine for processing.
@@ -81,9 +77,8 @@ public class SimpleAxisServer implements Runnable {
         try {
             // Accept and process requests from the socket
             while (!stopped) {
-                Socket socket = null;
                 try {
-                    socket = serverSocket.accept();
+                    this.socket = serverSocket.accept();
                    
                 } catch (java.io.InterruptedIOException iie) {
                 } catch (Exception e) {
@@ -91,16 +86,17 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 }
                 if (socket != null) {
-                    ServerHttpHandler worker = new ServerHttpHandler(this, socket,myAxisServer);
+                    ServerHttpHandler worker = new ServerHttpHandler(this, socket,engine);
                     MessageContext msgContext = worker.parseHTTPHeaders();
-                    myAxisServer.recive(msgContext);
-                    socket.close();
+                    engine.recive(msgContext);
+                    this.socket.close();
+                    this.socket = null;
                 }
             }
         } catch (AxisFault e) {
-            e.printStackTrace();
+            log.error(e);
         }catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         stop();
         log.info("Simple Axis Server Quit");
@@ -138,6 +134,7 @@ public class SimpleAxisServer implements Runnable {
      * This will interrupt any pending accept().
      */
     public void stop() {
+        log.info("stop called");
         //recognise use before we are live
         if(stopped ) {
             return;
@@ -151,15 +148,22 @@ public class SimpleAxisServer implements Runnable {
         try {
             if(serverSocket != null) {
                 serverSocket.close();
+                while(socket != null){
+                    try {
+                        //make sure all sockets closed by the time 
+                        //else we got in to lot of trouble testing
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        log.error(e1);
+                    }
+                }
             }
         } catch (IOException e) {
             log.info(e);
         } finally {
             serverSocket=null;
         }
-
         log.info("Simple Axis Server Quits");
-
     }
 
 }

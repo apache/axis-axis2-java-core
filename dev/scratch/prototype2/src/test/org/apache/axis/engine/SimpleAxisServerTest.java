@@ -17,22 +17,16 @@ package org.apache.axis.engine;
 
 //todo
 import java.net.ServerSocket;
-import java.net.URL;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.CallBack;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.engine.OperationImpl;
 import org.apache.axis.impl.engine.ServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.registry.ParameterImpl;
 import org.apache.axis.impl.transport.http.SimpleAxisServer;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
@@ -41,7 +35,7 @@ import org.apache.axis.registry.Service;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class EchoRawXMLTest extends AbstractTestCase{
+public class SimpleAxisServerTest extends AbstractTestCase{
     private QName serviceName = new QName("","EchoXMLService");
     private QName operationName = new QName("http://localhost/my","echoOMElement");
     private QName transportName = new QName("http://localhost/my","NullTransport");
@@ -52,12 +46,13 @@ public class EchoRawXMLTest extends AbstractTestCase{
     private SimpleAxisServer sas;
     private int testingPort = 7777;
     private int testCount = 0;
+    private AxisEngine engine;
     
-    public EchoRawXMLTest(){
-        super(EchoRawXMLTest.class.getName());
+    public SimpleAxisServerTest(){
+        super(SimpleAxisServerTest.class.getName());
     }
 
-    public EchoRawXMLTest(String testName) {
+    public SimpleAxisServerTest(String testName) {
         super(testName);
     }
 
@@ -91,74 +86,36 @@ public class EchoRawXMLTest extends AbstractTestCase{
         
         engineRegistry.addService(service);
         
-        AxisEngine engine = new AxisEngine(engineRegistry);
+        engine = new AxisEngine(engineRegistry);
+    }
+
+    protected void tearDown() throws Exception {
+    }
+
+
+    public void testEchoXMLSync() throws Exception{
         ServerSocket serverSoc = new ServerSocket(testingPort);
         sas = new SimpleAxisServer(engine);
         sas.setServerSocket(serverSoc);
         thisThread = new Thread(sas);
         thisThread.setDaemon(true);
         thisThread.start();
+        sas.stop();
+        Thread.sleep(1000);
+        serverSoc = new ServerSocket(testingPort);
+        sas = new SimpleAxisServer(engine);
+        sas.setServerSocket(serverSoc);
+        thisThread = new Thread(sas);
+        thisThread.setDaemon(true);
+        thisThread.start();
+        sas.stop();            
+        Thread.sleep(1000);
+        serverSoc = new ServerSocket(testingPort);
+        sas = new SimpleAxisServer(engine);
+        sas.setServerSocket(serverSoc);
+        thisThread = new Thread(sas);
+        thisThread.setDaemon(true);
+        thisThread.start();
+        sas.stop();            
     }
-
-    protected void tearDown() throws Exception {
-            sas.stop();   
-            Thread.sleep(1000);
-    }
-
-
-    public void testEchoXMLSync() throws Exception{
-        try{
-            OMFactory fac = OMFactory.newInstance();
-
-            OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
-            OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
-            OMElement value =  fac.createOMElement("myValue",omNs) ;
-            value.setValue("Isaac Assimov, the foundation Sega");
-            method.addChild(value);
-            
-            Call call = new Call();
-            URL url = new URL("http","127.0.0.1",testingPort,"/axis/services/EchoXMLService");
-            OMElement omele = call.syncCall(method,url);
-            assertNotNull(omele);
-        }catch(Exception e){
-            e.printStackTrace();
-            tearDown();
-            throw e;
-        }    
-    }
-    public void testEchoXMLASync() throws Exception{
-        try{
-            OMFactory fac = OMFactory.newInstance();
-
-            OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
-            OMElement method =  fac.createOMElement("echoOMElement",omNs) ;
-            OMElement value =  fac.createOMElement("myValue",omNs) ;
-            value.setValue("Isaac Assimov, the foundation Sega");
-            method.addChild(value);
-            
-            Call call = new Call();
-            URL url = new URL("http","127.0.0.1",testingPort,"/axis/services/EchoXMLService");
-            
-            CallBack callback = new CallBack() {
-                public void doWork(OMElement ele) {
-                    System.out.print("got the result = " + ele +" :)");
-
-                }
-                public void reportError(Exception e) {
-                    System.out.println("reporting error from callback !");
-                    e.printStackTrace();
-                }
-            };
-            
-            call.asyncCall(method,url,callback);
-            System.out.println("send the reqest");
-            
-            Thread.sleep(1000);
-        }catch(Exception e){
-            e.printStackTrace();
-            tearDown();
-            throw e;
-        }    
-    }
-
 }

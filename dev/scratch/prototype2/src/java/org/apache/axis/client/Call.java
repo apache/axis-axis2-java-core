@@ -43,20 +43,25 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This is conveneice API for the User who do not need to see the complexity of the 
- * Engine.  
+ * Engine. 
+ * //TODO this a a MOCK call things are subjected to be decided  
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Call {
     private EngineRegistry registry;
+    protected Log log = LogFactory.getLog(getClass());
+    
     
     public Call(){
         //TODO look for the Client XML and creatre a Engine registy
         this.registry = new EngineRegistryImpl(new GlobalImpl());
     }
-    //TODO this a a MOCK call things are subjected to be decided 
+    
     
     public OMElement syncCall(OMElement in,URL url) throws AxisFault{
         try {
@@ -74,7 +79,6 @@ public class Call {
             msgctx.setProperty(MessageContext.TRANSPORT_DATA,out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE,TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setProperty(MessageContext.REQUEST_URL,url);
-            
             engine.send(msgctx);
             
             MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
