@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Note: Had to substitute "xsd:string" for token, ID, and IDREF types to
+  avoid funky (and useless) special classes from Axis. This was true using both
+  1.1 and 1.2 alpha. -->
+<wsdl:definitions targetNamespace="http://seismic.sosnoski.com/wsdl"
+   xmlns:wns="http://seismic.sosnoski.com/wsdl"
+   xmlns:tns="http://seismic.sosnoski.com/types"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+   
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://seismic.sosnoski.com/types"
+     elementFormDefault="qualified">
+     
+   <element name="query">
+    <complexType>
+     <sequence>
+      <element name="min-date" minOccurs="0" type="xsd:dateTime"/>
+      <element name="max-date" minOccurs="0" type="xsd:dateTime"/>
+      <element name="min-long" minOccurs="0" type="xsd:float"/>
+      <element name="max-long" minOccurs="0" type="xsd:float"/>
+      <element name="min-lat" minOccurs="0" type="xsd:float"/>
+      <element name="max-lat" minOccurs="0" type="xsd:float"/>
+      <element name="min-mag" minOccurs="0" type="xsd:float"/>
+      <element name="max-mag" minOccurs="0" type="xsd:float"/>
+      <element name="min-depth" minOccurs="0" type="xsd:float"/>
+      <element name="max-depth" minOccurs="0" type="xsd:float"/>
+     </sequence>
+    </complexType>
+   </element>
+   
+   <complexType name="Region">
+    <simpleContent>
+     <extension base="xsd:string">
+      <attribute name="ident" type="xsd:string"/>
+      <attribute name="index" type="xsd:int"/>
+     </extension>
+    </simpleContent>
+   </complexType>
+   
+   <complexType name="Quake">
+    <attribute name="time" type="xsd:dateTime"/>
+    <attribute name="millis" type="xsd:int"/>
+    <attribute name="latitude" type="xsd:float"/>
+    <attribute name="longitude" type="xsd:float"/>
+    <attribute name="depth" type="xsd:float"/>
+    <attribute name="magnitude" type="xsd:float"/>
+    <attribute name="method" type="xsd:string"/>
+    <attribute name="region" type="xsd:string"/>
+   </complexType>
+   
+   <complexType name="QuakeSet">
+    <sequence>
+     <element name="area-name" type="xsd:string"/>
+     <element name="regions">
+      <complexType>
+       <sequence>
+        <element name="region" minOccurs="0" maxOccurs="unbounded" type="tns:Region"/>
+       </sequence>
+       <attribute name="count" type="xsd:int"/>
+      </complexType>
+     </element>
+     <element name="quakes">
+      <complexType>
+       <sequence>
+        <element name="quake" minOccurs="0" maxOccurs="unbounded" type="tns:Quake"/>
+       </sequence>
+       <attribute name="count" type="xsd:int"/>
+      </complexType>
+     </element>
+    </sequence>
+   </complexType>
+   
+   <element name="results">
+    <complexType>
+     <sequence>
+      <element name="result-set" minOccurs="0" maxOccurs="unbounded" type="tns:QuakeSet"/>
+     </sequence>
+     <attribute name="count" type="xsd:int"/>
+    </complexType>
+   </element>
+   
+  </schema>
+ </wsdl:types>
+ 
+ <wsdl:message name="quakeQuery">
+  <wsdl:part name="parameters" element="tns:query"/>
+ </wsdl:message>
+
+ <wsdl:message name="quakeResponse">
+  <wsdl:part name="result" element="tns:results"/>
+ </wsdl:message>
+ 
+ <wsdl:portType name="SeismicInterface">
+  <wsdl:operation name="matchQuakes">
+   <wsdl:input message="wns:quakeQuery"/>
+   <wsdl:output message="wns:quakeResponse"/>
+  </wsdl:operation>
+ </wsdl:portType>
+ 
+ <wsdl:binding name="SeismicBinding" type="wns:SeismicInterface">
+  <wsdl:operation name="matchQuakes">
+   <wsdl:input>
+    <soap:body use="literal"/>
+   </wsdl:input>
+   <wsdl:output>
+    <soap:body use="literal"/>
+   </wsdl:output>
+   <soap:operation soapAction=""/>
+  </wsdl:operation>
+  <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+ </wsdl:binding>
+
+ <wsdl:service name="SeismicService">
+  <wsdl:port name="seisdoclit" binding="wns:SeismicBinding">
+   <soap:address location="http://localhost:8080/axis/seisdoclit"/>
+  </wsdl:port>
+ </wsdl:service>
+
+</wsdl:definitions>
