@@ -17,21 +17,17 @@
   <logo>http://ws.apache.org/axis/images/axis.jpg</logo>
   <description>Next Generation of Apache Axis 2.0</description>
   <shortDescription>Axis 2.0</shortDescription>
-
   <!-- the project home page -->
   <url>http://ws.apache.org/axis2/</url>
   <issueTrackingUrl>http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
   <siteAddress>ws.apache.org/axis2</siteAddress>
   <siteDirectory>/www/axi2.ws.apache.org/</siteDirectory>
   <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
-
-	
 	<repository>
         <connection>scm:subversion:http://svn.apache.org/repos/asf/webservices/axis/trunk</connection>
         <developerConnection>scm:subversion:https://svn.apache.org/repos/asf/webservices/axis/trunk</developerConnection>
         <url>http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN</url>
     </repository>
-    
   <mailingLists>
     <mailingList>
       <name>Axis Developer List</name>
