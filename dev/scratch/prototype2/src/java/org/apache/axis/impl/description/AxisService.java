@@ -287,13 +287,6 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
         return (Class)this.getComponentProperty(DescriptionConstants.SERVICE_CLASS);
     }
 
-    public void setServiceClassName(String className) {
-       if(null != className)
-           this.setComponentProperty(DescriptionConstants.SERVICE_CLASS_NAME, className);
-    }
-
-    public String getServiceClassName() {
-        return (String) this.getComponentProperty(DescriptionConstants.SERVICE_CLASS_NAME);
-    }
+    
 
 }
