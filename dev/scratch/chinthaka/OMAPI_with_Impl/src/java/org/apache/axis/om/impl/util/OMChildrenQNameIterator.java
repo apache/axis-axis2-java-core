@@ -28,7 +28,6 @@ import java.util.Iterator;
  */
 public class OMChildrenQNameIterator implements Iterator {
 
-    private OMNamedNodeImpl currentNamedNode;
     private OMNode omNode;
     private QName qName;
 
@@ -66,36 +65,30 @@ public class OMChildrenQNameIterator implements Iterator {
      */
     public boolean hasNext() {
 
-        if (omNode != null) {
+        boolean needToMoveForward = true;
+        boolean isMatchingNodeFound = false;
 
-            if(picked){
-                omNode = omNode.getNextSibling();
-                picked = false;
-            }
+        while (needToMoveForward) {
+            if (omNode != null) {
 
-            if ((omNode instanceof OMNamedNodeImpl) && ((OMNamedNodeImpl)omNode).getQName().equals(qName)) {
-                currentNamedNode = (OMNamedNodeImpl) omNode;
-                return true;
-            }
+                System.out.println("Checking the current node, *" + omNode.getValue() + "*");
+                // check the current node for the criteria
+                if ((omNode instanceof OMNamedNodeImpl) && ((OMNamedNodeImpl) omNode).getQName().equals(qName)) {
+                    isMatchingNodeFound = true;
+                    needToMoveForward = false;
+                    System.out.println("One Found");
+                } else {
 
-            while (!(omNode.getNextSibling() instanceof OMNamedNodeImpl)) {
-                omNode =  omNode.getNextSibling();
-                if (omNode == null) {
-                    return false;
+                    System.out.println("Moving to next Sibling ...");
+                    // get the next named node
+                    omNode = omNode.getNextSibling();
+                    isMatchingNodeFound = needToMoveForward = !(omNode == null);
                 }
-            }
-
-            // now the currentNode holds an instance of an OMNamedNode
-            omNode =  omNode.getNextSibling();
-            currentNamedNode = (OMNamedNodeImpl) omNode;
-            if (currentNamedNode.getQName().equals(qName)) {
-                return true;
             } else {
-                return hasNext();
+                needToMoveForward = false;
             }
-
         }
-        return false;
+        return isMatchingNodeFound;
     }
 
     /**
@@ -106,11 +99,10 @@ public class OMChildrenQNameIterator implements Iterator {
      *          iteration has no more elements.
      */
     public Object next() {
-        if (hasNext()) {
-            picked = true;
-            return currentNamedNode;
-        }
-
-        return null;
+        OMNode tempNode = omNode;
+        omNode = omNode.getNextSibling();
+        return tempNode;
     }
+
+
 }

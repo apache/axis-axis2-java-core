@@ -70,8 +70,30 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
         ps.print(localName);
     }
 
-    public QName getQName(){
+    public QName getQName() {
         QName qName = new QName(ns.getValue(), ns.getPrefix(), localName);
         return qName;
     }
+
+//    /**
+//     * Equals method of QName seems doesn't working the way I need in this situation.
+//     * So implementing my own !!
+//     *
+//     * @param qName
+//     * @return
+//     */
+//    public boolean isQNameEquals(QName qName) {
+//        String thatLocalName = qName.getLocalName();
+//
+//        return ((thatLocalName == null && this.localName == null) || (thatLocalName != null && thatLocalName.equalsIgnoreCase(this.localName)))
+//                && ns.equals(qName.getNamespaceURI(), qName.getPrefix());
+//    }
+//
+//    private String getStringValue(String s) {
+//        if (s == null) {
+//            return "null";
+//        }
+//
+//        return s;
+//    }
 }

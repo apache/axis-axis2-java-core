@@ -28,7 +28,12 @@ import java.io.PrintStream;
 public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
     private String prefix;
 
-    protected OMNamespaceImpl(String uri, String prefix) {
+    /**
+     *
+     * @param uri
+     * @param prefix
+     */
+    public OMNamespaceImpl(String uri, String prefix) {
         value = uri;
         this.prefix = prefix;
     }

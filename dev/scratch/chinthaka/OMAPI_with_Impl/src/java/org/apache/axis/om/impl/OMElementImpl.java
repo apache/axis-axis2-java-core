@@ -79,6 +79,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         if (firstChild != null)
             firstChild.setPreviousSibling(child);
         child.setParent(this);
+        child.setComplete(true);
         firstChild = child;
     }
 
@@ -263,7 +264,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     /**
      * This will return the literal value of the node.
      * OMText --> the text
-     * OMElement --> name of the element as a QName in String format
+     * OMElement --> local name of the element in String format
      * OMAttribute --> the value of the attribue
      *
      * @return
