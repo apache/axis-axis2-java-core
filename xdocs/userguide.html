@@ -236,10 +236,10 @@ the server script can be used. The sever script however needs two parameters, th
 <p>Axis2 should be installed (see the Installation guide above). For simplicity samples will assume the servlet container is Tomcat. </p>
 <p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed Asix2.) </p>
 <p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
-<p>Apache Ant should be installed and should be available in the path. It can be checked weather Ant is properly installed by simply typing ant in the command prompt. Please refer<a href="http://ant.apache.org/"> http://ant.apache.org/</a>.</p>
+<p>Apache Ant should be installed and should be available in the path. It can be checked whether Ant is properly installed by simply typing ant in the command prompt. Please refer<a href="http://ant.apache.org/"> http://ant.apache.org/</a>.</p>
 <p align="center"><img src="images/ant.jpg" width="648" height="130"></p>
 <h2>Building the sample</h2>
-<p>The sources that are required for the running the samples can be compiled and packaged using the following ant task provided in the build.xml.</p>
+<p>The sources that are required for the running the samples can be compiled and packaged using the following ant task provided in the build.xml. Thus to build the samples the user can open a command prompt and change directory to modules\samples where the build.aml is located and type </p>
 <p>>ant compile</p>
 <p>or simply</p>
 <p>>ant</p>
@@ -252,7 +252,7 @@ the server script can be used. The sever script however needs two parameters, th
 </ul>
 <p>Once the sample is compiled once, all the required jar files for deploying and running all three Cases of the sample will be compiled and packaged.</p>
 <h3><a name="_Toc96698091"></a>Sample1- Case1 : Echo Synchronous call </h3>
-<p>The sample1 - Case1: Echo synchronous call is intended to demonstrate the synchronous web service call in Axis2 with both the client side and client side running Axis2. In the next few steps the user will be walked through in: </p>
+<p>The sample1 - Case1: Echo synchronous call is intended to demonstrate the synchronous web service call in Axis2 with both the client side and server side running Axis2. In the next few steps the user will be walked through in: </p>
 <ul>
   <li>Compiling and building a web service </li>
   <li>Deploying </li>
@@ -261,15 +261,9 @@ the server script can be used. The sever script however needs two parameters, th
 
 <p>It is assumed that the sample is already compiled. Please refer "Building Sample1" above.</p>
 
-<h4><strong>Building the sample </strong></h4>
-<p>Building the sample will take only one step provided that pre-conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the &quot;modules/samples&quot; directory and type </p>
-<p>&gt;ant compile </p>
-<p>and it will show the following output. </p>
-<p align="center"><img width="648" height="362" src="images/clip_image016.jpg"></p>
-<p>Now the user can actually go check for the sample1-all.jar in the lib directory and the packaged web service in the <strong>sample1.jar </strong>in the modules\samples\build\services directory. </p>
 
 <h4><strong>Deploying the sample </strong></h4>
-<p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis 2 engine at the runtime. </p>
+<p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis2 engine at the runtime. </p>
 <pre class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; 
    &nbsp;&nbsp;&lt;java:implementation class=&quot;userguide.sample1.EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;
 &nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt;   
@@ -295,7 +289,7 @@ the server script can be used. The sever script however needs two parameters, th
   <li>sample1 – Required for this(Case1) and the EchoAsync Call examples(Case1 and Case3). </li>
   <li>sample1WithHandler – required for Echo Synchronous call with a phased handler(Case2). </li>
 </ol>
-<p>If the servlet container is now running the user can go check to see weather the above services are deployed. Please refer the installation guide for further information on checking the deployed services. </p>
+<p>If the servlet container is now running the user can go check to see whether the above services are deployed. Please refer the installation guide for further information on checking the deployed services. </p>
 <p align="center"><img width="647" height="434" src="images/clip_image020.jpg"></p>
 <h4><strong>Running the sample </strong></h4>
 <p>The sample provides a simple synchronous client in the SynchronousClient.java class. First the user must start the servlet container and run the client by simply typing </p>
@@ -422,7 +416,7 @@ public void revoke(MessageContext msgContext){
 <p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a</strong>xis <strong>ar</strong>chive) </p>
 <p><strong>&#149;&nbsp; Deploy the archive in the Axis2 </strong></p>
 <p>While the Axis2 is running copy the archive to the services folder in the repository directory or use web upload method. (in the case of a Servlet container this directory is axis/WEB-INF/services/). Axis will automatically pick the archive and deploy the service. </p>
-<p>To make this whole process user-friendly, Axis 2 is shipped with a service creation GUI tool. It is
+<p>To make this whole process user-friendly, Axis2 is shipped with a service creation GUI tool. It is
 a "wizard interface" and also provides the facility for users to automatically create a very simple
 service.xml as well. The tool start script can be found in the bin directory. 
 
