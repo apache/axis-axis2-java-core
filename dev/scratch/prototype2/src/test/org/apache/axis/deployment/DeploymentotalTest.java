@@ -29,11 +29,11 @@ public class DeploymentotalTest extends TestCase {
         String filename = "./target/test-resources/deployment" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         er = deploymentEngine.start();
-       try {
-            Thread.sleep(11000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+//       try {
+//            Thread.sleep(11000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
     }
 
 }

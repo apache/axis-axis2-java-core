@@ -2,6 +2,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
@@ -169,9 +170,10 @@ public class DeploymentParser implements DeploymentConstants {
                 if (attname.equals(PROVIDERNAME)) {
                     //TODO load the java clss for this
                     //TODO  somtimes Provider should be change
-                    SimpleJavaProvider provider = new SimpleJavaProvider();
-                    provider.setName(new QName(getValue(attvalue)));
-                    axisService.setProvider(provider);
+                    dpengine.getCurrentFileItem().setProvideName(attvalue);
+                  //  Provider provider = new SimpleJavaProvider();
+                   // provider. .setName(new QName(getValue(attvalue)));
+                   // axisService.setProvider(provider);
                 } else if (attname.equals(STYLENAME)) {
                     // axisService.setStyle();
                     //TODO setStyle should be handle latter

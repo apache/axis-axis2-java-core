@@ -27,6 +27,7 @@ public class HDFileItem {
     private File file;
     private int type;
     private String className;
+    private String provideName;
 
     public String getClassName() {
         return className;
@@ -34,6 +35,14 @@ public class HDFileItem {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getProvideName() {
+        return provideName;
+    }
+
+    public void setProvideName(String provideName) {
+        this.provideName = provideName;
     }
 
     public HDFileItem(File file, int type) {

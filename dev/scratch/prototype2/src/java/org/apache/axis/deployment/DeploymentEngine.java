@@ -13,6 +13,7 @@ import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.phaseresolver.PhaseException;
@@ -251,8 +252,14 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
+                service.setClassLoader(loader1);
                 if(! currentFileItem.getClassName().equals("")){
                     serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
+                }
+                service.setServiceClass(serviceclass);
+                if(! currentFileItem.getProvideName().equals("")){
+                    Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
+                    service.setProvider((Provider)provider.newInstance());
                 }
                 service.setServiceClass(serviceclass);
             } catch (MalformedURLException e) {

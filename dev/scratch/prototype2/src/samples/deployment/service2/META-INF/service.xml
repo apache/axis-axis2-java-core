@@ -1,4 +1,4 @@
-<service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+<service provider="org.apache.axis.impl.providers.RawXMLProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
     <java:implementation class="Echo2" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
 
     <!-- these are Service Parameters -->
