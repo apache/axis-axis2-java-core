@@ -58,6 +58,7 @@ public interface EngineRegistry {
      * Ordred list of phases
      */
     public ArrayList getPhases();
+    public HashMap getServices();
 
 //    public ArrayList getTransPorts() ;
 //    public void setTransPorts(ArrayList transPorts) ;

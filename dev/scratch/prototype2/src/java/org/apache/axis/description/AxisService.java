@@ -234,6 +234,8 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
         return (Class)this.getComponentProperty(DescriptionConstants.SERVICE_CLASS);
     }
 
-    
+    public HashMap getOperations() {
+        return operationsMap;
+    }
 
 }

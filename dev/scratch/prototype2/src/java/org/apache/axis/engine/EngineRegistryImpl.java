@@ -39,6 +39,10 @@ public class EngineRegistryImpl implements EngineRegistry{
         phases = new ArrayList();
     }
 
+    public HashMap getServices() {
+        return services;
+    }
+
     public synchronized void addMdoule(AxisModule module) throws AxisFault {
         modules.put(module.getName(),module);
     }

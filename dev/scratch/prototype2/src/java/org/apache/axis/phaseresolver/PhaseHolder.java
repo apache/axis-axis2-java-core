@@ -157,7 +157,7 @@ public class PhaseHolder implements DeploymentConstants {
     public  void getOrderdHandlers(int chainType) throws PhaseException {
         try {
             OrderdPhases();
-            Vector tempHander = new Vector();
+       //     Vector tempHander = new Vector();
             HandlerMetaData[] handlers;
 
             switch (chainType) {
@@ -212,7 +212,7 @@ public class PhaseHolder implements DeploymentConstants {
     public void buildTransportChain(AxisTransport trnsport , int chainType) throws PhaseException {
         try{
             OrderdPhases();
-            Vector tempHander = new Vector();
+          //  Vector tempHander = new Vector();
             HandlerMetaData[] handlers;
             Class handlerClass = null;
             Handler handler;
@@ -304,7 +304,7 @@ public class PhaseHolder implements DeploymentConstants {
     public  void buildGoblalChain(AxisGlobal axisGlobal, int chainType) throws PhaseException {
         try {
             OrderdPhases();
-            Vector tempHander = new Vector();
+       //     Vector tempHander = new Vector();
             HandlerMetaData[] handlers;
 
             switch (chainType) {
