@@ -15,19 +15,17 @@
  */
 package org.apache.axis.om;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-
-
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import junit.framework.TestCase;
 import org.apache.axis.om.impl.SOAPMessageImpl;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.apache.axis.om.soap.SOAPMessage;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.
@@ -44,8 +42,8 @@ public class OMTest extends TestCase{
         XmlPullParser  parser = pf.newPullParser();
         parser.setInput(new InputStreamReader(in));
         
-        OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
-        omdoc = parserWrapper.getSOAPMessage();
+        OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
+        omdoc = new SOAPMessageImpl(parserWrapper);
     }
 
     

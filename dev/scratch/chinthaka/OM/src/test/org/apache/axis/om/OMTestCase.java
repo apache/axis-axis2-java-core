@@ -1,7 +1,7 @@
 package org.apache.axis.om;
 
 import junit.framework.TestCase;
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.soap.SOAPMessage;
 import org.xmlpull.v1.XmlPullParser;
@@ -31,7 +31,7 @@ import java.io.FileReader;
 public class OMTestCase extends TestCase  {
 
     protected static final String IN_FILE_NAME = "resources/soapmessage.xml";
-    protected OMXMLPullParserWrapper omXmlPullParserWrapper;
+    protected OMXPPWrapper omXmlPullParserWrapper;
 
     protected SOAPMessage soapMessage;
     protected SOAPEnvelope soapEnvelope;
@@ -43,11 +43,11 @@ public class OMTestCase extends TestCase  {
         soapEnvelope = soapMessage.getEnvelope();
     }
 
-    protected OMXMLPullParserWrapper getOMBuilder() throws Exception {
+    protected OMXPPWrapper getOMBuilder() throws Exception {
         XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.setInput(new FileReader(IN_FILE_NAME));
-        omXmlPullParserWrapper = new OMXMLPullParserWrapper(parser);
+        omXmlPullParserWrapper = new OMXPPWrapper(parser);
         return omXmlPullParserWrapper;
     }
 

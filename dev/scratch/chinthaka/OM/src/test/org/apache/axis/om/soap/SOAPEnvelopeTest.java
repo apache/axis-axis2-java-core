@@ -19,15 +19,7 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
-import org.apache.axis.om.soap.SOAPBody;
-import org.apache.axis.om.soap.SOAPHeader;
 import org.apache.axis.om.OMTestCase;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.FileReader;
-import java.util.Iterator;
 
 
 public class SOAPEnvelopeTest extends OMTestCase {

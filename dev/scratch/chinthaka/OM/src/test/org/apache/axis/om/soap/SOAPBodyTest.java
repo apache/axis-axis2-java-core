@@ -19,10 +19,8 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.impl.OMNamespaceImpl;
-import org.apache.axis.om.soap.SOAPBody;
-import org.apache.axis.om.soap.SOAPBodyElement;
 import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.impl.OMNamespaceImpl;
 
 
 public class SOAPBodyTest extends OMTestCase {

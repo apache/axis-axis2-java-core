@@ -19,8 +19,6 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.soap.SOAPHeader;
-import org.apache.axis.om.soap.SOAPHeaderElement;
 import org.apache.axis.om.OMTestCase;
 
 import java.util.Iterator;

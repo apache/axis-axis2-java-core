@@ -19,10 +19,8 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.impl.OMNamespaceImpl;
-import org.apache.axis.om.soap.SOAPHeader;
-import org.apache.axis.om.soap.SOAPHeaderElement;
 import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.impl.OMNamespaceImpl;
 
 import java.util.Iterator;
 
