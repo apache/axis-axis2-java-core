@@ -108,6 +108,81 @@ public class SimpleTypeEncodingUtils {
         }
         return Integer.parseInt(val);
     }
+
+     public static double deserializeDouble(XMLStreamReader xpp) throws AxisFault {
+        String val = deserializeString(xpp);
+        if (val == null) {
+            throw new AxisFault("Number format exception value is null");
+        }
+        return Double.parseDouble(val);
+    }
+
+    public static int[] deserializeIntArray(XMLStreamReader xpp)
+        throws AxisFault {
+        ArrayList ints = new ArrayList();
+
+        try {
+            int event = xpp.next();
+
+            while (true) {
+                if (XMLStreamConstants.START_ELEMENT == event) {
+                    String stringValue = deserializeString(xpp);
+                    if (stringValue==null){
+                        throw new AxisFault("Wrong type of argument");
+                    }
+                    ints.add(stringValue);
+                } else if (XMLStreamConstants.END_ELEMENT == event) {
+                    break;
+                } else if (XMLStreamConstants.END_DOCUMENT == event) {
+                    throw new AxisFault("premature end of file");
+                }
+                event = xpp.next();
+            }
+            int intCount = ints.size();
+            int[] intVals = new int[intCount];
+            for (int i = 0; i < intCount; i++) {
+                intVals[i] =  Integer.parseInt(ints.get(i).toString());
+            }
+            return intVals;
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+
+    }
+
+    public static double[] deserializeDoubleArray(XMLStreamReader xpp)
+           throws AxisFault {
+           ArrayList doubles = new ArrayList();
+
+           try {
+               int event = xpp.next();
+
+               while (true) {
+                   if (XMLStreamConstants.START_ELEMENT == event) {
+                       String stringValue = deserializeString(xpp);
+                       if (stringValue==null){
+                           throw new AxisFault("Wrong type of argument");
+                       }
+                       doubles.add(stringValue);
+                   } else if (XMLStreamConstants.END_ELEMENT == event) {
+                       break;
+                   } else if (XMLStreamConstants.END_DOCUMENT == event) {
+                       throw new AxisFault("premature end of file");
+                   }
+                   event = xpp.next();
+               }
+               int doubleCount = doubles.size();
+               double[] doubleVals = new double[doubleCount];
+               for (int i = 0; i < doubleCount; i++) {
+                   doubleVals[i] =  Double.parseDouble(doubles.get(i).toString());
+               }
+               return doubleVals;
+           } catch (XMLStreamException e) {
+               throw AxisFault.makeFault(e);
+           }
+
+       }
+
     public static void serialize(
         XMLStreamWriter out,
         QName elementName,
