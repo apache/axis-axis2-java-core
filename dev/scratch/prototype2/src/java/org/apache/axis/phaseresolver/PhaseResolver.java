@@ -1,6 +1,8 @@
 package org.apache.axis.phaseresolver;
 
 import java.util.Vector;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
@@ -101,9 +103,14 @@ public class PhaseResolver {
         }
         */
         // service module handlers
-        Vector modules = (Vector)axisService.getModules();
-        for (int i = 0; i < modules.size(); i++) {
-            QName moduleref = (QName) modules.elementAt(i);
+        Collection collection = axisService.getModules();
+        Iterator itr = collection.iterator();
+        while(itr.hasNext()){
+           QName moduleref = (QName)itr.next();
+       // }
+       // Vector modules = (Vector)axisService.getModules();
+       // for (int i = 0; i < modules.size(); i++) {
+         //   QName moduleref = (QName) modules.elementAt(i);
             module = engineRegistry.getModule(moduleref);
             switch (flowtype){
                 case 1 : {
