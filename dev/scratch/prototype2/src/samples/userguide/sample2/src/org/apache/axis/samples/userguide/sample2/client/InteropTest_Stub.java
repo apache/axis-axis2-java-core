@@ -47,7 +47,7 @@ public class InteropTest_Stub {
 	///					  User setter methods                 ///
 	/////////////////////////////////////////////////////////////
 	
-	public void setEnePointReference(EndpointReference epr){
+	public void setEndPointReference(EndpointReference epr){
 		this.call.setTo(epr);		
 	}
 	
