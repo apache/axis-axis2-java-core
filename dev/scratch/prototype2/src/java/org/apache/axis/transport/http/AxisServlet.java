@@ -67,6 +67,10 @@ public class AxisServlet extends HttpServlet {
         }
     }
 
+    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        doPost(httpServletRequest,httpServletResponse);
+    }
+
     /* (non-Javadoc)
     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
     */
@@ -121,7 +125,7 @@ public class AxisServlet extends HttpServlet {
 
     }
 
-
+    //todo this neeeds to be re-written as a JSP
     private void listServices(HttpServletResponse res) throws IOException {
         HashMap services = engineRegistry.getServices();
         HashMap operations;
@@ -131,7 +135,9 @@ public class AxisServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         res.setContentType("text/html");
         String html = "<HTML>\n" +
-                "<HEAD><TITLE>Avalilable services</TITLE></HEAD>\n" +
+                "<HEAD><TITLE>Avalilable services</TITLE>" +
+                "<link href=\"css/axis-style.css\" rel=\"stylesheet\" type=\"text/css\">" +
+                "</HEAD>\n" +
                 "<BODY>\n" +
                 "<H1>Avalilable services</H1>\n";
 
