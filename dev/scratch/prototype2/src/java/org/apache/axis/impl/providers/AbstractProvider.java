@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public abstract class AbstractProvider implements Provider{
-    private QName name;
+    protected QName name;
 
     public QName getName() {
         return name;

@@ -27,29 +27,10 @@ public class AxisGlobal implements ParameterInclude {
         paramInclude = new ParameterIncludeImpl();
     }
     
-    public int hashCode() {
-        return paramInclude.hashCode();
-    }
-
-    public String toString() {
-        return paramInclude.toString();
-    }
-
-    /**
-     * @param name
-     * @return
-     */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
     }
 
-    public boolean equals(Object obj) {
-        return paramInclude.equals(obj);
-    }
-
-    /**
-     * @param param
-     */
     public void addParameter(Parameter param) {
         paramInclude.addParameter(param);
     }

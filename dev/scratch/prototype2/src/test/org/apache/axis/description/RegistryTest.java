@@ -50,7 +50,9 @@ public class RegistryTest extends AbstractTestCase{
         
         assertSame(modlue,reg.getModule(moduleName));
         assertSame(service,reg.getService(serviceName));
+        reg.removeService(serviceName);
         assertSame(ag,reg.getGlobal());
+        assertNull(reg.getService(serviceName));
  
     }
     public void testHandlerMedatata(){
@@ -62,6 +64,8 @@ public class RegistryTest extends AbstractTestCase{
         AxisService service = new SimpleAxisServiceImpl(new QName("Service1"));
         testParameteInClude(service);
         testFlowIncludeTest(service);
+        
+        
     }    
     
     public void testModule(){

@@ -44,7 +44,6 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     protected Log log = LogFactory.getLog(getClass());
 
     private String message;
-    private QName name;
     private String scope;
     private Method method;
     private ClassLoader classLoader;
@@ -102,9 +101,6 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     }
 
 
-    public QName getName() {
-        return name;
-    }
 
     public MessageContext invoke(MessageContext msgContext) throws AxisFault {
         try {
@@ -155,9 +151,6 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         log.info("I am Speaking Provider revoking :)");
     }
 
-    public void setName(QName name) {
-        this.name = name;
-    }
 
     /**
      * @return

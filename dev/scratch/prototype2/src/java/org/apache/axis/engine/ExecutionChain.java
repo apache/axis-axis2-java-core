@@ -69,7 +69,7 @@ public class ExecutionChain {
                 }
             }
         } catch (Exception e) {
-            while (executionStack.isEmpty()) {
+            while (!executionStack.isEmpty()) {
                 Handler handler = (Handler) executionStack.pop();
                 handler.revoke(msgctx);
             }
