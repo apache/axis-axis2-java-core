@@ -1,0 +1,60 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from EchoService WSDL service -->
+
+  <service name="echo" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="http://axis.apache.org/sample/echo"/>
+      <parameter name="wsdlServiceElement" value="EchoService"/>
+      <parameter name="wsdlServicePort" value="echo"/>
+      <parameter name="className" value="org.apache.axis.sample.echo.EchoSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="Echo"/>
+      <operation name="echoString" qname="operNS:echoString" xmlns:operNS="http://axis.apache.org/sample/echo" returnQName="echoStringReturn" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="in" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoStringArray" qname="operNS:echoStringArray" xmlns:operNS="http://axis.apache.org/sample/echo" returnQName="echoStringArrayReturn" returnType="rtns:ArrayOf_xsd_string" xmlns:rtns="http://axis.apache.org/sample/echo" soapAction="" >
+        <parameter qname="in" type="tns:ArrayOf_xsd_string" xmlns:tns="http://axis.apache.org/sample/echo"/>
+      </operation>
+      <operation name="echoEchoStruct" qname="operNS:echoEchoStruct" xmlns:operNS="http://axis.apache.org/sample/echo" returnQName="echoEchoStructReturn" returnType="rtns:EchoStruct" xmlns:rtns="http://axis.apache.org/sample/echo" soapAction="" >
+        <parameter qname="in" type="tns:EchoStruct" xmlns:tns="http://axis.apache.org/sample/echo"/>
+      </operation>
+      <operation name="echoEchoStructArray" qname="operNS:echoEchoStructArray" xmlns:operNS="http://axis.apache.org/sample/echo" returnQName="echoEchoStructArrayReturn" returnType="rtns:ArrayOfEchoStruct" xmlns:rtns="http://axis.apache.org/sample/echo" soapAction="" >
+        <parameter qname="in" type="tns:ArrayOfEchoStruct" xmlns:tns="http://axis.apache.org/sample/echo"/>
+      </operation>
+      <parameter name="allowedMethods" value="echoEchoStructArray echoStringArray echoEchoStruct echoString"/>
+
+      <typeMapping
+        xmlns:ns="http://axis.apache.org/sample/echo"
+        qname="ns:ArrayOf_xsd_string"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://axis.apache.org/sample/echo"
+        qname="ns:ArrayOfEchoStruct"
+        type="java:org.apache.axis.sample.echo.EchoStruct[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://axis.apache.org/sample/echo"
+        qname="ns:EchoStruct"
+        type="java:org.apache.axis.sample.echo.EchoStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

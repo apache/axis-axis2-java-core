@@ -1,0 +1,75 @@
+<project name="perf-suite" basedir="." default="test">
+	<property name="maven.repo" value="${user.home}/.maven/repository/"/>
+	<property name="build" value="build"/>
+<property name="axis.classes" value="build/axis-classes"/>
+<property name="axis2.classes" value="build/axis2-classes"/>
+	
+	<path id="axis.classpath">
+			<fileset dir="${maven.repo}">
+					<include name="axis/jars/activation.jar"/>
+					<include name="axis/jars/axis-jaxrpc-1.2-RC3.jar"/>
+					<include name="axis/jars/j2ee.jar"/>
+					<include name="axis/jars/axis-wsdl4j-1.2-RC3.jar"/>
+					<include name="axis/jars/axis-1.2-RC3.jar"/>
+					<include name="axis/jars/axis-saaj-1.2-RC3.jar"/>
+					<include name="commons-logging/jars/commons-logging-*.jar"/>
+					<include name="commons-discovery/jars/commons-discovery-*.jar"/>
+					<include name="xerces/jars/xerces*.jar"/>
+			</fileset>
+	</path>
+	<path id="axis2.classpath">
+			<fileset dir="${maven.repo}">
+				<include name="axis/jars/axis2-*.jar"/>
+				<include name="axis/jars/commons-logging-*.jar"/>
+				<include name="axis/jars/commons-discovery-*.jar"/>
+			
+				<include  name="**stax/jars/*dev*.jar"/>
+					<include  name="**stax/jars/*dev*.jar"/>
+					<include  name="**stax/jars/*api*.jar"/>
+					<include  name="**axis/jars/j2ee.jar"/>
+					<include  name="**wsdl*-RC3**.jar"/>
+			</fileset>
+	</path>
+	
+	<target name="init">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${axis.classes}"/>
+		<mkdir dir="${axis2.classes}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac classpath="axis.classpath" destdir="${axis.classes}">
+				<classpath refid="axis.classpath" />
+				<src path="common"/>
+				<src path="axis"/>				
+		</javac>
+		<javac classpath="axis2.classpath" destdir="${axis2.classes}">
+				<classpath refid="axis2.classpath" />
+				<src path="common"/>
+				<src path="axis2"/>				
+		</javac>
+	</target>
+	
+	<target name="axis" depends="compile">
+		<java classname="AxisTest">
+				<classpath>
+				<path  refid="axis.classpath"/>
+					<pathelement location="${axis.classes}"/>
+				</classpath>
+		</java>
+	</target>
+	
+	<target name="axis2" depends="compile">
+		<java classname="Axis2Test">
+				<classpath>
+				<path  refid="axis2.classpath"/>
+					<pathelement location="${axis2.classes}"/>
+				</classpath>
+		</java>
+	</target>
+	
+	<target name="test" depends="clean,init,compile,axis,axis2"/>
+	<target name="clean">
+		<delete  dir="${build}"></delete>
+	</target>
+</project>
