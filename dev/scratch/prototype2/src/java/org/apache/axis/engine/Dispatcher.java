@@ -34,7 +34,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
             String filePart = toEPR.getAddress();
             String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
 
-            if (filePart.startsWith("axis/services/")) {
+            if (filePart.startsWith("axis/services/") || filePart.startsWith("/axis/services/")) {
                 String servicePart = filePart.substring(14);
                 int separator = servicePart.indexOf('/');
                 if (separator > -1) {

@@ -26,13 +26,18 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
+import org.apache.axis.encoding.OutObjectImpl;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
+import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OutObject;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
@@ -113,10 +118,12 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
         Object[] objs = new Object[parms.length];
         
         for(int i = 0;i<parms.length;i++){
-            if("int".equals(parms[i].getName())){
+            if(int.class.equals(parms[i])){
                 objs[i] =  new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
-            }else if("java.lang.String".equals(parms[i].getName())){
+            }else if(String.class.equals(parms[i])){
                 objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
+            }else if(String[].class.equals(parms[i])){
+                objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
             }else{
                 throw new UnsupportedOperationException("Only int and the String supported yet");
             } 
@@ -149,10 +156,18 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             Object[] parms = deserializeParameters(msgContext, method);
             //invoke the WebService 
             Object result = method.invoke(obj, parms);
-
-            //TODO fix the server side  
-//            SOAPXMLParserWrapper parser = new OMXMLPullParserWrapper();
-//            msgContext.setOutMessage(new OMMessageImpl(parser));
+            OutObject outobj = new OutObjectImpl(result);            
+            OMFactory fac = OMFactory.newInstance();
+            SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
+            
+            OMNamespace ns = fac.createOMNamespace("http://soapenc/","res");
+            OMElement responseMethodName = fac.createOMElement(methodName+"Response",ns);
+            responseEnvelope.getBody().addChild(responseMethodName);
+            OMElement returnelement = fac.createOMElement("return",ns);
+            responseMethodName.addChild(returnelement);
+            ObjectToOMBuilder builder = new ObjectToOMBuilder(returnelement,outobj);
+            msgContext.setEnvelope(responseEnvelope);
+            
             return msgContext;
         } catch (SecurityException e) {
             throw AxisFault.makeFault(e);

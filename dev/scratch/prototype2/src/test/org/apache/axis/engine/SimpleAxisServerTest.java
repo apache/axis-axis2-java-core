@@ -16,8 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import java.net.ServerSocket;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;

@@ -4,6 +4,9 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Locale;
 
 /**
@@ -29,7 +32,9 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
     public SOAPFaultImpl(OMElement parent, Exception e) {
         super(parent);
         this.e = e;
-        this.addChild(OMFactory.newInstance().createText(this, e.getMessage()));
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        this.addChild(OMFactory.newInstance().createText(this, sw.getBuffer().toString()));
         localName = SOAPFAULT_LOCAL_NAME;
         setNamespace(new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_NAMESPACE_PREFIX));
     }

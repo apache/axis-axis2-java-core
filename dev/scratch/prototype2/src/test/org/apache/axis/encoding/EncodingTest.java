@@ -24,6 +24,11 @@ import org.apache.axis.om.OMNamespace;
 
 import java.lang.reflect.Method;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 
 public class EncodingTest extends AbstractTestCase {
 
@@ -58,9 +63,49 @@ public class EncodingTest extends AbstractTestCase {
         sjp.deserializeParameters(omel.getPullParser(false),method);
     }
     
+    
+    public void testDeserializingStringArray() throws SecurityException, NoSuchMethodException, AxisFault{
+        Method method = Echo.class.getMethod("echoStringArray",new Class[]{String[].class});
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+        OMFactory omfac = OMFactory.newInstance();
+        OMElement omel = omfac.createOMElement("Array",omNs);
+        
+        for(int i = 0;i<5;i++){
+            OMElement temp = omfac.createOMElement("val",omNs);
+            temp.addChild(omfac.createText(String.valueOf(i)));
+            omel.addChild(temp);
+        }
+        
+        SimpleJavaProvider sjp = new SimpleJavaProvider();
+        sjp.deserializeParameters(omel.getPullParser(false),method);
+    }
+
+    public void testDeserializingStringArrayVal() throws SecurityException, NoSuchMethodException, AxisFault, XMLStreamException, FactoryConfigurationError{
+        OMNamespace omNs = OMFactory.newInstance().createOMNamespace("http://host/my","my");
+        OMFactory omfac = OMFactory.newInstance();
+        OMElement omel = omfac.createOMElement("Array",omNs);
+        
+        for(int i = 0;i<5;i++){
+            OMElement temp = omfac.createOMElement("val",omNs);
+            temp.addChild(omfac.createText(String.valueOf(i)));
+            omel.addChild(temp);
+        }
+        
+        omel.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),true);
+        XMLStreamReader xpp = omel.getPullParser(false);
+        String[] strs = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
+        for(int i = 0;i<strs.length;i++){
+            System.out.println(strs[i]);
+        }
+        
+    }
+    
     public class Echo{
         public int echoInt(int intVal){
             return intVal;
+        }
+        public String[] echoStringArray(String[] in){
+            return in;
         }
     }
 

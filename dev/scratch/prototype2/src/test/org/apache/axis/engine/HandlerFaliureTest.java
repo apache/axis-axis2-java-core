@@ -153,7 +153,7 @@ public class HandlerFaliureTest extends AbstractTestCase{
             OMElement omele = call.syncCall(method,url);
             assertNotNull(omele);
         }catch(AxisFault e){
-            assertEquals(e.getMessage(),EngineUtils.FAILURE_MESSAGE);
+            assertTrue((e.getMessage().indexOf(EngineUtils.FAILURE_MESSAGE)) > 0);
             tearDown();
             return;
         }

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.encoding;
 
+import java.util.ArrayList;
+
 import org.apache.axis.engine.AxisFault;
 
 import javax.xml.namespace.QName;
@@ -25,6 +27,32 @@ import javax.xml.stream.XMLStreamWriter;
 
 
 public class SimpleTypeEncodingUtils {
+    public static String[] deserializeStringArray(XMLStreamReader xpp)throws AxisFault{
+        ArrayList strings = new ArrayList();
+        
+        try{
+            int event = xpp.next();
+            while(true){
+                if(XMLStreamConstants.START_ELEMENT == event){
+                    strings.add(deserializeString(xpp));
+                }if(XMLStreamConstants.END_ELEMENT == event){
+                    break;
+                }if(XMLStreamConstants.END_DOCUMENT == event){
+                    throw new AxisFault("premature and of file");
+                }
+                event = xpp.next();
+            }
+            String[] stringvals = new String[strings.size()];
+            for(int i = 0;i<strings.size();i++){
+                stringvals[i] = (String)strings.get(i);
+            }
+            return stringvals;
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+
+    }
+    
     public static String deserializeString(XMLStreamReader xpp)throws AxisFault{
         StringBuffer value = new StringBuffer();
         try {
@@ -40,7 +68,7 @@ public class SimpleTypeEncodingUtils {
                 event = xpp.next();
             }
         } catch (XMLStreamException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         }
         if(value.length() == 0){
             return null;

@@ -1,5 +1,6 @@
 package org.apache.axis.om;
 
+import org.apache.axis.engine.AxisFault;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -43,5 +44,5 @@ public interface OutObject {
      * When this method is being called the Object should start throwing SAX events through the
      * ContentHandler registered earlier.
      */
-    public void startBuilding();
+    public void startBuilding()throws OMException ;
 }

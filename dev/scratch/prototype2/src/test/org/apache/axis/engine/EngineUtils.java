@@ -34,7 +34,7 @@ import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 
 public class EngineUtils {
-    public static final int TESTING_PORT = 7777;
+    public static final int TESTING_PORT = 3333;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
     private static SimpleHTTPReceiver sas;
@@ -50,13 +50,20 @@ public class EngineUtils {
     
     public static synchronized SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
         AxisEngine engine = new AxisEngine(engineRegistry);
-        ServerSocket serverSoc = new ServerSocket(TESTING_PORT);
+        ServerSocket serverSoc = null;
         if(sas == null){
-            sas = new SimpleHTTPReceiver(engine);
         }else{
             sas.stop();
-            sas = new SimpleHTTPReceiver(engine);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
+        serverSoc = new ServerSocket(TESTING_PORT);
+        sas = new SimpleHTTPReceiver(engine);
+
         sas.setServerSocket(serverSoc);
         Thread thisThread = new Thread(sas);
         thisThread.setDaemon(true);

@@ -48,11 +48,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     protected static Log log =
             LogFactory.getLog(SimpleHTTPReceiver.class.getName());
 
-    // Axis specific constants
     protected static String transportName = "SimpleHTTP";
-    protected AxisEngine engine;
-    //  private SimpleAxisServer server;
-    // private Socket socket;
     
 
 
@@ -145,6 +141,12 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(dir);
             EngineRegistry er = deploymentEngine.start();
+            try {
+                Thread.sleep(9000);
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
             this.engine = new AxisEngine(er);
         } catch (PhaseException e) {
             throw AxisFault.makeFault(e);
