@@ -135,7 +135,7 @@ the server script can be used. The sever script however needs two parameters, th
   <li>Case3: Echo Asynchronous call at the client side.  </li>
 </ol>
 <p>For the above three cases the sample will make use of two web services(namely sample1, sample1WithHandler) and two client applications. The diagram shows how the two services and the two client applications are used to come up with the three cases mentioned above.</p>
-<p align="center"><img src="images/cases.jpg"></p>
+<p align="center"><img src="images/cases.jpg" width="467" height="246"></p>
 
 <p> Axis2 M1 currently does not support the data binding, thus in the samples the operation that will be supported will be the echoing of xml without data binding. The message that will be sent and echoed will be the following.</p>
 <p class="style1 style2 style3">&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -238,13 +238,13 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed Asix2.) </p>
 <p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
 <p>Apache Ant should be installed and should be available in the path. It can be checked weather Ant is properly installed by simply typing ant in the command prompt. Please refer<a href="http://ant.apache.org/"> http://ant.apache.org/</a>.</p>
-<p align="center"><img src="images/ant.jpg"></p>
+<p align="center"><img src="images/ant.jpg" width="648" height="130"></p>
 <h2>Building the sample</h2>
 <p>The sources that are required for the running the samples can be compiled and packaged using the following ant task provided in the build.xml.</p>
 <p>>ant compile</p>
 <p>or simply</p>
 <p>>ant</p>
-<p align="center"><img src="images/clip_image018.jpg"></img></p>
+<p align="center"><img src="images/clip_image018.jpg" width="575" height="296"></img></p>
 <p>The compilation will result in building three jar files; two of which are deployable services and the other is the compiled classes required for running the samples.</p>
 <ul>
 	<li>sample1.jar – Deployable web service that will be used for Case1 and Case3 (Packaged to modules/samples/build/services)</li>
@@ -285,7 +285,7 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p>&gt;ant compile </p>
 <p>The web service will get packaged into the build\services directory. Now the user can deploy the service by one of the following methods. Since Axis2 supports the hot deployment of services can be deployed while the container is up and running. For option 2 below actually requires the container to be online. </p>
 <p>&gt;ant deploy </p>
-<p align="center"><img src="images/clip_image018.jpg"></p>
+<p align="center"><img src="images/clip_image018.jpg" width="575" height="296"></p>
 <p>&nbsp; </p>
 <p>&#149;&nbsp; Uploading the jar using the web interface provided in the <strong>http:// &lt;host :port&gt;/ axis2 </strong>location. Please refer the Installation guide for further information. </p>
 <p>&#149;&nbsp; Manually copying the sample1.jar in build\services to the AXIS_HOME\WEB-INF\services directory. </p>
