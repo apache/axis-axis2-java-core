@@ -1,0 +1,890 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="PerformanceTestReport_files/filelist.xml">
+<link rel=Edit-Time-Data href="PerformanceTestReport_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Performance Test Report</title>
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Tahoma;}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Tahoma;}
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Tahoma;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:10.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:20.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoTof, li.MsoTof, div.MsoTof
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:20.0pt;
+	margin-bottom:.0001pt;
+	text-indent:-20.0pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.report-title
+	{mso-style-name:report-title;
+	font-family:Tahoma;
+	mso-ascii-font-family:Tahoma;
+	mso-hansi-font-family:Tahoma;
+	mso-bidi-font-family:Tahoma;
+	font-weight:bold;}
+@page Section1
+	{size:595.45pt 841.7pt;
+	margin:.75in 63.35pt 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:275798829;
+	mso-list-type:hybrid;
+	mso-list-template-ids:254559684 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:1090544924;
+	mso-list-template-ids:1871741286;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:1555653279;
+	mso-list-template-ids:-1963555274;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l2:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:1579055467;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2128683606 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l3:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:1621573065;
+	mso-list-template-ids:558150902;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:1748920695;
+	mso-list-template-ids:-1970258260;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+class=report-title><span style='font-size:18.0pt'>Performance Test Report</span></span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<b><span style='font-size:16.0pt;font-family:Tahoma;mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:18.0pt;mso-ansi-language:EN-US;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span></b>
+
+<h1>Table of Contents</h1>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95557639">Test
+Environment<span style='color:windowtext;display:none;mso-hide:all;text-decoration:
+none;text-underline:none'> 3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95557640">Tool<span
+style='color:windowtext;display:none;mso-hide:all;text-decoration:none;
+text-underline:none'> 3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95557641">Machine
+configuration<span style='color:windowtext;display:none;mso-hide:all;
+text-decoration:none;text-underline:none'>. 3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink>Java <a href="#_Toc95557642">Virtual
+Machine<span style='color:windowtext;display:none;mso-hide:all;text-decoration:
+none;text-underline:none'>. 3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95557643">Tool
+Configuration<span style='color:windowtext;display:none;mso-hide:all;
+text-decoration:none;text-underline:none'>. 3</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95557644">Tests
+performed<span style='color:windowtext;display:none;mso-hide:all;text-decoration:
+none;text-underline:none'>. 3</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95557645">Appendix<span
+style='color:windowtext;display:none;mso-hide:all;text-decoration:none;
+text-underline:none'>. 6</span></a></span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<span style='font-size:16.0pt;font-family:Tahoma;mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:18.0pt;mso-ansi-language:EN-US;mso-fareast-language:EN-US;
+mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span>
+
+<h1><a name="_Toc95557639">Test Environment</a></h1>
+
+<h2><a name="_Toc95557640">Tool</a></h2>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'>Apache
+     JMeter Version 2.0.2 (available at <a
+     href="http://jakarta.apache.org/jmeter/index.html">http://jakarta.apache.org/jmeter/index.html</a>)</li>
+</ul>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2><a name="_Toc95557641">Machine configuration</a></h2>
+
+<h3>Hardware</h3>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Intel Pentium 4 CPU 2.8 GHz</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+512 MB RAM</p>
+
+<h3>Software</h3>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Windows XP Professional edition version 2002 with service pack 2</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2><a name="_Toc95557642">Java Virtual Machine</a></h2>
+
+<p class=MsoNormal style='margin-left:.5in'>java version &quot;1.4.2_04&quot;</p>
+
+<p class=MsoNormal style='margin-left:.5in'>Java(TM) 2 Runtime Environment,
+Standard Edition (build 1.4.2_04-b05)</p>
+
+<p class=MsoNormal style='margin-left:.5in'>Java HotSpot(TM) Client VM (build
+1.4.2_04-b05, mixed mode)</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
+
+<h2><a name="_Toc95557643">Tool Configuration</a></h2>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+500 requests per each type. The actual JMeter configuration file is included in
+the test resource bundle archive</p>
+
+<p class=MsoNormal><span style='mso-tab-count:1'>            </span>under the
+JMeter_configuration folder.</p>
+
+<h3>Axis Versions</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo6;tab-stops:list .5in'>Axis
+     1.2 RC1</li>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo6;tab-stops:list .5in'>Axis
+     2.0 M1 Release (built from the latest code in svn repository)</li>
+</ul>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<h1><a name="_Toc95557644">Tests performed</a></h1>
+
+<p class=MsoNormal>The tests were carried in several stages</p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'>1.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Basic types</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>a.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>String array with 10 elements</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>b.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>String array with 100 elements</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>c.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>String&nbsp;array with 1000 elements</p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'>2.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Complex types</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>a.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Complex structure array with 10 elements</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>b.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Complex structure array with 100 elements</p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'>c.<span
+style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Complex structure array with 1000 elements</p>
+
+<p class=MsoNormal style='margin-left:1.25in'>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The results are condensed below. Please refer the appendix
+for the JMeter screenshots.</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=511
+ style='width:383.0pt;margin-left:4.65pt;border-collapse:collapse;mso-padding-alt:
+ 0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;height:12.75pt'>
+  <td width=127 nowrap rowspan=3 valign=bottom style='width:95.0pt;border:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Axis Version</p>
+  </td>
+  <td width=192 nowrap colspan=3 valign=bottom style='width:2.0in;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Basic - String</p>
+  </td>
+  <td width=192 nowrap colspan=3 valign=bottom style='width:2.0in;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Complex - Structure</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1;height:12.75pt'>
+  <td width=192 nowrap colspan=3 valign=bottom style='width:2.0in;border-top:
+  none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Array Size</p>
+  </td>
+  <td width=192 nowrap colspan=3 valign=bottom style='width:2.0in;border-top:
+  none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Array Size</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;height:12.75pt'>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>10</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>100</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>1000</p>
+  </td>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>10</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>100</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>1000</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3;height:12.75pt'>
+  <td width=127 nowrap valign=bottom style='width:95.0pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>1.2</p>
+  </td>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>16</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>24</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>109</p>
+  </td>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>31</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>147</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>1436</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;mso-yfti-lastrow:yes;height:12.75pt'>
+  <td width=127 nowrap valign=bottom style='width:95.0pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>2</p>
+  </td>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>11</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>15</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>44</p>
+  </td>
+  <td width=44 nowrap valign=bottom style='width:33.35pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>15</p>
+  </td>
+  <td width=64 nowrap valign=bottom style='width:48.0pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>61</p>
+  </td>
+  <td width=84 nowrap valign=bottom style='width:62.65pt;border-top:none;
+  border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:12.75pt'>
+  <p class=MsoNormal align=right style='text-align:right'>499</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><img border=0 width=612 height=432 id="_x0000_i1025"
+src="PerformanceTestReport_files/image001.gif"></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><img border=0 width=624 height=444 id="_x0000_i1026"
+src="PerformanceTestReport_files/image002.gif"></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1><a name="_Toc95557645">Appendix</a></h1>
+
+<h3>Images</h3>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=676
+ style='width:507.05pt;border-collapse:collapse;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=410 height=368 id="_x0000_i1027"
+  src="PerformanceTestReport_files/image003.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 10 Elements – Axis 1.2 </p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=407 height=365 id="_x0000_i1028"
+  src="PerformanceTestReport_files/image004.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 10 Elements – Axis 2.0 </p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=407 height=365 id="_x0000_i1029"
+  src="PerformanceTestReport_files/image005.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 100 Elements – Axis 1.2</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=408 height=366 id="_x0000_i1030"
+  src="PerformanceTestReport_files/image006.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 100 Elements – Axis 2.0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=408 height=364 id="_x0000_i1031"
+  src="PerformanceTestReport_files/image007.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 1000 Elements – Axis 1.2</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5;height:213.55pt'>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in;height:213.55pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=439 valign=top style='width:329.25pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <h3><img border=0 width=408 height=367 id="_x0000_i1032"
+  src="PerformanceTestReport_files/image008.jpg"></h3>
+  </td>
+  <td width=228 colspan=2 style='width:170.9pt;padding:0in 5.4pt 0in 5.4pt;
+  height:213.55pt'>
+  <p class=MsoNormal>String Array – 1000 Elements – Axis 2.0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:6'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3><img border=0 width=404 height=361 id="_x0000_i1033"
+  src="PerformanceTestReport_files/image009.jpg"></h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 10 Elements – Axis 1.2</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:7'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3>&nbsp;<img border=0 width=410 height=365 id="_x0000_i1034"
+  src="PerformanceTestReport_files/image010.jpg">&nbsp;</h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 10 Elements – Axis 2.0</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:8'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3><img border=0 width=409 height=367 id="_x0000_i1035"
+  src="PerformanceTestReport_files/image011.jpg">&nbsp;</h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 100 Elements – Axis 1.2</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:9'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3><img border=0 width=409 height=366 id="_x0000_i1036"
+  src="PerformanceTestReport_files/image012.jpg">&nbsp;</h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 100 Elements – Axis 2.0</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:10'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3>&nbsp;<img border=0 width=410 height=368 id="_x0000_i1037"
+  src="PerformanceTestReport_files/image013.jpg"></h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 1000 Elements – Axis 1.2</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:11;mso-yfti-lastrow:yes'>
+  <td width=448 colspan=2 valign=top style='width:336.15pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h3>&nbsp;<img border=0 width=408 height=368 id="_x0000_i1038"
+  src="PerformanceTestReport_files/image014.jpg"></h3>
+  </td>
+  <td width=224 style='width:167.85pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Complex Array – 1000 Elements – Axis 2.0</p>
+  </td>
+  <td width=10 style='width:.1in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+</table>
+
+<h3>Links</h3>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Code for the samples</p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l3 level1 lfo8;
+tab-stops:list .75in'><![if !supportLists]><span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><a
+href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java/dev/scratch/prototype2/src/samples/encoding/sample1">Code
+for Sample 1</a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Complete Test bundle (this includes the images, Excel sheet and the request
+Documents)</p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l0 level1 lfo10;
+tab-stops:list .75in'><![if !supportLists]><span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><a href="TestResourceBundle.zip">Complete Test
+resource bundle</a></p>
+
+</div>
+
+</body>
+
+</html>
