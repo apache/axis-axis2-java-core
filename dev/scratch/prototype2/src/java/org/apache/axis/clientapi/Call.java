@@ -147,6 +147,7 @@ public class Call {
             msgctx.setEnvelope(envelope);
 
             OutputStream out = urlConnect.getOutputStream();
+            
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setProperty(MessageContext.REQUEST_URL, url);
@@ -179,7 +180,7 @@ public class Call {
             final AxisEngine engine = new AxisEngine(registry);
             urlConnect.setDoOutput(true);
 
-            MessageContext msgctx = new MessageContext(registry);
+            final MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(envelope);
 
             OutputStream out = urlConnect.getOutputStream();
@@ -193,21 +194,20 @@ public class Call {
              */
             if(blocked){
                 Runnable runnable = new Runnable() {
+                    MessageContext response;
                     public void run() {
                         try {
-
-                            //todo find a way to get msg id
-                            correlator.addCorrelationInfo("MSGID",callback);
+                            correlator.addCorrelationInfo(msgctx.getMessageID(),callback);
                             log.info("Starting new Thread ");
-                            MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(), engine);
+                            response= createIncomingMessageContext(urlConnect.getInputStream(), engine);
                             response.setServerSide(false);
                             engine.receive(response);
                             SOAPEnvelope envelope = response.getEnvelope();
                             //todo craete   AsyncResult here
                             AsyncResult result = null;
-                            correlator.getCorrelationInfo("MSGID").onComplete(result);
+                            correlator.getCorrelationInfo(response.getMessageID()).onComplete(result);
                         } catch (Exception e) {
-                            correlator.getCorrelationInfo("MSGID").reportError(e);
+                            correlator.getCorrelationInfo(response.getMessageID()).reportError(e);
                         }
                     }
                 };
