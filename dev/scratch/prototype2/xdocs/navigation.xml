@@ -2,12 +2,37 @@
 <project name="Axis2.0">
   <title>Axis2.0</title>
   <body>
+  <search/>
     <links>
       <item href="http://maven.apache.org/" name="Maven">
       </item>
     </links>
-    <menu name="References">
-      <item name="Architecture Guide" href="Axis 2 Architecture Guide.html" />  
+    <menu name="Axis 2.0">
+      <item name="Introduction" href="intro.html"/>
+      
+      <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
+      
+      <item name="Get Invloved">
+      	<item name="Overview" href="overview.html"/>
+      	<item name="SVN Repository" href="svn.html"/>
+      	<item name="Guide Lines" href="guidelines.html"/>
+      	<item name="Reference Library" href="refLib.html"/>
+      	<item name="Mailing Lists" href="mail-lists.html"/>
+      	<item name="How to build site" href="siteHowTo.html"/>
+      </item>
+      
+      <item name="References">
+        <item name="Documentation" href="docs.html" />
+      	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
+      	<item name="AXIOM Tutorial" href="OMTutorial.html" /> 
+      </item>
+      
+      <item name="Downloads">
+      	<item name="Releases" href="releases.html" /> 
+      	<item name="Interim Drops" href="interim.html" />
+      	<item name="Source Code" href="cvs-usage.html" />  
+      </item> 
     </menu>
+    
   </body>
 </project>
