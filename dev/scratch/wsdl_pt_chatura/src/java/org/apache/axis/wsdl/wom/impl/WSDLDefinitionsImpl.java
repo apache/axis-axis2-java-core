@@ -22,7 +22,7 @@ import org.apache.axis.wsdl.wom.WSDLBinding;
 import org.apache.axis.wsdl.wom.WSDLDefinitions;
 import org.apache.axis.wsdl.wom.WSDLInterface;
 import org.apache.axis.wsdl.wom.WSDLService;
-import org.apache.xml.utils.QName;
+import javax.xml.namespace.QName;
 
 
 

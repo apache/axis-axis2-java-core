@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import org.apache.axis.wsdl.wom.Component;
 import org.apache.axis.wsdl.wom.WSDLConstants;
-import org.apache.xml.utils.QName;
+import javax.xml.namespace.QName; 
 
 
 

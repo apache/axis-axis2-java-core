@@ -16,7 +16,10 @@
 package org.apache.axis.wsdl.wom;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
@@ -32,9 +35,9 @@ public interface WSDLInterface {
 
 	public void setProperties(List properties);
 
-	public List getDefinedOperations(WSDLInterface wsdlInterface);
+	public HashMap getDefinedOperations(WSDLInterface wsdlInterface);
 
-	public List getDefinedOperations();
+	public HashMap getDefinedOperations();
 
 	/**
 	 * @return
@@ -49,12 +52,12 @@ public interface WSDLInterface {
 	/**
 	 * @return
 	 */
-	public List getOperations();
+	public HashMap getOperations();
 
 	/**
 	 * @return
 	 */
-	public List getSuperInterfaces();
+	public HashMap getSuperInterfaces();
 
 	/**
 	 * @return
@@ -74,15 +77,21 @@ public interface WSDLInterface {
 	/**
 	 * @param list
 	 */
-	public void setOperations(List list);
+	public void setOperations(HashMap list);
 
 	/**
 	 * @param list
 	 */
-	public void setSuperInterfaces(List list);
+	public void setSuperInterfaces(HashMap list);
 
 	/**
 	 * @param uri
 	 */
 	public void setTargetnamespace(URI uri);
+	
+	public void setOperation(String nCName, WSDLOperation operation);
+	
+	public void addSuperInterface(QName qName, WSDLInterface interfaceComponent);
+	
+	public HashMap getAllOperations();
 }
