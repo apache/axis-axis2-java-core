@@ -44,10 +44,6 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLPump {
 
     private WSDLDefinitions womDefinition;

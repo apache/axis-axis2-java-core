@@ -20,10 +20,6 @@ import java.util.HashMap;
 import javax.xml.namespace.QName;
 
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLDefinitions extends Component{
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>

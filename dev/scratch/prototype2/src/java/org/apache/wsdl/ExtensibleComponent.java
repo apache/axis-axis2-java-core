@@ -18,10 +18,6 @@ package org.apache.wsdl;
 import java.util.List;
 
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface ExtensibleComponent extends Component{
     /**
      * Will add a <code>WSDLFeature</code> to the feature list.

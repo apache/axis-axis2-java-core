@@ -17,11 +17,6 @@ package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLEndpoint extends Component{
     public WSDLBinding getBinding();
 

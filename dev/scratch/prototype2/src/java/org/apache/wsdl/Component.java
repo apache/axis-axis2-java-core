@@ -17,10 +17,6 @@ package org.apache.wsdl;
 
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface Component {
     /**
      * Returns the properties that are specific to this WSDL Component.

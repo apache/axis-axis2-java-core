@@ -15,10 +15,6 @@
  */
 package org.apache.wsdl.util;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface Style {
 
 }

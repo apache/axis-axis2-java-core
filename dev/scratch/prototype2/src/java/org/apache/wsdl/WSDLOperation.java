@@ -19,13 +19,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
-public interface WSDLOperation  extends ExtensibleComponent{
-    
+public interface WSDLOperation extends ExtensibleComponent {
 
     public List getInfaults();
 
@@ -61,5 +55,4 @@ public interface WSDLOperation  extends ExtensibleComponent{
 
     public String getTargetnemespace();
 
-    
 }

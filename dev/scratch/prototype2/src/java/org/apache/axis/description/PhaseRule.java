@@ -15,9 +15,6 @@
  */
 package org.apache.axis.description;
 
-/**
- * @author Deepal Jayasinghe
- */
 public class PhaseRule {
     //can be either name of phase or handler
     private String before;

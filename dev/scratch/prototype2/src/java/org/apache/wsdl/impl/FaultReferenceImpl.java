@@ -17,10 +17,6 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.FaultReference;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class FaultReferenceImpl extends ComponentImpl implements FaultReference   {
 
 	//TODO make it  a QNAME

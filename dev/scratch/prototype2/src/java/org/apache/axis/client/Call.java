@@ -165,6 +165,35 @@ public class Call {
         }
     }
 
+    public void completeAsyncCall(OMElement in, URL url, final CallBack callback) throws AxisFault {
+        try {
+            final URLConnection urlConnect = url.openConnection();
+            final AxisEngine engine = new AxisEngine(registry);
+            urlConnect.setDoOutput(true);
+
+            SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
+
+            env.getBody().addChild(in);
+
+            MessageContext msgctx = new MessageContext(registry);
+            msgctx.setEnvelope(env);
+
+            OutputStream out = urlConnect.getOutputStream();
+            msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.REQUEST_URL, url);
+
+            engine.send(msgctx);
+            //TODO
+            //Corelater.corealte(msgID,callback);
+            //e.g. TransportReciverFactory.startReciverIfNotYetStrated();
+            throw new UnsupportedOperationException();
+        } catch (OMException e) {
+            throw AxisFault.makeFault(e);
+        } catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
 
     private MessageContext createIncomingMessageContext(InputStream in, AxisEngine engine) throws AxisFault {
         MessageContext msgContext;

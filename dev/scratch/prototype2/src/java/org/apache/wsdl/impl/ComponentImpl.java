@@ -20,13 +20,6 @@ import java.util.HashMap;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.WSDLConstants;
 
-
-
-
-/**
- * @author Chathura Herath
- *
- */
 public class ComponentImpl implements  WSDLConstants, Component{
 
     protected HashMap componentProperties = new HashMap();

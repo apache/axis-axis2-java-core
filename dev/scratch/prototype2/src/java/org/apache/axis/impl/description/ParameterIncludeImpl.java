@@ -20,9 +20,6 @@ import java.util.HashMap;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class ParameterIncludeImpl implements ParameterInclude {
     protected HashMap parmeters;
     public ParameterIncludeImpl(){

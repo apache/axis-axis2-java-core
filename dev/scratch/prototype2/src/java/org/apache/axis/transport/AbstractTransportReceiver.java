@@ -56,6 +56,9 @@ public abstract class AbstractTransportReceiver implements Runnable {
         this.engine = myAxisServer;
 
     }
+    
+    public AbstractTransportReceiver() {
+    }
 
     /**
      * stop the server if not already told to.
@@ -85,6 +88,9 @@ public abstract class AbstractTransportReceiver implements Runnable {
                         break;
                     }
                     if (socket != null) {
+                        if(engine == null){
+                            throw new AxisFault("Engine Must be null");
+                        }
                         MessageContext msgContext = parseTheTransport(engine, socket.getInputStream());
                         storeOutputInfo(msgContext, socket.getOutputStream());
                         engine.receive(msgContext);

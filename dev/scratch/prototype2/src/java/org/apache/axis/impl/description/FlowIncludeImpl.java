@@ -18,9 +18,6 @@ package org.apache.axis.impl.description;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowInclude;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class FlowIncludeImpl implements FlowInclude{
     private Flow in;
     private Flow out;

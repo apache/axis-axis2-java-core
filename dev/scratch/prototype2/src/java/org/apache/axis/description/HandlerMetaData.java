@@ -21,7 +21,7 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
+ * represent the deployment information about the handler
  */
 public class HandlerMetaData implements ParameterInclude{
     private  ParameterInclude parameterInclude;

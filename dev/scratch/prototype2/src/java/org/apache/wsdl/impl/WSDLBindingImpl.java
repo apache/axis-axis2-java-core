@@ -23,55 +23,48 @@ import javax.xml.namespace.QName;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLInterface;
 
-/**
- * @author chathura@opensource.lk
- *
- */
-public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding  {
+public class WSDLBindingImpl
+    extends ExtensibleComponentImpl
+    implements WSDLBinding {
 
-	private QName name;
-	
-	private URI targetNameSpace;
-	
-	private WSDLInterface boundInterface;
-	
-	private List faults;
-	
-	private List operations;
-	
-	
-	
-	 
-	
-	
-	public WSDLInterface getBoundInterface() {
-		return boundInterface;
-	}
-	public void setBoundInterface(WSDLInterface boundInterface) {
-		this.boundInterface = boundInterface;
-	}
-	public List getFaults() {
-		return faults;
-	}
-	public void setFaults(List faults) {
-		this.faults = faults;
-	}
-	public QName getName() {
-		return name;
-	}
-	public void setName(QName name) {
-		this.name = name;
-	}
-	public List getOperations() {
-		return operations;
-	}
-	public void setOperations(List operations) {
-		this.operations = operations;
-	}
-	public URI getTargetNameSpace() {
-		return targetNameSpace;
-	}
-	public void setTargetNameSpace(URI targetNameSpace) {
-		this.targetNameSpace = targetNameSpace;
-	}
+    private QName name;
+
+    private URI targetNameSpace;
+
+    private WSDLInterface boundInterface;
+
+    private List faults;
+
+    private List operations;
+
+    public WSDLInterface getBoundInterface() {
+        return boundInterface;
+    }
+    public void setBoundInterface(WSDLInterface boundInterface) {
+        this.boundInterface = boundInterface;
+    }
+    public List getFaults() {
+        return faults;
+    }
+    public void setFaults(List faults) {
+        this.faults = faults;
+    }
+    public QName getName() {
+        return name;
+    }
+    public void setName(QName name) {
+        this.name = name;
+    }
+    public List getOperations() {
+        return operations;
+    }
+    public void setOperations(List operations) {
+        this.operations = operations;
+    }
+    public URI getTargetNameSpace() {
+        return targetNameSpace;
+    }
+    public void setTargetNameSpace(URI targetNameSpace) {
+        this.targetNameSpace = targetNameSpace;
+    }
 }

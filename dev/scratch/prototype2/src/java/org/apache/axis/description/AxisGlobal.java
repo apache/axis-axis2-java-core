@@ -16,23 +16,44 @@
 package org.apache.axis.description;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 import org.apache.axis.impl.description.PhasesIncludeImpl;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
+ * <p>This holds the information shown in the global scope. The information are all 
+ * that not goes in to the Transport or a Service. This has two types of Info. </p> 
+ * <ol>
+ *  <li>parameters<li>
+ *  <li>ordered phases<li> 
+ *  <li>names of modules that are ref by the server.xml file, real modues are in the 
+ *      Registry.<li>
+ * <ol>  
+ * <p>Note: handlers in the server.xml file are not suported for M1, only way to put a 
+ * global handler is via a modules</p>  
  */
 public class AxisGlobal implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
+    protected Vector modules;
     
     public AxisGlobal(){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
     }
     
+    public void addModule(QName moduleref) {
+       modules.add(moduleref);
+    }
+    public Collection getModules() {
+       return modules;
+    }
+
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
     }

@@ -38,9 +38,6 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class SimpleAxisServiceImpl implements AxisService {
     protected PhasesInclude phaseInclude;
     protected WSDLService wsdlService;

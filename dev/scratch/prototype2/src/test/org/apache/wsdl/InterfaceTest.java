@@ -23,10 +23,6 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class InterfaceTest extends AbstractTestCase {
     public InterfaceTest(String testName) {
         super(testName);

@@ -16,21 +16,8 @@
 package org.apache.axis.description;
 
 import org.apache.wsdl.WSDLOperation;
-
 /**
- * @author chathura@opensource.lk
- *
+ * for the time been operation can have only the parameters 
  */
 public interface AxisOperation extends WSDLOperation,ParameterInclude  {
-//    public Flow getInFlow();
-//    
-//    public void setInflow(Flow inFlow);
-//    
-//    public Flow getOutFlow();
-//    
-//    public void setOutFlow(Flow outFlow);
-//    
-//    public Flow getFaultFlow();
-//    
-//    public void setFaultFlow();
 }

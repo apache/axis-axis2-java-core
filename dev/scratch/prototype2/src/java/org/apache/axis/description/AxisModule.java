@@ -21,10 +21,16 @@ import org.apache.axis.impl.description.FlowIncludeImpl;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 
 /**
- * @author chathura@opensource.lk
- *
+ * <p>This holds the information about a Module. </p> 
+ * <ol>
+ *  <li>parameters<li>
+ *  <li>handlers<li> 
+ * <ol>
+ * <p>Handler are registered once they are avlible but they avalibe to all services if server.xml
+ * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>  
  */
 public class AxisModule implements FlowInclude,ParameterInclude{
+    
     private QName name;
     
 

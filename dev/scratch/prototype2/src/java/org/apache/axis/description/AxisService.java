@@ -24,8 +24,7 @@ import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLService;
 
 /**
- * @author chathura@opensource.lk
- *
+ * <p>represent a implemented web service</p>
  */
 public interface AxisService extends WSDLService,ParameterInclude,FlowInclude,PhasesInclude {
     //modules

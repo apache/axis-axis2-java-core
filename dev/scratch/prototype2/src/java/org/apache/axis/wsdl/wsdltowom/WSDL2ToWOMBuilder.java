@@ -21,10 +21,6 @@ import javax.wsdl.WSDLException;
 
 import org.apache.wsdl.WSDLDefinitions;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDL2ToWOMBuilder implements WOMBuilder{
 
     public WSDLDefinitions build(InputStream in ) throws WSDLException{

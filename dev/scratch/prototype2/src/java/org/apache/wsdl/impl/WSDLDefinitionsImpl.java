@@ -27,10 +27,6 @@ import org.apache.wsdl.WSDLService;
 
 
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions    {
 
 	/**

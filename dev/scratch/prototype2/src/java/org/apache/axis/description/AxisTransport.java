@@ -24,7 +24,7 @@ import org.apache.axis.impl.description.ParameterIncludeImpl;
 import org.apache.axis.impl.description.PhasesIncludeImpl;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
+ * Represents a transport deployed in AXis2
  */
 public class AxisTransport implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
