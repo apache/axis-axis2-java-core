@@ -18,11 +18,11 @@ package org.apache.axis.om;
  * User: Eran Chinthaka - Lanka Software Foundation
  * Date: Oct 4, 2004
  * Time: 11:49:01 AM
- *
+ * <p/>
  * One must implement relevant constructors for the class implementing this interface
  * all the things like namespace, parent, value, etc., that should come in this are defined in base classes
  */
-public interface OMAttribute extends OMNamedNode{
+public interface OMAttribute extends OMNamedNode {
 
 
 }

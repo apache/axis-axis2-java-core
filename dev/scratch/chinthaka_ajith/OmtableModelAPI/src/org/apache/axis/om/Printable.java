@@ -1,5 +1,6 @@
 package org.apache.axis.om;
 
+import java.io.PrintStream;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -17,17 +18,12 @@ package org.apache.axis.om;
  * limitations under the License.
  * <p/>
  * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:39:01 AM
+ * Date: Oct 6, 2004
+ * Time: 11:36:01 AM
  * <p/>
- * OMElement and OMAttribute must have namespace support and those two behave in same manner as far as the namespaces are concerned.
- * So one can implement this interface specific methods in an abstract class.
+ * A component that implements this interface is printable to an outputstream
  */
-public interface OMNamedNode extends OMNode {
+public interface Printable {
 
-    public String getLocalName();
-    public void setLocalName(String localName);
-
-    public OMNamespace getNamespace() throws OMException;
-    public void setNamespace(OMNamespace namespace);
+    public void print(PrintStream ps) throws OMException;
 }

@@ -19,10 +19,11 @@ package org.apache.axis.om;
  * Date: Oct 4, 2004
  * Time: 2:04:43 PM
  */
-public interface OMText extends OMNode{
+public interface OMText extends OMNode {
     /**
-     *  We use the OMText class to hold comments, text, characterData, CData, etc.,
+     * We use the OMText class to hold comments, text, characterData, CData, etc.,
      * The codes are found in OMNode class
+     *
      * @param type
      */
     public void setTextType(short type);

@@ -16,14 +16,14 @@ package org.apache.axis.om;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Oct 4, 2004
- * Time: 4:48:10 PM
- * 
+ *         Date: Oct 4, 2004
+ *         Time: 4:48:10 PM
  */
-public interface OMDocument extends OMNode{
+public interface OMDocument extends OMNode {
 
     /**
      * Get the root element of this document
+     *
      * @return the root element
      */
     OMElement getDocumentElement();

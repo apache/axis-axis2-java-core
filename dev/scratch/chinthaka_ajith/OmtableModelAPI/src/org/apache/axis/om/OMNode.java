@@ -1,6 +1,6 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.OMElement;
+
 
 
 /**
@@ -23,82 +23,92 @@ import org.apache.axis.om.OMElement;
  * Time: 3:36:14 PM
  */
 public interface OMNode {
-   //==================================================================================
+    //==================================================================================
 
     // Followings are the codes for node types. Extracted these from DOM API
     /**
      * The node is an <code>Element</code>.
      */
-    public static final short ELEMENT_NODE              = 1;
+    public static final short ELEMENT_NODE = 1;
     /**
      * The node is an <code>Attr</code>.
      */
-    public static final short ATTRIBUTE_NODE            = 2;
+    public static final short ATTRIBUTE_NODE = 2;
     /**
      * The node is a <code>Text</code> node.
      */
-    public static final short TEXT_NODE                 = 3;
+    public static final short TEXT_NODE = 3;
     /**
      * The node is a <code>CDATASection</code>.
      */
-    public static final short CDATA_SECTION_NODE        = 4;
+    public static final short CDATA_SECTION_NODE = 4;
 
     /**
      * The node is a <code>Comment</code>.
      */
-    public static final short COMMENT_NODE              = 8;
+    public static final short COMMENT_NODE = 8;
     /**
      * The node is a <code>Document</code>.
      */
-    public static final short DOCUMENT_NODE             = 9;
+    public static final short DOCUMENT_NODE = 9;
 
-   //==================================================================================
+    //==================================================================================
 
     /**
      * This method should return the immediate parent of the node.
      * Parent is always an Element
+     *
      * @return
      * @throws OMException
      */
     public OMElement getParent() throws OMException;
-	public void setParent(OMElement element);
+
+    public void setParent(OMElement element);
 
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
+     *
      * @return
      * @throws OMException
      */
-	public OMNode getNextSibling() throws OMException;
-	public void setNextSibling(OMNode node);
+    public OMNode getNextSibling() throws OMException;
+
+    public void setNextSibling(OMNode node);
 
     /**
      * This will return the literal value of the node.
      * OMText --> the text
-     * OMElement --> name of the element as a QName in String format
+     * OMElement --> local name of the element in String format
      * OMAttribute --> the value of the attribue
+     *
      * @return
      * @throws OMException
      */
-	public String getValue() throws OMException;
-	public void setValue(String value);
+    public String getValue() throws OMException;
+
+    public void setValue(String value);
 
     /**
      * this will indicate whether parser has parsed this information item completely or not.
      * If somethings info are not available in the item, one has to check this attribute to make sure that, this
      * item has been parsed completely or not.
+     *
      * @return
      */
-	public boolean isComplete();
+    public boolean isComplete();
+
     public void setComplete(boolean state);
 
     /**
      * This will remove this information item and its children, from the model completely
+     *
      * @throws OMException
      */
-	public void detach() throws OMException;
+    public void detach() throws OMException;
 
     /**
      * This will insert a sibling just after the current information item.
+     *
      * @param sibling
      * @throws OMException
      */
@@ -106,8 +116,17 @@ public interface OMNode {
 
     /**
      * This will insert a sibling just before the current information item
+     *
      * @param sibling
      * @throws OMException
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException;
+
+    /** This is to get the type of node, as this is the super class of all the nodes
+     *
+     * @return
+     * @throws OMException
+     */
+    public short getType() throws OMException;
+    public void setType(short nodeType) throws OMException;
 }

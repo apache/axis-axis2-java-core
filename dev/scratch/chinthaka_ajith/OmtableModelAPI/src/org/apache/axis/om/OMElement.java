@@ -1,5 +1,6 @@
 package org.apache.axis.om;
 
+import org.apache.xml.utils.QName;
 import java.util.Iterator;
 
 /**
@@ -20,28 +21,27 @@ import java.util.Iterator;
  * User: Eran Chinthaka - Lanka Software Foundation
  * Date: Oct 4, 2004
  * Time: 11:52:18 AM
- *
+ * <p/>
  * One must make sure to insert relevant constructors for the classes that are implementing this interface
  */
 public interface OMElement extends OMNamedNode {
 
     /**
-     * This will add child to the element. One can decide whether he append the child or he adds to the
-     * front of the children list
-     *
+     * This will add child to the element. One must preserve the order of children, in this operation
+     * Tip : appending the new child is prefered
      * @param omNode
      */
     public void addChild(OMNode omNode);
 
     /**
-     * This will add a child in a specific location given in the index. If there are no preceding elements
-     * this will throw an AxisFault.
-     * Example if one tries to add child number four, but if there is no third child, throw an exception.
-     *
-     * @param omNode
-     * @param index
+     * This will search for children with a given QName and will return an iterator to traverse through
+     * the OMNodes.
+     * This QName can contain any combination of prefix, localname and URI
+     * @param elementQName
+     * @return
+     * @throws OMException
      */
-    public void addChild(OMNode omNode, int index) throws OMException;
+    public Iterator getChildrenWithName(QName elementQName) throws OMException;
 
     /**
      * This returns a collection of this element.
@@ -71,14 +71,16 @@ public interface OMElement extends OMNamedNode {
     public OMNamespace resolveNamespace(String uri, String prefix) throws OMException;
 
     /**
-     * This will returns the first attribute of the element or null, if none is present
-     *
+     * This will help to search for an attribute with a given QName within this Element
+     * @param qname
      * @return
+     * @throws OMException
      */
-    public OMAttribute getFirstAttribute();
+    public OMAttribute getAttributeWithQName(QName qname) throws OMException;
 
     /**
      * This will return a List of OMAttributes
+     *
      * @return
      */
     public Iterator getAttributes();
@@ -90,7 +92,6 @@ public interface OMElement extends OMNamedNode {
      * @param attr
      */
     public void insertAttribute(OMAttribute attr);
-
     public void removeAttribute(OMAttribute attr);
 
 }
