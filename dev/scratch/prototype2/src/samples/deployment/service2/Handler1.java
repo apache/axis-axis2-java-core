@@ -16,10 +16,12 @@
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.registry.*;
+
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.context.MessageContext;
+import org.apache.axis.impl.registry.AbstractEngineElement;
+
 
 public class Handler1 extends AbstractEngineElement implements Handler {
     private QName name;

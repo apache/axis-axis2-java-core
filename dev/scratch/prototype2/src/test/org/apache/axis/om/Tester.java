@@ -18,23 +18,24 @@
 
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.OMTextImpl;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
-import org.apache.axis.impl.llom.OMAttributeImpl;
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.*;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
-import org.xmlpull.v1.XmlPullParser;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.impl.llom.OMAttributeImpl;
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.OMNavigator;
+import org.apache.axis.impl.llom.OMTextImpl;
+import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
+import org.xmlpull.v1.XmlPullParser;
 
 
 /**

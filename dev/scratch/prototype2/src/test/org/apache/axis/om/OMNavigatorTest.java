@@ -1,15 +1,16 @@
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.OMNavigator;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
-import org.apache.axis.impl.llom.OMNavigator;
+import java.io.FileReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileReader;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.impl.llom.OMNavigator;
+import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

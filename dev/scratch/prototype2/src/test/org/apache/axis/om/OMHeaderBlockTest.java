@@ -19,11 +19,6 @@
 */
 package org.apache.axis.om;
 
-import org.apache.axis.om.OMHeader;
-import org.apache.axis.om.OMHeaderBlock;
-import org.apache.axis.om.OMTestCase;
-import org.apache.axis.om.OMHeaderBlock;
-
 import java.util.Iterator;
 
 

@@ -19,9 +19,6 @@
 */
 package org.apache.axis.om;
 
-import org.apache.axis.om.OMTestCase;
-import org.apache.axis.om.OMBody;
-import org.apache.axis.om.OMHeader;
 
 
 public class OMEnvelopeTest extends OMTestCase {

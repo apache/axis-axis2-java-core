@@ -20,8 +20,6 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.axis.AbstractTestCase;
 import org.w3c.dom.Document;
 

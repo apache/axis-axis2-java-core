@@ -30,6 +30,11 @@ public class Constants {
     public static final String APPLICATION_SCOPE = "application";
     public static final String SESSION_SCOPE = "session";
     public static final String GLOBAL_SCOPE = "global";
+    
+    public static final String PHASE_SERVICE = "service";
+    public static final String PHASE_TRANSPORT = "transport";
+    public static final String PHASE_GLOBAL = "global";
+
 
 }
 //    public static final int SOAP_STYLE_DOC_LITRAL_UNWRAPPED = 1003;

@@ -15,17 +15,15 @@
  */
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.

@@ -15,8 +15,7 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.exec.ExecutionChain;
-import org.apache.axis.engine.registry.Flow;
+import org.apache.axis.registry.Flow;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)

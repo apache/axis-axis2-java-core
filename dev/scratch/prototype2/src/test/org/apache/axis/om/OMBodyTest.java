@@ -20,9 +20,6 @@
 package org.apache.axis.om;
 
 import org.apache.axis.impl.llom.OMNamespaceImpl;
-import org.apache.axis.om.OMBody;
-import org.apache.axis.om.OMBodyBlock;
-import org.apache.axis.om.OMTestCase;
 
 
 public class OMBodyTest extends OMTestCase {

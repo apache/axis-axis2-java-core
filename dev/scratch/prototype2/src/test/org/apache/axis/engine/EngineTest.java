@@ -22,8 +22,8 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.engine.context.MessageContext;
-import org.apache.axis.engine.registry.EngineRegistry;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.registry.EngineRegistry;
 
 /**
  * @author hemapani@opensource.lk

@@ -16,9 +16,9 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.registry.FlowInclude;
-import org.apache.axis.engine.registry.ModuleInclude;
-import org.apache.axis.engine.registry.NamedEngineElement;
+import org.apache.axis.registry.FlowInclude;
+import org.apache.axis.registry.ModuleInclude;
+import org.apache.axis.registry.NamedEngineElement;
 
 /**
  * Runtime representation of the possible transport used. e.g. HTTP/SMTP

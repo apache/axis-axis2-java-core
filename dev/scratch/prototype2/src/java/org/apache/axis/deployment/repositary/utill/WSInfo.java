@@ -1,6 +1,5 @@
 package org.apache.axis.deployment.repositary.utill;
 
-import java.io.File;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -1,18 +1,16 @@
 package org.apache.axis.om.builder;
 
-import junit.framework.TestCase;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.apache.axis.om.*;
-import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.om.builder.dummy.DummyOutObject;
-import org.apache.axis.om.builder.dummy.DummyOutObject;
-
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
+import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OutObject;
+import org.apache.axis.om.builder.dummy.DummyOutObject;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

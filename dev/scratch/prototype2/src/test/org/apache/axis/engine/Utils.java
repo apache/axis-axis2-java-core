@@ -17,17 +17,20 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.exec.Constants;
-import org.apache.axis.engine.exec.ExecutionChain;
-import org.apache.axis.engine.exec.Phase;
-import org.apache.axis.engine.registry.ConcreateParameter;
-import org.apache.axis.engine.registry.EchoService;
-import org.apache.axis.engine.registry.EngineRegistry;
-import org.apache.axis.engine.registry.MockFlow;
-import org.apache.axis.engine.registry.Module;
-import org.apache.axis.engine.registry.Parameter;
-import org.apache.axis.engine.registry.SimpleEngineRegistry;
-import org.apache.axis.providers.SimpleJavaProvider;
+
+import org.apache.axis.impl.engine.GlobalImpl;
+import org.apache.axis.impl.engine.ModuleImpl;
+import org.apache.axis.impl.engine.OperationImpl;
+import org.apache.axis.impl.engine.ServiceImpl;
+import org.apache.axis.impl.engine.TransportImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.impl.registry.ParameterImpl;
+import org.apache.axis.impl.registry.EngineRegistryImpl;
+import org.apache.axis.registry.EchoService;
+import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.MockFlow;
+import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Parameter;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
@@ -35,35 +38,35 @@ import org.apache.axis.providers.SimpleJavaProvider;
 public class Utils {
     public static EngineRegistry createMockRegistry(QName serviceName,QName operationName,QName transportName) throws AxisFault{
         EngineRegistry engineRegistry = null;
-        Global global = new SimpleGlobal();
+        Global global = new GlobalImpl();
         global.setInFlow(new MockFlow("globel inflow",4));
         global.setOutFlow(new MockFlow("globel outflow",2));
         global.setFaultFlow(new MockFlow("globel faultflow",1));
-        engineRegistry = new SimpleEngineRegistry(global);
+        engineRegistry = new EngineRegistryImpl(global);
         
-        Transport transport = new SimpleTransport(transportName);
+        Transport transport = new TransportImpl(transportName);
         transport.setInFlow(new MockFlow("transport inflow",4));
         transport.setOutFlow(new MockFlow("transport outflow",2));
         transport.setFaultFlow(new MockFlow("transport faultflow",1));
         engineRegistry.addTransport(transport);
         
-        Service service = new SimpleService(serviceName);
+        Service service = new ServiceImpl(serviceName);
         service.setInFlow(new MockFlow("service inflow",4));
         service.setOutFlow(new MockFlow("service outflow",5));
         service.setFaultFlow(new MockFlow("service faultflow",1));
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         
-        Parameter classParam = new ConcreateParameter("className",EchoService.class.getName());
+        Parameter classParam = new ParameterImpl("className",EchoService.class.getName());
         service.addParameter(classParam);
          
         service.setProvider(new SimpleJavaProvider());
         
-        Module m1 = new SimpleModule(new QName("","A Mdoule 1"));
+        Module m1 = new ModuleImpl(new QName("","A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow",4));
         m1.setFaultFlow(new MockFlow("service module faultflow",1));
         service.addModule(m1);
         
-        Operation operation = new SimpleOperation(operationName,service);
+        Operation operation = new OperationImpl(operationName,service);
         operation.setInFlow(new MockFlow("inflow",4));
         
         service.addOperation(operation);

@@ -1,14 +1,11 @@
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
-import org.apache.axis.om.OMEnvelope;
+import java.io.FileReader;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.FileReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

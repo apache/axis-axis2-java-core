@@ -1,11 +1,13 @@
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.builder.OMStAXBuilder;
-
-import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -1,7 +1,5 @@
 package org.apache.axis.deployment.metadata;
 
-import org.apache.axis.deployment.DeploymentException;
-
 import java.util.Vector;
 
 /**

@@ -16,8 +16,8 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.context.MessageContext;
-import org.apache.axis.transport.http.TCPTrasnportSender;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.impl.transport.http.TCPTrasnportSender;
 
 
 /**

@@ -1,6 +1,5 @@
 package org.apache.axis.deployment.metadata;
 
-import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

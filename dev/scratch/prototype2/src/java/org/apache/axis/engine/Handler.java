@@ -16,8 +16,8 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.context.MessageContext;
-import org.apache.axis.engine.registry.NamedEngineElement;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.registry.NamedEngineElement;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;

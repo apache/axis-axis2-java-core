@@ -21,17 +21,15 @@ package org.apache.axis.deployment.repositary.utill;
  *
  */
 
-import org.apache.axis.deployment.DeployCons;
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.metadata.ServiceMetaData;
-import org.apache.axis.deployment.metadata.ModuleMetaData;
-import org.apache.axis.deployment.DeploymentParser;
-
-import java.io.*;
+import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipFile;
-import java.util.Enumeration;
+
+import org.apache.axis.deployment.DeployCons;
+import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.deployment.DeploymentParser;
+import org.apache.axis.deployment.metadata.ModuleMetaData;
+import org.apache.axis.deployment.metadata.ServiceMetaData;
 
 public class UnZipJAR implements DeployCons {
     final int BUFFER = 2048;

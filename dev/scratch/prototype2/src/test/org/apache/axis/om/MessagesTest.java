@@ -19,7 +19,6 @@
 */
 package org.apache.axis.om;
 
-import org.apache.axis.om.*;
 
 
 public class MessagesTest extends OMTestCase {

@@ -1,8 +1,8 @@
 package org.apache.axis.deployment.metadata;
 
-import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
-
 import java.util.Vector;
+
+import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

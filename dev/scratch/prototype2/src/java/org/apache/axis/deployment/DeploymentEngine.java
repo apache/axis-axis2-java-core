@@ -1,6 +1,20 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.deployment.metadata.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.deployment.metadata.FlowMetaData;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.ModuleMetaData;
+import org.apache.axis.deployment.metadata.OperationMetaData;
+import org.apache.axis.deployment.metadata.ParameterMetaData;
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.ServiceMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.repositary.utill.HDFileItem;
 import org.apache.axis.deployment.repositary.utill.UnZipJAR;
@@ -8,16 +22,28 @@ import org.apache.axis.deployment.repositary.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.engine.*;
-import org.apache.axis.engine.exec.Constants;
-import org.apache.axis.engine.exec.ExecutionChain;
-import org.apache.axis.engine.exec.Phase;
-import org.apache.axis.engine.registry.*;
-import org.apache.axis.providers.SimpleJavaProvider;
-
-import javax.xml.namespace.QName;
-import java.io.*;
-import java.util.Vector;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.Global;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Operation;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.engine.Service;
+import org.apache.axis.engine.Transport;
+import org.apache.axis.impl.engine.GlobalImpl;
+import org.apache.axis.impl.engine.ModuleImpl;
+import org.apache.axis.impl.engine.OperationImpl;
+import org.apache.axis.impl.engine.ServiceImpl;
+import org.apache.axis.impl.engine.TransportImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.impl.registry.FlowImpl;
+import org.apache.axis.impl.registry.ParameterImpl;
+import org.apache.axis.impl.registry.EngineRegistryImpl;
+import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Flow;
+import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Parameter;
 
 
 /**
@@ -160,23 +186,23 @@ public class DeploymentEngine implements DeployCons {
         /**
          * adding Global
          */
-        ConcreateFlow globalinflow = new ConcreateFlow();
-        ConcreateFlow globaloutflow = new ConcreateFlow();
-        ConcreateFlow globalfaultflow = new ConcreateFlow();
+        FlowImpl globalinflow = new FlowImpl();
+        FlowImpl globaloutflow = new FlowImpl();
+        FlowImpl globalfaultflow = new FlowImpl();
 
-        Global global = new SimpleGlobal();
+        Global global = new GlobalImpl();
         global.setInFlow(globalinflow);
         global.setOutFlow(globaloutflow);
         global.setFaultFlow(globalfaultflow);
-        newEngineRegisty = new SimpleEngineRegistry(global);
+        newEngineRegisty = new EngineRegistryImpl(global);
         /**
          * adding transport
          */
-        ConcreateFlow transportinflow = new ConcreateFlow();
-        ConcreateFlow transportoutflow = new ConcreateFlow();
-        ConcreateFlow transportfaultflow = new ConcreateFlow();
+        FlowImpl transportinflow = new FlowImpl();
+        FlowImpl transportoutflow = new FlowImpl();
+        FlowImpl transportfaultflow = new FlowImpl();
 
-        Transport transport = new SimpleTransport(transportName);
+        Transport transport = new TransportImpl(transportName);
         transport.setInFlow(transportinflow);
         transport.setOutFlow(transportoutflow);
         transport.setFaultFlow(transportfaultflow);
@@ -197,11 +223,11 @@ public class DeploymentEngine implements DeployCons {
         QName serviceName = new QName(serviceMetaData.getName());
         int count = 0;
 
-        ConcreateFlow serviceinflow = new ConcreateFlow();
-        ConcreateFlow serviceoutflow = new ConcreateFlow();
-        ConcreateFlow servicefaultflow = new ConcreateFlow();
+        FlowImpl serviceinflow = new FlowImpl();
+        FlowImpl serviceoutflow = new FlowImpl();
+        FlowImpl servicefaultflow = new FlowImpl();
 
-        Service service = new SimpleService(serviceName);
+        Service service = new ServiceImpl(serviceName);
         service.setInFlow(serviceinflow);
         service.setOutFlow(serviceoutflow);
         service.setFaultFlow(servicefaultflow);
@@ -241,7 +267,7 @@ public class DeploymentEngine implements DeployCons {
         count = serviceMetaData.getParametercount();
         for (int j = 0; j < count; j++) {
             ParameterMetaData paraMD = serviceMetaData.getParameter(j);
-            Parameter parameter = new ConcreateParameter(paraMD.getName(), paraMD.getElement());
+            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
             service.addParameter(parameter);
         }
 
@@ -258,31 +284,31 @@ public class DeploymentEngine implements DeployCons {
         /**
          * adding parametrs to module
          */
-        Module module = new SimpleModule(new QName(modulemd.getRef()));
+        Module module = new ModuleImpl(new QName(modulemd.getRef()));
         service.addModule(module);
         count = modulemd.getParameterCount();
 
         for (int j = 0; j < count; j++) {
             ParameterMetaData paraMD = modulemd.getParameter(j);
-            Parameter parameter = new ConcreateParameter(paraMD.getName(), paraMD.getElement());
+            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
             module.addParameter(parameter);
         }
 
-        ConcreateFlow operationinflow = new ConcreateFlow();
+        FlowImpl operationinflow = new FlowImpl();
         count = oprationmd.getInFlow().getHandlercount();
         addFlowHandlers(operationinflow, count, oprationmd.getInFlow(), serviceClassLoader);
 
-        ConcreateFlow operationutflow = new ConcreateFlow();
+        FlowImpl operationutflow = new FlowImpl();
         count = oprationmd.getOutFlow().getHandlercount();
         addFlowHandlers(operationutflow, count, oprationmd.getOutFlow(), serviceClassLoader);
 
-        ConcreateFlow operationfaultflow = new ConcreateFlow();
+        FlowImpl operationfaultflow = new FlowImpl();
         count = oprationmd.getFaultFlow().getHandlercount();
         addFlowHandlers(operationfaultflow, count, oprationmd.getFaultFlow(), serviceClassLoader);
 
 
         QName opname = new QName(oprationmd.getName());
-        Operation operation = new SimpleOperation(opname, service);
+        Operation operation = new OperationImpl(opname, service);
         operation.setInFlow(operationinflow);
         operation.setOutFlow(operationutflow);
         operation.setFaultFlow(operationfaultflow);
@@ -380,7 +406,7 @@ public class DeploymentEngine implements DeployCons {
             for (int k = 0; k < paracount; k++) {
                 ParameterMetaData paraMD = handlermd.getParameter(k);
                 //todo check with srinath whether this is correct
-                Parameter parameter = new ConcreateParameter(paraMD.getName(), paraMD.getElement());
+                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
                 handler.addParameter(parameter);
             }
             flow.addHandler(handler);
@@ -395,7 +421,7 @@ public class DeploymentEngine implements DeployCons {
         /**
          * adding parametrs to module
          */
-        Module module = new SimpleModule(new QName(modulemd.getName()));
+        Module module = new ModuleImpl(new QName(modulemd.getName()));
         int count = modulemd.getParameterCount();
 
         //todo change the classloder
@@ -403,19 +429,19 @@ public class DeploymentEngine implements DeployCons {
 
         for (int j = 0; j < count; j++) {
             ParameterMetaData paraMD = modulemd.getParameter(j);
-            Parameter parameter = new ConcreateParameter(paraMD.getName(), paraMD.getElement());
+            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
             module.addParameter(parameter);
         }
 
-        ConcreateFlow moduleinflow = new ConcreateFlow();
+        FlowImpl moduleinflow = new FlowImpl();
         count = modulemd.getInFlow().getHandlercount();
         addFlowHandlers(moduleinflow, count, modulemd.getInFlow(), moduleclassLoder);
 
-        ConcreateFlow moduleoutflow = new ConcreateFlow();
+        FlowImpl moduleoutflow = new FlowImpl();
         count = modulemd.getOutFlow().getHandlercount();
         addFlowHandlers(moduleoutflow, count, modulemd.getOutFlow(), moduleclassLoder);
 
-        ConcreateFlow modulefaultflow = new ConcreateFlow();
+        FlowImpl modulefaultflow = new FlowImpl();
         count = modulemd.getFaultFlow().getHandlercount();
         addFlowHandlers(modulefaultflow, count, modulemd.getFaultFlow(), moduleclassLoder);
         return module;

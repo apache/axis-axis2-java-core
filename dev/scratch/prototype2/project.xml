@@ -80,6 +80,8 @@
 	    <exclude>**/*Util*.java</exclude>
         <exclude>**/*SOAPEnvelopeAnotherTest.java</exclude>
         <exclude>**/*CompareOMWithDOMTest.java</exclude>
+       <exclude>**/*ServiceTest.java</exclude>
+        
       </excludes>
       <includes>
         <include>**/*Test.java</include>

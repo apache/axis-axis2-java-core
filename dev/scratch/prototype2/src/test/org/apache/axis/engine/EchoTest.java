@@ -27,9 +27,9 @@ import java.net.Socket;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.engine.context.MessageContext;
-import org.apache.axis.engine.registry.EngineRegistry;
-import org.apache.axis.transport.http.SimpleAxisServer;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.registry.EngineRegistry;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

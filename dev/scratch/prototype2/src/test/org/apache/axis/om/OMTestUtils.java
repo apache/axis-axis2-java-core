@@ -19,10 +19,8 @@ package org.apache.axis.om;
 import java.io.FileReader;
 import java.util.Iterator;
 
-
 import junit.framework.TestCase;
 
-import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

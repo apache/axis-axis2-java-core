@@ -1,8 +1,29 @@
 package org.apache.axis.impl.llom.factory;
 
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.*;
-import org.apache.axis.impl.llom.*;
+import org.apache.axis.impl.llom.OMAttributeImpl;
+import org.apache.axis.impl.llom.OMBodyElementImpl;
+import org.apache.axis.impl.llom.OMBodyImpl;
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.OMEnvelopeImpl;
+import org.apache.axis.impl.llom.OMHeaderBlockImpl;
+import org.apache.axis.impl.llom.OMHeaderImpl;
+import org.apache.axis.impl.llom.OMNamedNodeImpl;
+import org.apache.axis.impl.llom.OMNamespaceImpl;
+import org.apache.axis.impl.llom.OMNodeImpl;
+import org.apache.axis.impl.llom.OMTextImpl;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMBody;
+import org.apache.axis.om.OMBodyBlock;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMHeader;
+import org.apache.axis.om.OMHeaderBlock;
+import org.apache.axis.om.OMNamedNode;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

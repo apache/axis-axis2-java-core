@@ -16,11 +16,10 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.exec.ExecutionChain;
-import org.apache.axis.engine.registry.FlowInclude;
-import org.apache.axis.engine.registry.ModuleInclude;
-import org.apache.axis.engine.registry.NamedEngineElement;
-import org.apache.axis.engine.registry.TypeMappingInclude;
+import org.apache.axis.registry.FlowInclude;
+import org.apache.axis.registry.ModuleInclude;
+import org.apache.axis.registry.NamedEngineElement;
+import org.apache.axis.registry.TypeMappingInclude;
 
 import javax.xml.namespace.QName;
 

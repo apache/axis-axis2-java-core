@@ -15,7 +15,7 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.engine.context.MessageContext;
+import org.apache.axis.context.MessageContext;
 
 
 public class Sender {

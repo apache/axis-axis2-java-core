@@ -1,11 +1,11 @@
 package org.apache.axis.deployment.metadata.phaserule;
 
-import org.apache.axis.deployment.metadata.HandlerMetaData;
-import org.apache.axis.deployment.metadata.ServerMetaData;
+import java.util.Vector;
+
 import org.apache.axis.deployment.DeployCons;
 import org.apache.axis.deployment.DeploymentEngine;
-
-import java.util.Vector;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.ServerMetaData;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
