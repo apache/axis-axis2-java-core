@@ -18,35 +18,49 @@ package org.apache.axis.transport;
 
 import java.io.OutputStream;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  */
 public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
-
+	private Log log = LogFactory.getLog(getClass());
+	public static final QName NAME = new QName("http://axis.ws.apache.org","TransportSender");
+	
+	public AbstractTransportSender(){
+		init(new HandlerMetaData(NAME));
+	}
     public final void invoke(MessageContext msgContext) throws AxisFault {
 		OutputStream out = null;
         if (msgContext.isProcessingFault()) {
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {
+            	log.info("Obtain the output stream to send the fault flow to " + msgContext.getFaultTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getFaultTo());
             } else {
+				log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         } else {
             if (msgContext.getTo() != null) {
+				log.info("Obtain the output stream to send to To flow to " + msgContext.getTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
+				log.info("Obtain the output stream to send to ReplyTo flow to " + msgContext.getReplyTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else {
+				log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         }
@@ -65,6 +79,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 		
         finalizeSending();
+		log.info("Send the Response");
     }
 
     protected void startSending() {

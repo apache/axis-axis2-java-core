@@ -15,12 +15,15 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.context.MessageContext;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p> This is the ordered Collection of Phases as specified by the Server.xml file.
@@ -31,13 +34,15 @@ import java.util.Stack;
 public class ExecutionChain {
     private HashMap phases;
     private ArrayList executionList;
-
+	private Log log = LogFactory.getLog(getClass());
+	
     public ExecutionChain() {
         phases = new HashMap();
         executionList = new ArrayList();
     }
     
     public void addPhase(Phase phase) {
+    	log.info("Phase "+ phase.getPhaseName() + "Added ");
         phases.put(phase.getPhaseName(), phase);
         executionList.add(phase);
     }
@@ -59,16 +64,19 @@ public class ExecutionChain {
         Stack executionStack = new Stack();
         try {
             for (int i = 0; i < executionList.size(); i++) {
-                Handler phase = (Handler) executionList.get(i);
+                Phase phase = (Phase) executionList.get(i);
                 if (phase != null) {
+					log.info("Invoke the Phase "+ phase.getPhaseName());
                     executionStack.push(phase);
                     phase.invoke(msgctx);
                 }
             }
         } catch (Exception e) {
+        	log.info("Execution Chain failed with the "+e.getMessage());
             while (!executionStack.isEmpty()) {
-                Handler handler = (Handler) executionStack.pop();
-                handler.revoke(msgctx);
+				Phase phase = (Phase) executionStack.pop();
+				phase.revoke(msgctx);
+				log.info("revoke the Phase "+ phase.getPhaseName());
             }
             throw AxisFault.makeFault(e);
         }

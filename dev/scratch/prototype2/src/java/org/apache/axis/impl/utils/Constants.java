@@ -17,6 +17,8 @@ package org.apache.axis.impl.utils;
 
 import java.util.Iterator;
 
+import org.apache.axis.description.HandlerMetaData;
+
 public class Constants {
 	public static final Iterator EMPTY_ITERATOR = new Iterator() {
 		public void remove() {
@@ -31,4 +33,6 @@ public class Constants {
 			throw new UnsupportedOperationException();
 		}
 	};
+	
+	public static final HandlerMetaData EMPTY_HANDLER_METADATA = new HandlerMetaData();
 }

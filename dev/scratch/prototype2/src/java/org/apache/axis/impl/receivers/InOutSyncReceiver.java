@@ -16,7 +16,10 @@
 
 package org.apache.axis.impl.receivers;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Receiver;
@@ -27,7 +30,12 @@ import org.apache.commons.logging.LogFactory;
 
 public class InOutSyncReceiver extends AbstractHandler implements Receiver {
     protected Log log = LogFactory.getLog(getClass());
+	public static final QName NAME = new QName("http://axis.ws.apache.org","InOutSyncReceiver");
+	
 
+	public InOutSyncReceiver(){
+		init(new HandlerMetaData(NAME));
+	}
     public void invoke(final MessageContext msgContext) throws AxisFault {
         if (msgContext.isNewThreadRequired()) {
             Runnable runner = new Runnable() {

@@ -35,6 +35,12 @@ public class HandlerMetaData implements ParameterInclude{
        this.parameterInclude = new ParameterIncludeImpl();
        this.rules = new PhaseRule();
     }
+
+	public HandlerMetaData(QName name){
+		this();
+		this.name = name;
+	}
+
     /**
      * @return
      */

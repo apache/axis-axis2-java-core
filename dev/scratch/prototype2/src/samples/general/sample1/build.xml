@@ -5,7 +5,7 @@
 	<property name="build.classes" location="${build}/classes"/>
 	<property name="build.lib" location="${build}/lib"/>
 	<property name="lib" location="lib"/>
-	<property name="root" location="../../../"/>
+	<property name="root" location="../../../.."/>
 	<property name="jar.dir" location="${root}/target/test-resources/deployment/services"/>
 	
 	<path id="axis.test.classpath">

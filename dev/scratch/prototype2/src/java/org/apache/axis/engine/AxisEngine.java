@@ -45,6 +45,7 @@ public class AxisEngine {
 
     public void receive(MessageContext context) throws AxisFault {
         try {
+			log.info("starting the out flow");
 			//let us always start with a fresh EC
             context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
@@ -52,6 +53,7 @@ public class AxisEngine {
             // Receiving is always a matter of running the transport handlers first
             AxisTransport transport = context.getTransport();
             if (transport != null) {
+            	log.info("Using the transport" + transport.getName());
                 chain.addPhases(transport.getPhases(EngineRegistry.INFLOW));
             }
             //Add the phases that are are at Global scope
@@ -66,6 +68,7 @@ public class AxisEngine {
             
             //Start rolling the Service Handlers will,be added by the Dispatcher 
             chain.invoke(context);
+			log.info("ending the out flow");
         } catch (Throwable e) {
             handleFault(context, e);
         }

@@ -184,8 +184,5 @@ public class OMLinkedListImplFactory extends OMFactory {
         env.addChild(headerImpl);
 
         return env;
-
-
     }
-
 }

@@ -18,6 +18,7 @@ package org.apache.axis.engine;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.handlers.OpNameFinder;
@@ -25,6 +26,11 @@ import org.apache.axis.impl.handlers.OpNameFinder;
 import javax.xml.namespace.QName;
 
 public class Dispatcher extends AbstractHandler implements Handler {
+	public static final QName NAME = new QName("http://axis.ws.apache.org","Disapatcher");
+	public Dispatcher(){
+		init(new HandlerMetaData(NAME));
+	}
+	
     public void invoke(MessageContext msgctx) throws AxisFault{
         if(msgctx.isServerSide()){
             String uri = null;
