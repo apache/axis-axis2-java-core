@@ -23,17 +23,8 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.EngineRegistryImpl;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Provider;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.*;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
@@ -41,19 +32,13 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -111,6 +96,15 @@ public class DeploymentEngine implements DeploymentConstants {
         this(RepositaryName,"server.xml");
 
     }
+   /**
+    * this constructor is used to deploy a web service programatically, by using classLoader
+    * and InputStream
+    * @param engineRegistry
+    */
+    public DeploymentEngine(EngineRegistry engineRegistry) {
+        this.engineRegistry = engineRegistry;
+    }
+
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
         this.folderName = RepositaryName;
         File repository = new File(RepositaryName);
@@ -267,84 +261,74 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+        currentFileItem.setClassLoader();
+        serviceMetaData = getRunnerbleService(serviceMetaData);
+        engineRegistry.addService(serviceMetaData);
+        Parameter para = serviceMetaData.getParameter("OUTSERVICE");
+        if(para != null ){
+            String value = (String) para.getValue();
+            if("true".equals(value)){
+                Class temp = serviceMetaData.getServiceClass();
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        loadServiceClass(serviceMetaData,classLoader);
-
+            }
+        }
+    }
+    /**
+     * This method is used to fill the axis service , it dose loading service class and also the provider class
+     * and it will also load the service handlers
+     * @param serviceMetaData
+     * @return
+     * @throws AxisFault
+     * @throws PhaseException
+     */
+    private AxisService getRunnerbleService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+        loadServiceClass(serviceMetaData);
         Flow inflow = serviceMetaData.getInFlow();
         if(inflow != null ){
-            addFlowHandlers(inflow,classLoader);
+            addFlowHandlers(inflow);
         }
 
         Flow outFlow = serviceMetaData.getOutFlow();
         if(outFlow != null){
-            addFlowHandlers(outFlow,classLoader);
+            addFlowHandlers(outFlow);
         }
 
         Flow faultFlow = serviceMetaData.getFaultFlow();
         if(faultFlow != null) {
-            addFlowHandlers(faultFlow,classLoader);
+            addFlowHandlers(faultFlow);
         }
         PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
         reolve.buildchains();
-        engineRegistry.addService(serviceMetaData);
+        serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
+        return serviceMetaData;
     }
 
-    private void loadServiceClass(AxisService service, ClassLoader parent) throws AxisFault{
-        File file = currentFileItem.getFile();
+
+    private void loadServiceClass(AxisService service) throws AxisFault{
         Class serviceclass = null;
-        URLClassLoader loader1 = null;
-        if (file != null) {
-            URL[] urlsToLoadFrom = new URL[0];
-            try {
-                if (!file.exists()) {
-                    throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
-                }
-                urlsToLoadFrom = new URL[]{file.toURL()};
-                loader1 = new URLClassLoader(urlsToLoadFrom, parent);
-                service.setClassLoader(loader1);
-
-                String readInClass = currentFileItem.getClassName();
-
-                if(readInClass != null && !"".equals(readInClass)){
-                    serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
-                }
-                service.setServiceClass(serviceclass);
-
-                String readInProviderName = currentFileItem.getProvideName();
-                if(readInProviderName != null && ! "".equals(readInProviderName)){
-                    Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
-                    service.setProvider((Provider)provider.newInstance());
-                }
-            } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage(),e);
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage(),e);
+        ClassLoader loader1 = currentFileItem.getClassLoader();
+        try{
+            service.setClassLoader(loader1);
+            String readInClass = currentFileItem.getClassName();
+            if(readInClass != null && !"".equals(readInClass)){
+                serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
             }
-
+            service.setServiceClass(serviceclass);
+            String readInProviderName = currentFileItem.getProvideName();
+            if(readInProviderName != null && ! "".equals(readInProviderName)){
+                Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
+                service.setProvider((Provider)provider.newInstance());
+            }
+        } catch (Exception e) {
+            throw new AxisFault(e.getMessage(),e);
         }
 
     }
 
 
-    private void addFlowHandlers(Flow flow, ClassLoader parent) throws AxisFault {
+    private void addFlowHandlers(Flow flow) throws AxisFault {
         int count = flow.getHandlerCount();
-        File file = currentFileItem.getFile();
-        URLClassLoader loader1 = null;
-        if (file != null) {
-            URL[] urlsToLoadFrom = new URL[0];
-            try {
-                if (!file.exists()) {
-                    throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
-                }
-                urlsToLoadFrom = new URL[]{file.toURL()};
-            } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage());
-            }
-            loader1 = new URLClassLoader(urlsToLoadFrom, parent);
-        }
-
+        ClassLoader loader1 = currentFileItem.getClassLoader();
         for (int j = 0; j < count; j++) {
             //todo handle exception in properway
             HandlerMetadata handlermd = flow.getHandler(j);
@@ -366,7 +350,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    public Class getHandlerClass(String className, URLClassLoader loader1) throws AxisFault {
+    public Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
         Class handlerClass = null;
 
         try {
@@ -379,17 +363,16 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addNewModule(AxisModule moduelmetada) throws AxisFault {
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        currentFileItem.setClassLoader();
 
         Flow inflow = moduelmetada.getInFlow();
-        addFlowHandlers(inflow,classLoader);
+        addFlowHandlers(inflow);
 
         Flow outFlow = moduelmetada.getOutFlow();
-        addFlowHandlers(outFlow,classLoader);
+        addFlowHandlers(outFlow);
 
         Flow faultFlow = moduelmetada.getFaultFlow();
-        addFlowHandlers(faultFlow,classLoader);
+        addFlowHandlers(faultFlow);
 
         engineRegistry.addMdoule(moduelmetada);
     }
@@ -439,7 +422,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             serviceStatus = "Error:\n" + e.getMessage();
                         } finally {
                             if(serviceStatus.startsWith("Error:")) {
-                                 engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()),serviceStatus);
+                                engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()),serviceStatus);
                             }
                             currentFileItem = null;
                         }
@@ -479,7 +462,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         engineRegistry.removeService(new QName(serviceName));
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
-                     engineRegistry.getFaulytServices().remove(serviceName);
+                    engineRegistry.getFaulytServices().remove(serviceName);
                 }
 
             }
@@ -508,6 +491,25 @@ public class DeploymentEngine implements DeploymentConstants {
             return value;
         }
         return fileName;
+    }
+
+    public AxisService deployService(ClassLoader classLoder , InputStream serviceStream ,String servieName) throws DeploymentException {
+        AxisService service = null;
+        try {
+            currentFileItem = new HDFileItem(SERVICE,servieName);
+            currentFileItem.setClassLoader(classLoder);
+            service = new AxisService();
+            DeploymentParser schme = new DeploymentParser(serviceStream, this, "");
+            schme.parseServiceXML(service);
+            service = getRunnerbleService(service);
+        } catch (XMLStreamException e) {
+            throw  new DeploymentException(e.getMessage());
+        } catch (PhaseException e) {
+            throw  new DeploymentException(e.getMessage());
+        } catch (AxisFault axisFault) {
+            throw  new DeploymentException(axisFault.getMessage());
+        }
+        return service;
     }
 
 

@@ -104,7 +104,7 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(SERVICEXMLST)) {
                         procesServiceXML(axisService);
-                        axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getFile().getName())));
+                        axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
