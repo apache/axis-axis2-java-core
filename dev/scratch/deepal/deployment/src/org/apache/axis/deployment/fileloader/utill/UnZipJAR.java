@@ -38,18 +38,14 @@ public class UnZipJAR implements DeployCons{
         String strArchive =filename;
         String tempfile = "C:/tem.txt";
         ZipInputStream zin;
+        int entrysize = 0;
         try{
 
             zin = new ZipInputStream( new FileInputStream(strArchive) ) ;
             ZipEntry entry ;
             while ( ( entry = zin.getNextEntry()) != null ) {
                 if(entry.getName().equals(SERVICEXML)){
-                    int BUFFER = 2048;
-                    int count;
-                    byte data[] = new byte[BUFFER];
-                    count = zin.read(data, 0, BUFFER);
-                    InputStream inputStream = new ByteArrayInputStream(data,0,count);
-                    SchemaParser schme = new SchemaParser(inputStream);
+                    SchemaParser schme = new SchemaParser(zin);
                     schme.parseXML();
                 }
             }

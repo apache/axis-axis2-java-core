@@ -48,12 +48,12 @@ public class WSListenerImpl implements WSListener, DeployCons{
     }
 
     public void checkModules() {
-        String modulepath = folderName + "/modules/";
+        String modulepath = MODULE_PATH;//folderName + "/modules/";
         searchWS(modulepath, MODULE);
     }
 
     public void checkServices() {
-        String modulepath = folderName + "/services/";
+        String modulepath = SERVICE_PATH;//folderName + "/services/";
         searchWS(modulepath, SERVICE);
     }
 

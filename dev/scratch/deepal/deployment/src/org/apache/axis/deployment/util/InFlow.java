@@ -1,5 +1,7 @@
 package org.apache.axis.deployment.util;
 
+import java.util.Vector;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -21,21 +23,27 @@ package org.apache.axis.deployment.util;
  *
  */
 public class InFlow {
-    private Handler [] handlers;
+
+    private Vector handlers = new Vector();
     private int handlercount =0;
+
+    public InFlow() {
+        handlers.removeAllElements();
+    }
 
     /**
      *
      * @param handler
      */
+
     public void addHandler(Handler handler){
-        handlers[handlercount]=handler;
+        handlers.add(handler);
         handlercount++;
     }
 
     public Handler getHandler(int index){
         if(index <= handlercount ){
-            return handlers[index];
+            return (Handler)handlers.get(index);
         } else
             return null;
     }

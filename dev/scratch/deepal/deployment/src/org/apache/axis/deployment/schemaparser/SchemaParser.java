@@ -312,6 +312,112 @@ public class SchemaParser implements DeployCons{
     }
 
     /**
+     * this method is to process the Handler tag in the either service.xml or server.xml
+     * @return Handler object
+     * @throws DeploymentException
+     */
+    private Handler processHandler()throws DeploymentException{
+        String name = pullparser.getName();
+        Handler handler = new Handler();
+        int attribCount =  pullparser.getAttributeCount();
+
+        for (int i = 0; i < attribCount; i++) {
+            String attname = pullparser.getAttributeName(i);
+            String attprifix = pullparser.getAttributePrefix(i);
+            String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
+            String attvalue = pullparser.getAttributeValue(i);
+
+            if (attname.equals(Handler.CLASSNAME)){
+                handler.setClassName(attvalue);
+            } else if (attname.equals(Handler.NAME)){
+                handler.setName(attvalue);
+            } else if (attname.equals(Handler.REF)){
+                handler.setRef(attvalue);
+            }
+        }
+
+        boolean END_HANDLER = false;
+        String element = ""; // to store the paramater elemnt
+        //todo this should change to support xsdany
+        try{
+            while (! END_HANDLER) {
+                pullparser.next();
+                int eventType = pullparser.getEventType();
+                if (eventType==XmlPullParser.START_DOCUMENT){
+                    // processStartDocument();
+                }else if (eventType==XmlPullParser.END_DOCUMENT){
+                    // document end tag met , break the loop
+                    // but the doc end tag wont meet here :)
+                    END_HANDLER = true;
+                }else if (eventType==XmlPullParser.START_TAG){
+                    String tagnae = pullparser.getName();
+                    if(tagnae.equals(Handler.ORDER)){
+                        attribCount =  pullparser.getAttributeCount();
+                        for (int i = 0; i < attribCount; i++) {
+                            String attname = pullparser.getAttributeName(i);
+                            String attprifix = pullparser.getAttributePrefix(i);
+                            String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
+                            String attvalue = pullparser.getAttributeValue(i);
+
+                            if(attname.equals(Handler.AFTER)){
+                                handler.setAfter(attvalue);
+                            } else if (attname.equals(Handler.BEFORE)){
+                                handler.setBefore(attvalue);
+                            } else if (attname.equals(Handler.PHASE)){
+                                handler.setPhase(attvalue);
+                            } else if (attname.equals(Handler.PHASEFIRST)){
+                                String boolval = getValue(attvalue);
+                                if(boolval.equals("true")){
+                                    handler.setPhaseFirst(true);
+                                }else if(boolval.equals("false")){
+                                    handler.setPhaseFirst(false);
+                                }
+                            } else if (attname.equals(Handler.PHASELAST)){
+                                String boolval = getValue(attvalue);
+                                if(boolval.equals("true")){
+                                    handler.setPhaseLast(true);
+                                }else if(boolval.equals("false")){
+                                    handler.setPhaseLast(false);
+                                }
+                            }
+
+                        }
+                    } else if (tagnae.equals(PARAMETERST)){
+                        Parameter parameter = processParameter();
+                        handler.addParameter(parameter);
+                    }
+                }else if (eventType==XmlPullParser.END_TAG){
+                    String endtagname = pullparser.getName();
+                    if(endtagname.equals(HANDERST)){
+                        END_HANDLER = true;
+                        break;
+                    }
+                }else if (eventType==XmlPullParser.CDSECT){
+                    //do nothing
+                }else if (eventType==XmlPullParser.COMMENT){
+                    // do nothing
+                }else if (eventType==XmlPullParser.TEXT){
+                    element = element + pullparser.getText();
+                }else{
+                  //  throw new UnsupportedOperationException();
+                    //any other events are not interesting :)
+                }
+            }
+        } catch (XmlPullParserException e) {
+            throw new DeploymentException("parser Exception",e);
+        } catch (IOException e) {
+            throw new DeploymentException("IO Exception",e);
+        } catch (Exception e) {
+            throw new DeploymentException("Unknown process Exception",e);
+        }
+        // adding element to the parameter
+        return handler;
+    }
+
+
+
+
+    /**
      * This method used to process the <typeMapping>..</typeMapping> tag
      * in the service.xml
      * @throws DeploymentException
@@ -326,10 +432,10 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_TYPEMAPPING = true;
                 }else if (eventType==XmlPullParser.START_TAG){
 
@@ -340,14 +446,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
                     throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -386,16 +492,16 @@ public class SchemaParser implements DeployCons{
 
         boolean END_OPERATION = false;
         String text = ""; // to store the paramater elemnt
-        //todo this should change to support xsdany
+//todo this should change to support xsdany
         try{
             while (! END_OPERATION) {
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_OPERATION = true;
                 }else if (eventType==XmlPullParser.START_TAG){
                     String ST = pullparser.getName();
@@ -405,7 +511,7 @@ public class SchemaParser implements DeployCons{
                     } else if(ST.equals(FAILTFLOWST)){
                         FaultFlow faultFlow = processFaultFlow();
                         operation.setFaultFlow(faultFlow);
-                    }else if(ST.equals(INFLOWST)){
+                    } else if(ST.equals(INFLOWST)){
                         InFlow inFlow = processInFlow();
                         operation.setInFlow(inFlow);
                     } else if(ST.equals(OUTFLOWST)){
@@ -420,14 +526,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
                     throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -458,10 +564,10 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_BEANMAPPING = true;
                 }else if (eventType==XmlPullParser.START_TAG){
 
@@ -472,14 +578,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
                     throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -513,10 +619,10 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_MODULE = true;
                 }else if (eventType==XmlPullParser.START_TAG){
                     String ST= pullparser.getName();
@@ -524,8 +630,8 @@ public class SchemaParser implements DeployCons{
                         Parameter parameter=processParameter();
                         module.addParameter(parameter);
                     }
-                    //todo has to be implemnt this
-                    // complete implenatation
+//todo has to be implemnt this
+// complete implenatation
                 }else if (eventType==XmlPullParser.END_TAG){
                     String endtagname = pullparser.getName();
                     if(endtagname.equals(moduleXMLST)){
@@ -533,14 +639,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
                     throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -563,13 +669,17 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_INFLOW = true;
                 }else if (eventType==XmlPullParser.START_TAG){
-
+                    String tagnae = pullparser.getName();
+                    if(tagnae.equals(HANDERST)){
+                        Handler handler = processHandler();
+                        inFlow.addHandler(handler);
+                    }
                 }else if (eventType==XmlPullParser.END_TAG){
                     String endtagname = pullparser.getName();
                     if(endtagname.equals(INFLOWST)){
@@ -577,14 +687,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+                  //  throw new UnsupportedOperationException();
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -594,7 +704,6 @@ public class SchemaParser implements DeployCons{
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception",e);
         }
-
         return inFlow;
     }
 
@@ -608,13 +717,17 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_OUTFLOW = true;
                 }else if (eventType==XmlPullParser.START_TAG){
-
+                    String tagnae = pullparser.getName();
+                    if(tagnae.equals(HANDERST)){
+                        Handler handler = processHandler();
+                        outFlow.addHandler(handler);
+                    }
                 }else if (eventType==XmlPullParser.END_TAG){
                     String endtagname = pullparser.getName();
                     if(endtagname.equals(OUTFLOWST)){
@@ -622,14 +735,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+                 //   throw new UnsupportedOperationException();
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -653,13 +766,17 @@ public class SchemaParser implements DeployCons{
                 pullparser.next();
                 int eventType = pullparser.getEventType();
                 if (eventType==XmlPullParser.START_DOCUMENT){
-                    // processStartDocument();
+// processStartDocument();
                 }else if (eventType==XmlPullParser.END_DOCUMENT){
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
                     END_FAULTFLOW = true;
                 }else if (eventType==XmlPullParser.START_TAG){
-
+                    String tagnae = pullparser.getName();
+                    if(tagnae.equals(HANDERST)){
+                        Handler handler = processHandler();
+                        faultFlow.addHandler(handler);
+                    }
                 }else if (eventType==XmlPullParser.END_TAG){
                     String endtagname = pullparser.getName();
                     if(endtagname.equals(FAILTFLOWST)){
@@ -667,14 +784,14 @@ public class SchemaParser implements DeployCons{
                         break;
                     }
                 }else if (eventType==XmlPullParser.CDSECT){
-                    //do nothing
+//do nothing
                 }else if (eventType==XmlPullParser.COMMENT){
-                    // do nothing
+// do nothing
                 }else if (eventType==XmlPullParser.TEXT){
                     text = text + pullparser.getText();
                 }else{
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
+                   // throw new UnsupportedOperationException();
+//any other events are not interesting :)
                 }
             }
         } catch (XmlPullParserException e) {
@@ -684,12 +801,8 @@ public class SchemaParser implements DeployCons{
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception",e);
         }
-
         return faultFlow;
     }
-
-
-
 
     /**
      * this method is to get the value of attribue
@@ -713,7 +826,4 @@ public class SchemaParser implements DeployCons{
     private void procesModuleXML(){
 
     }
-
-
-
 }

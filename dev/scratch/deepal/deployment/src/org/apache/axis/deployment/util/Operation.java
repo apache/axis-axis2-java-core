@@ -37,10 +37,14 @@ public class Operation {
     private String qname;
     private String style;
     private String use;
+
     private Module module;
     private InFlow inFlow;
     private OutFlow outFlow;
     private FaultFlow faultFlow;
+
+    public Operation() {
+    }
 
     public String getName() {
         return name;

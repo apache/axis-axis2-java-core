@@ -30,11 +30,20 @@ public interface DeployCons {
     String SERVICEXML = "META-INF/service.xml";
     String MODULEXML = "META-INF/module.xml";
     String PARAMETERST = "parameter";// paramater start tag
+    String HANDERST = "handler";
     String TYPEMAPPINGST = "typeMapping";// typeMapping start tag
     String BEANMAPPINGST = "beanMapping";// beanMapping start tag
     String OPRATIONST = "operation";// operation start tag
     String INFLOWST = "inflow";// inflow start tag
-    String OUTFLOWST = "outflowr";// outflowr start tag
+    String OUTFLOWST = "outflow";// outflowr start tag
     String FAILTFLOWST = "faultflow";// faultflow start tag
+
+    String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data" ;
+    String MODULE_PATH = "D:/Axis 2.0/projects/Deployement/test-data/modules/" ;
+    String SERVICE_PATH = "D:/Axis 2.0/projects/Deployement/test-data/services/" ;
+
+    // for jws file extension
+    String JWS_EXTENSION = ".jws";
+
 
 }

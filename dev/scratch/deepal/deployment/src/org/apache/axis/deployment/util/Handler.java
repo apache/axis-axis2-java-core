@@ -2,6 +2,8 @@ package org.apache.axis.deployment.util;
 
 import org.apache.axis.deployment.DeploymentException;
 
+import java.util.Vector;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -23,12 +25,112 @@ import org.apache.axis.deployment.DeploymentException;
  *
  */
 public class Handler {
+    /**
+     * Following constant values need to parse the <handler>..<handler> tag
+     */
+    public static final String REF = "ref";
+    public static final String CLASSNAME = "class";
+    public static final String NAME = "name";
+    public static final String BEFORE = "before";
+    public static final String AFTER = "after";
+    public static final String PHASE = "phase";
+    public static final String PHASEFIRST = "phaseFirst";
+    public static final String PHASELAST = "phaseLast";
 
-    private String name;
-    private String type;
-    private Parameter [] parameters;
+    public static final String ORDER = "order";  // to resolve the order tag
+
+    /**
+     * ************************
+     * Handler properties
+     */
+    private Vector parameters =new Vector();
+
+    private String ref;
+
+    private String className ;// represent the class atribute in the handler element
+    private String name ;
+
+    private String before;
+    private String after;
+
+    private String phase;
+    private boolean phaseFirst;
+    private boolean phaseLast;
 
     private int count = 0;  // to keep the number of parameters
+
+    public Handler() {
+        this.name = "";
+        this.ref = "";
+        this.className = "";
+        this.before ="";
+        this.after = "";
+        this.phase = "";
+        this.phaseFirst = false;
+        this.phaseLast = false;
+
+        parameters.removeAllElements();
+    }
+
+    public Vector getParameters() {
+        return parameters;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getBefore() {
+        return before;
+    }
+
+    public void setBefore(String before) {
+        this.before = before;
+    }
+
+    public String getAfter() {
+        return after;
+    }
+
+    public void setAfter(String after) {
+        this.after = after;
+    }
+
+    public String getPhase() {
+        return phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
+    public boolean isPhaseFirst() {
+        return phaseFirst;
+    }
+
+    public void setPhaseFirst(boolean phaseFirst) {
+        this.phaseFirst = phaseFirst;
+    }
+
+    public boolean isPhaseLast() {
+        return phaseLast;
+    }
+
+    public void setPhaseLast(boolean phaseLast) {
+        this.phaseLast = phaseLast;
+    }
 
     public String getName() {
         return name;
@@ -38,22 +140,14 @@ public class Handler {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void addParameter(Parameter parameter){
-        parameters[count]= parameter;
+        parameters.add(parameter);
         count ++;
     }
 
     public Parameter getParameter(int index){
         if(index < count){
-            return  parameters[index] ;
+            return  (Parameter)parameters.get(index) ;
         }
         else {
             return null;

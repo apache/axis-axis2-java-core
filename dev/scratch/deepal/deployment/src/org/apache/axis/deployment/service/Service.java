@@ -33,6 +33,10 @@ import com.thoughtworks.xstream.XStream;
  * actual service class which is to deserilize Service.xml
  */
 public class Service {
+
+    public static String PROVIDERNAME = "provider";
+    public static String STYLENAME = "style";
+
     //TODO Complte this class
     private Vector parameters = new Vector();
     private String provider;
@@ -58,9 +62,6 @@ public class Service {
     public void setOperation(Operation operation) {
         this.operation = operation;
     }
-
-    public static String PROVIDERNAME = "provider";
-    public static String STYLENAME = "style";
 
     public OutFlow getOutFlow() {
         return outFlow;

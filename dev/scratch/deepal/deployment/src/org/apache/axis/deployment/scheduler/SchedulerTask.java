@@ -2,6 +2,7 @@ package org.apache.axis.deployment.scheduler;
 
 import org.apache.axis.deployment.deployEvents.WSListener;
 import org.apache.axis.deployment.deployEvents.WSListenerImpl;
+import org.apache.axis.deployment.DeployCons;
 
 import java.util.TimerTask;
 
@@ -25,7 +26,7 @@ import java.util.TimerTask;
  *         9:55:11 AM
  *
  */
-public class SchedulerTask implements Runnable {
+public class SchedulerTask implements Runnable , DeployCons {
     final Object lock = new Object();
 
      private WSListener wsListener;
@@ -42,7 +43,7 @@ public class SchedulerTask implements Runnable {
      */
 
     public SchedulerTask() {
-          String filename = "D:/Axis 2.0/projects/Deployement/test-data" ;
+          String filename = FOLDE_NAME; //"D:/Axis 2.0/projects/Deployement/test-data" ;
   //  private  FilesLoader filesLoader = new FilesLoader(filename);
      wsListener= new WSListenerImpl(filename);
     }

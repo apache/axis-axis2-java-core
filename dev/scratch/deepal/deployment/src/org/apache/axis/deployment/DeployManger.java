@@ -1,5 +1,7 @@
 package org.apache.axis.deployment;
 
+import java.io.InputStream;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -16,23 +18,30 @@ package org.apache.axis.deployment;
  * limitations under the License.
  *
  * @author Deepal Jayasinghe
- *         Oct 5, 2004
- *         2:51:57 PM
+ *         Nov 2, 2004
+ *         4:54:06 PM
  *
  */
-public class DeploymentException extends Exception{
-    public DeploymentException(Throwable cause) {
-        super(cause);
-    }
 
-    public DeploymentException() {
-    }
 
-    public DeploymentException(String message) {
-        super(message);
-    }
+public interface DeployManger {
 
-    public DeploymentException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * This method can used to deploy any model of ws like J2EE or JWS
+     * That is if it want to deploy ws as .aar file or .jws it can handle throgh this
+     * @param wsin
+     */
+    void deployWS(InputStream wsin, String fileName);
+
+    /**
+     * This method is to undeploy ws from the system , when it undeploy the correspondance file
+     * will permently remove from the syetm
+     * @param wsName
+     */
+    void undeployeWS(String wsName);
+
+    /**
+     * This method is to list all the available ws in the system
+     */
+    void listAllWS();
 }
