@@ -15,14 +15,40 @@
  */
 package org.apache.axis.client;
 
+import java.net.URL;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.impl.engine.GlobalImpl;
+import org.apache.axis.impl.registry.EngineRegistryImpl;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.registry.EngineRegistry;
+
 /**
  * This is conveneice API for the User who do not need to see the complexity of the 
  * Engine.  
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Call {
-    public Object[] invoke(Object[] obj){
-           return null;
+    private EngineRegistry registry;
+    public Call(){
+        this.registry = new EngineRegistryImpl(new GlobalImpl());
     }
-
+    //TODO this a a MOCK call things are subjected to be decided 
+    
+    public OMElement syncCall(OMElement in,URL url) throws AxisFault{
+        OMEnvelope env = null;
+        
+        env.getBody().addChild(in);
+        AxisEngine engine = new AxisEngine(registry);
+        MessageContext msgctx = new MessageContext(registry);
+        msgctx.setEnvelope(env);
+        engine.send(msgctx);
+        
+        
+        return null;
+    }    
+    
 }

@@ -18,7 +18,9 @@ package org.apache.axis.impl.transport.http;
 
 
 
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,21 +78,29 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        // Accept and process requests from the socket
-        while (!stopped) {
-            Socket socket = null;
-            try {
-                socket = serverSocket.accept();
-               
-            } catch (java.io.InterruptedIOException iie) {
-            } catch (Exception e) {
-                log.debug(e.getMessage(), e);
-                break;
+        try {
+            // Accept and process requests from the socket
+            while (!stopped) {
+                Socket socket = null;
+                try {
+                    socket = serverSocket.accept();
+                   
+                } catch (java.io.InterruptedIOException iie) {
+                } catch (Exception e) {
+                    log.debug(e.getMessage(), e);
+                    break;
+                }
+                if (socket != null) {
+                    ServerHttpHandler worker = new ServerHttpHandler(this, socket,myAxisServer);
+                    MessageContext msgContext = worker.execute();
+                    myAxisServer.recive(msgContext);
+                    socket.close();
+                }
             }
-            if (socket != null) {
-                SimpleAxisWorker worker = new SimpleAxisWorker(this, socket,myAxisServer);
-                worker.run();
-            }
+        } catch (AxisFault e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
         }
         log.info("Simple Axis Server Quit");
     }

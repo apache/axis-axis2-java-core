@@ -19,7 +19,7 @@ package org.apache.axis.engine;
 import java.io.OutputStream;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.transport.http.TCPTrasnportSender;
+import org.apache.axis.impl.transport.tcp.TCPTrasnportSender;
 
 
 /**
