@@ -1,0 +1,16 @@
+<server name="AxisJava2.0">
+    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
+    <parameter name="hotupdate" locked="xsd:false">true</parameter>
+    <transports>
+        <transport name="http"/>
+        <transport name="smtp"/>
+    </transports>
+    <phaseOrder>
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="module"/>
+        <phase name="service"/>
+    </phaseOrder>
+</server>
+
