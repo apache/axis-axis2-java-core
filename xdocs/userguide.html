@@ -22,10 +22,10 @@
 <body>
 <h1 align="center"><a name="_Toc96697849">Axis 2.0 User's Guide </a></h1>
 <p>&nbsp; </p>
-<h3><a name="_Toc96698076"></a><a name="_Toc96697851">Introduction </a></h3>
+<h3><a name="_Toc96698076"></a>Introduction </h3>
 <p>Welcome to Axis 2.0, the next generation of Apache Axis !!! This User Guide will help you to understand what you will get from Axis 2.0 and how to get started. </p>
 <p>We hope you will benefit from the power of Axis 2.0. </p>
-<h3><a name="_Toc96698077"></a><a name="_Toc96697852">What is Axis 2.0 ? </a></h3>
+<h3><a name="_Toc96698077"></a>What is Axis 2.0 ? </h3>
 <p>Before we start, its highly recommended to read <a href="http://ws.apache.org/axis/java/user-guide.html">Axis 1.x User's guide </a>, if you are new to Axis. </p>
 <p>Axis 2.0 is the next generation of Apache Axis. In late August 2004, during the Axis Summit held in Colombo, Sri Lanka, a new architecture was introduced to have a much more flexible, efficient and configurable Axis. Even though the architecture is new, some of the well established concepts from Axis 1.x, like handlers are preserved in Axis 2.0 also. Axis 2.0 comes with lots of new features, enhancements and new industry specification implementations. </p>
 <p>After months of continued discussion and coding effort in this direction, Axis 2.0 now delivers the following key features: </p>
@@ -44,7 +44,7 @@
 <p>We hope you enjoy using Axis. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation . </p>
 <p>Let us know what you think! </p>
 <p>Please send feedback about the package to &quot; <a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org </a>&quot; and make sure to prefix the subject of the mail with “[Axis2]”. </p>
-<h3><a name="_Toc96698078"></a><a name="_Toc96697853">What's in this release? </a></h3>
+<h3><a name="_Toc96698078"></a>What's in this release? </h3>
 <p>This release includes the following features: </p>
 <ul>
   <li>SOAP 1.1/1.2 compliant engine </li>
@@ -57,7 +57,7 @@
   <li>WSDL 1.1 and 2.0 compliant Component Model </li>
   <li>Examples, including a client and server for the one-way, two-way and synchronous, asynchronous web services invocation </li>
 </ul>
-<h3><a name="_Toc96698079"></a><a name="_Toc96697854">What's still to do? </a></h3>
+<h3><a name="_Toc96698079"></a>What's still to do? </h3>
 <p>Please see a list of what we think needs doing - and please consider helping out if you're interested &amp; able! </p>
 <ul>
   <li>Encoding/data binding </li>
@@ -67,15 +67,15 @@
   <li>Server side sync/async support </li>
   <li>Complete XML infoset support for AXIOM </li>
 </ul>
-<h2><a name="_Toc96698080"></a><a name="_Toc96697855">Installation Guide </a></h2>
-<h3><a name="_Toc96698081"></a><a name="_Toc96697856">Introduction </a></h3>
+<h2><a name="_Toc96698080"></a>Installation Guide </h2>
+<h3><a name="_Toc96698081"></a>Introduction </h3>
 <p>Axis 2.0 can be downloaded as a <a href="releases.html">zipped binary </a> or the <a href="cvs-usage.html">source </a>. This section describes how Axis2 can be installed either as a standalone server or as part of a J2EE compliant servlet container. </p>
-<h3><a name="_Toc96698082"></a><a name="_Toc96697857">Prerequisites </a></h3>
+<h3><a name="_Toc96698082"></a>Prerequisites </h3>
 <p>Axis2 requires the Java Runtime Environment to be properly installed. Axis is developed to be run on JRE 1.4 and upwards but it has not been fully tested with the latest JRE 1.5. Hence it is safe to run Axis with Java 1.4. If the JRE is not already in place it must be installed to proceed further. For instructions on setting up the JRE in different operating systems, please visit <a href="http://java.sun.com/">http://java.sun.com </a>. </p>
 <p>All the required jars are shipped with the binary distribution and if the source distribution is used, running the maven build will automatically download the required jars for you. </p>
 <p>Following sections describe how each type of distribution needs to be installed. Since the process with the source distribution is similar to the binary distribution after building, the first section explains the process of building Axis from source. If you have the binary distribution you can skip the build sections and directly go to the binary installation section. </p>
-<h3><a name="_Toc96698083"></a><a name="_Toc96697858">Building Axis2 from source </a></h3>
-<h4><a name="_Toc96698084"></a><a name="_Toc96697859">Setting up the Environment and the tools </a></h4>
+<h3><a name="_Toc96698083"></a>Building Axis2 from source </h3>
+<h4><a name="_Toc96698084"></a>Setting up the Environment and the tools </h4>
 <p>The Axis2 build is based on <a href="http://maven.apache.org/">Maven </a>. Hence the prerequisite to build Axis2 from source is to have Maven installed. Even though extensive instruction guides are available at the Maven site, this guide also contains the “easiest path” for quick environment setting. Advanced users who wish to know more about Maven can visit <a href="http://maven.apache.org/start/index.html">here </a>. </p>
 <p>For Windows users the easiest way is to download the windows installer package. Once the installer package is run, all the necessary environment variables will be properly set. Once Maven is installed, the success of the installation can be tested by typing “maven –version” in the command prompt. </p>
 <p>&nbsp; </p>
@@ -83,14 +83,14 @@
 <p>&nbsp; </p>
 <p>For Linux users the tar ball or the zip archive is the best options. (Unfortunately there is no rpm as such that can be easily installed) Once the archive is downloaded expand it to a directory of choice and set the environment variable “MAVEN_HOME” and add MAVEN_HOME/bin to the path as well. More instructions for installing Maven in UNIX based operating systems can be found <a href="http://maven.apache.org/start/install.html">here </a>. </p>
 <p>Once maven is properly installed it's all that is needed to start building Axis2. </p>
-<h4><a name="_Toc96698085"></a><a name="_Toc96697860">The Axis source distribution </a></h4>
+<h4><a name="_Toc96698085"></a>The Axis source distribution </h4>
 <p>The <a href="releases.html">source distribution </a> is available as a zipped archive or a tar ball. All the necessary build scripts are included with the source distribution. Once the source archive is expanded into a directory of choice, moving to the particular directory and typing maven will build the axis jar file. </p>
 <p align="center"><img width="540" height="292" src="images/clip_image004.jpg"></p>
 <p>Once the command completes, the binaries (jar files in this case) can be found at a newly created “target” directory. </p>
 <p><strong>Note – For the first Maven build (if the maven repository is not built first) it will take a while since required jars need to be downloaded. However this is a once only process and will not affect any successive builds. </strong></p>
 <p><strong> </strong>The default maven build will however build only the Axis2 jar file. To obtain a WAR (Web Archive), “maven war” command should be issued. This will create a complete WAR with the name axis2.war inside the target directory. </p>
 <p>Once this build step is complete, the binaries are ready to be deployed. </p>
-<h3><a name="_Toc96698086"></a><a name="_Toc96697861">Installing Axis2 in a Servlet container </a></h3>
+<h3><a name="_Toc96698086"></a>Installing Axis2 in a Servlet container </h3>
 <p>Installation of the WAR is quite simple. It's a matter of dropping the war in the webapps folders and most servlet containers will automatically install the war. However some servlet containers may require a restart in order to capture the new web application. Please refer your servlet container documentation for more information about this. </p>
 <p>Once the WAR is successfully installed it can be tested by pointing the web browser to the <strong>http:// &lt;host :port&gt;/ axis2. </strong>It should produce the following page. </p>
 <p align="center"><strong><img width="624" height="439" src="images/clip_image006.jpg"></strong></p>
@@ -108,7 +108,7 @@ present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;por
 </p>
 <!-- Image goes here -->
 
-<h3><a name="_Toc96698087"></a><a name="_Toc96697862">Running the Axis2 standalone server </a></h3>
+<h3><a name="_Toc96698087"></a>Running the Axis2 standalone server </h3>
 <p>Since a J2EE servlet container can be heavy in certain cases, a simple socket server is provided with Axis2. </p>
 Start scripts are inluded in the bin directory of the binary distribution.</p>
 <p>For windows</p>
@@ -127,7 +127,7 @@ the server script can be used. The sever script however needs two parameters, th
  Note - the directory entered as the repository loacation needs to have a services directory inside. This is
  absolutely required and AXIS will not create it automatically in the case of the simple axis server. 
  </b></p>
-<h2><a name="_Toc96697863"></a><a name="_Toc96698088">Samples </a></h2>
+<h2><a name="_Toc96697863"></a>Samples </h2>
 <p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under ../modules/samples/src/java/userguide/sample1. </p>
 <ol>
   <li>Case1: Echo Synchronous call. </li>
@@ -232,7 +232,7 @@ the server script can be used. The sever script however needs two parameters, th
     <td valign="top"><p>The jar that bundles the server side and client side code. </p></td>
   </tr>
 </table>
-<h3><a name="_Toc96698089"></a><a name="_Toc96697864">Pre-Conditions </a></h3>
+<h3><a name="_Toc96698089"></a>Pre-Conditions </h3>
 <p>Axis2 should be installed (see the Installation guide above). For simplicity samples will assume the servlet container is Tomcat. </p>
 <p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed Asix2.) </p>
 <p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
@@ -251,7 +251,7 @@ the server script can be used. The sever script however needs two parameters, th
 	<li>sample1-all.jar – Compiled sources required for running the client applications (Packaged to modules/samples/build/lib)</li>
 </ul>
 <p>Once the sample is compiled once, all the required jar files for deploying and running all three Cases of the sample will be compiled and packaged.</p>
-<h3><a name="_Toc96698091"></a><a name="_Toc96697866">Sample1- Case1 : Echo Synchronous call </a></h3>
+<h3><a name="_Toc96698091"></a>Sample1- Case1 : Echo Synchronous call </h3>
 <p>The sample1 - Case1: Echo synchronous call is intended to demonstrate the synchronous web service call in Axis2 with both the client side and client side running Axis2. In the next few steps the user will be walked through in: </p>
 <ul>
   <li>Compiling and building a web service </li>
@@ -302,7 +302,7 @@ the server script can be used. The sever script however needs two parameters, th
 <p>&gt;ant echo </p>
 <p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
 <p align="center"><img width="648" height="269" src="images/clip_image022.jpg"></p>
-<h3><a name="_Toc96698092"></a><a name="_Toc96697867">Sample1 - Case2: Echo Synchronous call with a phased handler. </a></h3>
+<h3><a name="_Toc96698092"></a>Sample1 - Case2: Echo Synchronous call with a phased handler. </h3>
 <p>This example will go one step forward from the example above and will deploy a web service with a Logging handler. The client application will not change, of course with an exception; the Endpoint Reference will be changed to refer the new service <strong>“Sample1WithHandler” </strong>. </p>
 <p>There is a Handler (LoggingHandler.java) that is introduced in this case and it will basically log the fact that it got called. The code can be found in LoggingHandler.java. </p>
 <pre class="style1 style2 style3">public void invoke(MessageContext msgContext) throws AxisFault { 
@@ -381,7 +381,7 @@ public void revoke(MessageContext msgContext){
 <p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
 <p align="center"><img width="648" height="265" src="images/clip_image024.jpg"></p>
 <p>The service <strong>“sample1withhandler” </strong> will run its logging handler as it gets called and it will log the call as the handler gets called in the inflow. This logged information can be found in the server logs. </p>
-<h3><a name="_Toc96698093"></a><a name="_Toc96697868">Sample1 - Case3: Echo Asynchronous call. </a></h3>
+<h3><a name="_Toc96698093"></a>Sample1 - Case3: Echo Asynchronous call. </h3>
 <p>In this case the example focuses on calling a synchronous web service in an asynchronous manner in the client side. If this example is compared with the first example, which is <strong>“Echo Synchronous call” </strong>, the server side is identical for both the cases. The difference will be in the web service client that will be used. </p>
 <p>In this case the client will make a web service call and it will register a call back handler and sends the message out. The difference will be that the client application that is doing the web service call will not hang till the response. Rather it will get returned and once the response returns the client will get notified by way of the registered callback (This is one of the two methods this can be done in Axis 2.0. Refer <a href="ClientAPI.html">Client Api Tutorial </a> for more information). </p>
 <p>The callback handler that will be used is ClientEchoCallbackHandler.java and the client program is AsynchronousClient.java. </p>
@@ -398,8 +398,8 @@ public void revoke(MessageContext msgContext){
 <p>&nbsp; </p>
 <strong><br>
 </strong>
-<h2><a name="_Toc96698094"></a><a name="_Toc96697869">Writing your own Service and a client </a></h2>
-<h3><a name="_Toc96698095"></a><a name="_Toc96697870">Writing a New Service </a></h3>
+<h2><a name="_Toc96698094"></a>Writing your own Service and a client </h2>
+<h3><a name="_Toc96698095"></a>Writing a New Service </h3>
 <p>Writing a new Web Service in Axis2-M1 requires you to do following steps </p>
 <p><strong>&#149;&nbsp; Writing a new Web Service implementation class </strong></p>
 <p>Axis2 M1 does not support data binding and supports only the XML level messaging. The default provider (do not worry about this if you do not know what it is) only supports the java methods having the return type as OMElement and only parameter as an OMElement. </p>
@@ -427,7 +427,7 @@ a "wizard interface" and also provides the facility for users to automatically c
 service.xml as well. The tool start script can be found in the bin directory. 
 
 
-<h3><a name="_Toc96698096"></a><a name="_Toc96697871">Writing a Client for the Axis2-M1 </a></h3>
+<h3><a name="_Toc96698096"></a>Writing a Client for the Axis2-M1 </h3>
 <p>Axis2 M1 supports HTTP transport only. Axis2-M1 supports the following interaction patterns. </p>
 <p>&#149;&nbsp; Blocking invocation of type in-out (request/response) </p>
 <p>&#149;&nbsp; Non blocking invocation of type in-out (Without a separate Listener) </p>
@@ -452,7 +452,7 @@ builder.getDocumentElement();
  </span></li>
 </ol>
 <p>for more information in handling the OM objects please read the <a href="OMTutorial.html">OM Tutorial </a>. </p>
-<h4><a name="_Toc96698097"></a><a name="_Toc96697872">Synchronous Client </a></h4>
+<h4><a name="_Toc96698097"></a>Synchronous Client </h4>
 <p>Invoking the synchronous web service call can be done with the following code. </p>
 <pre class="style4">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) + &quot;/axis/services/echo&quot; );  
 Call call = <strong>new </strong>Call();  
@@ -461,7 +461,7 @@ SOAPEnvelope responseEnv = call.sendReceive(envelope); </pre>
 <p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
 <p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
 <p>&#149;&nbsp; call.sendRecieve() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
-<h4><a name="_Toc96698098"></a><a name="_Toc96697873">Asynchronous Client </a></h4>
+<h4><a name="_Toc96698098"></a>Asynchronous Client </h4>
 <p>Invoking the asynchronous web service call can be done with the following code. </p>
 <pre class="style4">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT)+ &quot;/axis/services/echo&quot; );  
 Call call = <strong>new </strong>Call();  
