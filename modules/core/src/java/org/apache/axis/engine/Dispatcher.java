@@ -34,6 +34,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
      * Field NAME
      */
     public static final QName NAME = new QName("http://axis.ws.apache.org", "Disapatcher");
+    private AxisService service;
 
     /**
      * Constructor Dispatcher
@@ -49,52 +50,22 @@ public class Dispatcher extends AbstractHandler implements Handler {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
+        final String URI_ID_STRING = "/services";
         if (msgctx.isServerSide()) {
+
             EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
-            String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
 
-            QName operationName = null;
-            QName serviceName = null;
-            
-            int index = filePart.lastIndexOf('/');
-            String serviceAndMethodStr = null;
+            int index = filePart.lastIndexOf(URI_ID_STRING);
+            String serviceStr = null;
             if (index > 0) {
-                serviceAndMethodStr = filePart.substring(index + 1);
-            }
-
-            if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
-                if(serviceAndMethodStr != null){
-                    serviceName = new QName(serviceAndMethodStr);
-                }
-                if(soapAction != null &&  soapAction.trim().length() > 0){
-                    operationName = new QName(soapAction);
-                }
-            }else if (WSDLService.STYLE_RPC.equals(msgctx.getMessageStyle())) {
-                if(serviceAndMethodStr == null){
-                    if(soapAction != null &&  soapAction.trim().length() > 0){
-                        serviceAndMethodStr = soapAction;
-                    }else{
-                        throw new AxisFault("Noway to find the service, both URL and soapAcition missing");
-                    }
-                }
-                serviceName = new QName(serviceAndMethodStr);
-            }else{
-                throw new AxisFault("Unknow style " + msgctx.getMessageStyle());
-            }
-
-            if (serviceName != null) {
+                serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
                 EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
-                AxisService service = registry.getService(serviceName);
+                QName serviceName = new QName(serviceStr);
+                service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
                     msgctx.setMessageStyle(service.getStyle());
-                    if (operationName != null) {
-                        AxisOperation op = service.getOperation(operationName);
-                        if (op != null) {
-                            msgctx.setOperation(op);
-                        } 
-                    } 
                     // let add the Handlers
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
@@ -107,8 +78,20 @@ public class Dispatcher extends AbstractHandler implements Handler {
                 } else {
                     throw new AxisFault("Service " + serviceName + " is not found");
                 }
+
             } else {
                 throw new AxisFault("Both the URI and SOAP_ACTION Is Null");
+            }
+
+            if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
+                String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+                if (soapAction != null && soapAction.trim().length() > 0) {
+                    QName operationName = new QName(soapAction);
+                    AxisOperation op = service.getOperation(operationName);
+                    if (op != null) {
+                        msgctx.setOperation(op);
+                    }
+                }
             }
         } else {
             // TODO client side service Dispatch ,, What this really mean?
