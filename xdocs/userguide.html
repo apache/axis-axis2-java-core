@@ -4,7 +4,7 @@
 <head>
 <title>Axis 2.0 User's Guide</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-
+<link href="css/axis-docs.css" type="text/css" rel="stylesheet" />
 <style type="text/css">
 <!--
 .style1 {font-family: "Courier New", Courier, mono}
@@ -103,9 +103,30 @@
 <p>Since Axis2 supports hot deployment one can drop the service jar directly through the file system to the above mentioned services directory and it will also cause the service to be automatically installed without the container being restarted. </p>
 <p>To check the successful installation of a service <strong><em>available services link </em></strong> is provided. The services and the operations of successfully installed services will be displayed in the available services page. </p>
 <p align="center"><img width="647" height="469" src="images/clip_image012.jpg"></p>
-<p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. </p>
+<p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. However whether the service is
+present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;port&gt;/axis2/services/&lt;service name&gt;</b>. This should provide a page similar to the following
+</p>
+<!-- Image goes here -->
+
 <h2><a name="_Toc96698087"></a><a name="_Toc96697862">Running the Axis2 standalone server </a></h2>
 <p>Since a J2EE servlet container can be heavy in certain cases, a simple socket server is provided with Axis2. </p>
+Start scripts are inluded in the bin directory of the binary distribution.</p>
+<p>For windows</p>
+			 <p class="command">&gt;start.bat </p>
+<p>For Linux</p>
+			 <p class="command">$start.sh</p>			 			 
+<p>This will start the simple axis server in the default port (8080). To start the server in a non default port
+the server script can be used. The sever script however needs two parameters, the repository location and the port.</p>
+
+<p>For windows</p>
+			 <p class="command">&gt;server <i>repository directory</i> <i>port</i> </p>
+<p>For Linux</p>
+			 <p class="command">$server <i>repository directory</i> <i>port</i> </p>			 			 
+ 
+ <p><b>
+ Note - the directory entered as the repository loacation needs to have a services directory inside. This is
+ absolutely required and AXIS will not create it automatically in the case of the simple axis server. 
+ </b></p>
 <h1><a name="_Toc96697863"></a><a name="_Toc96698088">Samples </a></h1>
 <p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under ../modules/samples/src/java/userguide/sample1. </p>
 <ol>
@@ -421,6 +442,11 @@ xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;
 <p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a </strong>xis <strong>ar </strong>chive) </p>
 <p><strong>&#149;&nbsp; deploy the archive in the Axis2 </strong></p>
 <p>While the Axis2 is running copy the archive to the services folder in the repository directory or use web upload method. (in the case of a Servlet container this directory is axis/WEB-INF/services/). Axis will automatically pick the archive and deploy the service. </p>
+<p>To make this whole process user-friendly, Axis 2 is shipped with a service creation GUI tool. It is
+a "wizard interface" and also provides the facility for users to automatically create a very simple
+service.xml as well. The tool start script can be found in the bin directory. 
+
+
 <h2><a name="_Toc96698096"></a><a name="_Toc96697871">Writing a Client for the Axis2-M1 </a></h2>
 <p>Axis2 M1 supports HTTP transport only. Axis2-M1 supports the following interaction patterns. </p>
 <p>&#149;&nbsp; Blocking invocation of type in-out (request/response) </p>
