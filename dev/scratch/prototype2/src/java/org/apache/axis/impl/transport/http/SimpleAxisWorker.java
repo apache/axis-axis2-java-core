@@ -17,10 +17,10 @@
 package org.apache.axis.impl.transport.http;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.encoding.Base64;
 import org.apache.axis.engine.*;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.impl.encoding.Base64;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.encoding ;
+package org.apache.axis.impl.encoding;
 
 import java.io.IOException;
 import java.io.OutputStream;
