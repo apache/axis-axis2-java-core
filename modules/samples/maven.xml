@@ -49,5 +49,18 @@
 			<include name="**" />
 		</jar>
 
+		<!-- interop sample -->
+		<mkdir  dir="target/jar-code/sample4"/>
+		<mkdir  dir="target/jar-code/sample4/META-INF"/>
+       <copy todir="target/jar-code/sample4">
+			<fileset dir="target/classes/">
+				<include name="interop/doclit/**/*.class"/>
+			</fileset>
+		</copy>
+		<copy file="src/java/interop/doclit/service.xml" tofile="target/jar-code/sample3/META-INF/service.xml"/> 
+		<jar jarfile="target/test-resources/samples/services/interop-doclit.jar" basedir="target/jar-code/sample4" >
+			<include name="**" />
+		</jar>
+
     </goal>
  </project>
