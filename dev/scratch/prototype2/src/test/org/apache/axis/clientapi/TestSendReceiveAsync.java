@@ -1,9 +1,9 @@
 /*
- * Created on Dec 22, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+* Created on Dec 22, 2004
+*
+* TODO To change the template for this generated file go to
+* Window - Preferences - Java - Code Style - Code Templates
+*/
 package org.apache.axis.clientapi;
 
 import java.io.File;
@@ -63,9 +63,9 @@ public class TestSendReceiveAsync extends AbstractTestCase {
     private Thread thisThread = null;
 
     private SimpleHTTPReceiver sas;
-    
+
     private boolean finish=false;
-    
+
     /**
      * @param testName
      */
@@ -74,7 +74,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
         // TODO Auto-generated constructor stub
     }
 
-    
+
     protected void setUp() throws Exception {
         engineRegistry = EngineUtils.createMockRegistry(serviceName,
                 operationName, transportName);
@@ -98,55 +98,54 @@ public class TestSendReceiveAsync extends AbstractTestCase {
     protected void tearDown() throws Exception {
 
         while(!finish){
-        Thread.sleep(500);
+            Thread.sleep(500);
         }
         sas.stop();
-     
-        
+
+
     }
 
-    
+
     public void testSendReceiveAsync() throws Exception{
-       
+
         SOAPEnvelope envelope=getBasicEnvelope();
         EndpointReferenceType targetEPR = new EndpointReferenceType(
                 AddressingConstants.WSA_TO,"http://127.0.0.1:"+EngineUtils.TESTING_PORT+"/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
         call.setListenerTransport("http",true);
-        
+
         Callback callback = new Callback(){
-           public void onComplete(AsyncResult result){
-           SimpleOMSerializer sOMSerializer = new SimpleOMSerializer();
-               try {
-                sOMSerializer.serialize(result.getResponseEnvelope(), XMLOutputFactory.newInstance()
-                           .createXMLStreamWriter(System.out));
-            } catch (XMLStreamException e) {
-                reportError(e);
-                
-                
-            }finally{
-                finish=true;
-            }
+            public void onComplete(AsyncResult result){
+                SimpleOMSerializer sOMSerializer = new SimpleOMSerializer();
+                try {
+                    sOMSerializer.serialize(result.getResponseEnvelope(), XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(System.out));
+                } catch (XMLStreamException e) {
+                    reportError(e);
+
+
+                }finally{
+                    finish=true;
+                }
             }
             public void reportError(Exception e){
                 e.printStackTrace();    
             }
         };
-        
-        call.sendReceiveAsync(envelope,callback);
-        
-    }
-    
-    private SOAPEnvelope getBasicEnvelope() throws Exception{
-        File file = new File(
-        "D:/TestBase/SVN/trunk/java/dev/scratch/prototype2/src/test-resources/clientapi/SimpleSOAPEnvelope.xml");
-XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance()
-        .createXMLStreamReader(new FileReader(file)); //put the file
 
-OMXMLParserWrapper builder = OMXMLBuilderFactory
-        .createStAXSOAPModelBuilder(OMFactory.newInstance(),
-                xmlStreamReader);
-return (SOAPEnvelope) builder.getDocumentElement();
+        call.sendReceiveAsync(envelope,callback);
+
+    }
+
+    private SOAPEnvelope getBasicEnvelope() throws Exception{
+        File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
+        XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance()
+                .createXMLStreamReader(new FileReader(file)); //put the file
+
+        OMXMLParserWrapper builder = OMXMLBuilderFactory
+                .createStAXSOAPModelBuilder(OMFactory.newInstance(),
+                        xmlStreamReader);
+        return (SOAPEnvelope) builder.getDocumentElement();
     }
 }

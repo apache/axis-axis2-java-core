@@ -104,10 +104,8 @@ public class TestSendReceive extends AbstractTestCase {
     }
 
     private SOAPEnvelope getBasicEnvelope() throws Exception {
-        File file = new File(
-                "D:/TestBase/SVN/trunk/java/dev/scratch/prototype2/src/test-resources/clientapi/SimpleSOAPEnvelope.xml");
-        XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(
-                new FileReader(file)); //put the file
+        File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");
+        XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); //put the file
 
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory
                 .newInstance(), xmlStreamReader);

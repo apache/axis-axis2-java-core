@@ -67,6 +67,7 @@ public class AxisEngine {
             //Start rolling the Service Handlers will,be added by the Dispatcher 
             chain.invoke(context);
         } catch (AxisFault e) {
+            e.printStackTrace();
             handleFault(context, e);
         }
     }
