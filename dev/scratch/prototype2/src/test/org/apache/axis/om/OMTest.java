@@ -36,7 +36,7 @@ import javax.xml.stream.XMLInputFactory;
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class OMTest extends AbstractTestCase{
-    private OMEnvelope envelope;
+    private SOAPEnvelope envelope;
     private OMFactory fac;
     /**
      * Constructor.

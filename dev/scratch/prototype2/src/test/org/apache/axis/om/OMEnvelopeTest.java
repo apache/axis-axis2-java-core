@@ -30,32 +30,32 @@ public class OMEnvelopeTest extends OMTestCase {
         super.setUp();
     }
     public void testGetHeader1() {
-        OMHeader header = soapEnvelope.getHeader();
+        SOAPHeader header = soapEnvelope.getHeader();
         assertTrue("Header information retrieved not correct", ( header != null && header.getLocalName().equalsIgnoreCase("Header")) );
     }
 
     public void testGetBody1() {
-        OMBody body = soapEnvelope.getBody();
+        SOAPBody body = soapEnvelope.getBody();
         assertTrue("Header information retrieved not correct", ( body != null && body.getLocalName().equalsIgnoreCase("Body")) );
     }
 
-    private OMEnvelope getSecondEnvelope() throws Exception {
+    private SOAPEnvelope getSecondEnvelope() throws Exception {
         return OMTestUtils.getOMBuilder(getTestResourceFile("soap/sample1.xml")).getOMEnvelope();
     }
 
     public void testGetHeader2() throws Exception {
-        OMHeader header = getSecondEnvelope().getHeader();
+        SOAPHeader header = getSecondEnvelope().getHeader();
         assertTrue("Header information retrieved not correct", ( header != null && header.getLocalName().equalsIgnoreCase("Header")) );
     }
 
     public void testGetBody2() throws Exception {
-        OMBody body = getSecondEnvelope().getBody();
+        SOAPBody body = getSecondEnvelope().getBody();
         assertTrue("Header information retrieved not correct", ( body != null && body.getLocalName().equalsIgnoreCase("Body")) );
     }
 
     public void testDefaultEnveleope(){
 
-        OMEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
+        SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
         assertNotNull(env);
 
         assertNotNull("Header should not be null",env.getHeader());

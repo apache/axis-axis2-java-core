@@ -32,7 +32,7 @@ import org.apache.axis.AbstractTestCase;
  */
 public class IteratorTester extends AbstractTestCase{
 
-    OMEnvelope envelope = null;
+    SOAPEnvelope envelope = null;
 
     public IteratorTester(String testName) {
         super(testName);

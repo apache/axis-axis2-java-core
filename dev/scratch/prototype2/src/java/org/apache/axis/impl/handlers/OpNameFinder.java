@@ -21,7 +21,7 @@ import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Service;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 
@@ -35,7 +35,7 @@ public class OpNameFinder extends AbstractHandler{
     public void invoke(MessageContext msgContext) throws AxisFault {
         int style = msgContext.getMessageStyle();
         if(Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL){
-            OMEnvelope envelope = msgContext.getEnvelope();
+            SOAPEnvelope envelope = msgContext.getEnvelope();
             OMNode node = null;
             OMElement element = envelope.getBody();
             if(OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())){

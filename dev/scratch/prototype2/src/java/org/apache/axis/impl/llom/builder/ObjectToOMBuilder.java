@@ -61,7 +61,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         omFactory = OMFactory.newInstance();
     }
 
-    public OMEnvelope getOMEnvelope() throws OMException {
+    public SOAPEnvelope getOMEnvelope() throws OMException {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 

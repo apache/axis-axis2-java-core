@@ -23,7 +23,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.engine.GlobalImpl;
 import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.EngineRegistry;
 
 /**
@@ -39,7 +39,7 @@ public class Call {
     //TODO this a a MOCK call things are subjected to be decided 
     
     public OMElement syncCall(OMElement in,URL url) throws AxisFault{
-        OMEnvelope env = null;
+        SOAPEnvelope env = null;
         
         env.getBody().addChild(in);
         AxisEngine engine = new AxisEngine(registry);

@@ -26,7 +26,7 @@ import org.apache.axis.impl.llom.OMNamespaceImpl;
 
 public class OMHeaderTest extends OMTestCase {
 
-    OMHeader soapHeader;
+    SOAPHeader soapHeader;
 
     public OMHeaderTest(String testName) {
         super(testName);
@@ -45,7 +45,7 @@ public class OMHeaderTest extends OMTestCase {
 
     public void testAddHeaderElement() {
         String newElementName = "MyHeaderElement";
-        OMHeaderBlock soapHeaderElement = soapHeader.addHeaderBlock(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf"));
+        SOAPHeaderBlock soapHeaderElement = soapHeader.addHeaderBlock(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf"));
         assertTrue("Header Element added has different parent than it should have", soapHeaderElement.getParent() == soapHeader);
         assertTrue("Header Element added has different localname than it was given", soapHeaderElement.getLocalName().equalsIgnoreCase(newElementName));
     }

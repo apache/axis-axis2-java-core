@@ -22,7 +22,7 @@ package org.apache.axis.om;
 
 
 public class MessagesTest extends OMTestCase {
-    OMEnvelope soapEnvelope;
+    SOAPEnvelope soapEnvelope;
 
     public MessagesTest(String testName) {
         super(testName);

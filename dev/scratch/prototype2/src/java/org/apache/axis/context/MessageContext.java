@@ -22,7 +22,7 @@ import org.apache.axis.engine.EndpointReferance;
 import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Service;
 import org.apache.axis.impl.context.SimpleSessionContext;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.EngineRegistry;
 
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class MessageContext {
 
     private SessionContext sessionContext;
     private Service service;
-    private OMEnvelope envelope;
+    private SOAPEnvelope envelope;
     private boolean responseWritten;
     private boolean infaultFlow;
     private boolean serverSide;
@@ -103,7 +103,7 @@ public class MessageContext {
     /**
      * @return
      */
-    public OMEnvelope getEnvelope() {
+    public SOAPEnvelope getEnvelope() {
         return envelope;
     }
 
@@ -195,7 +195,7 @@ public class MessageContext {
     /**
      * @param envelope
      */
-    public void setEnvelope(OMEnvelope envelope) {
+    public void setEnvelope(SOAPEnvelope envelope) {
         this.envelope = envelope;
     }
 

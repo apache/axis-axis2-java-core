@@ -28,7 +28,7 @@ import org.xmlpull.v1.XmlPullParserException;
 public class OMXPPWrapper implements OMXMLParserWrapper {
     private XmlPullParser parser;
     // private OMElementImpl root;
-    private OMEnvelope envelope;
+    private SOAPEnvelope envelope;
     private OMNodeImpl lastNode;
     private boolean cache = true;
     private boolean slip = false;
@@ -55,7 +55,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
 //            next();
 //        return root;
 //    }
-    public OMEnvelope getOMEnvelope() throws OMException {
+    public SOAPEnvelope getOMEnvelope() throws OMException {
         while (envelope == null && !done) {
             next();
         }
@@ -116,9 +116,9 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
         if (elementLevel == 2) {
             // this is either a header or a body
             if (elementName.equalsIgnoreCase("Header")) {
-                element = new OMHeaderImpl(elementName, null, parent, this);
+                element = new SOAPHeaderImpl(elementName, null, parent, this);
             } else if (elementName.equalsIgnoreCase("Body")) {
-                element = new OMBodyImpl(elementName, null, parent, this);
+                element = new SOAPBodyImpl(elementName, null, parent, this);
             } else {
                 // can there be Elements other than Header and Body in Envelope. If yes, what are they and is it YAGNI ??
                 throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
@@ -126,7 +126,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
 
         } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase("Header")) {
             // this is a headerBlock
-            element = new OMHeaderBlockImpl(elementName, null, parent, this);
+            element = new SOAPHeaderBlockImpl(elementName, null, parent, this);
 
         } else {
             // this is neither of above. Just create an element

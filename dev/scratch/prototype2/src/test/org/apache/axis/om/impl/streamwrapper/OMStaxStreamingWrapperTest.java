@@ -6,7 +6,7 @@ import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 import org.apache.axis.impl.llom.wrapper.OMStAXWrapper;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
@@ -39,7 +39,7 @@ import java.io.FileNotFoundException;
  */
 public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
-    private OMEnvelope envelope = null;
+    private SOAPEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
     private OMStAXBuilder omStAXBuilder;
     private File tempFile;

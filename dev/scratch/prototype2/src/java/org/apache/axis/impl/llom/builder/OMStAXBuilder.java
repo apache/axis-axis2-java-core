@@ -36,7 +36,7 @@ public class OMStAXBuilder implements OMXMLParserWrapper{
 
     private OMFactory ombuilderFactory;
     private XMLStreamReader parser;
-    private OMEnvelope envelope;
+    private SOAPEnvelope envelope;
     private OMNode lastNode;
 
     //keeps the state of the cache
@@ -70,7 +70,7 @@ public class OMStAXBuilder implements OMXMLParserWrapper{
         this.ombuilderFactory = ombuilderFactory;
     }
 
-    public OMEnvelope getOMEnvelope() throws OMException {
+    public SOAPEnvelope getOMEnvelope() throws OMException {
         while (envelope == null && !done) {
             next();
         }

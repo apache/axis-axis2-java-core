@@ -30,7 +30,7 @@ public interface OMXMLParserWrapper {
      * @return
      * @throws OMException
      */
-    public OMEnvelope getOMEnvelope() throws OMException;
+    public SOAPEnvelope getOMEnvelope() throws OMException;
 
     /**
      *  Proceed the parser one step and return the event value

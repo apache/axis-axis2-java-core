@@ -32,7 +32,7 @@ public class OMTestCase extends AbstractTestCase  {
     protected OMXPPWrapper omXmlPullParserWrapper;
 protected OMFactory ombuilderFactory;
 
-    protected OMEnvelope soapEnvelope;
+    protected SOAPEnvelope soapEnvelope;
 
     public OMTestCase(String testName) {
         super(testName);

@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class OMBodyTest extends OMTestCase {
 
-    OMBody soapBody;
+    SOAPBody soapBody;
 
     public OMBodyTest(String testName) {
         super(testName);

@@ -19,7 +19,7 @@ import java.util.Locale;
 
 
 /**
- * An element in the <CODE>OMBody</CODE> object that contains
+ * An element in the <CODE>SOAPBody</CODE> object that contains
  * error and/or status information. This information may relate to
  * errors in the <CODE>OMMessage</CODE> object or to problems
  * that are not related to the content in the message itself.

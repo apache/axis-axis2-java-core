@@ -67,50 +67,50 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new OMTextImpl(s);
     }
 
-    public OMBody createOMBody(OMEnvelope envelope) {
-        return new OMBodyImpl(envelope);
+    public SOAPBody createOMBody(SOAPEnvelope envelope) {
+        return new SOAPBodyImpl(envelope);
     }
 
-    public OMBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMBodyImpl(localName, ns, parent, builder);
+    public SOAPBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+        return new SOAPBodyImpl(localName, ns, parent, builder);
     }
 
-    public OMEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMEnvelopeImpl(localName, ns, parent, builder);
+    public SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+        return new SOAPEnvelopeImpl(localName, ns, parent, builder);
     }
 
-    public OMEnvelope createOMEnvelope(String localName, OMNamespace ns) {
-        return new OMEnvelopeImpl(localName, ns);
+    public SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns) {
+        return new SOAPEnvelopeImpl(localName, ns);
     }
 
-    public OMEnvelope createOMEnvelope(OMXMLParserWrapper parserWrapper) {
+    public SOAPEnvelope createOMEnvelope(OMXMLParserWrapper parserWrapper) {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-    //TODO there should be a method to create an OMEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
+    //TODO there should be a method to create an SOAPEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
 
-    public OMHeader createHeader(OMEnvelope envelope) {
-        return new OMHeaderImpl(envelope);
+    public SOAPHeader createHeader(SOAPEnvelope envelope) {
+        return new SOAPHeaderImpl(envelope);
     }
 
-    public OMHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMHeaderImpl(localName, ns, parent, builder);
+    public SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+        return new SOAPHeaderImpl(localName, ns, parent, builder);
     }
 
-    public OMHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns) {
-        return new OMHeaderBlockImpl(localName, ns);
+    public SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns) {
+        return new SOAPHeaderBlockImpl(localName, ns);
     }
 
-    public OMHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMHeaderBlockImpl(localName, ns, parent, builder);
+    public SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+        return new SOAPHeaderBlockImpl(localName, ns, parent, builder);
     }
 
-    public OMEnvelope getDefaultEnvelope() {
+    public SOAPEnvelope getDefaultEnvelope() {
         //Create an envelop
         OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-        OMEnvelopeImpl env = new OMEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME,ns);
-        env.addChild(new OMHeaderImpl(env));
-        env.addChild(new OMBodyImpl(env));
+        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME,ns);
+        env.addChild(new SOAPHeaderImpl(env));
+        env.addChild(new SOAPBodyImpl(env));
 
         return env;
 

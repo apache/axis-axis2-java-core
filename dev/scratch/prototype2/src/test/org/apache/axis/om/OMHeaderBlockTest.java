@@ -24,8 +24,8 @@ import java.util.Iterator;
 
 public class OMHeaderBlockTest extends OMTestCase {
 
-    OMHeader soapHeader;
-    OMHeaderBlock soapHeaderElement;
+    SOAPHeader soapHeader;
+    SOAPHeaderBlock soapHeaderElement;
 
     public OMHeaderBlockTest(String testName) {
         super(testName);
@@ -37,7 +37,7 @@ public class OMHeaderBlockTest extends OMTestCase {
         soapHeader = soapEnvelope.getHeader();
         Iterator headerElementIter = soapHeader.examineAllHeaderBlocks();
         if (headerElementIter.hasNext()) {
-            soapHeaderElement = (OMHeaderBlock) headerElementIter.next();
+            soapHeaderElement = (SOAPHeaderBlock) headerElementIter.next();
        }
     }
 

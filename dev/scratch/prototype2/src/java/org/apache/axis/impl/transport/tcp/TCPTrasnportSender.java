@@ -21,7 +21,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 
 import java.io.OutputStream;
 
@@ -37,7 +37,7 @@ public class TCPTrasnportSender extends AbstractHandler implements TransportSend
     
     public void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-        OMEnvelope envelope = msgContext.getEnvelope();
+        SOAPEnvelope envelope = msgContext.getEnvelope();
         if(envelope != null){
             SimpleOMSerializer serializer = new SimpleOMSerializer();
             serializer.serialize(envelope,this.out);

@@ -100,7 +100,7 @@ public abstract class OMFactory {
      * @param envelope
      * @return
      */
-    public abstract OMBody createOMBody(OMEnvelope envelope);
+    public abstract SOAPBody createOMBody(SOAPEnvelope envelope);
 
     /**
      * @param localName
@@ -109,7 +109,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
     /**
@@ -119,18 +119,18 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
     /**
      * @param localName
      * @param ns
      */
-    public abstract OMEnvelope createOMEnvelope(String localName, OMNamespace ns);
+    public abstract SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns);
 
     /**
      * @param envelope
      */
-    public abstract OMHeader createHeader(OMEnvelope envelope);
+    public abstract SOAPHeader createHeader(SOAPEnvelope envelope);
 
     /**
      * @param localName
@@ -139,7 +139,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
 
@@ -147,7 +147,7 @@ public abstract class OMFactory {
      * @param localName
      * @param ns
      */
-    public abstract OMHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns);
+    public abstract SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns);
 
     /**
      * @param localName
@@ -156,7 +156,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
     //make the constructor protected
@@ -167,6 +167,6 @@ public abstract class OMFactory {
         return FactoryFinder.findFactory(null);
     }
 
-    public abstract OMEnvelope getDefaultEnvelope();
+    public abstract SOAPEnvelope getDefaultEnvelope();
 
 }

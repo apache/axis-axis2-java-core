@@ -5,7 +5,7 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
@@ -57,7 +57,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
 
     public void testStaxBuilder()throws Exception{
 
-        OMEnvelope envelope = builder.getOMEnvelope();
+        SOAPEnvelope envelope = builder.getOMEnvelope();
         assertNotNull(envelope);
         serilizer.serialize(envelope,new FileOutputStream(tempFile));
 

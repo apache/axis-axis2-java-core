@@ -38,7 +38,7 @@ import org.apache.axis.AbstractTestCase;
  */
 public class OMNavigatorTest extends AbstractTestCase {
 
-    private OMEnvelope envelope = null;
+    private SOAPEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
     private OMStAXBuilder builder;
     private File tempFile;

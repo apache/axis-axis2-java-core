@@ -22,7 +22,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Service;
-import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -122,7 +122,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
 
             Object[] parms = new Object[]{msgContext.getEnvelope()};
             //invoke the WebService 
-            OMEnvelope result = (OMEnvelope)method.invoke(obj,parms);
+            SOAPEnvelope result = (SOAPEnvelope)method.invoke(obj,parms);
             MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry());
             msgContext1.setEnvelope(result);
             
