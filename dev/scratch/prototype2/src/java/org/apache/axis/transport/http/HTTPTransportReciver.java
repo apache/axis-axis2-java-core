@@ -63,7 +63,7 @@ public class HTTPTransportReciver extends TransportReciver {
 
             } else {
                 if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(map.get(HTTPConstants.RESPONSE_CODE))) {
-                    //This is Ack
+                    msgContext.setProperty(MessageContext.TRANSPORT_SUCCEED,HTTPConstants.RESPONSE_ACK_CODE_VAL);
                     return;
                 }
                 //TODO take care of other HTTP Headers

@@ -30,8 +30,8 @@ public class Correlator {
         return instance;
     }
 
-    public void addCorrelationInfo(String msgid, Callback callbackobj) {
-        correlationHash.put(msgid, callbackobj);
+    public void addCorrelationInfo(String msgid, Callback callbackObj) {
+        correlationHash.put(msgid, callbackObj);
     }
 
     public Callback getCorrelationInfo(String MessageID) {

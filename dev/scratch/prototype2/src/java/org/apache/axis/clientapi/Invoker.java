@@ -11,7 +11,6 @@ package org.apache.axis.clientapi;
  * governing permissions and limitations under the License.
  */
 
-import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
@@ -52,8 +51,8 @@ public class Invoker implements Runnable {
             MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties(),reqMsgContext.getSessionContext());
 
             resMsgContext.setServerSide(false);
-            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-            Constants.TRANSPORT_HTTP);
+//            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+//            Constants.TRANSPORT_HTTP);
             TransportReciver reciver =
                     TransportReciverLocator.locate(resMsgContext);
             reciver.invoke(resMsgContext);
@@ -63,6 +62,7 @@ public class Invoker implements Runnable {
             resMsgContext.setMessageID(messageID);
             callback =
                     correlator.getCorrelationInfo(resMsgContext.getMessageID());
+            callback.setComplete(true);
             callback.onComplete(result);
 
         } catch (Exception e) {

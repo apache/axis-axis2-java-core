@@ -51,6 +51,8 @@ public class MessageContext {
     public static final String TRANSPORT_WRITER = "TRANSPORT_WRITER";
     public static final String TRANSPORT_READER = "TRANSPORT_READER";
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
+
+    public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
     //public static final String REQUEST_URL = "REQUEST_URL";
 
     private boolean processingFault = false;

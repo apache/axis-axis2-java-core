@@ -32,5 +32,6 @@ public class Constants {
 
     public static final String TRANSPORT_TCP = "tcp";
     public static final String TRANSPORT_HTTP = "http";
+    public static final String TRANSPORT_SMTP= "smtp";
 
 }
