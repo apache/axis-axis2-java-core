@@ -1,9 +1,8 @@
 package org.apache.axis.deployement.Scheduler;
 
-import org.apache.axis.deployement.FileLoder.FilesLoader;
+import org.apache.axis.deployement.FileLoader.FilesLoader;
 
 import java.util.TimerTask;
-import java.util.Date;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

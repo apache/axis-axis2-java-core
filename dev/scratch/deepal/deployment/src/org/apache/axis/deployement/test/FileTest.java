@@ -1,6 +1,6 @@
 package org.apache.axis.deployement.test;
 
-import org.apache.axis.deployement.FileLoder.utill.UnZipJAR;
+import org.apache.axis.deployement.FileLoader.utill.UnZipJAR;
 
 import java.util.Vector;
 import java.util.Date;
