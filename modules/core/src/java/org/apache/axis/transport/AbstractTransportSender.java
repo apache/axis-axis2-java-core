@@ -18,7 +18,7 @@ package org.apache.axis.transport;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
@@ -42,7 +42,7 @@ public abstract class AbstractTransportSender
     protected OutputStream outS;
 
     public AbstractTransportSender() {
-        init(new HandlerMetaData(NAME));
+        init(new HandlerMetadata(NAME));
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {

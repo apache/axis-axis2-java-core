@@ -68,6 +68,7 @@
     
     <goal name="war-withsamples" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
+        <mkdir dir="target"/>
                <war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
                   <fileset dir="modules/core/src/html"/>
                   <webinf dir="modules/samples/target/test-resources/samples"/>

@@ -21,6 +21,8 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -58,14 +60,14 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     buf.append("Pragma: no-cache\n");
                     buf.append("SOAPAction: \"\"\n\n");
                     outS = socket.getOutputStream();
-                    out = new OutputStreamWriter(outS);
+                    out = new BufferedWriter(new OutputStreamWriter(outS));
                     out.write(buf.toString().toCharArray());
 
 //                        URLConnection connection = url.openConnection();
 //                                                connection.setDoOutput(true);
 //                        out = new OutputStreamWriter(connection.getOutputStream());
 
-                    msgContext.setProperty(MessageContext.TRANSPORT_READER, new InputStreamReader(socket.getInputStream()));
+                    msgContext.setProperty(MessageContext.TRANSPORT_READER, new BufferedReader(new InputStreamReader(socket.getInputStream())));
                     msgContext.setProperty(HTTPConstants.SOCKET, socket);
                 } catch (MalformedURLException e) {
                     throw new AxisFault(e.getMessage(), e);

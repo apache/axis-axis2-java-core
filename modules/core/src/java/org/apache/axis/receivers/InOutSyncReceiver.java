@@ -17,7 +17,7 @@
 package org.apache.axis.receivers;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Receiver;
@@ -34,7 +34,7 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
 
 
     public InOutSyncReceiver() {
-        init(new HandlerMetaData(NAME));
+        init(new HandlerMetadata(NAME));
     }
 
     public void invoke(final MessageContext msgContext) throws AxisFault {

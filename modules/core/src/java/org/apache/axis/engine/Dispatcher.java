@@ -19,7 +19,7 @@ package org.apache.axis.engine;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.handlers.OpNameFinder;
 
@@ -29,7 +29,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
     public static final QName NAME = new QName("http://axis.ws.apache.org", "Disapatcher");
 
     public Dispatcher() {
-        init(new HandlerMetaData(NAME));
+        init(new HandlerMetadata(NAME));
     }
 
     public void invoke(MessageContext msgctx) throws AxisFault {

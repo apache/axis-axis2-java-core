@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 /**
  * represent the deployment information about the handler
  */
-public class HandlerMetaData implements ParameterInclude {
+public class HandlerMetadata implements ParameterInclude {
     private ParameterInclude parameterInclude;
     private QName name;
     private PhaseRule rules;
@@ -31,12 +31,12 @@ public class HandlerMetaData implements ParameterInclude {
     private String className;
 
 
-    public HandlerMetaData() {
+    public HandlerMetadata() {
         this.parameterInclude = new ParameterIncludeImpl();
         this.rules = new PhaseRule();
     }
 
-    public HandlerMetaData(QName name) {
+    public HandlerMetadata(QName name) {
         this();
         this.name = name;
     }

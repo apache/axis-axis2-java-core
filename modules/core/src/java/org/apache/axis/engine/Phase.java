@@ -17,7 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +45,7 @@ public class Phase extends AbstractHandler implements Handler {
     public Phase(String phaseName) {
         handlers = new ArrayList();
         this.phaseName = phaseName;
-        init(new HandlerMetaData(NAME));
+        init(new HandlerMetadata(NAME));
     }
 
     public void addHandler(Handler handler, int index) {

@@ -21,7 +21,7 @@ import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
@@ -134,7 +134,7 @@ public class PhaseResolver {
             }
             if (flow != null) {
                 for (int j = 0; j < flow.getHandlerCount(); j++) {
-                    HandlerMetaData metadata = flow.getHandler(j);
+                    HandlerMetadata metadata = flow.getHandler(j);
                     //todo change this in properway
                     if (metadata.getRules().getPhaseName().equals("")) {
                         metadata.getRules().setPhaseName("service");
@@ -163,7 +163,7 @@ public class PhaseResolver {
         }
         if (flow != null) {
             for (int j = 0; j < flow.getHandlerCount(); j++) {
-                HandlerMetaData metadata = flow.getHandler(j);
+                HandlerMetadata metadata = flow.getHandler(j);
                 //todo change this in properway
                 if (metadata.getRules().getPhaseName().equals("")) {
                     metadata.getRules().setPhaseName("service");
@@ -174,7 +174,7 @@ public class PhaseResolver {
         phaseHolder = new PhaseHolder(engineRegistry, axisService);
 
         for (int i = 0; i < allHandlers.size(); i++) {
-            HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.get(i);
+            HandlerMetadata handlerMetaData = (HandlerMetadata) allHandlers.get(i);
             phaseHolder.addHandler(handlerMetaData);
         }
         phaseHolder.getOrderdHandlers(type);
@@ -218,7 +218,7 @@ public class PhaseResolver {
             }
             if (flow != null) {
                 for (int j = 0; j < flow.getHandlerCount(); j++) {
-                    HandlerMetaData metadata = flow.getHandler(j);
+                    HandlerMetadata metadata = flow.getHandler(j);
                     //todo change this in properway
                     if (metadata.getRules().getPhaseName().equals("")) {
                         metadata.getRules().setPhaseName("transport");
@@ -262,7 +262,7 @@ public class PhaseResolver {
                 }
                 if (flow != null) {
                     for (int j = 0; j < flow.getHandlerCount(); j++) {
-                        HandlerMetaData metadata = flow.getHandler(j);
+                        HandlerMetadata metadata = flow.getHandler(j);
                         //todo change this in properway
                         if (metadata.getRules().getPhaseName().equals("")) {
                             metadata.getRules().setPhaseName("global");

@@ -27,12 +27,12 @@ public class FlowImpl implements Flow {
         list = new ArrayList();
     }
 
-    public void addHandler(HandlerMetaData handler) {
+    public void addHandler(HandlerMetadata handler) {
         list.add(handler);
     }
 
-    public HandlerMetaData getHandler(int index) {
-        return (HandlerMetaData) list.get(index);
+    public HandlerMetadata getHandler(int index) {
+        return (HandlerMetadata) list.get(index);
     }
 
     public int getHandlerCount() {

@@ -17,7 +17,7 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
@@ -25,8 +25,8 @@ import org.apache.axis.engine.Handler;
 import javax.xml.namespace.QName;
 
 public abstract class AbstractHandler implements Handler {
-    private static HandlerMetaData EMPTY_HANDLER_METADATA = new HandlerMetaData();
-    protected HandlerMetaData handlerDesc;
+    private static HandlerMetadata EMPTY_HANDLER_METADATA = new HandlerMetadata();
+    protected HandlerMetadata handlerDesc;
 
     public AbstractHandler() {
         handlerDesc = EMPTY_HANDLER_METADATA;
@@ -48,7 +48,7 @@ public abstract class AbstractHandler implements Handler {
         return handlerDesc.getParameter(name);
     }
 
-    public void init(HandlerMetaData handlerdesc) {
+    public void init(HandlerMetadata handlerdesc) {
         this.handlerDesc = handlerdesc;
     }
 }

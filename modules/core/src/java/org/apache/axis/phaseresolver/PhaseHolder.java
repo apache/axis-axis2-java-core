@@ -20,7 +20,7 @@ package org.apache.axis.phaseresolver;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
@@ -52,7 +52,7 @@ public class PhaseHolder {
 
     private boolean isPhaseExist(String phaseName) {
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return true;
             }
@@ -72,14 +72,14 @@ public class PhaseHolder {
         return false;
     }
 
-    public void addHandler(HandlerMetaData handler) throws PhaseException {
+    public void addHandler(HandlerMetadata handler) throws PhaseException {
         String phaseName = handler.getRules().getPhaseName();
 
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
             if (isPhaseExistinER(phaseName)) {
-                PhaseMetaData newpPhase = new PhaseMetaData(phaseName);
+                PhaseMetadata newpPhase = new PhaseMetadata(phaseName);
                 addPhase(newpPhase);
                 newpPhase.addHandler(handler);
             } else {
@@ -89,13 +89,13 @@ public class PhaseHolder {
         }
     }
 
-    private void addPhase(PhaseMetaData phase) {
+    private void addPhase(PhaseMetadata phase) {
         phaseholder.add(phase);
     }
 
-    private PhaseMetaData getPhase(String phaseName) {
+    private PhaseMetadata getPhase(String phaseName) {
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return phase;
             }
@@ -106,9 +106,9 @@ public class PhaseHolder {
 
     private void OrderdPhases() {
         //todo complet this using phaseordeer
-        PhaseMetaData[] phase = new PhaseMetaData[phaseholder.size()];
+        PhaseMetadata[] phase = new PhaseMetadata[phaseholder.size()];
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData tempphase = (PhaseMetaData) phaseholder.get(i);
+            PhaseMetadata tempphase = (PhaseMetadata) phaseholder.get(i);
             phase[i] = tempphase;
         }
         phase = getOrderPhases(phase);
@@ -116,21 +116,21 @@ public class PhaseHolder {
         phaseholder.clear();
 
         for (int i = 0; i < phase.length; i++) {
-            PhaseMetaData phaseMetaData = phase[i];
+            PhaseMetadata phaseMetaData = phase[i];
             phaseholder.add(phaseMetaData);
 
         }
     }
 
 
-    private PhaseMetaData[] getOrderPhases(PhaseMetaData[] phasesmetadats) {
-        PhaseMetaData[] temppahse = new PhaseMetaData[phasesmetadats.length];
+    private PhaseMetadata[] getOrderPhases(PhaseMetadata[] phasesmetadats) {
+        PhaseMetadata[] temppahse = new PhaseMetadata[phasesmetadats.length];
         int count = 0;
         ArrayList pahselist = registry.getPhases();
         for (int i = 0; i < pahselist.size(); i++) {
             String phasemetadata = (String) pahselist.get(i);
             for (int j = 0; j < phasesmetadats.length; j++) {
-                PhaseMetaData tempmetadata = phasesmetadats[j];
+                PhaseMetadata tempmetadata = phasesmetadats[j];
                 if (tempmetadata.getName().equals(phasemetadata)) {
                     temppahse[count] = tempmetadata;
                     count++;
@@ -157,14 +157,14 @@ public class PhaseHolder {
         try {
             OrderdPhases();
             //     Vector tempHander = new Vector();
-            HandlerMetaData[] handlers;
+            HandlerMetadata[] handlers;
 
             switch (chainType) {
                 case 1:
                     {
                         ArrayList inChain = new ArrayList();//       service.getExecutableInChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -179,7 +179,7 @@ public class PhaseHolder {
                     {
                         ArrayList outChain = new ArrayList();// service.getExecutableOutChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -194,7 +194,7 @@ public class PhaseHolder {
                     {
                         ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -215,7 +215,7 @@ public class PhaseHolder {
         try {
             OrderdPhases();
             //  Vector tempHander = new Vector();
-            HandlerMetaData[] handlers;
+            HandlerMetadata[] handlers;
             Class handlerClass = null;
             Handler handler;
             switch (chainType) {
@@ -223,7 +223,7 @@ public class PhaseHolder {
                     {
                         ArrayList inChain = new ArrayList();//       service.getExecutableInChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -250,7 +250,7 @@ public class PhaseHolder {
                     {
                         ArrayList outChain = new ArrayList();// service.getExecutableOutChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -277,7 +277,7 @@ public class PhaseHolder {
                     {
                         ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -310,14 +310,14 @@ public class PhaseHolder {
         try {
             OrderdPhases();
             //     Vector tempHander = new Vector();
-            HandlerMetaData[] handlers;
+            HandlerMetadata[] handlers;
 
             switch (chainType) {
                 case 1:
                     {
                         ArrayList inChain = new ArrayList();//       service.getExecutableInChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -332,7 +332,7 @@ public class PhaseHolder {
                     {
                         ArrayList outChain = new ArrayList();// service.getExecutableOutChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -347,7 +347,7 @@ public class PhaseHolder {
                     {
                         ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                         for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
+                            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {

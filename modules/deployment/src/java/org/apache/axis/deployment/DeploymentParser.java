@@ -23,7 +23,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.SimpleAxisOperationImpl;
@@ -388,10 +388,10 @@ public class DeploymentParser implements DeploymentConstants {
      * @throws org.apache.axis.deployment.DeploymentException
      *
      */
-    private HandlerMetaData processHandler() throws DeploymentException {
+    private HandlerMetadata processHandler() throws DeploymentException {
         //  String name = pullparser.getLocalName();
         boolean ref_name = false;
-        HandlerMetaData handler = new HandlerMetaData();
+        HandlerMetadata handler = new HandlerMetadata();
         int attribCount = pullparser.getAttributeCount();
 
         for (int i = 0; i < attribCount; i++) {
@@ -711,7 +711,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetaData handler = processHandler();
+                        HandlerMetadata handler = processHandler();
                         inFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -749,7 +749,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetaData handler = processHandler();
+                        HandlerMetadata handler = processHandler();
                         outFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -788,7 +788,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetaData handler = processHandler();
+                        HandlerMetadata handler = processHandler();
                         faultFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);

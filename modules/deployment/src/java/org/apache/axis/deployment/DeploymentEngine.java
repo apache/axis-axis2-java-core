@@ -27,7 +27,7 @@ import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
@@ -340,7 +340,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         for (int j = 0; j < count; j++) {
             //todo handle exception in properway
-            HandlerMetaData handlermd = flow.getHandler(j);
+            HandlerMetadata handlermd = flow.getHandler(j);
             Class handlerClass = null;
             Handler handler;
             handlerClass = getHandlerClass(handlermd.getClassName(), loader1);

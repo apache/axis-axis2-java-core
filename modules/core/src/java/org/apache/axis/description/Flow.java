@@ -23,7 +23,7 @@ package org.apache.axis.description;
 public interface Flow {
     public int getHandlerCount();
 
-    public HandlerMetaData getHandler(int index);
+    public HandlerMetadata getHandler(int index);
 
-    public void addHandler(HandlerMetaData handler);
+    public void addHandler(HandlerMetadata handler);
 }

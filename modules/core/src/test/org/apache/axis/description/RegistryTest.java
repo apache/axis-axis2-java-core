@@ -57,7 +57,7 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testHandlerMedatata() {
-        HandlerMetaData hmd = new HandlerMetaData();
+        HandlerMetadata hmd = new HandlerMetadata();
         testParameteInClude(hmd);
     }
 
@@ -118,7 +118,7 @@ public class RegistryTest extends AbstractTestCase {
             public void invoke(MessageContext msgContext) throws AxisFault {
             }
         };
-        handler.init(new HandlerMetaData());
+        handler.init(new HandlerMetadata());
         assertNull(handler.getName());
         assertNull(handler.getParameter("hello"));
         handler.cleanup();
