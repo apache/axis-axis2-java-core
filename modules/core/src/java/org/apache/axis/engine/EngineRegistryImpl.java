@@ -25,6 +25,8 @@ import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 
 /**
  * Class EngineRegistryImpl
@@ -49,6 +51,10 @@ public class EngineRegistryImpl implements EngineRegistry {
      * Field transports
      */
     private final HashMap transports = new HashMap();
+    
+    private final HashMap transportsIn = new HashMap();
+    
+    private final HashMap transportsOut = new HashMap();
 
     /**
      * Field global
@@ -164,6 +170,36 @@ public class EngineRegistryImpl implements EngineRegistry {
      * @throws AxisFault
      */
     public synchronized void addTransport(AxisTransport transport)
+            throws AxisFault {
+        transports.put(transport.getName(), transport);
+    }
+
+
+    public AxisTransportIn getTransportIn(QName name) throws AxisFault {
+        return (AxisTransportIn) transportsIn.get(name);
+    }
+
+    /**
+     * Method addTransport
+     *
+     * @param transport
+     * @throws AxisFault
+     */
+    public synchronized void addTransport(AxisTransportIn transport)
+            throws AxisFault {
+        transports.put(transport.getName(), transport);
+    }
+    public AxisTransportOut getTransportOut(QName name) throws AxisFault {
+        return (AxisTransportOut) transports.get(name);
+    }
+
+    /**
+     * Method addTransport
+     *
+     * @param transport
+     * @throws AxisFault
+     */
+    public synchronized void addTransportOut(AxisTransportOut transport)
             throws AxisFault {
         transports.put(transport.getName(), transport);
     }
