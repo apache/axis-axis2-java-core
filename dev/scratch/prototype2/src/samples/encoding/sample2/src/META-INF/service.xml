@@ -4,10 +4,13 @@
     <operation name="echoStrings" qname="echoStrings" style="anyStyle" use="anyUse"/>
     <operation name="echoInts" qname="echoInts" style="anyStyle" use="anyUse"/>
     <operation name="echoDoubles" qname="echoDoubles" style="anyStyle" use="anyUse"/>
+    <operation name="echoBase64" qname="echoBase64" style="anyStyle" use="anyUse"/>
     <operation name="receiveStrings" qname="receiveStrings" style="anyStyle" use="anyUse"/>
     <operation name="receiveInts" qname="receiveInts" style="anyStyle" use="anyUse"/>
     <operation name="receiveDoubles" qname="receiveDoubles" style="anyStyle" use="anyUse"/>
+    <operation name="receiveBase64" qname="receiveBase64" style="anyStyle" use="anyUse"/>
     <operation name="sendStrings" qname="sendStrings" style="anyStyle" use="anyUse"/>
     <operation name="sendInts" qname="sendInts" style="anyStyle" use="anyUse"/>
     <operation name="sendDoubles" qname="sendDoubles" style="anyStyle" use="anyUse"/>
+    <operation name="sendBase64" qname="sendBase64" style="anyStyle" use="anyUse"/>
 </service>

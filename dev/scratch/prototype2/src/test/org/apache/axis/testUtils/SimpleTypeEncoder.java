@@ -83,7 +83,12 @@ public class SimpleTypeEncoder implements Encoder {
                     cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI, OMConstants.ARRAY_ITEM_LOCALNAME, OMConstants.ARRAY_ITEM_QNAME);
                 }
 
-            } else {
+
+            }else if(obj.getClass() == byte[].class){
+                byte[] byteArray = (byte[])obj;
+                str = new String(byteArray).toCharArray();
+                cHandler.characters(str,0,str.length);
+            }else{
                 throw new OMException("Unsupported type");
             }
         } catch (SAXException e) {

@@ -17,7 +17,7 @@ public interface Benchmark1PortType extends java.rmi.Remote {
     /**
      * echos base64 content
      */
-    //public byte[] echoBase64(byte[] input) throws java.rmi.RemoteException;
+    public byte[] echoBase64(byte[] input) throws java.rmi.RemoteException;
 
     /**
      * echos string arrays
@@ -37,7 +37,7 @@ public interface Benchmark1PortType extends java.rmi.Remote {
     /**
      * receives base64 content
      */
-    //public int receiveBase64(byte[] input) throws java.rmi.RemoteException;
+    public int receiveBase64(byte[] input) throws java.rmi.RemoteException;
 
     /**
      * receives strings
@@ -57,7 +57,7 @@ public interface Benchmark1PortType extends java.rmi.Remote {
     /**
      * sends base64 content
      */
-    //public byte[] sendBase64(int size) throws java.rmi.RemoteException;
+    public byte[] sendBase64(int size) throws java.rmi.RemoteException;
 
     /**
      * sends strings

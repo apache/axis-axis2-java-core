@@ -26,6 +26,16 @@ import java.util.ArrayList;
 
 public class SimpleTypeEncodingUtils {
 
+     public static byte[] deserializeByteArray(XMLStreamReader xpp)
+             throws AxisFault {
+        String val = deserializeString(xpp);
+        if (val == null) {
+            throw new AxisFault("Null recieved!!");
+        }
+        return val.getBytes();
+
+
+    }
 
     public static String[] deserializeStringArray(XMLStreamReader xpp)
             throws AxisFault {

@@ -11,9 +11,9 @@ public class Benchmark1Impl implements benchmark1.Benchmark1PortType{
     public void echoVoid() throws java.rmi.RemoteException {
     }
 
-//    public byte[] echoBase64(byte[] input) throws java.rmi.RemoteException {
-//        return input;
-//    }
+    public byte[] echoBase64(byte[] input) throws java.rmi.RemoteException {
+        return input;
+    }
 
     public java.lang.String[] echoStrings(java.lang.String[] input) throws java.rmi.RemoteException {
         return input;
@@ -28,9 +28,9 @@ public class Benchmark1Impl implements benchmark1.Benchmark1PortType{
     }
 
 
-//    public int receiveBase64(byte[] input) throws java.rmi.RemoteException {
-//        return input.length;
-//    }
+    public int receiveBase64(byte[] input) throws java.rmi.RemoteException {
+        return input.length;
+    }
 
     public int receiveStrings(String[] input) throws java.rmi.RemoteException {
         return input.length;
@@ -44,14 +44,14 @@ public class Benchmark1Impl implements benchmark1.Benchmark1PortType{
         return input.length;
     }
 
-//    public byte[] sendBase64(int n) throws java.rmi.RemoteException {
-//        byte[] output = new byte[n];
-//        for (int i = 0; i < n; i++)
-//        {
-//            output[i] = (byte) i;
-//        }
-//        return output;
-//    }
+    public byte[] sendBase64(int n) throws java.rmi.RemoteException {
+        byte[] output = new byte[n];
+        for (int i = 0; i < n; i++)
+        {
+            output[i] = (byte) i;
+        }
+        return output;
+    }
 
     public String[] sendStrings(int n) throws java.rmi.RemoteException {
         String[] output = new String[n];

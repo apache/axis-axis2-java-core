@@ -60,7 +60,9 @@ public class BenchProvider extends SimpleJavaProvider {
                      	objs[i] = SimpleTypeEncodingUtils.deserializeDoubleArray(xpp);
 					} else if (int[].class.equals(parms[i])) {
                      	objs[i] = SimpleTypeEncodingUtils.deserializeIntArray(xpp);
-					} else {
+					} else if (byte[].class.equals(parms[i])) {
+                     	objs[i] = SimpleTypeEncodingUtils.deserializeByteArray(xpp);
+					}else {
 						throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
 					}
 				}
@@ -104,19 +106,26 @@ public class BenchProvider extends SimpleJavaProvider {
 				result = benchmark.echoInts((int[])parms[0]);
 			}else if ("echoDoubles".equals(methodName))	{
 				result = benchmark.echoDoubles((double[])parms[0]);
+			}else if ("echoBase64".equals(methodName))	{
+				result = benchmark.echoBase64((byte[])parms[0]);
 			}else if ("receiveStrings".equals(methodName))	{
 				result = new Integer(benchmark.receiveStrings((String[])parms[0]));
 			} else if ("receiveInts".equals(methodName))	{
 				result = new Integer(benchmark.receiveInts((int[])parms[0]));
 			} else if ("receiveDoubles".equals(methodName))	{
 				result = new Integer(benchmark.receiveDoubles((double[])parms[0]));
+			}else if ("receiveBase64".equals(methodName))	{
+				result = new Integer(benchmark.receiveBase64((byte[])parms[0]));
 			} else if ("sendStrings".equals(methodName))	{
 				result = benchmark.sendStrings(((Integer)parms[0]).intValue());
 			} else if ("sendInts".equals(methodName))	{
 				result = benchmark.sendInts(((Integer)parms[0]).intValue());
 			}else if ("sendDoubles".equals(methodName))	{
 				result = benchmark.sendDoubles(((Integer)parms[0]).intValue());
+			}else if ("sendBase64".equals(methodName))	{
+				result = benchmark.sendBase64(((Integer)parms[0]).intValue());
 			}
+
 
 			Encoder outobj = null;
 
@@ -128,7 +137,8 @@ public class BenchProvider extends SimpleJavaProvider {
                 clazz == int[].class ||
                 clazz == double.class ||
                 clazz == Double.class ||
-                clazz == double[].class ) {
+                clazz == double[].class ||
+                clazz == byte[].class) {
 				outobj = new SimpleTypeEncoder(result);
 			}
 
