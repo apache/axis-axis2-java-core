@@ -412,7 +412,6 @@ public class DeploymentEngine implements DeploymentConstants {
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
-                            System.out.println("ok");
                         } catch (DeploymentException de) {
                             throw new RuntimeException(de);
                         } catch (AxisFault axisFault) {
