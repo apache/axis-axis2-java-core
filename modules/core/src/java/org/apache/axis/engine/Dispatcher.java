@@ -15,7 +15,8 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.Constants;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
@@ -25,8 +26,6 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.handlers.OpNameFinder;
 import org.apache.wsdl.WSDLService;
 
-import javax.xml.namespace.QName;
-
 /**
  * Class Dispatcher
  */
@@ -34,8 +33,7 @@ public class Dispatcher extends AbstractHandler implements Handler {
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org",
-                    "Disapatcher");
+    public static final QName NAME = new QName("http://axis.ws.apache.org", "Disapatcher");
 
     /**
      * Constructor Dispatcher
@@ -54,51 +52,49 @@ public class Dispatcher extends AbstractHandler implements Handler {
         if (msgctx.isServerSide()) {
             EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
-            String soapAction =
-                    (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+            String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+
+            QName operationName = null;
+            QName serviceName = null;
+            
             int index = filePart.lastIndexOf('/');
             String serviceAndMethodStr = null;
             if (index > 0) {
                 serviceAndMethodStr = filePart.substring(index + 1);
             }
-            if (serviceAndMethodStr == null) {
-                serviceAndMethodStr = soapAction;
-            }
-            index = serviceAndMethodStr.lastIndexOf(
-                    Constants.METHOD_NAME_ESCAPE_CHARACTOR);
-            QName serviceName = null;
-            QName operationName = null;
-            if (index > 0) {
-                serviceName = new QName(serviceAndMethodStr.substring(0,
-                                index ));
-                operationName = new QName(serviceAndMethodStr.substring(index
-                                        + 1));
-            } else {
+
+            if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
+                if(serviceAndMethodStr != null){
+                    serviceName = new QName(serviceAndMethodStr);
+                }
+                if(soapAction != null &&  soapAction.trim().length() > 0){
+                    operationName = new QName(soapAction);
+                }
+            }else if (WSDLService.STYLE_RPC.equals(msgctx.getMessageStyle())) {
+                if(serviceAndMethodStr == null){
+                    if(soapAction != null &&  soapAction.trim().length() > 0){
+                        serviceAndMethodStr = soapAction;
+                    }else{
+                        throw new AxisFault("Noway to find the service, both URL and soapAcition missing");
+                    }
+                }
                 serviceName = new QName(serviceAndMethodStr);
+            }else{
+                throw new AxisFault("Unknow style " + msgctx.getMessageStyle());
             }
+
             if (serviceName != null) {
-                EngineRegistry registry =
-                        msgctx.getGlobalContext().getRegistry();
+                EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
                 AxisService service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
                     msgctx.setMessageStyle(service.getStyle());
-                    if (!WSDLService.STYLE_RPC.equals(
-                            msgctx.getMessageStyle())) {
-                        if (operationName != null) {
-                            AxisOperation op =
-                                    service.getOperation(operationName);
-                            if (op != null) {
-                                msgctx.setOperation(op);
-                            } else {
-                                throw new AxisFault("Operation not found "
-                                                + operationName);
-                            }
-                        } else {
-                            throw new AxisFault("Operation Name not specifed");
-                        }
-                    }
-
+                    if (operationName != null) {
+                        AxisOperation op = service.getOperation(operationName);
+                        if (op != null) {
+                            msgctx.setOperation(op);
+                        } 
+                    } 
                     // let add the Handlers
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
@@ -106,12 +102,10 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     // add invoke Phase
                     Phase invokePhase = new Phase(Phase.SERVICE_INVOCATION);
                     invokePhase.addHandler(new OpNameFinder());
-                    invokePhase.addHandler(
-                            ReceiverLocator.locateReceiver(msgctx));
+                    invokePhase.addHandler(ReceiverLocator.locateReceiver(msgctx));
                     chain.addPhase(invokePhase);
                 } else {
-                    throw new AxisFault("Service " + serviceName
-                                    + " is not found");
+                    throw new AxisFault("Service " + serviceName + " is not found");
                 }
             } else {
                 throw new AxisFault("Both the URI and SOAP_ACTION Is Null");

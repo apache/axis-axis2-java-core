@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.testUtils;
 
 import org.apache.axis.engine.AxisFault;
@@ -27,10 +27,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 
-
 public class ArrayTypeEncoder implements Encoder {
     private Object[] obj = null;
     private Encoder arrayTypeEncoder;
+    private String arrayelmentLocalName = OMConstants.ARRAY_ITEM_LOCALNAME;
+    private String arrayelmentNSsURI = OMConstants.ARRAY_ITEM_NSURI;
+    private String arrayelmentQName = OMConstants.ARRAY_ITEM_QNAME;
 
     public ArrayTypeEncoder(Object[] obj, Encoder arrayTypeEncoder) {
         this.obj = obj;
@@ -41,14 +43,44 @@ public class ArrayTypeEncoder implements Encoder {
         this.arrayTypeEncoder = arrayTypeEncoder;
     }
 
+    public ArrayTypeEncoder(
+        Object[] obj,
+        Encoder arrayTypeEncoder,
+        String arrayelmentLocalName,
+        String arrayelmentNSsURI,
+        String arrayelmentQName) {
+        this.obj = obj;
+        this.arrayTypeEncoder = arrayTypeEncoder;
+        this.arrayelmentLocalName = arrayelmentLocalName;
+        this.arrayelmentNSsURI = arrayelmentNSsURI;
+        this.arrayelmentQName = arrayelmentQName;
+    }
+
+    public ArrayTypeEncoder(
+        Encoder arrayTypeEncoder,
+        String arrayelmentLocalName,
+        String arrayelmentNSsURI,
+        String arrayelmentQName) {
+        this.arrayTypeEncoder = arrayTypeEncoder;
+        this.arrayelmentLocalName = arrayelmentLocalName;
+        this.arrayelmentNSsURI = arrayelmentNSsURI;
+        this.arrayelmentQName = arrayelmentQName;
+    }
 
     public void serialize(ContentHandler cHandler) throws OMException {
         try {
             for (int i = 0; i < obj.length; i++) {
-                cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI, OMConstants.ARRAY_ITEM_LOCALNAME, OMConstants.ARRAY_ITEM_QNAME, null);
+                cHandler.startElement(
+                    OMConstants.ARRAY_ITEM_NSURI,
+                    OMConstants.ARRAY_ITEM_LOCALNAME,
+                    OMConstants.ARRAY_ITEM_QNAME,
+                    null);
                 arrayTypeEncoder.setObject(obj[i]);
                 arrayTypeEncoder.serialize(cHandler);
-                cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI, OMConstants.ARRAY_ITEM_LOCALNAME, OMConstants.ARRAY_ITEM_QNAME);
+                cHandler.endElement(
+                    OMConstants.ARRAY_ITEM_NSURI,
+                    OMConstants.ARRAY_ITEM_LOCALNAME,
+                    OMConstants.ARRAY_ITEM_QNAME);
             }
         } catch (SAXException e) {
             throw new OMException(e);
@@ -76,14 +108,14 @@ public class ArrayTypeEncoder implements Encoder {
         try {
             int event = xpp.next();
             while (XMLStreamConstants.START_ELEMENT != event
-                    && XMLStreamConstants.END_ELEMENT != event) {
+                && XMLStreamConstants.END_ELEMENT != event) {
                 event = xpp.next();
             }
             if (XMLStreamConstants.END_ELEMENT == event) {
                 return null;
             }
 
-//            event = xpp.next();
+            //            event = xpp.next();
             while (true) {
                 if (XMLStreamConstants.START_ELEMENT == event) {
                     objs.add(arrayTypeEncoder.deSerialize(xpp));

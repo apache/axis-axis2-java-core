@@ -50,7 +50,12 @@ public class SimpleTypeEncoder implements Encoder {
                             OMConstants.ARRAY_ITEM_LOCALNAME,
                             OMConstants.ARRAY_ITEM_QNAME,
                             null);
-                    str = strs[i].toCharArray();
+                    if(strs[i]!=null){
+                        str = strs[i].toCharArray();
+                    }else{
+                        str = "".toCharArray();
+                    }
+                    
                     cHandler.characters(str, 0, str.length);
                     cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI, OMConstants.ARRAY_ITEM_LOCALNAME, OMConstants.ARRAY_ITEM_QNAME);
                 }

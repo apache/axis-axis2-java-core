@@ -55,9 +55,9 @@ public class SOAPStructEncoder implements Encoder {
                     if (VAR_STRING.equals(localName)) {
                         struct.setVarString(
                             SimpleTypeEncodingUtils.deserializeString(xpp));
-                    }else if(VAR_STRING.equals(localName)){
+                    }else if(VAR_INT.equals(localName)){
                         struct.setVarInt(SimpleTypeEncodingUtils.deserializeInt(xpp));                        
-                    }else if(VAR_STRING.equals(localName)){
+                    }else if(VAR_FLOAT.equals(localName)){
                         struct.setVarFloat(SimpleTypeEncodingUtils.deserializeFloat(xpp));                                
                     }else{
                         throw new AxisFault("Unknown elemnt "+ localName);                    
