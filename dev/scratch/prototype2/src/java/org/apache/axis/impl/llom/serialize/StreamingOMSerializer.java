@@ -70,7 +70,6 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
                     //this is eaten
                 }
             }
-            writer.flush();
         }
     }
 

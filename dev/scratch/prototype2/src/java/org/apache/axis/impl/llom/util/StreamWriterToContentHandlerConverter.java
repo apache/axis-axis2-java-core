@@ -41,7 +41,6 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     public void characters(char ch[], int start, int length) throws SAXException {
         try {
             writer.writeCharacters(ch, start, length);
-            writer.flush();
         } catch (XMLStreamException e) {
             throw new SAXException(e);
         }
