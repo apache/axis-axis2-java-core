@@ -22,10 +22,10 @@ where dependencies and interactions between components are discussed.</P>
 described in the next section of this document.</P>
 <OL>
   <LI>Core ( Consisting of the Engine, Engine Registry, Contexts, Handler Framework and Phase 
-  rules)
+  Resolver)
   <LI>Deployment
   <LI>Axis Object Model (AXIOM)
-  <LI>WSDL Object model. <LI>Client API. </LI></OL>
+  <LI>WSDL Object Model. <LI>Client API. </LI></OL>
 <IMG height=568 alt="TotalArch (17K)" 
 src="Axis2ArchitectureGuide_files/TotalArch.png" width=673> 
 <H2>1. Core of Apache Axis2</H2>
@@ -583,17 +583,7 @@ Processing Module of Axis2. </P>
   <LI>WSDL Emitter. 
   <LI>Code Generator. 
   <LI>Code Parser. </LI></UL>
-<H3><A name=_Toc96747295>5.5 WOM Builder Module</A></H3>
-<P>WOM has an external building mechanism and it gets built by an external 
-builder. Since WOM is both WSDL 1.1 and WSDL 2.0 compliant it can get built from 
-an either of the WSDL versions. Currently WSDL1ToWOMBuilder uses the WSDL4J for 
-the WSDL Parsing. In that implementation the WOM gets populated from a WSDL4J 
-object structure. Following is the class diagram of the WOM build mechanism. 
-<BR><BR><IMG height=240 src="Axis2ArchitectureGuide_files/archi014.jpg" 
-width=633 border=0 DESIGNTIMEURL="images/archi014.jpg"><BR><BR>The 
-WSDL2ToWOMBuilder is to be implemented and the WSDL24J is going to be part of 
-this implementation</P>
-<P>
+Above four modules are yet to be implemented / in-progress.
 <H2><A name=_Toc96747296>6. Client API</A></H2>
 <P></P>
 <P>Types of Client programming models that Axis2 support: </P>
