@@ -1,9 +1,7 @@
-<%@ page import="java.util.Collection,
-                 java.util.HashMap,
-                 java.util.Iterator,
-                 org.apache.axis.description.AxisService,
+<%@ page import="org.apache.axis.description.AxisService,
                  org.apache.axis.Constants,
-                 org.apache.axis.description.AxisOperation"%>
+                 org.apache.axis.description.AxisOperation,
+                 java.util.*"%>
  <%--
     /*
  * Copyright 2002,2004 The Apache Software Foundation.
@@ -32,18 +30,20 @@
   <br/><a href="<%=Constants.LISTSERVICES%>"> Refresh  </a><br/>
      <%
         HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+        Hashtable errornessservice =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
+         boolean status = false;
         if (serviceMap!=null && !serviceMap.isEmpty()){
         HashMap operations;
         String serviceName = "";
         Collection servicecol = serviceMap.values();
         Collection operationsList;
-
        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
             AxisService axisService = (AxisService) iterator.next();
             operations = axisService.getOperations();
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
-            %><hr><h3><font color="blue"><%=serviceName%></font></h3><%
+            %><hr><h3><font color="blue"><%=serviceName%></font></h3>
+           <%
             if (operationsList.size() > 0) {
                 %><i>Available operations</i><%
             } else {
@@ -54,10 +54,28 @@
                 AxisOperation axisOperation = (AxisOperation) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li><%
             }
-           %></ul><%
+           %></ul>
+           <%
+           status = true;
         }
-         request.getSession().removeAttribute(Constants.SERVICE_MAP);   
-        }else{
+        }
+        if(errornessservice != null){
+            if(errornessservice.size() > 0){
+                request.getSession().setAttribute(Constants.IS_FAULTY,Constants.IS_FAULTY);
+                %>
+                 <hr><h3><font color="blue">Faulty Services</font></h3>
+                <%
+                Enumeration faultyservices = errornessservice.keys();
+                while (faultyservices.hasMoreElements()) {
+                    String faultyserviceName = (String) faultyservices.nextElement();
+                    %><h3><font color="blue"><a href="listSingleService.jsp?serviceName=<%=faultyserviceName%>">
+                    <%=faultyserviceName%></a></font></h3>
+                    <%
+                }
+            }
+           request.getSession().removeAttribute(Constants.SERVICE_MAP);
+           status = true;
+        }if(!status){
             %> There seems to be no services listed! Try hitting refresh <%
         }
        %>

@@ -192,6 +192,7 @@ public class AxisServlet extends HttpServlet {
             throws IOException {
         HashMap services = engineRegistry.getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP, engineRegistry.getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 

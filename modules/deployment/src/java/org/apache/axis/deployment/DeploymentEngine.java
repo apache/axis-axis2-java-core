@@ -53,11 +53,13 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 
 public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
     private static Scheduler scheduler;
+
 
     private boolean hotdeployment = true;   //to do hot deployment or not
     private boolean hotupdate = true;  // to do hot update or not
@@ -414,10 +416,11 @@ public class DeploymentEngine implements DeploymentConstants {
                 currentFileItem = (HDFileItem) wsToDeploy.get(i);
                 int type = currentFileItem.getType();
                 UnZipJAR unZipJAR = new UnZipJAR();
+                String serviceStatus ="";
                 switch (type) {
                     case SERVICE:
                         try {
-//
+
                             AxisService service = new AxisService();
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
@@ -425,16 +428,19 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException de) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("DeploymentException  " + de);
-                            de.printStackTrace();
+                            serviceStatus = "Error:\n" + de.getMessage();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("AxisFault  " + axisFault);
-                            axisFault.printStackTrace();
+                            serviceStatus = "Error:\n" + axisFault.getMessage();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("Exception  " + e);
-                            e.printStackTrace();
+                            serviceStatus = "Error:\n" + e.getMessage();
                         } finally {
+                            if(serviceStatus.startsWith("Error:")) {
+                                 engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()),serviceStatus);
+                            }
                             currentFileItem = null;
                         }
                         break;
@@ -473,6 +479,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         engineRegistry.removeService(new QName(serviceName));
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
+                     engineRegistry.getFaulytServices().remove(serviceName);
                 }
 
             }
@@ -502,5 +509,6 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         return fileName;
     }
+
 
 }

@@ -17,6 +17,7 @@ package org.apache.axis.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
@@ -135,4 +136,6 @@ public interface EngineRegistry {
      * @return
      */
     public HashMap getServices();
+
+    public Hashtable getFaulytServices();
 }

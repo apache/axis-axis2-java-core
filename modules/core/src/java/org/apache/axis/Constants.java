@@ -95,6 +95,18 @@ public class Constants {
     public static final String SERVICE_MAP = "servicemap";
 
     /**
+     * Errorness servcie
+     */
+    public static final String ERROR_SERVICE_MAP = "errprservicemap";
+
+    public static final String IS_FAULTY = "Fault";
+
+
+
+
+
+
+    /**
      * Field SINGLE_SERVICE
      */
     public static final String SINGLE_SERVICE = "singleservice";

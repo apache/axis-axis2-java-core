@@ -3,7 +3,8 @@
                  java.util.HashMap,
                  java.util.Collection,
                  org.apache.axis.description.AxisService,
-                 org.apache.axis.Constants"%>
+                 org.apache.axis.Constants,
+                 java.util.Hashtable"%>
  <%--
   Created by IntelliJ IDEA.
   User: Ajith
@@ -23,7 +24,15 @@
         <%
             AxisService service = (AxisService)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
             //System.out.println("service = " + service);
-            if (service!=null){
+            String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
+            System.out.println("isFault = " + isFault);
+            if(Constants.IS_FAULTY.equals(isFault)){
+                Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
+                String servicName = (String)request.getParameter("serviceName");
+                %> <h3>This Web service has deployment faults</h3><%
+                %><font color="red" ><%=(String)errornessservices.get(servicName) %></font><%
+
+            }else  if (service!=null){
             %> <h2>This location contains a web service</h2><%
                 HashMap operations;
                 Collection operationsList;

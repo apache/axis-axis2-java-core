@@ -17,6 +17,7 @@ package org.apache.axis.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
@@ -29,6 +30,11 @@ import org.apache.axis.description.AxisTransport;
  * Class EngineRegistryImpl
  */
 public class EngineRegistryImpl implements EngineRegistry {
+    /**
+     * To store Erroness services
+     */
+    private  Hashtable errornesServices;
+
     /**
      * Field modules
      */
@@ -62,6 +68,7 @@ public class EngineRegistryImpl implements EngineRegistry {
     public EngineRegistryImpl(AxisGlobal global) {
         this.global = global;
         phases = new ArrayList();
+        errornesServices = new Hashtable();
     }
 
     /**
@@ -71,6 +78,10 @@ public class EngineRegistryImpl implements EngineRegistry {
      */
     public HashMap getServices() {
         return services;
+    }
+
+    public Hashtable getFaulytServices() {
+        return  errornesServices;
     }
 
     /**
