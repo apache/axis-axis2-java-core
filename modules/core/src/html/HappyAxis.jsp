@@ -34,8 +34,10 @@
 %>
 <head>
 <title>Axis2 Happiness Page</title>
+  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
-<body bgcolor='#ffffff'>
+<body>
+   <jsp:include page="include/header.inc"></jsp:include>
 <%port =request.getServerPort();%>
 <%!
     /*
@@ -488,23 +490,10 @@
         }
     %>
     <h2>Examining Application Server</h2>
-    <%
-        String servletVersion=getServletVersion();
-        String xmlParser=getParserName();
-        String xmlParserLocation = getParserLocation(out);
-
-    %>
-    <table>
-        <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
-        <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
-        <tr><td>XML ParserLocation</td><td><%= xmlParserLocation %></td></tr>
+     <table>
+        <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
+        <tr><td>Platform</td><td><%=getServletConfig().getServletContext().getServerInfo()%></td></tr>
     </table>
-<% if(xmlParser.indexOf("crimson")>=0) { %>
-    <p>
-    <b>We recommend <a href="http://xml.apache.org/xerces2-j/">Xerces 2</a>
-        over Crimson as the XML parser for Axis</b>
-    </p>
-<%    } %>
 
     <h2>Examining System Properties</h2>
 <%
@@ -527,8 +516,9 @@
         out.write("System properties are not accessible<p>");
     }
 %>
-    <hr>
-    Platform: <%= getServletConfig().getServletContext().getServerInfo()  %>
+
+ <jsp:include page="include/link-footer.inc"></jsp:include>
+       <jsp:include page="include/footer.inc"></jsp:include>
 </body>
 </html>
 

@@ -54,7 +54,7 @@
 %>
 <head>
  <title> Upload a service </title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+ <link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 	<body>
 	    <jsp:include page="include/header.inc"></jsp:include>

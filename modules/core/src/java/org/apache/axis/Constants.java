@@ -34,4 +34,9 @@ public class Constants {
     public static final String TRANSPORT_HTTP = "http";
     public static final String TRANSPORT_SMTP= "smtp";
 
+public static final String LISTSERVICES = "listServices";
+    public static final String SERVICE_MAP = "servicemap";
+    public static final String SINGLE_SERVICE = "singleservice";
+
+
 }

@@ -33,6 +33,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
@@ -54,10 +55,14 @@ import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 public class AxisServlet extends HttpServlet {
     private EngineRegistry engineRegistry;
-    private final String LISTSERVICES = "listServices";
 
+    private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
+    private static final String LIST_SINGLE_SERVICE_JSP_NAME = "listSingleService.jsp";
 
-    public void init(ServletConfig config) throws ServletException {
+    private final boolean allowListServices = true;
+    private final boolean allowListSingleService = true;
+
+   public void init(ServletConfig config) throws ServletException {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
@@ -69,8 +74,21 @@ public class AxisServlet extends HttpServlet {
         }
     }
 
+
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        doPost(httpServletRequest,httpServletResponse);
+
+        String filePart = httpServletRequest.getRequestURL().toString();
+
+        if (allowListServices && filePart != null && filePart.endsWith(Constants.LISTSERVICES)) {
+            listServices(httpServletRequest,httpServletResponse);
+            return;
+        }else{
+            if (allowListSingleService){
+                listService(httpServletRequest,httpServletResponse,filePart);
+                return;
+            }
+
+        }
     }
 
     /* (non-Javadoc)
@@ -81,24 +99,19 @@ public class AxisServlet extends HttpServlet {
         try {
             res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine = new AxisEngine(engineRegistry);
-            
-            
+
+
             Object sessionContext = req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if(sessionContext == null){
                 sessionContext = new SimpleSessionContext();
                 req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,sessionContext);
             }
-            
+
             MessageContext msgContext = new MessageContext(engineRegistry, null,(SessionContext)sessionContext);
-            
+
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
-            if (filePart != null && filePart.endsWith(LISTSERVICES)) {
-                listServices(res);
-                return;
-            }
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, filePart));
-
             String soapActionString = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
             if (soapActionString != null) {
@@ -127,41 +140,27 @@ public class AxisServlet extends HttpServlet {
 
     }
 
-    //todo this neeeds to be re-written as a JSP
-    private void listServices(HttpServletResponse res) throws IOException {
+    private void listServices(HttpServletRequest req,HttpServletResponse res) throws IOException {
         HashMap services = engineRegistry.getServices();
-        HashMap operations;
-        String serviceName = "";
-        Collection servicecol = services.values();
-        Collection operationsList;
-        PrintWriter out = res.getWriter();
-        res.setContentType("text/html");
-        String html = "<HTML>\n" +
-                "<HEAD><TITLE>Avalilable services</TITLE>" +
-                "<link href=\"css/axis-style.css\" rel=\"stylesheet\" type=\"text/css\">" +
-                "</HEAD>\n" +
-                "<BODY>\n" +
-                "<H1>Avalilable services</H1>\n";
+        req.getSession().setAttribute(Constants.SERVICE_MAP,services);
+        res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
+    }
 
-
-        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
-            AxisService axisService = (AxisService) iterator.next();
-            operations = axisService.getOperations();
-            operationsList = operations.values();
-            serviceName = axisService.getName().getLocalPart();
-            html += "<hr><h3><font color=\"blue\">" + serviceName + "</font><h3>";
-            if (operationsList.size() > 0) {
-                html += "<i> Availble operations</i>";
-            } else {
-                html += "<i> There is no any opeartion specified</i>";
-            }
-            for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                AxisOperation axisOperation = (AxisOperation) iterator1.next();
-                html += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+    private void listService (HttpServletRequest req,HttpServletResponse res,String filePart) throws IOException {
+        String serviceName =filePart.substring(filePart.lastIndexOf("/")+1,filePart.length());
+        HashMap services = engineRegistry.getServices();
+        if (services!=null && !services.isEmpty()){
+            Object serviceObj = services.get(new QName(serviceName));
+            if (serviceObj!=null){
+                req.getSession().setAttribute(Constants.SINGLE_SERVICE,serviceObj);
             }
         }
-        out.println(html + "</BODY></HTML>");
+        String URI =  req.getRequestURI();
+        URI = URI.substring(0,URI.indexOf("services"));
+
+        res.sendRedirect(URI + LIST_SINGLE_SERVICE_JSP_NAME);
     }
+
 
 
 }
