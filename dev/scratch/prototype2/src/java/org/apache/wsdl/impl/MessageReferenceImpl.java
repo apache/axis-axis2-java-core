@@ -15,6 +15,8 @@
  */
 package org.apache.wsdl.impl;
 
+import javax.xml.namespace.QName;
+
 import org.apache.wsdl.MessageReference;
 
 
@@ -34,8 +36,8 @@ public class MessageReferenceImpl  extends ExtensibleComponentImpl implements Me
 	
 	//TODO Do we need it "Message content model"
 	
-	//TODO can make it a QNAME value is a QName that needs to be resolved by the types element children
-	private String element;
+	
+	private QName element;
 	
 	
 	
@@ -45,10 +47,21 @@ public class MessageReferenceImpl  extends ExtensibleComponentImpl implements Me
 	public void setDirection(String direction) {
 		Direction = direction;
 	}
-	public String getElement() {
+	
+	/**
+	 * Returns an Element which refers to the actual message that will get transported. This Element 
+	 * Abstracts all the Message Parts that was defined in the WSDL 1.1.
+	 */
+	public QName getElement() {
 		return element;
 	}
-	public void setElement(String element) {
+	
+	
+	/**
+	 * Sets the Element that will Abstract the actual message. All the parts defined in WSDL 1.1
+	 * per message should be Encapsulated in this Element.
+	 */
+	public void setElement(QName element) {
 		this.element = element;
 	}
 	public String getMessageLabel() {

@@ -101,11 +101,10 @@ public interface WSDLInterface extends ExtensibleComponent{
 
     /**
      * The Inteface will be added to the list of super interfaces keyed with 
-     * the QName.
-     * @param qName The QName of the Inteface
+     * the QName. 
      * @param interfaceComponent WSDLInterface Object
      */
-    public void addSuperInterface(QName qName, WSDLInterface interfaceComponent);
+    public void addSuperInterface(WSDLInterface interfaceComponent);
 
     /**
      * Will return the StyleDefault if exist , otherwise will return null

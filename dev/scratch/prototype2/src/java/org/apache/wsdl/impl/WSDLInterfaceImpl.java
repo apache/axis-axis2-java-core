@@ -210,12 +210,11 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl implements WSDLIn
 	
 	/**
 	 * The Inteface will be added to the list of super interfaces keyed with 
-	 * the QName.
-	 * @param qName The QName of the Inteface
+	 * the QName.	 
 	 * @param interfaceComponent WSDLInterface Object
 	 */
-	public void addSuperInterface(QName qName, WSDLInterface interfaceComponent){
-	    this.superInterfaces.put(qName, interfaceComponent);
+	public void addSuperInterface(WSDLInterface interfaceComponent){
+	    this.superInterfaces.put(interfaceComponent.getName(), interfaceComponent);
 	}
 
 	/**

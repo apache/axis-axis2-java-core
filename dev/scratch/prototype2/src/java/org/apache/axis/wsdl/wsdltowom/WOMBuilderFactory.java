@@ -32,10 +32,22 @@ import org.xml.sax.SAXException;
  */
 public class WOMBuilderFactory {
 
-    private static final int WSDL11 = 1;
-    private static final int wsdl20 = 2;
+    public static final int WSDL11 = 1;
+    public static final int wsdl20 = 2;
     
     
+    public static WOMBuilder getBuilder(int wsdlDocumentType) throws WSDLException{
+    	
+    	if(wsdlDocumentType == WSDL11){
+    		return new WSDL1ToWOMBuilder();
+    	}
+    	if(wsdlDocumentType == wsdl20){
+    		return new WSDL2ToWOMBuilder();
+    	}
+    	throw new WSDLException(WSDLException.INVALID_WSDL, "The document type specified is not valid");
+    }
+    
+        
     
     public static WOMBuilder getBuilder(InputStream in) throws WSDLException{
         // Load the wsdl as a DOM

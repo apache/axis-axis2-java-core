@@ -45,7 +45,7 @@ public class WSDLServiceImpl extends ComponentImpl implements WSDLService   {
     /**
      * 
      */
-    private HashMap endpoints;
+    private HashMap endpoints = new HashMap();
     
     
     public HashMap getEndpoints() {

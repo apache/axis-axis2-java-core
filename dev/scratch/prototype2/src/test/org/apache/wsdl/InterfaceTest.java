@@ -44,7 +44,7 @@ public class InterfaceTest extends AbstractTestCase {
 	        	intfc.setOperation(op);
 	        }
 	        if(j>0){
-	            intfc.addSuperInterface(array[j-1].getName(), array[j-1]);
+	            intfc.addSuperInterface(array[j-1]);
 	        }
 	        array[j] = intfc;
         }
@@ -92,7 +92,7 @@ public class InterfaceTest extends AbstractTestCase {
                 
         WSDLInterface inheritedInterface = new WSDLInterfaceImpl();
         for(int i=0; i< array.length; i++){
-            inheritedInterface.addSuperInterface(array[i].getName(), array[i]);
+            inheritedInterface.addSuperInterface(array[i]);
         }
         
         assertEquals(inheritedInterface.getAllOperations().size(),5);

@@ -58,7 +58,7 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
 	
 	//TODO The object structure of some external xml data binding is going to be pluged here eventually.  
 	
-	private Object[] types;
+	private WSDLTypes types;
 	
 	/**
 	 * This List will be a list of <code>WSDLInterface</code> objects.
@@ -213,10 +213,10 @@ public class WSDLDescriptionImpl extends ComponentImpl implements WSDLDescriptio
 	public void setWsdlInterfaces(HashMap wsdlInterfaces) {
 		this.wsdlInterfaces = wsdlInterfaces;
 	}
-    public Object[] getTypes() {
+    public WSDLTypes getTypes() {
         return types;
     }
-    public void setTypes(Object[] types) {
+    public void setTypes(WSDLTypes types) {
         this.types = types;
     }
     /**

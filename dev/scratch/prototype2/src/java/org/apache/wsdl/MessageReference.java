@@ -15,6 +15,8 @@
  */
 package org.apache.wsdl;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author chathura@opensource.lk
  *
@@ -24,9 +26,14 @@ public interface MessageReference  extends ExtensibleComponent{
 
     public void setDirection(String direction);
 
-    public String getElement();
 
-    public void setElement(String element);
+	/**
+	 * This Element refers to the actual message that will get transported. This Element 
+	 * Abstracts all the Message Parts that was defined in the WSDL 1.1.
+	 */
+    public QName getElement();
+
+    public void setElement(QName element);
 
     public String getMessageLabel();
 

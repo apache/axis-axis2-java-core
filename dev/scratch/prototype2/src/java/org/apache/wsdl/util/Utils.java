@@ -17,11 +17,15 @@ package org.apache.wsdl.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
+import javax.wsdl.Message;
+import javax.wsdl.Part;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.wsdl.WSDLTypes;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -34,5 +38,14 @@ public class Utils {
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
         return db.parse(in);
+    }
+    
+    public static WSDLTypes buildWSDL2ComplientMessageType(Message message){
+    	Iterator messageTypeIterator = message.getParts().values().iterator();
+    	if(1 == message.getParts().size() && messageTypeIterator.hasNext()){
+    		Part part = (Part)messageTypeIterator.next();
+    		/// new WSDLTypesImpl().set
+    	}
+    	return null;
     }
 }

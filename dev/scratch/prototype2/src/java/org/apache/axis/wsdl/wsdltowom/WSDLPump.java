@@ -18,6 +18,9 @@ package org.apache.axis.wsdl.wsdltowom;
 import java.util.Iterator;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Operation;
@@ -26,23 +29,33 @@ import javax.wsdl.Output;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 
+import org.apache.wsdl.ExtensionElement;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.impl.ExtensionElementImpl;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 import org.apache.wsdl.impl.WSDLBindingImpl;
+import org.apache.wsdl.impl.WSDLBindingMessageReferenceImpl;
+import org.apache.wsdl.impl.WSDLBindingOperationImpl;
 import org.apache.wsdl.impl.WSDLEndpointImpl;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.apache.wsdl.impl.WSDLServiceImpl;
+import org.apache.wsdl.impl.WSDLTypesImpl;
 
 /**
  * @author chathura@opensource.lk
@@ -50,6 +63,7 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
  */
 public class WSDLPump {
 
+	private static final String BOUND_INTERFACE_NAME = "BoundInterface";
     private WSDLDescription womDefinition;
 
     private Definition wsdl4jParsedDefinition;
@@ -62,9 +76,11 @@ public class WSDLPump {
     }
 
     public void pump() {
-        this.populateDefinition(
-            this.womDefinition,
-            this.wsdl4jParsedDefinition);
+        if(null != this.wsdl4jParsedDefinition && null != this.womDefinition ){
+        	this.populateDefinition(this.womDefinition, this.wsdl4jParsedDefinition);
+        }else{
+            throw new WSDLProcessingException("Properties not set properly");
+        }
 
     }
 
@@ -92,8 +108,21 @@ public class WSDLPump {
 		//////////////////////////(1)First pump the Types////////////////////////////		
 		//Types may get changed inside the Operation pumping.
 				
-        
-        
+        Types wsdl4jTypes = wsdl4JDefinition.getTypes();
+        WSDLTypes wsdlTypes = new WSDLTypesImpl();
+        Iterator wsdl4jelmentsIterator = wsdl4jTypes.getExtensibilityElements().iterator();
+        ExtensibilityElement wsdl4jElement;
+        ExtensionElement womElement;
+        while(wsdl4jelmentsIterator.hasNext()){
+            wsdl4jElement = (ExtensibilityElement)wsdl4jelmentsIterator.next();
+            womElement = new ExtensionElementImpl();
+            if(null != wsdl4jElement.getRequired())
+                womElement.setRequired(wsdl4jElement.getRequired().booleanValue());
+            //TODO
+            
+            wsdlTypes.addElement(wsdl4jElement.getElementType(), womElement);            
+        }
+        this.womDefinition.setTypes(wsdlTypes);
         
         
         
@@ -138,15 +167,15 @@ public class WSDLPump {
 		while(serviceIterator.hasNext()){
 			wsdlService = new WSDLServiceImpl();
 			this.populateServices(wsdlService, (Service)serviceIterator.next());
+			wsdlDefinition.addService(wsdlService);
 		}		
-
-        throw new UnsupportedOperationException("Fill the impl");
+        
     }
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////   Top level Components Copying ////////////////////
 
-	
+
 
     /**
      * Simply Copy information.
@@ -154,23 +183,19 @@ public class WSDLPump {
      * @param wsdl4jPortType
      */
     //FIXME Evaluate a way of injecting features and priperties with a general formatted input
-    private void populateInterfaces(
-        WSDLInterface wsdlInterface,
-        PortType wsdl4jPortType) {
+    private void populateInterfaces(WSDLInterface wsdlInterface, PortType wsdl4jPortType) {
 
         //Copy the Attrebute information items
 		//Copied with the Same QName so it will reqire no Query in Binding pumping.
         wsdlInterface.setName(wsdl4jPortType.getQName()); 
         
 
-        Iterator wsdl4JOperationsIterator =
-            wsdl4jPortType.getOperations().iterator();
+        Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations().iterator();
+        WSDLOperation wsdloperation ;
         while (wsdl4JOperationsIterator.hasNext()) {
-            WSDLOperation wsdloperation = new WSDLOperationImpl();
-            this.populateOperations(
-                wsdloperation,
-                (Operation) wsdl4JOperationsIterator.next(),
-                wsdl4jPortType.getQName().getNamespaceURI());
+            wsdloperation = new WSDLOperationImpl();
+            this.populateOperations( wsdloperation, (Operation) wsdl4JOperationsIterator.next(), wsdl4jPortType.getQName().getNamespaceURI());
+            wsdlInterface.setOperation(wsdloperation);
 
         }
 
@@ -193,9 +218,13 @@ public class WSDLPump {
 		
 		Iterator bindingoperationsIterator = wsdl4JBinding.getBindingOperations().iterator();
 		
+		WSDLBindingOperation wsdlBindingOperation;
 		while(bindingoperationsIterator.hasNext()){
-			throw new UnsupportedOperationException("Fill the impl");
+		    wsdlBindingOperation = new WSDLBindingOperationImpl();			
+			this.populateBindingOperation(wsdlBindingOperation, (BindingOperation)bindingoperationsIterator.next(), wsdl4JBinding.getQName().getNamespaceURI());
+			wsdlBinding.addBindingOperation(wsdlBindingOperation);
 		}
+		
 		
 	}
 	
@@ -204,10 +233,12 @@ public class WSDLPump {
 	public void  populateServices(WSDLService wsdlService, Service wsdl4jService){
 		wsdlService.setName(wsdl4jService.getQName());
 		Iterator wsdl4jportsIterator = wsdl4jService.getPorts().values().iterator();
+		wsdlService.setServiceInterface(this.getBoundInterface(wsdlService));
 		WSDLEndpoint wsdlEndpoint;
 		while(wsdl4jportsIterator.hasNext()){
 			wsdlEndpoint = new WSDLEndpointImpl();
 			this.populatePorts(wsdlEndpoint, (Port)wsdl4jportsIterator.next(), wsdl4jService.getQName().getNamespaceURI());
+			wsdlService.setEndpoint(wsdlEndpoint);
 		}
 		
 	}
@@ -230,6 +261,9 @@ public class WSDLPump {
 
         //Get all the in parts and create a new Element out of it and add it to the Types.
         //TODO
+        
+        wsdlInputMessage.setMessageLabel(wsdl4jInputMessage.getName());
+        //wsdlInputMessage.setElement(wsdl4jInputMessage.getMessage())
 
         //       	wsdlInputMessage.setMessageLabel()
 
@@ -248,17 +282,42 @@ public class WSDLPump {
     }
     
     
+    private void populateBindingOperation(WSDLBindingOperation wsdlBindingOperation, BindingOperation wsdl4jBindingOperation, String nameSpaceOfTheBindingOperation){
+        wsdlBindingOperation.setName(new QName(nameSpaceOfTheBindingOperation, wsdl4jBindingOperation.getName()));
+        
+        BindingInput wsdl4jInputBinding = wsdl4jBindingOperation.getBindingInput();
+        WSDLBindingMessageReference wsdlInputBinding =  new WSDLBindingMessageReferenceImpl();
+        
+        wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+        //TODO
+        wsdlBindingOperation.setInput(wsdlInputBinding);
+        
+        
+        
+        BindingOutput wsdl4jOutputBinding = wsdl4jBindingOperation.getBindingOutput();
+        WSDLBindingMessageReference wsdlOutputBinding =  new WSDLBindingMessageReferenceImpl();
+        
+        wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+        //TODO
+        wsdlBindingOperation.setInput(wsdlOutputBinding);
+        
+        
+        
+    }
+    
+    
+    
     public void populatePorts(WSDLEndpoint wsdlEndpoint, Port wsdl4jPort, String targetNamspace){
     	wsdlEndpoint.setName(new QName(targetNamspace, wsdl4jPort.getName()));
     	
 		wsdlEndpoint.setBinding(this.womDefinition.getBinding(wsdl4jPort.getBinding().getQName()));
-		///Extesibility ekements.
+		///Extesibility elements.
     }
     
     
     
     ///////////////////////////Util Methods ////////////////////////////////////
-    
+   
     /**
      * Will return the URI for the MEP. if null will retun the IN_OUT as default
      * pattern.
@@ -279,10 +338,46 @@ public class WSDLPump {
 	    	if(operationType.equals(OperationType.SOLICIT_RESPONSE))
 	    	    return WSDLConstants.MEP_URI_OUT_IN;
         }
-        
-        //Either operation type is null of its none of the above.
-        throw new WSDLProcessingException("Invalid Operation Type(MEP) :Operation Type should be either of REQUESTRESPONCE, ONEWAY, NOTIFICATION, SOLICITRESPONCE");
-    	    	
+        //TODO
+        return WSDLConstants.MEP_URI_OUT_IN;
     }
-
+    
+    /**
+     * This method will fill up the gap of WSDL 1.1 and WSDL 2.0 w.r.t. the 
+     * bound interface for the Service Component Defined in the WSDL 2.0.
+     * Logic being if there exist only one PortType in the WSDL 1.1 file
+     * then that will be set as the bound interface of the Service. If more than one 
+     * Porttype exist in the WSDl 1.1 file this will create a dummy Interface
+     * with the available PortTypes and will return that interface so that it 
+     * will inherit all those interfaces.
+     * 
+     * Eventuall this will have to be fixed using user input since  
+     * @param service
+     * @return
+     */
+    private WSDLInterface getBoundInterface(WSDLService service){
+    	
+    	// Throw an exception if there are no interfaces defined as at yet.
+    	if(0 ==this.womDefinition.getWsdlInterfaces().size())
+    		throw new WSDLProcessingException( "There are no " +
+    				"Interfaces/PortTypes identified in the current partially built" +
+    				"WOM");
+    	
+    	//If there is only one Interface available hten return that because normally
+    	// that interface must be the one to the service should get bound.
+    	if(1 == this.womDefinition.getWsdlInterfaces().size())
+    		return (WSDLInterface)this.womDefinition.getWsdlInterfaces().values().iterator().next();
+    	
+    	//If there are more than one interface available... For the time being create a 
+    	// new interface and set all those existing interfaces as superinterfaces of it
+    	// and return.
+    	WSDLInterface newBoundInterface = this.womDefinition.createInterface();
+    	newBoundInterface.setName(new QName(service.getNamespace(), service.getName().getLocalPart()+ BOUND_INTERFACE_NAME));
+    	Iterator interfaceIterator = this.womDefinition.getWsdlInterfaces().values().iterator();
+    	while(interfaceIterator.hasNext()){
+    		newBoundInterface.addSuperInterface((WSDLInterface)interfaceIterator.next());
+    	}
+    	return newBoundInterface;    	
+    }
+    
 }

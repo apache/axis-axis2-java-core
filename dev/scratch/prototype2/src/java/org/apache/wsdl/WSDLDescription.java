@@ -97,9 +97,9 @@ public interface WSDLDescription extends Component{
 
     public void setWsdlInterfaces(HashMap wsdlInterfaces);
 
-    public Object[] getTypes();
+    public WSDLTypes getTypes();
 
-    public void setTypes(Object[] types);
+    public void setTypes(WSDLTypes types);
 
     /**
      * Gets the name attrebute of the WSDL 1.1 Definitions Element 
