@@ -23,8 +23,7 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Service;
+import org.apache.axis.description.AxisService;
 
 /**
  * @author hemapani@opensource.lk
@@ -46,7 +45,7 @@ public class EngineTest extends TestCase{
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
         mc = new MessageContext(engineRegistry);
-        Service service = engineRegistry.getService(serviceName);
+        AxisService service = engineRegistry.getService(serviceName);
         mc.setProperty(MessageContext.REQUEST_URL,"/axis/services/EchoService");
         mc.setOperation(service.getOperation(operationName));
         

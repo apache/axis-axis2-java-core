@@ -15,7 +15,7 @@
  */
 package org.apache.axis.context;
 
-import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.engine.EngineRegistry;
 
 import java.util.HashMap;
 

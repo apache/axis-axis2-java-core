@@ -16,8 +16,8 @@
 
 package org.apache.axis.registry;
 
-import org.apache.axis.impl.registry.FlowImpl;
-import org.apache.axis.registry.Flow;
+import org.apache.axis.description.Flow;
+import org.apache.axis.impl.description.FlowImpl;
 
 
 public class MockFlow extends FlowImpl implements Flow {

@@ -16,14 +16,14 @@
 
 package org.apache.axis.context;
 
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.EndpointReferance;
+import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.impl.context.SimpleSessionContext;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Operation;
-import org.apache.axis.registry.Service;
 
 import java.util.HashMap;
 
@@ -57,13 +57,13 @@ public class MessageContext {
     private final GlobalContext globalContext;
 
     private SessionContext sessionContext;
-    private Service service;
+    private AxisService service;
     private SOAPEnvelope envelope;
     private boolean responseWritten;
     private boolean infaultFlow;
     private boolean serverSide;
     private String messageID;
-    private Operation operation;
+    private AxisOperation operation;
     private boolean newThreadRequired = false;
 
     public MessageContext(EngineRegistry er) throws AxisFault {
@@ -261,7 +261,7 @@ public class MessageContext {
     /**
      * @return
      */
-    public Service getService() {
+    public AxisService getService() {
         return service;
     }
 
@@ -269,14 +269,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public Operation getOperation() {
+    public AxisOperation getOperation() {
         return operation;
     }
 
     /**
      * @param operation
      */
-    public void setOperation(Operation operation) {
+    public void setOperation(AxisOperation operation) {
         this.operation = operation;
     }
 
@@ -297,7 +297,7 @@ public class MessageContext {
     /**
      * @param service
      */
-    public void setService(Service service) {
+    public void setService(AxisService service) {
         this.service = service;
     }
 

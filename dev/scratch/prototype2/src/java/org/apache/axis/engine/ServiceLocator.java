@@ -17,7 +17,8 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.Service;
+import org.apache.axis.description.AxisService;
+
 
 import javax.xml.namespace.QName;
 
@@ -25,7 +26,7 @@ import javax.xml.namespace.QName;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class ServiceLocator {
-    public static Service locateService(MessageContext msgctx) throws AxisFault {
+    public static AxisService locateService(MessageContext msgctx) throws AxisFault{
         String uri = null;
         String filePart = (String) msgctx.getProperty(MessageContext.REQUEST_URL);
         String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
@@ -55,7 +56,7 @@ public class ServiceLocator {
             }
         }
         if (serviceName != null) {
-            Service service = msgctx.getGlobalContext().getRegistry().getService(serviceName);
+            AxisService service = msgctx.getGlobalContext().getRegistry().getService(serviceName);
             if (service != null) {
                 return service;
             } else {

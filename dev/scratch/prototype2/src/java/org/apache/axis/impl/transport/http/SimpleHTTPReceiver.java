@@ -19,13 +19,13 @@ package org.apache.axis.impl.transport.http;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.transport.AbstractTransportReceiver;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

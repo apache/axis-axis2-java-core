@@ -18,9 +18,8 @@ package org.apache.axis.engine;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import org.apache.axis.description.Flow;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Flow;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)

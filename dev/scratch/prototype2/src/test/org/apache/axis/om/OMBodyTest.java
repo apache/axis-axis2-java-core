@@ -19,10 +19,6 @@
 */
 package org.apache.axis.om;
 
-import java.util.Iterator;
-
-import org.apache.axis.impl.llom.OMNamespaceImpl;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 
 public class OMBodyTest extends OMTestCase implements OMConstants{
 

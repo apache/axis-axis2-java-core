@@ -30,7 +30,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

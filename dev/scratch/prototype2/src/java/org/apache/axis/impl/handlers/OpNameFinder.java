@@ -16,11 +16,11 @@
 package org.apache.axis.impl.handlers;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.om.*;
-import org.apache.axis.registry.Operation;
-import org.apache.axis.registry.Service;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -48,8 +48,8 @@ public class OpNameFinder extends AbstractHandler {
                             String ns = omns.getValue();
                             if (ns != null) {
                                 QName opName = new QName(ns, bodyChild.getLocalName());
-                                Service service = msgContext.getService();
-                                Operation op = service.getOperation(opName);
+                                AxisService service = msgContext.getService();
+                                AxisOperation op = service.getOperation(opName);
                                 if (op != null) {
                                     msgContext.setOperation(op);
                                 } else {

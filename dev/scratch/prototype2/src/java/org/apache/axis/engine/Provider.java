@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 package org.apache.axis.engine;
-
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.NamedEngineElement;
-
 import java.io.Serializable;
 
 
@@ -27,6 +24,7 @@ import java.io.Serializable;
  *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Provider extends Serializable, NamedEngineElement {
-    public MessageContext invoke(MessageContext msgCtx) throws AxisFault;
+public interface Provider extends Serializable{
+    public MessageContext invoke(MessageContext msgCtx)throws AxisFault;
+
 }    

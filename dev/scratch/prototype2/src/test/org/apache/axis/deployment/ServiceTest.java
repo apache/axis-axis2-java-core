@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.engine.EngineRegistry;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

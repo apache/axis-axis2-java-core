@@ -13,14 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.wsdl.wom.impl;
 
-package org.apache.axis.impl.engine;
+import org.apache.wsdl.wom.WSDLFeature;
 
-import org.apache.axis.registry.Global;
+/**
+ * @author chathura@opensource.lk
+ *
+ */
+public class WSDLFeatureImpl extends ComponentImpl implements WSDLFeature {
 
-
-public class GlobalImpl extends AbstractContainer implements Global {
-    public GlobalImpl() {
-    }
-
+	
+	private String name;
+	
+	private boolean required;
+	
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public boolean isRequired() {
+		return required;
+	}
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
 }

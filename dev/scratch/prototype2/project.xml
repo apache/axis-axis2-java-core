@@ -153,6 +153,14 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-wsdl4j</artifactId>
+            <version>1.2-RC1</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 	<dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>

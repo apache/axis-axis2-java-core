@@ -18,14 +18,14 @@ package org.apache.axis.impl.providers;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.registry.Parameter;
-import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,7 +57,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     protected Object makeNewServiceObject(MessageContext msgContext)
             throws AxisFault {
         try {
-            Service service = msgContext.getService();
+            AxisService service = msgContext.getService();
             classLoader = service.getClassLoader();
             Parameter classParm = service.getParameter("className");
             String className = (String) classParm.getValue();
@@ -73,10 +73,11 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         }
     }
 
-    public Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-        Service service = msgContext.getService();
-        QName serviceName = service.getName();
-        if (Constants.APPLICATION_SCOPE.equals(scope)) {
+    public Object getTheImplementationObject(
+            MessageContext msgContext)throws AxisFault{
+            AxisService service = msgContext.getService();
+            QName serviceName = service.getName();
+        if(Constants.APPLICATION_SCOPE.equals(scope)){
             return makeNewServiceObject(msgContext);
         } else if (Constants.SESSION_SCOPE.equals(scope)) {
             SessionContext sessionContext = msgContext.getSessionContext();

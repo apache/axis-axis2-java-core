@@ -17,11 +17,10 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.impl.handlers.OpNameFinder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,14 +40,12 @@ public class AxisEngine {
     }
 
     public void send(MessageContext mc) throws AxisFault {
-        Service service = null;
-        //dispatch the service Name
-        service = mc.getService();
+        AxisService service = mc.getService();
         try {
             //what are we suppose to do in the client side 
             //how the client side handlers are deployed ??? this is a hack and no client side handlers
             if (mc.isServerSide() || service != null) {
-                ExecutionChain exeChain = service.getOutputExecutionChain();
+                ExecutionChain exeChain = service.getExecutableOutChain();
                 exeChain.invoke(mc);
             }
             sendTheMessage(mc);
@@ -59,7 +56,7 @@ public class AxisEngine {
     }
 
     public void receive(MessageContext mc) throws AxisFault {
-        Service service = null;
+        AxisService service = null;
         try {
             if (mc.isServerSide()) {
                 service = ServiceLocator.locateService(mc);
@@ -67,7 +64,7 @@ public class AxisEngine {
             }
 
             if (service != null) {
-                ExecutionChain exeChain = service.getInputExecutionChain();
+                ExecutionChain exeChain = service.getExecutableInChain();
                 exeChain.invoke(mc);
             }
             if (mc.isServerSide()) {
@@ -86,16 +83,15 @@ public class AxisEngine {
         TransportSender ts = TransportSenderLocator.locateTransPortSender(msgCtx);
         ts.invoke(msgCtx);
     }
-
-    private void handleFault(MessageContext mc, Exception e, Service service) throws AxisFault {
-        if (mc.isProcessingFault()) {
+    private void handleFault(MessageContext mc,Exception e,AxisService service) throws AxisFault{
+        if(mc.isProcessingFault()){
             //TODO log and exit
             log.error("Error in fault flow", e);
         } else {
             log.debug("receive failed", e);
             mc.setProcessingFault(true);
             if (service != null) {
-                ExecutionChain faultExeChain = service.getFaultExecutionChain();
+                ExecutionChain faultExeChain = service.getExecutableFaultChain();
                 faultExeChain.invoke(mc);
             }
             SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();

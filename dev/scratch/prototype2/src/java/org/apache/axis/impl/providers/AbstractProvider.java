@@ -16,8 +16,6 @@
 package org.apache.axis.impl.providers;
 
 import org.apache.axis.engine.Provider;
-import org.apache.axis.impl.registry.AbstractEngineElement;
-
 import javax.xml.namespace.QName;
 
 /**
@@ -26,7 +24,7 @@ import javax.xml.namespace.QName;
  *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class AbstractProvider extends AbstractEngineElement implements Provider {
+public abstract class AbstractProvider implements Provider{
     private QName name;
 
     public QName getName() {

@@ -23,21 +23,20 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.engine.OperationImpl;
-import org.apache.axis.impl.engine.ServiceImpl;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.providers.RawXMLProvider;
-import org.apache.axis.impl.registry.FlowImpl;
-import org.apache.axis.impl.registry.ParameterImpl;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.registry.EngineRegistry;
-import org.apache.axis.registry.Flow;
-import org.apache.axis.registry.Operation;
-import org.apache.axis.registry.Parameter;
-import org.apache.axis.registry.Service;
 import org.apache.axis.registry.SpeakingHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,7 +71,7 @@ public class HandlerFaliureTest extends AbstractTestCase{
     
     
     public void testFailureAtServerRequestFlow() throws Exception{
-        Service service = new ServiceImpl(serviceName);
+        AxisService service = new SimpleAxisServiceImpl(serviceName);
         
         Flow flow = new FlowImpl();
         flow.addHandler(new SpeakingHandler());
@@ -87,33 +86,33 @@ public class HandlerFaliureTest extends AbstractTestCase{
         Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
         service.addParameter(classParam);
         service.setProvider(new RawXMLProvider());
-        Operation operation = new OperationImpl(operationName,service);
+        AxisOperation operation = new SimpleAxisOperationImpl(operationName);
         
         service.addOperation(operation);
         
         ExecutionChain inchain = new ExecutionChain();
         inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setInputExecutionChain(inchain);
+        service.setExecutableInChain(inchain);
         
         ExecutionChain outchain = new ExecutionChain();
         outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setOutExecutionChain(outchain);
+        service.setExecutableOutChain(outchain);
         
         ExecutionChain faultchain = new ExecutionChain();
         
         faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         
         EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setFaultExecutionChain(outchain);
+        service.setExecutableFaultChain(outchain);
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    
     }
     
     public void testFailureAtServerResponseFlow() throws Exception{
-        Service service = new ServiceImpl(serviceName);
+        AxisService service = new SimpleAxisServiceImpl(serviceName);
         
         Flow flow = new FlowImpl();
         flow.addHandler(new SpeakingHandler());
@@ -137,26 +136,26 @@ public class HandlerFaliureTest extends AbstractTestCase{
         Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
         service.addParameter(classParam);
         service.setProvider(new RawXMLProvider());
-        Operation operation = new OperationImpl(operationName,service);
+        AxisOperation operation = new SimpleAxisOperationImpl(operationName);
         
         service.addOperation(operation);
         
         ExecutionChain inchain = new ExecutionChain();
         inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setInputExecutionChain(inchain);
+        service.setExecutableInChain(inchain);
         
         ExecutionChain outchain = new ExecutionChain();
         outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setOutExecutionChain(outchain);
+        service.setExecutableOutChain(outchain);
         
         ExecutionChain faultchain = new ExecutionChain();
         
         faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         
         EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setFaultExecutionChain(outchain);
+        service.setExecutableFaultChain(outchain);
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    

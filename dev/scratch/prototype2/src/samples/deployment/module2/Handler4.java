@@ -21,12 +21,11 @@ import javax.xml.namespace.QName;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.impl.registry.AbstractEngineElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
-public class Handler4 extends AbstractEngineElement implements Handler {
+public class Handler4  implements Handler {
     private Log log = LogFactory.getLog(getClass());private String message;
     private QName name;
     public Handler4() {

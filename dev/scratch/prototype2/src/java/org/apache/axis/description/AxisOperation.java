@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.axis.description;
 
-package org.apache.axis.impl.engine;
+import org.apache.wsdl.wom.WSDLOperation;
 
-import org.apache.axis.registry.Transport;
-
-import javax.xml.namespace.QName;
-
-public class TransportImpl extends AbstractContainer implements Transport {
-    private QName name;
-
-    public TransportImpl(QName name) {
-        this.name = name;
-    }
-
-    public QName getName() {
-        return name;
-    }
-
+/**
+ * @author chathura@opensource.lk
+ *
+ */
+public interface AxisOperation extends WSDLOperation,ParameterInclude  {
+//    public Flow getInFlow();
+//    
+//    public void setInflow(Flow inFlow);
+//    
+//    public Flow getOutFlow();
+//    
+//    public void setOutFlow(Flow outFlow);
+//    
+//    public Flow getFaultFlow();
+//    
+//    public void setFaultFlow();
 }

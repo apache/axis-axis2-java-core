@@ -16,15 +16,15 @@
 package org.apache.axis.client;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.TransportSenderLocator;
-import org.apache.axis.impl.engine.GlobalImpl;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.om.*;
-import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,7 +54,7 @@ public class Call {
 
     public Call() {
         //TODO look for the Client XML and creatre a Engine registy
-        this.registry = new EngineRegistryImpl(new GlobalImpl());
+        this.registry = new EngineRegistryImpl(new AxisGlobal());
     }
 
 

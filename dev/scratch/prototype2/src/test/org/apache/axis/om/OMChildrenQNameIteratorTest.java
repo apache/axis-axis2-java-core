@@ -21,15 +21,15 @@ package org.apache.axis.om;
  * 
  */
 
-import junit.framework.*;
-import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.AbstractTestCase;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.namespace.QName;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
 
 public class OMChildrenQNameIteratorTest extends AbstractTestCase {
 

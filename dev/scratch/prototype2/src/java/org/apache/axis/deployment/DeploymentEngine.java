@@ -10,12 +10,10 @@ import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
 import org.apache.axis.engine.*;
+import org.apache.axis.description.*;
+import org.apache.axis.impl.description.*;
 import org.apache.axis.impl.engine.*;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
-import org.apache.axis.impl.registry.EngineRegistryImpl;
-import org.apache.axis.impl.registry.FlowImpl;
-import org.apache.axis.impl.registry.ParameterImpl;
-import org.apache.axis.registry.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -135,12 +133,11 @@ public class DeploymentEngine implements DeploymentConstants {
     public void addService(ServiceMetaData serviceMetaData) throws PhaseException, AxisFault {
         servicelist.add(serviceMetaData);
         addnewService(serviceMetaData);
-        log.info("Numbetr of service" + engineRegistry.getServiceCount());
     }
 
     public void addModule(ModuleMetaData module) throws AxisFault {
         modulelist.add(module);
-        Module simplemodule = castModuleMetaData(module);
+        AxisModule simplemodule = castModuleMetaData(module);
         engineRegistry.addMdoule(simplemodule);
 
     }
@@ -172,14 +169,8 @@ public class DeploymentEngine implements DeploymentConstants {
         /**
          * adding Global
          */
-        FlowImpl globalinflow = new FlowImpl();
-        FlowImpl globaloutflow = new FlowImpl();
-        FlowImpl globalfaultflow = new FlowImpl();
 
-        Global global = new GlobalImpl();
-        global.setInFlow(globalinflow);
-        global.setOutFlow(globaloutflow);
-        global.setFaultFlow(globalfaultflow);
+        AxisGlobal global = new AxisGlobal();
         newEngineRegisty = new EngineRegistryImpl(global);
         /**
          * adding transport
@@ -188,11 +179,6 @@ public class DeploymentEngine implements DeploymentConstants {
         FlowImpl transportoutflow = new FlowImpl();
         FlowImpl transportfaultflow = new FlowImpl();
 
-        Transport transport = new TransportImpl(transportName);
-        transport.setInFlow(transportinflow);
-        transport.setOutFlow(transportoutflow);
-        transport.setFaultFlow(transportfaultflow);
-        newEngineRegisty.addTransport(transport);
 
         /**
          * adding services
@@ -213,7 +199,7 @@ public class DeploymentEngine implements DeploymentConstants {
         FlowImpl serviceoutflow = new FlowImpl();
         FlowImpl servicefaultflow = new FlowImpl();
 
-        Service service = new ServiceImpl(serviceName);
+        AxisService service = new SimpleAxisServiceImpl(serviceName);
         service.setInFlow(serviceinflow);
         service.setOutFlow(serviceoutflow);
         service.setFaultFlow(servicefaultflow);
@@ -270,8 +256,8 @@ public class DeploymentEngine implements DeploymentConstants {
         /**
          * adding parametrs to module
          */
-        Module module = new ModuleImpl(new QName(modulemd.getRef()));
-        service.addModule(module);
+        AxisModule module = new AxisModule(new QName(modulemd.getRef()));
+        service.addModule(module.getName());
         count = modulemd.getParameterCount();
 
         for (int j = 0; j < count; j++) {
@@ -294,11 +280,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
         QName opname = new QName(oprationmd.getName());
-        Operation operation = new OperationImpl(opname, service);
-        operation.setInFlow(operationinflow);
-        operation.setOutFlow(operationutflow);
-        operation.setFaultFlow(operationfaultflow);
-
+        AxisOperation operation = new SimpleAxisOperationImpl(opname);
 
         service.addOperation(operation);
 
@@ -353,9 +335,9 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         outchain.addPhase(faultservicephase);
 
-        service.setInputExecutionChain(inchain);
-        service.setOutExecutionChain(outchain);
-        service.setFaultExecutionChain(faultchain);
+        service.setExecutableInChain(inchain);
+        service.setExecutableOutChain(outchain);
+        service.setExecutableFaultChain(faultchain);
 
         engineRegistry.addService(service);
     }
@@ -386,8 +368,9 @@ public class DeploymentEngine implements DeploymentConstants {
             for (int k = 0; k < paracount; k++) {
                 ParameterMetaData paraMD = handlermd.getParameter(k);
                 //todo check with srinath whether this is correct
-                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-                handler.addParameter(parameter);
+//FIXME 
+//                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
+//                handler.addParameter(parameter);
             }
             flow.addHandler(handler);
         }
@@ -431,13 +414,13 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private Module castModuleMetaData(ModuleMetaData moduelmetada) throws AxisFault {
+    private AxisModule castModuleMetaData(ModuleMetaData moduelmetada) throws AxisFault {
         ModuleMetaData modulemd = moduelmetada;
 
         /**
          * adding parametrs to module
          */
-        Module module = new ModuleImpl(new QName(modulemd.getName()));
+        AxisModule module = new AxisModule(new QName(modulemd.getName()));
         int count = modulemd.getParameterCount();
 
         //todo change the classloder

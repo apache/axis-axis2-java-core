@@ -17,12 +17,12 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.NamedEngineElement;
+
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
 
-public interface Handler extends Serializable, NamedEngineElement {
+public interface Handler extends Serializable {
     /**
      * Invoke is called to do the actual work of the Handler object.
      * If there is a fault during the processing of this method it is
@@ -50,5 +50,3 @@ public interface Handler extends Serializable, NamedEngineElement {
 
     public QName getName();
 }
-
-;
