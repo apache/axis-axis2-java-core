@@ -35,10 +35,10 @@ public class OutObjectArrayImpl implements OutObject{
     public void startBuilding(ContentHandler cHandler) throws OMException {
         try {
         	for(int i = 0;i<obj.length;i++){
-				cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"",null);
+				cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,OMConstants.ARRAY_ITEM_QNAME,null);
 				arrayTypeEncoder.setObject(obj[i]);
 				arrayTypeEncoder.startBuilding(cHandler);
-				cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"");
+				cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,OMConstants.ARRAY_ITEM_QNAME);
         	}
         } catch (SAXException e) {
             throw new OMException(e);

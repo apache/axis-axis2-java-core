@@ -105,14 +105,15 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
             else
                 writer.writeStartElement(qname.getPrefix(), qname.getLocalName(),namespaceURI);
 
-            int attCount = atts.getLength();
-            for (int i = 0; i < attCount; i++) {
-                qname = breakUpSaxQname(atts.getQName(i));
-                writer.writeAttribute(atts.getURI(i),
-                        qname.getLocalName(),
-                        atts.getValue(i));
+            if (atts!=null){
+                int attCount = atts.getLength();
+                for (int i = 0; i < attCount; i++) {
+                    qname = breakUpSaxQname(atts.getQName(i));
+                    writer.writeAttribute(atts.getURI(i),
+                            qname.getLocalName(),
+                            atts.getValue(i));
+                }
             }
-            writer.flush();
         } catch (XMLStreamException e) {
             throw new SAXException(e);
         }

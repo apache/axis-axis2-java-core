@@ -459,6 +459,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
                     } else {
                         //do the special serialization
                         //Only the push serializer is left now
+                         builder.setCache(cache);
                         builder.next();
                     }
 
@@ -471,7 +472,10 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
             } else {
                 //do the special serilization
                 //Only the push serializer is left now
+                builder.setCache(cache);
+                namespaceCount = serializeStartpart(writer);
                 builder.next();
+                serializeEndpart(writer, namespaceCount);
             }
 
 
@@ -532,7 +536,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
 
     private void serializeNormal(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
 
-        int namespaceCount = serializeStartpart(writer);
+       int namespaceCount = serializeStartpart(writer);
 
         if (getFirstChild() != null) {
             getFirstChild().serialize(writer, cache, namespaceStack);

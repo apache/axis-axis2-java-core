@@ -66,14 +66,14 @@ public class AxisEngine {
             
             //Start rolling the Service Handlers will,be added by the Dispatcher 
             chain.invoke(context);
-        } catch (AxisFault e) {
+        } catch (Throwable e) {
             handleFault(context, e);
         }
     }
 
     private void handleFault(
         MessageContext context,
-        AxisFault e)
+        Throwable e)
         throws AxisFault {
         boolean serverSide = context.isServerSide();
         if(serverSide && !context.isProcessingFault()){    
@@ -84,13 +84,13 @@ public class AxisEngine {
             SOAPEnvelope envelope =
                 OMFactory.newInstance().getDefaultEnvelope();
             //TODO do we need to set old Headers back?
-            envelope.getBody().addFault(e);
+            envelope.getBody().addFault(new AxisFault("",e));
             context.setEnvelope(envelope);
             //send the error
             executeOutFlow(context,EngineRegistry.FAULTFLOW);
         }else if (!serverSide){
             //if at the client side throw the exception
-            throw e;
+            throw new AxisFault("",e);
         }else{
             //TODO log and exit
             log.error("Error in fault flow", e);
