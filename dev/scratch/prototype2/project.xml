@@ -154,7 +154,7 @@
       </resources>
 
     </unitTest>
-	
+<!--	
 	<sourceModifications>
         <sourceModification>
           <className>javax.servlet.http.HttpServlet</className>
@@ -163,6 +163,7 @@
           </excludes>
      	</sourceModification>
      </sourceModifications>
+-->
 
     <resources>
       <resource>
@@ -202,16 +203,16 @@
                 <module>true</module>
             </properties>
         </dependency>
-<!--        <dependency>
-            <groupId>xpp3</groupId>
-            <artifactId>xpp3</artifactId>
-            <version>1.1.3.3</version>
+	 <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-servlet</artifactId>
+            <version>2.4-rc3</version>
             <properties>
                 <module>true</module>
             </properties>
         </dependency>
         
--->        
+        
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
