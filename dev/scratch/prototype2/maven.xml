@@ -14,13 +14,15 @@
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service2"/>
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module1"/>
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module2"/>
-    		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
 	</j:jelly>
+        <attainGoal name="samples"/>
       <ant:copy file="${basedir}/src/test-resources/deployment/server.xml" tofile="${basedir}/target/test-resources/deployment/server.xml"/>
     </postGoal> 
 	<postGoal name="jar">
+        <jar destfile="target/axis2-test.jar" basedir="target/test-classes"/>
         <ant:mkdir dir="${maven.repo.local}/axis/jars"/>
 		<ant:copy file="${basedir}/target/axis2-M1.jar" tofile="${maven.repo.local}/axis/jars/axis2-M1.jar"/>
+		<ant:copy file="${basedir}/target/axis2-test.jar" tofile="${maven.repo.local}/axis/jars/axis2-test.jar"/>
      </postGoal>
     <goal name="war" prereqs="jar">
         <!-- jar the test classes -->
@@ -51,7 +53,6 @@
     
     <goal name="war-withsamples" prereqs="jar">
         <!-- jar the test classes -->
-        <jar destfile="target/axis2-test.jar" basedir="target/test-classes"/>
                 <war destfile="target/axis2.war" webxml="src/conf/web.xml">
                   <fileset dir="src/html"/>
                   <webinf dir="target/test-resources/samples"/>
