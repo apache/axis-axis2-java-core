@@ -19,4 +19,5 @@
 <project>
     <pomVersion>3</pomVersion>
     <extend>etc/project.xml</extend>
+    <id>axis2</id>
 </project>
