@@ -15,13 +15,6 @@
  */
 package org.apache.axis.transport.http;
 
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.AbstractTransportSender;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -32,6 +25,11 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URL;
+
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.AbstractTransportSender;
 
 /**
  * Class HTTPTransportSender
@@ -54,7 +52,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * @return
      * @throws AxisFault
      */
-    protected Writer obtainOutputStream(MessageContext msgContext)
+    protected Writer obtainWriter(MessageContext msgContext)
             throws AxisFault {
         if (!msgContext.isServerSide()) {
             EndpointReference toURL = msgContext.getTo();
@@ -66,12 +64,11 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     socket = new Socket();
                     socket.connect(add);
                     OutputStream outS = socket.getOutputStream();
-                    out = new BufferedWriter(new OutputStreamWriter(outS));
+                    out = new OutputStreamWriter(outS);
                     writeTransportHeaders(out, url);
                     msgContext.setProperty(
                             MessageContext.TRANSPORT_READER,
-                            new BufferedReader(
-                                    new InputStreamReader(socket.getInputStream())));
+                                    new InputStreamReader(socket.getInputStream()));
                     msgContext.setProperty(HTTPConstants.SOCKET, socket);
                 } catch (MalformedURLException e) {
                     throw new AxisFault(e.getMessage(), e);
@@ -101,11 +98,11 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * @return
      * @throws AxisFault
      */
-    protected Writer obtainOutputStream(
+    protected Writer obtainWriter(
             MessageContext msgContext, EndpointReference epr) throws AxisFault {
 
         // TODO this is temporay work around
-        return obtainOutputStream(msgContext);
+        return obtainWriter(msgContext);
     }
 
     /**
@@ -114,7 +111,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * @param msgContext
      * @throws AxisFault
      */
-    protected void finalizeSending(MessageContext msgContext)
+    protected void finalizeSending(MessageContext msgContext,Writer writer)
             throws AxisFault {
         try {
             socket.shutdownOutput();
@@ -129,7 +126,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * @param msgContext
      * @throws AxisFault
      */
-    protected void startSending(MessageContext msgContext) throws AxisFault {
+    protected void startSending(MessageContext msgContext,Writer out) throws AxisFault {
     }
 
     /**
@@ -150,6 +147,6 @@ public class HTTPTransportSender extends AbstractTransportSender {
         buf.append("Cache-Control: no-cache\n");
         buf.append("Pragma: no-cache\n");
         buf.append("SOAPAction: \"\"\n\n");
-        out.write(buf.toString().toCharArray());
+        out.write(buf.toString());
     }
 }

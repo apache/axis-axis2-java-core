@@ -15,6 +15,12 @@
  */
 package org.apache.axis.transport;
 
+import java.io.Writer;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetadata;
@@ -23,12 +29,6 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.OutputStream;
-import java.io.Writer;
 
 /**
  */
@@ -66,28 +66,28 @@ public abstract class AbstractTransportSender extends AbstractHandler
             if (msgContext.getFaultTo() != null) {
                 log.info("Obtain the output stream to send the fault flow to "
                                 + msgContext.getFaultTo().getAddress());
-                out = obtainOutputStream(msgContext, msgContext.getFaultTo());
+                out = obtainWriter(msgContext, msgContext.getFaultTo());
             } else {
                 log.info(
                         "Obtain the output stream to send the fault flow to ANONYMOUS");
-                out = obtainOutputStream(msgContext);
+                out = obtainWriter(msgContext);
             }
         } else {
             if (msgContext.getTo() != null) {
                 log.info("Obtain the output stream to send to To flow to "
                                 + msgContext.getTo().getAddress());
-                out = obtainOutputStream(msgContext, msgContext.getTo());
+                out = obtainWriter(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
                 log.info("Obtain the output stream to send to ReplyTo flow to "
                                 + msgContext.getReplyTo().getAddress());
-                out = obtainOutputStream(msgContext, msgContext.getTo());
+                out = obtainWriter(msgContext, msgContext.getTo());
             } else {
                 log.info(
                         "Obtain the output stream to send the fault flow to ANONYMOUS");
-                out = obtainOutputStream(msgContext);
+                out = obtainWriter(msgContext);
             }
         }
-        startSending(msgContext);
+        startSending(msgContext,out);
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope != null) {
             XMLStreamWriter outputWriter = null;
@@ -101,7 +101,7 @@ public abstract class AbstractTransportSender extends AbstractHandler
                 throw new AxisFault("Stream error", e);
             }
         }
-        finalizeSending(msgContext);
+        finalizeSending(msgContext,out);
         log.info("Send the Response");
     }
 
@@ -111,8 +111,7 @@ public abstract class AbstractTransportSender extends AbstractHandler
      * @param msgContext
      * @throws AxisFault
      */
-    protected void startSending(MessageContext msgContext) throws AxisFault {
-    }
+    protected abstract void startSending(MessageContext msgContext,Writer writer) throws AxisFault;
 
     /**
      * Method obtainOutputStream
@@ -122,7 +121,7 @@ public abstract class AbstractTransportSender extends AbstractHandler
      * @return
      * @throws AxisFault
      */
-    protected abstract Writer obtainOutputStream(
+    protected abstract Writer obtainWriter(
             MessageContext msgContext, EndpointReference epr) throws AxisFault;
 
     /**
@@ -132,7 +131,7 @@ public abstract class AbstractTransportSender extends AbstractHandler
      * @return
      * @throws AxisFault
      */
-    protected abstract Writer obtainOutputStream(MessageContext msgContext)
+    protected abstract Writer obtainWriter(MessageContext msgContext)
             throws AxisFault;
 
     /**
@@ -141,7 +140,6 @@ public abstract class AbstractTransportSender extends AbstractHandler
          * @param msgContext
          * @throws AxisFault
          */
-    protected void finalizeSending(MessageContext msgContext)
-            throws AxisFault {
-    }
+    protected abstract void finalizeSending(MessageContext msgContext,Writer writer)
+            throws AxisFault ;
 }
