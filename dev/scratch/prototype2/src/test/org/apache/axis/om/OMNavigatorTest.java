@@ -1,6 +1,9 @@
 package org.apache.axis.om;
 
 import java.io.FileReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -11,6 +14,7 @@ import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
+import org.apache.axis.AbstractTestCase;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,86 +36,84 @@ import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
  * Time: 4:35:04 PM
  * 
  */
-public class OMNavigatorTest extends TestCase{
-    private static final String IN_FILE_NAME2 = "src/test-resources/soap/soapmessage1.xml";
+public class OMNavigatorTest extends AbstractTestCase {
+
     private OMEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
     private OMStAXBuilder builder;
+    private File tempFile;
+
+    public OMNavigatorTest(String testName) {
+        super(testName);
+    }
 
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(IN_FILE_NAME2));
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         OMFactory factory = new OMLinkedListImplFactory();
-        builder = new OMStAXBuilder(factory,xmlStreamReader);
+        builder = new OMStAXBuilder(factory, xmlStreamReader);
         envelope = builder.getOMEnvelope();
         serilizer = new SimpleOMSerializer();
+
+        tempFile = File.createTempFile("temp", "xml");
     }
 
 
-    public void testnavigatorFullyBuilt(){
-        System.out.println(" #######  Testing fully built OM tree ########");
+    public void testnavigatorFullyBuilt() throws Exception {
+
         assertNotNull(envelope);
-        serilizer.serialize(envelope,System.out);
-
-        //now the OM is fully created
-        OMNavigator navigator = new OMNavigator(envelope);
-        OMNode node=null;
-        while(navigator.isNavigable()){
-            node = navigator.next();
-
-            assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
-
+        //dump the out put to a  temporary file
+        try {
+            serilizer.serialize(envelope, new FileOutputStream(tempFile));
+        } catch (FileNotFoundException e) {
+            throw e;
         }
 
+        //now the OM is fully created test the navigation
+        OMNavigator navigator = new OMNavigator(envelope);
+        OMNode node = null;
+
+        while (navigator.isNavigable()) {
+            node = navigator.next();
+            assertNotNull(node);
+        }
     }
 
-    public void testnavigatorHalfBuilt(){
-        System.out.println(" #######  Testing partially built OM tree ########");
+    public void testnavigatorHalfBuilt() {
+        assertNotNull(envelope);
+        //now the OM is not fully created. Try to navigate it
+        OMNavigator navigator = new OMNavigator(envelope);
+        OMNode node = null;
+
+        while (navigator.isNavigable()) {
+            node = navigator.next();
+            assertNotNull(node);
+        }
+    }
+
+    public void testnavigatorHalfBuiltStep() {
         assertNotNull(envelope);
 
         //now the OM is not fully created
         OMNavigator navigator = new OMNavigator(envelope);
-        OMNode node=null;
+        OMNode node = null;
 
-        while(navigator.isNavigable()){
-            node = navigator.next();
-
-            assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
-
-        }
-
-    }
-    public void testnavigatorHalfBuiltStep(){
-        System.out.println(" #######  Testing partially built OM tree With Stepping########");
-        assertNotNull(envelope);
-
-        //now the OM is not fully created
-        OMNavigator navigator = new OMNavigator(envelope);
-        OMNode node=null;
-
-        while(!navigator.isCompleted()){
-            if (navigator.isNavigable()){
+        while (!navigator.isCompleted()) {
+            if (navigator.isNavigable()) {
                 node = navigator.next();
-            }else{
+            } else {
                 builder.next();
                 navigator.step();
-                node=navigator.next();
+                node = navigator.next();
             }
-
             assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
 
         }
 
     }
 
+    protected void tearDown() throws Exception {
+        tempFile.delete();
+    }
 
 }

@@ -17,6 +17,7 @@
 package org.apache.axis.om;
 
 import java.io.FileReader;
+import java.io.File;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -32,7 +33,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class OMTestUtils {
-    public static OMXPPWrapper getOMBuilder(String file) throws Exception {
+
+    public static OMXPPWrapper getOMBuilder(File file) throws Exception {
         XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.setInput(new FileReader(file));
@@ -63,10 +65,7 @@ public class OMTestUtils {
         if(ele == null && omele == null){
             return;
         }else if(ele != null && omele != null){
-            System.out.println("@@@ ele = " +ele +" = " + "omele = "+ omele);
-            
-            System.out.println(ele.getLocalName() +" = " + omele.getLocalName());
-            System.out.println(ele.getNamespaceURI()+" = " + omele.getNamespace().getValue());
+
             TestCase.assertTrue(ele.getLocalName().equals(omele.getLocalName()));
             TestCase.assertTrue(ele.getNamespaceURI().equals(omele.getNamespace().getValue()));
             

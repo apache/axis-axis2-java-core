@@ -49,17 +49,17 @@ public class ObjectToOMBuilderTest extends TestCase{
     }
 
     public void testBuilding(){
-        System.out.println("element = " + element.isComplete());
+
 
         objectToOMBuilder.next();
 
         Iterator children = element.getChildren();
         while (children.hasNext()) {
             OMNode omNode = (OMNode) children.next();
-            System.out.println("omNode = " + omNode.getValue());
+            assertNotNull(omNode);
         }
 
-        System.out.println("element = " + element.isComplete());
+
     }
 
 

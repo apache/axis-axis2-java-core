@@ -7,11 +7,15 @@ import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 import org.apache.axis.impl.llom.wrapper.OMStAXWrapper;
 import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import java.io.FileReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -33,28 +37,33 @@ import java.io.FileReader;
  * Time: 5:23:01 PM
  * 
  */
-public class OMStaxStreamingWrapperTest extends TestCase {
+public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
-    private static final String IN_FILE_NAME2 = "src/test-resources/soap/soapmessage1.xml";
     private OMEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
     private OMStAXBuilder omStAXBuilder;
+    private File tempFile;
+
+    public OMStaxStreamingWrapperTest(String testName) {
+        super(testName);
+    }
 
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(IN_FILE_NAME2));
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         OMFactory factory = new OMLinkedListImplFactory();
         omStAXBuilder = new OMStAXBuilder(factory, xmlStreamReader);
         envelope = omStAXBuilder.getOMEnvelope();
         serilizer = new SimpleOMSerializer();
+
+        tempFile = File.createTempFile("temp","xml");
     }
 
 
-    public void testWrapperFullOM() {
-        System.out.println(" # -----------------------Full OM------------------------------- #");
+    public void testWrapperFullOM() throws FileNotFoundException {
         assertNotNull(envelope);
         //this serializing will cause the OM to fully build!
-        serilizer.serialize(envelope, System.out);
+        serilizer.serialize(envelope, new FileOutputStream(tempFile));
 
         //now the OM is fully created. Create the wrapper and see
         OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
@@ -64,28 +73,21 @@ public class OMStaxStreamingWrapperTest extends TestCase {
             assertTrue(event>0);
         }
 
-        System.out.println(" # -----------------------Full OM end ------------------------------- #");
     }
 
     public void testWrapperHalfOM() {
-        System.out.println(" # -----------------------Half OM------------------------------- #");
         assertNotNull(envelope);
 
         //now the OM is not fully created. Create the wrapper and see
         OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
-
         while (wrapper.hasNext()) {
             int event = wrapper.next();
             assertTrue(event>0);
-//            System.out.println("returnEvent = " + getEventString(event));
         }
-
-        System.out.println(" # -----------------------Half OM end------------------------------- #");
     }
-    public void testWrapperHalfOMWithCacheOff() {
-        System.out.println(" # -----------------------Half OM with cache off------------------------------- #");
-        assertNotNull(envelope);
 
+    public void testWrapperHalfOMWithCacheOff() {
+        assertNotNull(envelope);
         //now the OM is not fully created. Create the wrapper and see
         OMStAXWrapper wrapper = new OMStAXWrapper(omStAXBuilder, envelope);
         //set the switching allowed flag
@@ -93,27 +95,10 @@ public class OMStaxStreamingWrapperTest extends TestCase {
         while (wrapper.hasNext()) {
             int event = wrapper.next();
             assertTrue(event>0);
-//            System.out.println("returnEvent = " + getEventString(event));
         }
-        System.out.println(" # -----------------------Half OM with cache off end------------------------------- #");
     }
 
-    private String getEventString(int event){
-        String outStr = "";
-        switch (event){
-            case XMLStreamConstants.START_ELEMENT:
-                outStr = "START_ELEMENT";
-                break;
-            case XMLStreamConstants.END_ELEMENT:
-                outStr = "END_ELEMENT";
-                break;
-            case XMLStreamConstants.CHARACTERS:
-                outStr = "char";
-                break;
-            default:outStr = event+"";
-
-        }
-        return outStr;
+    protected void tearDown() throws Exception {
+        tempFile.delete();
     }
-
 }

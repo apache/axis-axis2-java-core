@@ -15,6 +15,7 @@
  */
 package org.apache.axis.engine;
 
+//todo
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -64,29 +65,29 @@ public class EchoTest extends AbstractTestCase{
 
 
     public void testEchoStringServer() throws Exception{
-    	File file = new File("src/test-resources/soap/soapmessage.txt");
+    	File file = getTestResourceFile("soap/soapmessage.txt");
     	FileInputStream in = new FileInputStream(file);
     	
     	Socket socket = new Socket("127.0.0.1",testingPort);
-    	System.out.println("scoket created");
     	OutputStream out = socket.getOutputStream();
     	byte[]  buf = new byte[1024];
     	int index = -1;
     	while((index = in.read(buf)) > 0){
     		out.write(buf,0,index);
     	}
-    	System.out.println("Message Send");
+
     	
     	InputStream respose = socket.getInputStream();
     	Reader rReader = new InputStreamReader(respose);
     	char[] charBuf = new char[1024];
     	while((index = rReader.read(charBuf)) > 0){
-        	System.out.println(charBuf);    		
+
     	}
     	
     	in.close();
     	out.close();
-    	rReader.close();
+
+        rReader.close();
     	socket.close();
     }
 }

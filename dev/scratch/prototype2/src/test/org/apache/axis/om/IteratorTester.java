@@ -8,6 +8,7 @@ import javax.xml.stream.XMLInputFactory;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.AbstractTestCase;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,18 +30,18 @@ import org.apache.axis.impl.llom.builder.OMStAXBuilder;
  * Time: 12:34:15 PM
  * 
  */
-public class IteratorTester extends TestCase{
-    private static final String IN_FILE_NAME = "resources/soapmessage.xml";
-    private static final String IN_FILE_NAME2 = "src/test-resources/soap/sample1.xml";
+public class IteratorTester extends AbstractTestCase{
+
     OMEnvelope envelope = null;
 
+    public IteratorTester(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
-//        XmlPullParser parser= XmlPullParserFactory.newInstance().newPullParser();
-//		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-//		parser.setInput();
-//        ;
 		envelope = new OMStAXBuilder(XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(IN_FILE_NAME2))).getOMEnvelope();
+                createXMLStreamReader(
+                        new FileReader(getTestResourceFile("soap/sample1.xml")))).getOMEnvelope();
     }
 
     public void testIterator(){
@@ -49,9 +50,7 @@ public class IteratorTester extends TestCase{
 
         while (iter.hasNext()) {
             OMNode o = (OMNode) iter.next();
-            System.out.println("o = " + o);
-            if (o!=null)
-            System.out.println("value o " + o.getValue());
+            assertNotNull(o);//todo make this better
         }
 
     }

@@ -58,7 +58,7 @@ public class OMTest extends AbstractTestCase{
      */
 
     public void testNullInChilderen(){
-        isNullChildrenAreThere(envelope);
+        isNullChildrenThere(envelope);
     }
     
     /**
@@ -69,13 +69,13 @@ public class OMTest extends AbstractTestCase{
         isNameSpacesMissing(envelope);
     }
     
-    public void isNullChildrenAreThere(OMElement omeleent){
+    public void isNullChildrenThere(OMElement omeleent){
         Iterator it = omeleent.getChildren();
         while(it.hasNext()){
             OMNode node = (OMNode)it.next();
             assertNotNull(node);
             if(node.getType() == OMNode.ELEMENT_NODE){
-                isNullChildrenAreThere((OMElement)node);
+                isNullChildrenThere((OMElement)node);
             }
         }
     }

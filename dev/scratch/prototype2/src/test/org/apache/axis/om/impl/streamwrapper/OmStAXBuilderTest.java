@@ -6,10 +6,13 @@ import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 import org.apache.axis.om.OMEnvelope;
+import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.FileReader;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -31,30 +34,39 @@ import java.io.FileReader;
  * Time: 3:54:54 PM
  * 
  */
-public class OmStAXBuilderTest extends TestCase{
+public class OmStAXBuilderTest extends AbstractTestCase{
 
-    private static final String FILE_NAME = "src/test-resources/soap/soapmessage1.xml";
     private OMFactory factory =null;
     private OMStAXBuilder builder;
     private SimpleOMSerializer serilizer;
-    protected void setUp() throws Exception {
+    private File tempFile;
 
-        factory = new OMLinkedListImplFactory();
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(FILE_NAME));
-        builder = new OMStAXBuilder(factory,reader);
-        serilizer = new SimpleOMSerializer();
+    public OmStAXBuilderTest(String testName) {
+        super(testName);
     }
 
-    public void testStaxBuilder(){
+    protected void setUp() throws Exception {
+        factory = new OMLinkedListImplFactory();
+        XMLStreamReader reader = XMLInputFactory.newInstance().
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
+        builder = new OMStAXBuilder(factory,reader);
+        serilizer = new SimpleOMSerializer();
+
+        tempFile = File.createTempFile("temp", "xml");
+    }
+
+    public void testStaxBuilder()throws Exception{
 
         OMEnvelope envelope = builder.getOMEnvelope();
         assertNotNull(envelope);
-        serilizer.serialize(envelope,System.out);
+        serilizer.serialize(envelope,new FileOutputStream(tempFile));
 
 
     }
 
-
+    protected void tearDown() throws Exception {
+        tempFile.delete();
+    }
 
 
 }

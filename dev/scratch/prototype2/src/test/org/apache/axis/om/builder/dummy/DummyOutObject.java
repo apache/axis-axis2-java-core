@@ -41,7 +41,6 @@ public class DummyOutObject implements OutObject {
         try {
             parser = org.xml.sax.helpers.XMLReaderFactory.createXMLReader();
             System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser");
-            System.out.println(System.getProperty("org.xml.sax.driver"));
 
         } catch (SAXException e) {
             e.printStackTrace();  //TODO implement this
