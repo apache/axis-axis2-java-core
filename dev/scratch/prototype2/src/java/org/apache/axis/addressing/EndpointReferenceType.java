@@ -18,7 +18,7 @@ import javax.xml.namespace.QName;
  * limitations under the License.
  * <p/>
  */
-public class EndpointReference {
+public class EndpointReferenceType {
 
     /**
      * this can be one of the followings
@@ -44,7 +44,7 @@ public class EndpointReference {
      * 
      * @param address
      */
-    public EndpointReference(String messageInformationHeaderType, String address) {
+    public EndpointReferenceType(String messageInformationHeaderType, String address) {
         this.messageInformationHeaderType = messageInformationHeaderType;
         this.address = address;
     }

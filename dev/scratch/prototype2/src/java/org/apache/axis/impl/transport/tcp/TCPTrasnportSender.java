@@ -19,7 +19,7 @@ package org.apache.axis.impl.transport.tcp;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTrasnportSender;
-import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.EndpointReferenceType;
 
 import java.io.OutputStream;
 
@@ -40,7 +40,7 @@ public class TCPTrasnportSender extends AbstractTrasnportSender {
 
     }
 
-    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReference epr) {
+    protected OutputStream obtainOutPutStream(MessageContext msgContext, EndpointReferenceType epr) {
         throw new UnsupportedOperationException("Addressing not suppotrted yet");
     }
 

@@ -7,7 +7,7 @@ import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.om.*;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +43,7 @@ import java.util.Iterator;
 public class Call {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
-    private EndpointReference targetEPR;
+    private EndpointReferenceType targetEPR;
 
 
     public Call() {
@@ -51,7 +51,7 @@ public class Call {
         this.registry = new EngineRegistryImpl(new AxisGlobal());
     }
 
-    public void setTo(EndpointReference EPR){
+    public void setTo(EndpointReferenceType EPR){
         this.targetEPR = EPR;
 
     }
