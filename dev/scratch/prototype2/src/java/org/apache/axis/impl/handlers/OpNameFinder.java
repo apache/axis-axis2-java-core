@@ -42,13 +42,6 @@ public class OpNameFinder extends AbstractHandler{
                 Iterator bodychilderen = element.getChildren();
                 while(bodychilderen.hasNext()){
                     node = (OMNode)bodychilderen.next();
-                    
-                    //TODO
-                    if(node == null){
-                        System.out.println("Why the some nodes are null :( :( :(");
-                        continue; 
-                    }
-                    
                     if(node.getType() == OMNode.ELEMENT_NODE){
                         OMElement bodyChild  = (OMElement)node;
                     

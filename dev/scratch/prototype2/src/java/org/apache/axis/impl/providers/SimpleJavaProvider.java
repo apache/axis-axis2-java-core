@@ -23,6 +23,8 @@ import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.Service;
 import org.apache.axis.registry.Parameter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +36,7 @@ import java.lang.reflect.Method;
  */
 
 public class SimpleJavaProvider extends AbstractProvider implements Provider {
+    protected Log log = LogFactory.getLog(getClass());
     private String message;
     private QName name;
     private String scope;
@@ -94,7 +97,6 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     } 
     
     public Object[] deserializeParameters(MessageContext msgContext,Method method){
-        //TODO deserialize the parameters here
         return null;
     }
 
@@ -141,7 +143,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am Speaking Provider revoking :)");
+        log.info("I am Speaking Provider revoking :)");
     }
 
     public void setName(QName name) {

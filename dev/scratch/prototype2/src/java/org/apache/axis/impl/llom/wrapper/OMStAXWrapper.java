@@ -553,10 +553,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         }
 
         if (navigable) {
-//            System.out.println("--------------");
-//            System.out.println("currentNode = " + currentNode);
-//            System.out.println("currentNode = " + currentNode.getValue());
-
             currentEvent = generateEvents(currentNode);
             updateCompleteStatus();
             updateNextNode();

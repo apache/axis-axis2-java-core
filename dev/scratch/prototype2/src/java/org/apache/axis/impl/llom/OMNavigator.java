@@ -74,9 +74,6 @@ public class OMNavigator {
         backtracked = false;
 
         updateNextNode();
-//        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-//        System.out.println("node in navigator = " + node);
-//        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
         //set the starting and ending flags
         if (root.equals(node)){
             if (!start){

@@ -16,6 +16,8 @@
 package org.apache.axis.context;
 
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 
@@ -25,7 +27,6 @@ import java.util.HashMap;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class GlobalContext {
-    
     private EngineRegistry registry;
     private HashMap map = new HashMap();
     

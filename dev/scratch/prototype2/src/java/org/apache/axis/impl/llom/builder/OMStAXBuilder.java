@@ -95,8 +95,6 @@ public class OMStAXBuilder implements OMXMLParserWrapper{
             lastNode.setNextSibling(node);
 //            node.setPreviousSibling(lastNode);
         } else {
-//            System.out.println("lastNode = " + lastNode.getClass());
-
             OMElement e = (OMElement) lastNode;
             node = constructNode((OMElement) lastNode, elementName);
             e.setFirstChild(node);
