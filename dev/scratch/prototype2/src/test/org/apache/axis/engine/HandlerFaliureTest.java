@@ -90,22 +90,8 @@ public class HandlerFaliureTest extends AbstractTestCase{
         
         service.addOperation(operation);
         
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setExecutableInChain(inchain);
+        EngineUtils.createExecutionChains(service);
         
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setExecutableOutChain(outchain);
-        
-        ExecutionChain faultchain = new ExecutionChain();
-        
-        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        
-        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setExecutableFaultChain(outchain);
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    

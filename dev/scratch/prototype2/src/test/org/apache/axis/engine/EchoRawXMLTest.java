@@ -16,7 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import java.net.ServerSocket;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -52,8 +51,6 @@ public class EchoRawXMLTest extends AbstractTestCase{
     private MessageContext mc;
     private Thread thisThread = null;
     private SimpleHTTPReceiver sas;
-    private int testingPort = 7777;
-    private int testCount = 0;
     
     public EchoRawXMLTest(){
         super(EchoRawXMLTest.class.getName());
@@ -65,6 +62,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
+        
         AxisService service = new SimpleAxisServiceImpl(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
@@ -74,32 +72,10 @@ public class EchoRawXMLTest extends AbstractTestCase{
         
         service.addOperation(operation);
         
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setExecutableInChain(inchain);
-        
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setExecutableOutChain(outchain);
-        
-        ExecutionChain faultchain = new ExecutionChain();
-        
-        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        
-        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setExecutableFaultChain(faultchain);
-        
+        EngineUtils.createExecutionChains(service);
         engineRegistry.addService(service);
         
-        AxisEngine engine = new AxisEngine(engineRegistry);
-        ServerSocket serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleHTTPReceiver(engine);
-        sas.setServerSocket(serverSoc);
-        thisThread = new Thread(sas);
-        thisThread.setDaemon(true);
-        thisThread.start();
+        sas = EngineUtils.startServer(engineRegistry);
     }
 
     protected void tearDown() throws Exception {
@@ -119,7 +95,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
             method.addChild(value);
             
             Call call = new Call();
-            URL url = new URL("http","127.0.0.1",testingPort,"/axis/services/EchoXMLService");
+            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
             OMElement omele = call.syncCall(method,url);
             assertNotNull(omele);
         }catch(Exception e){
@@ -139,7 +115,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
             method.addChild(value);
             
             Call call = new Call();
-            URL url = new URL("http","127.0.0.1",testingPort,"/axis/services/EchoXMLService");
+            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
             
             CallBack callback = new CallBack() {
                 public void doWork(OMElement ele) {

@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.xml.namespace.QName;
@@ -46,7 +45,6 @@ public class EchoTest extends AbstractTestCase{
     private MessageContext mc;
     private Thread thisThread = null;
     private SimpleHTTPReceiver sas;
-    private int testingPort = 1234;
 
     public EchoTest(String testName) {
         super(testName);
@@ -54,11 +52,7 @@ public class EchoTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
-        AxisEngine engine = new AxisEngine(engineRegistry);
-        sas = new SimpleHTTPReceiver(engine);
-        sas.setServerSocket(new ServerSocket(testingPort));
-        thisThread = new Thread(sas);
-        thisThread.start();
+        sas = EngineUtils.startServer(engineRegistry);
     }
 
     protected void tearDown() throws Exception {
@@ -71,7 +65,7 @@ public class EchoTest extends AbstractTestCase{
     	File file = getTestResourceFile("soap/soapmessage.txt");
     	FileInputStream in = new FileInputStream(file);
     	
-    	Socket socket = new Socket("127.0.0.1",testingPort);
+    	Socket socket = new Socket("127.0.0.1",EngineUtils.TESTING_PORT);
     	OutputStream out = socket.getOutputStream();
     	byte[]  buf = new byte[1024];
     	int index = -1;

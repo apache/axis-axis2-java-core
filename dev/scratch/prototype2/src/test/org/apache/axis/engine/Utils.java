@@ -17,7 +17,6 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 
-
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;

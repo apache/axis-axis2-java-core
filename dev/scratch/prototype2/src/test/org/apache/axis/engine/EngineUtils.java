@@ -20,6 +20,7 @@ import java.net.ServerSocket;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
@@ -58,6 +59,25 @@ public class EngineUtils {
         index++;
         hmd.setHandler(handler);
         flow.addHandler(hmd);
+    }
+    
+    public static void createExecutionChains(AxisService service) throws AxisFault{
+        ExecutionChain inchain = new ExecutionChain();
+        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
+        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
+        service.setExecutableInChain(inchain);
+
+        ExecutionChain outchain = new ExecutionChain();
+        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
+        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
+        service.setExecutableOutChain(outchain);
+
+        ExecutionChain faultchain = new ExecutionChain();
+
+        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
+
+        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
+        service.setExecutableFaultChain(faultchain);
     }
 
 }
