@@ -24,7 +24,7 @@ import org.apache.axis.engine.AxisFault;
 
 public class SimpleTypeEncodingUtils {
     public static String deserializeString(XMLStreamReader xpp)throws AxisFault{
-        StringBuffer value = null;
+        StringBuffer value = new StringBuffer();
         try {
             int event = xpp.getEventType();
             while(XMLStreamConstants.START_ELEMENT != event){
@@ -32,10 +32,10 @@ public class SimpleTypeEncodingUtils {
             }
             event = xpp.next();
             while(XMLStreamConstants.END_ELEMENT != event){
-                event = xpp.next();
                 if(XMLStreamConstants.CHARACTERS == event){
                     value.append(xpp.getText());
                 }
+                event = xpp.next();
             }
         } catch (XMLStreamException e) {
             AxisFault.makeFault(e);

@@ -21,15 +21,22 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Parameter;
+import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 
 /**
@@ -95,7 +102,33 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
 
     }
 
-    public Object[] deserializeParameters(MessageContext msgContext, Method method) {
+    public Object[] deserializeParameters(MessageContext msgContext, Method method) throws AxisFault {
+        SOAPEnvelope env = msgContext.getEnvelope();
+        SOAPBody soapBody = env.getBody();
+        Iterator it = soapBody.getChildren();
+        while(it.hasNext()){
+            OMNode node = (OMNode)it.next();
+            if(node.getType() == OMNode.ELEMENT_NODE){
+                return deserializeParameters(((OMElement)node).getPullParser(true),method);
+            }
+        }
+        return null;
+ 
+    }
+    
+    public Object[] deserializeParameters(XMLStreamReader xpp, Method method) throws AxisFault {
+        Class[] parms = method.getParameterTypes();
+        Object[] objs = new Object[parms.length];
+        
+        for(int i = 0;i<parms.length;i++){
+            if("int".equals(parms[i].getName())){
+                objs[i] =  new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
+            }else if("java.lang.String".equals(parms[i].getName())){
+                objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
+            }else{
+                throw new UnsupportedOperationException("Only int and the String supported yet");
+            } 
+        }
         return null;
     }
 
