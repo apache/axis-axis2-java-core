@@ -17,8 +17,12 @@ import org.apache.axis.impl.registry.FlowImpl;
 import org.apache.axis.impl.registry.ParameterImpl;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Flow;
+import org.apache.axis.registry.Global;
 import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
+import org.apache.axis.registry.Service;
+import org.apache.axis.registry.Transport;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

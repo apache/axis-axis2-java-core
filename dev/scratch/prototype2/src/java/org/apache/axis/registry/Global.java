@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
+package org.apache.axis.registry;
 
-import org.apache.axis.registry.EngineElement;
-import org.apache.axis.registry.FlowInclude;
-import org.apache.axis.registry.Module;
-import org.apache.axis.registry.ModuleInclude;
-import org.apache.axis.registry.TypeMappingInclude;
 /**
  * Executes the Handlers that should be executed  for every web Service and
  * Contians the all global elements.   

@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Service;
 
 /**
  * @author hemapani@opensource.lk

@@ -27,11 +27,11 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.engine.Service;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.Parameter;
+import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -17,11 +17,11 @@
 package org.apache.axis.impl.registry;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Global;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.Transport;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Global;
 import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Service;
+import org.apache.axis.registry.Transport;
 import org.apache.axis.utils.HashedBaundle;
 
 import javax.xml.namespace.QName;

@@ -19,11 +19,11 @@ package org.apache.axis.context;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.EndpointReferance;
-import org.apache.axis.engine.Operation;
-import org.apache.axis.engine.Service;
 import org.apache.axis.impl.context.SimpleSessionContext;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Operation;
+import org.apache.axis.registry.Service;
 
 import java.util.HashMap;
 

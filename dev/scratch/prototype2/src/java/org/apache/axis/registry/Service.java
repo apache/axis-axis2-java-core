@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
+package org.apache.axis.registry;
 
-import org.apache.axis.registry.FlowInclude;
-import org.apache.axis.registry.ModuleInclude;
-import org.apache.axis.registry.NamedEngineElement;
-import org.apache.axis.registry.TypeMappingInclude;
+import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Provider;
 
 import javax.xml.namespace.QName;
 

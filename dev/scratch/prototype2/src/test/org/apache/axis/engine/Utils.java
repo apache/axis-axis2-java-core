@@ -28,9 +28,13 @@ import org.apache.axis.impl.registry.ParameterImpl;
 import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.registry.EchoService;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Global;
 import org.apache.axis.registry.MockFlow;
 import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
+import org.apache.axis.registry.Service;
+import org.apache.axis.registry.Transport;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)

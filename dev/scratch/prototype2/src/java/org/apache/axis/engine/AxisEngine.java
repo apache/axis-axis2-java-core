@@ -19,6 +19,7 @@ package org.apache.axis.engine;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.handlers.OpNameFinder;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -16,7 +16,7 @@
 
 package org.apache.axis.impl.engine;
 
-import org.apache.axis.engine.Global;
+import org.apache.axis.registry.Global;
 
 
 

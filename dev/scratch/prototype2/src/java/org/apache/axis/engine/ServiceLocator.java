@@ -17,6 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.registry.Service;
 
 import javax.xml.namespace.QName;
 

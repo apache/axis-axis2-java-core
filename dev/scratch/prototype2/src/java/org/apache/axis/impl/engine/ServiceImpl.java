@@ -18,9 +18,9 @@ package org.apache.axis.impl.engine;
 
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.engine.Service;
+import org.apache.axis.registry.Operation;
+import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

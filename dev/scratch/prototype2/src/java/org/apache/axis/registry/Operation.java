@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
-
-import org.apache.axis.registry.FlowInclude;
-import org.apache.axis.registry.ModuleInclude;
-import org.apache.axis.registry.NamedEngineElement;
+package org.apache.axis.registry;
 
 /**
- * Runtime representation of the possible transport used. e.g. HTTP/SMTP
+ * Runtime representation of the WSDL Operation
  */
-
-public interface Transport extends FlowInclude,NamedEngineElement,ModuleInclude{
+public interface Operation extends FlowInclude,NamedEngineElement{
 }

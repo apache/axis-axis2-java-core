@@ -17,9 +17,6 @@
 package org.apache.axis.registry;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Global;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.Transport;
 
 import javax.xml.namespace.QName;
 

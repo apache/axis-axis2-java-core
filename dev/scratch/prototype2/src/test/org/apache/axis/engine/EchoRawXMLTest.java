@@ -34,7 +34,9 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
+import org.apache.axis.registry.Service;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

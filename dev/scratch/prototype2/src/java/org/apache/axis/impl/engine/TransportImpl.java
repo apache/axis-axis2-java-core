@@ -18,7 +18,7 @@ package org.apache.axis.impl.engine;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.Transport;
+import org.apache.axis.registry.Transport;
 
 public class TransportImpl extends AbstractContainer implements Transport{
     private QName name;
