@@ -17,19 +17,14 @@ package org.apache.axis.util;
 
 import java.util.ArrayList;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Phase;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
 
 public class Utils {
 
@@ -76,48 +71,6 @@ public class Utils {
         }
     }
 
-    public static AxisTransport createHTTPTransport(EngineRegistry er) throws AxisFault {
-        try {
-            QName transportName = new QName("http");
-            //AxisTransport httpTransport = er.getTransport(transportName);
-            AxisTransport httpTransport = null;
-            if (httpTransport == null) {
-                httpTransport = new AxisTransport(transportName);
-                Class className =
-                    Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
-                httpTransport.setSender((TransportSender) className.newInstance());
-
-                className = Class.forName("org.apache.axis.transport.http.HTTPTransportReceiver");
-                httpTransport.setReciever((TransportReceiver) className.newInstance());
-            }
-            return httpTransport;
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw new AxisFault(e.getMessage(), e);
-        }
-    }
-    public static AxisTransport createMailTransport(EngineRegistry er) throws AxisFault {
-        try {
-            QName transportName = new QName("http");
-
-            AxisTransport mailTransport = null;
-            if (mailTransport == null) {
-                mailTransport = new AxisTransport(new QName("http"));
-                Class className =
-                    Class.forName("org.apache.axis.transport.mail.MailTransportSender");
-                mailTransport.setSender((TransportSender) className.newInstance());
-            }
-            return mailTransport;
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw new AxisFault(e.getMessage(), e);
-        }
-    }
+  
 
 }

@@ -24,9 +24,11 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -37,7 +39,6 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.smtp.SMTPClient;
@@ -90,7 +91,9 @@ public class MailWorker implements Runnable {
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            msgContext = new MessageContext(this.reg, null, null, Utils.createHTTPTransport(this.reg));
+            msgContext = new MessageContext(this.reg, null, null, 
+                reg.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                reg.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
         } catch (AxisFault af) {
             log.error("Error occured while creating the message context", af);

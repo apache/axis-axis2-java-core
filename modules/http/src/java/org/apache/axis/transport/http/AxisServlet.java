@@ -39,7 +39,6 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.context.SimpleSessionContext;
-import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
@@ -48,7 +47,6 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.util.Utils;
 
 /**
  * Class AxisServlet
@@ -152,7 +150,9 @@ public class AxisServlet extends HttpServlet {
             }
             MessageContext msgContext = new MessageContext(engineRegistry,
                     null,
-                    (SessionContext) sessionContext,Utils.createHTTPTransport(engineRegistry));
+                    (SessionContext) sessionContext,
+                    engineRegistry.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                    engineRegistry.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
@@ -171,8 +171,6 @@ public class AxisServlet extends HttpServlet {
             new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             
-            AxisTransport httpTransport = new AxisTransport(new QName("http"));
-            httpTransport.setSender(new HTTPTransportSender());
 
             msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
                     new BufferedWriter(res.getWriter()));

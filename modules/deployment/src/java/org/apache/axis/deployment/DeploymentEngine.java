@@ -249,7 +249,7 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineRegistry createEngineRegistry() {
+    private EngineRegistry createEngineRegistry() throws AxisFault {
         EngineRegistry newEngineRegisty;
 
         server = new AxisGlobal();

@@ -20,7 +20,7 @@ package org.apache.axis.engine;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.handlers.OpNameFinder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPBody;
@@ -87,7 +87,7 @@ public class AxisEngine {
             ExecutionChain chain = context.getExecutionChain();
 
             // Receiving is always a matter of running the transport handlers first
-            AxisTransport transport = context.getTransport();
+            AxisTransportIn transport = context.getTransportIn();
             if (transport != null) {
                 log.info("Using the transport" + transport.getName());
                 chain.addPhases(transport.getPhases(EngineRegistry.INFLOW));
@@ -138,7 +138,7 @@ public class AxisEngine {
 
             // create a SOAP envelope with the Fault
             MessageContext faultContext = new MessageContext(context.getGlobalContext().getRegistry(),
-                context.getProperties(),context.getSessionContext(),context.getTransport());
+                context.getProperties(),context.getSessionContext(),context.getTransportIn(),context.getTransportOut());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
             SOAPEnvelope envelope =
@@ -194,13 +194,13 @@ public class AxisEngine {
             chain.addPhases(global.getPhases(flow));
 
             // Receiving is always a matter of running the transport handlers first
-            AxisTransport transport = context.getTransport();
+            AxisTransportIn transport = context.getTransportIn();
             chain.addPhases(transport.getPhases(flow));
             
             // startet rolling
             chain.invoke(context);
             
-            TransportSender sender = transport.getSender();
+            TransportSender sender = context.getTransportOut().getSender();
             sender.invoke(context);
             
         } catch (AxisFault error) {

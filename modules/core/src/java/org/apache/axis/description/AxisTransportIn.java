@@ -53,7 +53,7 @@ public class AxisTransportIn
     protected QName name;
 
 
-    protected TransportReceiver sender;
+    protected TransportReceiver reciever;
 
     /**
      * Constructor AxisTransport
@@ -132,4 +132,18 @@ public class AxisTransportIn
     public void setFaultFlow(Flow faultFlow) {
         this.faultFlow = faultFlow;
     }
+    /**
+     * @return
+     */
+    public TransportReceiver getReciever() {
+        return reciever;
+    }
+
+    /**
+     * @param receiver
+     */
+    public void setReciver(TransportReceiver receiver) {
+        reciever = receiver;
+    }
+
 }

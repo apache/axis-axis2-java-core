@@ -53,7 +53,7 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
         super.setUp();
         outHandler = new AddressingOutHandler();
         testUtil = new TestUtil();
-        msgCtxt = new MessageContext(null, null, null, null);
+        msgCtxt = new MessageContext(null, null, null, null,null);
     }
 
     public void testAddToSOAPHeader() throws Exception {

@@ -23,11 +23,14 @@ import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -130,9 +133,11 @@ public class SimpleHTTPServer implements Runnable {
                         new OutputStreamWriter(socket.getOutputStream());
                         Reader in =
                         new InputStreamReader(socket.getInputStream());
+                        AxisTransportOut transportOut = engineReg.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
-                        new MessageContext(this.engineReg, null, null,Utils.createHTTPTransport(engineReg));
+                        new MessageContext(this.engineReg, null, null,engineReg.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),transportOut);
                         msgContext.setServerSide(true);
+                        
                         out.write(HTTPConstants.HTTP);
                         out.write(HTTPConstants.OK);
                         out.write("\n\n".toCharArray());

@@ -62,7 +62,7 @@
 		<dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
-            <version>1.2-RC1</version>
+            <version>1.2-RC3</version>
             <properties>
                 <module>true</module>
             </properties>

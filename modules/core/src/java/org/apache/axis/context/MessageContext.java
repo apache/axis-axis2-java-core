@@ -15,22 +15,24 @@
  */
 package org.apache.axis.context;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
+import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.stream.XMLStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The palce where all the service specific states are kept.
@@ -80,7 +82,7 @@ public class MessageContext {
      */
     public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
 
-    // public static final String REQUEST_URL = "REQUEST_URL";
+
 
     /**
      * Field processingFault
@@ -101,8 +103,10 @@ public class MessageContext {
 
     private final ExecutionChain chain;
 
-    private final AxisTransport transport;
-
+    private AxisTransportIn transportIn;
+    
+    private AxisTransportOut transportOut;
+    
     /**
      * Field properties
      */
@@ -181,7 +185,7 @@ public class MessageContext {
     public MessageContext(EngineRegistry er, 
             Map initialProperties, 
             SessionContext sessionContext,
-            AxisTransport transport)
+            AxisTransportIn transportIn,AxisTransportOut transportOut)
             throws AxisFault {
         this.globalContext = new GlobalContext(er);
         if (sessionContext == null) {
@@ -195,7 +199,9 @@ public class MessageContext {
         properties = initialProperties;
         chain = new ExecutionChain();
         messageInformationHeaders = new MessageInformationHeadersCollection();
-        this.transport = transport;
+        this.transportIn = transportIn;
+        this.transportOut = transportOut;
+        
     }
 
     /**
@@ -449,19 +455,7 @@ public class MessageContext {
         return this.chain;
     }
 
-     /**
-     * @return
-     */
-    public AxisTransport getTransport() {
-        return transport;
-    }
 
-//    /**
-//     * @param transport
-//     */
-//    public void setTransport(AxisTransport transport) {
-//        this.transport = transport;
-//    }
 
     /**
      * @return
@@ -531,4 +525,32 @@ public class MessageContext {
     public void setPaused(boolean b) {
         paused = b;
     }
+    /**
+     * @return
+     */
+    public AxisTransportIn getTransportIn() {
+        return transportIn;
+    }
+
+    /**
+     * @return
+     */
+    public AxisTransportOut getTransportOut() {
+        return transportOut;
+    }
+
+    /**
+     * @param in
+     */
+    public void setTransportIn(AxisTransportIn in) {
+        transportIn = in;
+    }
+
+    /**
+     * @param out
+     */
+    public void setTransportOut(AxisTransportOut out) {
+        transportOut = out;
+    }
+
 }

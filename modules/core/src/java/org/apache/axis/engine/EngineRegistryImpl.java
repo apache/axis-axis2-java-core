@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 
@@ -71,7 +70,7 @@ public class EngineRegistryImpl implements EngineRegistry {
      *
      * @param global
      */
-    public EngineRegistryImpl(AxisGlobal global) {
+    public EngineRegistryImpl(AxisGlobal global) throws AxisFault {
         this.global = global;
         phases = new ArrayList();
         errornesServices = new Hashtable();
@@ -152,27 +151,7 @@ public class EngineRegistryImpl implements EngineRegistry {
         services.remove(name);
     }
 
-    /**
-     * Method getTransport
-     *
-     * @param name
-     * @return
-     * @throws AxisFault
-     */
-    public AxisTransport getTransport(QName name) throws AxisFault {
-        return (AxisTransport) transports.get(name);
-    }
-
-    /**
-     * Method addTransport
-     *
-     * @param transport
-     * @throws AxisFault
-     */
-    public synchronized void addTransport(AxisTransport transport)
-            throws AxisFault {
-        transports.put(transport.getName(), transport);
-    }
+ 
 
 
     public AxisTransportIn getTransportIn(QName name) throws AxisFault {
@@ -185,7 +164,7 @@ public class EngineRegistryImpl implements EngineRegistry {
      * @param transport
      * @throws AxisFault
      */
-    public synchronized void addTransport(AxisTransportIn transport)
+    public synchronized void addTransportIn(AxisTransportIn transport)
             throws AxisFault {
         transportsIn.put(transport.getName(), transport);
     }

@@ -20,6 +20,7 @@ import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
@@ -128,7 +129,7 @@ public class DeploymentParser implements DeploymentConstants {
                         dpengine.getEngineRegistry().addTransportOut(transportout);
                     } else if (TRANSPORTRECEIVER.equals(ST)) {
                         AxisTransportIn transportin = proccessTrasnsportIN();
-                        dpengine.getEngineRegistry().addTransport(transportin);
+                        dpengine.getEngineRegistry().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
@@ -162,9 +163,28 @@ public class DeploymentParser implements DeploymentConstants {
         AxisTransportIn transportin = null;
         String attname = pullparser.getAttributeLocalName(0);
         String attvalue = pullparser.getAttributeValue(0);
-        if (ATTNAME.equals(attname)) {
-            transportin = new AxisTransportIn(new QName(attvalue));
-        }
+        
+        int attribCount = pullparser.getAttributeCount();
+                for (int i = 0; i < attribCount; i++) {
+                    attname = pullparser.getAttributeLocalName(i);
+                    attvalue = pullparser.getAttributeValue(i);
+                    if (ATTNAME.equals(attname)) {
+                        transportin = new AxisTransportIn(new QName(attvalue));
+                    } else if (transportin != null && CLASSNAME.equals(attname)) {
+                        Class reciever = null;
+                        try {
+                            reciever = Class.forName(attvalue, true, Thread.currentThread().getContextClassLoader());
+                            TransportReceiver trnsrecievr = (TransportReceiver) reciever.newInstance();
+                            transportin.setReciver(trnsrecievr);
+                        } catch (ClassNotFoundException e) {
+                            throw  new DeploymentException(e.getMessage());
+                        } catch (IllegalAccessException e) {
+                            throw  new DeploymentException(e.getMessage());
+                        } catch (InstantiationException e) {
+                            throw  new DeploymentException(e.getMessage());
+                        }
+                    }
+                }    
         boolean END_TRANSPORTS = false;
         String text = ""; // to store the paramater elemnt
         try {

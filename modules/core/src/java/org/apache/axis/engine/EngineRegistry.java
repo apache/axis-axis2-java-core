@@ -95,22 +95,6 @@ public interface EngineRegistry {
      */
     public void addMdoule(AxisModule module) throws AxisFault;
 
-    /**
-     * Method getTransport
-     *
-     * @param name
-     * @return
-     * @throws AxisFault
-     */
-    public AxisTransport getTransport(QName name) throws AxisFault;
-
-    /**
-     * Method addTransport
-     *
-     * @param transport
-     * @throws AxisFault
-     */
-    public void addTransport(AxisTransport transport) throws AxisFault;
 
     /**
      * Method getTransports
@@ -138,7 +122,7 @@ public interface EngineRegistry {
 
 
     public AxisTransportIn getTransportIn(QName name) throws AxisFault ;
-    public  void addTransport(AxisTransportIn transport) throws AxisFault;
+    public  void addTransportIn(AxisTransportIn transport) throws AxisFault;
     public AxisTransportOut getTransportOut(QName name) throws AxisFault ;
     public  void addTransportOut(AxisTransportOut transport) throws AxisFault ;
     public HashMap getTransportsIn();

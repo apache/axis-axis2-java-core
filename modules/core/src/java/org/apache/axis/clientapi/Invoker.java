@@ -73,10 +73,10 @@ public class Invoker implements Runnable {
                     callback);
             MessageContext resMsgContext =
             new MessageContext(registry, reqMsgContext.getProperties(),
-                    reqMsgContext.getSessionContext(),reqMsgContext.getTransport());
+                    reqMsgContext.getSessionContext(),reqMsgContext.getTransportIn(),reqMsgContext.getTransportOut());
             resMsgContext.setServerSide(false);
 
-            TransportReceiver receiver = reqMsgContext.getTransport().getReciever();
+            TransportReceiver receiver = reqMsgContext.getTransportIn().getReciever();
 
             receiver.invoke(resMsgContext);
             AsyncResult result = new AsyncResult();

@@ -27,7 +27,8 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
@@ -51,9 +52,15 @@ public class EnginePausingTest extends TestCase {
     protected void setUp() throws Exception {
         engineRegistry = new EngineRegistryImpl(new AxisGlobal());
 
-        AxisTransport transport = new AxisTransport(new QName("null"));
-        transport.setSender(new NullTransportSender());
-        mc = new MessageContext(engineRegistry, null, null, transport);
+        AxisTransportOut transportOut = new AxisTransportOut(new QName("null"));
+        transportOut.setSender(new NullTransportSender());
+
+        AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
+        
+
+
+        mc = new MessageContext(engineRegistry, null, null, transportIn,transportOut);
+        mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         OMFactory omFac = OMFactory.newInstance();
         mc.setEnvelope(omFac.getDefaultEnvelope());
@@ -149,7 +156,7 @@ public class EnginePausingTest extends TestCase {
                 new MessageContext(
                     msgCtx.getGlobalContext().getRegistry(),
                     msgCtx.getProperties(),
-                    msgCtx.getSessionContext(),msgCtx.getTransport());
+                    msgCtx.getSessionContext(),msgCtx.getTransportIn(),msgCtx.getTransportOut());
             newCtx.setEnvelope(msgCtx.getEnvelope());
             return newCtx;
         }

@@ -18,10 +18,14 @@ package org.apache.axis.clientapi;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
@@ -29,7 +33,7 @@ import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.util.Utils;
+import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -79,9 +83,35 @@ public class Call {
     /**
      * Constructor Call
      */
-    public Call() {
+    public Call() throws AxisFault {
         // TODO look for the Client XML and create an Engine registy
         this.registry = new EngineRegistryImpl(new AxisGlobal());
+        
+        try {
+            //This is a hack, initialize the transports for the client side 
+            AxisTransportOut httpTransportOut = new AxisTransportOut(new QName(Constants.TRANSPORT_HTTP));
+            Class className = Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
+            httpTransportOut.setSender((TransportSender) className.newInstance());
+            registry.addTransportOut(httpTransportOut);
+            
+            AxisTransportIn axisTr = new AxisTransportIn(new QName(Constants.TRANSPORT_HTTP)); 
+            className = Class.forName("org.apache.axis.transport.http.HTTPTransportReceiver");
+            axisTr.setReciver((TransportReceiver) className.newInstance());
+            registry.addTransportIn(axisTr);
+            
+            AxisTransportOut mailTransportOut = new AxisTransportOut(new QName(Constants.TRANSPORT_MAIL));
+            className = Class.forName("org.apache.axis.transport.mail.MailTransportSender");
+            mailTransportOut.setSender((TransportSender) className.newInstance());
+            registry.addTransportIn(new AxisTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+            registry.addTransportOut(mailTransportOut);
+        }  catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage(),e);
+        } catch (InstantiationException e) {
+            throw new AxisFault(e.getMessage(),e);
+        } catch (IllegalAccessException e) {
+            throw new AxisFault(e.getMessage(),e);
+        }
+
         Listenertransport = null;
         transport = Constants.TRANSPORT_HTTP;
     }
@@ -150,8 +180,12 @@ public class Call {
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
         Writer out = null;
         try {
+            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
+            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
+            
             final AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
+            MessageContext msgctx = new MessageContext(registry, null, null,transportIn,transportOut);
+            msgctx.setTransportOut(transportOut);
             msgctx.setEnvelope(envelope);
             msgctx.setTo(targetEPR);
 
@@ -187,10 +221,13 @@ public class Call {
         } else {
             MessageContext request = null;
             try {
-                final AxisEngine engine = new AxisEngine();
-                request = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
-                request.setEnvelope(envelope);
+                AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
+                AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
+                final AxisEngine engine = new AxisEngine();
+                request = new MessageContext(registry, null, null,transportIn,transportOut);
+                request.setEnvelope(envelope);
+                request.setTransportOut(transportOut);
                 request.setTo(targetEPR);
                 if (action != null) {
                     request.setProperty(MessageContext.SOAP_ACTION, action);
@@ -209,7 +246,7 @@ public class Call {
                 * request.getSessionContext());
                 */
                 request.setServerSide(false);
-                TransportReceiver receiver = request.getTransport().getReciever();
+                TransportReceiver receiver = request.getTransportIn().getReciever();
                 receiver.invoke(request);
                 if (request.getProperty(MessageContext.TRANSPORT_SUCCEED) != null) {
                     throw new AxisFault("Sent failed");
@@ -244,20 +281,23 @@ public class Call {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }
         try {
-            AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
-            msgctx.setEnvelope(envelope);
+            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
+            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
+            AxisEngine engine = new AxisEngine();
+            MessageContext msgctx = new MessageContext(registry, null, null,transportIn,transportOut);
+            msgctx.setEnvelope(envelope);
+            
             msgctx.setTo(targetEPR);
             if (action != null) {
                 msgctx.setProperty(MessageContext.SOAP_ACTION, action);
             }
             engine.send(msgctx);
             MessageContext response =
-                new MessageContext(registry, msgctx.getProperties(), msgctx.getSessionContext(),msgctx.getTransport());
+                new MessageContext(registry, msgctx.getProperties(), msgctx.getSessionContext(),msgctx.getTransportIn(),transportOut);
             response.setServerSide(false);
 
-            TransportReceiver receiver = response.getTransport().getReciever();
+            TransportReceiver receiver = response.getTransportIn().getReciever();
             receiver.invoke(response);
             SOAPEnvelope resenvelope = response.getEnvelope();
 
@@ -277,10 +317,13 @@ public class Call {
      */
     public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback) throws AxisFault {
         try {
+            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
+            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
+            
             AxisEngine engine = new AxisEngine();
-            final MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
+            final MessageContext msgctx = new MessageContext(registry, null, null, transportIn,transportOut);
             msgctx.setEnvelope(envelope);
-
+            msgctx.setTransportOut(transportOut);
             msgctx.setTo(targetEPR);
             if (action != null) {
                 msgctx.setProperty(MessageContext.SOAP_ACTION, action);

@@ -59,50 +59,50 @@ public abstract class AbstractTransportSender extends AbstractHandler
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Writer out = null;
-        if (msgContext.isProcessingFault()) {
-
-            // Means we are processing fault
-            if (msgContext.getFaultTo() != null) {
-                log.info("Obtain the output stream to send the fault flow to "
-                                + msgContext.getFaultTo().getAddress());
-                out = obtainWriter(msgContext, msgContext.getFaultTo());
+            Writer out = null;
+            if (msgContext.isProcessingFault()) {
+            
+                // Means we are processing fault
+                if (msgContext.getFaultTo() != null) {
+                    log.info("Obtain the output stream to send the fault flow to "
+                                    + msgContext.getFaultTo().getAddress());
+                    out = obtainWriter(msgContext, msgContext.getFaultTo());
+                } else {
+                    log.info(
+                            "Obtain the output stream to send the fault flow to ANONYMOUS");
+                    out = obtainWriter(msgContext);
+                }
             } else {
-                log.info(
-                        "Obtain the output stream to send the fault flow to ANONYMOUS");
-                out = obtainWriter(msgContext);
+                if (msgContext.getTo() != null) {
+                    log.info("Obtain the output stream to send to To flow to "
+                                    + msgContext.getTo().getAddress());
+                    out = obtainWriter(msgContext, msgContext.getTo());
+                } else if (msgContext.getReplyTo() != null) {
+                    log.info("Obtain the output stream to send to ReplyTo flow to "
+                                    + msgContext.getReplyTo().getAddress());
+                    out = obtainWriter(msgContext, msgContext.getTo());
+                } else {
+                    log.info(
+                            "Obtain the output stream to send the fault flow to ANONYMOUS");
+                    out = obtainWriter(msgContext);
+                }
             }
-        } else {
-            if (msgContext.getTo() != null) {
-                log.info("Obtain the output stream to send to To flow to "
-                                + msgContext.getTo().getAddress());
-                out = obtainWriter(msgContext, msgContext.getTo());
-            } else if (msgContext.getReplyTo() != null) {
-                log.info("Obtain the output stream to send to ReplyTo flow to "
-                                + msgContext.getReplyTo().getAddress());
-                out = obtainWriter(msgContext, msgContext.getTo());
-            } else {
-                log.info(
-                        "Obtain the output stream to send the fault flow to ANONYMOUS");
-                out = obtainWriter(msgContext);
+            startSending(msgContext,out);
+            SOAPEnvelope envelope = msgContext.getEnvelope();
+            if (envelope != null) {
+                XMLStreamWriter outputWriter = null;
+                try {
+                    outputWriter =
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                    envelope.serialize(outputWriter, false);
+                    outputWriter.flush();
+                        out.flush();
+                  } catch (Exception e) {
+                    throw new AxisFault("Stream error", e);
+                }
             }
-        }
-        startSending(msgContext,out);
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        if (envelope != null) {
-            XMLStreamWriter outputWriter = null;
-            try {
-                outputWriter =
-                XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-                envelope.serialize(outputWriter, false);
-                outputWriter.flush();
-                    out.flush();
-              } catch (Exception e) {
-                throw new AxisFault("Stream error", e);
-            }
-        }
-        finalizeSending(msgContext,out);
-        log.info("Send the Response");
+            finalizeSending(msgContext,out);
+            log.info("Send the Response");
     }
 
     /**

@@ -34,7 +34,7 @@ import org.apache.axis.om.SOAPEnvelope;
 
 public class SynchronousClient {
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws AxisFault{
 		if(2 != args.length ){
 			System.out.println("Usage <Port> ");
 			

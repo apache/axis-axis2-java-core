@@ -20,7 +20,6 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.util.Utils;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
@@ -29,7 +28,7 @@ public class MessageContextTest extends AbstractTestCase {
 
     public void testMesssageContext() throws AxisFault {
         EngineRegistry er = new EngineRegistryImpl(new AxisGlobal());
-        MessageContext msgctx = new MessageContext(er, null,null,null);
+        MessageContext msgctx = new MessageContext(er, null,null,null,null);
 
         msgctx.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());
         assertNotNull(msgctx.getEnvelope());
