@@ -108,19 +108,16 @@ public abstract class OMFactory {
 
 
     /**
-     * @param localName
      * @param ns
-     * @param parent
      * @param builder
      * @return
      */
-    public abstract SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns, OMXMLParserWrapper builder);
 
     /**
-     * @param localName
      * @param ns
      */
-    public abstract SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns);
+    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
 
     /**
      * @param envelope

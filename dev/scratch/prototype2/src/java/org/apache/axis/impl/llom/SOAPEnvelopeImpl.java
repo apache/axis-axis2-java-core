@@ -27,21 +27,18 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
      * @param builder
      */
     public SOAPEnvelopeImpl(OMXMLParserWrapper builder) {
-        super("", null, null, builder);
-        this.localName = SOAPENVELOPE_LOCAL_NAME;
-
+        super(SOAPENVELOPE_LOCAL_NAME, null, null, builder);
     }
 
-    public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, ns, parent, builder);
+    public SOAPEnvelopeImpl(OMNamespace ns, OMXMLParserWrapper builder) {
+        super(SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
     }
 
     /**
-     * @param localName
      * @param ns
      */
-    public SOAPEnvelopeImpl(String localName, OMNamespace ns) {
-        super(localName, ns);
+    public SOAPEnvelopeImpl(OMNamespace ns) {
+        super(SOAPENVELOPE_LOCAL_NAME, ns);
     }
 
     /**

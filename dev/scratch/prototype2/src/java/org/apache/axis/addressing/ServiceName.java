@@ -42,4 +42,20 @@ public class ServiceName {
         this.name = name;
         this.portName = portName;
     }
+
+    public QName getName() {
+        return name;
+    }
+
+    public void setName(QName name) {
+        this.name = name;
+    }
+
+    public String getPortName() {
+        return portName;
+    }
+
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
 }

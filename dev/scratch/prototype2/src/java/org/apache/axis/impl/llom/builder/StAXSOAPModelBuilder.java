@@ -21,8 +21,8 @@ import javax.xml.stream.XMLStreamReader;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *         Note - OM navigator has been removed to simplify the build process
+ * <p/>
+ * Note - OM navigator has been removed to simplify the build process
  */
 public class StAXSOAPModelBuilder extends StAXBuilder {
 
@@ -81,7 +81,10 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         OMElement element = null;
         if (isEnvelope) {
 
-            envelope = ombuilderFactory.createSOAPEnvelope(elementName, null, null, this);
+            if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
+                throw new OMException("First Element must contain the local name, " + OMConstants.SOAPENVELOPE_LOCAL_NAME);
+            }
+            envelope = ombuilderFactory.createSOAPEnvelope(null, this);
             element = (OMElementImpl) envelope;
             processNamespaceData(element, true);
 

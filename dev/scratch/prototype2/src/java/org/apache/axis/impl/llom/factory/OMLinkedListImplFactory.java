@@ -1,13 +1,7 @@
 package org.apache.axis.impl.llom.factory;
 
 import org.apache.axis.impl.llom.*;
-import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
-import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
 import org.apache.axis.om.*;
-import org.xml.sax.ContentHandler;
-
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -76,16 +70,12 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPBodyImpl(localName, ns, parent, builder);
     }
 
-    public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        if (!localName.equals(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
-            throw new OMException("wrong name for the envelope!");
-        }
-        return new SOAPEnvelopeImpl(localName, ns, parent, builder);
-
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns, OMXMLParserWrapper builder) {
+        return new SOAPEnvelopeImpl(ns, builder);
     }
 
-    public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns) {
-        return new SOAPEnvelopeImpl(localName, ns);
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns) {
+        return new SOAPEnvelopeImpl(ns);
     }
 
     public SOAPEnvelope createOMEnvelope(OMXMLParserWrapper parserWrapper) {
@@ -121,7 +111,7 @@ public class OMLinkedListImplFactory extends OMFactory {
     public SOAPEnvelope getDefaultEnvelope() {
         //Create an envelop
         OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME, ns);
+        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
 
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         bodyImpl.setComplete(true);

@@ -29,4 +29,20 @@ public class RelatesTo {
         this.address = address;
         this.relationshipType = relationshipType;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getRelationshipType() {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(String relationshipType) {
+        this.relationshipType = relationshipType;
+    }
 }
