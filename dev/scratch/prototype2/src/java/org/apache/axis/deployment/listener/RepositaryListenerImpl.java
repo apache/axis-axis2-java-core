@@ -1,6 +1,6 @@
 package org.apache.axis.deployment.listener;
 
-import org.apache.axis.deployment.repositary.utill.WSInfoList;
+import org.apache.axis.deployment.repository.utill.WSInfoList;
 import org.apache.axis.deployment.DeployCons;
 import org.apache.axis.deployment.DeploymentEngine;
 

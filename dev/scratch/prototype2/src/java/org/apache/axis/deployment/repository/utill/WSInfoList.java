@@ -1,4 +1,4 @@
-package org.apache.axis.deployment.repositary.utill;
+package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeployCons;

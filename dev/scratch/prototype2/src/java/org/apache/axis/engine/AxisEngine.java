@@ -72,7 +72,7 @@ public class AxisEngine {
             if(mc.isServerSide()){
                 OpNameFinder finder = new OpNameFinder();
                 finder.invoke(mc);
-                Reciver reciver = ReciverLocator.locateReciver(mc);
+                Receiver reciver = ReceiverLocator.locateReciver(mc);
                 reciver.invoke(mc);
             }
         }catch(AxisFault e){

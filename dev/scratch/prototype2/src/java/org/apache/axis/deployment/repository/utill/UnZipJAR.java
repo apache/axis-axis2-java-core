@@ -1,4 +1,4 @@
-package org.apache.axis.deployment.repositary.utill;
+package org.apache.axis.deployment.repository.utill;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

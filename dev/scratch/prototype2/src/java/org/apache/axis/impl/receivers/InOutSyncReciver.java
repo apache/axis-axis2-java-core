@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.recivers;
+package org.apache.axis.impl.receivers;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.engine.Reciver;
+import org.apache.axis.engine.Receiver;
 import org.apache.axis.engine.Sender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class InOutSyncReciver extends AbstractHandler implements Reciver {
+public class InOutSyncReciver extends AbstractHandler implements Receiver {
     protected Log log = LogFactory.getLog(getClass()); 
 
     public void invoke(final MessageContext msgContext) throws AxisFault {

@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.recivers;
+package org.apache.axis.engine;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.impl.receivers.InOutSyncReciver;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class InOutAsyncReciver {
-
+public class ReceiverLocator {
+    public static Receiver locateReciver(MessageContext msgCtx)throws AxisFault{
+        
+        //File wsdlFile = msgCtx.getService().getParameter("wsdlFile");
+        //parse the WSDL find the patterns 
+        //create a reciver
+        return new InOutSyncReciver();
+    }
 }

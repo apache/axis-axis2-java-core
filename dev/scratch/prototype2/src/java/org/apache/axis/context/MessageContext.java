@@ -18,7 +18,7 @@ package org.apache.axis.context;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
-import org.apache.axis.engine.EndPointReferance;
+import org.apache.axis.engine.EndpointReferance;
 import org.apache.axis.engine.Operation;
 import org.apache.axis.engine.Service;
 import org.apache.axis.impl.context.SimpleSessionContext;
@@ -44,11 +44,11 @@ public class MessageContext {
     public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
     
     private boolean processingFault = false;
-    private EndPointReferance to;
-    private EndPointReferance from;
-    private EndPointReferance relatesTo;
-    private EndPointReferance replyTo;
-    private EndPointReferance faultTo;
+    private EndpointReferance to;
+    private EndpointReferance from;
+    private EndpointReferance relatesTo;
+    private EndpointReferance replyTo;
+    private EndpointReferance faultTo;
 
     //there is a no use cas found to set those proprties 
     //so declare them final    
@@ -75,14 +75,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndPointReferance getFaultTo() {
+    public EndpointReferance getFaultTo() {
         return faultTo;
     }
 
     /**
      * @return
      */
-    public EndPointReferance getFrom() {
+    public EndpointReferance getFrom() {
         return from;
     }
 
@@ -132,14 +132,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndPointReferance getRelatesTo() {
+    public EndpointReferance getRelatesTo() {
         return relatesTo;
     }
 
     /**
      * @return
      */
-    public EndPointReferance getReplyTo() {
+    public EndpointReferance getReplyTo() {
         return replyTo;
     }
 
@@ -167,21 +167,21 @@ public class MessageContext {
     /**
      * @return
      */
-    public EndPointReferance getTo() {
+    public EndpointReferance getTo() {
         return to;
     }
 
     /**
      * @param referance
      */
-    public void setFaultTo(EndPointReferance referance) {
+    public void setFaultTo(EndpointReferance referance) {
         faultTo = referance;
     }
 
     /**
      * @param referance
      */
-    public void setFrom(EndPointReferance referance) {
+    public void setFrom(EndpointReferance referance) {
         from = referance;
     }
 
@@ -224,14 +224,14 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setRelatesTo(EndPointReferance referance) {
+    public void setRelatesTo(EndpointReferance referance) {
         relatesTo = referance;
     }
 
     /**
      * @param referance
      */
-    public void setReplyTo(EndPointReferance referance) {
+    public void setReplyTo(EndpointReferance referance) {
         replyTo = referance;
     }
 
@@ -253,7 +253,7 @@ public class MessageContext {
     /**
      * @param referance
      */
-    public void setTo(EndPointReferance referance) {
+    public void setTo(EndpointReferance referance) {
         to = referance;
     }
 
