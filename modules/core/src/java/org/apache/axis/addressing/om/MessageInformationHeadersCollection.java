@@ -15,6 +15,7 @@
  */
 package org.apache.axis.addressing.om;
 
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.om.SOAPHeader;
@@ -45,7 +46,7 @@ public class MessageInformationHeadersCollection {
     private EndpointReference replyTo;
 
     /**
-     *  identifies the intended receiver for faults related to the message
+     * identifies the intended receiver for faults related to the message
      */
     private EndpointReference faultTo;
 
@@ -58,7 +59,6 @@ public class MessageInformationHeadersCollection {
      * Field messageId
      */
     private String messageId;
-
 
 
     /**
@@ -91,6 +91,9 @@ public class MessageInformationHeadersCollection {
      * @return
      */
     public EndpointReference getTo() {
+        if (to == null) {
+            to = new EndpointReference(AddressingConstants.WSA_TO, "");
+        }
         return to;
     }
 
@@ -109,6 +112,9 @@ public class MessageInformationHeadersCollection {
      * @return
      */
     public EndpointReference getFrom() {
+        if (from == null) {
+            from = new EndpointReference(AddressingConstants.WSA_FROM, "");
+        }
         return from;
     }
 
@@ -127,6 +133,9 @@ public class MessageInformationHeadersCollection {
      * @return
      */
     public EndpointReference getReplyTo() {
+        if (replyTo == null) {
+            replyTo = new EndpointReference(AddressingConstants.WSA_REPLY_TO, "");
+        }
         return replyTo;
     }
 
@@ -145,6 +154,9 @@ public class MessageInformationHeadersCollection {
      * @return
      */
     public EndpointReference getFaultTo() {
+        if (faultTo == null) {
+            faultTo = new EndpointReference(AddressingConstants.WSA_FAULT_TO, "");
+        }
         return faultTo;
     }
 
@@ -199,6 +211,9 @@ public class MessageInformationHeadersCollection {
      * @return
      */
     public RelatesTo getRelatesTo() {
+        if (relatesTo == null) {
+            relatesTo = new RelatesTo("");
+        }
         return relatesTo;
     }
 
@@ -208,6 +223,7 @@ public class MessageInformationHeadersCollection {
      * @param relatesTo
      */
     public void setRelatesTo(RelatesTo relatesTo) {
+
         this.relatesTo = relatesTo;
     }
 

@@ -34,7 +34,10 @@ public interface OMElement extends OMNamedNode {
     /**
      * This will search for children with a given QName and will return an iterator to traverse through
      * the OMNodes.
-     * This QName can contain any combination of prefix, localname and URI
+     * This will match localName and namespaceURI only. localName only or namespaceURI only can also be given. But
+     * the other parameter should be set to null
+     * Example : If you want to get all the addressing headers, header.getChildrenWithName(new QName(AddressingNamespace, null))
+     * will do.
      *
      * @param elementQName
      * @return
@@ -197,4 +200,10 @@ public interface OMElement extends OMNamedNode {
      * @return
      */
     public XMLStreamReader getPullParser(boolean cacheOff);
+
+    /**
+     * This will return the non-empty text children as a String
+     * @return
+     */
+    public String getText();
 }

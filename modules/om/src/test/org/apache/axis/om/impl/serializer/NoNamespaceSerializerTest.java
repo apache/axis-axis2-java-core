@@ -58,10 +58,20 @@ public class NoNamespaceSerializerTest extends TestCase{
         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), reader);
     }
 
-    public void testSerilization() throws Exception{
+    public void testSerilizationWithCacheOff() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
        env.serialize(writer,false);
        writer.flush();
+
+
+    }
+
+    public void testSerilizationWithCacheOn() throws Exception{
+       SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
+       env.serialize(writer,true);
+       writer.flush();
+
+
     }
 
 

@@ -201,7 +201,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         } else {
 
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, null,
+            element = ombuilderFactory.createOMElement(elementName, parent.getNamespace(),
                     parent, this);
             processNamespaceData(element, false);
         }
@@ -282,21 +282,24 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         }
 
         // set the own namespace
+        String namespaceURI = parser.getNamespaceURI();
+        if(namespaceURI != ""){
         OMNamespace namespace =
                 node.findInScopeNamespace(parser.getNamespaceURI(),
                 parser.getPrefix());
-
+            node.setNamespace(namespace);
+        }
         // TODO we got to have this to make sure OM reject mesagess that are not sname space qualified
         // But got to comment this to interop with Axis.1.x
         // if (namespace == null) {
         // throw new OMException("All elements must be namespace qualified!");
         // }
         if (isSOAPElement) {
-            if (!namespace.getName().equals(
+            if (!node.getNamespace().getName().equals(
                     OMConstants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw new OMBuilderException("invalid SOAP namespace URI");
             }
         }
-        node.setNamespace(namespace);
+
     }
 }

@@ -556,6 +556,21 @@ public class OMElementImpl extends OMNamedNodeImpl
         return new OMStAXWrapper(builder, this, cacheOff);
     }
 
+    public String getText() {
+        String childText = "";
+        OMNode child = this.getFirstChild();
+        while(child != null){
+            String value = child.getValue();
+            System.out.println("value.length() = " + value.length());
+            if(child.getType() == OMNode.TEXT_NODE && value != null && !"".equals(value.trim())){
+               childText += value.trim();
+            }
+            child = child.getNextSibling();
+        }
+
+        return childText;
+    }
+
     /**
      * Method serialize
      *

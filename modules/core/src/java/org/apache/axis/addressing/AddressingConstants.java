@@ -62,4 +62,10 @@ public interface AddressingConstants {
      * Field WSA_FAULT_TO
      */
     public static final String WSA_FAULT_TO = "FaultTo";
+
+    public static final String EPR_ADDRESS = "Address";
+    public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
+    public static final String EPR_REFERENCE_PARAMETERS = "ReferenceParameters";
+    public static final String EPR_PORT_TYPE = "PortType";
+    public static final String EPR_SERVICE_NAME = "ServiceName";
 }
