@@ -34,10 +34,8 @@
 %>
 <head>
 <title>Axis2 Happiness Page</title>
-<link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
-<body>
-<jsp:include page="include/header.inc"></jsp:include>
+<body bgcolor='#ffffff'>
 <%port =request.getServerPort();%>
 <%!
     /*
@@ -419,9 +417,9 @@
             "Streaming API for XML",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
-     needed+=needClass(out, "javax.xml.stream.XMLStreamWriter",
+     needed+=needClass(out, "com.bea.xml.stream.MXParser",
             "stax-1.1.1-dev.jar",
-            "Streaming API for XML",
+            "Streaming API for XML implementation",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
 
@@ -469,9 +467,8 @@
    %>
        <p>
        <font color="blue" >
-       Found the echo service and Axis2 is working properly, and now you can either drop any web service in
-       to axis2/WEB-INF/service or use the upload utility in this application to upload a service
-        and check whether it's working.
+       Found the echo service and Axis2 is working properly, and now you can drop any web service in
+       to axis2/WEB-INF/service and check it is working.and got the following result
        <br>
        <%= error%> </font>
        </p>
@@ -481,7 +478,7 @@
     %>
      <p>
       <font color="red" >
-     Either the echo service not found or Axis2 is not working properly. Check whether the echo.jar is in
+     Not found echo service or Axis2 is not working properly, check whether the echo.jar is in
      webapps/axis2/WEB-INF/service if it is then report the following error to the mailing list.
       <br>
      <%= error%></font>
@@ -494,12 +491,21 @@
     <%
         String servletVersion=getServletVersion();
         String xmlParser=getParserName();
+        String xmlParserLocation = getParserLocation(out);
+
     %>
     <table>
         <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
         <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
-        <tr><td>Platform</td><td><%= getServletConfig().getServletContext().getServerInfo()%></td></tr>
+        <tr><td>XML ParserLocation</td><td><%= xmlParserLocation %></td></tr>
     </table>
+<% if(xmlParser.indexOf("crimson")>=0) { %>
+    <p>
+    <b>We recommend <a href="http://xml.apache.org/xerces2-j/">Xerces 2</a>
+        over Crimson as the XML parser for Axis</b>
+    </p>
+<%    } %>
+
     <h2>Examining System Properties</h2>
 <%
     /**
@@ -522,10 +528,7 @@
     }
 %>
     <hr>
-
-
-    <jsp:include page="include/link-footer.inc"></jsp:include>
-    <jsp:include page="include/footer.inc"></jsp:include>
+    Platform: <%= getServletConfig().getServletContext().getServerInfo()  %>
 </body>
 </html>
 
