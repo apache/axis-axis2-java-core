@@ -32,16 +32,19 @@ public class WSInfoList implements DeploymentConstants {
      * This is to store all the jar files in a specified folder (WEB_INF)
      */
     private static Vector jarlist = new Vector();
+
+    /**
+     * All the curently updated jars
+     */
     public Vector currentjars = new Vector();
 
+    /**
+     * Referance to DeploymentEngine to make update
+     */
     private DeploymentEngine deplorer;
 
     public WSInfoList(DeploymentEngine deploy_engine) {
         deplorer = deploy_engine;
-    }
-
-    public static Vector getJarlist() {
-        return jarlist;
     }
 
     /**
@@ -51,30 +54,44 @@ public class WSInfoList implements DeploymentConstants {
         jarlist.removeAllElements();
     }
 
+    /**
+     * First it check whether the file is already available in the
+     * system call isFileExist , if it is not deployed yet then it will add
+     * that to jarlist and to the deployment engine as new service or module
+     * in adding new item to jarlist it first create optimice and requird object to
+     * keep those infor call WSInfo and that will be added to jarist and actual
+     * jar file will be added to DeploymentEngine
+     *
+     * If it is alredy exsit then it check whether it has been updated
+     * then change the last update date of the wsInfo and added two entries to DeploymentEngine
+     * one for New Deployment and other for undeployment
+     * @param file actual jar files for either Module or service
+     * @param type indicate either Service or Module
+     */
     public void addWSInfoItem(File file, int type) {
         switch (type) {
             case SERVICE:
                 {
-                    if (!isFileExist(file.getName())) {
+                    if (!isFileExist(file.getName())) { // chacking whether the file is already deployed
                         WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), SERVICE);
                         jarlist.add(wsInfo);
                         HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
                         WSInfo tempWSInfo = getFileItem(file.getName());
-                        if (isModified(file, tempWSInfo)) {
+                        if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
                             tempWSInfo.setLastmodifieddate(file.lastModified());
                             WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), SERVICE);
-                            deplorer.addtowstoUnDeploy(wsInfo);
+                            deplorer.addtowstoUnDeploy(wsInfo);  // add entry to undeploy list
                             HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
-                            deplorer.addtowsToDeploy(hdFileItem);
+                            deplorer.addtowsToDeploy(hdFileItem);   // add entry to deploylist
 
                         }
                     }
                 }
             case MODULE:
                 {
-                    if (!isFileExist(file.getName())) {
+                    if (!isFileExist(file.getName())) {  // chacking whether the file is already deployed
                         WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), MODULE);
                         jarlist.add(wsInfo);
                         HDFileItem hdFileItem = new HDFileItem(file, MODULE);
@@ -84,9 +101,9 @@ public class WSInfoList implements DeploymentConstants {
                         if (isModified(file, tempWSInfo)) {
                             tempWSInfo.setLastmodifieddate(file.lastModified());
                             WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), MODULE);
-                            deplorer.addtowstoUnDeploy(wsInfo);
+                            deplorer.addtowstoUnDeploy(wsInfo);   // add entry to undeploy list
                             HDFileItem hdFileItem = new HDFileItem(file, MODULE);
-                            deplorer.addtowsToDeploy(hdFileItem);
+                            deplorer.addtowsToDeploy(hdFileItem); // add entry to deploylist
 
                         }
                     }
@@ -96,6 +113,12 @@ public class WSInfoList implements DeploymentConstants {
         currentjars.add(jarname);
     }
 
+    /**
+     * This method is to use to check the file exist and if so
+     * it will return related wsinfo object to the file else return null;
+     * @param filename
+     * @return
+     */
     public WSInfo getFileItem(String filename) {
         int sise = jarlist.size();
         for (int i = 0; i < sise; i++) {
@@ -107,6 +130,13 @@ public class WSInfoList implements DeploymentConstants {
         return null;
     }
 
+    /**
+     * comapre the last update dates of both files and if those are differ
+     * that will assume as the file is been modified
+     * @param file
+     * @param wsInfo
+     * @return
+     */
     public boolean isModified(File file, WSInfo wsInfo) {
         if (wsInfo.getLastmodifieddate() != file.lastModified()) {
             return true;
@@ -114,6 +144,12 @@ public class WSInfoList implements DeploymentConstants {
         return false;
     }
 
+    /**
+     * to check whether the file is alredy in the list
+     *
+     * @param filename
+     * @return
+     */
     public boolean isFileExist(String filename) {
         if (getFileItem(filename) == null) {
             return false;
@@ -123,6 +159,10 @@ public class WSInfoList implements DeploymentConstants {
 
     /**
      * this is to check , undeploye WS
+     * what this relly does is it caheck older jars files and
+     * current jars if name of the old jar file does not exit in the currecntjar
+     * list then it is assumed that the jar file has been removed
+     * that is hot undeployment
      */
     public void checkForUndeploye() {
         Iterator iter = jarlist.listIterator();

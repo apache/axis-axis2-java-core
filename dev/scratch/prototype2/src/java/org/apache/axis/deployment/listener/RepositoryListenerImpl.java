@@ -38,24 +38,47 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      */
     private WSInfoList wsinfoList;
 
+    /**
+     * The parent directory of the modules and services directories
+     * taht the listentner should listent
+     */
     private String folderName;
 
+    /**
+     * This constructor take two argumnets folder name and referance to Deployment Engine
+     * Fisrt it initilize the syetm , by loading all the modules in the /modules directory
+     * and also create a WSInfoList to keep infor about available modules and services
+     * @param folderName  path to parent directory that the listener should listent
+     * @param deploy_engine  refearnce to engine registry  inorder to inform the updates
+     *
+     */
     public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsinfoList = new WSInfoList(deploy_engine);
         init();
     }
 
+    /**
+     * this method ask serachWS to serch for the folder to caheck
+     * for updates
+     */
     public void checkModules() {
         String modulepath = folderName + MODULE_PATH;
         searchWS(modulepath, MODULE);
     }
 
+    /**
+     * this method ask serachWS to serch for the folder to caheck
+     * for updates
+     */
     public void checkServices() {
         String modulepath = folderName + SERVICE_PATH;
         searchWS(modulepath, SERVICE);
     }
 
+    /**
+     * call to update method of WSInfoList object
+     */
     public void update() {
         //todo completet this
         // this call the update method of WSInfoList
@@ -63,7 +86,10 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * all the initialization should come here
+     * First it call to initalize method of WSInfoList to initilizat that
+     * then it call to checkModules to load all the module.jar s
+     * and then it call to update() method inorder to update the Deployment engine and
+     * engine regsitry
      */
     public void init() {
         wsinfoList.init();
@@ -111,6 +137,11 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         }
     }
 
+    /**
+     * to check whthere a given file is  a  jar file 
+     * @param filename
+     * @return
+     */
     private boolean isJarFile(String filename) {
         // to check whether the file is  a jar file
         if (!filename.endsWith(".jar")) {

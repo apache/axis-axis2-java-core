@@ -42,7 +42,7 @@ public interface DeploymentConstants {
     String OUTFLOWST = "outflow";// outflowr start tag
     String FAILTFLOWST = "faultflow";// faultflow start tag
 
-    String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
+   // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
     String MODULE_PATH = "/modules/";
     String SERVICE_PATH = "/services/";
 

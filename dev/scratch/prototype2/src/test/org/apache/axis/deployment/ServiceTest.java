@@ -29,15 +29,28 @@ import org.apache.axis.registry.EngineRegistry;
  *
  */
 public class ServiceTest extends TestCase {
+   EngineRegistry er = null;
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
         String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
-        EngineRegistry er = null;
         er = deploymentEngine.start();
+        try {
+            Thread.sleep(11000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        /*for (int i = 0; i < 150000; i++) {
+            try {
 
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+          //  System.out.println("Numer is eqaul :" + i);
+        }  */
     }
-   /*
-    public static void main(String args []){
+
+
+  /*  public static void main(String args []){
        String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = null;

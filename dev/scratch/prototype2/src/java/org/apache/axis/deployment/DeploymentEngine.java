@@ -144,16 +144,13 @@ public class DeploymentEngine implements DeploymentConstants {
             DeploymentParser parser = new  DeploymentParser(in,this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            throw new AxisFault(e.getMessage());
         }
         engineRegistry = createEngineRegistry();
         startSearch(this);
         return engineRegistry;
     }
 
-
-    public DeploymentEngine() {
-    }
 
     public void addService(ServiceMetaData serviceMetaData) throws PhaseException, AxisFault {
         servicelist.add(serviceMetaData);
