@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 
-public class HandlerFaliureTest extends AbstractTestCase {
+public class HandlerFailureTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
@@ -54,11 +54,11 @@ public class HandlerFaliureTest extends AbstractTestCase {
     private Thread thisThread;
     private SimpleHTTPServer sas;
 
-    public HandlerFaliureTest() {
-        super(HandlerFaliureTest.class.getName());
+    public HandlerFailureTest() {
+        super(HandlerFailureTest.class.getName());
     }
 
-    public HandlerFaliureTest(String testName) {
+    public HandlerFailureTest(String testName) {
         super(testName);
     }
 
