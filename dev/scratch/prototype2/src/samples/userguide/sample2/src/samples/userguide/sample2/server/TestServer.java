@@ -17,8 +17,6 @@ package samples.userguide.sample2.server;
 
 import org.apache.axis.engine.EngineUtils;
 
-import samples.userguide.sample1.server.SampleEnvironmentCreator;
-
 /**
  * @author chathura@opensource.lk
  * 
