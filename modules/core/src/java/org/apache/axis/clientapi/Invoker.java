@@ -19,7 +19,7 @@ package org.apache.axis.clientapi;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.transport.TransportReciver;
+import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportReciverLocator;
 
 public class Invoker implements Runnable {
@@ -58,9 +58,9 @@ public class Invoker implements Runnable {
             resMsgContext.setServerSide(false);
 //            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
 //            Constants.TRANSPORT_HTTP);
-            TransportReciver reciver =
+            TransportReceiver receiver =
                     TransportReciverLocator.locate(resMsgContext);
-            reciver.invoke(resMsgContext);
+            receiver.invoke(resMsgContext);
 
             AsyncResult result = new AsyncResult();
             result.setResult(resMsgContext.getEnvelope());

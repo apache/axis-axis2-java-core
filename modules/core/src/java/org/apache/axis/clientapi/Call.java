@@ -29,7 +29,7 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.transport.TransportReciver;
+import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportReciverLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -119,7 +119,7 @@ public class Call {
             try {
                 //TODO This should be the Receiver.close();
                 //Receiver is taken using the
-                //TransportReciver reciver = TransportReciverLocator.locate(requestMessageContext);
+                //TransportReceiver reciver = TransportReciverLocator.locate(requestMessageContext);
                 out.close();
             } catch (IOException e1) {
                 throw new AxisFault();
@@ -156,8 +156,8 @@ public class Call {
                 request.setProperty(
                         MessageContext.TRANSPORT_TYPE,
                         transport);
-                TransportReciver reciver = TransportReciverLocator.locate(request);
-                reciver.invoke(request);
+                TransportReceiver receiver = TransportReciverLocator.locate(request);
+                receiver.invoke(request);
                 if(request.getProperty(MessageContext.TRANSPORT_SUCCEED)!= null){
                     throw new AxisFault("Sent failed");
                 } else if (request.getEnvelope().getBody().hasFault()){
@@ -205,8 +205,8 @@ public class Call {
             response.setProperty(
                     MessageContext.TRANSPORT_TYPE,
                     transport);
-            TransportReciver reciver = TransportReciverLocator.locate(response);
-            reciver.invoke(response);
+            TransportReceiver receiver = TransportReciverLocator.locate(response);
+            receiver.invoke(response);
             SOAPEnvelope resenvelope = response.getEnvelope();
 
             //TODO if the resenvelope is a SOAPFault then throw an exception

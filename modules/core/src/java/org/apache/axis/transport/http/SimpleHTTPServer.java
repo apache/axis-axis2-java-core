@@ -121,8 +121,8 @@ public class SimpleHTTPServer implements Runnable {
                                 out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER,
                                 in);
-                        HTTPTransportReciver reciver =
-                                new HTTPTransportReciver();
+                        HTTPTransportReceiver reciver =
+                                new HTTPTransportReceiver();
                         reciver.invoke(msgContext);
 
                     }

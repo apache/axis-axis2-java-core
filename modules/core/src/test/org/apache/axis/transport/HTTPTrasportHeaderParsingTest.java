@@ -19,7 +19,7 @@ package org.apache.axis.transport;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.transport.http.HTTPTransportReciver;
+import org.apache.axis.transport.http.HTTPTransportReceiver;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -43,7 +43,7 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "SOAPAction: \"\"\n"
                 + "Content-Length: 73507\n\nee rwewebtewbeww";
         StringReader reader = new StringReader(message);
-        HTTPTransportReciver reciver = new HTTPTransportReciver();
+        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
 
         Map map = reciver.parseTheHeaders(reader, true);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.0");
@@ -67,7 +67,7 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Server: Apache-Coyote/1.1\n"
                 + "Connection: close\n\nA";
         StringReader reader = new StringReader(message);
-        HTTPTransportReciver reciver = new HTTPTransportReciver();
+        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
 
         Map map = reciver.parseTheHeaders(reader, false);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.1");
@@ -89,7 +89,7 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                     + "Server: Apache-Coyote/1.1\n"
                     + "Connection: close";
             StringReader reader = new StringReader(message);
-            HTTPTransportReciver reciver = new HTTPTransportReciver();
+            HTTPTransportReceiver reciver = new HTTPTransportReceiver();
             BufferedReader br = new BufferedReader(reader);
             Map map = reciver.parseTheHeaders(br, false);
             fail("test must failed as \n\n is missing");

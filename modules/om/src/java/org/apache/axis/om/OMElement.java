@@ -177,14 +177,14 @@ public interface OMElement extends OMNamedNode {
     public OMNode getFirstChild();
     
     /**
-     * Convienace extention of the getFristChild
+     * Convenience extension of the getFirstChild
      * @return
      */
     
     public OMElement getFirstElement();
 
     /**
-      * Convienace extention of the getNextSibling
+      * Convenience extension of the getNextSibling
       * @return
       */
     public OMElement getNextSiblingElement() throws OMException;

@@ -19,15 +19,15 @@ package org.apache.axis.transport;
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.http.HTTPTransportReciver;
+import org.apache.axis.transport.http.HTTPTransportReceiver;
 
 public class TransportReciverLocator {
     
-    public static TransportReciver locate(MessageContext msgContext)
+    public static TransportReceiver locate(MessageContext msgContext)
             throws AxisFault {
         String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
         if (Constants.TRANSPORT_HTTP.equals(type)) {
-            return new HTTPTransportReciver();
+            return new HTTPTransportReceiver();
         } else {
             throw new AxisFault("No tranport found");
         }
