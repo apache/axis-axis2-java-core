@@ -38,6 +38,12 @@
         </dependency>
         <dependency>
             <groupId>axis</groupId>
+            <artifactId>axis2-http</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>axis</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
