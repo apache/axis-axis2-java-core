@@ -32,6 +32,14 @@ public class SimpleTypeEncodingUtils {
         
 		try{
 			int event = xpp.next();
+			while(XMLStreamConstants.START_ELEMENT != event && XMLStreamConstants.END_ELEMENT != event){
+				event = xpp.next();
+			}
+			if(XMLStreamConstants.END_ELEMENT == event){
+				return null;
+			}
+
+			event = xpp.next();
 			while(true){
 				if(XMLStreamConstants.START_ELEMENT == event){
 					objs.add(encoder.deSerialize(xpp));

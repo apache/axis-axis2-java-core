@@ -8,6 +8,7 @@ package org.apache.axis.sample.echo;
 
 import java.lang.reflect.Method;
 
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.context.MessageContext;
@@ -32,28 +33,45 @@ public class EchoProvider extends SimpleJavaProvider {
 		throws AxisFault {
 		Class[] parms = method.getParameterTypes();
 		Object[] objs = new Object[parms.length];
-
-		for (int i = 0; i < parms.length; i++) {
-			if (int.class.equals(parms[i])) {
-				objs[i] =
-					new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
-			} else if (String.class.equals(parms[i])) {
-				objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
-			} else if (String[].class.equals(parms[i])) {
-				objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
-			} else if (EchoStruct.class.equals(parms[i])) {
-				Encoder en = new EchoStructEncoder(null);
-				objs[i] = en.deSerialize(xpp);
-			} else if (EchoStruct[].class.equals(parms[i])) {
-				objs[i] =
-					SimpleTypeEncodingUtils.deserializeArray(
-						xpp,
-						new EchoStructEncoder(null));
-			} else {
-				throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
+		
+		try {
+			int event = xpp.next();
+			while (XMLStreamConstants.START_ELEMENT != event
+				&& XMLStreamConstants.END_ELEMENT != event) {
+				event = xpp.next();
 			}
+			if (XMLStreamConstants.END_ELEMENT == event) {
+				return null;
+			} else {
+				for (int i = 0; i < parms.length; i++) {
+					if (int.class.equals(parms[i])) {
+						objs[i] =
+							new Integer(
+								SimpleTypeEncodingUtils.deserializeInt(xpp));
+					} else if (String.class.equals(parms[i])) {
+						objs[i] =
+							SimpleTypeEncodingUtils.deserializeString(xpp);
+					} else if (String[].class.equals(parms[i])) {
+						objs[i] =
+							SimpleTypeEncodingUtils.deserializeStringArray(xpp);
+					} else if (EchoStruct.class.equals(parms[i])) {
+						Encoder en = new EchoStructEncoder(null);
+						objs[i] = en.deSerialize(xpp);
+					} else if (EchoStruct[].class.equals(parms[i])) {
+						objs[i] =
+							SimpleTypeEncodingUtils.deserializeArray(
+								xpp,
+								new EchoStructEncoder(null));
+					} else {
+						throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
+					}
+				}
+				return objs;
+
+			}
+		} catch (Exception e) {
+			throw new AxisFault("Exception",e);
 		}
-		return objs;
 	}
 
 	public MessageContext invoke(MessageContext msgContext) throws AxisFault {

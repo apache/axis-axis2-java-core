@@ -41,7 +41,9 @@
 		    <include name="axis2*.jar"/>
 		  </lib>  
 		</war>
-
-
+    </goal>
+    
+    <goal name="samples">
+    		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/sample1"/>
     </goal>
  </project>
