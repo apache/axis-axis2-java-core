@@ -17,7 +17,6 @@ package org.apache.axis.engine;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -28,29 +27,8 @@ import java.net.Socket;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.engine.Global;
-import org.apache.axis.engine.Operation;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.SimpleGlobal;
-import org.apache.axis.engine.SimpleModule;
-import org.apache.axis.engine.SimpleOperation;
-import org.apache.axis.engine.SimpleService;
-import org.apache.axis.engine.SimpleTransport;
-import org.apache.axis.engine.Transport;
 import org.apache.axis.engine.context.MessageContext;
-import org.apache.axis.engine.exec.Constants;
-import org.apache.axis.engine.exec.ExecutionChain;
-import org.apache.axis.engine.registry.ConcreateParameter;
-import org.apache.axis.engine.registry.EchoService;
 import org.apache.axis.engine.registry.EngineRegistry;
-import org.apache.axis.engine.registry.MockFlow;
-import org.apache.axis.engine.registry.Module;
-import org.apache.axis.engine.registry.Parameter;
-import org.apache.axis.engine.registry.SimpleEngineRegistry;
-import org.apache.axis.providers.SimpleJavaProvider;
-import org.apache.axis.providers.SyncProvider;
 import org.apache.axis.transport.http.SimpleAxisServer;
 
 /**
@@ -73,12 +51,6 @@ public class EchoTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
-        
-        mc = new MessageContext(engineRegistry);
-        mc.setCurrentTansport(transportName);
-        mc.setCurrentService(serviceName);
-        mc.setCurrentOperation(operationName);
-
         AxisEngine engine = new AxisEngine(engineRegistry);
         sas = new SimpleAxisServer(engine);
         sas.setServerSocket(new ServerSocket(testingPort));
@@ -92,7 +64,7 @@ public class EchoTest extends AbstractTestCase{
 
 
     public void testEchoStringServer() throws Exception{
-    	File file = new File("src/samples/soap/sample1.txt");
+    	File file = new File("src/test-resources/soap/soapmessage.txt");
     	FileInputStream in = new FileInputStream(file);
     	
     	Socket socket = new Socket("127.0.0.1",testingPort);

@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.Service;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
@@ -30,11 +31,11 @@ import org.apache.axis.om.soap.SOAPMessage;
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
-public class RPCOpNameFinder extends AbstractHandler{
+public class OpNameFinder extends AbstractHandler{
     public void invoke(MessageContext msgContext) throws AxisFault {
         int style = msgContext.getMessageStyle();
         if(Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL){
-            SOAPMessage message = msgContext.getInMessage();
+            SOAPMessage message = msgContext.getMessage();
             OMNode node = null;
             OMElement element = message.getEnvelope().getBody();
             if(Constants.ELEM_BODY.equals(element.getLocalName())){
@@ -56,7 +57,9 @@ public class RPCOpNameFinder extends AbstractHandler{
                         if(omns != null){
                             String ns = omns.getValue();
                             if(ns != null){
-                                msgContext.setCurrentOperation(new QName(ns,bodyChild.getLocalName())); 
+                                QName opName = new QName(ns,bodyChild.getLocalName());
+                                Service service = msgContext.getService();
+                                msgContext.setOperation(service.getOperation(opName)); 
                             }
                         }else{
                             throw new AxisFault("SOAP Body must be NS Qualified");                            

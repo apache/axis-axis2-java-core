@@ -54,7 +54,7 @@ public class SimpleService extends AbstractContainer implements Service{
     private Log log = LogFactory.getLog(getClass());     
     private HashMap operations = new HashMap();
     private QName name;
-    private Handler provider;
+    private Provider provider;
     private Handler sender;    
     private ClassLoader classLoader;
     
@@ -82,11 +82,11 @@ public class SimpleService extends AbstractContainer implements Service{
         operations.put(op.getName(),op);
     }
 
-    public Handler getProvider() {
+    public Provider getProvider() {
         return provider;
     }
 
-    public void setProvider(Handler provider) {
+    public void setProvider(Provider provider) {
         this.provider = provider;
 
     }

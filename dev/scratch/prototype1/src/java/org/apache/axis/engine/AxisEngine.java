@@ -16,11 +16,13 @@
 
 package org.apache.axis.engine;
 
+import javax.naming.OperationNotSupportedException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.exec.ExecutionChain;
 import org.apache.axis.engine.registry.EngineRegistry;
+import org.apache.axis.handlers.OpNameFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,11 +44,12 @@ public class AxisEngine {
         QName currentServiceName = null;
         Service service = null;
         //dispatch the service Name
-        currentServiceName = mc.getCurrentService();
-        service = registry.getService(currentServiceName);
+        service = mc.getService();
         try{
             ExecutionChain exeChain = service.getOutputExecutionChain();
             exeChain.invoke(mc);
+            TransportSender ts = TransportSenderLocator.locateTransPortSender(mc);
+            ts.invoke(mc);
         }catch(AxisFault e){
             if(mc.isProcessingFault()){
                 //TODO log and exit
@@ -63,14 +66,17 @@ public class AxisEngine {
     
     public void recive(MessageContext mc)throws AxisFault{
         QName currentServiceName = null;
-        Service service = null;
-
-        currentServiceName = mc.getCurrentService();
-        service = registry.getService(currentServiceName);
+        Service service = mc.getService();
 
         try{
             ExecutionChain exeChain = service.getInputExecutionChain();
             exeChain.invoke(mc);
+            if(mc.isServerSide()){
+                OpNameFinder finder = new OpNameFinder();
+                finder.invoke(mc);
+                Reciver reciver = ReciverLocator.locateReciver(mc);
+                reciver.invoke(mc);
+            }
         }catch(AxisFault e){
             if(mc.isProcessingFault()){
                 //TODO log and exit
@@ -81,6 +87,7 @@ public class AxisEngine {
                 ExecutionChain faultExeChain = service.getFaultExecutionChain();
                 faultExeChain.invoke(mc);
             }
+            e.printStackTrace();
         }
         log.info("end the recive()");
     }    

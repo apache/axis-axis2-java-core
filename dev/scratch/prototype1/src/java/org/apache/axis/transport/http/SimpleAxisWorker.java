@@ -21,15 +21,18 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeaders;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Service;
+import org.apache.axis.engine.ServiceLocator;
+import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.OMXMLPullParserWrapper;
-import org.apache.axis.om.impl.SOAPMessageImpl;
+import org.apache.axis.om.mime.MimeHeaders;
 import org.apache.axis.transport.TransportSender;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
@@ -46,6 +49,8 @@ public class SimpleAxisWorker implements Runnable {
     private AxisEngine engine;
     private SimpleAxisServer server;
     private Socket socket;
+    private String serviceFromURI;
+
 
     // Axis specific constants
     private static String transportName = "SimpleHTTP";
@@ -149,19 +154,22 @@ public class SimpleAxisWorker implements Runnable {
     public void run() {
         try {
             execute();
-        } finally {
+        }catch(AxisFault e){
+            log.error(e);
+        }finally {
+            
         }
     }
     
     /**
      * The main workhorse method.
      */
-    public void execute () {
+    public void execute () throws AxisFault {
         byte buf[] = new byte[BUFSIZ];
         // create an Axis server
 
         MessageContext msgContext = new MessageContext(engine.getRegistry());
-
+        msgContext.setServerSide(true);
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =
@@ -233,7 +241,7 @@ public class SimpleAxisWorker implements Runnable {
                                        servicePart.substring(separator + 1));
                         servicePart = servicePart.substring(0, separator);
                     }
-                    msgContext.setCurrentService(new QName(servicePart));
+                   this.serviceFromURI = servicePart;
                 }
 
                 if (authInfo.length() > 0) {
@@ -259,8 +267,6 @@ public class SimpleAxisWorker implements Runnable {
                     msgContext.setProperty(MessageContext.USER_NAME,userBuf.toString());
                     msgContext.setProperty(MessageContext.PASSWARD,pwBuf.toString());
                 }
-///////////////////////
-                // if get, then return simpleton document as response
                 if (httpRequest.toString().equals("GET")) {
                 		throw new UnsupportedOperationException("GET not supported"); 
                 } else {
@@ -269,16 +275,24 @@ public class SimpleAxisWorker implements Runnable {
                     // for now, do not complain if no SOAPAction at all
                     String soapActionString = soapAction.toString();
                     if (soapActionString != null) {
-                        msgContext.setUseSOAPAction(true);
-                        msgContext.setSoapAction(soapActionString);
+                        msgContext.setProperty(MessageContext.SOAP_ACTION,soapActionString);
                     }
-
+                    
+                    Service service = ServiceLocator.locateService(serviceFromURI,soapActionString,msgContext);
+                    msgContext.setService(service);
                     // Send it on its way...
                     OutputStream out = socket.getOutputStream();
                     out.write(HTTP);
                     out.write(status);
                     log.info("status written");
-                    msgContext.setTransportSender(new TransportSender(out));
+                    
+                    
+                    
+                    //We do not have any Addressing Headers to put
+                    //let us put the information about incoming transport
+                    msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+                        TransportSenderLocator.TRANSPORT_TCP);
+                    msgContext.setProperty(MessageContext.TRANSPORT_DATA,out);
 
                     XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
                     pf.setNamespaceAware(true);
@@ -286,7 +300,7 @@ public class SimpleAxisWorker implements Runnable {
                     parser.setInput(new InputStreamReader(is));
                     
                     OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
-                    msgContext.setInMessage(parserWrapper.getSOAPMessage());
+                    msgContext.setMessage(parserWrapper.getSOAPMessage());
                     EngineRegistry reg = engine.getRegistry();
                     // invoke the Axis engine
                     engine.recive(msgContext);

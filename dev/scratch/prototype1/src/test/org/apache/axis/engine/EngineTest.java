@@ -16,11 +16,12 @@
 
 package org.apache.axis.engine;
 
+import java.io.OutputStream;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
 
@@ -44,9 +45,15 @@ public class EngineTest extends TestCase{
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
         mc = new MessageContext(engineRegistry);
-        mc.setCurrentTansport(transportName);
-        mc.setCurrentService(serviceName);
-        mc.setCurrentOperation(operationName);
+        Service service = engineRegistry.getService(serviceName);
+        mc.setService(service);
+        mc.setOperation(service.getOperation(operationName));
+        
+        OutputStream out = System.out;
+        mc.setProperty(MessageContext.TRANSPORT_TYPE,
+                                TransportSenderLocator.TRANSPORT_TCP);
+        mc.setProperty(MessageContext.TRANSPORT_DATA,out);
+        out.flush();
     }
 
     public void testSend()throws Exception{

@@ -35,21 +35,8 @@ public class OMTestCase extends TestCase  {
 
     protected SOAPMessage soapMessage;
     protected SOAPEnvelope soapEnvelope;
-
-
     protected void setUp() throws Exception {
-        super.setUp();
-        soapMessage = getOMBuilder().getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(IN_FILE_NAME).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
     }
-
-    protected OMXMLPullParserWrapper getOMBuilder() throws Exception {
-        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-        parser.setInput(new FileReader(IN_FILE_NAME));
-        omXmlPullParserWrapper = new OMXMLPullParserWrapper(parser);
-        return omXmlPullParserWrapper;
-    }
-
-
 }

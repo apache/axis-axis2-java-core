@@ -99,15 +99,17 @@ public class RepositaryListenerImpl implements RepositaryListener, DeployCons {
             File dir = (File) current_jars.elementAt(0); // get first dir
             current_jars.remove(0);       // remove it
             files = dir.list();              // get list of files
-
-            for (int i = 0; i < files.length; i++) { // iterate
-                File f = new File(dir, files[i]);
-                if (f.isDirectory()) {        // see if it's a directory
-                    current_jars.insertElementAt(f, 0);
-                } // add dir to start of agenda
-                else if (isJarFile(f.getName())) {
-                    wsinfoList.addWSInfoItem(f, type);
+            if(files != null){
+                for (int i = 0; i < files.length; i++) { // iterate
+                    File f = new File(dir, files[i]);
+                    if (f.isDirectory()) {        // see if it's a directory
+                        current_jars.insertElementAt(f, 0);
+                    } // add dir to start of agenda
+                    else if (isJarFile(f.getName())) {
+                        wsinfoList.addWSInfoItem(f, type);
+                    }
                 }
+            
             }
         }
     }

@@ -20,16 +20,18 @@ import java.lang.reflect.Method;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.providers.AbstractProvider;
 
-public class SpeakingProvider extends AbstractProvider implements Handler {
+public class SpeakingProvider extends AbstractProvider implements Provider {
     private String message;
     public SpeakingProvider(){}
 
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public MessageContext invoke(MessageContext msgContext) throws AxisFault {
         System.out.println("I am Speaking Provider Running :)");
+        return msgContext;
     }
 
     public void revoke(MessageContext msgContext) {

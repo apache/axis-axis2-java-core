@@ -35,7 +35,7 @@ import junit.framework.TestCase;
 public class OMTest extends TestCase{
     SOAPMessage omdoc;
     protected void setUp() throws Exception {
-        File file = new File("src/samples/soap/sample1.xml");
+        File file = new File("src/test-resources/soap/sample1.xml");
         FileInputStream in = new FileInputStream(file);
         
         XmlPullParserFactory pf = XmlPullParserFactory.newInstance();

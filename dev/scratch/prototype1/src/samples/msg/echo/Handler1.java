@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine.registry;
-
 import javax.xml.namespace.QName;
 
+import org.apache.axis.engine.registry.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.context.MessageContext;
 
-public class SpeakingHandler extends AbstractEngineElement implements Handler {
-    private String message;
+public class Handler1 extends AbstractEngineElement implements Handler {
     private QName name;
-    public SpeakingHandler() {
-       this.message = "Hi I amtesting ";
+    public Handler1() {
     }
     public QName getName() {
         return name;
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am " + message + " Handler Running :)");
+        System.out.println("I am  Running :)");
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am " + message + " Handler Running :)");
+        System.out.println("I am  Handler Running :)");
     }
 
     public void setName(QName name) {
         this.name = name;
     }
-
 }

@@ -22,11 +22,11 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.context.MessageContext;
 
-public class SpeakingHandler extends AbstractEngineElement implements Handler {
+public class SpeakingHandler1 extends AbstractEngineElement implements Handler {
     private String message;
     private QName name;
-    public SpeakingHandler() {
-       this.message = "Hi I amtesting ";
+    public SpeakingHandler1(String message) {
+       this.message = message;
     }
     public QName getName() {
         return name;

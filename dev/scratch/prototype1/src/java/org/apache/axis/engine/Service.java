@@ -32,9 +32,9 @@ public interface Service extends FlowInclude,NamedEngineElement,
     TypeMappingInclude,ModuleInclude{
     public Operation getOperation(QName index);
     public void addOperation(Operation op);
-    public Handler getProvider();
+    public Provider getProvider();
     public Handler getSender();
-    public void setProvider(Handler handler);    
+    public void setProvider(Provider handler);    
     public ClassLoader getClassLoader();
     public void setClassLoader(ClassLoader cl); 
     /**

@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine.registry;
+package org.apache.axis.transport.http;
 
-import javax.xml.namespace.QName;
+import java.io.OutputStream;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.TransportSender;
 import org.apache.axis.engine.context.MessageContext;
+import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.om.soap.SOAPMessage;
 
-public class SpeakingHandler extends AbstractEngineElement implements Handler {
-    private String message;
-    private QName name;
-    public SpeakingHandler() {
-       this.message = "Hi I amtesting ";
-    }
-    public QName getName() {
-        return name;
-    }
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
+public class TCPTrasnportSender extends AbstractHandler implements TransportSender{
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am " + message + " Handler Running :)");
+        OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+        SOAPMessage message = msgContext.getMessage();
+        //TODO write OM  
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am " + message + " Handler Running :)");
-    }
 
-    public void setName(QName name) {
-        this.name = name;
     }
 
 }

@@ -20,10 +20,14 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.Operation;
+import org.apache.axis.engine.Service;
+import org.apache.axis.engine.addressing.EndPointReferance;
 import org.apache.axis.engine.registry.EngineRegistry;
 import org.apache.axis.om.soap.SOAPMessage;
-import org.apache.axis.transport.TransportSender;
+
 /**
  *  The palce where all the service specific states are kept. 
  *  All the Global states kept in the <code>EngineRegistry</code> and all the 
@@ -32,123 +36,55 @@ import org.apache.axis.transport.TransportSender;
  */
 public class MessageContext {
     private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
-    private HashMap messages = new HashMap();
-	public static String USER_NAME = "USER";
-	public static String PASSWARD = "PASSWD";
-	
-	
-    public MessageContext(EngineRegistry er){
-        globalContext = new GlobalContext(er);
-        sessionContext = new SimpleSessionContext();
-    }
+//    private HashMap messages = new HashMap();
+    
+	public static final String USER_NAME = "USER";
+	public static final String PASSWARD = "PASSWD";
+	public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
+    public static final String SOAP_ACTION = "SOAP_ACTION";
+    public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
     
     private boolean processingFault = false;
-    private QName currentTansport = null; 
-    private QName currentService = null;
-    private QName currentOperation = null;
-    private HashMap properties = new HashMap();
-    private boolean useSOAPAction = true;
-    private String soapAction = "";   
-    private SOAPMessage inMessage;
-    private SOAPMessage outMessage;
-    private TransportSender transportSender;
-    
-    /**
-     * @return Returns the transportSender.
-     */
-    public TransportSender getTransportSender() {
-        return transportSender;
-    }
-    /**
-     * @param transportSender The transportSender to set.
-     */
-    public void setTransportSender(TransportSender transportSender) {
-        this.transportSender = transportSender;
-    }
-	/**
-	 * @return Returns the soapAction.
-	 */
-	public String getSoapAction() {
-		return soapAction;
-	}
-	/**
-	 * @param soapAction The soapAction to set.
-	 */
-	public void setSoapAction(String soapAction) {
-		this.soapAction = soapAction;
-	}
-	/**
-	 * @return Returns the useSOAPAction.
-	 */
-	public boolean isUseSOAPAction() {
-		return useSOAPAction;
-	}
-	/**
-	 * @param useSOAPAction The useSOAPAction to set.
-	 */
-	public void setUseSOAPAction(boolean useSOAPAction) {
-		this.useSOAPAction = useSOAPAction;
-	}
+    private EndPointReferance to;
+    private EndPointReferance from;
+    private EndPointReferance relatesTo;
+    private EndPointReferance replyTo;
+    private EndPointReferance faultTo;
+
+    //there is a no use cas found to set those proprties 
+    //so declare them final    
+    private final HashMap properties;
+    private final GlobalContext globalContext;
+
     private SessionContext sessionContext;
-    private GlobalContext globalContext;
+    private Service service;
+    private SOAPMessage message; 
+    private boolean responseWritten;
+    private boolean infaultFlow;
+    private boolean serverSide;
+    private String messageID;
+    private Operation operation;
+    private boolean newThreadRequired = false;
     
+    public MessageContext(EngineRegistry er) throws AxisFault{
+        this.globalContext = new GlobalContext(er);
+        this.sessionContext = new SimpleSessionContext();
+        properties = new HashMap();
+    }
+
     
-    public boolean isProcessingFault(){
-        return processingFault;
-    }
-    public void setProcessingFault(boolean processingFault){
-        this.processingFault = processingFault;
-    }
-    
-    public void setProperty(String key,String value){
-    	properties.put(key,value);
-    }
-    
-    public String getProperty(String key){
-    	return (String)properties.get(key);
-    }
     /**
      * @return
      */
-    public QName getCurrentTansport() {
-        return currentTansport;
-    }
-
-   
-    /**
-     * @param name
-     */
-    public void setCurrentTansport(QName name) {
-        currentTansport = name;
+    public EndPointReferance getFaultTo() {
+        return faultTo;
     }
 
     /**
      * @return
      */
-    public QName getCurrentOperation() {
-        return currentOperation;
-    }
-
-
-    /**
-     * @param name
-     */
-    public void setCurrentOperation(QName name) {
-        currentOperation = name;
-    }
-
-    /**
-     * @param name
-     */
-    public void setCurrentService(QName name) {
-        currentService = name;
-    }
-
-    /**
-     * @return
-     */
-    public QName getCurrentService() {
-        return currentService;
+    public EndPointReferance getFrom() {
+        return from;
     }
 
     /**
@@ -161,15 +97,208 @@ public class MessageContext {
     /**
      * @return
      */
+    public boolean isInfaultFlow() {
+        return infaultFlow;
+    }
+
+    /**
+     * @return
+     */
+    public SOAPMessage getMessage() {
+        return message;
+    }
+
+    /**
+     * @return
+     */
+    public String getMessageID() {
+        return messageID;
+    }
+
+
+    /**
+     * @return
+     */
+    public boolean isProcessingFault() {
+        return processingFault;
+    }
+
+    /**
+     * @return
+     */
+    public Object getProperty(Object key) {
+        return properties.get(key);
+    }
+
+    /**
+     * @return
+     */
+    public EndPointReferance getRelatesTo() {
+        return relatesTo;
+    }
+
+    /**
+     * @return
+     */
+    public EndPointReferance getReplyTo() {
+        return replyTo;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isResponseWritten() {
+        return responseWritten;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isServerSide() {
+        return serverSide;
+    }
+
+    /**
+     * @return
+     */
     public SessionContext getSessionContext() {
         return sessionContext;
     }
 
     /**
-     * @param context
+     * @return
      */
-    public void setGlobalContext(GlobalContext context) {
-        globalContext = context;
+    public EndPointReferance getTo() {
+        return to;
+    }
+
+    /**
+     * @param referance
+     */
+    public void setFaultTo(EndPointReferance referance) {
+        faultTo = referance;
+    }
+
+    /**
+     * @param referance
+     */
+    public void setFrom(EndPointReferance referance) {
+        from = referance;
+    }
+
+    /**
+     * @param b
+     */
+    public void setInfaultFlow(boolean b) {
+        infaultFlow = b;
+    }
+
+    /**
+     * @param message
+     */
+    public void setMessage(SOAPMessage message) {
+        this.message = message;
+    }
+
+    /**
+     * @param string
+     */
+    public void setMessageID(String string) {
+        messageID = string;
+    }
+
+
+    /**
+     * @param b
+     */
+    public void setProcessingFault(boolean b) {
+        processingFault = b;
+    }
+
+    /**
+     * @param map
+     */
+    public void setProperty(Object key,Object value) {
+        properties.put(key,value);
+    }
+
+    /**
+     * @param referance
+     */
+    public void setRelatesTo(EndPointReferance referance) {
+        relatesTo = referance;
+    }
+
+    /**
+     * @param referance
+     */
+    public void setReplyTo(EndPointReferance referance) {
+        replyTo = referance;
+    }
+
+    /**
+     * @param b
+     */
+    public void setResponseWritten(boolean b) {
+        responseWritten = b;
+    }
+
+    /**
+     * @param b
+     */
+    public void setServerSide(boolean b) {
+        serverSide = b;
+    }
+
+
+    /**
+     * @param referance
+     */
+    public void setTo(EndPointReferance referance) {
+        to = referance;
+    }
+
+    /**
+     * @return
+     */
+    public Service getService() {
+        return service;
+    }
+
+
+    /**
+     * @return
+     */
+    public Operation getOperation() {
+        return operation;
+    }
+
+    /**
+     * @param operation
+     */
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isNewThreadRequired() {
+        return newThreadRequired;
+    }
+
+    /**
+     * @param b
+     */
+    public void setNewThreadRequired(boolean b) {
+        newThreadRequired = b;
+    }
+
+    /**
+     * @param service
+     */
+    public void setService(Service service) {
+        this.service = service;
     }
 
     /**
@@ -179,44 +308,18 @@ public class MessageContext {
         sessionContext = context;
     }
 
-	/**
-	 * @return Returns the inMessage.
-	 */
-	public SOAPMessage getInMessage() {
-		return inMessage;
-	}
-	/**
-	 * @param inMessage The inMessage to set.
-	 */
-	public void setInMessage(SOAPMessage inMessage) {
-		this.inMessage = inMessage;
-	}
-	/**
-	 * @return Returns the outMessage.
-	 */
-	public SOAPMessage getOutMessage() {
-		return outMessage;
-	}
-	/**
-	 * @param outMessage The outMessage to set.
-	 */
-	public void setOutMessage(SOAPMessage outMessage) {
-		this.outMessage = outMessage;
-	}
     /**
-     * @return Returns the messageStyle.
+     * @return
      */
     public int getMessageStyle() {
         return messageStyle;
     }
+
     /**
-     * @param messageStyle The messageStyle to set.
+     * @param i
      */
-    public void setMessageStyle(int messageStyle) {
-        this.messageStyle = messageStyle;
+    public void setMessageStyle(int i) {
+        messageStyle = i;
     }
-    
-   public void addRelatedMessageContext(String key,MessageContext msgctx){
-       messages.put(key,msgctx);
-   }
+
 }

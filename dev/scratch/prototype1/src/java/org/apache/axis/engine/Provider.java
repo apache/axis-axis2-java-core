@@ -15,11 +15,17 @@
  */
 package org.apache.axis.engine;
 
+import java.io.Serializable;
+
+import org.apache.axis.engine.context.MessageContext;
+import org.apache.axis.engine.registry.NamedEngineElement;
+
 
 /**
  * This Provider is the workhorse who locate the implementation of the Web Service and 
  * invoke the Web Service. 
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Provider extends Handler{
+public interface Provider extends Serializable,NamedEngineElement{
+    public MessageContext invoke(MessageContext msgCtx)throws AxisFault;
 }    

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--// 
+            Web Services Deployment Descriptor (WSDD) Version 1.1 (Proposal)
+            
+            BNF NOTE:- everything started with _ is a intermediate varibale
+            The BNF service.xml for the XML in XML out M1 purposed, no data binding support
+            
+            _parameter::=<parameter name="xsd:string" value="xsd:string"/>
+            		|<parameter name="string">xsd:any</parameter/>
+            		
+            _handler::=<handler name="URI">
+            			(_parameter)*
+            			<order phase=”#phase” />
+						<java:implementation class=”..”/>
+		   			</handler>
+		   	_in_flow::= <inflow>(_handler)*<inflow>		
+		   	_out_flow::= <outflow>(_handler)*<outflow>		
+		   	_fault_flow::= <faultflow>(_handler)*<faultflow>		
+		   	
+		   	_operation::=<operation name="xsd:string">
+		   		(_parameter)*
+				(_in_flow)?
+		   		(_out_flow)?
+		   		(_fault_flow)?
+		   		</operation>		
+            
+            _service ::= <service name="URI">
+            	(_operation)*
+           		(_in_flow)?
+		   		(_out_flow)?
+		   		(_fault_flow)?
+           </service>  
+            
+//-->
+<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+    <xsd:complexType name="parameter">
+        <xsd:sequence>
+            <xsd:element ref="xsd:any" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:NCName" use="optional"/>
+        <xsd:attribute name="value" type="xsd:QName" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="java:implementation" xmlns:java="http://xml.apache.org/axis/wsdd/java">
+        <xsd:attribute name="class" type="xsd:URI" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="order">
+        <xsd:attribute name="phase" type="xsd:URI" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="handler">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:element ref="wsdd:order" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="java:implementation" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:attribute name="name" type="xsd:QName" use="optional"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="inflow">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="outflow">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="faultflow">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="operation">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
+    </xsd:complexType>
+    
+    
+    <xsd:complexType name="service">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:element ref="wsdd:operation" minOccurs="1" maxOccurs="unbounded"/>
+        <xsd:element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
+    </xsd:complexType>
+</xsd:schema>

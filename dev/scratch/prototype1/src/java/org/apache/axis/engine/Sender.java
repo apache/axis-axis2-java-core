@@ -17,9 +17,7 @@ package org.apache.axis.engine;
 
 import org.apache.axis.engine.context.MessageContext;
 
-/**
- * @author Srinath Perera (hemapani@opensource.lk)
- */
+
 public class Sender {
     public void send(MessageContext msgCtx) throws AxisFault{
         AxisEngine engine = new AxisEngine(msgCtx.getGlobalContext().getRegistry());

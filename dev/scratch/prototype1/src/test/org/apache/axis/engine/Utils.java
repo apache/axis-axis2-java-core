@@ -17,18 +17,6 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.engine.Global;
-import org.apache.axis.engine.Operation;
-import org.apache.axis.engine.Service;
-import org.apache.axis.engine.SimpleGlobal;
-import org.apache.axis.engine.SimpleModule;
-import org.apache.axis.engine.SimpleOperation;
-import org.apache.axis.engine.SimpleService;
-import org.apache.axis.engine.SimpleTransport;
-import org.apache.axis.engine.Transport;
-import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.exec.Constants;
 import org.apache.axis.engine.exec.ExecutionChain;
 import org.apache.axis.engine.exec.Phase;
@@ -40,7 +28,6 @@ import org.apache.axis.engine.registry.Module;
 import org.apache.axis.engine.registry.Parameter;
 import org.apache.axis.engine.registry.SimpleEngineRegistry;
 import org.apache.axis.providers.SimpleJavaProvider;
-import org.apache.axis.providers.SyncProvider;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
@@ -69,7 +56,7 @@ public class Utils {
         Parameter classParam = new ConcreateParameter("className",EchoService.class.getName());
         service.addParameter(classParam);
          
-        service.setProvider(new SyncProvider(new SimpleJavaProvider()));
+        service.setProvider(new SimpleJavaProvider());
         
         Module m1 = new SimpleModule(new QName("","A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow",4));
@@ -95,9 +82,9 @@ public class Utils {
         outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
         outchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
         outchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        EngineUtils.addHandlers(service.getInFlow(),outchain,Constants.PHASE_SERVICE);
-        EngineUtils.addHandlers(global.getInFlow(),outchain,Constants.PHASE_GLOBAL);
-        EngineUtils.addHandlers(transport.getInFlow(),outchain,Constants.PHASE_TRANSPORT);
+        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
+        EngineUtils.addHandlers(global.getOutFlow(),outchain,Constants.PHASE_GLOBAL);
+        EngineUtils.addHandlers(transport.getOutFlow(),outchain,Constants.PHASE_TRANSPORT);
         service.setOutExecutionChain(outchain);
         
         ExecutionChain faultchain = new ExecutionChain();
@@ -106,9 +93,9 @@ public class Utils {
         faultchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
         faultchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
         
-        EngineUtils.addHandlers(service.getInFlow(),faultchain,Constants.PHASE_SERVICE);
-        EngineUtils.addHandlers(global.getInFlow(),faultchain,Constants.PHASE_GLOBAL);
-        EngineUtils.addHandlers(transport.getInFlow(),faultchain,Constants.PHASE_TRANSPORT);
+        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
+        EngineUtils.addHandlers(global.getFaultFlow(),faultchain,Constants.PHASE_GLOBAL);
+        EngineUtils.addHandlers(transport.getFaultFlow(),faultchain,Constants.PHASE_TRANSPORT);
         service.setFaultExecutionChain(outchain);
         return engineRegistry;
     }

@@ -32,7 +32,7 @@ public class TransportSender extends AbstractHandler implements Handler {
         this.out = out;
     }
     public void invoke(MessageContext msgContext) throws AxisFault {
-        SOAPMessage message = msgContext.getOutMessage();
+        SOAPMessage message = msgContext.getMessage();
         //Serialize the Mesage
     }
 }

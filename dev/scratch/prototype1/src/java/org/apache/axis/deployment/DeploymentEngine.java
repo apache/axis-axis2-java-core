@@ -226,7 +226,7 @@ public class DeploymentEngine implements DeployCons {
          * ****************************************************************************
          * setting  service provider
          */
-        service.setProvider(new SyncProvider(new SimpleJavaProvider()));
+        service.setProvider(new SimpleJavaProvider());
 
         //todo Module should come inside operation not service (Srinath fix that :) )
 

@@ -15,14 +15,9 @@
  */
 package org.apache.axis.providers;
 
-import java.lang.reflect.Method;
-
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.AbstractEngineElement;
 
 /**
@@ -30,18 +25,9 @@ import org.apache.axis.engine.registry.AbstractEngineElement;
  * protected abstract methods are only for the sake of braking down the logic
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class AbstractProvider extends AbstractEngineElement implements Handler, Provider{
+public abstract class AbstractProvider extends AbstractEngineElement implements Provider{
     private QName name;
     private String scope;
-    
-    protected abstract Object makeNewServiceObject(MessageContext msgContext)throws AxisFault;
-
-    public abstract Object getTheImplementationObject(
-            MessageContext msgContext)throws AxisFault;
-    
-    public abstract Object[] deserializeParameters(MessageContext msgContext,Method method)throws AxisFault;
-
-
     public QName getName() {
         return name;
     }

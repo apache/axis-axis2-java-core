@@ -28,20 +28,24 @@ import org.apache.axis.engine.Service;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.context.SessionContext;
 import org.apache.axis.engine.registry.Parameter;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.soap.SOAPBody;
+import org.apache.axis.om.soap.SOAPEnvelope;
+import org.apache.axis.om.soap.SOAPMessage;
 
 /**
  * This is a Simple java Provider. 
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 
-public class SimpleJavaProvider extends AbstractProvider implements Provider {
+public class RawXMLProvider extends AbstractProvider implements Provider {
     private String message;
     private QName name;
     private String scope;
     private Method method;
     private ClassLoader classLoader;
     
-    public SimpleJavaProvider(){
+    public RawXMLProvider(){
         scope = Constants.APPLICATION_SCOPE;
 
     }
@@ -94,10 +98,6 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             
     } 
     
-    public Object[] deserializeParameters(MessageContext msgContext,Method method){
-        //TODO deserialize the parameters here
-        return null;
-    }
 
 
     public QName getName() {
@@ -119,15 +119,14 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
                     break;
                 }
             }
-            //deserialize (XML-> java)
-            Object[] parms = deserializeParameters(msgContext,method);
-            //invoke the WebService 
-            Object result = method.invoke(obj,parms);
 
-            //TODO fix the server side  
-//            OMXMLParserWrapper parser = new OMXMLPullParserWrapper();
-//            msgContext.setOutMessage(new SOAPMessageImpl(parser)); 
-            return msgContext;
+            Object[] parms = new Object[]{msgContext.getMessage()};
+            //invoke the WebService 
+            SOAPMessage result = (SOAPMessage)method.invoke(obj,parms);
+            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry());
+            msgContext1.setMessage(result);
+            
+            return msgContext1;
         }  catch (SecurityException e) {
             throw AxisFault.makeFault(e);
         } catch (IllegalArgumentException e) {

@@ -103,10 +103,6 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETLOCATION= "transport.http.servletLocation";
     public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
 
-    /**
-     * @deprecated Should use javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY instead.
-     */
-    public static String MC_HTTP_SOAPACTION = javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY;
 
     /** HTTP header field values
      */

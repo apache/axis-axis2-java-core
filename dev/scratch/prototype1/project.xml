@@ -74,6 +74,12 @@
     <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
 
     <unitTest>
+    
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+	    <exclude>**/*Util*.java</exclude>
+        <exclude>**/*SOAPEnvelopeAnotherTest.java</exclude>
+      </excludes>
       <includes>
         <include>**/*Test.java</include>
       </includes>
@@ -118,22 +124,6 @@
         <dependency>
             <groupId>axis</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>jaxrpc</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>saaj</artifactId>
             <version>SNAPSHOT</version>
             <properties>
                 <module>true</module>
