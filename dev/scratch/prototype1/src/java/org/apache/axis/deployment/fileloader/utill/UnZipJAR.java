@@ -23,6 +23,7 @@ package org.apache.axis.deployment.fileloader.utill;
 
 import org.apache.axis.deployment.DeployCons;
 import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.deployment.MetaData.ServiceMetaData;
 import org.apache.axis.deployment.schemaparser.SchemaParser;
 
 import java.io.*;
@@ -33,21 +34,26 @@ import java.util.Enumeration;
 
 public class UnZipJAR implements DeployCons {
     final int BUFFER = 2048;
-
-    public void listZipcontent(String filename, DeploymentEngine engine) {
+    /**
+     * This method will unzip the given jar or aar.
+     * it take two arguments filename and refereance to DeployEngine
+     * @param filename
+     * @param engine
+     */
+    public ServiceMetaData unzip(String filename, DeploymentEngine engine) {
+        ServiceMetaData service =null;
         // get attribute values
         String strArchive = filename;
         String tempfile = "C:/tem.txt";
         ZipInputStream zin;
         int entrysize = 0;
         try {
-
             zin = new ZipInputStream(new FileInputStream(strArchive));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
                     SchemaParser schme = new SchemaParser(zin, engine, filename);
-                    schme.parseXML();
+                    service = schme.parseServiceXML();
                 }
             }
             zin.closeEntry();
@@ -55,42 +61,8 @@ public class UnZipJAR implements DeployCons {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return service;
     }
-
-
-    public void listzip(String filename) {
-        int BUFFER = 2048;
-        try {
-            BufferedOutputStream dest = null;
-            BufferedInputStream is = null;
-            ZipEntry entry;
-            ZipFile zipfile = new ZipFile(filename);
-            Enumeration e = zipfile.entries();
-            while (e.hasMoreElements()) {
-                entry = (ZipEntry) e.nextElement();
-                System.out.println("Extracting: " + entry);
-                is = new BufferedInputStream
-                        (zipfile.getInputStream(entry));
-                int count;
-                byte data[] = new byte[BUFFER];
-                FileOutputStream fos = new
-                        FileOutputStream(entry.getName());
-                dest = new
-                        BufferedOutputStream(fos, BUFFER);
-                while ((count = is.read(data, 0, BUFFER))
-                        != -1) {
-                    dest.write(data, 0, count);
-                }
-                dest.flush();
-                dest.close();
-                is.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
 
 

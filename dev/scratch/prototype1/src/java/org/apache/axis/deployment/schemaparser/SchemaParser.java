@@ -83,9 +83,10 @@ public class SchemaParser implements DeployCons {
     }
 
 
-    public void parseXML() throws DeploymentException, PhaseException {
+    public ServiceMetaData parseServiceXML() throws DeploymentException, PhaseException {
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
+        ServiceMetaData service = null;
 
         try {
             while (!END_DOCUMENT) {
@@ -97,7 +98,12 @@ public class SchemaParser implements DeployCons {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                 } else if (eventType == XmlPullParser.START_TAG) {
-                    processStartElement();
+                    String ST = pullparser.getName();
+                    if (ST.equals(serviceXMLST)) {
+                        service = procesServiceXML();
+                        service.setName(servicename);
+                    }
+                    //processStartElement();
                     break;//todo this has to be chenfed only for testng
                 } else if (eventType == XmlPullParser.END_TAG) {
                     // procesEndElement();
@@ -121,6 +127,7 @@ public class SchemaParser implements DeployCons {
         } catch (Exception e) {
             throw new DeploymentException(e.toString());
         }
+        return service;
     }
 
 
@@ -129,7 +136,7 @@ public class SchemaParser implements DeployCons {
         if (ST.equals(serviceXMLST)) {
             ServiceMetaData service = procesServiceXML();
             service.setName(servicename);
-            dpengine.addService(service);
+          //  dpengine.addService(service);
             service.prinData();
         }
     }

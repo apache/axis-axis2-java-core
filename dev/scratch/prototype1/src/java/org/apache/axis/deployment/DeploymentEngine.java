@@ -1,35 +1,27 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.deployment.fileloader.utill.WSInfo;
-import org.apache.axis.deployment.fileloader.utill.UnZipJAR;
+import org.apache.axis.deployment.MetaData.*;
+import org.apache.axis.deployment.MetaData.phaserule.PhaseException;
 import org.apache.axis.deployment.fileloader.utill.HDFileItem;
+import org.apache.axis.deployment.fileloader.utill.UnZipJAR;
+import org.apache.axis.deployment.fileloader.utill.WSInfo;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.deployment.scheduler.DeploymentIterator;
-import org.apache.axis.deployment.MetaData.ServiceMetaData;
-import org.apache.axis.deployment.MetaData.HandlerMetaData;
-import org.apache.axis.deployment.MetaData.ParameterMetaData;
-import org.apache.axis.deployment.MetaData.FlowMetaData;
-import org.apache.axis.deployment.MetaData.OperationMetaData;
-import org.apache.axis.deployment.MetaData.ModuleMetaData;
 import org.apache.axis.deployment.schemaparser.SchemaParser;
-import org.apache.axis.deployment.MetaData.phaserule.HandlerChainMetaData;
-import org.apache.axis.deployment.MetaData.phaserule.HandlerChainMetaDataImpl;
-import org.apache.axis.deployment.MetaData.phaserule.PhaseException;
-import org.apache.axis.engine.registry.*;
 import org.apache.axis.engine.*;
+import org.apache.axis.engine.exec.Constants;
 import org.apache.axis.engine.exec.ExecutionChain;
 import org.apache.axis.engine.exec.Phase;
+import org.apache.axis.engine.registry.*;
 import org.apache.axis.providers.SimpleJavaProvider;
 import org.apache.axis.providers.SyncProvider;
-import org.apache.axis.engine.exec.Constants;
 
 import javax.xml.namespace.QName;
-import java.util.Vector;
-import java.util.Date;
-import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Vector;
 
 
 /**
@@ -80,15 +72,32 @@ public class DeploymentEngine implements DeployCons {
 
     private String folderName;
 
-    public DeploymentEngine(InputStream inputStream, String fileanme) throws PhaseException,DeploymentException {
+    /**
+     * This the constructor which is used by Engine inorder to start
+     * Deploymenat module,
+     * @param RepositaryName is the path to which Repositary Listner should
+     * listent.
+     */
+    public DeploymentEngine(String RepositaryName){
         Date date = new Date();
-        this.folderName = fileanme;
         this.hourOfDay = date.getHours();
         this.minute = date.getMinutes();
         this.second = date.getSeconds();
-        SchemaParser schemaParser = new SchemaParser(inputStream, this, fileanme);
-        schemaParser.parseXML();
+        this.folderName = RepositaryName;
     }
+
+    /**
+     * This method will fill the engine registry and return it to Engine
+     * @return
+     * @throws AxisFault
+     * @throws PhaseException
+     */
+    public EngineRegistry start() throws AxisFault, PhaseException {
+        engineRegistry = createEngineRegistry();
+        startSearch(this);
+        return engineRegistry;
+    }
+
 
     public DeploymentEngine() {
         Date date = new Date();
@@ -97,13 +106,16 @@ public class DeploymentEngine implements DeployCons {
         this.second = date.getSeconds();
     }
 
-    public void addService(ServiceMetaData serviceMetaData) throws PhaseException {
+    public void addService(ServiceMetaData serviceMetaData) {
         servicelist.add(serviceMetaData);
-        EngineRegistry en = start();
-      //  XStream xstream = new XStream();
-       // String xml = xstream.toXML(en);
-       // System.out.println("Serialization out put for Engine Registry \n"  + xml );
-
+        try {
+            addnewService(serviceMetaData);
+             System.out.println("Numbetr of service" + engineRegistry.getServiceCount());
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (PhaseException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        }
     }
 
     /**
@@ -115,19 +127,12 @@ public class DeploymentEngine implements DeployCons {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator(hourOfDay, minute, second));
     }
 
-    public EngineRegistry start() {
-        //    startSearch(this);
-        try {
-            updateER(new QName("Transport"));
-        } catch (Exception e) {
-            e.printStackTrace();
+    private EngineRegistry createEngineRegistry() throws AxisFault {
+        EngineRegistry newEngineRegisty ;
+        //todo the below line dse not need ask from srinath why
+        // do we need to have this line
+        QName transportName = new QName("Transport");
 
-        }
-        return engineRegistry;
-
-    }
-
-    private void updateER(QName transportName) throws AxisFault, PhaseException {
         /**
          * adding Global
          */
@@ -139,7 +144,7 @@ public class DeploymentEngine implements DeployCons {
         global.setInFlow(globalinflow);
         global.setOutFlow(globaloutflow);
         global.setFaultFlow(globalfaultflow);
-        engineRegistry = new SimpleEngineRegistry(global);
+        newEngineRegisty = new SimpleEngineRegistry(global);
         /**
          * adding transport
          */
@@ -151,15 +156,16 @@ public class DeploymentEngine implements DeployCons {
         transport.setInFlow(transportinflow);
         transport.setOutFlow(transportoutflow);
         transport.setFaultFlow(transportfaultflow);
-        engineRegistry.addTransport(transport);
+        newEngineRegisty.addTransport(transport);
 
         /**
          * adding services
          */
-        for (int i = 0; i < servicelist.size(); i++) {
-            ServiceMetaData serviceMetaData = (ServiceMetaData) servicelist.elementAt(i);
-            addnewService(serviceMetaData);
-        }
+        /*   for (int i = 0; i < servicelist.size(); i++) {
+        ServiceMetaData serviceMetaData = (ServiceMetaData) servicelist.elementAt(i);
+        addnewService(serviceMetaData);
+        } */
+        return newEngineRegisty;
     }
 
 
@@ -410,9 +416,9 @@ public class DeploymentEngine implements DeployCons {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 HDFileItem fileItem = (HDFileItem) wsToDeploy.elementAt(i);
                 UnZipJAR unZipJAR = new UnZipJAR();
-                unZipJAR.listZipcontent(fileItem.getAbsolutePath(), this);
-                // System.out.println("File" + fileItem.toString());
-
+                ServiceMetaData service = new ServiceMetaData();
+                service = unZipJAR.unzip(fileItem.getAbsolutePath(), this);
+                addService(service);
                 System.out.println("\nDeployement WS Name  " + fileItem.getName());
             }
         }
