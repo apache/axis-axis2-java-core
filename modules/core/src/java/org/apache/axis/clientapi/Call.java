@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.clientapi;
 
 import org.apache.axis.Constants;
@@ -103,12 +103,12 @@ public class Call {
      */
     public void setTransportType(String transport) throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                        || Constants.TRANSPORT_SMTP.equals(transport)
-                        || Constants.TRANSPORT_TCP.equals(transport))) {
+                || Constants.TRANSPORT_SMTP.equals(transport)
+                || Constants.TRANSPORT_TCP.equals(transport))) {
             this.transport = transport;
         } else {
             throw new AxisFault("Selected transport dose not suppot ( "
-                            + transport + " )");
+                    + transport + " )");
         }
     }
 
@@ -124,13 +124,13 @@ public class Call {
             String Listenertransport, boolean useSeparateListener)
             throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                        || Constants.TRANSPORT_SMTP.equals(transport)
-                        || Constants.TRANSPORT_TCP.equals(transport))) {
+                || Constants.TRANSPORT_SMTP.equals(transport)
+                || Constants.TRANSPORT_TCP.equals(transport))) {
             this.Listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
         } else {
             throw new AxisFault("Selected transport dose not suppot ( "
-                            + transport + " )");
+                    + transport + " )");
         }
     }
 
@@ -160,6 +160,9 @@ public class Call {
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
                     Constants.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
+            if(action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            }
             engine.send(msgctx);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
@@ -194,6 +197,9 @@ public class Call {
                 request.setEnvelope(envelope);
                 request.setProperty(MessageContext.TRANSPORT_TYPE, transport);
                 request.setTo(targetEPR);
+                if(action != null) {
+                    request.setProperty(MessageContext.SOAP_ACTION,action);
+                }
                 engine.send(request);
 
                 // todo dose the 202 response  come throgh the same connection
@@ -201,12 +207,12 @@ public class Call {
                 // Handle the HTTP 202 respose
 
                 /*
-                 * MessageContext response =
-                 * new MessageContext(
-                 * registry,
-                 * request.getProperties(),
-                 * request.getSessionContext());
-                 */
+                * MessageContext response =
+                * new MessageContext(
+                * registry,
+                * request.getProperties(),
+                * request.getSessionContext());
+                */
                 request.setServerSide(false);
                 request.setProperty(MessageContext.TRANSPORT_TYPE, transport);
                 TransportReceiver receiver =
@@ -253,6 +259,9 @@ public class Call {
             msgctx.setEnvelope(envelope);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, transport);
             msgctx.setTo(targetEPR);
+            if(action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            }
             engine.send(msgctx);
             MessageContext response = new MessageContext(registry,
                     msgctx.getProperties(),
@@ -287,6 +296,9 @@ public class Call {
             msgctx.setEnvelope(envelope);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, transport);
             msgctx.setTo(targetEPR);
+            if(action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            }
             if (useSeparateListener) {
                 if (Constants.TRANSPORT_SMTP.equals(transport)) {
                     throw new AxisFault(
