@@ -1,0 +1,23 @@
+<h1 align="center">WebServices - Axis 2.0</h1>
+<h2 align="left">Introduction</h2>
+<p>Axis 2.0 will be a platform for the next generation of web services / service 
+oriented applications. To achieve this goal, we need to incorporate the latest 
+in concepts in Web Services Architecture group and WSDL working group among 
+others. For example, the architecture should be completely asynchronous and 
+should support all kinds of MEP's. The platform must be very extensible 
+(runtime, java2wsdl, wsdl2java etc) to accomodate the growing demand for 
+different WS-* implementations. A &quot;module&quot; can very easily change the behaviour 
+of existing components. For example, additional decorations can be added at 
+runtime to the base wsdl (for example, for WSDM manageability spec). Presence of 
+an addressing module could change the client code generated (where additional 
+methods can be exposed) that make it easy to use addressing. One main focus is 
+to improve the performance even in the presence of a heavy duty &quot;security&quot; 
+module. </p>
+<p>As a starting point we have started working on the core of Axis 2.0. This M1 
+release will not have support for ANY JSR specs like JAX-RPC or SAAJ. But we 
+will make sure we can build JAXRPC/SAAJ layers on top of the core architecture. 
+The core is basically a streaming XML infoset that we call &quot;OM&quot; that supports 
+deffered building and the xml pull event generation and async support will be 
+baked in to the core as well. </p>
+<h2 align="left">Credits</h2>
+<p align="left">Axis 2.0 development team</p>

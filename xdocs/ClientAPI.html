@@ -1,0 +1,144 @@
+<html><head><title>Axis 2.0 Client API</title>
+<style></style>
+</head>
+<body>
+<h2>Introduction</h2>
+<p>Invocation of web service will lead to an exchange of messages between two or more parties. &nbsp;If we consider the general scenario where client invokes a single service, the communication between them can be either one way or two-way. Depending on the way the client handles the invocation at the API level, whether the transport protocol used is unidirectional or bi-directional and the type of the service method, one can derive many interaction patterns between client and the service. Rest of the document will focus on identifying these possible break ups and how they are supported in Apache Axis 2.</p>
+<p>Note: Through out the tutorial the words Client and the Service are used to represent Web Service Client and the Web Service respectively.</p>
+<h2>Axis 2 Client API</h2>
+<p>Followings will decide the interaction patterns between client and the service.</p>
+<ul>
+	<li>Client API </li>
+	<li>The transport protocol used</li>
+	<li>The type of the service method</li>
+</ul>
+<h2>Client API</h2>
+<p>Clients can consume services which take almost no time to complete and the services take considerable amount of time to complete. So it’s important that the SOAP engine provides both blocking and non-blocking APIs for the client. This can be easily done in the API level. </p>
+<p>With a blocking API client will hang till the operation completes. In other words once invoked, the client will keep blocking till it gets the response (if any) from the service. This will be a huge drawback in the client side performance, if the operation takes considerable amount of time.</p>
+<p>A non blocking API will provide the client to use a Callback mechanism (or polling mechanism) to get the responses (if any) for a service invocation. Client gets this response it two ways. Both ways client has to register a call back with the SOAP engine.</p>
+<ul>
+<li>Client keep on polling the call back object it registers with the SOAP engine, with the isComplete(). If isComplete() returns true, client get the result, if any, through getResult() which returns an AsyncResult object. 
+<li>Upon receipt of the response, if any, SOAPEngine calls the onComplete(AsyncResult) of the call back object. </li></ul>
+<p>Note that client can adopt any one of the above two methods, independent of the way service has been implemented.</p>
+<h2>Transport Protocol Used</h2>
+<p>Transport protocols can be categorized mainly in to two types.</p>
+<ol>
+	<li>Unidirectional </li>
+	<li>Bi-Directional</li>
+</ol>
+<p>With a unidirectional protocol (e.g. SMTP), client can simply invoke a service which has no response(s) to be sent in the same connection. But if the service is request/response in nature, it is required to use two separate connections of unidirectional protocol. However if the client needs only to send information, unidirectional is useful for that.</p>
+<p>With a bidirectional protocol the client can retrieve the service response (if any) using the same connection. In this context HTTP is the most common bidirectional transport protocol. However the main drawback is the possibility of the timeouts that can happen. If the service takes some time to complete then there is a possibility of time out in the connection.</p>
+<p>Bi-directional transport can be used to invoke one-way services as well. In this case the return path of the communication channel is not used. However since we are using a bi-directional protocol the return path can be used to carry the acceptance state or a fault (if any). With reference to HTTP the HTTP 202 header status will act as the acceptance state and it will also be used to send a fault (if any) to the client using the same connection.</p>
+<h2>Type of the Service Method</h2>
+<p>According to the WSDL definitions, there can be various Message Exchange Patterns defined for web services. These require the client to use possible invocation mechanism to handle the service invocations. For example if the client is invoking a service method which is defined as IN-ONLY operation, then the client should be able to use a method in the client API which is capable of handling this type of requests.</p>
+<p>All these variations give rise to several Client API methods which will ultimately ease the service invocation for a web service client. For Axis 2, currently we are providing following methods in the Call API provided</p>
+<ol>
+<li>Robust Invocation 
+<li>Fire and Forget invocation 
+<li>Blocking Invocation of type In-Out 
+<li>Non Blocking Invocation of type In-Out </li>
+<ul>
+	<li>&nbsp;Method 1: Without a Client Side Listener</li>
+	<li>&nbsp;Method 2: With a Client Side Listener</li>
+</ul>
+</ol>
+<h2>Architecture</h2>
+<p>Following architecture was derived for the Axis 2 client side, to support the above patterns the. A description of each component is given below.</p>
+<p align=center>
+<p align="center"> <img height=315 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image002.jpg" width=576 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image002.jpg"></p>
+<p align=center>Figure 1 – Axis Client Architecture</p>
+<h3>Client </h3>
+<p>This is the web service client that actually utilizes the service.</p>
+<h3>Call </h3>
+<p>This is the API that the Axis client should use to invoke the web services. Followings are the methods that the client can use in this API.</p>
+<source></source><p>public void setTo(EndpointReference EPR)</p>
+<p>public void setTransportType(String transport)</p>
+<p>public void setListenerTransport(String Listenertransport, boolean useSeparateListener)</p>
+<p>public void setAction(String action)</p>
+<p>&nbsp;</p>
+<p>public void sendAsync(SOAPEnvelope envelope) throws AxisFault</p>
+<p>public void send(SOAPEnvelope envelope) throws AxisFault</p>
+<p>public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault</p>
+<p>public void sendReceiveAsync(SOAPEnvelope envelope,final Callback callback) throws AxisFault</p>
+<p>public void getTO()</p></source>
+<h3>Engine</h3>
+<p>This is Axis 2 engine and it does not make any difference whether the engine is used in the client side or the server side.&nbsp; </p>
+<h3>Correlator</h3>Correlator is required when client uses the non-blocking API to invoke a web service. Its stores callback object with a key field as messageID. This is a singleton class which consists of following two methods. 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void addCorrelationInfo(String msgid, Callback callbackObj)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Callback getCorrelationInfo(String MessageID)</p>
+<h3>Listener </h3>
+<p>A separate listener is required to provide the asynchronous communication between the client and the service. That is, when the client retrieves the response (if any) using a separate transport connection, listener will act as an addressable end point to the service so that it can send the service responses directly to the listener.</p>
+<h3>ClientProvider</h3>
+<p>This is provider used in the client side.(The name should be changed later). This is only used when the client uses asynchronous web service invocation pattern, that is when a separate listener is used to retrieve the response. The service response is received using the same way that the axis engine receives a request. So the ProviderX will represent the end of the execution chain of the engine and it will set the response to the callback object.</p>
+<p>&nbsp;</p>
+<h2>How Axis 2 Architecture Supports the above Message Patterns</h2>
+<h3>Robust Invocation</h3>
+<p>This invocation is mainly a one way operation. However it supports the returning faults from the service. The transport protocol used in this message pattern should be bi-directional.&nbsp; The following code snippet shows how the client can use above method of invocation and the sequence diagram shows the complete message. </p>
+<p><strong>Code Snippet</strong></p><source></source>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTo(EPR)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.send(SOAPEnvelope) </p></source>
+<p><strong>Message Path and Sequence Diagram</strong></p>a -&gt; call.send(SOAPEnvelope)<p>b -&gt; engine.send( ..)</p>
+<p>c -&gt; Send the SOAP message</p>
+<div align="center">
+	<pre> 
+<img height=149 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image004.jpg" width=416 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image004.jpg"></pre>
+</div>
+<p align=center>Figure 2- Sequence diagram corresponding to send ()</p>
+<h3>Fire and Forget Invocation</h3>
+<p>This method of invocation does not wait for any kind of response, not even for a fault. Once the request is written to the wire the method immediately returns to the client. Transport can be either unidirectional or bi-directional. Following code snippet shows how the client can use above API method and the sequence diagram shows the complete message. </p>
+<p><strong>Code Snippet</strong></p><source>&nbsp; call.setTo(EPR)<p>&nbsp;&nbsp; call.setAction(String)</p>
+<p>&nbsp;&nbsp; call.setTransportType(String)</p>
+<p>&nbsp;&nbsp; call.sendAsync(SOAPEnvelope) </p></source>
+<p><strong>Message Path and Sequence Diagram</strong></p>
+<pre>a -&gt; call.send(SOAPEnvelope)</pre><pre>b -&gt; engine.send( ..)</pre><pre>c -&gt; Send the SOAP message</pre>
+<p align=center><img height=147 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image006.jpg" width=434 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image006.jpg"></p>
+<p align=center>Figure 3 – Sequence diagram corresponds to sendAsync()</p>
+<h3>Blocking Invocation of type In-Out</h3>
+<p>This invocation pattern lets the client to invoke a web service and wait till the response is received before proceeding to the next line of invocation. This is very much similar to the Call.invoke() with response types in Axis 1.1. In this approach, the transport specified should be a bi-directional transport and the response is retrieved using the same transport connection. The client will hang till the entire communication completes.</p>
+<p><strong>Code Snippet&nbsp;</strong></p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SOAPEnvelope env=call.sendReceive(SOAPEnvelope)</p>
+<p><strong>Message Path and Sequence Diagram</strong></p>
+a -&gt; call.sendReceive(SOAPEnvelope)<pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>d -&gt; Receive the response over the synchronous transport</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>e -&gt; provider returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </pre><pre>f -&gt; Call hand over the response to the client</pre>
+<p align=center><img height=199 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image008.jpg" width=439 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image008.jpg"></p>
+<p align=center>Figure 4 – Sequence diagram corresponds to sendRecieve()</p>
+<h3>Non Blocking Invocation of type In-Out</h3>
+<p>Using this method client can access In-Out type web service operations. There are two ways that the client can use this invocation pattern.</p>
+<p><strong>Method 1: Without a Client Side Listener</strong></p>
+<p>The communication happens using a single transport connection. With respect to the transport protocol used, the web service response is received using the same connection. However the client will not block till it receive the response. Instead it can proceed to the next line of execution by registering a Callback object.&nbsp; The following code snippet shows how the client can use above API method and the sequence diagram shows the complete message. To use this pattern client should use the value “<strong>true</strong>” for the parameter “useSeparateListener” in the setListenerTransport(..) method.</p>
+<p><strong>Code Snippet</strong></p>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
+<p><strong>Message Path and Sequence Diagram</strong></p>
+<pre>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</pre><pre>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</pre><pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>d -&gt; Receive the response over the synchronous transport</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
+<div align="center">
+	<pre>
+<img height=225 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image010.jpg" width=643 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image010.jpg"></pre>
+</div>
+<p align=center>Figure 5 – Sequence diagram corresponds to sendRecieveAysn with two way transport</p>
+<p><strong>Method 2: With a Client Side Listener</strong></p>
+<p>In this method client will have the usage of non-blocking API with a separate listener to accept the service response asynchronously. Outgoing transport does not wait for the response. Instead corresponding incoming message is processed by different transport, which is created by call object while it is sending the request. The correlation between the request and the response messages is achieved using a similar message ID mechanism as in WS-Addressing. Once the WS-Addressing support is implemented the client will only use &lt;wsa:MessageID&gt; and the &lt;was:RelatesTo&gt; headers to achieve the correlation. </p>
+<p>The following code snippet shows how the client can use that above API method and the sequence diagram shows the complete message. To use this pattern client should use the value “<strong>false</strong>” for the parameter “useSeparateListener” in the setListenerTransport(..) method.</p>
+<p><strong>Code Snippet</strong></p>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTO(EPR)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setAction(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTransportType(String)</pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setListenerTransport(String transportType,boolean useSeparateListener) </pre><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.sendReceiveAsync (SOAPEnvelope, Callback)</pre>
+<p><strong><u>&nbsp;</u></strong></p>
+<p><strong>Message Path and Sequence Diagram</strong></p>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)<p>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</p>
+<pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>r -&gt; Receive the response by the listener</pre><pre>s -&gt; engine.receive(..)</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
+<p align=center><img height=234 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image012.jpg" width=648 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image012.jpg"></p>
+<p align=center>Figure 6 – Sequence diagram corresponds to sendRecieveAync with one way transport.</p>
+<p><strong><u>Asynchronous invocation with one way transport</u></strong></p>
+<p>The programming model almost similar to asynchronous invocation with two way transport. Only difference is that &nbsp;for outgoing and incoming messages, it uses two engine instances, and outgoing transport dose not wait for response. Instead, corresponding incoming message is processed by different transport which is created by call object while it is sending the request. Here the Listener is the newly created transport, which is running to get the incoming message. Corresponding sequence diagram is shown in Figure 6, code snippet and message paths are described below. </p><pre>call.setTO(EPR)</pre><pre>call.setAction(String)</pre><pre>call.setListenerTransport(“http”, false)</pre><pre>call.sendReceiveAsync(SOAPEnvelope, Callback)</pre>
+<h3>Message paths</h3><pre>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</pre><pre>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</pre><pre>b- &gt; engine.send (..)</pre><pre>c -&gt; Send the SOAP message</pre><pre>r -&gt; Receive the response by the listener</pre><pre>s -&gt; engine.receive(..)</pre><pre>w -&gt; ProviderX will be called as the last step in engine.receive(..) </pre><pre>q -&gt; correlator.getCorrelationInfo(msgID)</pre><pre>g -&gt; callbackObj.onComplet()</pre>
+<p align=center><img height=234 src="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image013.jpg" width=648 DESIGNTIMEURL="Axis2%20supports%20both%20synchronous%20and%20asynchronous%20web%20service%20invocation%20with%20following%20five%20types%20of%20client%20programming%20model_files/image013.jpg"></p>
+<p align=center>Figure 6 – Sequence diagram corresponds to sendRecieveAync with one way transport.</p>
+<h2>What is supported in M1</h2>
+<p>From the above interaction patterns for M1, we only support following two 
+types.</p>
+<ul>
+	<li>Blocking Invocation of type In-Out</li>
+	<li>Non Blocking Invocation of type In-Out --&gt; Method 1: Without a Client Side Listener</li>
+</ul>
+<h2>&nbsp;</h2></body></html>
