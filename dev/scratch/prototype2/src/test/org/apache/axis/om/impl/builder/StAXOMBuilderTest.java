@@ -20,17 +20,18 @@ package org.apache.axis.om.impl.builder;
  * Time: 2:29:07 PM
  */
 
+import java.io.FileReader;
+import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
-
-import javax.xml.stream.XMLInputFactory;
-import java.io.FileReader;
-import java.util.Iterator;
+import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 public class StAXOMBuilderTest extends AbstractTestCase {
     StAXOMBuilder stAXOMBuilder;

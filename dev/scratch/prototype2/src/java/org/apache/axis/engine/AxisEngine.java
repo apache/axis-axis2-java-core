@@ -18,8 +18,8 @@ package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
-import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;

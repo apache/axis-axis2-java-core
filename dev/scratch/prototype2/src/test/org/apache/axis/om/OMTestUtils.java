@@ -16,16 +16,22 @@
 
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
-import org.w3c.dom.*;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class OMTestUtils {
 

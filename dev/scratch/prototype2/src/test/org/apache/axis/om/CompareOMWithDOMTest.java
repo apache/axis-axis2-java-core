@@ -15,12 +15,13 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.AbstractTestCase;
-import org.w3c.dom.Document;
+import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+
+import org.apache.axis.AbstractTestCase;
+import org.w3c.dom.Document;
 
 /**
  * @version $Rev: $ $Date: $

@@ -1,8 +1,8 @@
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.HandlerMetaData;
-
 import java.util.Vector;
+
+import org.apache.axis.description.HandlerMetaData;
 
 
 /**

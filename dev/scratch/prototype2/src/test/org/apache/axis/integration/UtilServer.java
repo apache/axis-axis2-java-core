@@ -21,10 +21,10 @@ import java.net.ServerSocket;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPReceiver;
 
 public class UtilServer {
     private static int count = 0;

@@ -15,8 +15,6 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.impl.description.FlowIncludeImpl;
-import org.apache.axis.impl.description.ParameterIncludeImpl;
 
 import javax.xml.namespace.QName;
 

@@ -1,15 +1,20 @@
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.*;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.impl.description.AxisService;
-
-import javax.xml.namespace.QName;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

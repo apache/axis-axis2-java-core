@@ -15,14 +15,15 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.

@@ -27,7 +27,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
-import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

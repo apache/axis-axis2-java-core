@@ -19,16 +19,17 @@
  */
 package org.apache.axis.om.impl.traverse;
 
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMTestCase;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
-
-import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
 
 public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase implements OMConstants {

@@ -16,11 +16,11 @@
 
 package org.apache.axis.engine;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.transport.http.HTTPTransportSender;
-import org.apache.axis.impl.transport.tcp.TCPTrasnportSender;
-
 import java.io.OutputStream;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.transport.http.HTTPTransportSender;
+import org.apache.axis.transport.tcp.TCPTrasnportSender;
 
 
 public class TransportSenderLocator {

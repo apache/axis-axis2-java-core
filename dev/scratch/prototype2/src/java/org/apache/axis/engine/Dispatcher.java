@@ -16,14 +16,14 @@
 
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.impl.handlers.AbstractHandler;
-import org.apache.axis.impl.handlers.OpNameFinder;
-
-import javax.xml.namespace.QName;
+import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.handlers.OpNameFinder;
 
 public class Dispatcher extends AbstractHandler implements Handler {
 	public static final QName NAME = new QName("http://axis.ws.apache.org","Disapatcher");

@@ -17,7 +17,6 @@ import org.apache.axis.encoding.Encoder;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-
 import org.xml.sax.ContentHandler;
 
 public class EchoStructEncoder implements Encoder {

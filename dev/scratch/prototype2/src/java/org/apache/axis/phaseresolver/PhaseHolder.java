@@ -1,19 +1,19 @@
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.deployment.DeploymentConstants;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.description.AxisTransport;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.Phase;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.impl.description.AxisService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.ArrayList;
 import java.util.Vector;
+
+import org.apache.axis.deployment.DeploymentConstants;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Phase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

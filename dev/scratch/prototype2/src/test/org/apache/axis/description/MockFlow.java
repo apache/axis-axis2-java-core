@@ -17,7 +17,6 @@
 package org.apache.axis.description;
 
 import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.impl.description.FlowImpl;
 
 
 public class MockFlow extends FlowImpl implements Flow {

@@ -36,13 +36,13 @@ import org.apache.axis.encoding.Encoder;
 import org.apache.axis.encoding.SimpleTypeEncoder;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.impl.llom.builder.ObjectToOMBuilder;
 
 
 public class EchoTest extends TestCase {

@@ -10,13 +10,13 @@ import javax.xml.stream.XMLStreamWriter;
 import junit.framework.TestCase;
 
 import org.apache.axis.encoding.Encoder;
-import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
+import org.apache.axis.om.impl.llom.builder.ObjectToOMBuilder;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -1,15 +1,16 @@
 package org.apache.axis.om.impl.streamwrapper;
 
+import java.io.File;
+import java.io.FileReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
-
-import javax.xml.stream.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

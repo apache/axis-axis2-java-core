@@ -16,7 +16,6 @@
 package org.apache.axis.description;
 
 import org.apache.axis.engine.Handler;
-import org.apache.axis.impl.description.ParameterIncludeImpl;
 
 import javax.xml.namespace.QName;
 

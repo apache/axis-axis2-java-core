@@ -18,7 +18,6 @@ package org.apache.axis.engine;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMFactory;
 
 public class MessageContextTest extends AbstractTestCase{

@@ -1,12 +1,17 @@
 package org.apache.axis.om;
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.xml.stream.*;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 
 /**

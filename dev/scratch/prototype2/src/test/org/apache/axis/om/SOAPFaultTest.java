@@ -1,12 +1,11 @@
 package org.apache.axis.om;
 
-import org.apache.axis.AbstractTestCase;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
-import java.io.FileOutputStream;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis.AbstractTestCase;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
