@@ -37,6 +37,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 
 public class HandlerFaliureTest extends AbstractTestCase {
@@ -161,9 +163,16 @@ public class HandlerFaliureTest extends AbstractTestCase {
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().
+                                        createXMLStreamWriter(System.out);
+            resEnv.serialize(writer, true);
+            writer.flush();
+
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
-                throw new AxisFault(sb.getFault().getFaultString());
+                String message = sb.getFault().getException().getMessage();
+                System.out.println("message = " + message);
+                throw new AxisFault(message);
             }
         } catch (AxisFault e) {
             assertTrue((e.getMessage().indexOf(EngineUtils.FAILURE_MESSAGE)) > 0);

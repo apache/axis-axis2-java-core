@@ -115,7 +115,7 @@ public class OMNodeImpl implements OMNode {
      */
     public void detach() throws OMException {
         if (parent == null)
-            throw new OMException();
+            throw new OMException("Elements that doesn't have a parent can not be detached");
         OMNodeImpl nextSibling = (OMNodeImpl) getNextSibling();
         if (previousSibling == null)
             parent.setFirstChild(nextSibling);

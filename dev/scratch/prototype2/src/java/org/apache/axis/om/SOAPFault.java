@@ -119,17 +119,11 @@ public interface SOAPFault extends OMElement {
     public abstract String getFaultString();
 
     /**
-     * Sets the fault string for this <code>SOAPFault</code> object to the given
-     * string and localized to the given locale.
-     *
-     * @param faultString a <code>String</code> giving an explanation of
-     *                    the fault
-     * @param locale      a <code>Locale</code> object indicating the
-     *                    native language of the <code>faultString</code>
-     * @throws OMException if there was an error in adding the
-     *                     <code>faultString</code> to the underlying XML tree
+     * This will set the given omnode under the detail element of SOAP fault
+     * @param detail
      */
-    public abstract void setFaultString(String faultString, Locale locale) throws OMException;
+    public abstract void setDetailInformation(OMNode detail);
+    public abstract OMNode getDetailInformation();
 
 
     public abstract Exception getException() throws OMException;

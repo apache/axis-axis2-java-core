@@ -123,5 +123,10 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
 //        return soapBody;
     }
 
+    public void detach() throws OMException {
+        throw new OMException("Root Element can not be detached");
+
+    }
+
 
 }

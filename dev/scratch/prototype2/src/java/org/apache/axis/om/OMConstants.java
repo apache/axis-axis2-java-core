@@ -38,6 +38,10 @@ public interface OMConstants {
     public static final String ATTR_MUSTUNDERSTAND = "mustUnderstand";
 
     public static final String SOAPFAULT_LOCAL_NAME = "Fault";
+    public static final String SOAPFAULT_CODE_LOCAL_NAME = "faultcode";
+    public static final String SOAPFAULT_STRING_LOCAL_NAME = "faultstring";
+    public static final String SOAPFAULT_ACTOR_LOCAL_NAME = "faultactor";
+    public static final String SOAPFAULT_DETAIL_LOCAL_NAME = "detail";
     public static final String SOAPFAULT_NAMESPACE_URI = SOAP_ENVELOPE_NAMESPACE_URI;
     public static final String SOAPFAULT_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
 
