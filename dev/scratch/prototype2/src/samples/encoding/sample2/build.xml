@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project basedir="." default="jar">
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="build.classes" location="${build}/classes"/>
+	<property name="build.lib" location="${build}/lib"/>
+	<property name="lib" location="lib"/>
+	<property name="root" location="../../../.."/>
+	<property name="jar.dir" location="${root}/target/test-resources/samples/services"/>
+    <property name="jar.name" value="soap-bench" ></property>
+
+	<path id="axis.test.classpath">
+		<path refid="maven.dependency.classpath"></path>
+		<pathelement location="${root}/target/classes"/>
+		<pathelement location="${root}/target/test-classes"/>
+	</path>
+	
+	<target name="compile" depends="init" unless="jars.uptodate">
+	   <mkdir dir="${build.classes}"/>
+	   <mkdir dir="${build.lib}"/>
+		<javac destdir="${build.classes}" debug="on">
+			<classpath refid="axis.test.classpath" />
+			<src path="${src}"/>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile" unless="jars.uptodate">
+       <copy todir="${build.classes}/META-INF">
+			<fileset dir="${src}/META-INF/">
+			<include name="**/*.xml"/>
+			<exclude name="build.xml"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${jar.dir}"/>
+		<jar jarfile="${jar.dir}/${jar.name}.jar" basedir="${build.classes}" >
+			<include name="**" />
+		</jar>
+		<delete dir="${build}"/>
+	</target>
+	
+	<target name="init">
+		<uptodate property="jars.uptodate" targetfile="${jar.dir}/${jar.name}.jar">
+			<srcfiles dir="${src}">
+				<include name="**/*.java"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.wsdl"/>
+				<exclude name="${build}/**"/>
+			</srcfiles>
+		</uptodate>
+		<echo message="the files are up to date = ${jars.uptodate}"></echo>
+	</target>
+	
+</project>

@@ -1,0 +1,13 @@
+<service provider="benchmark1.BenchProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="benchmark1.Benchmark1Impl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    <operation name="echoVoid" qname="echoVoid" style="anyStyle" use="anyUse"/>
+    <operation name="echoStrings" qname="echoStrings" style="anyStyle" use="anyUse"/>
+    <operation name="echoInts" qname="echoInts" style="anyStyle" use="anyUse"/>
+    <operation name="echoDoubles" qname="echoDoubles" style="anyStyle" use="anyUse"/>
+    <operation name="receiveStrings" qname="receiveStrings" style="anyStyle" use="anyUse"/>
+    <operation name="receiveInts" qname="receiveInts" style="anyStyle" use="anyUse"/>
+    <operation name="receiveDoubles" qname="receiveDoubles" style="anyStyle" use="anyUse"/>
+    <operation name="sendStrings" qname="sendStrings" style="anyStyle" use="anyUse"/>
+    <operation name="sendInts" qname="sendInts" style="anyStyle" use="anyUse"/>
+    <operation name="sendDoubles" qname="sendDoubles" style="anyStyle" use="anyUse"/>
+</service>
