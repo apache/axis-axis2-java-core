@@ -1,12 +1,17 @@
 package org.apache.axis.impl.llom.builder;
 
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMNodeImpl;
-import org.apache.axis.impl.llom.OMTextImpl;
-import org.apache.axis.om.*;
-
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.OMNodeImpl;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,6 +37,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
 
     protected OMFactory ombuilderFactory;
     protected XMLStreamReader parser;
+    protected OMFactory omfactory;
 
     protected OMNode lastNode;
 //returns the state of completion
@@ -47,10 +53,12 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     protected StAXBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         this.ombuilderFactory = ombuilderFactory;
         this.parser = parser;
+        omfactory = OMFactory.newInstance();
     }
 
     protected StAXBuilder(XMLStreamReader parser) {
         this(OMFactory.newInstance(), parser);
+		omfactory = OMFactory.newInstance();
     }
 
     public void setOmbuilderFactory(OMFactory ombuilderFactory) {
@@ -79,14 +87,14 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     protected OMNode createOMText() throws OMException {
         if (lastNode == null)
             throw new OMException();
-        OMNodeImpl node;
+        OMNode node;
         if (lastNode.isComplete()) {
-            node = new OMTextImpl(lastNode.getParent(), parser.getText());
+            node = omfactory.createText(lastNode.getParent(), parser.getText());
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
             OMElementImpl e = (OMElementImpl) lastNode;
-            node = new OMTextImpl(e, parser.getText());
+            node = omfactory.createText(e, parser.getText());
             e.setFirstChild(node);
         }
         return node;

@@ -19,21 +19,7 @@ package org.apache.axis.om;
  * This will help to create OM API object. This will ease the switching from one OM impl to another.
  */
 public abstract class OMFactory {
-
-    //    /**
-//     * @param parent
-//     * @param object
-//     * This is used to construct the elements from an Object
-//     * @return the parent itself
-//     */
-//   public abstract OMElement createOMElement(OMElement parent,Object object);
-
-    /**
-     * @param parent
-     * @return
-     */
-    public abstract OMElement createOMElement(OMElement parent);
-
+	public abstract void free(OMNode node);
     /**
      * @param localName
      * @param ns
@@ -57,18 +43,18 @@ public abstract class OMFactory {
      * @param parent
      * @return
      */
-    public abstract OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent);
+   /// public abstract OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent);
 
-    /**
-     * @param parent
-     * @return
-     */
-    public abstract OMNamedNode createOMNamedNode(OMElement parent);
+//    /**
+//     * @param parent
+//     * @return
+//     */
+//    public abstract OMNamedNode createOMNamedNode(OMElement parent);
 
     public abstract OMNamespace createOMNamespace(String uri, String prefix);
 
 
-    public abstract OMNode createOMNode(OMElement parent);
+//    public abstract OMNode createOMNode(OMElement parent);
 
     /**
      * @param parent

@@ -1,7 +1,30 @@
 package org.apache.axis.impl.llom.factory;
 
-import org.apache.axis.impl.llom.*;
-import org.apache.axis.om.*;
+import java.util.Stack;
+
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.OMNamedNodeImpl;
+import org.apache.axis.impl.llom.OMNamespaceImpl;
+import org.apache.axis.impl.llom.OMNodeImpl;
+import org.apache.axis.impl.llom.OMTextImpl;
+import org.apache.axis.impl.llom.SOAPBodyImpl;
+import org.apache.axis.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.impl.llom.SOAPFaultImpl;
+import org.apache.axis.impl.llom.SOAPHeaderBlockImpl;
+import org.apache.axis.impl.llom.SOAPHeaderImpl;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamedNode;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -20,48 +43,73 @@ import org.apache.axis.om.*;
  * <p/>
  */
 public class OMLinkedListImplFactory extends OMFactory {
+	private Stack elements = new Stack();
+	private Stack textNodes = new Stack();
+	
+	public void free(OMNode node){
+		int type = node.getType();
+		switch(type){
+			case OMNode.ELEMENT_NODE:
+			elements.push(node);
+			case OMNode.TEXT_NODE:
+			textNodes.push(node);
+			default:
+			//NOOP;
+			
+		}
+	}
 
-
-//    public OMElement createOMElement(OMElement parent, OutObject object) {
-//        ObjectToOMBuilder objectToOMBuilder = new ObjectToOMBuilder(parent, object);
-//        createOMElement(null, null, parent, objectToOMBuilder);
-//        return parent;
-//    }
-
-    public OMElement createOMElement(OMElement parent) {
-        return new OMElementImpl(parent);
-    }
 
     public OMElement createOMElement(String localName, OMNamespace ns) {
-        return new OMElementImpl(localName, ns);
+		OMElementImpl element = null;
+		if(elements.isEmpty()){
+			element = new OMElementImpl();
+		}
+		element.init(localName, ns);
+		return element;
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMElementImpl(localName, ns, parent, builder);
+    	OMElementImpl element = null;
+    	if(elements.isEmpty()){
+    		element = new OMElementImpl();
+    	}
+        element.init(localName, ns, parent, builder);
+        return element;
     }
 
-    public OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent) {
-        return new OMNamedNodeImpl(localName, ns, parent);
-    }
-
-    public OMNamedNode createOMNamedNode(OMElement parent) {
-        return new OMNamedNodeImpl(parent);
-    }
+//    public OMNamedNode createOMNamedNode(String localName, OMNamespace ns, OMElement parent) {
+//        return new OMNamedNodeImpl(localName, ns, parent);
+//    }
+//
+//    public OMNamedNode createOMNamedNode(OMElement parent) {
+//        return new OMNamedNodeImpl(parent);
+//    }
 
     public OMNamespace createOMNamespace(String uri, String prefix) {
         return new OMNamespaceImpl(uri, prefix);
     }
 
-    public OMNode createOMNode(OMElement parent) {
-        return new OMNodeImpl(parent);
-    }
+//    public OMNode createOMNode(OMElement parent) {
+//        return new OMNodeImpl(parent);
+//    }
 
     public OMText createText(OMElement parent, String text) {
-        return new OMTextImpl(parent, text);
+		OMTextImpl textNode = null;
+		if(textNodes.isEmpty()){
+			textNode = new OMTextImpl();
+		}
+		textNode.init(parent, text);
+		return textNode;
     }
 
     public OMText createText(String s) {
-        return new OMTextImpl(s);
+		OMTextImpl textNode = null;
+		if(textNodes.isEmpty()){
+			textNode = new OMTextImpl();
+		}
+		textNode.init(s);
+		return textNode;
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope) {

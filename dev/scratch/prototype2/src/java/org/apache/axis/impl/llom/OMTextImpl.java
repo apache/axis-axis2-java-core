@@ -25,15 +25,17 @@ import java.util.Stack;
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     protected short textType = TEXT_NODE;
+    
+	public OMTextImpl(){}
+    
 
-    public OMTextImpl(OMElement parent, String text) {
-        super(parent);
+    public void init(OMElement parent, String text) {
+        super.init(parent);
         setValue(text);
         done = true;
     }
 
-    public OMTextImpl(String s) {
-        super();
+    public void init(String s) {
         setValue(s);
     }
 

@@ -157,5 +157,5 @@ public interface OMNode {
      * @throws XMLStreamException
      */
     public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException ;
-
+    public void free();
 }

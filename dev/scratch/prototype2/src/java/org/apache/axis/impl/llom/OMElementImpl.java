@@ -25,6 +25,8 @@ import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
 
 
+
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -48,30 +50,36 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     private HashMap attributes;
     private Stack namespaceStack;
 
-    public OMElementImpl(OMElement parent) {
-        super(parent);
-        done = true;
-        this.namespaces = CollectionPool.createHashMap(5);
-        this.attributes = CollectionPool.createHashMap(5);
-    }
 
-	public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-		super(localName, null, parent);
-		this.namespaces = CollectionPool.createHashMap(5);
-		this.attributes = CollectionPool.createHashMap(5);
+	public OMElementImpl(){
+		namespaces = new HashMap(5);
+		this.attributes = new HashMap();
+	}
 
+
+	public void free(){
+		this.namespaces.clear();
+		this.attributes.clear();
+		firstChild.free();
+		OMFactory.newInstance().free(this);
+		nextSibling.free();
+	}
+	
+	
+	public void init(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+		super.init(localName, null, parent);
 		if (ns != null) {
 			setNamespace(handleNamespace(ns));
 		}
 		this.builder = builder;
+		namespaceStack = null;
+		firstChild = null;
 	}
 
 
-    public OMElementImpl(String localName, OMNamespace ns) {
-        super(localName, null, null);
-		this.namespaces = CollectionPool.createHashMap(5);
-		this.attributes = CollectionPool.createHashMap(5);
-
+    public void init(String localName, OMNamespace ns) {
+        super.init(localName, null, null);
+		this.done = true;
         if (ns != null) {
             setNamespace(handleNamespace(ns));
         }

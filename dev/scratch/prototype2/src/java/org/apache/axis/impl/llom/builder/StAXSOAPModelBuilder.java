@@ -180,7 +180,6 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         } catch (OMException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new OMException(e);
         }
     }

@@ -269,7 +269,6 @@ public class DeploymentEngine implements DeploymentConstants {
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage(),e);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new AxisFault(e.getMessage(),e);
             }
 

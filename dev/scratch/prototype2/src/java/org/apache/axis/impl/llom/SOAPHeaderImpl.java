@@ -29,7 +29,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @param envelope
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope) {
-        super(envelope);
+        super.init(envelope);
         //set the namespaces
         this.ns = envelope.getNamespace();
         this.localName = OMConstants.HEADER_LOCAL_NAME;
@@ -37,7 +37,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
     }
 
     public SOAPHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, ns, parent, builder);
+        super.init(localName, ns, parent, builder);
     }
 
     /**

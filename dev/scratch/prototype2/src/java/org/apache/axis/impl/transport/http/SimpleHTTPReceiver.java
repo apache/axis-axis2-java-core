@@ -144,8 +144,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             try {
                 Thread.sleep(9000);
             } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+				throw new AxisFault("Thread interuptted",e1);
             }
             this.engine = new AxisEngine(er);
         } catch (PhaseException e) {

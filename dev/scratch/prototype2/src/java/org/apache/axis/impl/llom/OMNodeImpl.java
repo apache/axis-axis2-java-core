@@ -2,6 +2,7 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;
 
 import javax.xml.stream.XMLStreamException;
@@ -43,8 +44,8 @@ public class OMNodeImpl implements OMNode {
      */
 
 
-    public OMNodeImpl(OMElement parent) {
-        if (parent instanceof OMElementImpl){
+    public void init(OMElement parent) {
+        if (parent != null && parent.getType() == OMNode.ELEMENT_NODE){
             this.parent = (OMElementImpl) parent;
         }
     }
@@ -207,5 +208,9 @@ public class OMNodeImpl implements OMNode {
     public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
         serialize(writer,cache,null);
     }
+	public void free(){
+		OMFactory.newInstance().free(this);
+		nextSibling.free();
+	}
 
 }

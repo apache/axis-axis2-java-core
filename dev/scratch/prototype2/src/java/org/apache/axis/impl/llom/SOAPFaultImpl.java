@@ -30,22 +30,17 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
     private Exception e;
 
     public SOAPFaultImpl(OMElement parent, Exception e) {
-        super(parent);
+        super.init(SOAPFAULT_LOCAL_NAME,
+        	new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_NAMESPACE_PREFIX));
+		this.parent = (OMElementImpl)parent;       
         this.e = e;
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         this.addChild(OMFactory.newInstance().createText(this, sw.getBuffer().toString()));
-        localName = SOAPFAULT_LOCAL_NAME;
-        setNamespace(new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_NAMESPACE_PREFIX));
     }
 
-//    public SOAPFaultImpl(OMElement parent) {
-//        super(parent);
-//
-//    }
-
     public SOAPFaultImpl(OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(SOAPFAULT_LOCAL_NAME, ns, parent, builder);
+        super.init(SOAPFAULT_LOCAL_NAME, ns, parent, builder);
     }
 
     public void setFaultCode(QName faultCode) throws OMException {

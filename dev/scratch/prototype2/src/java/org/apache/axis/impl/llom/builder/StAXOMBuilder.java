@@ -30,15 +30,18 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     protected OMDocument document;
+    protected OMFactory omFactory;
 
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocument(this);
+		omfactory = OMFactory.newInstance();
     }
 
     public StAXOMBuilder(XMLStreamReader parser) {
         super(parser);
         document = new OMDocument(this);
+		omfactory = OMFactory.newInstance();
     }
 
     protected OMNode createOMElement() throws OMException {
@@ -46,15 +49,15 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
         String elementName = parser.getLocalName();
 
         if (lastNode == null) {
-            node = new OMElementImpl(elementName, null, null, this);
+            node = omfactory.createOMElement(elementName, null, null, this);
             document.setRootElement(node);
         } else if (lastNode.isComplete()) {
-            node = new OMElementImpl(elementName, null, lastNode.getParent(), this);
+            node = omfactory.createOMElement(elementName, null, lastNode.getParent(), this);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
-            node = new OMElementImpl(elementName, null, (OMElement) lastNode, this);
+            node = omfactory.createOMElement(elementName, null, (OMElement) lastNode, this);
             e.setFirstChild(node);
         }
 
@@ -122,7 +125,6 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
         } catch (OMException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new OMException(e);
         }
     }

@@ -66,9 +66,6 @@ public class ExecutionChain {
                 }
             }
         } catch (Exception e) {
-            /////////////
-            e.printStackTrace();
-            ////////////////
             while (!executionStack.isEmpty()) {
                 Handler handler = (Handler) executionStack.pop();
                 handler.revoke(msgctx);
