@@ -11,6 +11,7 @@
 	<path id="axis.test.classpath">
 		<path refid="maven.dependency.classpath"></path>
 		<pathelement location="${root}/target/classes"/>
+		<pathelement location="${root}/target/test-classes"/>
 	</path>
 	
 	<target name="compile" depends="init" unless="jars.uptodate">

@@ -20,8 +20,7 @@ package org.apache.axis.om;
  */
 class FactoryFinder {
 
-    private static final String defaultClassName = "org.apache.axis.impl.llom.factory.OMLinkedListImplFactory";
-
+    private static final String defaultClassName = "org.apache.axis.om.impl.llom.factory.OMLinkedListImplFactory";
     /**
      * This needs to be improved. Currently the factory is loaded only from the default implementation
      * However provisions should be made to load a custom factory depending on the users setting

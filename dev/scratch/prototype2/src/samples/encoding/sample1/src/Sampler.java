@@ -1,8 +1,6 @@
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
-import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -104,7 +102,9 @@ public class Sampler {
         Object[] structs = (Object[]) obj;
 
         for (int i = 0; i < structs.length; i++) {
-            TestCase.assertTrue(structs[i].equals(objs[i]));
+            if(!structs[i].equals(objs[i])){
+                throw new Exception("Assertion Failed");
+            }
 
         }
         

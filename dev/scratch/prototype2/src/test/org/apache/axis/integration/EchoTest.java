@@ -168,7 +168,7 @@ public class EchoTest extends TestCase {
                 "Hello testing4",
                 "Hello testing5" };
         Class clasname =
-            Class.forName("org.apache.axis.sample.echo.EchoStruct", true, cl);
+            Class.forName("EchoStruct", true, cl);
         Object obj = clasname.newInstance();
 
         Method method1 =
@@ -215,7 +215,7 @@ public class EchoTest extends TestCase {
 
         Class encoderClass =
             Class.forName(
-                "org.apache.axis.sample.echo.EchoStructEncoder",
+                "EchoStructEncoder",
                 true,
                 cl);
         Constructor constCt =
@@ -247,7 +247,7 @@ public class EchoTest extends TestCase {
     public void testEchoStructArray() throws Exception {
         Object[] objs = new Object[10];
         Class clasname =
-            Class.forName("org.apache.axis.sample.echo.EchoStruct", true, cl);
+            Class.forName("EchoStruct", true, cl);
 
         for (int i = 0; i < objs.length; i++) {
 
@@ -297,7 +297,7 @@ public class EchoTest extends TestCase {
 
         Class encoderClass =
             Class.forName(
-                "org.apache.axis.sample.echo.EchoStructEncoder",
+                "EchoStructEncoder",
                 true,
                 cl);
         Constructor constCt =

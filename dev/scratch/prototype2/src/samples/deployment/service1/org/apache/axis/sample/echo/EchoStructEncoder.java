@@ -13,11 +13,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 import org.xml.sax.ContentHandler;
 
 public class EchoStructEncoder implements Encoder {
@@ -355,7 +354,7 @@ public class EchoStructEncoder implements Encoder {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis.encoding.Encoder#setObject(java.lang.Object)
+	 * @see org.apache.axis.testUtils.Encoder#setObject(java.lang.Object)
 	 */
 	public void setObject(Object obj) {
 		this.struct = (EchoStruct) obj;

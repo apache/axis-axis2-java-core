@@ -17,7 +17,7 @@ package org.apache.axis.samples.userguide.sample3.server;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

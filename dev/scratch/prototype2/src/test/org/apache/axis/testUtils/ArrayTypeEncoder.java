@@ -105,9 +105,6 @@ public class ArrayTypeEncoder implements Encoder{
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis.encoding.Encoder#setObject(java.lang.Object)
-     */
     public void setObject(Object obj) {
         this.obj = (Object[])obj;
     }

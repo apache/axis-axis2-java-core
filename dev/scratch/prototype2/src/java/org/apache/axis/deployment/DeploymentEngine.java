@@ -385,11 +385,11 @@ public class DeploymentEngine implements DeploymentConstants {
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
-                            throw new RuntimeException(de.getMessage());
+                            throw new RuntimeException(de);
                         } catch (AxisFault axisFault) {
-                            throw new RuntimeException(axisFault.getMessage());
+                            throw new RuntimeException(axisFault);
                         } catch (Exception e) {
-                            throw new RuntimeException(e.getMessage());
+                            throw new RuntimeException(e);
                         } finally {
                             currentFileItem = null;
                         }
@@ -401,9 +401,9 @@ public class DeploymentEngine implements DeploymentConstants {
                             addNewModule(metaData);
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
-                            throw new RuntimeException(e.getMessage());
+                            throw new RuntimeException(e);
                         } catch (AxisFault axisFault) {
-                            throw new RuntimeException(axisFault.getMessage());
+                            throw new RuntimeException(axisFault);
                         } finally {
                             currentFileItem = null;
                         }

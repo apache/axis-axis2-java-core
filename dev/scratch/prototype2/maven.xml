@@ -7,7 +7,7 @@
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
-    <preGoal name="test:test">
+    <postGoal name="test:compile">
         <j:jelly xmlns="jelly:ant">
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/general/sample1"/>
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service1"/>
@@ -17,7 +17,7 @@
     		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
 	</j:jelly>
       <ant:copy file="${basedir}/src/test-resources/deployment/server.xml" tofile="${basedir}/target/test-resources/deployment/server.xml"/>
-    </preGoal> 
+    </postGoal> 
 	<postGoal name="jar">
         <ant:mkdir dir="${maven.repo.local}/axis/jars"/>
 		<ant:copy file="${basedir}/target/axis2-M1.jar" tofile="${maven.repo.local}/axis/jars/axis2-M1.jar"/>

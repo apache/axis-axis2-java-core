@@ -23,7 +23,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.handlers.AbstractHandler;
 
 public class Handler3 extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
