@@ -1,6 +1,7 @@
 package org.apache.axis.clientapi;
 
 import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation. <p/>Licensed under the
@@ -17,12 +18,12 @@ import java.util.Hashtable;
 public class Correlator {
     private static Correlator instance = null;
 
-    private static Hashtable correlationHash = null;
+    private static HashMap correlationHash = null;
 
     private Correlator() {
         // Exists only to defeat instantiation.
 
-        correlationHash = new Hashtable();
+        correlationHash = new HashMap();
     }
 
     public static Correlator getInstance() {

@@ -6,6 +6,8 @@ import org.apache.axis.deployment.repository.utill.WSInfoList;
 
 import java.io.File;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -27,7 +29,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     /**
      * to store curreently checking jars
      */
-    private Vector current_jars;
+    private List current_jars;
     /**
      * Referance to a WSInfoList
      */
@@ -108,13 +110,13 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      */
     private void searchWS(String folderName, int type) {
         String files[];
-        current_jars = new Vector();
+        current_jars = new ArrayList();
         File root = new File(folderName);
         // adding the root folder to the vector
-        current_jars.addElement(root);
+        current_jars.add(root);
 
         while (current_jars.size() > 0) {         // loop until empty
-            File dir = (File) current_jars.elementAt(0); // get first dir
+            File dir = (File) current_jars.get(0); // get first dir
             current_jars.remove(0);       // remove it
             files = dir.list();              // get list of files
             if (files == null) {
@@ -123,7 +125,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
             for (int i = 0; i < files.length; i++) { // iterate
                 File f = new File(dir, files[i]);
                 if (f.isDirectory()) {        // see if it's a directory
-                    current_jars.insertElementAt(f, 0);
+                    current_jars.add(0, f);
                 } // add dir to start of agenda
                 else if (isJarFile(f.getName())) {
                     wsinfoList.addWSInfoItem(f, type);

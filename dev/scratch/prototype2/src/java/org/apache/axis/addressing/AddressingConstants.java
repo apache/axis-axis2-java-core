@@ -17,7 +17,7 @@ package org.apache.axis.addressing;
  *
  * This will hold all the constants related WS-Addressing
  */
-public class AddressingConstants {
+public interface AddressingConstants {
     public static final String WSA_MESSAGE_ID = "MessageID";
     public static final String WSA_RELATES_TO = "RelatesTo";
     public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE = "RelationshipType";

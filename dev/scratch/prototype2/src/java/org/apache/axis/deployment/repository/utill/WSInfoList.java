@@ -6,6 +6,8 @@ import org.apache.axis.deployment.DeploymentEngine;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,12 +28,12 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * This is to store all the jar files in a specified folder (WEB_INF)
      */
-    private static Vector jarlist = new Vector();
+    private static List jarlist = new ArrayList();
 
     /**
      * All the curently updated jars
      */
-    public Vector currentjars = new Vector();
+    public List currentjars = new ArrayList();
 
     /**
      * Referance to DeploymentEngine to make update
@@ -46,7 +48,7 @@ public class WSInfoList implements DeploymentConstants {
      * This method is used to initialize the vector
      */
     public void init() {
-        jarlist.removeAllElements();
+        jarlist.clear();
     }
 
     /**
@@ -84,6 +86,7 @@ public class WSInfoList implements DeploymentConstants {
 
                         }
                     }
+                    break;
                 }
             case MODULE:
                 {
@@ -103,6 +106,7 @@ public class WSInfoList implements DeploymentConstants {
 
                         }
                     }
+                    break;
                 }
         }
         String jarname = file.getName();
@@ -119,7 +123,7 @@ public class WSInfoList implements DeploymentConstants {
     public WSInfo getFileItem(String filename) {
         int sise = jarlist.size();
         for (int i = 0; i < sise; i++) {
-            WSInfo wsInfo = (WSInfo) jarlist.elementAt(i);
+            WSInfo wsInfo = (WSInfo) jarlist.get(i);
             if (wsInfo.getFilename().equals(filename)) {
                 return wsInfo;
             }
@@ -165,15 +169,15 @@ public class WSInfoList implements DeploymentConstants {
     public void checkForUndeploye() {
         Iterator iter = jarlist.listIterator();
         int size = currentjars.size();
-        Vector tempvector = new Vector();
-        tempvector.removeAllElements();
+        List tempvector = new ArrayList();
+        tempvector.clear();
         String filename = "";
         boolean exist = false;
         while (iter.hasNext()) {
             WSInfo fileitem = (WSInfo) iter.next();
             exist = false;
             for (int i = 0; i < size; i++) {
-                filename = (String) currentjars.elementAt(i);
+                filename = (String) currentjars.get(i);
                 if (filename.equals(fileitem.getFilename())) {
                     exist = true;
                     break;
@@ -189,11 +193,11 @@ public class WSInfoList implements DeploymentConstants {
         }
 
         for (int i = 0; i < tempvector.size(); i++) {
-            WSInfo fileItem = (WSInfo) tempvector.elementAt(i);
-            jarlist.removeElement(fileItem);
+            WSInfo fileItem = (WSInfo) tempvector.get(i);
+            jarlist.remove(fileItem);
         }
-        tempvector.removeAllElements();
-        currentjars.removeAllElements();
+        tempvector.clear();
+        currentjars.clear();
     }
 
 
@@ -203,7 +207,7 @@ public class WSInfoList implements DeploymentConstants {
     public void update() {
         checkForUndeploye();
         deplorer.doUnDeploye();
-        deplorer.doDeploye();
+        deplorer.doDeploy();
 
     }
 

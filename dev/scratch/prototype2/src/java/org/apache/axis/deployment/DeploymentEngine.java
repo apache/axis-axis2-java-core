@@ -29,6 +29,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -52,11 +54,11 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * This will store all the web Services to deploye
      */
-    private Vector wsToDeploy = new Vector();
+    private List wsToDeploy = new ArrayList();
     /**
      * this will store all the web Services to undeploye
      */
-    private Vector wsToUnDeploy = new Vector();
+    private List wsToUnDeploy = new ArrayList();
 
     /**
      * to keep a ref to engine register
@@ -362,32 +364,22 @@ public class DeploymentEngine implements DeploymentConstants {
         wsToUnDeploy.add(file);
     }
 
-    public void doDeploye() {
+    public void doDeploy() {
         //todo complete this
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
-                currentFileItem = (HDFileItem) wsToDeploy.elementAt(i);
+                currentFileItem = (HDFileItem) wsToDeploy.get(i);
                 int type = currentFileItem.getType();
                 UnZipJAR unZipJAR = new UnZipJAR();
                 switch (type) {
                     case SERVICE:
                         {
                             try {
-//                            	String serviceName = currentFileItem.getName();
-//                            	int endIndex = serviceName.lastIndexOf('.');
-//                            	int startIndex =  serviceName.lastIndexOf('/');
-//                            	if(startIndex == -1){
-//									startIndex =  serviceName.lastIndexOf('\\');
-//                            	}
-                            	
-	//							AxisService service = new AxisService(new QName(serviceName.substring(startIndex +1,endIndex -1)));
-                            	
+//
                                 AxisService service = new AxisService();
                                 unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                                 addnewService(service);
                                 log.info("Deployement WS Name  " + currentFileItem.getName());
-                                // currentFileItem = null;
-                                //  break;
                             }catch (DeploymentException de){
                                 throw new RuntimeException(de.getMessage());
                             }catch (AxisFault axisFault) {
@@ -406,8 +398,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                 unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
                                 addNewModule(metaData);
                                 log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
-                                // currentFileItem = null;
-                                //  break;
                             } catch (DeploymentException e) {
                                    throw new RuntimeException(e.getMessage());
                             } catch (AxisFault axisFault) {
@@ -417,22 +407,23 @@ public class DeploymentEngine implements DeploymentConstants {
                             }
                             break;
                         }
+
                 }
             }
         }
-        wsToDeploy.removeAllElements();
+        wsToDeploy.clear();
     }
 
     public void doUnDeploye() {
         //todo complete this
         if (wsToUnDeploy.size() > 0) {
             for (int i = 0; i < wsToUnDeploy.size(); i++) {
-                WSInfo wsInfo = (WSInfo) wsToUnDeploy.elementAt(i);
+                WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                 log.info("UnDeployement WS Name  " + wsInfo.getFilename());
             }
 
         }
-        wsToUnDeploy.removeAllElements();
+        wsToUnDeploy.clear();
     }
 
 

@@ -34,8 +34,6 @@ public abstract class AbstractHandler implements Handler {
         return handlerDesc.getName();
     }
 
-    public abstract void invoke(MessageContext msgContext) throws AxisFault;
-
     public void revoke(MessageContext msgContext) {
     }
 

@@ -20,11 +20,13 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 public class FlowImpl implements Flow {
-   protected Vector list = null; 
+   protected List list = null;
    public FlowImpl(){
-        list = new Vector();
+        list = new ArrayList();
    }
    public void addHandler(HandlerMetaData handler) {
        list.add(handler);

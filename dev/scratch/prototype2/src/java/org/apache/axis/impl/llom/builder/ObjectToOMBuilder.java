@@ -1,6 +1,8 @@
 package org.apache.axis.impl.llom.builder;
 
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.axis.encoding.Encoder;
 import org.apache.axis.om.OMConstants;
@@ -45,7 +47,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
     // ============= For content handler ============
     private OMNode lastNode = null;
-    private Vector nameSpaces = new Vector();
+    private List nameSpaces = new ArrayList();
     // ==============================================
 
 
@@ -197,7 +199,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         addNewNode(element, lastNode);
 
         for (int i = 0; i < nameSpaces.size(); i++) {
-            OMNamespace ns = (OMNamespace) nameSpaces.elementAt(i);
+            OMNamespace ns = (OMNamespace) nameSpaces.get(i);
             element.declareNamespace(ns);
         }
         nameSpaces.clear();
