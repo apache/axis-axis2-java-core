@@ -116,7 +116,17 @@ public interface OMElement extends OMNamedNode {
      *
      * @param attr
      */
-    public void insertAttribute(OMAttribute attr);
+    public OMAttribute insertAttribute(OMAttribute attr);
+
+    /**
+     *
+     * @param attributeName
+     * @param value
+     * @param ns - the namespace has to be one of the in scope namespace. i.e. the passed namespace
+     * must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
+     * @return
+     */
+    public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns);
 
     public void removeAttribute(OMAttribute attr);
 

@@ -71,9 +71,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             //todo if the attributes are supposed to namespace qualified all the time
             //todo then this should throw an exception here
 
-            node.insertAttribute(ombuilderFactory.createOMAttribute(parser.getAttributeLocalName(i),
-                    ns,
-                    parser.getAttributeValue(i)));
+            node.insertAttribute(parser.getAttributeLocalName(i),parser.getAttributeValue(i), ns);
         }
     }
 

@@ -42,13 +42,29 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
 
 
     public OMElementImpl(String localName, OMNamespace ns) {
-        super(localName, ns, null);
+        super(localName, null, null);
+        if (ns != null) {
+            setNamespace(handleNamespace(ns));
+        }
         done = true;
+    }
+
+    private OMNamespace handleNamespace(OMNamespace ns) {
+
+        OMNamespace namespace = findInScopeNamespace(ns.getName(), ns.getPrefix());
+        if (namespace == null) {
+            namespace = declareNamespace(ns);
+        }
+
+        return namespace;
     }
 
 
     public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, ns, parent);
+        super(localName, null, parent);
+        if (ns != null) {
+            setNamespace(handleNamespace(ns));
+        }
         this.builder = builder;
     }
 
@@ -215,17 +231,17 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
             // no namespace declared in this element.
             // return a null iterator
             // have to look in to this later
-            return new Iterator(){
+            return new Iterator() {
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
 
-                public boolean hasNext(){
+                public boolean hasNext() {
                     return false;
                 }
 
                 public Object next() {
-                    throw new UnsupportedOperationException(); 
+                    throw new UnsupportedOperationException();
                 }
             };
         }
@@ -278,17 +294,32 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      *
      * @param attr
      */
-    public void insertAttribute(OMAttribute attr) {
+    public OMAttribute insertAttribute(OMAttribute attr) {
         if (attributes == null) {
             attributes = new ArrayList(5);
         }
         attributes.add(attr);
+
+        return attr;
     }
 
     public void removeAttribute(OMAttribute attr) {
         if (attributes.indexOf(attr) != -1) {
             attributes.remove(attr);
         }
+    }
+
+    public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns) {
+        OMNamespace namespace = null;
+        if (ns != null) {
+            namespace = findInScopeNamespace(ns.getName(), ns.getPrefix());
+            if (namespace == null) {
+                throw new OMException("Given OMNamespace(" + ns.getName() + ns.getPrefix() + ") for " +
+                        "this attribute is not declared in the scope of this element. First declare the namespace" +
+                        " and then use it with the attribute");
+            }
+        }
+        return insertAttribute(new OMAttributeImpl(localName, ns, value));
     }
 
     public void setBuilder(OMXMLParserWrapper wrapper) {

@@ -22,10 +22,6 @@ import org.apache.axis.om.*;
 public class OMLinkedListImplFactory extends OMFactory {
 
 
-    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
-        return new OMAttributeImpl(localName, ns, value);
-    }
-
     public OMElement createOMElement(OMElement parent) {
         return new OMElementImpl(parent);
     }

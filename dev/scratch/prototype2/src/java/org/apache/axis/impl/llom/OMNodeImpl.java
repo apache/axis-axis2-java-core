@@ -40,8 +40,9 @@ public class OMNodeImpl implements OMNode {
 
 
     public OMNodeImpl(OMElement parent) {
-        if (parent instanceof OMNodeImpl)
+        if (parent instanceof OMElementImpl){
             this.parent = (OMElementImpl) parent;
+        }
     }
 
     /**

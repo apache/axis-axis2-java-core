@@ -20,15 +20,7 @@ package org.apache.axis.om;
  */
 public abstract class OMFactory {
 
-    /**
-     * @param localName
-     * @param ns
-     * @param value
-     * @return
-     */
-    public abstract OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
-
-//    /**
+    //    /**
 //     * @param parent
 //     * @param object
 //     * This is used to construct the elements from an Object
