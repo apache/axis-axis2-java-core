@@ -385,11 +385,11 @@ public class DeploymentEngine implements DeploymentConstants {
                                 // currentFileItem = null;
                                 //  break;
                             }catch (DeploymentException de){
-                                de.printStackTrace();
+                                throw new RuntimeException(de.getMessage());
                             }catch (AxisFault axisFault) {
-                                axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                                throw new RuntimeException(axisFault.getMessage());
                             } catch (Exception e){
-                                e.printStackTrace();
+                                   throw new RuntimeException(e.getMessage());
                             } finally{
                                 currentFileItem = null;
                             }
@@ -405,9 +405,9 @@ public class DeploymentEngine implements DeploymentConstants {
                                 // currentFileItem = null;
                                 //  break;
                             } catch (DeploymentException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                   throw new RuntimeException(e.getMessage());
                             } catch (AxisFault axisFault) {
-                                axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                   throw new RuntimeException(axisFault.getMessage());
                             }finally{
                                 currentFileItem = null;
                             }
