@@ -5,6 +5,7 @@ import org.apache.axis.deployment.scheduler.SchedulerTask;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.DeployCons;
 import org.apache.axis.deployment.DeployMangerImpl;
+import org.apache.axis.deployment.phaserule.PhaseException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

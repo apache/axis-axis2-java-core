@@ -153,4 +153,13 @@ public class Handler {
             return null;
         }
     }
+
+    public void printMe(){
+        System.out.println("===========================================");
+        System.out.println("Name : " + getName());
+        System.out.println("Ref : "  + getRef());
+        System.out.println("Class : " + getClassName());
+         System.out.println("Phase : " + getPhase());
+        System.out.println("===========================================");
+    }
 }
