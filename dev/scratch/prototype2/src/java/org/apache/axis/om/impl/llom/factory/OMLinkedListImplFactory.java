@@ -2,17 +2,7 @@ package org.apache.axis.om.impl.llom.factory;
 
 import java.util.Stack;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
@@ -21,6 +11,8 @@ import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis.om.impl.llom.SOAPFaultImpl;
 import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
 import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
+
+import javax.xml.namespace.QName;
 
 
 /**
@@ -40,23 +32,27 @@ import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
  * <p/>
  */
 public class OMLinkedListImplFactory extends OMFactory {
-	public static final int MAX_TO_POOL = 100;
-	private Stack elements = new Stack();
-	private Stack textNodes = new Stack();
+    public static final int MAX_TO_POOL = 100;
+    private Stack elements = new Stack();
+    private Stack textNodes = new Stack();
 
-	
+
     public OMElement createOMElement(String localName, OMNamespace ns) {
-		OMElementImpl element = new OMElementImpl(localName, ns);
-		return element;
+        OMElementImpl element = new OMElementImpl(localName, ns);
+        return element;
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-    	OMElementImpl element = new OMElementImpl(localName, ns, parent, builder);
+        OMElementImpl element = new OMElementImpl(localName, ns, parent, builder);
         return element;
     }
 
     public OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix) {
-        return this.createOMElement(localName, this.createOMNamespace(namespaceURI,namespacePrefix));
+        return this.createOMElement(localName, this.createOMNamespace(namespaceURI, namespacePrefix));
+    }
+
+    public OMElement createOMElement(QName qname, OMElement parent) throws OMException {
+        return new OMElementImpl(qname, parent);
     }
 
     public OMNamespace createOMNamespace(String uri, String prefix) {
@@ -64,17 +60,18 @@ public class OMLinkedListImplFactory extends OMFactory {
     }
 
     public OMText createText(OMElement parent, String text) {
-		OMTextImpl textNode = new OMTextImpl(parent, text);
-		return textNode;
+        OMTextImpl textNode = new OMTextImpl(parent, text);
+        return textNode;
     }
 
     public OMText createText(String s) {
-		OMTextImpl textNode = new OMTextImpl(s);;
-		return textNode;
+        OMTextImpl textNode = new OMTextImpl(s);
+        ;
+        return textNode;
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope) {
-    	SOAPBody soapBody = new SOAPBodyImpl(envelope);
+        SOAPBody soapBody = new SOAPBodyImpl(envelope);
         return soapBody;
     }
 
@@ -121,11 +118,11 @@ public class OMLinkedListImplFactory extends OMFactory {
 
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         env.addChild(bodyImpl);
-		//env.setBody(bodyImpl);
+        //env.setBody(bodyImpl);
         SOAPHeaderImpl headerImpl = new SOAPHeaderImpl(env);
         headerImpl.setComplete(true);
         env.addChild(headerImpl);
-		//env.setHeader(headerImpl);
+        //env.setHeader(headerImpl);
         return env;
     }
 }

@@ -47,8 +47,14 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
     }
 
     public OMNamespace getNamespace() throws OMException {
-        if (ns == null)
+
+        if (ns == null && parent != null){
+            ns = parent.getNamespace();
+        }
+
+        if(ns == null)
             throw new OMException("all elements in a soap message must be namespace qualified");
+        
         return ns;
     }
 

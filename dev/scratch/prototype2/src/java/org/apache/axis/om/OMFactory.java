@@ -1,5 +1,7 @@
 package org.apache.axis.om;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -46,6 +48,15 @@ public abstract class OMFactory {
      * @return
      */
     public abstract OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix);
+
+    /**
+     * QName(localPart),
+     * QName(namespaceURI, localPart) - a prefix will be assigned to this
+     * QName(namespaceURI, localPart, prefix)
+     * @param qname
+     * @return
+     */
+    public abstract OMElement createOMElement(QName qname, OMElement parent) throws OMException ;
 
 
     /**
