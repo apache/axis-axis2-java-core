@@ -20,4 +20,11 @@ public class Message {
     public void setContent(OMElement root) {
         this.root = root;
     }
+
+    public String toString() {
+        if (root != null) {
+            return root.getObjectValue().toString();
+        }
+        return "[Empty Message]";
+    }
 }

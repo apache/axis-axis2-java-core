@@ -1,6 +1,7 @@
 package axis2;
 
 import axis2.handlers.BasicHandler;
+import axis2.om.OMElement;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,9 +19,17 @@ public class Provider extends BasicHandler {
         }
 
         // call java class
+        System.out.println("Provider calling Java class...");
 
         // make response message
-        
+        String msg = msgContext.getMessage().getContent().getObjectValue().toString();
+
+        Message response = new Message();
+        OMElement om = new OMElement();
+        om.setObjectValue("Response - you said '" + msg + "'");
+        response.setContent(om);
+        msgContext.setMessage(response);
+
         resp.invoke(msgContext);
         return true;
     }

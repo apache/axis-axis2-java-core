@@ -16,6 +16,8 @@ public class HTTPResponder extends BasicHandler implements Responder, HTTPConsta
         // put the right transport stuff on the end of the chain
 
         System.out.println("HTTPResponder : Writing response... (no 202 should appear)");
+        System.out.println(context.getMessage());
+        
         return true;
     }
 }
