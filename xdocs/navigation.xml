@@ -2,8 +2,7 @@
 <project name="Axis2.0">
   <title>Axis 2.0</title>
   <body>
-  <search/>
-    
+     
     <menu name="Axis 2.0">
       <item name="Introduction" href="intro.html"/>
       
