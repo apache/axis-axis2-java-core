@@ -1,14 +1,13 @@
+
 package userguide.sample1;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -32,13 +31,14 @@ import org.apache.axis.om.SOAPEnvelope;
  */
 
 
-public class SynchronousClient {
+public class AsynchronousClient {
 	
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		if(2 != args.length ){
 			System.out.println("Usage <Port> ");
 			
 		}
+		
 		System.out.println("Initializing the Client Call....");
 		Call call = new Call();
 		System.out.println("Setting the Endpointreference ");
@@ -53,34 +53,35 @@ public class SynchronousClient {
 		
 		call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
 		
+		
+		SOAPEnvelope requestEnvelop = ClientUtil.getEchoSoapEnvelop();
 		try {
-			call.setListenerTransport(Constants.SESSION_SCOPE, true);
-			SOAPEnvelope requestEnvelop = ClientUtil.getEchoSoapEnvelop();
+			call.setListenerTransport("http", true);
 			
-			System.out.println("Sending request...");
+			System.out.println("Sending the Async message ....");
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 			requestEnvelop.serialize(writer,true);
 			writer.flush();
 			System.out.println();
-			SOAPEnvelope responceEnvelop = call.sendReceive(requestEnvelop);
-			System.out.println("Responce received  ...");
-			responceEnvelop.serialize(writer,true);
-			writer.flush();
+			
+			call.sendReceiveAsync(requestEnvelop, new ClientEchoCallbackHandler() );
+			
 			
 		} catch (AxisFault e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (XMLStreamException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (FactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			
+			e1.printStackTrace();                            
 		}
-				
+		catch (XMLStreamException e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("Message sent and the client thread sleep till the responce ....");		
+		try {
+			Thread.sleep(6000);
+		} catch (InterruptedException e2) {
+			System.exit(0);
+			
+		}
 	}
-	
-	
-	
 
 }

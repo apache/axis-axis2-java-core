@@ -9,98 +9,130 @@
                    
                                                                      
      ====================================================================== -->
-<project name="sample1" basedir="." default="compile">
+<project name="samples" basedir="." default="compile">
 	<property name="src.dir" value="src/java" />
-	<property name="build.dir" value="${build.dir}/build" />
+	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="${build.dir}/lib" />
 	<property name="classes.dir" value="./classes" />
-	<property name="setup.dir" value="${build.dir}/setup"/>	
-	<property name="jardrop.dir" value="${build.dir}/services"/>
-	<property environment="env"/>
-	<property name="AXIS_HOME" value="${env.AXIS_HOME}"/>
-	<property name="axis.serverJarDrop.dir" value="${AXIS_HOME}/WEB-INF/services"/>
-	
-	
-	
+
+	<property name="jardrop.dir" value="${build.dir}/services" />
+	<property environment="env" />
+	<property name="AXIS_HOME" value="${env.AXIS_HOME}" />
+	<property name="axis.serverJarDrop.dir" value="${AXIS_HOME}/WEB-INF/services" />
+
+
+
+	<property name="conf.dir" value="conf"/>
 	
 	<path id="classpath.library">
-	        <fileset dir="${AXIS_HOME}/WEB-INF/lib">
-	            <include name="**/*.jar"/>            
-	        </fileset>
-	    </path>
-		
-		<path id="classpath.client">
-			<fileset dir="${lib.dir}">
-				<include name="**/*.jar"/>            
-			</fileset>
-		</path>
-		
-		<path id="classpath.runtimelibraries">
-			<path refid="classpath.library" />
-			<path refid="classpath.client" />
-		</path>
-	
+		<fileset dir="${AXIS_HOME}/WEB-INF/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
-	
+	<path id="classpath.client">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="classpath.runtimelibraries">
+		<path refid="classpath.library" />
+		<path refid="classpath.client" />
+	</path>
+
+
+
 
 	<target name="clean" description="Delete all generated files">
 		<delete dir="${classes.dir}" failonerror="false" />
-		<delete dir="${services.dir}" failonerror="false"/>
+		
 		<delete dir="${build.dir}" failonerror="false" />
-		<delete dir="${lib.dir}" failonerror="false"/>
 	</target>
 
 	<target name="validateAxisHome">
-		<available file="${AXIS_HOME}}" type="dir" property="axis2.deployed"/>				
+		<available file="${AXIS_HOME}}" type="dir" property="axis2.deployed" />
 	</target>
-	
+
 	<target name="validateSevices.dir">
-		<available  file="${AXIS_HOME}/WEB-INF/services" type="dir" property="axis2.services"/>	
+		<available file="${AXIS_HOME}/WEB-INF/services" type="dir" property="axis2.services" />
 	</target>
-	
+
 	<target name="validateDeploymentSettings" depends="validateAxisHome" unless="validateSevices.dir">
-		<mkdir dir="${AXIS_HOME}/WEB-INF/services"/>
+		<mkdir dir="${AXIS_HOME}/WEB-INF/services" />
 	</target>
-	
+
 
 	<target name="createDir">
 		<mkdir dir="${build.dir}" />
-		<mkdir dir="${lib.dir}"/>
+		<mkdir dir="${lib.dir}" />
 		<mkdir dir="${classes.dir}" />
-		<mkdir dir="${build.dir}/${jardrop.dir}"/>
+		<mkdir dir="${jardrop.dir}" />
 	</target>
 
 	<target name="compile" depends="clean,createDir">
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" >
-			<classpath refid="classpath.library"/>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+			<classpath refid="classpath.library" />
 		</javac>
 		<jar destfile="${lib.dir}/${ant.project.name}-all.jar">
-					<fileset dir="${classes.dir}"/> 
+			<fileset dir="${classes.dir}" />
 		</jar>
-		
-		<mkdir  dir="${setup.dir}/1"/>
-		<copy todir="${setup.dir}/1">
-					<fileset dir="${classes.dir}"> 
-						<include name="**/EchoXML.class"/>							
-					</fileset>
-					<fileset dir="${src.dir}">
-						<include name="**/service.xml"/>
-					</fileset>
-		</copy>
-		
-		<jar destfile="${build.dir}/${jardrop.dir}/${ant.project.name}.jar" basedir="${setup.dir}/1"/>	
-		<delete dir="${classes.dir}" failonerror="false"/>
+
+		<copy file="${conf.dir}/service.xml" todir="${build.dir}/META-INF" overwrite="true" />
+
+		<jar destfile="${jardrop.dir}/sample1.jar">
+
+			<fileset dir="${classes.dir}">
+				<include name="**/EchoXML.class" />
+			</fileset>
+			<fileset dir="${build.dir}">
+				<include name="META-INF/service.xml" />
+			</fileset>
+		</jar>
+
+
+		<copy file="${conf.dir}/service4withhandler.xml" tofile="${build.dir}/META-INF/service.xml" overwrite="true" />
+
+		<jar destfile="${jardrop.dir}/sample1WithHandler.jar">
+
+			<fileset dir="${classes.dir}">
+				<include name="**/EchoXML.class" />
+				<include name="**/LoggingHandler.class" />
+			</fileset>
+			<fileset dir="${build.dir}">
+				<include name="META-INF/service.xml" />
+			</fileset>
+		</jar>
+		<delete dir="${classes.dir}" failonerror="false" />
 	</target>
-	
-	
+
+
 	<target name="deploy" depends="compile,validateDeploymentSettings">
-		<copy file="${build.dir}/${jardrop.dir}/${ant.project.name}.jar" todir="${axis.serverJarDrop.dir}" overwrite="true"/>			
+		<copy file="${jardrop.dir}/sample1.jar" todir="${axis.serverJarDrop.dir}" overwrite="true" />
+		<copy file="${jardrop.dir}/sample1WithHandler.jar" todir="${axis.serverJarDrop.dir}" overwrite="true" />
 	</target>
-	
+
 	<target name="echo" depends="compile">
-		<java classname="SynchronousClient">
-			<classpath refid="classpath.runtimelibraries"/>
-			<arg value="8080"/>
+		<java classname="userguide.sample1.SynchronousClient">
+			<classpath refid="classpath.runtimelibraries" />
+			<arg value="8080" />
+			<arg value="/axis2/services/sample1" />
+		</java>
+	</target>
+
+	<target name="echoWithHandler" depends="compile">
+		<java classname="userguide.sample1.SynchronousClient">
+			<classpath refid="classpath.runtimelibraries" />
+			<arg value="8080" />
+			<arg value="/axis2/services/sample1WithHandler" />
+		</java>
+	</target>
+
+	<target name="echoAsync" depends="compile">
+		<java classname="userguide.sample1.AsynchronousClient">
+			<classpath refid="classpath.runtimelibraries" />
+			<arg value="8080" />
+			<arg value="/axis2/services/sample1" />
 		</java>
 	</target>
 </project>
