@@ -1,0 +1,1 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header></soapenv:Header><soapenv:Body><my:echoOMElement xmlns:my="http://localhost/my"><my:myValue>Isaac Assimov, the foundation Sega</my:myValue></my:echoOMElement></soapenv:Body></soapenv:Envelope>
