@@ -43,7 +43,7 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
     private AxisEngine engine;
     private SimpleAxisServer server;
     private Socket socket;
-    private String serviceFromURI;
+//    private String serviceFromURI;
     
     public ServerHttpHandler(SimpleAxisServer server, Socket socket,AxisEngine engine) {
         this.server = server;
@@ -116,16 +116,17 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
 
 
             String filePart = fileName.toString();
-            if (filePart.startsWith("axis/services/")) {
-                String servicePart = filePart.substring(14);
-                int separator = servicePart.indexOf('/');
-                if (separator > -1) {
-                    msgContext.setProperty("objectID",
-                                   servicePart.substring(separator + 1));
-                    servicePart = servicePart.substring(0, separator);
-                }
-               this.serviceFromURI = servicePart;
-            }
+            msgContext.setProperty(MessageContext.REQUEST_URL,filePart);
+//            if (filePart.startsWith("axis/services/")) {
+//                String servicePart = filePart.substring(14);
+//                int separator = servicePart.indexOf('/');
+//                if (separator > -1) {
+//                    msgContext.setProperty("objectID",
+//                                   servicePart.substring(separator + 1));
+//                    servicePart = servicePart.substring(0, separator);
+//                }
+//               this.serviceFromURI = servicePart;
+//            }
 
             if (authInfo.length() > 0) {
                 // Process authentication info
@@ -157,8 +158,6 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
                     msgContext.setProperty(MessageContext.SOAP_ACTION,soapActionString);
                 }
                 
-                Service service = ServiceLocator.locateService(serviceFromURI,soapActionString,msgContext);
-                msgContext.setService(service);
                 // Send it on its way...
                 OutputStream out = socket.getOutputStream();
                 out.write(HTTP);

@@ -36,8 +36,24 @@ public class HTTPTrasnportSender extends AbstractHandler implements TransportSen
     }
     
     public void invoke(MessageContext msgContext) throws AxisFault {
-//        try {
-            OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+        OutputStream out = null;
+        if(msgContext.isProcessingFault()){
+            //Means we are processing fault
+            if(msgContext.getFaultTo()!= null){
+                throw new UnsupportedOperationException("Addressing not suppotrted yet");
+            }else{
+                out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+            }
+        }else{
+            if(msgContext.getTo()!= null){
+                throw new UnsupportedOperationException("Addressing not suppotrted yet");
+            }else if(msgContext.getReplyTo() != null){
+                throw new UnsupportedOperationException("Addressing not suppotrted yet");
+            }else{
+                out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
+            }
+        }
+        
 //            if(!msgContext.isServerSide()){
 //                URL url = (URL)msgContext.getProperty(MessageContext.REQUEST_URL);
 //                if(url != null){
@@ -50,17 +66,13 @@ public class HTTPTrasnportSender extends AbstractHandler implements TransportSen
 //                    throw new AxisFault(MessageContext.REQUEST_URL + "where to send ?");
 //                }
 //            }
+        
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        if(envelope != null){
+            SimpleOMSerializer serializer = new SimpleOMSerializer();
+            serializer.serialize(envelope,this.out);
             
-            SOAPEnvelope envelope = msgContext.getEnvelope();
-            if(envelope != null){
-                SimpleOMSerializer serializer = new SimpleOMSerializer();
-                serializer.serialize(envelope,this.out);
-                
-            }
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+        }
     }
 
     public void revoke(MessageContext msgContext) {

@@ -16,6 +16,9 @@
 package org.apache.axis.om;
 
 import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.AxisFault;
+
 import java.util.Locale;
 
 
@@ -131,7 +134,5 @@ public interface SOAPFault extends OMElement {
     public abstract void setFaultString(String faultString, Locale locale) throws OMException;
 
 
-
-
-
+    public abstract Exception getException() throws OMException;
 }

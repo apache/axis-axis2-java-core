@@ -16,14 +16,14 @@
 
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.handlers.OpNameFinder;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 /**
  *  There is one engine for the Server and the Client. the send() and recive() 
@@ -51,25 +51,19 @@ public class AxisEngine {
                 ExecutionChain exeChain = service.getOutputExecutionChain();
                 exeChain.invoke(mc);
             }
-            TransportSender ts = TransportSenderLocator.locateTransPortSender(mc);
-            ts.invoke(mc);
+            sendTheMessage(mc);
         }catch(AxisFault e){
-            if(mc.isProcessingFault()){
-                //TODO log and exit
-                log.debug("Error in fault flow",e);
-            }else{
-                log.debug("send failed",e);
-                mc.setProcessingFault(true);
-                ExecutionChain faultExeChain = service.getFaultExecutionChain();
-                faultExeChain.invoke(mc);
-            }
+            handleFault(mc,e,service);
         }
         log.info("end the send()");
     }
     
     public void recive(MessageContext mc)throws AxisFault{
-        QName currentServiceName = null;
-        Service service = mc.getService();
+        Service service = null;
+        if(mc.isServerSide()){
+            service = ServiceLocator.locateService(mc);
+            mc.setService(service);
+        }
 
         try{
             if(service != null){
@@ -83,19 +77,30 @@ public class AxisEngine {
                 reciver.invoke(mc);
             }
         }catch(AxisFault e){
-            if(mc.isProcessingFault()){
-                //TODO log and exit
-                log.debug("Error in fault flow",e);
-            }else{
-                log.debug("recive failed",e);
-                mc.setProcessingFault(true);
-                ExecutionChain faultExeChain = service.getFaultExecutionChain();
-                faultExeChain.invoke(mc);
-            }
-            e.printStackTrace();
+            handleFault(mc,e,service);
         }
         log.info("end the recive()");
     }    
+    
+    private void sendTheMessage(MessageContext msgCtx)throws AxisFault{
+        TransportSender ts = TransportSenderLocator.locateTransPortSender(msgCtx);
+        ts.invoke(msgCtx);
+    }
+    
+    private void handleFault(MessageContext mc,Exception e,Service service) throws AxisFault{
+        if(mc.isProcessingFault()){
+            //TODO log and exit
+            log.error("Error in fault flow",e);
+        }else{
+            log.debug("recive failed",e);
+            mc.setProcessingFault(true);
+            ExecutionChain faultExeChain = service.getFaultExecutionChain();
+            faultExeChain.invoke(mc);
+            mc.getEnvelope().getBody().addFault(e);
+            sendTheMessage(mc);
+        }
+    }
+    
 	/**
 	 * @return Returns the registry.
 	 */

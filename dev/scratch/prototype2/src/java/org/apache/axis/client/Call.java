@@ -42,6 +42,7 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFault;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,6 +93,9 @@ public class Call {
             while(children != null && children.hasNext() ){
                 OMNode child = (OMNode)children.next();
                 if(child.getType() == OMNode.ELEMENT_NODE){
+                    if(child instanceof SOAPFault){
+                        throw AxisFault.makeFault(((SOAPFault)child).getException());
+                    }
                     return (OMElement)child;
                 }
             }

@@ -47,7 +47,7 @@ public class EngineTest extends TestCase{
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
         mc = new MessageContext(engineRegistry);
         Service service = engineRegistry.getService(serviceName);
-        mc.setService(service);
+        mc.setProperty(MessageContext.REQUEST_URL,"/axis/services/EchoService");
         mc.setOperation(service.getOperation(operationName));
         
         OutputStream out = System.out;

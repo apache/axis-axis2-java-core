@@ -74,27 +74,31 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        try {
-            // Accept and process requests from the socket
-            while (!stopped) {
-                try {
-                    this.socket = serverSocket.accept();
-                   
-                } catch (java.io.InterruptedIOException iie) {
-                } catch (Exception e) {
-                    log.debug(e.getMessage(), e);
-                    break;
+        try{
+            try {
+                // Accept and process requests from the socket
+                while (!stopped) {
+                    try {
+                        this.socket = serverSocket.accept();
+                       
+                    } catch (java.io.InterruptedIOException iie) {
+                    } catch (Exception e) {
+                        log.debug(e.getMessage(), e);
+                        break;
+                    }
+                    if (socket != null) {
+                        ServerHttpHandler worker = new ServerHttpHandler(this, socket,engine);
+                        MessageContext msgContext = worker.parseHTTPHeaders();
+                        engine.recive(msgContext);
+                        this.socket.close();
+                        this.socket = null;
+                    }
                 }
-                if (socket != null) {
-                    ServerHttpHandler worker = new ServerHttpHandler(this, socket,engine);
-                    MessageContext msgContext = worker.parseHTTPHeaders();
-                    engine.recive(msgContext);
-                    this.socket.close();
-                    this.socket = null;
-                }
-            }
-        } catch (AxisFault e) {
-            log.error(e);
+            } catch (AxisFault e) {
+                log.error(e);
+                this.socket.close();
+                this.socket = null;
+            }     
         }catch (IOException e) {
             log.error(e);
         }
@@ -148,15 +152,15 @@ public class SimpleAxisServer implements Runnable {
         try {
             if(serverSocket != null) {
                 serverSocket.close();
-                while(socket != null){
-                    try {
-                        //make sure all sockets closed by the time 
-                        //else we got in to lot of trouble testing
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        log.error(e1);
-                    }
-                }
+//                while(socket != null){
+//                    try {
+//                        //make sure all sockets closed by the time 
+//                        //else we got in to lot of trouble testing
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e1) {
+//                        log.error(e1);
+//                    }
+//                }
             }
         } catch (IOException e) {
             log.info(e);

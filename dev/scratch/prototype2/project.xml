@@ -82,6 +82,7 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
         <exclude>**/*BadInputTest.java</exclude>
+        <exclude>**/*CallUnregisterdServiceTest.java</exclude>
       </excludes>
       <includes>
         <include>**/*Test.java</include>

@@ -25,7 +25,21 @@ import javax.xml.namespace.QName;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class ServiceLocator {
-    public static Service locateService(String uri,String soapAction,MessageContext msgctx) throws AxisFault{
+    public static Service locateService(MessageContext msgctx) throws AxisFault{
+        String uri = null;
+        String filePart = (String)msgctx.getProperty(MessageContext.REQUEST_URL);
+        String soapAction = (String)msgctx.getProperty(MessageContext.SOAP_ACTION);
+        
+        if (filePart.startsWith("axis/services/")) {
+            String servicePart = filePart.substring(14);
+            int separator = servicePart.indexOf('/');
+            if (separator > -1) {
+                uri = servicePart.substring(0, separator);
+            }else{
+                uri = servicePart;
+            }
+        }
+
         QName serviceName = null;
         if(uri != null){
             int index = uri.indexOf('?');

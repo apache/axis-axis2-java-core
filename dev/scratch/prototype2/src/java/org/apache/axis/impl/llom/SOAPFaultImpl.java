@@ -1,5 +1,6 @@
 package org.apache.axis.impl.llom;
 
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
@@ -71,5 +72,12 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
 
     public void setFaultString(String faultString, Locale locale) throws OMException {
         throw new UnsupportedOperationException(); //TODO implement this
+    }
+    public Exception getException() throws OMException {
+        if(e == null){
+            return new AxisFault();        
+        }else{
+            return e;
+        }
     }
 }
