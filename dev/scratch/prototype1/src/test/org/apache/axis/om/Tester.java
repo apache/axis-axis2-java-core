@@ -25,94 +25,96 @@ import org.apache.axis.om.impl.OMNavigator;
 import org.apache.axis.om.impl.OMTextImpl;
 import org.apache.axis.om.impl.serialize.SimpleOMSerializer;
 import org.apache.axis.om.impl.streamwrapper.OMStAXBuilder;
+import org.apache.axis.AbstractTestCase;
 import org.xmlpull.v1.XmlPullParser;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.namespace.QName;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 
 /**
  * @author Dasarath Weeratunge
+ * @author Ajith Ranabahu (Modifier)
  *
  */
-public class Tester extends TestCase {
-    private static final String IN_FILE_NAME = "src/test-resources/soap/soapmessage.xml";
-    private static final String OUT_FILE_NAME = "src/test-resources/soap/tester-out.xml";
+public class Tester extends AbstractTestCase {
 
     private SimpleOMSerializer serializer = null;
+
+    public Tester(String testName) {
+        super(testName);
+    }
 
     protected void setUp() throws Exception {
         super.setUp();
         serializer = new SimpleOMSerializer();
     }
 
-    public void test1() throws Exception {
-        System.out.println("\n+++");
+    public void testRootNotCompleteInPartialBuild() throws Exception {
         OMElement root= getOMBuilder().getSOAPMessage().getEnvelope();
-        System.out.println(root.isComplete());
-        print(root,System.out);
+        assertFalse("Root should not be complete",root.isComplete());
     }
 
-    public void test2() throws Exception {
-        System.out.println("\n+++");
+    /**
+     * Assumption - The fed XML has at least two children under the root element
+     * @throws Exception
+     */
+    public void testFirstChildDetach() throws Exception {
         OMElement root= getOMBuilder().getSOAPMessage().getEnvelope();
+        assertFalse("Root should not be complete",root.isComplete());
+        OMNode oldFirstChild = root.getFirstChild();
+        assertNotNull(oldFirstChild);
+        oldFirstChild.detach();
 
-        System.out.println(root.isComplete());
-        root.getFirstChild().detach();
+        OMNode newFirstChild = root.getFirstChild();
+        assertNotNull(newFirstChild);
 
-        System.out.println("---");
-        navigate(root);
-
-        OMElement header= (OMElement)root.getFirstChild();
-        //	we read the header completely but do not cache it
-       // header.detach();
-
-        System.out.println("---");
-        navigate(root);
-
-        System.out.println("---");
-        print(root,System.out);
+        assertNotSame(oldFirstChild,newFirstChild);
     }
 
-    public void test3() throws Exception {
-        System.out.println("\n+++");
+    public void testAdditionOfaCompletelyNewElement() throws Exception {
+
         OMElement root= getOMBuilder().getSOAPMessage().getEnvelope();
 
         OMNamespace soapenv= root.resolveNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
         OMNamespace wsa= root.resolveNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
 
-        OMElement relatesTo= new OMElementImpl("RelatesTo", wsa);
+        //Assumption - A RelatesTo Element does not exist in the input document
+        OMElement relatesTo= new OMElementImpl("RelatesTo", wsa);  //todo isn't this wrong? this should come from the factory
         relatesTo.insertAttribute(new OMAttributeImpl("RelationshipType", null, "wsa:Reply", relatesTo));
         relatesTo.insertAttribute(new OMAttributeImpl("mustUnderstand", soapenv, "0", relatesTo));
         relatesTo.addChild(new OMTextImpl(relatesTo, "uuid:3821F4F0-D020-11D8-A10A-E4EE6425FCB0"));
         relatesTo.setComplete(true);
 
-        System.out.println(root.isComplete());
         root.addChild(relatesTo);
 
-        OMNavigator navigator= new OMNavigator(root);
-        OMNode node= navigator.next();
-        do {
-            if (node instanceof OMElement) {
-                OMElement el= (OMElement)node;
-                System.out.println("OMElement= " + el.getLocalName());
-            }
-            else
-                System.out.println("OMText= " + node.getValue());
-            node= navigator.next();
-        }
-        while (node != null);
+        QName name = new QName(wsa.getValue(),"RelatesTo",wsa.getPrefix());
 
-        print(root,System.out);
+        Iterator children = root.getChildrenWithName(name);
+        //this should contain only one child!
+        if (children.hasNext()){
+            OMElement newlyAddedElement = (OMElement)children.next();
+
+            assertNotNull(newlyAddedElement);
+
+            assertEquals(newlyAddedElement.getLocalName(),"RelatesTo");
+            //todo put the assert statements here
+        }else{
+            assertFalse("New child not added",true);
+        }
+
     }
 
+    //Todo need to fix this
     public void test4() throws Exception {
-        System.out.println("\n+++");
+
         OMElementImpl root= new OMElementImpl("Envelope", null);
         OMNamespace soapenv= root.createNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
         root.setNamespace(soapenv);
@@ -151,7 +153,7 @@ public class Tester extends TestCase {
         from.insertSiblingBefore(to);
         to.insertSiblingBefore(messageID);
 
-        root.print(new PrintStream(new FileOutputStream(OUT_FILE_NAME)));
+        //print(root,new PrintStream(new FileOutputStream(OUT_FILE_NAME)));
     }
 
 //	public void test5() throws Exception {
@@ -189,45 +191,12 @@ public class Tester extends TestCase {
 
         while (navigator.isNavigable()){
             tempNode= navigator.next();
-
-            if (tempNode instanceof OMElement) {
-				OMElement el= (OMElement)tempNode;
-				System.out.print("OMElement= " + el.getLocalName());
-			}
-			else
-				System.out.print("OMText= " + tempNode.getValue());
-
         }
-
-//        do {
-//			if (tempNode instanceof OMElement) {
-//				OMElement el= (OMElement)tempNode;
-//				System.out.print("OMElement= " + el.getLocalName());
-//			}
-//			else
-//				System.out.print("OMText= " + tempNode.getValue());
-//			System.out.println(" isComplete= " + tempNode.isComplete());
-//			tempNode= navigator.next();
-//		}
-//		while (tempNode != null);
     }
 
     private OMXMLParserWrapper getOMBuilder() throws Exception {
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(IN_FILE_NAME));
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         return new OMStAXBuilder(reader);
     }
 
-    private static Field[] flds= XmlPullParser.class.getDeclaredFields();
-
-    public static String getFieldName(int field) throws Exception {
-        for (int i= 1; i < flds.length + 1; i++) {
-            if (flds[i].getInt(null) == field)
-                return flds[i].getName();
-        }
-        return null;
-    }
-
-    private void print(OMNode node,OutputStream stream){
-        this.serializer.serialize(node,stream);
-    }
 }

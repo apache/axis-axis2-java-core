@@ -1,7 +1,7 @@
 package org.apache.axis.om;
 
-import org.apache.xml.utils.QName;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**

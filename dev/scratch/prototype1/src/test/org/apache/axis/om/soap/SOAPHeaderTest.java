@@ -22,15 +22,18 @@ package org.apache.axis.om.soap;
 import org.apache.axis.om.impl.OMNamespaceImpl;
 import org.apache.axis.om.soap.SOAPHeader;
 import org.apache.axis.om.soap.SOAPHeaderElement;
-import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.AbstractTestCase;
 
 import java.util.Iterator;
 
 
-public class SOAPHeaderTest extends OMTestCase {
+public class SOAPHeaderTest extends AbstractTestCase {
 
     SOAPHeader soapHeader;
-    public static void main(String[] args) {
+
+    public SOAPHeaderTest(String testName) {
+        super(testName);
     }
 
     /*
@@ -38,6 +41,9 @@ public class SOAPHeaderTest extends OMTestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
+        SOAPEnvelope soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/soapmessage.xml")).
+                                   getSOAPMessage().getEnvelope();
+
         soapHeader = soapEnvelope.getHeader();
     }
 

@@ -6,8 +6,8 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.util.SOAPConstants;
 import org.apache.axis.om.soap.SOAPHeaderElement;
-import org.apache.xml.utils.QName;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**

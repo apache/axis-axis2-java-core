@@ -22,14 +22,17 @@ package org.apache.axis.om.soap;
 import org.apache.axis.om.impl.OMNamespaceImpl;
 import org.apache.axis.om.soap.SOAPBody;
 import org.apache.axis.om.soap.SOAPBodyElement;
-import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.AbstractTestCase;
 
 
-public class SOAPBodyTest extends OMTestCase {
+public class SOAPBodyTest extends AbstractTestCase{
 
     SOAPBody soapBody;
 
-    public static void main(String[] args) {
+
+    public SOAPBodyTest(String testName) {
+        super(testName);
     }
 
     /*
@@ -37,6 +40,8 @@ public class SOAPBodyTest extends OMTestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
+        SOAPEnvelope soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/soapmessage1.xml")).
+                                        getSOAPMessage().getEnvelope();
         soapBody = soapEnvelope.getBody();
     }
 
@@ -56,8 +61,12 @@ public class SOAPBodyTest extends OMTestCase {
     }
 
     public void testAddBodyElement() {
-         String newElementName = "MyBodyElement";
+
+        assertNotNull(soapBody);
+
+        String newElementName = "MyBodyElement";
         SOAPBodyElement soapBodyElement = soapBody.addBodyElement(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf"));
+
         assertTrue("Body Element added has different parent than it should have", soapBodyElement.getParent() == soapBody);
         assertTrue("Body Element added has different localname than it was given", soapBodyElement.getLocalName().equalsIgnoreCase(newElementName));
     }

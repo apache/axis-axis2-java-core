@@ -8,8 +8,9 @@ import org.apache.axis.om.impl.util.SOAPConstants;
 import org.apache.axis.om.soap.SOAPBody;
 import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.soap.SOAPHeader;
-import org.apache.xml.utils.QName;
 
+
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**

@@ -19,15 +19,20 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.OMTestCase;
 import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.AbstractTestCase;
 
 
-public class SOAPEnvelopeAnotherTest extends OMTestCase {
+public class SOAPEnvelopeAnotherTest extends AbstractTestCase {
     SOAPMessage soapMessage;
     SOAPEnvelope soapEnvelope;
+
+    public SOAPEnvelopeAnotherTest(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
-        soapMessage = OMTestUtils.getOMBuilder("src/test-resources/soap/sample1.xml").getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(getTestResourceFile("soap/sample1.xml")).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
     }
     public void testGetHeader() {

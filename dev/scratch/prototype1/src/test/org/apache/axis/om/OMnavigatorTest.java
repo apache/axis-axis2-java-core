@@ -6,10 +6,14 @@ import org.apache.axis.om.impl.factory.OMLinkedListImplFactory;
 import org.apache.axis.om.impl.serialize.SimpleOMSerializer;
 import org.apache.axis.om.impl.streamwrapper.OMStAXBuilder;
 import org.apache.axis.om.soap.SOAPMessage;
+import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.FileReader;
+import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,17 +33,22 @@ import java.io.FileReader;
  * @author Axis team
  * Date: Nov 19, 2004
  * Time: 4:35:04 PM
- * 
+ *
+ * Todo - These test classes are supposed to be modified further to support exact XML's
  */
-public class OMnavigatorTest extends TestCase{
-    private static final String IN_FILE_NAME2 = "src/test-resources/soap/soapmessage1.xml";
+public class OMnavigatorTest extends AbstractTestCase{
+
     private SOAPMessage document = null;
     private SimpleOMSerializer serilizer;
     private OMStAXBuilder builder;
 
+    public OMnavigatorTest(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(IN_FILE_NAME2));
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
         OMFactory factory = new OMLinkedListImplFactory();
         builder = new OMStAXBuilder(factory,xmlStreamReader);
         document = builder.getSOAPMessage();
@@ -48,46 +57,40 @@ public class OMnavigatorTest extends TestCase{
 
 
     public void testnavigatorFullyBuilt(){
-        System.out.println(" #######  Testing fully built OM tree ########");
+
         assertNotNull(document);
-        serilizer.serialize(document.getEnvelope(),System.out);
+        try {
+            serilizer.serialize(document.getEnvelope(), new FileOutputStream(new File("temp.xml")));
+        } catch (FileNotFoundException e) {
+            assertFalse(true);
+        }
 
         //now the OM is fully created
         OMNavigator navigator = new OMNavigator(document.getEnvelope());
         OMNode node=null;
         while(navigator.isNavigable()){
             node = navigator.next();
-
             assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
 
         }
 
     }
 
     public void testnavigatorHalfBuilt(){
-        System.out.println(" #######  Testing partially built OM tree ########");
-        assertNotNull(document);
 
-        //now the OM is not fully created
+        assertNotNull(document);
+         //now the OM is not fully created
         OMNavigator navigator = new OMNavigator(document.getEnvelope());
         OMNode node=null;
 
         while(navigator.isNavigable()){
             node = navigator.next();
-
             assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
 
         }
 
     }
     public void testnavigatorHalfBuiltStep(){
-        System.out.println(" #######  Testing partially built OM tree With Stepping########");
         assertNotNull(document);
 
         //now the OM is not fully created
@@ -104,9 +107,6 @@ public class OMnavigatorTest extends TestCase{
             }
 
             assertNotNull(node);
-
-            System.out.println("node = " + node);
-            System.out.println("node.getValue() = " + node.getValue());
 
         }
 

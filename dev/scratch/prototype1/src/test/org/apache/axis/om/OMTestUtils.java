@@ -17,6 +17,7 @@
 package org.apache.axis.om;
 
 import java.io.FileReader;
+import java.io.File;
 import java.util.Iterator;
 
 
@@ -30,14 +31,17 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class OMTestUtils {
-    public static OMXPPWrapper getOMBuilder(String file) throws Exception {
+
+
+
+    public static OMXPPWrapper getOMBuilder(File file) throws Exception {
         XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.setInput(new FileReader(file));
         OMXPPWrapper omXmlPullParserWrapper = new OMXPPWrapper(parser);
         return omXmlPullParserWrapper;
     }
-    
+
     public static void walkThrough(OMElement omEle){
         Iterator attibIt = omEle.getAttributes();
         while(attibIt.hasNext()){
@@ -47,7 +51,8 @@ public class OMTestUtils {
         Iterator it = omEle.getChildren();
         while(it.hasNext()){
             OMNode ele = (OMNode)it.next();
-            TestCase.assertNotNull("once the has next is not null, the " +                "eleemnt should not be null",ele);
+            TestCase.assertNotNull("once the has next is not null, the " +
+                "eleemnt should not be null",ele);
             
             if(ele instanceof OMElement){
                 walkThrough((OMElement)ele);

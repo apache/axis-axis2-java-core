@@ -3,8 +3,9 @@ package org.apache.axis.om.impl;
 import org.apache.axis.om.*;
 import org.apache.axis.om.impl.util.OMChildrenIterator;
 import org.apache.axis.om.impl.util.OMChildrenQNameIterator;
-import org.apache.xml.utils.QName;
 
+
+import javax.xml.namespace.QName;
 import java.io.PrintStream;
 import java.util.Iterator;
 
@@ -28,6 +29,7 @@ import java.util.Iterator;
  * Time: 1:16:10 PM
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
+
     private OMNode firstChild;
     private OMXMLParserWrapper builder;
     private OMAttributeImpl firstAttribute;

@@ -3,8 +3,8 @@ package org.apache.axis.om.impl.util;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.impl.OMNamedNodeImpl;
 import org.apache.axis.om.impl.OMNodeImpl;
-import org.apache.xml.utils.QName;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**
@@ -116,8 +116,13 @@ public class OMChildrenQNameIterator implements Iterator {
          }
 
         // if the given localname is null, whatever value this.qname has, its a match
-        boolean localNameMatch = qNameToBeMatched.getLocalName() == null || qNameToBeMatched.getLocalName() == "" || (elementQName != null && elementQName.getLocalName().equalsIgnoreCase(qNameToBeMatched.getLocalName()));
-        boolean namespaceURIMatch = qNameToBeMatched.getNamespaceURI() == null || qNameToBeMatched.getNamespaceURI() == "" ||  (elementQName != null && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
+        boolean localNameMatch = qNameToBeMatched.getLocalPart() == null ||
+                qNameToBeMatched.getLocalPart() == "" ||
+                (elementQName != null && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
+
+        boolean namespaceURIMatch = qNameToBeMatched.getNamespaceURI() == null ||
+                qNameToBeMatched.getNamespaceURI() == "" ||
+                (elementQName != null && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
 
         return localNameMatch && namespaceURIMatch;
 

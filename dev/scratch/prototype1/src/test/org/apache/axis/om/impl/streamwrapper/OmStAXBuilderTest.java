@@ -5,10 +5,14 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.impl.factory.OMLinkedListImplFactory;
 import org.apache.axis.om.impl.serialize.SimpleOMSerializer;
 import org.apache.axis.om.soap.SOAPMessage;
+import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.FileReader;
+import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -28,32 +32,41 @@ import java.io.FileReader;
  * @author Axis team
  * Date: Nov 18, 2004
  * Time: 3:54:54 PM
- * 
+ *
  */
-public class OmStAXBuilderTest extends TestCase{
+public class OmStAXBuilderTest extends AbstractTestCase {
 
-    private static final String FILE_NAME = "src/test-resources/soap/soapmessage1.xml";
-    private OMFactory factory =null;
+
+
+    private OMFactory factory = null;
     private OMStAXBuilder builder;
     private SimpleOMSerializer serilizer;
+    private File tempFile;
+
+    public OmStAXBuilderTest(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
 
         factory = new OMLinkedListImplFactory();
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(FILE_NAME));
-        builder = new OMStAXBuilder(factory,reader);
+        XMLStreamReader reader = XMLInputFactory.newInstance().
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
+        builder = new OMStAXBuilder(factory, reader);
         serilizer = new SimpleOMSerializer();
+        tempFile = File.createTempFile("temp", "xml");
+
     }
 
-    public void testStaxBuilder(){
-
+    public void testStaxBuilder() throws FileNotFoundException{
         SOAPMessage message = builder.getSOAPMessage();
         assertNotNull(message);
-        serilizer.serialize(message.getEnvelope(),System.out);
-
-
+        serilizer.serialize(message.getEnvelope(), new FileOutputStream(tempFile));
     }
 
 
-
+    protected void tearDown() throws Exception {
+        tempFile.delete();
+    }
 
 }

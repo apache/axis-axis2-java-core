@@ -19,15 +19,27 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.OMTestCase;
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.OMTestUtils;
 
 
-public class SOAPEnvelopeTest extends OMTestCase {
+public class SOAPEnvelopeTest extends AbstractTestCase {
+
+    private SOAPEnvelope soapEnvelope;
+
+    public SOAPEnvelopeTest(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
+        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/soapmessage.xml")).
+                            getSOAPMessage().getEnvelope();
+
     }
     public void testGetHeader() {
         SOAPHeader header = soapEnvelope.getHeader();
+
         assertTrue("Header information retrieved not correct", ( header != null && header.getLocalName().equalsIgnoreCase("Header")) );
     }
 

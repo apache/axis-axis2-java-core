@@ -20,34 +20,39 @@
 package org.apache.axis.om.soap;
 
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMTestCase;
 import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.AbstractTestCase;
 
 
-public class MessagesTest extends OMTestCase {
+public class MessagesTest extends AbstractTestCase {
+
     SOAPMessage soapMessage;
     SOAPEnvelope soapEnvelope;
 
+    public MessagesTest(String testName) {
+        super(testName);
+    }
+
     public void testMessageWithLotOfWhiteSpaces() throws OMException, Exception {
-        soapMessage = OMTestUtils.getOMBuilder("src/test-resources/soap/whitespacedMessage.xml").getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(getTestResourceFile("soap/whitespacedMessage.xml")).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testMinimalMessage() throws OMException, Exception {
-        soapMessage = OMTestUtils.getOMBuilder("src/test-resources/soap/minimalMessage.xml").getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testReallyBigMessage() throws OMException, Exception {
-        soapMessage = OMTestUtils.getOMBuilder("src/test-resources/soap/reallyReallyBigMessage.xml").getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(getTestResourceFile("soap/reallyReallyBigMessage.xml")).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
     public void testEmptyBodiedMessage() throws OMException, Exception {
-        soapMessage = OMTestUtils.getOMBuilder("src/test-resources/soap/emtyBodymessage.xml").getSOAPMessage();
+        soapMessage = OMTestUtils.getOMBuilder(getTestResourceFile("soap/emptyBodymessage.xml")).getSOAPMessage();
         soapEnvelope = soapMessage.getEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }

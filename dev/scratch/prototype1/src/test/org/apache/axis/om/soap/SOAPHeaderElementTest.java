@@ -21,28 +21,35 @@ package org.apache.axis.om.soap;
 
 import org.apache.axis.om.soap.SOAPHeader;
 import org.apache.axis.om.soap.SOAPHeaderElement;
-import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.OMTestUtils;
+import org.apache.axis.AbstractTestCase;
 
 import java.util.Iterator;
 
 
-public class SOAPHeaderElementTest extends OMTestCase {
+public class SOAPHeaderElementTest extends AbstractTestCase{
 
     SOAPHeader soapHeader;
     SOAPHeaderElement soapHeaderElement;
 
+    public SOAPHeaderElementTest(String testName) {
+        super(testName);
+    }
 
     protected void setUp() throws Exception {
         super.setUp();
+        SOAPEnvelope soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/soapmessage.xml")).
+                            getSOAPMessage().getEnvelope();
+
         soapHeader = soapEnvelope.getHeader();
         Iterator headerElementIter = soapHeader.examineAllHeaderElements();
+
         if (headerElementIter.hasNext()) {
             soapHeaderElement = (SOAPHeaderElement) headerElementIter.next();
        }
+
     }
 
-    public static void main(String[] args) {
-    }
 
     public void testSetAndGetActor() {
         String newActorURI = "http://newActor.org";

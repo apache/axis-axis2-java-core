@@ -86,7 +86,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
-            System.out.println("lastNode = " + lastNode.getClass());
+//            System.out.println("lastNode = " + lastNode.getClass());
             OMElementImpl e = (OMElementImpl) lastNode;
             node = constructNode((OMElement) lastNode, elementName);
 //            node = new OMElementImpl(parser.getName(), null, (OMElement) lastNode, this);

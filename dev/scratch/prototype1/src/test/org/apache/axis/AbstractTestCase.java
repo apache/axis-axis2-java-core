@@ -30,7 +30,10 @@ public abstract class AbstractTestCase
 	protected String sampleDir = "src/samples/";
 	protected String outDir = "target/generated/samples/";
 	protected String tempDir = "target/generated/temp";
-	/** 
+	protected String testResourceDir = "src/test-resources";
+
+
+    /**
 	 * Basedir for all file I/O. Important when running tests from
 	 * the reactor.
 	 */
@@ -44,26 +47,16 @@ public abstract class AbstractTestCase
 		super(testName);
 		if(basedir == null){
 			basedir = new File(".").getAbsolutePath();
-			if(!(basedir.endsWith("axis")
-				||basedir.endsWith("axis\\")
-				||basedir.endsWith("axis/"))){
-				basedir = new File("./modules/axis").getAbsolutePath();
-			}
 		}
 		testDir = new File(basedir,testDir).getAbsolutePath();
 		sampleDir = new File(basedir,sampleDir).getAbsolutePath();
 		outDir = new File(basedir,outDir).getAbsolutePath();
 		tempDir = new File(basedir,tempDir).getAbsolutePath();
 	}
-    
-	/**
-	 * Get test input file.
-	 *
-	 * @param path Path to test input file.
-	 */
-	public String getTestFile(String path)
-	{
-		return new File(basedir,path).getAbsolutePath();
-	}
+
+
+    public File getTestResourceFile(String relativePath){
+        return new File(testResourceDir,relativePath);
+    }
 }
 

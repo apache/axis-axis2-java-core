@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.axis.om.impl.SOAPMessageImpl;
 import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.apache.axis.om.soap.SOAPMessage;
+import org.apache.axis.AbstractTestCase;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -31,10 +32,15 @@ import java.util.Iterator;
  * This test case tests the basic expectations of the engine from the OM.
  * @author Srinath Perera (hemapani@opensource.lk)
  */
-public class OMTest extends TestCase{
-    SOAPMessage omdoc;
+public class OMTest extends AbstractTestCase{
+    SOAPMessage message;
+
+    public OMTest(String testName) {
+        super(testName);
+    }
+
     protected void setUp() throws Exception {
-        File file = new File("src/test-resources/soap/sample1.xml");
+        File file = getTestResourceFile("soap/sample1.xml");
         FileInputStream in = new FileInputStream(file);
         
         XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
@@ -43,7 +49,7 @@ public class OMTest extends TestCase{
         parser.setInput(new InputStreamReader(in));
         
         OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
-        omdoc = parserWrapper.getSOAPMessage();
+        message = parserWrapper.getSOAPMessage();
     }
 
     
@@ -52,24 +58,24 @@ public class OMTest extends TestCase{
      */
 
     public void testNullInChilderen(){
-        isNullChildrenAreThere(omdoc.getEnvelope());
+        isNullChildrenThere(message.getEnvelope());
     }
     
     /**
-     * the document is completly namesapce qulified so all the OMElements got to have namespace values not null
+     * the message is completly namesapce qulified so all the OMElements got to have namespace values not null
      *
      */
     public void test4MissingNamespaces(){
-        isNameSpacesMissing(omdoc.getEnvelope());
+        isNameSpacesMissing(message.getEnvelope());
     }
     
-    public void isNullChildrenAreThere(OMElement omeleent){
+    public void isNullChildrenThere(OMElement omeleent){
         Iterator it = omeleent.getChildren();
         while(it.hasNext()){
             OMNode node = (OMNode)it.next();
             assertNotNull(node);
             if(node.getType() == OMNode.ELEMENT_NODE){
-                isNullChildrenAreThere((OMElement)node);
+                isNullChildrenThere((OMElement)node);
             }
         }
     }

@@ -30,18 +30,6 @@ import org.apache.axis.engine.registry.EngineRegistry;
 public class ServiceTest extends TestCase {
 
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault{
-        /*  File file = new File("src/test-resources/deployment/service1.xml");
-        String filename = "D:/Axis 2.0/projects/Deployement/test-data";
-        InputStream inputStream = null;
-        try {
-        inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-        e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
-        DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
-        EngineRegistry er = deploymentEngine.start();
-        //  DeploymentEngine deploymentEngine = new DeploymentEngine(inputStream, file.getName());
-        */
         String filename = "src/test-resources/deployment";
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         try {
@@ -62,6 +50,4 @@ public class ServiceTest extends TestCase {
             axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
     }
-
-
 }

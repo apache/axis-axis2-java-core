@@ -3,6 +3,7 @@ package org.apache.axis.om;
 import junit.framework.TestCase;
 import org.apache.axis.om.impl.streamwrapper.OMStAXBuilder;
 import org.apache.axis.om.soap.SOAPMessage;
+import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;
@@ -28,29 +29,28 @@ import java.util.Iterator;
  * Time: 12:34:15 PM
  * 
  */
-public class IteratorTester extends TestCase{
-    private static final String IN_FILE_NAME = "resources/soapmessage.xml";
-    private static final String IN_FILE_NAME2 = "src/test-resources/soap/sample1.xml";
-    SOAPMessage document = null;
+public class IteratorTester extends AbstractTestCase{
+
+    SOAPMessage message = null;
+
+    public IteratorTester(String testName) {
+        super(testName);
+    }
 
     protected void setUp() throws Exception {
-//        XmlPullParser parser= XmlPullParserFactory.newInstance().newPullParser();
-//		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-//		parser.setInput();
-//        ;
-		document = new OMStAXBuilder(XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(IN_FILE_NAME2))).getSOAPMessage();
+		message = new OMStAXBuilder(XMLInputFactory.newInstance().
+                createXMLStreamReader(new FileReader(getTestResourceFile("soap/sample1.xml")))).getSOAPMessage();
     }
 
     public void testIterator(){
-        OMElement elt = document.getEnvelope();
+        OMElement elt = message.getEnvelope();
         Iterator iter = elt.getChildren();
 
         while (iter.hasNext()) {
             OMNode o = (OMNode) iter.next();
-            System.out.println("o = " + o);
-            if (o!=null)
-            System.out.println("value o " + o.getValue());
+            //Todo need to improve this test
+            assertNotNull(o);
+
         }
 
     }
