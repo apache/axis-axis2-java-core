@@ -39,26 +39,25 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertNotNull(er);
         assertNotNull(er.getGlobal());
 
-        AxisService service = er.getService(new QName("echo"));
+        AxisService service = er.getService(new QName("service2"));
         assertNotNull(service);
         Provider provider = service.getProvider();
         assertNotNull(provider);
         assertTrue(provider instanceof RawXMLProvider);
         ClassLoader cl = service.getClassLoader();
         assertNotNull(cl);
-        Class.forName("org.apache.axis.engine.Echo", true, cl);
+        Class.forName("Echo2", true, cl);
         assertNotNull(service.getName());
-        assertEquals(service.getContextPath(), "axis/service/echo");
-
+        
         Flow flow = service.getFaultFlow();
-        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        assertTrue(flow.getHandlerCount() > 0);
         flow = service.getInFlow();
-        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        assertTrue(flow.getHandlerCount() > 0);
         flow = service.getOutFlow();
-        assertTrue(flow == null || flow.getHandlerCount() == 0);
-        assertNull(service.getParameter("hello"));
+        assertTrue( flow.getHandlerCount() > 0);
+        assertNotNull(service.getParameter("para2"));
 
-        AxisOperation op = service.getOperation(new QName("echo"));
+        AxisOperation op = service.getOperation(new QName("opname"));
         assertNotNull(op);
 
     }
