@@ -23,7 +23,7 @@ import org.apache.axis.wsdl.wom.WDSLProperty;
  * @author chathura@opensource.lk
  *
  */
-public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty {
+public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty  {
 
 	
 	private URI name;

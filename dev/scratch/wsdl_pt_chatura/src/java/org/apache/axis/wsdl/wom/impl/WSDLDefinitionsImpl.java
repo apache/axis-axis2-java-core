@@ -18,11 +18,13 @@ package org.apache.axis.wsdl.wom.impl;
 import java.net.URI;
 import java.util.HashMap;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.wsdl.wom.WSDLBinding;
 import org.apache.axis.wsdl.wom.WSDLDefinitions;
 import org.apache.axis.wsdl.wom.WSDLInterface;
 import org.apache.axis.wsdl.wom.WSDLService;
-import javax.xml.namespace.QName;
+import org.apache.xmlbeans.XmlObject;
 
 
 
@@ -30,7 +32,7 @@ import javax.xml.namespace.QName;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions {
+public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions  {
 
 	//TODO local name and the naspace name to be made static or through a Constant class.
 	
@@ -43,7 +45,7 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	
 	//TODO The object structure of some external xml data binding is going to be pluged here eventually.  
 	
-	private Object types;
+	private XmlObject[] types;
 	
 	/**
 	 * This List will be a list of <code>WSDLInterface</code> objects.
@@ -205,16 +207,17 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	public void setTargetNameSpace(URI targetNameSpace) {
 		this.targetNameSpace = targetNameSpace;
 	}
-	public Object getTypes() {
-		return types;
-	}
-	public void setTypes(Object types) {
-		this.types = types;
-	}
+	
 	public HashMap getWsdlInterfaces() {
 		return wsdlInterfaces;
 	}
 	public void setWsdlInterfaces(HashMap wsdlInterfaces) {
 		this.wsdlInterfaces = wsdlInterfaces;
 	}
+    public XmlObject[] getTypes() {
+        return types;
+    }
+    public void setTypes(XmlObject[] types) {
+        this.types = types;
+    }
 }

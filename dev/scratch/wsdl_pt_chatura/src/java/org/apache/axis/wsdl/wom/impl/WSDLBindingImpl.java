@@ -26,7 +26,7 @@ import org.apache.axis.wsdl.wom.WSDLInterface;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLBindingImpl extends ComponentImpl implements WSDLBinding {
+public class WSDLBindingImpl extends ComponentImpl implements WSDLBinding  {
 
 	private String name;
 	

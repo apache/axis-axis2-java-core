@@ -26,7 +26,7 @@ import org.apache.axis.wsdl.wom.WSDLService;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLServiceImpl implements WSDLService {
+public class WSDLServiceImpl implements  WSDLService {
 
     /**
      * The NCName that identifies the Service.

@@ -21,77 +21,108 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+
 /**
  * @author chathura@opensource.lk
  *
  */
 public interface WSDLInterface {
-	
     public List getFeatures();
 
-	public void setFeatures(List features);
+    public void setFeatures(List features);
 
-	public List getProperties();
+    public List getProperties();
 
-	public void setProperties(List properties);
+    public void setProperties(List properties);
 
-	public HashMap getDefinedOperations(WSDLInterface wsdlInterface);
+    public HashMap getDefinedOperations(WSDLInterface wsdlInterface);
 
-	public HashMap getDefinedOperations();
+    public HashMap getDefinedOperations();
 
-	/**
-	 * @return
-	 */
-	public List getFaults();
+    /**
+     * Will return a map of all this <code>WSDLOperation</code>s that 
+     * are defined and inherited from super interfaces.
+     */
+    public HashMap getAllOperations();
 
-	/**
-	 * @return
-	 */
-	public String getName();
+    /**
+     * @return
+     */
+    public List getFaults();
 
-	/**
-	 * @return
-	 */
-	public HashMap getOperations();
+    /**
+     * @return
+     */
+    public String getName();
 
-	/**
-	 * @return
-	 */
-	public HashMap getSuperInterfaces();
+    /**
+     * @return
+     */
+    public HashMap getOperations();
 
-	/**
-	 * @return
-	 */
-	public URI getTargetnamespace();
+    public WSDLOperation getOperation(QName qName);
 
-	/**
-	 * @param list
-	 */
-	public void setFaults(List list);
+    public WSDLOperation getOperation(String nCName);
 
-	/**
-	 * @param string
-	 */
-	public void setName(String string);
+    /**
+     * @return
+     */
+    public HashMap getSuperInterfaces();
 
-	/**
-	 * @param list
-	 */
-	public void setOperations(HashMap list);
+    public WSDLInterface getSuperInterface(QName qName);
 
-	/**
-	 * @param list
-	 */
-	public void setSuperInterfaces(HashMap list);
+    /**
+     * @return
+     */
+    public URI getTargetnamespace();
 
-	/**
-	 * @param uri
-	 */
-	public void setTargetnamespace(URI uri);
-	
-	public void setOperation(String nCName, WSDLOperation operation);
-	
-	public void addSuperInterface(QName qName, WSDLInterface interfaceComponent);
-	
-	public HashMap getAllOperations();
+    /**
+     * @param list
+     */
+    public void setFaults(List list);
+
+    /**
+     * @param string
+     */
+    public void setName(String string);
+
+    /**
+     * @param list
+     */
+    public void setOperations(HashMap list);
+
+    /**
+     * The Operation will be added to the interfce's operations.
+     * Though the Qname is required the actual storage will be from the 
+     * NCName of the operation, but the namespace URI of the QName 
+     * should match that of the Namespaces defined in the WSDLConstants interface. 
+     * @param qName
+     * @param operation
+     */
+    public void setOperation(QName qName, WSDLOperation operation);
+
+    /**
+     * The operation is added by its ncname.
+     * @param nCName
+     * @param operation
+     */
+    public void setOperation(String nCName, WSDLOperation operation);
+
+    /**
+     * @param list
+     */
+    public void setSuperInterfaces(HashMap list);
+
+    /**
+     * The Inteface will be added to the list of super interfaces keyed with 
+     * the QName.
+     * @param qName The QName of the Inteface
+     * @param interfaceComponent WSDLInterface Object
+     */
+    public void addSuperInterface(QName qName, WSDLInterface interfaceComponent);
+
+    /**
+     * @param uri
+     */
+    public void setTargetnamespace(URI uri);
 }

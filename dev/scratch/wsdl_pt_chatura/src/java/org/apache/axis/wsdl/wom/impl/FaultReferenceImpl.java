@@ -21,7 +21,7 @@ import org.apache.axis.wsdl.wom.FaultReference;
  * @author chathura@opensource.lk
  *
  */
-public class FaultReferenceImpl extends ComponentImpl  implements FaultReference {
+public class FaultReferenceImpl extends ComponentImpl implements FaultReference   {
 
 	//TODO make it  a QNAME
 	private String ref;
@@ -31,22 +31,41 @@ public class FaultReferenceImpl extends ComponentImpl  implements FaultReference
 	
 	private String direction;
 	
-	
+	/**
+	 * Returns the direction of the Fault according the MEP
+	 * @return
+	 */
 	public String getDirection() {
 		return direction;
 	}
+	
+	/**
+	 * Sets the direction of the Fault.
+	 * @param direction
+	 */
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
+	
 	public String getMessageLabel() {
 		return messageLabel;
 	}
 	public void setMessageLabel(String messageLabel) {
 		this.messageLabel = messageLabel;
 	}
+	
+	/**
+	 * Returns the Fault reference.
+	 * @return
+	 */
 	public String getRef() {
 		return ref;
 	}
+	
+	/**
+	 * Sets the Fault reference.
+	 * @param ref
+	 */
 	public void setRef(String ref) {
 		this.ref = ref;
 	}

@@ -26,7 +26,7 @@ import org.apache.axis.wsdl.wom.WSDLOperation;
  * @author Chathura Herath
  *
  */
-public class WSDLOperationImpl extends ComponentImpl implements WSDLOperation {
+public class WSDLOperationImpl extends ComponentImpl implements WSDLOperation  {
 
 	private String name;
 	private URI targetnemespace;

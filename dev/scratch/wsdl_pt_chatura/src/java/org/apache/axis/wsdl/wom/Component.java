@@ -22,7 +22,14 @@ import java.util.HashMap;
  *
  */
 public interface Component {
+    /**
+     * Returns the properties that are specific to this WSDL Component.
+     * 
+     */
     public HashMap getComponentProperties();
 
+    /**
+     * Sets the properties of the Component if any.
+     */
     public void setComponentProperties(HashMap properties);
 }

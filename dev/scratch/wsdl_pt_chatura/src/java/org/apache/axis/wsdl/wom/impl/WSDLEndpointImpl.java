@@ -24,7 +24,7 @@ import org.apache.axis.wsdl.wom.WSDLEndpoint;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLEndpointImpl extends  ComponentImpl implements WSDLEndpoint{
+public class WSDLEndpointImpl extends  ComponentImpl implements WSDLEndpoint {
 
     private String name;
     

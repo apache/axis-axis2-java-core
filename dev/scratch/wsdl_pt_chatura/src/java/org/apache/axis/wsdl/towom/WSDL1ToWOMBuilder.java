@@ -13,38 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl.wom;
+package org.apache.axis.wsdl.towom;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface FaultReference {
-    /**
-     * Returns the direction of the Fault according the MEP
-     * @return
-     */
-    public String getDirection();
+public class WSDL1ToWOMBuilder implements WOMBuilder {
 
-    /**
-     * Sets the direction of the Fault.
-     * @param direction
-     */
-    public void setDirection(String direction);
-
-    public String getMessageLabel();
-
-    public void setMessageLabel(String messageLabel);
-
-    /**
-     * Returns the Fault reference.
-     * @return
-     */
-    public String getRef();
-
-    /**
-     * Sets the Fault reference.
-     * @param ref
-     */
-    public void setRef(String ref);
 }

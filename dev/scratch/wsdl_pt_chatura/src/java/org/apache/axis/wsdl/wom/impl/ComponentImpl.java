@@ -30,14 +30,20 @@ import javax.xml.namespace.QName;
  * @author Chathura Herath
  *
  */
-public class ComponentImpl implements Component, WSDLConstants{
+public class ComponentImpl implements  WSDLConstants, Component{
 
     protected HashMap componentProperties = new HashMap();
     
-    
+    /**
+     * Returns the properties that are specific to this WSDL Component.
+     * 
+     */
     public HashMap getComponentProperties() {
         return componentProperties;
     }
+    /**
+     * Sets the properties of the Component if any.
+     */
     public void setComponentProperties(HashMap properties) {
         this.componentProperties = properties;
     }

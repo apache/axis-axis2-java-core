@@ -22,15 +22,15 @@ import java.net.URI;
  *
  */
 public interface WDSLProperty {
-	public Object getConstraint();
+    public Object getConstraint();
 
-	public void setConstraint(Object constraint);
+    public void setConstraint(Object constraint);
 
-	public URI getName();
+    public URI getName();
 
-	public void setName(URI name);
+    public void setName(URI name);
 
-	public Object getValue();
+    public Object getValue();
 
-	public void setValue(Object value);
+    public void setValue(Object value);
 }

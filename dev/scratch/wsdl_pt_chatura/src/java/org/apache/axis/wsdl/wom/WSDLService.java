@@ -28,7 +28,17 @@ public interface WSDLService {
 
     public void setEndpoints(HashMap endpoints);
 
+    /**
+     * Will add a WSDLEndpoint object to the WOM keyed with NCName;
+     */
     public void setEndpoint(WSDLEndpoint endpoint, String nCName);
+
+    /**
+     * Endpoint will be retrived by its NCName.
+     * @param nCName NCName of the Service
+     * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
+     */
+    public WSDLService getService(String nCName);
 
     public String getName();
 

@@ -13,38 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl.wom;
+package org.apache.axis.wsdl;
 
 /**
  * @author chathura@opensource.lk
+ *	The checked exception for the WSDL procession
  *
  */
-public interface FaultReference {
-    /**
-     * Returns the direction of the Fault according the MEP
-     * @return
-     */
-    public String getDirection();
+public class WSDLException extends Exception {
 
-    /**
-     * Sets the direction of the Fault.
-     * @param direction
-     */
-    public void setDirection(String direction);
-
-    public String getMessageLabel();
-
-    public void setMessageLabel(String messageLabel);
-
-    /**
-     * Returns the Fault reference.
-     * @return
-     */
-    public String getRef();
-
-    /**
-     * Sets the Fault reference.
-     * @param ref
-     */
-    public void setRef(String ref);
+    
+    public WSDLException(String message){
+        super(message);
+    }
+    
+    public WSDLException(Throwable e){
+        super(e);
+    }
+    
+    public WSDLException(String message, Throwable e){
+        super(message, e);
+    }
 }

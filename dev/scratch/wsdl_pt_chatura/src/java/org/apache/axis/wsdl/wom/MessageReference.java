@@ -20,15 +20,15 @@ package org.apache.axis.wsdl.wom;
  *
  */
 public interface MessageReference {
-	public String getDirection();
+    public String getDirection();
 
-	public void setDirection(String direction);
+    public void setDirection(String direction);
 
-	public String getElement();
+    public String getElement();
 
-	public void setElement(String element);
+    public void setElement(String element);
 
-	public String getMessageLabel();
+    public String getMessageLabel();
 
-	public void setMessageLabel(String messageLabel);
+    public void setMessageLabel(String messageLabel);
 }

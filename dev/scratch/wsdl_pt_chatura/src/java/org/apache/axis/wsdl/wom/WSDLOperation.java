@@ -24,47 +24,47 @@ import java.util.List;
  *
  */
 public interface WSDLOperation {
-	public List getFeatures();
+    public List getFeatures();
 
-	public void setFeatures(List features);
+    public void setFeatures(List features);
 
-	public List getProperties();
+    public List getProperties();
 
-	public void setProperties(List properties);
+    public void setProperties(List properties);
 
-	public List getInfaults();
+    public List getInfaults();
 
-	public void setInfaults(List infaults);
+    public void setInfaults(List infaults);
 
-	public MessageReference getInputMessage();
+    public MessageReference getInputMessage();
 
-	public void setInputMessage(MessageReference inputMessage);
+    public void setInputMessage(MessageReference inputMessage);
 
-	public int getMessageExchangePattern();
+    public int getMessageExchangePattern();
 
-	public void setMessageExchangePattern(int messageExchangePattern);
+    public void setMessageExchangePattern(int messageExchangePattern);
 
-	public String getName();
+    public String getName();
 
-	public void setName(String name);
+    public void setName(String name);
 
-	public List getOutfaults();
+    public List getOutfaults();
 
-	public void setOutfaults(List outfaults);
+    public void setOutfaults(List outfaults);
 
-	public MessageReference getOutputMessage();
+    public MessageReference getOutputMessage();
 
-	public void setOutputMessage(MessageReference outputMessage);
+    public void setOutputMessage(MessageReference outputMessage);
 
-	public boolean isSafe();
+    public boolean isSafe();
 
-	public void setSafety(boolean safe);
+    public void setSafety(boolean safe);
 
-	public int getStyle();
+    public int getStyle();
 
-	public void setStyle(int style);
+    public void setStyle(int style);
 
-	public URI getTargetnemespace();
+    public URI getTargetnemespace();
 
-	public void setTargetnemespace(URI targetnemespace);
+    public void setTargetnemespace(URI targetnemespace);
 }

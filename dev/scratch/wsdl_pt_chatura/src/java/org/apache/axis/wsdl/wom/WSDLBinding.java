@@ -24,32 +24,31 @@ import java.util.List;
  *
  */
 public interface WSDLBinding {
-	
-	public List getFeatures();
+    public List getFeatures();
 
-	public void setFeatures(List features);
+    public void setFeatures(List features);
 
-	public List getProperties();
+    public List getProperties();
 
-	public void setProperties(List properties);	
-	
-	public WSDLInterface getBoundInterface();
+    public void setProperties(List properties);
 
-	public void setBoundInterface(WSDLInterface boundInterface);
+    public WSDLInterface getBoundInterface();
 
-	public List getFaults();
+    public void setBoundInterface(WSDLInterface boundInterface);
 
-	public void setFaults(List faults);
+    public List getFaults();
 
-	public String getName();
+    public void setFaults(List faults);
 
-	public void setName(String name);
+    public String getName();
 
-	public List getOperations();
+    public void setName(String name);
 
-	public void setOperations(List operations);
+    public List getOperations();
 
-	public URI getTargetNameSpace();
+    public void setOperations(List operations);
 
-	public void setTargetNameSpace(URI targetNameSpace);
+    public URI getTargetNameSpace();
+
+    public void setTargetNameSpace(URI targetNameSpace);
 }
