@@ -36,7 +36,8 @@
 <title>Axis2 Happiness Page</title>
 <link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
-<body bgcolor='#ffffff'>
+<body>
+<jsp:include page="include/header.inc"></jsp:include>
 <%port =request.getServerPort();%>
 <%!
     /*
