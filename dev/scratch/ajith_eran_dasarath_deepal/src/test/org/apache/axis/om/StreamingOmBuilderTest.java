@@ -35,7 +35,7 @@ public class StreamingOmBuilderTest extends TestCase{
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             
             pullparser.setInput(new InputStreamReader(cl.getResourceAsStream("testFile.xml")));
-            StreamingOmBuilder builder = new StreamingOmBuilder(pullparser);
+            StreamingOMBuilder builder = new StreamingOMBuilder(pullparser);
 
             Document doc = builder.getDocument();
             doc.getDocumentElement();
