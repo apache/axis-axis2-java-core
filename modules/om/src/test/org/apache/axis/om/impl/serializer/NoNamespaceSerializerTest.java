@@ -60,7 +60,7 @@ public class NoNamespaceSerializerTest extends TestCase {
     private XMLStreamReader readerTwo;
     private XMLStreamWriter writer;
 
-    private OMXMLParserWrapper builder;
+   // private OMXMLParserWrapper builder;
     // private File tempFile;
 
     private OMXMLParserWrapper builderOne;
@@ -124,8 +124,14 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     }
     public void testSerilizationWithCacheOn() throws Exception{
-       SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
+       SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
        env.serialize(writer,true);
+       writer.flush();
+    }
+
+     public void testSerilizationWithCacheOff() throws Exception{
+       SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
+       env.serialize(writer,false);
        writer.flush();
     }
     }
