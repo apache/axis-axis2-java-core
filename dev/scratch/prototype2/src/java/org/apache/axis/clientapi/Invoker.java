@@ -11,12 +11,12 @@ package org.apache.axis.clientapi;
  * governing permissions and limitations under the License.
  */
 
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.transport.TransportReciver;
 import org.apache.axis.transport.TransportReciverLocator;
-import org.apache.axis.transport.TransportSenderLocator;
 
 public class Invoker implements Runnable {
 
@@ -49,11 +49,11 @@ public class Invoker implements Runnable {
             correlator.addCorrelationInfo(reqMsgContext.getMessageID(),
                     callback);
 
-            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties());
+            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties(),reqMsgContext.getSessionContext());
 
             resMsgContext.setServerSide(false);
             resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                    TransportSenderLocator.TRANSPORT_HTTP);
+            Constants.TRANSPORT_HTTP);
             TransportReciver reciver =
                     TransportReciverLocator.locate(resMsgContext);
             reciver.invoke(resMsgContext);

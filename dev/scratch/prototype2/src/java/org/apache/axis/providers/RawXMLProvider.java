@@ -16,11 +16,11 @@
 
 package org.apache.axis.providers;
 
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
@@ -111,7 +111,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
             Object[] parms = new Object[]{parmeter};
             //invoke the WebService 
             OMElement result = (OMElement) method.invoke(obj, parms);
-            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry(), msgContext.getProperties());
+            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry(), msgContext.getProperties(),msgContext.getSessionContext());
 
             SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
             envelope.getBody().setFirstChild(result);

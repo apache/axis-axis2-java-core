@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 public class SimpleSessionContext implements SessionContext {
     private HashMap map = new HashMap();
+    
 
     public Object get(Object key) {
         return map.get(key);

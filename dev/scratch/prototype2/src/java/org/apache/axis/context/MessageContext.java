@@ -16,13 +16,13 @@
 
 package org.apache.axis.context;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.OMElement;
@@ -40,8 +40,10 @@ import java.util.Map;
  */
 public class MessageContext {
     private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
-//    private HashMap messages = new HashMap();
-
+    
+    /**
+     *  Follwing are the defined properties that are stored in the message Context 
+     */
     public static final String USER_NAME = "USER";
     public static final String PASSWORD = "PASSWD";
     public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
@@ -77,10 +79,21 @@ public class MessageContext {
     private boolean newThreadRequired = false;
     private XMLStreamReader xpp;
     private OMElement soapOperationElement;
+    
+    /**
+     * 
+     * @param er
+     * @param initialProperties
+     * @param sessionContext
+     * @throws AxisFault
+     */
 
-    public MessageContext(EngineRegistry er, Map initialProperties) throws AxisFault {
+    public MessageContext(EngineRegistry er, Map initialProperties,SessionContext sessionContext) throws AxisFault {
         this.globalContext = new GlobalContext(er);
-        this.sessionContext = new SimpleSessionContext();
+        if(sessionContext == null){
+            this.sessionContext = new SimpleSessionContext();
+        }
+        
         if (initialProperties == null) {
             initialProperties = new HashMap();
         }

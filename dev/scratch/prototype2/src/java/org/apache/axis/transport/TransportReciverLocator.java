@@ -16,19 +16,17 @@
 
 package org.apache.axis.transport;
 
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPTransportReciver;
 
 public class TransportReciverLocator {
-    public static final String TRANSPORT_TCP = "tcp";
-    public static final String TRANSPORT_HTTP = "http";
-
+    
     public static TransportReciver locate(MessageContext msgContext)
             throws AxisFault {
-        String type =
-                (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
-        if (TransportReciverLocator.TRANSPORT_HTTP.equals(type)) {
+        String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+        if (Constants.TRANSPORT_HTTP.equals(type)) {
             return new HTTPTransportReciver();
         } else {
             throw new AxisFault("No tranport found");

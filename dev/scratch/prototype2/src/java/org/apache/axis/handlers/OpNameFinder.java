@@ -15,12 +15,12 @@
  */
 package org.apache.axis.handlers;
 
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Constants;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;

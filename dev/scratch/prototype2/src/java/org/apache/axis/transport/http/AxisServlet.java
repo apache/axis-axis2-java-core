@@ -16,20 +16,12 @@
 package org.apache.axis.transport.http;
 
 
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.transport.TransportSenderLocator;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -41,12 +33,23 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.SessionContext;
+import org.apache.axis.context.SimpleSessionContext;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 
 public class AxisServlet extends HttpServlet {
@@ -72,7 +75,16 @@ public class AxisServlet extends HttpServlet {
         try {
             res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine = new AxisEngine(engineRegistry);
-            MessageContext msgContext = new MessageContext(engineRegistry, null);
+            
+            
+            Object sessionContext = req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+            if(sessionContext == null){
+                sessionContext = new SimpleSessionContext();
+                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,sessionContext);
+            }
+            
+            MessageContext msgContext = new MessageContext(engineRegistry, null,(SessionContext)sessionContext);
+            
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             if (filePart != null && filePart.endsWith(LISTSERVICES)) {
@@ -94,7 +106,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
 
             msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                    TransportSenderLocator.TRANSPORT_HTTP);
+                    Constants.TRANSPORT_HTTP);
             msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
                     res.getWriter());
 
