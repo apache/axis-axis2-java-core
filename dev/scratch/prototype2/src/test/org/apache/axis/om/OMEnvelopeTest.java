@@ -52,4 +52,15 @@ public class OMEnvelopeTest extends OMTestCase {
         OMBody body = getSecondEnvelope().getBody();
         assertTrue("Header information retrieved not correct", ( body != null && body.getLocalName().equalsIgnoreCase("Body")) );
     }
+
+    public void testDefaultEnveleope(){
+
+        OMEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
+        assertNotNull(env);
+
+        assertNotNull("Header should not be null",env.getHeader());
+        assertNotNull("Body should not be null",env.getBody());
+
+    }
+
 }

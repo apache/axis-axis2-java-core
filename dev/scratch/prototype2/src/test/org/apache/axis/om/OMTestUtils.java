@@ -51,7 +51,7 @@ public class OMTestUtils {
         Iterator attibIt = omEle.getAttributes();
         while(attibIt.hasNext()){
             TestCase.assertNotNull("once the has next is not null, the " +
-                            "eleemnt should not be null",attibIt.next());
+                            "element should not be null",attibIt.next());
         }
         Iterator it = omEle.getChildren();
         while(it.hasNext()){

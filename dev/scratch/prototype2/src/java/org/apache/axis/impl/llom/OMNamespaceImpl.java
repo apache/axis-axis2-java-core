@@ -49,17 +49,6 @@ public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
                 && value.equals(uri);
     }
 
-    public void print(PrintStream s) {
-        s.print("xmlns");
-        if (prefix != null) {
-            s.print(':');
-            s.print(prefix);
-        }
-        s.print('=');
-        s.print('"');
-        s.print(value);
-        s.print('"');
-    }
 
     public boolean isDefaultNs() {
         return prefix == null;

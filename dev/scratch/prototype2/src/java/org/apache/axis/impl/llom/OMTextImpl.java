@@ -64,10 +64,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
         throw new UnsupportedOperationException();
     }
 
-    public void print(PrintStream s) throws OMException {
-        s.print(value);
-    }
-
     /**
      * This is to get the type of node, as this is the super class of all the nodes
      *

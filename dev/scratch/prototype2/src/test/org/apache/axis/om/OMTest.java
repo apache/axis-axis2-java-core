@@ -18,20 +18,26 @@ package org.apache.axis.om;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.Iterator;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.apache.axis.impl.llom.builder.OMStAXBuilder;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class OMTest extends AbstractTestCase{
-    OMEnvelope envelope;
-
+    private OMEnvelope envelope;
+    private OMFactory fac;
     /**
      * Constructor.
      */
@@ -41,15 +47,10 @@ public class OMTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         File file = getTestResourceFile("soap/sample1.xml");
-        FileInputStream in = new FileInputStream(file);
-        
-        XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
-        pf.setNamespaceAware(true);
-        XmlPullParser  parser = pf.newPullParser();
-        parser.setInput(new InputStreamReader(in));
-        
-        OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
-        envelope = parserWrapper.getOMEnvelope();
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+        fac = OMFactory.newInstance();
+        OMXMLParserWrapper builder = new OMStAXBuilder(fac,parser);
+        envelope = builder.getOMEnvelope();
     }
 
     
@@ -92,5 +93,62 @@ public class OMTest extends AbstractTestCase{
                 isNameSpacesMissing((OMElement)node);
             }
         }
+    }
+
+     public void testRootNotCompleteInPartialBuild() throws Exception {
+         assertFalse("Root should not be complete",envelope.isComplete());
+    }
+
+    /**
+     * Assumption - The fed XML has at least two children under the root element
+     * @throws Exception
+     */
+    public void testFirstChildDetach() throws Exception {
+        OMElement root= envelope;
+        assertFalse("Root should not be complete",root.isComplete());
+        OMNode oldFirstChild = root.getFirstChild();
+        assertNotNull(oldFirstChild);
+        oldFirstChild.detach();
+
+        OMNode newFirstChild = root.getFirstChild();
+        assertNotNull(newFirstChild);
+
+        assertNotSame(oldFirstChild,newFirstChild);
+    }
+
+    //todo this is wrong correct this
+    public void testAdditionOfaCompletelyNewElement() throws Exception {
+
+//        OMElement root= envelope;
+//
+//        OMNamespace soapenv= root.resolveNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+//        OMNamespace wsa= root.resolveNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
+//        if (wsa==null)
+//            wsa= root.createNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
+//
+//        //Assumption - A RelatesTo Element does not exist in the input document
+//        OMElement relatesTo= fac.createOMElement ("RelatesTo", wsa);
+//        relatesTo.insertAttribute(fac.createOMAttribute("RelationshipType", null, "wsa:Reply", relatesTo));
+//        relatesTo.insertAttribute(fac.createOMAttribute("mustUnderstand", soapenv, "0", relatesTo));
+//        relatesTo.addChild(fac.createText(relatesTo, "uuid:3821F4F0-D020-11D8-A10A-E4EE6425FCB0"));
+//        relatesTo.setComplete(true);
+//
+//        root.addChild(relatesTo);
+//
+//        QName name = new QName(wsa.getValue(),"RelatesTo",wsa.getPrefix());
+//
+//        Iterator children = root.getChildrenWithName(name);
+//        //this should contain only one child!
+//        if (children.hasNext()){
+//            OMElement newlyAddedElement = (OMElement)children.next();
+//
+//            assertNotNull(newlyAddedElement);
+//
+//            assertEquals(newlyAddedElement.getLocalName(),"RelatesTo");
+//            //todo put the other assert statements here
+//        }else{
+//            assertFalse("New child not added",true);
+//        }
+
     }
 }

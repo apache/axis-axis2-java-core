@@ -4,8 +4,9 @@ import org.apache.axis.om.*;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.impl.llom.OMAttributeImpl;
 import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.xml.utils.QName;
 
+
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**

@@ -41,8 +41,6 @@ public class OMHeaderBlockTest extends OMTestCase {
        }
     }
 
-    public static void main(String[] args) {
-    }
 
     public void testSetAndGetActor() {
         String newActorURI = "http://newActor.org";
@@ -52,7 +50,6 @@ public class OMHeaderBlockTest extends OMTestCase {
 
 
     public void testSetAndGetMustUnderstand() {
-
         soapHeaderElement.setMustUnderstand(false);
         assertTrue("MustUnderstand was not properly set", !soapHeaderElement.getMustUnderstand());
     }

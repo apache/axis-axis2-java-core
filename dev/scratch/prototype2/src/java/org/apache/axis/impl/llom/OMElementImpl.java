@@ -5,7 +5,9 @@ import java.util.Iterator;
 import org.apache.axis.om.*;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
-import org.apache.xml.utils.QName;
+
+import javax.xml.namespace.QName;
+
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

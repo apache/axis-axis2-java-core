@@ -4,8 +4,9 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
-import org.apache.xml.utils.QName;
 
+
+import javax.xml.namespace.QName;
 import java.io.PrintStream;
 
 /**
@@ -52,7 +53,7 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
     }
 
     public OMNamespace getNamespace() throws OMException {
-        if (ns==null)
+        if (ns == null)
             throw new OMException("all elements in a soap message must be namespace qualified");
         return ns;
     }
@@ -64,20 +65,9 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
         this.ns = namespace;
     }
 
-    public void print(PrintStream ps) throws OMException {
-        if (ns != null && !ns.isDefaultNs()) {
-            String prefix = ns.getPrefix();
-            if (prefix != "") {
-                ps.print(prefix);
-                ps.print(':');
-            }
-
-        }
-        ps.print(localName);
-    }
 
     public QName getQName() {
-        QName qName = new QName(ns.getValue(), ns.getPrefix(), localName);
+        QName qName = new QName(ns.getValue(), localName, ns.getPrefix());
         return qName;
     }
 

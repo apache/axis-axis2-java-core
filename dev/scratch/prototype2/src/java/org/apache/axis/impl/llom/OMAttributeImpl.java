@@ -47,21 +47,6 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
         return matcher.replaceAll(QUOTE_ENTITY);
     }
 
-    public void print(PrintStream s) throws OMException {
-        super.print(s);
-        s.print('=');
-        String v = value;
-        char quote = '"';
-        if (value.indexOf('"') != -1)
-            if (value.indexOf('\'') == -1)
-                quote = '\'';
-            else
-                v = replaceQuoteWithEntity(value);
-        s.print(quote);
-        s.print(v);
-        s.print(quote);
-    }
-
     public void detach() throws OMException {
         
         if (parent == null)

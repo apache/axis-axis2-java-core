@@ -23,6 +23,7 @@ public class OMConstants {
 
     public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
     public static final String SOAPENVELOPE_NAMESPACE_PREFIX = "soapenv";
+    public static final String SOAPENVELOPE_LOCAL_NAME = "Envelope";
 
     // Header constants
     public static final String HEADER_NAMESPACEURI = SOAP_ENVELOPE_NAMESPACE_URI;

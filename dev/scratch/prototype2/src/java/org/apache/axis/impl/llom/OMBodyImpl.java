@@ -30,6 +30,8 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
      */
     public OMBodyImpl(OMEnvelope envelope) {
         super(envelope);
+        this.ns = envelope.getNamespace();
+        this.localName = OMConstants.BODY_LOCAL_NAME;
     }
 
     public OMBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
@@ -79,5 +81,5 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-   
+
 }

@@ -33,6 +33,10 @@ public class OMHeaderImpl extends OMElementImpl implements OMHeader {
      */
     public OMHeaderImpl(OMEnvelope envelope) {
         super(envelope);
+        //set the namespaces
+        this.ns = envelope.getNamespace();
+        this.localName = OMConstants.HEADER_LOCAL_NAME;
+
     }
 
     public OMHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {

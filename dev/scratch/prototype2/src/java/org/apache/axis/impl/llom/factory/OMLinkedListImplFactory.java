@@ -105,4 +105,16 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new OMHeaderBlockImpl(localName, ns, parent, builder);
     }
 
+    public OMEnvelope getDefaultEnvelope() {
+        //Create an envelop
+        OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
+        OMEnvelopeImpl env = new OMEnvelopeImpl(OMConstants.SOAPENVELOPE_LOCAL_NAME,ns);
+        env.addChild(new OMHeaderImpl(env));
+        env.addChild(new OMBodyImpl(env));
+
+        return env;
+
+
+    }
+
 }
