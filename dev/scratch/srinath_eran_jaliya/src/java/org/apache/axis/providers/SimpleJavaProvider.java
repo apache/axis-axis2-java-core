@@ -21,14 +21,17 @@ import java.lang.reflect.Method;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
-import org.apache.axis.Handler;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SessionContext;
-import org.apache.axis.engine.Service;
-import org.apache.axis.message.OMMessage;
-import org.apache.axis.registry.Parameter;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Constants;
+import org.apache.axis.core.Handler;
+import org.apache.axis.core.Service;
+import org.apache.axis.core.context.MessageContext;
+import org.apache.axis.core.context.SessionContext;
+import org.apache.axis.core.registry.Parameter;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.SOAPMessageImpl;
+import org.apache.axis.om.soap.SOAPMessage;
 
 /**
  * This is a Simple java Provider. 
@@ -124,7 +127,10 @@ public class SimpleJavaProvider extends AbstractProvider implements Handler {
             Object[] parms = deserializeParameters(msgContext,method);
             //invoke the WebService 
             Object result = method.invoke(obj,parms);
-            msgContext.setOutMessage(new OMMessage(parms)); 
+
+            //TODO fix the server side  
+//            OMXMLParserWrapper parser = new OMXMLPullParserWrapper();
+//            msgContext.setOutMessage(new SOAPMessageImpl(parser)); 
         }  catch (SecurityException e) {
             throw AxisFault.makeFault(e);
         } catch (IllegalArgumentException e) {

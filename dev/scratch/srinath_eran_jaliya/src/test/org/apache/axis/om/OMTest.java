@@ -21,9 +21,9 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 
 
-import org.apache.axis.om.factory.OMDocumentFactory;
-import org.apache.axis.om.factory.XPPFactoryConfiguration;
-import org.apache.axis.om.xpp.StreamingXPPOMBuilder;
+import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.SOAPMessageImpl;
+import org.apache.axis.om.soap.SOAPMessage;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -33,14 +33,18 @@ import junit.framework.TestCase;
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class OMTest extends TestCase{
-    OMDocument omdoc;
+    SOAPMessage omdoc;
     protected void setUp() throws Exception {
         File file = new File("src/samples/soap/sample1.xml");
         FileInputStream in = new FileInputStream(file);
         
-        OMDocumentFactory fac = OMDocumentFactory.newInstance(new XPPFactoryConfiguration());
+        XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
+        pf.setNamespaceAware(true);
+        XmlPullParser  parser = pf.newPullParser();
+        parser.setInput(new InputStreamReader(in));
         
-        omdoc = fac.getDocument(new InputStreamReader(in));
+        OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
+        omdoc = new SOAPMessageImpl(parserWrapper);
     }
 
     
@@ -57,7 +61,7 @@ public class OMTest extends TestCase{
      *
      */
     public void test4MissingNamespaces(){
-        isNameSpacesMissing(omdoc.getDocumentElement());
+        isNameSpacesMissing(omdoc.getEnvelope());
     }
     
     public void isNullChildrenAreThere(OMElement omeleent){

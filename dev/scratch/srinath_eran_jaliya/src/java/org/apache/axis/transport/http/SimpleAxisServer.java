@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.core.AxisEngine;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

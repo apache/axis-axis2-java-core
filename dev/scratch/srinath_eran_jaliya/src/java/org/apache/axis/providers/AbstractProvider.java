@@ -19,11 +19,11 @@ import java.lang.reflect.Method;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Handler;
-import org.apache.axis.Provider;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.AbstractEngineElement;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Handler;
+import org.apache.axis.core.Provider;
+import org.apache.axis.core.context.MessageContext;
+import org.apache.axis.core.registry.AbstractEngineElement;
 
 /**
  * This is the Absract provider. It is just a another handler. the 

@@ -17,10 +17,10 @@ package org.apache.axis.handlers;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Handler;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.registry.Parameter;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Handler;
+import org.apache.axis.core.context.MessageContext;
+import org.apache.axis.core.registry.Parameter;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
@@ -32,7 +32,7 @@ public abstract class AbstractHandler implements Handler{
     }
     public void invoke(MessageContext msgContext) throws AxisFault {
     }
-    public void revoke(MessageContext msgContext) {
+    public void revoke(MessageContext msgContext){
     }
     public void setName(QName name) {
         this.name = name;

@@ -18,9 +18,9 @@ package org.apache.axis.engine.registry;
 
 import java.lang.reflect.Method;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Handler;
-import org.apache.axis.context.MessageContext;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Handler;
+import org.apache.axis.core.context.MessageContext;
 import org.apache.axis.providers.AbstractProvider;
 
 public class SpeakingProvider extends AbstractProvider implements Handler {

@@ -16,7 +16,7 @@
 
 package org.apache.axis.schema;
 
-import org.apache.axis.Constants;
+import org.apache.axis.core.Constants;
 
 import javax.xml.namespace.QName;
 

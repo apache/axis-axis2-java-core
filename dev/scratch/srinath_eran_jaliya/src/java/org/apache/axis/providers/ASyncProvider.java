@@ -15,10 +15,10 @@
  */
 package org.apache.axis.providers;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Provider;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.Sender;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Provider;
+import org.apache.axis.core.Sender;
+import org.apache.axis.core.context.MessageContext;
 import org.apache.axis.handlers.AbstractHandler;
 
 /**

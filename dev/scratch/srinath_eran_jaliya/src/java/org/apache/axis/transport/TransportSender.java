@@ -19,12 +19,12 @@ import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Handler;
-import org.apache.axis.context.MessageContext;
+import org.apache.axis.core.AxisFault;
+import org.apache.axis.core.Handler;
+import org.apache.axis.core.context.MessageContext;
+import org.apache.axis.core.registry.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.message.OMMessage;
-import org.apache.axis.registry.Parameter;
+import org.apache.axis.om.soap.SOAPMessage;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
@@ -35,7 +35,7 @@ public class TransportSender extends AbstractHandler implements Handler {
         this.out = out;
     }
     public void invoke(MessageContext msgContext) throws AxisFault {
-        OMMessage message = msgContext.getOutMessage();
-        message.serialize(out);
+        SOAPMessage message = msgContext.getOutMessage();
+        //Serialize the Mesage
     }
 }

@@ -16,8 +16,8 @@
 
 package org.apache.axis.engine.registry;
 
-import org.apache.axis.registry.ConcreateFlow;
-import org.apache.axis.registry.Flow;
+import org.apache.axis.core.registry.ConcreateFlow;
+import org.apache.axis.core.registry.Flow;
 
 public class MockFlow extends ConcreateFlow implements Flow{
     public MockFlow(String message,int length){

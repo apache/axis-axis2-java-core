@@ -16,21 +16,26 @@
 
 package org.apache.axis.transport.http;
 
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeaders;
 
-import org.apache.axis.context.MessageContext;
+import org.apache.axis.core.AxisEngine;
+import org.apache.axis.core.context.MessageContext;
+import org.apache.axis.core.registry.EngineRegistry;
 import org.apache.axis.encoding.Base64;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.message.OMMessage;
-import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.SOAPMessageImpl;
 import org.apache.axis.transport.TransportSender;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 
 
@@ -275,7 +280,13 @@ public class SimpleAxisWorker implements Runnable {
                     log.info("status written");
                     msgContext.setTransportSender(new TransportSender(out));
 
-                    msgContext.setInMessage(new OMMessage(is));
+                    XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
+                    pf.setNamespaceAware(true);
+                    XmlPullParser  parser = pf.newPullParser();
+                    parser.setInput(new InputStreamReader(is));
+                    
+                    OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
+                    msgContext.setInMessage(new SOAPMessageImpl(parserWrapper));
                     EngineRegistry reg = engine.getRegistry();
                     // invoke the Axis engine
                     engine.recive(msgContext);
