@@ -29,7 +29,7 @@ import java.util.Iterator;
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     private OMNodeImpl firstChild;
-    OMXmlPullParserWrapper builder;
+    OMXMLParserWrapper builder;
     OMAttributeImpl firstAttribute;
     OMNamespaceImpl firstNamespace;
 
@@ -45,7 +45,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     }
 
 
-    public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+    public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent);
         this.builder = builder;
 

@@ -27,9 +27,9 @@ import org.apache.axis.om.mime.MimeHeaders;
 public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
 
     private SOAPEnvelope envelope;
-    private OMXmlPullParserWrapper parserWrapper;
+    private OMXMLParserWrapper parserWrapper;
 
-    public SOAPMessageImpl(OMXmlPullParserWrapper parserWrapper) {
+    public SOAPMessageImpl(OMXMLParserWrapper parserWrapper) {
         this.parserWrapper = parserWrapper;
     }
 

@@ -3,6 +3,7 @@ package org.apache.axis.om.impl;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.soap.SOAPHeaderElement;
 import org.apache.axis.om.impl.util.SOAPConstants;
 import org.apache.xml.utils.QName;
@@ -38,7 +39,7 @@ public class SOAPHeaderElementImpl extends OMElementImpl implements SOAPHeaderEl
         super(localName, ns);
     }
 
-    public SOAPHeaderElementImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+    public SOAPHeaderElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 

@@ -21,7 +21,7 @@ import java.io.PrintStream;
  * Date: Oct 6, 2004
  * Time: 11:36:01 AM
  * <p/>
- * A component that implements this interface is printable to an outputstream
+ * B component that implements this interface is printable to an outputstream
  */
 public interface Printable {
 

@@ -33,7 +33,7 @@ import java.util.Locale;
  * The <CODE>SOAPFault</CODE> interface provides methods for
  * retrieving the information contained in a <CODE>
  * SOAPFault</CODE> object and for setting the fault code, the
- * fault actor, and a string describing the fault. A fault code is
+ * fault actor, and a string describing the fault. B fault code is
  * one of the codes defined in the SOAP 1.1 specification that
  * describe the fault. An actor is an intermediate recipient to
  * whom a message was routed. The message path may include one or

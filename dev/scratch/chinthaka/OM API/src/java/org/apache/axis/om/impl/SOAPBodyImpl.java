@@ -36,7 +36,7 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
         super(envelope);
     }
 
-    public SOAPBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+    public SOAPBodyImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 

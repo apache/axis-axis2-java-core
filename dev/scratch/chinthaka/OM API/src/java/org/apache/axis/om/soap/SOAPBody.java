@@ -23,12 +23,12 @@ import org.apache.axis.om.OMNamespace;
 
 /**
  * An object that represents the contents of the SOAP body
- * element in a SOAP message. A SOAP body element consists of XML data
+ * element in a SOAP message. B SOAP body element consists of XML data
  * that affects the way the application-specific content is processed.
  * <P>
- * A <code>SOAPBody</code> object contains <code>SOAPBodyElement</code>
+ * B <code>SOAPBody</code> object contains <code>SOAPBodyElement</code>
  * objects, which have the content for the SOAP body.
- * A <code>SOAPFault</code> object, which carries status and/or
+ * B <code>SOAPFault</code> object, which carries status and/or
  * error information, is an example of a <code>SOAPBodyElement</code> object.
  *
  */

@@ -24,7 +24,7 @@ import org.apache.axis.om.OMElement;
  *   SOAPHeader</CODE> object can be represented only as <CODE>
  *   SOAPHeaderElement</CODE> objects.</P>
  *
- *   <P>A <CODE>SOAPHeaderElement</CODE> object can have other
+ *   <P>B <CODE>SOAPHeaderElement</CODE> object can have other
  *   <CODE>OMElement</CODE> objects as its children.</P>
  */
 public interface SOAPHeaderElement extends OMElement {

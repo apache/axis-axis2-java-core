@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * A container for <CODE>MimeHeader</CODE> objects, which
+ * B container for <CODE>MimeHeader</CODE> objects, which
  *   represent the MIME headers present in a MIME part of a
  *   message.</P>
  *
@@ -303,7 +303,7 @@ public class MimeHeaders {
     // fixme: does this need to be a Vector? Will a non-synchronized impl of
     // List do?
     /**
-     * A <code>Vector</code> containing the headers as <code>MimeHeader</code>
+     * B <code>Vector</code> containing the headers as <code>MimeHeader</code>
      *              instances.
      */
     protected Vector headers;

@@ -1,6 +1,7 @@
 package org.apache.axis.om.impl;
 
 import org.apache.axis.om.*;
+import org.apache.axis.om.soap.SOAPMessage;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -23,7 +24,7 @@ import org.xmlpull.v1.XmlPullParserException;
  * Date: Oct 6, 2004
  * Time: 11:42:44 AM
  */
-public class OMXmlPullParserWrapper {
+public class OMXMLPullParserWrapper implements OMXMLParserWrapper {
     private XmlPullParser parser;
     // private OMElementImpl root;
     private SOAPMessageImpl document;
@@ -41,16 +42,16 @@ public class OMXmlPullParserWrapper {
      */
     private int elementLevel = 0;
 
-    public OMXmlPullParserWrapper(XmlPullParser parser) {
+    public OMXMLPullParserWrapper(XmlPullParser parser) {
         this.parser = parser;
     }
 
-//    public OMElementImpl getDocument() throws OMException {
+//    public OMElementImpl getSOAPMessage() throws OMException {
 //        if (root == null)
 //            next();
 //        return root;
 //    }
-    public SOAPMessageImpl getDocument() throws OMException {
+    public SOAPMessage getSOAPMessage() throws OMException {
         document = new SOAPMessageImpl(this);
         return document;
     }
@@ -227,20 +228,27 @@ public class OMXmlPullParserWrapper {
         }
     }
 
-    public void discard(OMElementImpl el) throws OMException {
-        if (el.isComplete() || !cache)
+    public void discard(OMElement el) throws OMException {
+        OMElementImpl elementImpl = null;
+        if (el instanceof OMElementImpl) {
+            elementImpl = (OMElementImpl) el;
+        } else {
+            throw new OMException();
+        }
+
+        if (elementImpl.isComplete() || !cache)
             throw new OMException();
         try {
             cache = false;
             do {
                 while (parser.next() != XmlPullParser.END_TAG) ;
                 //	TODO:
-            } while (!parser.getName().equals(el.getLocalName()));
-            lastNode = (OMNodeImpl) el.getPreviousSibling();
+            } while (!parser.getName().equals(elementImpl.getLocalName()));
+            lastNode = (OMNodeImpl) elementImpl.getPreviousSibling();
             if (lastNode != null)
                 lastNode.setNextSibling(null);
             else {
-                OMElementImpl parent = (OMElementImpl) el.getParent();
+                OMElementImpl parent = (OMElementImpl) elementImpl.getParent();
                 if (parent == null)
                     throw new OMException();
                 parent.setFirstChild(null);

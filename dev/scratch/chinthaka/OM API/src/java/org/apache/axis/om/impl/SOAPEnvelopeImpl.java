@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope {
 
-    public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+    public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 

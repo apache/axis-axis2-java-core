@@ -39,7 +39,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         super(envelope);
     }
 
-    public SOAPHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXmlPullParserWrapper builder) {
+    public SOAPHeaderImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
     }
 
