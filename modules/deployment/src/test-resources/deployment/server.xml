@@ -20,7 +20,6 @@
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>
-        <phase name="module"/>
         <phase name="service"/>
     </phaseOrder>
 </server>
