@@ -13,28 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.samples.userguide.sample2.server;
+package org.apache.axis.samples.userguide.sample2.client;
 
-import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.samples.userguide.sample1.server.SampleEnvironmentCreator;
+import org.apache.axis.clientapi.AsyncResult;
+import org.apache.axis.clientapi.Callback;
+import org.apache.axis.engine.AxisFault;
 
 /**
  * @author chathura@opensource.lk
  * 
  */
-public class TestServer {
+public class EchoStringCallbackHandler implements Callback {
 
-	public static void main(String[] args) throws Exception {
+	public void onComplete(AsyncResult result) {
 		
-		new SampleEnvironmentCreator().setUp();
-		System.out.println("Simple Axis Server started ....");
-		Thread.sleep(300000);
-		tearDown();
+		try {
+			System.out.println("Clent is called back. The echoed value is :"+new InteropTest_Stub().getEchoStringFromSOAPEnvelop(result.getResponseEnvelope()));
+		} catch (AxisFault e) {
+			
+			e.printStackTrace();
+		}		
+
 	}
-	
-	protected static void tearDown() throws Exception {
-        EngineUtils.stopServer();    
-        Thread.sleep(1000);
-        System.out.println("Server shuting down......");
+
+	public void reportError(Exception e) {
+		System.out.println("An Error Pccured !!!");
+		e.printStackTrace();
+
 	}
+
 }

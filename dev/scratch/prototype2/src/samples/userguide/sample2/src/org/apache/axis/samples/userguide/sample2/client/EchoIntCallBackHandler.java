@@ -29,9 +29,9 @@ public class EchoIntCallBackHandler implements Callback {
 	public void onComplete(AsyncResult result) {
 		
 		try {
-			System.out.println(new InteropTest_Stub().getEchoIntFromSOAPEnvelop(result.getResponseEnvelope()));
+			System.out.println("Clent is called back. The echoed value is :"+new InteropTest_Stub().getEchoStringFromSOAPEnvelop(result.getResponseEnvelope()));
 		} catch (AxisFault e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}		
 
@@ -39,6 +39,7 @@ public class EchoIntCallBackHandler implements Callback {
 
 	
 	public void reportError(Exception e) {
+		System.out.println("An Error Pccured !!!");
 		e.printStackTrace();
 
 	}

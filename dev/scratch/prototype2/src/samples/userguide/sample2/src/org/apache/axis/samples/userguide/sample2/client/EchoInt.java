@@ -28,35 +28,36 @@ import org.apache.axis.engine.EngineUtils;
  * @author chathura@opensource.lk
  * 
  */
-public class EchoInt extends Thread{
+public class EchoInt {
 
 	
 	
 	public static void main(String[] args) throws Exception {
-		new EchoInt().start();
-		
-		Thread.sleep(600000);
-	}
-	
-	public void run(){
 		InteropTest_Stub clientStub = new InteropTest_Stub();
 		URL url= null;
 		try {
 			url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			System.exit(0);
 		}
-		clientStub.setEnePointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+		System.out.println("Initializing the Web service Call ....");
+		clientStub.setEndPointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+		clientStub.setListenerTransport("http", true);
 		try {
-			
+			System.out.println("Sending the Async message ....");
 			clientStub.echoInt(new Integer(794), new EchoIntCallBackHandler());
+			
 		} catch (AxisFault e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		
+		System.out.println("Message sent and the client thread sleep till the resonce ....");		
+		Thread.sleep(6000);
+				
 	}
+	
 
 }

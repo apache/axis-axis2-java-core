@@ -15,12 +15,14 @@
  */
 package org.apache.axis.samples.userguide.sample2.client;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.samples.userguide.client.InteropTest_Stub;
+import org.apache.axis.samples.userguide.sample2.client.InteropTest_Stub;
 
 /**
  * @author chathura@opensource.lk
@@ -29,11 +31,29 @@ import org.apache.axis.samples.userguide.client.InteropTest_Stub;
 public class EchoString {
 
 	public static void main(String[] args) throws Exception{
-		InteropTest_Stub stub =new InteropTest_Stub();
-		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
-		stub.setEnePointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		System.out.println(stub.echoString("does this damn think work"));
+		InteropTest_Stub clientStub = new InteropTest_Stub();
+		URL url= null;
+		try {
+			url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
+		} catch (MalformedURLException e) {
+			
+			e.printStackTrace();
+			System.exit(0);
+		}
+		System.out.println("Initializing the Web service Call ....");
+		clientStub.setEndPointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+		clientStub.setListenerTransport("http", true);
+		try {
+			System.out.println("Sending the Async message ....");
+			clientStub.echoString("Dont fear death, rather a unlived life", new EchoIntCallBackHandler());
+			
+		} catch (AxisFault e1) {
+			
+			e1.printStackTrace();
+		}
 		
+		System.out.println("Message sent and the client thread sleep till the resonce ....");		
+		Thread.sleep(6000);
 		
 	}
 	

@@ -51,6 +51,10 @@ public class InteropTest_Stub {
 		this.call.setTo(epr);		
 	}
 	
+	public void setListenerTransport(String transport, boolean blocked){
+		call.setListenerTransport("http",blocked);
+	}
+	
 	
 	
 	///////////////////////////////////////////////////////////////
