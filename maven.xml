@@ -25,6 +25,9 @@
        |
        | clean
        |    Deletes the 'target' directory in all projects
+
+       | clean-repo
+       |    Deletes the 'target' directory in all projects
        |
        | war
        |    Build the war
@@ -39,98 +42,72 @@
        |  	Binary Distribution
        | 
      -->
-<!--
-  <j:set var="release.id" value="${pom.standardToLegacyId(pom.id)}-${pom.currentVersion}"/>
-    <j:set var="distDir" value="target/${pom.groupId}-${pom.currentVersion}"/>
--->
  
 <project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant" xmlns:j="jelly:core">
+  			<j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
+			<j:set var="dist.dir" value="target/dist"/>
 
+		 <goal name="init">
+		        <ant:mkdir dir="target"/>
+		        <ant:mkdir dir="${dist.dir}"/>
+   		        <ant:mkdir dir="target/lib"/>
+		</goal>	
+				
 		 <goal name="clean">
 			<attainGoal name="multiproject:clean"/>
+			<ant:delete dir="target"/>
+		</goal>
+
+		 <goal name="clean-repo">
 			<ant:delete >
 				<ant:fileset dir="${maven.repo.local}">
 					<ant:include name="axis/jars/axis2*.jar"/>
 				</ant:fileset>
 			</ant:delete>
-			<ant:delete dir="target"/>
 		</goal>
+		
+		<goal name="create-lib" prereqs="init">
+				<ant:copy todir="target/lib" flatten="true">
+					<ant:fileset dir="${maven.repo.local}">
+					<ant:include name="stax/jars/stax-api-1.0.jar"/>
+					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+					<ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+					<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
+					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+				</ant:fileset> 
+				<ant:fileset dir="modules">
+					<ant:include name="**/target/axis2*.jar"/>
+				</ant:fileset> 
+		</ant:copy> 
+				
+		</goal>		
+		
 
-
-    <goal name="war" prereqs="multiproject:install"> 
+    <goal name="war" prereqs="multiproject:install,init,create-lib"> 
         <!-- jar the test classes -->
-        <ant:mkdir dir="target"/>
 		<ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
-		  <ant:fileset dir="modules/core/src/html"/>
-		  <ant:lib dir="${maven.repo.local}/stax/jars/">
-		    <ant:include name="stax-api-1.0.jar"/>
-		    <ant:include name="stax-1.1.1-dev.jar"/>		    
-		  </ant:lib>  
-		  <ant:lib dir="${maven.repo.local}/commons-logging/jars/">
-		    <ant:include name="commons-logging-1.0.3.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="${maven.repo.local}/axis/jars/">
-		    <ant:include name="axis-wsdl4j-1.2-RC1.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="${maven.repo.local}/log4j/jars/">
-		    <ant:include name="log4j-1.2.8.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="modules/om/target/">
-		    <ant:include name="axis2*.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="modules/core/target/">
-		    <ant:include name="axis2*.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="modules/deployment/target/">
-		    <ant:include name="axis2*.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="modules/wsdl/target/">
-		    <ant:include name="axis2*.jar"/>
-		  </ant:lib>  
-		  <ant:lib dir="modules/samples/target/">
-		    <ant:include name="axis2*.jar"/>
-		  </ant:lib>  
-		<ant:classes dir="modules/core/src/conf">
-      		    <ant:include name="*.properties"/>
-		</ant:classes>
+		  	<ant:fileset dir="modules/core/src/html"/>
+		  	<ant:lib dir="target/lib">
+			    	<ant:include name="*.jar"/>
+		  	</ant:lib>  
+			<ant:classes dir="modules/core/src/conf">
+      		    	<ant:include name="*.properties"/>
+			</ant:classes>
 		</ant:war>
     </goal>
     
-    <goal name="war-withsamples" prereqs="multiproject:install"> 
+    <goal name="war-withsamples" prereqs="multiproject:install,init,create-lib"> 
         <!-- jar the test classes -->
         <ant:mkdir dir="target"/>
                <ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
                   <ant:fileset dir="modules/core/src/html"/>
-		  <ant:fileset dir="modules/samples/src/jsp"/>
+		  		  <ant:fileset dir="modules/samples/src/jsp"/>
                   <ant:webinf dir="modules/samples/target/test-resources/samples"/>
-                  <ant:lib dir="${maven.repo.local}/stax/jars/">
-                    <ant:include name="stax-api-1.0.jar"/>
-                    <ant:include name="stax-1.1.1-dev.jar"/>
-                  </ant:lib>
-                  <ant:lib dir="${maven.repo.local}/commons-logging/jars/">
-                    <ant:include name="commons-logging-1.0.3.jar"/>
-                  </ant:lib>
-                  <ant:lib dir="${maven.repo.local}/axis/jars/">
-                    <ant:include name="axis-wsdl4j-1.2-RC1.jar"/>
-                  </ant:lib>
-                  <ant:lib dir="${maven.repo.local}/log4j/jars/">
-                    <ant:include name="log4j-1.2.8.jar"/>
-                  </ant:lib>
-				  <ant:lib dir="modules/om/target/">
-				    <ant:include name="axis2*.jar"/>
-				  </ant:lib>  
-				  <ant:lib dir="modules/core/target/">
-				    <ant:include name="axis2*.jar"/>
-				  </ant:lib>  
-				  <ant:lib dir="modules/deployment/target/">
-				    <ant:include name="axis2*.jar"/>
-				  </ant:lib>  
-				  <ant:lib dir="modules/wsdl/target/">
-				    <ant:include name="axis2*.jar"/>
-				  </ant:lib>  
-				  <ant:lib dir="modules/samples/target/">
-				    <ant:include name="axis2*.jar"/>
-				  </ant:lib>  
+			  	<ant:lib dir="target/lib">
+				    	<ant:include name="*.jar"/>
+			  	</ant:lib>  
 				<ant:classes dir="modules/core/src/conf">
 		      		    <ant:include name="*.properties"/>
 				</ant:classes>
@@ -142,7 +119,7 @@
     <attainGoal name="html2xdoc"/>
   </preGoal>
   
-  <goal name="dist-bin" prereqs="war,javadoc-gen">
+  <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
 	<ant:mkdir dir="target/dist-bin"/>
 	<ant:mkdir dir="target/dist-bin/docs"/>
 	<ant:mkdir dir="target/dist-bin/bin"/>
@@ -161,17 +138,8 @@
 			</ant:fileset> 
 		</ant:copy> 
 		<ant:copy todir="target/dist-bin/lib" flatten="true">
-			<ant:fileset dir="${maven.repo.local}">
-				<ant:include name="stax/jars/stax-api-1.0.jar"/>
-				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-				<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
-				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-			</ant:fileset> 
-			<ant:fileset dir="modules">
-				<ant:include name="**/target/axis2*.jar"/>
+			<ant:fileset dir="target/lib">
+				<ant:include name="*.jar"/>
 			</ant:fileset> 
 		</ant:copy> 
 		<ant:copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
@@ -185,13 +153,17 @@
 				<ant:include name="userguide/**"/>
 			</ant:fileset> 
 		</ant:copy> 
-		<ant:zip file="target/axis2-bin-M1.zip" basedir="target/dist-bin"/>
-		<!-- <ant:tar tarfile="target/axis2-bin-M1.tar" basedir="target/dist-bin"/> -->
+		<ant:zip file="${dist.dir}/${dist.name}-bin.zip" basedir="target/dist-bin"/>
+		<ant:tar tarfile="target/${dist.name}-bin.tar" basedir="target/dist-bin"/> 
+		<gzip src="target/${dist.name}-bin.tar" zipfile="${dist.dir}/${dist.name}-bin.tar.gz"/>
 		<ant:delete dir="target/dist-bin"/>
+		<ant:delete file="target/${dist.name}-bin.tar"/>
   </goal>
-  <goal name="dist-src">
+  
+  
+  <goal name="dist-src" prereqs="init">
 		<ant:mkdir dir="target/dist-src"/>
-		<ant:zip file="target/axis2-src-M1.zip" >
+		<ant:zip file="${dist.dir}/${dist.name}-src.zip" >
 			<ant:fileset dir=".">
 				<ant:include name="**/*.java"/>
 				<ant:include name="**/*.xml"/>
@@ -212,9 +184,31 @@
 				<ant:exclude name="**/bin/**"/>
 			</ant:fileset> 
 		</ant:zip> 
+		 <ant:tar tarfile="target/${dist.name}-src.tar" basedir="." >
+               <ant:include name="**/*.java"/>
+              <ant:include name="**/*.xml"/>
+               <ant:include name="**/*.properties"/>
+              <ant:include name="**/*.xsd"/>
+               <ant:include name="**/*.jsp"/>
+                <ant:include name="**/*.html"/>
+                 <ant:include name="**/*.inc"/> 
+                <ant:include name="**/*.css"/>
+                 <ant:include name="**/*.gif"/>
+                 <ant:include name="**/*.jpg"/>
+                  <ant:include name="**/*.png"/>
+                  <ant:include name="**/*.GIF"/>
+                 <ant:include name="**/*.PNG"/>
+                 <ant:include name="**/*.JPG"/>
+                 <ant:exclude name="**/target/**"/>
+                  <ant:exclude name="**/.svn/**"/>
+                  <ant:exclude name="**/bin/**"/>
+            </ant:tar>
+            <gzip src="target/${dist.name}-src.tar" zipfile="${dist.dir}/${dist.name}-bin.tar.gz"/>
+            <ant:delete file="target/${dist.name}-src.tar"/>
+
   </goal>
   
-  <goal name="javadoc-gen">
+  <goal name="javadoc-gen" prereqs="init">
 	  <ant:javadoc packagenames="org.apache.axis.*"
            defaultexcludes="yes"
            destdir="target/apidocs"
