@@ -91,6 +91,8 @@ public class HandlerFaliureTest extends AbstractTestCase{
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    
+        EngineUtils.stopServer();  
+        Thread.sleep(1000);
     }
     
     public void testFailureAtServerResponseFlow() throws Exception{
@@ -126,17 +128,17 @@ public class HandlerFaliureTest extends AbstractTestCase{
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    
+        EngineUtils.stopServer();  
+        Thread.sleep(1000);
     }
     
     
 
     protected void tearDown() throws Exception {
-            sas.stop();   
-            Thread.sleep(1000);
     }
 
 
-    public void callTheService() throws Exception{
+    private void callTheService() throws Exception{
         try{
             OMFactory fac = OMFactory.newInstance();
 

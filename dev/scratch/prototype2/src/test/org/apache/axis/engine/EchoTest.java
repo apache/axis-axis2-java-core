@@ -71,7 +71,7 @@ public class EchoTest extends AbstractTestCase{
     }
 
     protected void tearDown() throws Exception {
-            sas.stop();   
+            EngineUtils.stopServer();    
             Thread.sleep(1000);
     }
 

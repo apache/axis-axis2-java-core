@@ -70,28 +70,13 @@ public class SimpleAxisServerTest extends AbstractTestCase{
 
 
     public void testEchoXMLSync() throws Exception{
-        ServerSocket serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleHTTPReceiver(engine);
-        sas.setServerSocket(serverSoc);
-        thisThread = new Thread(sas);
-        thisThread.setDaemon(true);
-        thisThread.start();
-        sas.stop();
+        EngineUtils.startServer(engineRegistry);
+        EngineUtils.stopServer();  
         Thread.sleep(1000);
-        serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleHTTPReceiver(engine);
-        sas.setServerSocket(serverSoc);
-        thisThread = new Thread(sas);
-        thisThread.setDaemon(true);
-        thisThread.start();
-        sas.stop();            
+        EngineUtils.startServer(engineRegistry);
+        EngineUtils.stopServer();  
         Thread.sleep(1000);
-        serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleHTTPReceiver(engine);
-        sas.setServerSocket(serverSoc);
-        thisThread = new Thread(sas);
-        thisThread.setDaemon(true);
-        thisThread.start();
-        sas.stop();            
+        EngineUtils.startServer(engineRegistry);
+        EngineUtils.stopServer();  
     }
 }

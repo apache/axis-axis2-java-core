@@ -37,6 +37,7 @@ public class EngineUtils {
     public static final int TESTING_PORT = 7777;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
+    private static SimpleHTTPReceiver sas;
     
     public static void addHandlers(Flow flow,Phase phase) throws AxisFault{
         if(flow != null){
@@ -47,16 +48,29 @@ public class EngineUtils {
         }
     }
     
-    public static SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
+    public static synchronized SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
         AxisEngine engine = new AxisEngine(engineRegistry);
         ServerSocket serverSoc = new ServerSocket(TESTING_PORT);
-        SimpleHTTPReceiver sas = new SimpleHTTPReceiver(engine);
+        if(sas == null){
+            sas = new SimpleHTTPReceiver(engine);
+        }else{
+            sas.stop();
+            sas = new SimpleHTTPReceiver(engine);
+        }
         sas.setServerSocket(serverSoc);
         Thread thisThread = new Thread(sas);
         thisThread.setDaemon(true);
         thisThread.start();
         return sas;
     }
+    
+    public static synchronized void stopServer() throws IOException{
+        if(sas != null){
+            sas.stop();
+            sas = null;
+        }
+    }
+    
     
     public static void addHandler(Flow flow, Handler handler){
         HandlerMetaData hmd = new HandlerMetaData();

@@ -93,7 +93,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
         while(!finish){
             Thread.sleep(500);
         }
-        sas.stop();
+        EngineUtils.stopServer();  
 
 
     }

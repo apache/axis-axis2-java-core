@@ -83,7 +83,7 @@ public class TestSendReceive extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
-        sas.stop();
+        EngineUtils.stopServer();  
     }
 
     public void testSendReceive() throws Exception {

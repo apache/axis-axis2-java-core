@@ -37,7 +37,6 @@ public class EngineAndDeploymentTest extends AbstractTestCase{
     public EngineAndDeploymentTest(String testName) throws Exception{
         super(testName);
         er = EngineRegistryFactory.createEngineRegistry("target/test-resources/deployment");
-        sas = EngineUtils.startServer(er);
         
     }
 
@@ -60,4 +59,12 @@ public class EngineAndDeploymentTest extends AbstractTestCase{
             OMElement omele = call.sendReceive(envelope);
             assertNotNull(omele);
     }
+    protected void setUp() throws Exception {
+        sas = EngineUtils.startServer(er);
+    }
+
+    protected void tearDown() throws Exception {
+        EngineUtils.stopServer();  
+    }
+
 }
