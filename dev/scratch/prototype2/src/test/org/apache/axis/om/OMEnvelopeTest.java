@@ -40,7 +40,7 @@ public class OMEnvelopeTest extends OMTestCase {
     }
 
     private OMEnvelope getSecondEnvelope() throws Exception {
-        return OMTestUtils.getOMBuilder(getTestResourceFile("/soap/sample1.xml")).getOMEnvelope();
+        return OMTestUtils.getOMBuilder(getTestResourceFile("soap/sample1.xml")).getOMEnvelope();
     }
 
     public void testGetHeader2() throws Exception {

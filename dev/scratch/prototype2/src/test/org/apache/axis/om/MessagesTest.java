@@ -34,7 +34,7 @@ public class MessagesTest extends OMTestCase {
     }
     
     public void testMinimalMessage() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("/soap/minimalMessage.xml")).getOMEnvelope();
+        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getOMEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }
     
@@ -44,7 +44,7 @@ public class MessagesTest extends OMTestCase {
     }
     
     public void testEmptyBodiedMessage() throws OMException, Exception {
-        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("/soap/emtyBodymessage.xml")).getOMEnvelope();
+        soapEnvelope = OMTestUtils.getOMBuilder(getTestResourceFile("soap/emtyBodymessage.xml")).getOMEnvelope();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 
