@@ -19,15 +19,11 @@ package org.apache.axis.deployment.scheduler;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DeploymentIterator implements ScheduleIterator {
+public class DeploymentIterator{
+
     private Calendar calendar = Calendar.getInstance();
 
-    public DeploymentIterator() {
-
-    }
-
     public Date next() {
-        // calendar.add(Calendar.MINUTE, 1);
         calendar.add(Calendar.SECOND, 10);
         return calendar.getTime();
     }

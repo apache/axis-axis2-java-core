@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.apache.axis.deployment.scheduler;
 
@@ -22,12 +22,15 @@ import java.util.TimerTask;
 
 public class Scheduler {
 
-    public class SchedulerTimerTask extends TimerTask {
-        private SchedulerTask schedulerTask;
-        private ScheduleIterator iterator;
+    private final Timer timer = new Timer();
 
-        public SchedulerTimerTask(SchedulerTask schedulerTask,
-                                  ScheduleIterator iterator) {
+    public class SchedulerTimerTask extends TimerTask {
+
+        private SchedulerTask schedulerTask;
+        private DeploymentIterator iterator;
+
+
+        public SchedulerTimerTask(SchedulerTask schedulerTask, DeploymentIterator iterator) {
             this.schedulerTask = schedulerTask;
             this.iterator = iterator;
         }
@@ -36,27 +39,6 @@ public class Scheduler {
             schedulerTask.run();
             reschedule(schedulerTask, iterator);
         }
-    }
-
-
-    private final Timer timer = new Timer();
-
-    public Scheduler() {
-    }
-
-    /**
-     * Terminates this <code>scheduler</code>, discarding any currently scheduled tasks.
-     * Does not interfere with a currently executing task (if it exists).
-     * Once a scheduler has been terminated, its execution thread terminates gracefully,
-     * and no more tasks may be scheduled on it.
-     * Note that calling this method from within the run method of a scheduler task that
-     * was invoked by this scheduler absolutely guarantees that the ongoing task execution is the last
-     * task execution that will ever be performed by this scheduler.
-     * This method may be called repeatedly; the second and subsequent calls have no effect.
-     */
-
-    public void cancel() {
-        timer.cancel();
     }
 
     /**
@@ -70,18 +52,13 @@ public class Scheduler {
      *                               scheduler was cancelled, or scheduler thread terminated.
      */
 
-    public void schedule(SchedulerTask schedulerTask,
-                         ScheduleIterator iterator) {
+    public void schedule(SchedulerTask schedulerTask, DeploymentIterator  iterator) {
 
         Date time = iterator.next();
         if (time == null) {
             schedulerTask.cancel();
         } else {
             synchronized (schedulerTask.lock) {
-                if (schedulerTask.state != SchedulerTask.VIRGIN) {
-                    throw new IllegalStateException("Task already scheduled " +
-                            "or cancelled");
-                }
                 schedulerTask.state = SchedulerTask.SCHEDULED;
                 schedulerTask.timerTask =
                         new SchedulerTimerTask(schedulerTask, iterator);
@@ -90,9 +67,7 @@ public class Scheduler {
         }
     }
 
-    private void reschedule(SchedulerTask schedulerTask,
-                            ScheduleIterator iterator) {
-
+    private void reschedule(SchedulerTask schedulerTask,DeploymentIterator iterator) {
         Date time = iterator.next();
         if (time == null) {
             schedulerTask.cancel();
@@ -106,4 +81,5 @@ public class Scheduler {
             }
         }
     }
+
 }
