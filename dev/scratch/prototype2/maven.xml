@@ -23,6 +23,8 @@
 		<ant:copy file="${basedir}/target/axis2-M1.jar" tofile="${maven.repo.local}/axis/jars/axis2-M1.jar"/>
      </postGoal>
     <goal name="war" prereqs="jar">
+        <!-- jar the test classes -->
+        <jar destfile="target/axis2-test.jar" basedir="target/test-classes"/>
 		<war destfile="target/axis2.war" webxml="src/conf/web.xml">
 		  <fileset dir="src/html"/>
 		  <lib dir="${maven.repo.local}/stax/jars/">
