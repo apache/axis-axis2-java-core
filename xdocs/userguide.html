@@ -1,0 +1,428 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Axis 2.0 User's Guide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.style1 {
+	font-family: "Courier New", Courier, mono;
+	font-size: 14px;
+}
+.style2 {
+	color: #990000;
+	font-weight: bold;
+}
+.style9 {color: #990000}
+.style10 {
+	font-family: "Courier New", Courier, mono;
+	font-size: 14px;
+	color: #990000;
+	font-weight: bold;
+}
+.style11 {font-family: "Courier New", Courier, mono; font-size: 14px; color: #990000; }
+-->
+</style>
+</head>
+
+<body>
+<h1 align="center"><a name="_Toc96697849">Axis 2.0 User's Guide </a></h1>
+<p>&nbsp; </p>
+<h2><a name="_Toc96698076"></a><a name="_Toc96697851">Introduction </a></h2>
+<p>Welcome to Axis 2.0, the next generation of Apache Axis !!! This User Guide will help you to understand what you will get from Axis 2.0 and how to get started. </p>
+<p>We hope you will benefit from the power of Axis 2.0. </p>
+<h2><a name="_Toc96698077"></a><a name="_Toc96697852">What is Axis 2.0 ? </a></h2>
+<p>Before we start, its highly recommended to read <a href="http://ws.apache.org/axis/java/user-guide.html">Axis 1.x User's guide </a>, if you are new to Axis. </p>
+<p>Axis 2.0 is the next generation of Apache Axis. In late August 2004, during the Axis Summit held in Colombo, Sri Lanka, a new architecture was introduced to have a much more flexible, efficient and configurable Axis. Even though the architecture is new, some of the well established concepts from Axis 1.x, like handlers are preserved in Axis 2.0 also. Axis 2.0 comes with lots of new features, enhancements and new industry specification implementations. </p>
+<p>After months of continued discussion and coding effort in this direction, Axis 2.0 now delivers the following key features: </p>
+<ul>
+  <li><strong>Speed</strong>. Axis uses its own object model and StAX (streaming) parsing to achieve significantly greater speed than earlier versions of Apache AXIS. </li>
+  <li><strong>Low memory foot print</strong>. Axis 2.0 was designed ground-up keeping low memory foot print in mind. </li>
+  <li><strong>AXIOM</strong>. Axis 2.0 comes with its own light-weight object model, AXIOM, for message processing which is extensible, high performance and developer convenient </li>
+  <li><strong>Hot Deployment.</strong> One can now hot deploy web services and handlers. </li>
+  <li><strong>Asynchronous Web Services</strong>. Axis 2.0 now support asynchronous web services invocation and asynchronous web services. </li>
+  <li><strong>Flexibility</strong>. The Axis architecture gives the developer complete freedom to insert extensions into the engine for custom header processing, system management, or anything else you can imagine. </li>
+  <li><strong>Stability</strong>. Axis defines a set of published interfaces which change relatively slowly compared to the rest of Axis. </li>
+  <li><strong>Component-oriented deployment</strong>. You can easily define reusable networks of Handlers to implement common patterns of processing for your applications, or to distribute to partners. </li>
+  <li><strong>Transport framework</strong>. We have a clean and simple abstraction for designing transports (i.e., senders and listeners for SOAP over various protocols such as SMTP, FTP, message-oriented middleware, etc), and the core of the engine is completely transport-independent. </li>
+  <li><strong>WSDL support.</strong> Axis 2.0 supports the <a href="http://www.w3.org/TR/wsdl">Web Service Description Language </a>, version 1.1 and 2.0, which allows you to easily build stubs to access remote services, and also to automatically export machine-readable descriptions of your deployed services from Axis. </li>
+</ul>
+<p>We hope you enjoy using Axis. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation . </p>
+<h5>Let us know what you think! </h5>
+<p>Please send feedback about the package to &quot; <a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org </a>&quot; and make sure to prefix the subject of the mail with “[Axis2]”. </p>
+<h2><a name="_Toc96698078"></a><a name="_Toc96697853">What's in this release? </a></h2>
+<p>This release includes the following features: </p>
+<ul>
+  <li>SOAP 1.1/1.2 compliant engine </li>
+  <li>Flexible configuration / deployment system with hot deployment support </li>
+  <li>HTTP servlet-based transport </li>
+  <li>Handler framework </li>
+  <li>AXIOM with complete SOAP specific API support </li>
+  <li>Client synchronous/asynchronous model </li>
+  <li>Basic XML in / XML out scenario support </li>
+  <li>WSDL 1.1 and 2.0 compliant Component Model </li>
+  <li>Examples, including a client and server for the one-way, two-way and synchronous, asynchronous web services invocation </li>
+</ul>
+<h2><a name="_Toc96698079"></a><a name="_Toc96697854">What's still to do? </a></h2>
+<p>Please see a list of what we think needs doing - and please consider helping out if you're interested &amp; able! </p>
+<ul>
+  <li>Encoding/data binding </li>
+  <li>JAX-RPC support </li>
+  <li>WSDL Based code (server/client) code generator </li>
+  <li>MTOM attachments support </li>
+  <li>Server side sync/async support </li>
+  <li>Complete XML infoset support for AXIOM </li>
+</ul>
+<h1><a name="_Toc96698080"></a><a name="_Toc96697855">Installation Guide </a></h1>
+<h2><a name="_Toc96698081"></a><a name="_Toc96697856">Introduction </a></h2>
+<p>Axis 2.0 can be downloaded as a <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/releases.html">zipped binary </a> or the <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/sources.html">source </a>. This section describes how Axis2 can be installed either as a standalone server or as part of a J2EE compliant servlet container. </p>
+<h2><a name="_Toc96698082"></a><a name="_Toc96697857">Prerequisites </a></h2>
+<p>Axis 2 requires the Java Runtime Environment to be properly installed. Axis is developed to be run on JRE 1.4 and upwards but it has not been fully tested with the latest JRE 1.5. Hence it is safe to run Axis with Java 1.4. If the JRE is not already in place it must be installed to proceed further. For instructions on setting up the JRE in different operating systems, please visit <a href="http://java.sun.com/">http://java.sun.com </a>. </p>
+<p>All the required jars are shipped with the binary distribution and if the source distribution is used, running the maven build will automatically download the required jars for you. </p>
+<p>Following sections describe how each type of distribution needs to be installed. Since the process with the source distribution is similar to the binary distribution after building, the first section explains the process of building Axis from source. If you have the binary distribution you can skip the build sections and directly go to the binary installation section. </p>
+<h2><a name="_Toc96698083"></a><a name="_Toc96697858">Building Axis2 from source </a></h2>
+<h3><a name="_Toc96698084"></a><a name="_Toc96697859">Setting up the Environment and the tools </a></h3>
+<p>The Axis2 build is based on <a href="http://maven.apache.org/">Maven </a>. Hence the prerequisite to build Axis2 from source is to have Maven installed. Even though extensive instruction guides are available at the Maven site, this guide also contains the “easiest path” for quick environment setting. Advanced users who wish to know more about Maven can visit <a href="http://maven.apache.org/start/index.html">here </a>. </p>
+<p>For Windows users the easiest way is to download the windows installer package. Once the installer package is run, all the necessary environment variables will be properly set. Once Maven is installed, the success of the installation can be tested by typing “maven –version” in the command prompt. </p>
+<p>&nbsp; </p>
+<p align="center"><img width="477" height="211" src="images/clip_image002.jpg"></p>
+<p>&nbsp; </p>
+<p>For Linux users the tar ball or the zip archive is the best options. (Unfortunately there is no rpm as such that can be easily installed) Once the archive is downloaded expand it to a directory of choice and set the environment variable “MAVEN_HOME” and add MAVEN_HOME/bin to the path as well. More instructions for installing Maven in UNIX based operating systems can be found <a href="http://maven.apache.org/start/install.html">here </a>. </p>
+<p>Once maven is properly installed it's all that is needed to start building Axis2. </p>
+<h3><a name="_Toc96698085"></a><a name="_Toc96697860">The Axis source distribution </a></h3>
+<p>The <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/sources.html">source distribution </a> is available as a zipped archive or a tar ball. All the necessary build scripts are included with the source distribution. Once the source archive is expanded into a directory of choice, moving to the particular directory and typing maven will build the axis jar file. </p>
+<p align="center"><img width="540" height="292" src="images/clip_image004.jpg"></p>
+<p>Once the command completes, the binaries (jar files in this case) can be found at a newly created “target” directory. </p>
+<p><strong>Note – For the first Maven build (if the maven repository is not built first) it will take a while since required jars need to be downloaded. However this is a once only process and will not affect any successive builds. </strong></p>
+<p><strong> </strong>The default maven build will however build only the Axis2 jar file. To obtain a WAR (Web Archive), “maven war” command should be issued. This will create a complete WAR with the name axis2.war inside the target directory. </p>
+<p>Once this build step is complete, the binaries are ready to be deployed. </p>
+<h2><a name="_Toc96698086"></a><a name="_Toc96697861">Installing Axis2 in a Servlet container </a></h2>
+<p>Installation of the WAR is quite simple. It's a matter of dropping the war in the webapps folders and most servlet containers will automatically install the war. However some servlet containers may require a restart in order to capture the new web application. Please refer your servlet container documentation for more information about this. </p>
+<p>Once the WAR is successfully installed it can be tested by pointing the web browser to the <strong>http:// &lt;host :port&gt;/ axis2. </strong>It should produce the following page. </p>
+<p align="center"><strong><img width="624" height="439" src="images/clip_image006.jpg"></strong></p>
+<p><strong>&nbsp; </strong>To ensure that everything is fine and smooth, a probing of the system can be done through the validate link. If the validation fails then the war has failed to install properly or some essential jars are missing. At such a situation the documentation of the particular servlet container should be consulted to find the problem. The following page is a successful validation. Note the statement “core axis libraries are present”. </p>
+<p align="center"><img width="647" height="469" src="images/clip_image008.jpg"></p>
+<p>The axis web application also provides an interface to upload services. Once a service is created according to the service specification (see the service jar file format structure) that jar file can be uploaded using the upload page. </p>
+<p align="center"><img width="647" height="469" src="images/clip_image010.jpg"></p>
+<p>&nbsp; </p>
+<p>The uploaded jar files will be stored in the default service directory. For Axis2 this will be the &lt;webapps&gt;/axis2/WEB-INF/services directory. Once a service is uploaded it will be instantly installed. </p>
+<p>Since Axis2 supports hot deployment one can drop the service jar directly through the file system to the above mentioned services directory and it will also cause the service to be automatically installed without the container being restarted. </p>
+<p>To check the successful installation of a service <strong><em>available services link </em></strong> is provided. The services and the operations of successfully installed services will be displayed in the available services page. </p>
+<p align="center"><img width="647" height="469" src="images/clip_image012.jpg"></p>
+<p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. </p>
+<h2><a name="_Toc96698087"></a><a name="_Toc96697862">Running the Axis2 standalone server </a></h2>
+<p>Since a J2EE servlet container can be heavy in certain cases, a simple socket server is provided with Axis2. </p>
+<h1><a name="_Toc96697863"></a><a name="_Toc96698088">Samples </a></h1>
+<p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under src\samples\userguide\sample1. </p>
+<ol>
+  <li>Echo Synchronous call. </li>
+  <li>    Echo Synchronous call with a phased handler. </li>
+  <li>Echo Asynchronous call at the client side.  </li>
+</ol>
+<p>The Sample1 can be located at the src/samples/userguide/sample1 directory and it will have (or eventually have after the build) the following files. </p>
+<p>&nbsp;</p>
+<table width="756" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="138" align="center" valign="top"><p align="center">Directory </p></td>
+    <td width="245" valign="top"><p align="center">File </p></td>
+    <td width="371" valign="top"><p align="center">Description </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>. </p></td>
+    <td valign="top"><p>build.xml </p></td>
+    <td valign="top"><p>Ant build file to compile, deploy and run the sample </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>src </p></td>
+    <td valign="top"><p>EchoXML.java </p></td>
+    <td valign="top"><p>Actual web service </p></td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top"><p>&nbsp; </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>&nbsp; </p></td>
+    <td valign="top"><p>SynchronousClient.java </p></td>
+    <td valign="top"><p>Echo Synchronous client. The same client will be used for Echo Synchronous call with a phased handler. </p>
+        <p>&nbsp; </p></td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top"><p>&nbsp; </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>&nbsp; </p></td>
+    <td valign="top"><p>LoggingHandler.java </p></td>
+    <td valign="top"><p>A handler that will log when it gets called. </p></td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top"><p>&nbsp; </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>&nbsp; </p></td>
+    <td valign="top"><p>AsynchronousClient.java </p></td>
+    <td valign="top"><p>Echo client with client side Asynchronous call </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>&nbsp; </p></td>
+    <td valign="top"><p>ClientEchoCallbackHandler.java </p></td>
+    <td valign="top"><p>The callback that will be called after the completion of the Asynchronous call. </p></td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top"><p>&nbsp; </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>conf/WEB-INF </p></td>
+    <td valign="top"><p>service.xml </p></td>
+    <td valign="top"><p>The deployment descriptor for the service. </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>build/services </p></td>
+    <td valign="top"><p>sample1.jar </p></td>
+    <td valign="top"><p>The deployable jar that is created after building the sample. </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><p>lib </p></td>
+    <td valign="top"><p>sample1-all.jar </p></td>
+    <td valign="top"><p>The jar that bundles the server side and client side code. </p></td>
+  </tr>
+</table>
+<h2><a name="_Toc96698089"></a><a name="_Toc96697864">Pre-Conditions </a></h2>
+<p>Axis2 should be installed (see the Installation guide above). For simplicity samples will assume the servlet container is Tomcat. </p>
+<p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed asix2.) </p>
+<p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
+<p>Apache Ant should be installed and should be available in the path. </p>
+<h2><a name="_Toc96698090"></a><a name="_Toc96697865">Deployment Mechanism </a></h2>
+<p>Axis2 supports hot deployment and a service can be deployed by packing the following files in a jar archive and simply dropping it into the Axis2 jar drop location which is AXIS_HOME/services directory in the servlet container. </p>
+<p>./&lt;compiled class files&gt; <br>
+./META-INF/service.xml </p>
+<p>Service.xml file describes axis specific functionality of the web service and should follow the schema listed in <a href="http://wiki.apache.org/ws/FrontPage/Architecture/Deployment">http://wiki.apache.org/ws/FrontPage/Architecture/Deployment </a> location. Please refer Appendix A for further information on writing your own service.xml. </p>
+<p>Once the built jar is dropped to AXIS_HOME/services of the running servlet container the user can immediately check weather the service is deployed using the web interface provided. The link would be http://&lt;hostname&gt;:&lt;port&gt;/&lt;axis2 war dropped directory&gt;/axis2/index.html (if axis2.war was dropped at the webapps directory of the servlet container running locally then the link would be <a href="http://127.0.0.1:8080/axis2/index.html">http://127.0.0.1:8080/axis2/index.html </a> )and click on the “List available services” link. </p>
+<h2><a name="_Toc96698091"></a><a name="_Toc96697866">Sample1 : Echo Synchronous call </a></h2>
+<p>The sample1: Echo synchronous call is intended to demonstrate the synchronous web service call in Axis2 with both the client side and client side running Axis2. In the next few steps the user will be walked through in: </p>
+<ul>
+  <li>Compiling and building a web service </li>
+  <li>Deploying </li>
+  <li>Running the client  </li>
+</ul>
+<h3><strong>Building the sample </strong></h3>
+<p>Building the sample will take only one step provided that pre conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the src/samples/userguide/sample1 directory and type </p>
+<p>&gt;ant compile </p>
+<p>and it will show the following output. </p>
+<p align="center"><img width="648" height="362" src="images/clip_image016.jpg"></p>
+<p>Now the user can actually go check for the sample1-all.jar in the lib directory and the packaged web service in the <strong>sample1.jar </strong>in the build\services directory. </p>
+<h3><strong>Deploying the sample </strong></h3>
+<p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis 2 engine at the runtime. </p>
+<p class="style1 style2">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br> 
+ &nbsp;&nbsp;&lt;java:implementation class=&quot;EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;<br>&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt;  
+<br>&lt;/service&gt;
+<p>Above service.xml provides three required types of information. </p>
+<ul>
+  <li>Provider – Provider that will invoke the service. </li>
+  <li>Implementation – Actual web service implementation class, in this case EchoXML. </li>
+  <li>Operation – The operations that the web service implementation supports or needs to be exposed. </li>
+</ul>
+<p>Once the service.xml and the web service (in this case EchoXML) is ready it is necessary to package it to a jar. Actually with the above </p>
+<p>&gt;ant compile </p>
+<p>The web service will get packaged into the build\services directory. Now user can deploy the service by one of the following methods. Since Axis2 supports the hot deployment of services can be deployed while the container is up and running. For option 2 below actually requires the container to be online. </p>
+<p>&gt;ant deploy </p>
+<p align="center"><img width="648" height="467" src="images/clip_image018.jpg"></p>
+<p>&nbsp; </p>
+<p>&#149;&nbsp; Uploading the jar using the web interface provided in the <strong>http:// &lt;host :port&gt;/ axis2 </strong>location. Please refer the Installation guide for further information. </p>
+<p>&#149;&nbsp; Manually copying the sample1.jar in build\services to the AXIS_HOME\WEB-INF\services directory. </p>
+<p><strong>The service will be deployed with the packaged jar file name. If the jar file is sample1.jar the service will be deployed with the name “sample1”. </strong></p>
+<p>Point to note here is that above ant task is going to deploy two services </p>
+<ol>
+  <li>sample1 – Required for this(Echo Sync call) and the EchoAsync Call examples. </li>
+  <li>sample1WithHandler – required for Echo Synchronous call with a phased handler. </li>
+</ol>
+<p>If the servlet container is now running the user can go check to see weather the above services are deployed. Please refer the installation guide for further information on checking the deployed services. </p>
+<p align="center"><img width="647" height="434" src="images/clip_image020.jpg"></p>
+<h3><strong>Running the sample </strong></h3>
+<p>The sample provides a simple synchronous client in the SynchronousClient.java class. First the user must start the servlet container and run the client by simply typing </p>
+<p>&gt;ant echo </p>
+<p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
+<p align="center"><img width="648" height="269" src="images/clip_image022.jpg"></p>
+<h2><a name="_Toc96698092"></a><a name="_Toc96697867">Sample2 : Echo Synchronous call with a phased handler. </a></h2>
+<p>This example will go one step forward from the example above and will deploy a web service with a Logging handler. The client application will not change, of course with an exception; the Endpoint Reference will be changed to refer the new service <strong>“Sample1WithHandler” </strong>. </p>
+<p>There is a Handler (LoggingHandler.java) that is introduced in this case and it will basically log the fact that it got called. The code can be found in LoggingHandler.java. </p>
+<p class="style1 style2">public void invoke(MessageContext msgContext) throws AxisFault {
+<br>&nbsp;&nbsp;log.info(&quot;Incoming message From &quot;+msgContext.getTo().getAddress()); 
+
+<br><br>public void revoke(MessageContext msgContext){ 
+<br>&nbsp;&nbsp;log.info(&quot;Incoming message Revoked at the server &quot;+msgContext.getTo().getAddress() ); 
+<br>} </p>
+<h3><strong>Building the sample </strong></h3>
+<p>Building the sample once will build all required classes and jars for all three cases. The ant task would be ant Compile. Please refer the building of the <strong>“Echo Synchronous call” </strong> above. </p>
+<h3><strong>Deploying the sample </strong></h3>
+<p>The implementation of the web service will be EchoXML, operation will be echo and the provider will be org.apache.axis.providers.RawXMLProvider, which are similar to that of the <strong>“Echo Synchronous call” </strong>. The difference is that there will be a handler that will be added in the server side. For further discussion refer the following service.xml which will be used in deploying the service. </p>
+<p class="style1 style2">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br>
+&nbsp;&lt;java:implementation class=&quot;EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; 
+&nbsp;&nbsp;&lt;inflow&gt; 
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;samples.userguide.sample3.server.LoggingHandler&quot;&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
+<br>&nbsp;&nbsp;&lt;/inflow&gt; 
+<br><br>&nbsp;&nbsp;&lt;outflow&gt; 
+<br>&nbsp;&nbsp;&lt;/outflow&gt; 
+<br><br>&nbsp;&nbsp;&lt;faultflow&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;LoggingHandler&quot;&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
+<br>&nbsp;&nbsp;&lt;/faultflow&gt; 
+<br><br>&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt; 
+<br>&lt;/service&gt; </p>
+<p>In extra this service.xml has defined three elements </p>
+<ol>
+  <li>inflow </li>
+  <li>outflow </li>
+  <li>faultflow </li>
+</ol>
+<p>These refer to the flows of the Axis2 server and further information of each could be found in the Architecture Guide. Using these elements the deployer can specify what handlers should go into which each flow. It can be further explained by referring to the entries in the above service.xml. In the above descriptor for the inflow and the faultfow there is a handler element that is added. At the deployment time, Axis2 will incorporate that handler to both the inflow and the fault flow. Since there is no such entry for the outflow no handler will be associated with the outflow. </p>
+<p>Handler should specify the implementation class and the phase that it belongs to. In this case the handler belong to the <strong>Logging </strong> phase and this phase name should be one of that is defined in the <strong>server.xml </strong>(not service.xml). So this <strong>Logging </strong> phase should be defined there in the server.xml which is located in AXIS_HOME/ axis2/WEB-INF. The following is the default server.xml that is shipped with axis2.war. </p>
+<p class="style1 style9"><strong>&lt;server name=&quot;AxisJava2.0&quot;&gt;
+<br>&nbsp;&nbsp;&lt;parameter name=&quot;hotdeployment&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
+<br>&nbsp;&nbsp;&lt;parameter name=&quot;hotupdate&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
+<br>&nbsp;&nbsp;&lt;transports&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;http&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;smtp&quot;/&gt; 
+<br>&nbsp;&nbsp;&lt;/transports&gt; 
+<br>&nbsp;&nbsp;&lt;phaseOrder&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;global&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;transport&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;Logging&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;module&quot;/&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;service&quot;/&gt; 
+<br>&nbsp;&nbsp;&lt;/phaseOrder&gt; 
+<br>&lt;/server&gt;  </strong></p>
+<p>Since the Logging phase is there in the default server.xml the user who runs these samples need not edit the server.xml at all. </p>
+<p>Nevertheless deploying the sample is very easy and it can be done in any of the three methods described in the <strong>“Echo Synchronous call” </strong> case. Infact had the use typed </p>
+<p>&gt;ant deploy </p>
+<p>and deployed the service in the <strong>“Echo Synchronous call” </strong> case then this service too will be deployed. The relevant jar file is <strong>sample1WithHandler.jar </strong> and will be packed to \build\services directory if the user wants to deploy it manually or upload using the web application. </p>
+<h3><strong>Running the sample </strong></h3>
+<p>In this case the client side is similar to that of <strong>“Echo Synchronous call” </strong>. The changes are happening in the server side in this case. The same SynchronousClient.java can be used to invoke the service by changing the command line arguments. Refer the ant target for details </p>
+<p>&lt;target name= &quot;echo&quot; depends= &quot;compile&quot; &gt; </p>
+<p><span class="style11" body="bold">&lt;java classname= &quot;SynchronousClient&quot;&gt;
+  </span>
+</p>
+<p class="style10">&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; </p>
+<p class="style10">&lt;arg value= &quot;8080&quot; /&gt; </p>
+<p class="style10">&lt;arg value= &quot;/axis2/services/sample1&quot; /&gt; </p>
+<p class="style10">&lt;/java&gt; </p>
+<p class="style10">&lt;/target&gt; </p>
+<p class="style10">&lt;target name= &quot;echoWithHandler&quot; &gt; </p>
+<p class="style10">&lt;java classname= &quot;SynchronousClient&quot; &gt; </p>
+<p class="style10">&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; </p>
+<p class="style10">&lt;arg value= &quot;8080&quot; /&gt; </p>
+<p class="style10">&lt;arg value= &quot;/axis2/services/sample1WithHandler&quot; /&gt; </p>
+<p class="style10">&lt;/java&gt; </p>
+<p class="style10">&lt;/target&gt; </p>
+<p>To run the sample first the user must start the servlet container and run the client by simply typing </p>
+<p>&gt;ant echoWithHandler </p>
+<p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
+<p align="center"><img width="648" height="265" src="images/clip_image024.jpg"></p>
+<p>The service <strong>“sample1withhandler” </strong> will run its logging handler as it gets called and it will log the call as the handler gets called in the inflow. This logged information can be found in the server logs. </p>
+<h2><a name="_Toc96698093"></a><a name="_Toc96697868">Sample3 : Echo Asynchronous call. </a></h2>
+<p>In this case the example focuses on calling a synchronous web service in an asynchronous manner in the client side. If this example is compared with the first example, which is <strong>“Echo Synchronous call” </strong>, the server side is identical for both the cases. The difference will be in the web service client that will be used. </p>
+<p>In this case the client will make a web service call and it will register a call back handler and sends the message out. The difference will be that the client application that is doing the web service call will not hang till the response. Rather it will get returned and once the response returns the client will get notified by way of the registered callback (This is one of the two methods this can be done in Axis 2.0. Refer <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/clientAPI.html">client api tutorial </a> for more information). </p>
+<p>The callback handler that will be used is ClientEchoCallbackHandler.java and the client program is AsynchronousClient.java. </p>
+<h3><strong>Building the sample </strong></h3>
+<p>Building the sample once will build all required classes and jars for all three cases. The ant task would be “ant Compile”. Please refer the building of the <strong>“Echo Synchronous call” </strong> above. </p>
+<h3><strong>Deploying the sample </strong></h3>
+<p>The web service that will be called is the <strong>sample1 </strong> service which is used in the <strong>“Echo Synchronous call” </strong> case. If the web service is not already deployed please refer “Deploying the sample” of <strong>“Echo Synchronous call” </strong> above. </p>
+<h3><strong>Running the sample </strong></h3>
+<p>The class to run is AsynchronousClient.java and it will intialise the web service call. It will register a call back in this case an instance of the ClientEchoCallbackHandler and then client will sleep to keep the thread alive. Eventually when the response is received the callback handler will be called(if all goes well onComplete() method will be called), in this case the ClientEchoCallbackHandler instance that was registered. </p>
+<p>Inside the ClientEchoCallbackHandler it will print the received SOAP message. Please refer the code. </p>
+<p>To run the client one can simply type </p>
+<p>&gt;ant echoAsync </p>
+<p>and it will give the following output. </p>
+<p align="center"><img width="648" height="277" src="images/clip_image026.jpg"></p>
+<p>&nbsp; </p>
+<strong><br>
+</strong>
+<h1><a name="_Toc96698094"></a><a name="_Toc96697869">Writing your own Service and a client </a></h1>
+<h2><a name="_Toc96698095"></a><a name="_Toc96697870">Writing a New Service </a></h2>
+<p>Writing a new Web Service in Axis2-M1 requires you to do following steps </p>
+<p><strong>&#149;&nbsp; Writing a new Web Service implementation class </strong></p>
+<p>Axis2 M1 does not support data binding and supports only the XML level messaging. The default provider (do not worry about this if you do not know what it is) only supports the java methods having the return type as OMElement and only parameter as an OMElement. </p>
+<p>The OMElement is a Streaming representation of XML Message Element Information Item (Even though the user sees the OMElement as a tree based DOM/JDOM like node, it reads the information from the stream only when its absolutely required.). For more information refer the <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/OMTutorial.html">OM Tutorial </a>. </p>
+<p>public class &lt;class-name&gt;{ </p>
+<p>public OMElelemnt &lt;method-name&gt;(OMEllemnt){ </p>
+<p>&lt;business logic&gt; </p>
+<p>} </p>
+<p>..... </p>
+<p>} </p>
+<p><strong>&#149;&nbsp; Write the service.xml file </strong></p>
+<p>the following XML snippet is a very simple service.xml file. </p>
+<p>&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; &gt; </p>
+<p>&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot; </p>
+<p>xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; </p>
+<p>&lt;operation name=&quot;&lt;method-name&gt;&quot; qname=&quot;&lt;method-name&gt;&quot;/&gt;... </p>
+<p>&lt;/service&gt; </p>
+<p>Here the org.apache.axis.providers.RawXMLProvider is the default provider for the Apache Axis2 M1, the provider can be changed by specifying the relevant parameter. Note that &lt;method-name&gt; should be replaced by the relevant method name. </p>
+<p><strong>&#149;&nbsp; Create an archive with the service.xml file and with class files </strong></p>
+<p>Compile the the Web Service implementation class and any other supporting class. Archive them in to a jar file. Place the service.xml file in the META-INF directory. </p>
+<p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a </strong>xis <strong>ar </strong>chive) </p>
+<p><strong>&#149;&nbsp; deploy the archive in the Axis2 </strong></p>
+<p>While the Axis2 is running copy the archive to the services folder in the repository directory or use web upload method. (in the case of a Servlet container this directory is axis/WEB-INF/services/). Axis will automatically pick the archive and deploy the service. </p>
+<h2><a name="_Toc96698096"></a><a name="_Toc96697871">Writing a Client for the Axis2-M1 </a></h2>
+<p>Axis2 M1 supports HTTP transport only. Axis2-M1 supports the following interaction patterns. </p>
+<p>&#149;&nbsp; Blocking invocation of type in-out (request/response) </p>
+<p>&#149;&nbsp; Non blocking invocation of type in-out (Without a separate Listener) </p>
+<p>for more information about the interaction patterns, visit the <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/clientAPI.html">Client API Tutorial </a>. </p>
+<p>To invoke the web service, user needs to build the the SOAPEnvelope himself. The SOAPEnvelope can be built by the following code. </p>
+<p>OMFactory fac = OMFactory.newInstance(); </p>
+<p>SOAPEnvelope envelope = fac.getDefaultEnvelope(); </p>
+<p>OMElement omElement = ..... </p>
+<p>envelope.getBody().addChild(omElement); </p>
+<p>&nbsp; </p>
+<p>OMElement can be build using one of the following methods; </p>
+<ol>
+  <li>Create a OM by building the OM tree </li>
+</ol>
+<p class="style1">	fac.createOMElement(method, ns); </p>
+<ol>
+  <li>Create a OM Element from a XML file </li>
+</ol>
+<p class="style1">XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); <br>
+  OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(), parser); </p>
+<p class="style1">builder.getDocumentElement(); </p>
+<p class="style1">for more information in handling the OM objects please read the <a href="file:///E|/projects/dev/scratch/prototype2/xdocs/OMTutorial.html">OM Tutorial </a>. </p>
+<h3><a name="_Toc96698097"></a><a name="_Toc96697872">Synchronous Client </a></h3>
+<p>Invoking the synchronous web service call can be done with the following code. </p>
+<p class="style1">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) + &quot;/axis/services/echo&quot; ); </p>
+<p class="style1">Call call = <strong>new </strong>Call(); </p>
+<p class="style1">call.setTo(targetEPR); </p>
+<p class="style1">SOAPEnvelope responseEnv = call.sendReceive(envelope); </p>
+<p class="style1">&nbsp; </p>
+<p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
+<p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
+<p>&#149;&nbsp; call.sendRecieve() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
+<h3><a name="_Toc96698098"></a><a name="_Toc96697873">Asynchronous Client </a></h3>
+<p>Invoking the asynchronous web service call can be done with the following code. </p>
+<p class="style1">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) </p>
+<p class="style1">+ &quot;/axis/services/echo&quot; ); </p>
+<p class="style1">Call call = <strong>new </strong>Call(); </p>
+<p class="style1">call.setTo(targetEPR); </p>
+<p class="style1">call.setListenerTransport(Constants.TRANSPORT_HTTP, <strong>true </strong>); </p>
+<p class="style1">SOAPEnvelope responseEnv = call.sendReceiveAsync(envelope,callback); </p>
+<p>&nbsp; </p>
+<p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
+<p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
+<p>&#149;&nbsp; call.sendRecieveAsync() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
+<p>&#149;&nbsp; The LitenerTransport is type of the trasport to be used. Axis2-M1 only supports the http and the second parameter express the should the seperate listener is to be started or not. Axis-M1 suppoerts only the true for this. </p>
+<p>&#149;&nbsp; callback it the Callback to handle the response e.g. </p>
+<p class="style1">Callback callback = <strong>new </strong> Callback() { </p>
+<p class="style1"><strong>public void </strong>onComplete(AsyncResult result) { </p>
+<p class="style1">//process the result </p>
+<p class="style1">} </p>
+<p class="style1">&nbsp; </p>
+<p class="style1"><strong>public void </strong>reportError(Exception e) { </p>
+<p class="style1">//handler error </p>
+<p class="style1">} </p>
+<p class="style1">}; </p>
+<p>&nbsp; </p>
+<p>&nbsp; </p>
+</body>
+</html>
