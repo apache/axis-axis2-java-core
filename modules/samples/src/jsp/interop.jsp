@@ -24,7 +24,7 @@
  */
  %>
 <head>
-    <title>Axis 2 - Home</title>
+    <title>Axis 2 -Interop Test Page</title>
     <link href="css/axis-style.css" rel="stylesheet" type="text/css">
     <script>
        function displayStringRow(){
@@ -53,7 +53,11 @@
     </script>
 </head>
 	<body>
+         <jsp:include page="include/header.inc"></jsp:include>
 
+       	<h3>Welcome to Axis interop testing.</h3><br/>
+        You can use this web page to do a doclit standard interop test. For more detail and test server information please visit the
+        <a href="http://www.whitemesa.com/r3/interop3.html">whitemesa interop test page.</a>
     <%
       if (request.getParameter("submit") != null) {
           int type = interopBean.getType();
@@ -81,17 +85,12 @@
           try {
               new InteropRequestHandler().handleInteropRequest(interopBean);
           } catch (Exception e) {
-             out.write(" Exception occured!!!");
+              %> <font color="red">Exception occurred during the test <br/> <%=e.getMessage()%></font> <%
+
           }
       }
     %>
 
-
-        <jsp:include page="include/header.inc"></jsp:include>
-
-       	<h3>Welcome to Axis interop testing.</h3><br/>
-        You can use this web page to do a doclit standard interop test. For more detail and test server information please visit the
-        <a href="http://www.whitemesa.com/r3/interop3.html">whitemesa interop test page.</a>
         <form method="post" name="InteropTesting" action="interop.jsp">
          <table border="0" width="100%" cellspacing="1" cellpadding="1">
           <tr>
@@ -207,23 +206,13 @@
            <td>&nbsp;</td>
            <td>&nbsp;</td>
            </tr>
-           <tr>
-           <tr>
-           <td>&nbsp;</td>
-           <td>&nbsp;</td>
-           </tr>
-          <tr>
+                    <tr>
                 <td width="40%" ></td>
                 <td>
                      <input name="submit" type="submit" value=" Send " class="buttons" >
                      <input name="reset" type="reset" value=" Clear " class="buttons" >
                 </td>
            </tr>
-           <tr>
-           <td>&nbsp;</td>
-           <td>&nbsp;</td>
-           </tr>
-           <tr>
            <tr>
            <td>&nbsp;</td>
            <td>&nbsp;</td>
@@ -256,7 +245,7 @@
           </tr>
         </form>
 
-
+        <jsp:include page="include/link-footer.inc"></jsp:include>
         <jsp:include page="include/footer.inc"></jsp:include>
 	</body>
 </html>
