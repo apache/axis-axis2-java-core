@@ -26,6 +26,14 @@ public class HTTPConstants {
      * whaddya think? - todo by Jacek)
      */
 
+    public static final String PROTOCOL_VERSION = "PROTOCOL";
+    public static final String REQUEST_URI = "REQUEST_URI";
+    public static final String RESPONSE_CODE = "RESPONSE_CODE";
+    public static final String RESPONSE_WORD = "RESPONSE_WORD";
+    public static final String RESPONSE_ACK_CODE_VAL = "202";
+    public static final String SOCKET = "SOCKET";
+    
+
     public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
     public static final String HEADER_PROTOCOL_11 = "HTTP/1.1";
     public static final String HEADER_PROTOCOL_V10 = "1.0".intern();
@@ -123,13 +131,13 @@ public class HTTPConstants {
     public static final String PLUGIN_EXCEPTION_LOG = "transport.http.plugin.exceptionLog";
     
     
-    public static final byte OK[] = ("200 OK").getBytes();
+    public static final char OK[] = ("200 OK").toCharArray();
     public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();
     public static final byte UNAUTH[] = ("401 Unauthorized").getBytes();
     public static final byte SENDER[] = "400".getBytes();
     public static final byte ISE[] = ("500 Internal server error").getBytes();
     // HTTP prefix
-    public static byte HTTP[] = "HTTP/1.0 ".getBytes();
+    public static char HTTP[] = "HTTP/1.0 ".toCharArray();
 
 
 }

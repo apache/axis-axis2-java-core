@@ -15,25 +15,14 @@ import org.apache.axis.testUtils.ObjectToOMBuilder;
 
 public class Sampler {
     private int count;
-    public Sampler(int count){
+    private Collecter collector;
+    public Sampler(int count,Collecter collector){
         this.count = count;
+        this.collector = collector;
     }
     
     
     public void invokeService() throws Exception {
-        long start = System.currentTimeMillis();
-        OMFactory fac = OMFactory.newInstance();
-        OMNamespace ns =
-            fac.createOMNamespace(
-                "http://apache.ws.apache.org/samples",
-                "samples");
-        OMNamespace arrayNs =
-            fac.createOMNamespace(
-                OMConstants.ARRAY_ITEM_NSURI,
-                OMConstants.ARRAY_ITEM_NS_PREFIX);
-        OMNamespace targetNs =
-            fac.createOMNamespace("http://axis.apache.org", "s");
-
         EchoStruct[] objs = new EchoStruct[count];
 
         for (int i = 0; i < objs.length; i++) {
@@ -52,6 +41,20 @@ public class Sampler {
             objs[i].setValue12("Scotch Gambit");
             objs[i].setValue13("English Opening"+i);
         }
+
+        long start = System.currentTimeMillis();
+        OMFactory fac = OMFactory.newInstance();
+        OMNamespace ns =
+            fac.createOMNamespace(
+                "http://apache.ws.apache.org/samples",
+                "samples");
+        OMNamespace arrayNs =
+            fac.createOMNamespace(
+                OMConstants.ARRAY_ITEM_NSURI,
+                OMConstants.ARRAY_ITEM_NS_PREFIX);
+        OMNamespace targetNs =
+            fac.createOMNamespace("http://axis.apache.org", "s");
+
 
         OMElement returnelement = fac.createOMElement("param1", ns);
         EchoStructEncoder encoder = new EchoStructEncoder();
@@ -107,8 +110,8 @@ public class Sampler {
             }
 
         }
-        
-        System.out.println(end -start);
-
+        long val = end -start;
+        System.out.println(val);
+        collector.add(val);
     }
 }

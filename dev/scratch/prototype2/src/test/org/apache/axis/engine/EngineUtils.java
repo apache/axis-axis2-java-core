@@ -30,13 +30,14 @@ import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.MockFlow;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.testUtils.SimpleJavaProvider;
-import org.apache.axis.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPServer;
+
 
 public class EngineUtils {
-    public static final int TESTING_PORT = 4444;
+    public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
-    private static SimpleHTTPReceiver sas;
+    private static SimpleHTTPServer sas;
     
     public static void addHandlers(Flow flow,Phase phase) throws AxisFault{
         if(flow != null){
@@ -47,7 +48,7 @@ public class EngineUtils {
         }
     }
     
-    public static synchronized SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
+    public static synchronized SimpleHTTPServer startServer(EngineRegistry engineRegistry) throws IOException{
         ServerSocket serverSoc = null;
         if(sas == null){
         }else{
@@ -60,7 +61,7 @@ public class EngineUtils {
             }
         }
         serverSoc = new ServerSocket(TESTING_PORT);
-        sas = new SimpleHTTPReceiver(engineRegistry);
+        sas = new SimpleHTTPServer(engineRegistry);
 
         sas.setServerSocket(serverSoc);
         Thread thisThread = new Thread(sas);

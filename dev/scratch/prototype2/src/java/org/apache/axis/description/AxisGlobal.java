@@ -17,7 +17,6 @@ package org.apache.axis.description;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 import java.util.List;
 
 import javax.xml.namespace.QName;

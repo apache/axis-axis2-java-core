@@ -114,7 +114,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
             Object[] parms = new Object[]{parmeter};
             //invoke the WebService 
             OMElement result = (OMElement) method.invoke(obj, parms);
-            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry());
+            MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry(),msgContext.getProperties());
 
             SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
             envelope.getBody().setFirstChild(result);

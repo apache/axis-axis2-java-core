@@ -43,9 +43,41 @@
 		  <lib dir="target/">
 		    <include name="axis2*.jar"/>
 		  </lib>  
+		<classes dir="src/conf">
+      		    <include name="*.properties"/>
+		</classes>
 		</war>
     </goal>
     
+    <goal name="war-withsamples" prereqs="jar">
+        <!-- jar the test classes -->
+        <jar destfile="target/axis2-test.jar" basedir="target/test-classes"/>
+                <war destfile="target/axis2.war" webxml="src/conf/web.xml">
+                  <fileset dir="src/html"/>
+                  <webinf dir="target/test-resources/samples"/>
+                  <lib dir="${maven.repo.local}/stax/jars/">
+                    <include name="stax-api-1.0.jar"/>
+                    <include name="stax-1.1.1-dev.jar"/>
+                  </lib>
+                  <lib dir="${maven.repo.local}/commons-logging/jars/">
+                    <include name="commons-logging-1.0.3.jar"/>
+                  </lib>
+                  <lib dir="${maven.repo.local}/axis/jars/">
+                    <include name="axis-wsdl4j-1.2-RC1.jar"/>
+                  </lib>
+                  <lib dir="${maven.repo.local}/log4j/jars/">
+                    <include name="log4j-1.2.8.jar"/>
+                  </lib>
+                  <lib dir="target/">
+                    <include name="axis2*.jar"/>
+                  </lib>
+		<classes dir="src/conf">
+      		    <include name="*.properties"/>
+		</classes>
+                </war>
+    </goal>
+
+
     <goal name="samples">
     		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
     		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample2"/>

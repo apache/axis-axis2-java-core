@@ -18,12 +18,10 @@ package org.apache.axis.transport.http;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -39,17 +37,17 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisOperation;
+import org.apache.axis.transport.TransportSenderLocator;
 
 
 
@@ -76,7 +74,7 @@ public class AxisServlet extends HttpServlet{
         try {
             res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine  = new AxisEngine(engineRegistry);
-            MessageContext msgContext = new MessageContext(engineRegistry);
+            MessageContext msgContext = new MessageContext(engineRegistry,null);
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             if(filePart != null && filePart.endsWith(LISTSERVICES))  {
@@ -91,13 +89,21 @@ public class AxisServlet extends HttpServlet{
                 msgContext.setProperty(MessageContext.SOAP_ACTION, soapActionString);
             }
 
-            InputStreamReader isr = new InputStreamReader(req.getInputStream());
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
-            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+            XMLStreamReader reader =
+                 XMLInputFactory.newInstance().createXMLStreamReader(new InputStreamReader(
+                     req.getInputStream()));
+             StAXBuilder builder =
+                 new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
 
-            storeOutputInfo(msgContext, res.getOutputStream());
-            engine.receive(msgContext);
+             msgContext.setProperty(
+                 MessageContext.TRANSPORT_TYPE,
+                 TransportSenderLocator.TRANSPORT_HTTP);
+             msgContext.setProperty(
+                 MessageContext.TRANSPORT_WRITER,
+                 res.getWriter());
+
+             engine.receive(msgContext);
         } catch (AxisFault e) {
             throw new ServletException(e);
         } catch (XMLStreamException e) {
@@ -108,22 +114,7 @@ public class AxisServlet extends HttpServlet{
 
     }
 
-    protected void storeOutputInfo(MessageContext msgContext,
-                                   OutputStream out) throws AxisFault {
-//        try {
-        // Send it on its way...
-//            out.write(HTTPConstants.HTTP);
-//            out.write(HTTPConstants.OK);
-//            out.write("\n\n".getBytes());
-        //We do not have any Addressing Headers to put
-        //let us put the information about incoming transport
-        msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                TransportSenderLocator.TRANSPORT_HTTP);
-        msgContext.setProperty(MessageContext.TRANSPORT_DATA, out);
-//        } catch (IOException e) {
-//            throw AxisFault.makeFault(e);
-//        }
-    }
+ 
 
     private void listServices(HttpServletResponse res) throws IOException {
         HashMap services = engineRegistry.getServices();

@@ -35,7 +35,8 @@ import org.apache.axis.description.MockFlow;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.testUtils.SimpleJavaProvider;
-import org.apache.axis.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPServer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,7 +49,7 @@ public class MessageWithServerTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
-    private SimpleHTTPReceiver sas;
+    private SimpleHTTPServer sas;
 
     public MessageWithServerTest(String testName) {
         super(testName);

@@ -1,3 +1,7 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 /*
  * Created on Feb 9, 2005
  *
@@ -12,19 +16,26 @@
  */
 public class LoadTest implements Runnable {
     private int sizeOfArray = 10;
-    private int numberOfRequests = 100;
+    private static int numberOfRequests = 100;
     private int no;
-    
-    public LoadTest(int no){
+    private static int THREAD_COUNT = 500;
+    private Collecter c; 
+    public LoadTest(int no,Collecter c){
         this.no = no;
+        this.c = c;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
+    public static void main(String[] args) throws IOException {
+        Writer writer = new FileWriter("results/result.txt");
+        Collecter c = new Collecter(THREAD_COUNT * numberOfRequests,"Load increase test, Axis2",writer);
+        for (int i = 0; i < THREAD_COUNT; i++) {
             System.out.println("Thread "+i+ " started");
-            Thread thread = new Thread(new LoadTest(i));
+            Thread thread = new Thread(new LoadTest(i,c));
             thread.start();
         }
+        c.printResult();
+        writer.close();
+        
     }
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
@@ -34,7 +45,7 @@ public class LoadTest implements Runnable {
         for (int i = 0; i < numberOfRequests; i++) {
             
             try {
-                Sampler sampler = new Sampler(sizeOfArray);
+                Sampler sampler = new Sampler(sizeOfArray,c);
                 sampler.invokeService();
             } catch (Exception e) {
                 e.printStackTrace();

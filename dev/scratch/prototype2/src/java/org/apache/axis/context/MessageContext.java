@@ -29,6 +29,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 
@@ -46,7 +47,9 @@ public class MessageContext {
     public static final String PASSWORD = "PASSWD";
     public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
     public static final String SOAP_ACTION = "SOAP_ACTION";
-    public static final String TRANSPORT_DATA = "TRANSPORT_DATA";
+    public static final String TRANSPORT_WRITER = "TRANSPORT_WRITER";
+    public static final String TRANSPORT_READER = "TRANSPORT_READER";
+    public static final String TRANSPORT_IN = "TRANSPORT_IN";
     //public static final String REQUEST_URL = "REQUEST_URL";
 
     private boolean processingFault = false;
@@ -61,7 +64,7 @@ public class MessageContext {
 
     //there is a no use cas found to set those proprties 
     //so declare them final    
-    private final HashMap properties;
+    private final Map properties;
     private final GlobalContext globalContext;
 
     private SessionContext sessionContext;
@@ -76,10 +79,13 @@ public class MessageContext {
     private XMLStreamReader xpp;
     private OMElement soapOperationElement;
 
-    public MessageContext(EngineRegistry er) throws AxisFault {
+    public MessageContext(EngineRegistry er, Map initialProperties) throws AxisFault {
         this.globalContext = new GlobalContext(er);
         this.sessionContext = new SimpleSessionContext();
-        properties = new HashMap();
+        if(initialProperties == null){
+            initialProperties = new HashMap();
+        }
+        properties = initialProperties;
         chain = new ExecutionChain();
     }
 
@@ -389,5 +395,12 @@ public class MessageContext {
 	public void setSoapOperationElement(OMElement element) {
 		soapOperationElement = element;
 	}
+
+    /**
+     * @return
+     */
+    public Map getProperties() {
+        return properties;
+    }
 
 }

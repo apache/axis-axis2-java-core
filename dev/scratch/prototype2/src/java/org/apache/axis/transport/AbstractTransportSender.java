@@ -17,6 +17,7 @@
 package org.apache.axis.transport;
 
 import java.io.OutputStream;
+import java.io.Writer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -26,7 +27,6 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.TransportSender;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
@@ -34,64 +34,84 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  */
-public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
-	private Log log = LogFactory.getLog(getClass());
-	public static final QName NAME = new QName("http://axis.ws.apache.org","TransportSender");
-	
-	public AbstractTransportSender(){
-		init(new HandlerMetaData(NAME));
-	}
-    public final void invoke(MessageContext msgContext) throws AxisFault {
-		OutputStream out = null;
+public abstract class AbstractTransportSender
+    extends AbstractHandler
+    implements TransportSender {
+    private Log log = LogFactory.getLog(getClass());
+    public static final QName NAME =
+        new QName("http://axis.ws.apache.org", "TransportSender");
+    protected OutputStream outS;
+    public AbstractTransportSender() {
+        init(new HandlerMetaData(NAME));
+    }
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Writer out = null;
         if (msgContext.isProcessingFault()) {
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {
-            	log.info("Obtain the output stream to send the fault flow to " + msgContext.getFaultTo().getAddress());
+                log.info(
+                    "Obtain the output stream to send the fault flow to "
+                        + msgContext.getFaultTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getFaultTo());
             } else {
-				log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
+                log.info(
+                    "Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         } else {
             if (msgContext.getTo() != null) {
-				log.info("Obtain the output stream to send to To flow to " + msgContext.getTo().getAddress());
+                log.info(
+                    "Obtain the output stream to send to To flow to "
+                        + msgContext.getTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
-				log.info("Obtain the output stream to send to ReplyTo flow to " + msgContext.getReplyTo().getAddress());
+                log.info(
+                    "Obtain the output stream to send to ReplyTo flow to "
+                        + msgContext.getReplyTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else {
-				log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
+                log.info(
+                    "Obtain the output stream to send the fault flow to ANONYMOUS");
                 out = obtainOutputStream(msgContext);
             }
         }
-        startSending();
+        startSending(msgContext);
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope != null) {
-			XMLStreamWriter outputWriter = null;
+            XMLStreamWriter outputWriter = null;
             try {
-               // org.TimeRecorder.BEFORE_SERIALIZE = System.currentTimeMillis();
-                outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-               // envelope.serialize(outputWriter,false);
-			    envelope.serialize(outputWriter,false);
+                // org.TimeRecorder.BEFORE_SERIALIZE = System.currentTimeMillis();
+                outputWriter =
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                envelope.serialize(outputWriter, false);
                 outputWriter.flush();
-
-               // org.TimeRecorder.AFTER_SERIALIZE = System.currentTimeMillis();
+                if (outS != null) {
+                    outS.flush();
+                } else {
+                    out.flush();
+                }
+                // org.TimeRecorder.AFTER_SERIALIZE = System.currentTimeMillis();
             } catch (Exception e) {
-                throw new AxisFault("Stream error",e);
+                throw new AxisFault("Stream error", e);
             }
         }
-		
-        finalizeSending();
-		log.info("Send the Response");
+
+        finalizeSending(msgContext);
+        log.info("Send the Response");
     }
 
-    protected void startSending() {
+    protected void startSending(MessageContext msgContext) throws AxisFault {
     }
 
-    protected abstract OutputStream obtainOutputStream(MessageContext msgContext, EndpointReference epr) throws AxisFault;
+    protected abstract Writer obtainOutputStream(
+        MessageContext msgContext,
+        EndpointReference epr)
+        throws AxisFault;
 
-    protected abstract OutputStream obtainOutputStream(MessageContext msgContext) throws AxisFault;
+    protected abstract Writer obtainOutputStream(MessageContext msgContext)
+        throws AxisFault;
 
-    protected void finalizeSending() {
+    protected void finalizeSending(MessageContext msgContext)
+        throws AxisFault {
     }
 }

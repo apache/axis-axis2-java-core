@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.axis.transport;
-
+package org.apache.axis.transport.http;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.transport.TransportSenderLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,9 +42,8 @@ import org.apache.commons.logging.LogFactory;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public abstract class AbstractTransportReceiver implements Runnable {
-    protected Log log =
-            LogFactory.getLog(AbstractTransportReceiver.class.getName());
+public class SimpleHTTPServer implements Runnable {
+    protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
     protected EngineRegistry engineReg;
     protected ServerSocket serverSocket;
     protected Socket socket;
@@ -52,13 +53,20 @@ public abstract class AbstractTransportReceiver implements Runnable {
      */
     private boolean stopped = false;
 
-
-    public AbstractTransportReceiver(EngineRegistry reg) {
+    public SimpleHTTPServer(EngineRegistry reg) {
         this.engineReg = reg;
 
     }
-    
-    public AbstractTransportReceiver() {
+
+    public SimpleHTTPServer(String dir) throws AxisFault {
+        EngineRegistry er = EngineRegistryFactory.createEngineRegistry(dir);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            throw new AxisFault("Thread interuptted", e1);
+        }
+        this.engineReg = er;
+
     }
 
     /**
@@ -77,41 +85,65 @@ public abstract class AbstractTransportReceiver implements Runnable {
      */
     public void run() {
         try {
-            try {
-                // Accept and process requests from the socket
-                while (!stopped) {
-                    try {
-                        this.socket = serverSocket.accept();
+            while (!stopped) {
+                try {
+                    // Accept and process requests from the socket
 
+                    try {
+                        socket = serverSocket.accept();
                     } catch (java.io.InterruptedIOException iie) {
                     } catch (Exception e) {
-                        log.debug(e.getMessage(), e);
+                        log.debug(e);
                         break;
                     }
                     if (socket != null) {
-                        if(engineReg == null){
+                        if (engineReg == null) {
                             throw new AxisFault("Engine Must be null");
                         }
-                        AxisEngine axisEngine = new AxisEngine(engineReg);
-                        MessageContext msgContext = parseTheTransport(axisEngine, socket.getInputStream());
-                        storeOutputInfo(msgContext, socket.getOutputStream());
-                        axisEngine.receive(msgContext);
+                        Writer out =
+                            new OutputStreamWriter(socket.getOutputStream());
+                        Reader in =
+                            new InputStreamReader(socket.getInputStream());
+                        MessageContext msgContext =
+                            new MessageContext(this.engineReg, null);
+                        msgContext.setServerSide(true);
+
+                        out.write(HTTPConstants.HTTP);
+                        out.write(HTTPConstants.OK);
+                        out.write("\n\n".toCharArray());
+                        log.info("status written");
+                        //We do not have any Addressing Headers to put
+                        //let us put the information about incoming transport
+                        msgContext.setProperty(
+                            MessageContext.TRANSPORT_TYPE,
+                            TransportSenderLocator.TRANSPORT_HTTP);
+                        msgContext.setProperty(
+                            MessageContext.TRANSPORT_WRITER,
+                            out);
+                        msgContext.setProperty(
+                            MessageContext.TRANSPORT_READER,
+                            in);
+                        HTTPTransportReciver reciver =
+                            new HTTPTransportReciver();
+                        reciver.invoke(msgContext);
+
+                    }
+                } catch (Throwable e) {
+                    log.error(e);
+                } finally {
+                    if (socket != null) {
                         this.socket.close();
                         this.socket = null;
                     }
                 }
-            } catch (AxisFault e) {
-                log.error(e);
-                this.socket.close();
-                this.socket = null;
             }
+
         } catch (IOException e) {
             log.error(e);
         }
         stop();
         log.info("Simple Axis Server Quit");
     }
-
 
     /**
      * Obtain the serverSocket that that SimpleAxisServer is listening on.
@@ -128,7 +160,6 @@ public abstract class AbstractTransportReceiver implements Runnable {
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
-
 
     /**
      * Start this server as a NON-daemon.
@@ -158,15 +189,15 @@ public abstract class AbstractTransportReceiver implements Runnable {
         try {
             if (serverSocket != null) {
                 serverSocket.close();
-//                while(socket != null){
-//                    try {
-//                        //make sure all sockets closed by the time 
-//                        //else we got in to lot of trouble testing
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e1) {
-//                        log.error(e1);
-//                    }
-//                }
+                //                while(socket != null){
+                //                    try {
+                //                        //make sure all sockets closed by the time 
+                //                        //else we got in to lot of trouble testing
+                //                        Thread.sleep(1000);
+                //                    } catch (InterruptedException e1) {
+                //                        log.error(e1);
+                //                    }
+                //                }
             }
         } catch (IOException e) {
             log.info(e);
@@ -176,21 +207,29 @@ public abstract class AbstractTransportReceiver implements Runnable {
         log.info("Simple Axis Server Quits");
     }
 
-    protected abstract MessageContext parseTheTransport(AxisEngine engine, InputStream in) throws AxisFault;
-
-    protected abstract void storeOutputInfo(MessageContext msgctx, OutputStream out) throws AxisFault;
-    /**
-     * @param registry
-     */
-    public void setEngineReg(EngineRegistry registry) {
-        engineReg = registry;
-    }
-
-    /**
-     * @return
-     */
     public EngineRegistry getEngineReg() {
         return engineReg;
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            System.out.println("SimpeHttpReciver repositoryLocation port");
+        }
+        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0]);
+
+        ServerSocket serverSoc = null;
+        serverSoc = new ServerSocket(Integer.parseInt(args[1]));
+        reciver.setServerSocket(serverSoc);
+        Thread thread = new Thread(reciver);
+        thread.setDaemon(true);
+
+        try {
+            thread.start();
+            System.in.read();
+        } finally {
+            reciver.stop();
+
+        }
     }
 
 }

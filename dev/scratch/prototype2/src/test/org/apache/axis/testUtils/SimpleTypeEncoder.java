@@ -33,6 +33,9 @@ public class SimpleTypeEncoder implements Encoder{
 
     public void serialize(ContentHandler cHandler) throws OMException {
         try {
+            if(obj == null){
+                return;
+            }
             char[] str=null;
             if(obj.getClass() == String.class){
                 str = ((String)obj).toCharArray();

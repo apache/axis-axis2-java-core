@@ -23,18 +23,21 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class UtilServer {
     private static int count = 0;
-    private static SimpleHTTPReceiver reciver;
+    private static SimpleHTTPServer reciver;
+    
 
     public static synchronized void deployService(AxisService service)
         throws AxisFault {
         reciver.getEngineReg().addService(service);
     }
-    
+
     public static synchronized void unDeployService(QName service)
         throws AxisFault {
         reciver.getEngineReg().removeService(service);
@@ -42,7 +45,16 @@ public class UtilServer {
 
     public static synchronized void start() throws IOException {
         if (count == 0) {
-            reciver = new SimpleHTTPReceiver("target/test-resources/samples/");
+            EngineRegistry er =
+                EngineRegistryFactory.createEngineRegistry(
+                    "target/test-resources/samples/");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e1) {
+                throw new AxisFault("Thread interuptted", e1);
+            }
+
+            reciver = new SimpleHTTPServer(er);
 
             ServerSocket serverSoc = null;
             serverSoc = new ServerSocket(EngineUtils.TESTING_PORT);
@@ -52,11 +64,11 @@ public class UtilServer {
 
             try {
                 thread.start();
-                System.out.print("Server started .....");
+                System.out.print("Server started on port "+EngineUtils.TESTING_PORT+".....");
             } finally {
 
             }
-        } 
+        }
         count++;
     }
 

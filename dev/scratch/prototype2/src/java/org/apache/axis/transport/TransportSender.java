@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
+package org.apache.axis.transport;
+
+import org.apache.axis.engine.Handler;
 
 public interface TransportSender extends Handler {
 }

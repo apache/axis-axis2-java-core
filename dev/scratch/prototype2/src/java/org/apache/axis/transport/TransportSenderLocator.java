@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
-
-import java.io.OutputStream;
+package org.apache.axis.transport;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPTransportSender;
-import org.apache.axis.transport.tcp.TCPTrasnportSender;
 
 
 public class TransportSenderLocator {
     public static final String TRANSPORT_TCP = "tcp";
     public static final String TRANSPORT_HTTP = "http";
 
-    public static TransportSender locateTransPortSender(MessageContext msgContext) throws AxisFault {
+    public static TransportSender locate(MessageContext msgContext) throws AxisFault {
         String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
-        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-
-        if (TransportSenderLocator.TRANSPORT_TCP.equals(type)) {
-            if (out != null) {
-                return new TCPTrasnportSender(out);
-            } else {
-                throw new AxisFault("if TCP trsport used there should be a propoerty named " + MessageContext.TRANSPORT_DATA);
-            }
-        } else if (TransportSenderLocator.TRANSPORT_HTTP.equals(type)) {
-            if (out != null) {
-                return new HTTPTransportSender(out);
-            } else {
-                throw new AxisFault("if TCP trsport used there should be a propoerty named " + MessageContext.TRANSPORT_DATA);
-            }
+        if (TransportSenderLocator.TRANSPORT_HTTP.equals(type)) {
+                return new HTTPTransportSender();
         }
         throw new AxisFault("No tranport found");
     }

@@ -32,18 +32,18 @@ import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 
 public abstract class AbstractCall {
-    public MessageContext createIncomingMessageContext(InputStream in, EngineRegistry reg) throws AxisFault {
-        MessageContext msgContext;
-        try {
-            msgContext = new MessageContext(reg);
-            InputStreamReader isr = new InputStreamReader(in);
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
-            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
-        return msgContext;
-
-    }
+//    public MessageContext createIncomingMessageContext(InputStream in, EngineRegistry reg) throws AxisFault {
+//        MessageContext msgContext;
+//        try {
+//            msgContext = new MessageContext(reg);
+//            InputStreamReader isr = new InputStreamReader(in);
+//            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
+//            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+//            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+//        } catch (XMLStreamException e) {
+//            throw AxisFault.makeFault(e);
+//        }
+//        return msgContext;
+//
+//    }
 }

@@ -11,13 +11,12 @@ package org.apache.axis.clientapi;
  * governing permissions and limitations under the License.
  */
 
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.transport.TransportReciver;
+import org.apache.axis.transport.TransportReciverLocator;
+import org.apache.axis.transport.TransportSenderLocator;
 
 public class Invoker extends AbstractCall implements Runnable {
 
@@ -28,7 +27,11 @@ public class Invoker extends AbstractCall implements Runnable {
 
     private Callback callback;
 
-    public Invoker(MessageContext msgContext, AxisEngine engine,EngineRegistry reg, Callback callback) {
+    public Invoker(
+        MessageContext msgContext,
+        AxisEngine engine,
+        EngineRegistry reg,
+        Callback callback) {
         this.engine = engine;
         this.reqMsgContext = msgContext;
         this.callback = callback;
@@ -40,26 +43,29 @@ public class Invoker extends AbstractCall implements Runnable {
         final Correlator correlator = Correlator.getInstance();
         final String messageID = Long.toString(System.currentTimeMillis());
         try {
-            URL url = new URL(reqMsgContext.getTo().getAddress());
-            URLConnection urlConnect = url.openConnection();
-            urlConnect.setDoOutput(true);
 
-            OutputStream out = urlConnect.getOutputStream();
-            reqMsgContext.setProperty(MessageContext.TRANSPORT_DATA, out);
             reqMsgContext.setMessageID(messageID);
 
             engine.send(reqMsgContext);
-            correlator.addCorrelationInfo(reqMsgContext.getMessageID(), callback);
+            correlator.addCorrelationInfo(
+                reqMsgContext.getMessageID(),
+                callback);
 
-            MessageContext resMsgContext = createIncomingMessageContext(
-                    urlConnect.getInputStream(), registry);
+            MessageContext resMsgContext = new MessageContext(registry,reqMsgContext.getProperties());
+
             resMsgContext.setServerSide(false);
-            engine.receive(resMsgContext);
+            resMsgContext.setProperty(
+                MessageContext.TRANSPORT_TYPE,
+                TransportSenderLocator.TRANSPORT_HTTP);
+            TransportReciver reciver =
+                TransportReciverLocator.locate(resMsgContext);
+            reciver.invoke(resMsgContext);
 
             AsyncResult result = new AsyncResult();
             result.setResult(resMsgContext.getEnvelope());
             resMsgContext.setMessageID(messageID);
-            callback = correlator.getCorrelationInfo(resMsgContext.getMessageID());
+            callback =
+                correlator.getCorrelationInfo(resMsgContext.getMessageID());
             callback.onComplete(result);
 
         } catch (Exception e) {

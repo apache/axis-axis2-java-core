@@ -22,6 +22,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.transport.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -130,7 +131,7 @@ public class AxisEngine {
                 chain.addPhases(transport.getPhases(flow));
             }
             Phase sendPhase = new Phase(Phase.SENDING_PHASE);
-            sendPhase.addHandler(TransportSenderLocator.locateTransPortSender(context));
+            sendPhase.addHandler(TransportSenderLocator.locate(context));
             chain.addPhase(sendPhase);
             //startet rolling
             chain.invoke(context);

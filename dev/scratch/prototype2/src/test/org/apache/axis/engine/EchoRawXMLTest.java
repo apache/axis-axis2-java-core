@@ -36,7 +36,8 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.providers.RawXMLProvider;
-import org.apache.axis.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPServer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,7 +50,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
-    private SimpleHTTPReceiver sas;
+    private SimpleHTTPServer sas;
 
     private boolean finish=false;
 
