@@ -123,7 +123,6 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
             OMElement omele = call.syncCall(method,url);
             assertNotNull(omele);
         }catch(AxisFault e){
-            //e.printStackTrace();
             tearDown();
             return;
         }

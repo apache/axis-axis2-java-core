@@ -20,6 +20,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.handlers.OpNameFinder;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Service;
 import org.apache.commons.logging.Log;
@@ -60,12 +62,12 @@ public class AxisEngine {
     
     public void recive(MessageContext mc)throws AxisFault{
         Service service = null;
-        if(mc.isServerSide()){
-            service = ServiceLocator.locateService(mc);
-            mc.setService(service);
-        }
-
         try{
+            if(mc.isServerSide()){
+                service = ServiceLocator.locateService(mc);
+                mc.setService(service);
+            }
+
             if(service != null){
                 ExecutionChain exeChain = service.getInputExecutionChain();
                 exeChain.invoke(mc);
@@ -94,9 +96,14 @@ public class AxisEngine {
         }else{
             log.debug("recive failed",e);
             mc.setProcessingFault(true);
-            ExecutionChain faultExeChain = service.getFaultExecutionChain();
-            faultExeChain.invoke(mc);
-            mc.getEnvelope().getBody().addFault(e);
+            if(service != null){
+                ExecutionChain faultExeChain = service.getFaultExecutionChain();
+                faultExeChain.invoke(mc);
+            }
+            SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
+            //TODO do we need to set old Headers back?
+            envelope.getBody().addFault(e);
+            mc.setEnvelope(envelope);
             sendTheMessage(mc);
         }
     }

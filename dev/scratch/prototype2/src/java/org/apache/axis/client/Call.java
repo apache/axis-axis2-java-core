@@ -36,9 +36,11 @@ import org.apache.axis.impl.engine.GlobalImpl;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.registry.EngineRegistryImpl;
+import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -93,8 +95,12 @@ public class Call {
             while(children != null && children.hasNext() ){
                 OMNode child = (OMNode)children.next();
                 if(child.getType() == OMNode.ELEMENT_NODE){
-                    if(child instanceof SOAPFault){
-                        throw AxisFault.makeFault(((SOAPFault)child).getException());
+                    OMElement element = (OMElement)child;
+                    OMNamespace ns  = element.getNamespace();
+                    if(OMConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName()) 
+                            && OMConstants.SOAPFAULT_NAMESPACE_URI.equals(ns.getValue())){
+                                //TODO handle this better
+                          throw new AxisFault(element.getValue());
                     }
                     return (OMElement)child;
                 }
