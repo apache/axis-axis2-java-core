@@ -63,13 +63,19 @@
       <name>Aleksander Slominski</name>
       <id>alek</id>
       <email>aslom@cs.indiana.edu</email>
-      <organization></organization>
+      <organization>Indiana University Extreme! Computing Lab</organization>
     </developer>
     <developer>
       <name>Farhaan Mohideen</name>
       <id>farhaan</id>
       <email>farhaan@opensource.lk</email>
       <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Srinath Perera</name>
+      <id>hemapani</id>
+      <email>hemapani@apache.org</email>
+      <organization></organization>
     </developer>
     <developer>
       <name>Eran Chinthaka</name>
@@ -108,10 +114,16 @@
       <organization>LSF</organization>
     </developer>
     <developer>
-      <name>Srinath Perera</name>
-      <id>hemapani</id>
-      <email>hemapani@apache.org</email>
-      <organization></organization>
+      <name>Changshin Lee</name>
+      <id>ias</id>
+      <email>iasandcb@hotmail.com</email>
+      <organization>Tmax Soft, Korea</organization>
+    </developer>
+    <developer>
+      <name>Rajith Priyanga</name>
+      <id>priyanga</id>
+      <email>priyanga@opensource.lk</email>
+      <organization>LSF</organization>
     </developer>
 	
 	<!--- I Add few please correct the information, add others and remove this comment Srinath -->
