@@ -30,9 +30,20 @@ public class TestSuite {
     
     public void runSuite() throws IOException{
        writer.write("Starting the Suite at "+ new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(new Date())+"\n");
-       endToEndTest();
-        //loadIncreaseTest();
-        loadTest();
+        String includes = System.getProperty("include");
+        if(includes == null){
+            endToEndTest();
+            loadIncreaseTest();
+            loadTest();
+        }else{
+            if("end2end".equals(includes)){
+                endToEndTest();
+            }else if("load".equals(includes)){
+                loadTest();
+            }else{
+                loadIncreaseTest();
+            }
+        }
         writer.write("Starting the Suite at "+ new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(new Date())+"\n");
     }
     

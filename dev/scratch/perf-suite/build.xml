@@ -37,6 +37,7 @@
 	</path>
 	
 	<target name="init">
+	<echo message="to have one test runing only have the System property set to e.g. -Dinclude=end2end|load|loadincrease"></echo>
 		<mkdir dir="${build}"/>
 		<mkdir dir="${axis.classes}"/>
 		<mkdir dir="${axis2.classes}"/>
