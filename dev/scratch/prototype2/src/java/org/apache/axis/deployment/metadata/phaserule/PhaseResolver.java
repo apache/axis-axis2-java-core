@@ -5,6 +5,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.DeploymentEngine;
 
@@ -32,30 +33,130 @@ import java.util.Vector;
  */
 public class PhaseResolver {
     private EngineRegistry engineRegistry ;
-    AxisService axisService;
+    private AxisService axisService;
+    private PhaseHolder phaseHolder ;
+
+
+    private ServerMetaData server = DeploymentEngine.getServerMetaData();
 
     public PhaseResolver(EngineRegistry engineRegistry, AxisService axisService ) {
         this.engineRegistry = engineRegistry;
         this.axisService = axisService;
     }
 
-    public AxisService buildExcutionChains() throws AxisFault {
+    public void buildchains() throws PhaseException, AxisFault {
+        for(int i =1 ; i < 4 ; i++) {
+                buildExcutionChains(i);
+
+        }
+
+    }
+
+    /**
+     * this opeartion is used to build all the three cahins ,
+     * so type varible is used to difrenciate them
+     *  type = 1 inflow
+     *  type = 2 out flow
+     *  type = 3 fault flow
+     * @param type
+     * @throws AxisFault
+     */
+    public  void buildExcutionChains(int type) throws AxisFault, PhaseException {
+        int flowtype =  type;
         Vector allHandlers = new Vector();
-        ServerMetaData server = DeploymentEngine.getServerMetaData();
         int count = server.getModuleCount();
         QName moduleName;
         AxisModule module;
-        Flow flow;
-        for(int intA=0 ; intA <= count; intA ++){
+        Flow flow = null;
+        //adding server specific handlers  . global
+        for(int intA=0 ; intA < count; intA ++){
             moduleName = server.getModule(intA);
             module = engineRegistry.getModule(moduleName);
-            flow = module.getInFlow();
-            for(int j= 0 ; j <= flow.getHandlerCount() ; j++ ){
-                allHandlers.add(flow.getHandler(j));
+            switch (flowtype){
+                case 1 : {
+                    flow = module.getInFlow();
+                    break;
+                }
+                case  2 : {
+                    flow = module.getOutFlow();
+                    break;
+                }
+                case 3 : {
+                    flow = module.getFaultFlow();
+                    break;
+                }
+            }
+            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                HandlerMetaData metadata = flow.getHandler(j);
+                //todo change this in properway
+                if (metadata.getRules().getPhaseName().equals("")){
+                    metadata.getRules().setPhaseName("global");
+                }
+                allHandlers.add(metadata);
             }
         }
 
-        return  axisService;
+        // service module handlers
+        Vector modules = (Vector)axisService.getModules();
+        for (int i = 0; i < modules.size(); i++) {
+            QName moduleref = (QName) modules.elementAt(i);
+            module = engineRegistry.getModule(moduleref);
+            switch (flowtype){
+                case 1 : {
+                    flow = module.getInFlow();
+                    break;
+                }
+                case  2 : {
+                    flow = module.getOutFlow();
+                    break;
+                }
+                case 3 : {
+                    flow = module.getFaultFlow();
+                    break;
+                }
+            }
+            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                HandlerMetaData metadata = flow.getHandler(j);
+                //todo change this in properway
+                if (metadata.getRules().getPhaseName().equals("") ){
+                    metadata.getRules().setPhaseName("service");
+                }
+                allHandlers.add(metadata);
+            }
+
+        }
+
+        switch (flowtype){
+            case 1 : {
+                flow = axisService.getInFlow();
+                break;
+            }
+            case  2 : {
+                flow = axisService.getOutFlow();
+                break;
+            }
+            case 3 : {
+                flow = axisService.getFaultFlow();
+                break;
+            }
+        }
+        for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+            HandlerMetaData metadata = flow.getHandler(j);
+            //todo change this in properway
+            if (metadata.getRules().getPhaseName().equals("")){
+                metadata.getRules().setPhaseName("service");
+            }
+            allHandlers.add(metadata);
+        }
+
+        phaseHolder = new PhaseHolder(server,axisService);
+
+        for (int i = 0; i < allHandlers.size(); i++) {
+            HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.elementAt(i);
+            phaseHolder.addHandler(handlerMetaData);
+        }
+        phaseHolder.getOrderdHandlers(type);
+
     }
 
 }

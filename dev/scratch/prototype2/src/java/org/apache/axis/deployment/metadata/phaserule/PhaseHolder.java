@@ -1,9 +1,13 @@
 package org.apache.axis.deployment.metadata.phaserule;
 
 import org.apache.axis.deployment.DeploymentConstants;
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.metadata.HandlerMetaData;
 import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Vector;
 
@@ -34,16 +38,19 @@ import java.util.Vector;
  */
 public class PhaseHolder implements DeploymentConstants {
 
+    private Log log = LogFactory.getLog(getClass());
     private Vector phaseholder = new Vector();
 
     /**
      * Referance to ServerMetaData inorder to get information about phases.
      */
-    ServerMetaData serverMetaData;// = new  ServerMetaData();
+    private ServerMetaData serverMetaData;// = new  ServerMetaData();
+    private AxisService service;
 
-    public PhaseHolder() {
-        this.serverMetaData = DeploymentEngine.getServerMetaData();
-        phaseholder.removeAllElements();
+
+    public PhaseHolder(ServerMetaData serverMetaDatain,AxisService serviceIN) {
+        this.serverMetaData = serverMetaDatain;
+        this.service = serviceIN;
     }
 
     private boolean isPhaseExist(String phaseName) {
@@ -58,16 +65,7 @@ public class PhaseHolder implements DeploymentConstants {
     }
 
     public void addHandler(HandlerMetaData handler) throws PhaseException {
-        String phaseName = handler.getPhase();
-        /**
-         * if user dose not specify the phase that belong to service phase
-         * todo i have to check that before and after property of handers if they
-         * represent phases the default name should be change
-         */
-        if (phaseName.equals("")) {
-            phaseName = SERVICETAG;
-            handler.setPhase(SERVICETAG);
-        }
+        String phaseName = handler.getRules().getPhaseName();
 
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
@@ -77,7 +75,7 @@ public class PhaseHolder implements DeploymentConstants {
                 addPhase(newpPhase);
                 newpPhase.addHandler(handler);
             } else {
-                throw new PhaseException("Invalid Phase ," + phaseName + " dose not exit in server.xml");
+                throw new PhaseException("Invalid Phase ," + phaseName + "for the handler " + handler.getName()    + " dose not exit in server.xml");
             }
 
         }
@@ -98,7 +96,7 @@ public class PhaseHolder implements DeploymentConstants {
         return null;
     }
 
-    private void OrderdPhases() {
+    private  void OrderdPhases() {
         //todo complet this using phaseordeer
         PhaseMetaData[] phase = new PhaseMetaData[phaseholder.size()];
         for (int i = 0; i < phaseholder.size(); i++) {
@@ -116,8 +114,15 @@ public class PhaseHolder implements DeploymentConstants {
         }
     }
 
-
-    public HandlerMetaData[] getOrderdHandlers() throws PhaseException {
+    /**
+     * cahinType
+     *  1 : inFlowExcChain
+     *  2 : OutFlowExeChain
+     *  3 : FaultFlowExcechain
+     * @param chainType
+     * @throws PhaseException
+     */
+    public  void getOrderdHandlers(int chainType) throws PhaseException {
         OrderdPhases();
         Vector tempHander = new Vector();
         HandlerMetaData[] handlers;
@@ -136,7 +141,38 @@ public class PhaseHolder implements DeploymentConstants {
             handler[i] = (HandlerMetaData) tempHander.elementAt(i);
 
         }
-        return handler;
+        switch (chainType) {
+            case 1 : {
+                ExecutionChain inChain =  new ExecutionChain();//       service.getExecutableInChain();
+                for (int i = 0; i < handler.length; i++) {
+                    HandlerMetaData handlerMetaData = handler[i];
+                    inChain.addHandler(handlerMetaData.getHandler());
+                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                }
+                service.setExecutableInChain(inChain);
+                break;
+            }
+            case 2 : {
+                ExecutionChain outChain =new ExecutionChain();// service.getExecutableOutChain();
+                for (int i = 0; i < handler.length; i++) {
+                    HandlerMetaData handlerMetaData = handler[i];
+                    outChain.addHandler(handlerMetaData.getHandler());
+                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                }
+                service.setExecutableOutChain(outChain);
+                break;
+            }
+            case 3 : {
+                ExecutionChain faultChain = new ExecutionChain();//service.getExecutableFaultChain();
+                for (int i = 0; i < handler.length; i++) {
+                    HandlerMetaData handlerMetaData = handler[i];
+                    faultChain.addHandler(handlerMetaData.getHandler());
+                    log.info("Phase Name " + handlerMetaData.getRules().getPhaseName() );
+                }
+                service.setExecutableFaultChain(faultChain);
+                break;
+            }
+        }
     }
 
 }

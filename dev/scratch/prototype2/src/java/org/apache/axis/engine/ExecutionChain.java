@@ -35,10 +35,23 @@ public class ExecutionChain {
         executionList = new ArrayList();
     }
 
+    /**
+     * to add handler directly to list ,
+     * for teh execution chain , it is no need to rember about phases :)
+     * @param handler
+     *
+     * addded by Deepal
+     */
+    
+    public void addHandler(Handler handler){
+       executionList.add(handler);
+    }
+
     public void addPhase(Phase phase) {
         phases.put(phase.getPhaseName(), phase);
         executionList.add(phase);
     }
+
 
     public void addHandlerDirectly(Handler directHandler, int index) {
         phases.put(directHandler.getName(), directHandler);

@@ -3,6 +3,7 @@ package org.apache.axis.deployment;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaserule.PhaseResolver;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;
@@ -167,7 +168,8 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(AxisService serviceMetaData) throws AxisFault {
+    private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Flow inflow = serviceMetaData.getInFlow();
@@ -184,7 +186,8 @@ public class DeploymentEngine implements DeploymentConstants {
         if(faultFlow != null) {
             addFlowHandlers(faultFlow,classLoader);
         }
-
+            PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
+            reolve.buildchains();
     }
 
 
@@ -236,19 +239,19 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new AxisFault(e.getMessage());
         }
 
-        try {
-            Handler handler = (Handler) handlerClass.newInstance();
-            MessageContext msgContext = null;
-            try {
-                handler.invoke(msgContext);
-            } catch (AxisFault axisFault) {
-                throw new AxisFault(axisFault.getMessage());
-            }
-        } catch (InstantiationException e) {
-            throw new AxisFault(e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new AxisFault(e.getMessage());
-        }
+//        try {
+//            Handler handler = (Handler) handlerClass.newInstance();
+//            MessageContext msgContext = null;
+//            try {
+//                handler.invoke(msgContext);
+//            } catch (AxisFault axisFault) {
+//                throw new AxisFault(axisFault.getMessage());
+//            }
+//        } catch (InstantiationException e) {
+//            throw new AxisFault(e.getMessage());
+//        } catch (IllegalAccessException e) {
+//            throw new AxisFault(e.getMessage());
+//        }
         return handlerClass;
     }
 
@@ -299,7 +302,11 @@ public class DeploymentEngine implements DeploymentConstants {
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             try {
                                 if (service != null) {
-                                    addnewService(service);
+                                    try {
+                                        addnewService(service);
+                                    } catch (PhaseException e) {
+                                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    }
                                     log.info("Deployement WS Name  " + currentFileItem.getName());
                                     currentFileItem = null;
                                     break;

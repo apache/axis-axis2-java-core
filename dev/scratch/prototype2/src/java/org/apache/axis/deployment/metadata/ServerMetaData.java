@@ -92,7 +92,7 @@ public class ServerMetaData {
     }
 
     public QName getModule(int index) {
-        if (index <= moduleCount) {
+        if (index < moduleCount) {
             return (QName) modules.get(index);
         } else
             return null;
@@ -121,10 +121,10 @@ public class ServerMetaData {
         PhaseMetaData[] temppahse = new PhaseMetaData[phasesmetadats.length];
         int count = 0;
         for (int i = 0; i < phases.size(); i++) {
-            PhaseMetaData phasemetadata = (PhaseMetaData) phases.elementAt(i);
+            String phasemetadata = (String) phases.elementAt(i);
             for (int j = 0; j < phasesmetadats.length; j++) {
                 PhaseMetaData tempmetadata = phasesmetadats[j];
-                if (tempmetadata.getName().equals(phasemetadata.getName())) {
+                if (tempmetadata.getName().equals(phasemetadata)) {
                     temppahse[count] = tempmetadata;
                     count++;
                 }
