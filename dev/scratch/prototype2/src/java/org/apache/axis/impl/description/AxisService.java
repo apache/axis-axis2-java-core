@@ -17,6 +17,7 @@ package org.apache.axis.impl.description;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.swing.text.Style;
 import javax.xml.namespace.QName;
@@ -36,6 +37,8 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
 
 
 public class AxisService extends WSDLServiceImpl implements WSDLService,ParameterInclude,FlowInclude,PhasesInclude , DescriptionConstants{
+
+    protected HashMap operationsMap = new HashMap();
 
     public AxisService(){
         this.setComponentProperty(MODULEREF_KEY,new ArrayList());
@@ -117,15 +120,15 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
      * @see org.apache.axis.description.AxisService#getOperation(javax.xml.namespace.QName)
      */
     public AxisOperation getOperation(QName operationName) {
-        return (AxisOperation)this.getComponentProperty(OPERATION_KEY);
+        return (AxisOperation)this.operationsMap.get(operationName);
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#addOperation(org.apache.axis.description.AxisOperation)
      */
-    public void addOperation(AxisOperation operationName) {
-        if(null != operationName){
-            this.setComponentProperty(OPERATION_KEY, operationName);
+    public void addOperation(AxisOperation operation) {
+        if(null != operation){
+            this.operationsMap.put(operation.getName(),operation);
         }
     }
 

@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
 public class ComponentImpl implements  WSDLConstants, Component{
 
     protected HashMap componentProperties = new HashMap();
-    
+        
     protected Document documentation = null;
     
     /**
