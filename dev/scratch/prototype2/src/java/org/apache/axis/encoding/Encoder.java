@@ -16,13 +16,16 @@
  
 package org.apache.axis.encoding;
 
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OutObject;
-
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMException;
 
-public interface Encoder extends OutObject{
+import org.xml.sax.ContentHandler;
+
+
+public interface Encoder{
 	public Object deSerialize(XMLStreamReader xpp)throws AxisFault;
 	public void setObject(Object obj);
+    public void serialize(ContentHandler contentHandler)throws OMException ;
 }

@@ -24,8 +24,8 @@ import java.io.OutputStream;
 
 
 public class TransportSenderLocator {
-    public static final String TRANSPORT_TCP = "TRANSPORT_TCP";
-    public static final String TRANSPORT_HTTP = "TRANSPORT_HTTP";
+    public static final String TRANSPORT_TCP = "tcp";
+    public static final String TRANSPORT_HTTP = "http";
 
     public static TransportSender locateTransPortSender(MessageContext msgContext) throws AxisFault {
         String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);

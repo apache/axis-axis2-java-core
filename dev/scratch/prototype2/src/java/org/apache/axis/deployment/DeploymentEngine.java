@@ -89,7 +89,12 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param RepositaryName is the path to which Repositary Listner should
      *                       listent.
      */
+
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
+        this(RepositaryName,"server.xml");
+        
+    }
+    public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
         this.folderName = RepositaryName;
         File repository = new File(RepositaryName);
         if(!repository.exists()){
@@ -99,7 +104,7 @@ public class DeploymentEngine implements DeploymentConstants {
             modules.mkdirs();
             servcies.mkdirs();
         }
-        File serverConf = new File(repository,"server.xml");
+        File serverConf = new File(repository,serverXMLFile);
         if(!serverConf.exists()){
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
@@ -124,14 +129,13 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-
-        this.serverconfigName = RepositaryName + "/server.xml";
+            this.serverconfigName = RepositaryName + "/" + serverXMLFile;
     }
 
-    public DeploymentEngine(String RepositaryName , String configFileName) {
-        this.folderName = RepositaryName;
-        this.serverconfigName = configFileName;
-    }
+//    public DeploymentEngine(String RepositaryName , String configFileName) {
+//        this.folderName = RepositaryName;
+//        this.serverconfigName = configFileName;
+//    }
 
     public HDFileItem getCurrentFileItem() {
         return currentFileItem;
@@ -154,20 +158,18 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws PhaseException
      */
     public EngineRegistry start() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
-        String fileName;
-        if(serverconfigName != null) {
-            fileName = serverconfigName;
-        } else{
+        //String fileName;
+        if(serverconfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
-        File tempfile = new File(fileName);
+        File tempfile = new File(serverconfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
             engineRegistry = createEngineRegistry();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
-            throw new AxisFault(e.getMessage());
+            throw new AxisFault("Exception at deployment",e);
         }
 
         startSearch(this);

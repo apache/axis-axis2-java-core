@@ -128,7 +128,11 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
                     } else if (TRANSPORTSTAG.equals(ST)) {
-                        dpengine.getEngineRegistry().setTransPorts(processTransport());
+                        ArrayList trasports = processTransport();
+                        for (int i = 0; i < trasports.size(); i++) {
+                            dpengine.getEngineRegistry().addTransport((AxisTransport)trasports.get(i));
+                        }
+                        
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
@@ -153,7 +157,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (DeploymentException e) {
+        } catch (AxisFault e) {
             throw new DeploymentException(e);
         }
     }
@@ -162,6 +166,9 @@ public class DeploymentParser implements DeploymentConstants {
     public ArrayList processTransport() throws DeploymentException {
         boolean END_TRANSPORTS = false;
         ArrayList transportList = new ArrayList();
+        AxisTransport transport = null;
+        
+        
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_TRANSPORTS) {
@@ -174,8 +181,24 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (ATTNAME.equals(attname)) {
-                            transportList.add(attvalue);
+                            transport = new AxisTransport(new QName(attvalue));
+                            transportList.add(transport);
                         }
+                    }else if (transport != null && PARAMETERST.equals(tagnae)) {
+                        Parameter parameter =  processParameter();
+                        transport.addParameter(parameter);
+                        //axisService. .appParameter(parameter);
+                    }  else if (transport != null && INFLOWST.equals(tagnae)) {
+                        Flow inFlow = processInFlow();
+                        transport.setInFlow(inFlow);
+                    } else if (transport != null && OUTFLOWST.equals(tagnae)) {
+                        Flow outFlow = processOutFlow();
+                        transport.setOutFlow(outFlow);
+                    } else if (transport != null && FAILTFLOWST.equals(tagnae)) {
+                        Flow faultFlow = processFaultFlow();
+                        transport.setFaultFlow(faultFlow);
+                    } else{
+                        throw new DeploymentException("Unknown element "+ tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();

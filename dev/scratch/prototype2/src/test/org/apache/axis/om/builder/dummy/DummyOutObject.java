@@ -4,8 +4,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.om.OutObject;
+import org.apache.axis.encoding.Encoder;
+import org.apache.axis.engine.AxisFault;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -30,7 +33,7 @@ import org.xml.sax.XMLReader;
  * Date: Nov 19, 2004
  * Time: 3:56:08 PM
  */
-public class DummyOutObject implements OutObject {
+public class DummyOutObject implements Encoder {
     private XMLReader parser;
     String fileName = "src/test-resources/soapmessage.xml";
 
@@ -52,7 +55,7 @@ public class DummyOutObject implements OutObject {
     }
 
 
-    public void startBuilding(ContentHandler contentHandler) {
+    public void serialize(ContentHandler contentHandler) {
         try {
             parser.parse(new InputSource(new FileReader(fileName)));
         } catch (IOException e) {
@@ -62,4 +65,20 @@ public class DummyOutObject implements OutObject {
         }
 
     }
+    /* (non-Javadoc)
+     * @see org.apache.axis.encoding.Encoder#deSerialize(javax.xml.stream.XMLStreamReader)
+     */
+    public Object deSerialize(XMLStreamReader xpp) throws AxisFault {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.encoding.Encoder#setObject(java.lang.Object)
+     */
+    public void setObject(Object obj) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

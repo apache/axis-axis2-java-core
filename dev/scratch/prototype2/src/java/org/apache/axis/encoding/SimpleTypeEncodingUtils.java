@@ -24,62 +24,28 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.ArrayList;
 
-
 public class SimpleTypeEncodingUtils {
-	
-	public static Object[] deserializeArray(XMLStreamReader xpp,Encoder encoder)throws AxisFault{
-		ArrayList objs = new ArrayList();
-        
-		try{
-			int event = xpp.next();
-			while(XMLStreamConstants.START_ELEMENT != event && XMLStreamConstants.END_ELEMENT != event){
-				event = xpp.next();
-			}
-			if(XMLStreamConstants.END_ELEMENT == event){
-				return null;
-			}
 
-			event = xpp.next();
-			while(true){
-				if(XMLStreamConstants.START_ELEMENT == event){
-					objs.add(encoder.deSerialize(xpp));
-				}else if(XMLStreamConstants.END_ELEMENT == event){
-					break;
-				}else if(XMLStreamConstants.END_DOCUMENT == event){
-					throw new AxisFault("premature and of file");
-				}
-				event = xpp.next();
-			}
-			Object[] vals = new Object[objs.size()];
-			for(int i = 0;i<objs.size();i++){
-				vals[i] = objs.get(i);
-			}
-			return vals;
-		} catch (XMLStreamException e) {
-			throw AxisFault.makeFault(e);
-		}
 
-	}
-	
-	
-    public static String[] deserializeStringArray(XMLStreamReader xpp)throws AxisFault{
+    public static String[] deserializeStringArray(XMLStreamReader xpp)
+        throws AxisFault {
         ArrayList strings = new ArrayList();
-        
-        try{
+
+        try {
             int event = xpp.next();
-            while(true){
-                if(XMLStreamConstants.START_ELEMENT == event){
+            while (true) {
+                if (XMLStreamConstants.START_ELEMENT == event) {
                     strings.add(deserializeString(xpp));
-                }else if(XMLStreamConstants.END_ELEMENT == event){
+                } else if (XMLStreamConstants.END_ELEMENT == event) {
                     break;
-                }else if(XMLStreamConstants.END_DOCUMENT == event){
+                } else if (XMLStreamConstants.END_DOCUMENT == event) {
                     throw new AxisFault("premature and of file");
                 }
                 event = xpp.next();
             }
             String[] stringvals = new String[strings.size()];
-            for(int i = 0;i<strings.size();i++){
-                stringvals[i] = (String)strings.get(i);
+            for (int i = 0; i < strings.size(); i++) {
+                stringvals[i] = (String) strings.get(i);
             }
             return stringvals;
         } catch (XMLStreamException e) {
@@ -87,47 +53,76 @@ public class SimpleTypeEncodingUtils {
         }
 
     }
-    
-    public static String deserializeString(XMLStreamReader xpp)throws AxisFault{
-        StringBuffer value = new StringBuffer();
+
+    public static String deserializeStringWithWiteSpaces(XMLStreamReader xpp)
+        throws AxisFault {
+                StringBuffer value = new StringBuffer();
+                try {
+                    int event = xpp.getEventType();
+                    while(XMLStreamConstants.START_ELEMENT != event){
+                        event = xpp.next();
+                    }
+                    event = xpp.next();
+                    while(XMLStreamConstants.END_ELEMENT != event){
+                        if(XMLStreamConstants.CHARACTERS == event){
+                            value.append(xpp.getText());
+                        }
+                        event = xpp.next();
+                    }
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
+                if(value.length() == 0){
+                    return null;
+                }else{
+                    return value.toString();        
+                }
+        }
+        
+    public static String deserializeString(XMLStreamReader xpp)
+        throws AxisFault {
+        String value = null;
         try {
             int event = xpp.getEventType();
-            while(XMLStreamConstants.START_ELEMENT != event){
+            while (XMLStreamConstants.START_ELEMENT != event) {
                 event = xpp.next();
             }
             event = xpp.next();
-            while(XMLStreamConstants.END_ELEMENT != event){
-                if(XMLStreamConstants.CHARACTERS == event){
-                    value.append(xpp.getText());
+            while (XMLStreamConstants.END_ELEMENT != event) {
+                if (XMLStreamConstants.CHARACTERS == event
+                    && !xpp.isWhiteSpace()) {
+                    value = xpp.getText();
                 }
                 event = xpp.next();
             }
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }
-        if(value.length() == 0){
-            return null;
-        }else{
-            return value.toString();        
-        }
+        return value;
     }
-    
-    public static int deserializeInt(XMLStreamReader xpp)throws AxisFault{
+
+    public static int deserializeInt(XMLStreamReader xpp) throws AxisFault {
         String val = deserializeString(xpp);
-        if(val == null){
+        if (val == null) {
             throw new AxisFault("Number format exception value is null");
         }
         return Integer.parseInt(val);
     }
-    public static void serialize(XMLStreamWriter out,QName elementName,String value)throws AxisFault{
+    public static void serialize(
+        XMLStreamWriter out,
+        QName elementName,
+        String value)
+        throws AxisFault {
         try {
-            out.writeStartElement(elementName.getNamespaceURI(),elementName.getLocalPart());
+            out.writeStartElement(
+                elementName.getNamespaceURI(),
+                elementName.getLocalPart());
             out.writeCharacters(value);
             out.writeEndElement();
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }
-        
-    } 
-    
+
+    }
+
 }

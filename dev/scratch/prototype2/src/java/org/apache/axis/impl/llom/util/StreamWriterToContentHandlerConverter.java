@@ -1,12 +1,14 @@
 package org.apache.axis.impl.llom.util;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -24,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
  * limitations under the License.
  */
 public class StreamWriterToContentHandlerConverter implements ContentHandler {
+    private Log log = LogFactory.getLog(getClass());
     private XMLStreamWriter writer;
 
     public StreamWriterToContentHandlerConverter(XMLStreamWriter writer) {
@@ -67,11 +70,12 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
-//         try {
-//            writer.setPrefix(prefix,uri);
-//        } catch (XMLStreamException e) {
-//            throw new SAXException(e);
-//        }
+         try {
+            writer.writeNamespace(prefix,uri);
+            writer.setPrefix(prefix,uri);
+        } catch (XMLStreamException e) {
+            throw new SAXException(e);
+        }
     }
 
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
@@ -82,34 +86,33 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
         }
     }
 
-    private simpleQnameKeeper breakUpSaxQname(String qName){
-        simpleQnameKeeper qNk=new simpleQnameKeeper();
+    private String getPrefix(String qName){
         if (qName!=null){
-            String[] text = qName.split(":");
-            if (text.length>1){
-                qNk.setPrefix(text[0]);
-                qNk.setLocalName(text[1]);
-            }else{
-                qNk.setLocalName(text[0]);
-            }
+            return qName.substring(0,qName.indexOf(":"));
         }
-        return qNk;
+        return null;
     }
+    
+    
+    
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         try {
-            simpleQnameKeeper qname = breakUpSaxQname(qName);
-
-            if (qname.getPrefix()==null)
-                writer.writeStartElement(namespaceURI,qname.getLocalName());
-            else
-                writer.writeStartElement(qname.getPrefix(), qname.getLocalName(),namespaceURI);
-
+            log.info("writing element {"+namespaceURI+"}"+ localName +" directly to stream ");
+            
+            String prefix = getPrefix(qName);
+            //it is only the prefix we want to learn from the QName! so we can get rid of the 
+            //spliting QName
+            if (prefix ==null){
+                writer.writeStartElement(namespaceURI,localName);            
+            }else{
+                writer.writeStartElement(prefix,localName,namespaceURI);            
+            }
             if (atts!=null){
                 int attCount = atts.getLength();
                 for (int i = 0; i < attCount; i++) {
-                    qname = breakUpSaxQname(atts.getQName(i));
+                    
                     writer.writeAttribute(atts.getURI(i),
-                            qname.getLocalName(),
+                            localName,
                             atts.getValue(i));
                 }
             }
@@ -118,25 +121,4 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
         }
     }
 
-    private class simpleQnameKeeper{
-        private String prefix=null;
-        private String localName=null;
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
-
-        public String getLocalName() {
-            return localName;
-        }
-
-        public void setLocalName(String localName) {
-            this.localName = localName;
-        }
-
-    }
 }

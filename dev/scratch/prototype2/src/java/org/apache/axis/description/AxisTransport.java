@@ -16,6 +16,7 @@
 package org.apache.axis.description;
 
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.impl.description.FlowIncludeImpl;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 import org.apache.axis.impl.description.PhasesIncludeImpl;
 
@@ -25,14 +26,17 @@ import java.util.ArrayList;
 /**
  * Represents a transport deployed in AXis2
  */
-public class AxisTransport implements ParameterInclude,PhasesInclude {
+public class AxisTransport implements ParameterInclude,PhasesInclude,FlowInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
+    private FlowInclude flowInclude;
     protected QName name; 
     
-    public AxisTransport(){
+    public AxisTransport(QName name){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
+        flowInclude = new FlowIncludeImpl();
+        this.name = name;
     }
     
     public Parameter getParameter(String name) {
@@ -73,6 +77,48 @@ public class AxisTransport implements ParameterInclude,PhasesInclude {
      */
     public void setName(QName name) {
         this.name = name;
+    }
+
+    /**
+     * @return
+     */
+    public Flow getFaultFlow() {
+        return flowInclude.getFaultFlow();
+    }
+
+    /**
+     * @return
+     */
+    public Flow getInFlow() {
+        return flowInclude.getInFlow();
+    }
+
+    /**
+     * @return
+     */
+    public Flow getOutFlow() {
+        return flowInclude.getOutFlow();
+    }
+
+    /**
+     * @param faultFlow
+     */
+    public void setFaultFlow(Flow faultFlow) {
+        flowInclude.setFaultFlow(faultFlow);
+    }
+
+    /**
+     * @param inFlow
+     */
+    public void setInFlow(Flow inFlow) {
+        flowInclude.setInFlow(inFlow);
+    }
+
+    /**
+     * @param outFlow
+     */
+    public void setOutFlow(Flow outFlow) {
+        flowInclude.setOutFlow(outFlow);
     }
 
 }

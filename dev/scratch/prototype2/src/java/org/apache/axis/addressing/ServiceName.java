@@ -17,9 +17,6 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 17, 2004
- * Time: 3:42:18 PM
  */
 public class ServiceName {
     private QName name;

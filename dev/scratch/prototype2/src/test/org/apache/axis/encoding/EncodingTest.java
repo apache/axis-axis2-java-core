@@ -16,6 +16,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.om.OMElement;
@@ -46,8 +47,7 @@ public class EncodingTest extends AbstractTestCase {
         OMElement omel = omfac.createOMElement("value",omNs);
         omel.addChild(omfac.createText("1234"));
         
-        SimpleJavaProvider sjp = new SimpleJavaProvider();
-        sjp.deserializeParameters(omel.getPullParser(false),method);
+        deserialize(method,omel.getPullParser(false));
     }
 
 
@@ -58,8 +58,7 @@ public class EncodingTest extends AbstractTestCase {
         OMElement omel = omfac.createOMElement("value",omNs);
         omel.addChild(omfac.createText("1234"));
         
-        SimpleJavaProvider sjp = new SimpleJavaProvider();
-        sjp.deserializeParameters(omel.getPullParser(false),method);
+        deserialize(method,omel.getPullParser(false));
     }
     
     
@@ -75,8 +74,7 @@ public class EncodingTest extends AbstractTestCase {
             omel.addChild(temp);
         }
         
-        SimpleJavaProvider sjp = new SimpleJavaProvider();
-        sjp.deserializeParameters(omel.getPullParser(false),method);
+        deserialize(method,omel.getPullParser(false));
     }
 
     public void testDeserializingStringArrayVal() throws SecurityException, NoSuchMethodException, AxisFault, XMLStreamException, FactoryConfigurationError{
@@ -98,6 +96,25 @@ public class EncodingTest extends AbstractTestCase {
         }
         
     }
+    public void deserialize(Method method,XMLStreamReader xpp) throws AxisFault{
+        Class[] parms = method.getParameterTypes();
+        Object[] objs = new Object[parms.length];
+
+        for (int i = 0; i < parms.length; i++) {
+            if (int.class.equals(parms[i])) {
+                objs[i] =
+                    new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
+            } else if (String.class.equals(parms[i])) {
+                objs[i] = SimpleTypeEncodingUtils.deserializeString(xpp);
+            } else if (String[].class.equals(parms[i])) {
+                objs[i] = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
+            } else {
+                throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
+            }
+        }
+
+    }
+    
     
     public  class Echo{
         public int echoInt(int intVal){

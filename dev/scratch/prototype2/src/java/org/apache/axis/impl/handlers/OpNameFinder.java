@@ -46,53 +46,32 @@ public class OpNameFinder extends AbstractHandler {
 			SOAPEnvelope envelope = msgContext.getEnvelope();
 			SOAPBody body = envelope.getBody();
 			OMNode node = body.getFirstChild();
-			int type = node.getType();
-			while(type != OMNode.ELEMENT_NODE){
-				node = node.getNextSibling();
-			}
-			OMElement bodyChild = (OMElement) node;
-			msgContext.setSoapOperationElement(bodyChild);
-			OMNamespace omns = bodyChild.getNamespace();
-
-			if (omns != null) {
-				String ns = omns.getName();
-				if (ns != null) {
-					QName opName = new QName(ns, bodyChild.getLocalName());
-					AxisService service = msgContext.getService();
-					AxisOperation op = service.getOperation(opName);
-					if (op != null) {
-						msgContext.setOperation(op);
-					} else {
-						throw new AxisFault(opName + " operation not found");
-					}
-				}
-			} else {
-				throw new AxisFault("SOAP Body must be NS Qualified");
-			}
-
-
-            
-//            try {
-//				int event = xpp.next();
-//
-//				while (event != XMLStreamConstants.START_ELEMENT) {
-//					event = xpp.next();
-//				}
-//				//Now we are at the body tag, let us move foward
-//				event = xpp.next();
-//				QName opName =
-//					new QName(xpp.getNamespaceURI(), xpp.getLocalName());
-//				AxisService service = msgContext.getService();
-//				AxisOperation op = service.getOperation(opName);
-//				if (op != null) {
-//					msgContext.setOperation(op);
-//				} else {
-//					throw new AxisFault(opName + " operation not found");
-//				}
-//			} catch (Exception e) {
-//				throw new AxisFault("Error finding the operationName",e);
-//			}
-            
+            while(node != null){
+                int type = node.getType();
+                if(type == OMNode.ELEMENT_NODE){
+                    OMElement bodyChild = (OMElement) node;
+                    msgContext.setSoapOperationElement(bodyChild);
+                    OMNamespace omns = bodyChild.getNamespace();
+                    if (omns != null) {
+                        String ns = omns.getName();
+                        if (ns != null) {
+                            QName opName = new QName(ns, bodyChild.getLocalName());
+                            AxisService service = msgContext.getService();
+                            AxisOperation op = service.getOperation(opName);
+                            if (op != null) {
+                                msgContext.setOperation(op);
+                            } else {
+                                throw new AxisFault(opName + " operation not found");
+                            }
+                            break;
+                        }
+                        
+                    } else {
+                        throw new AxisFault("SOAP Body must be NS Qualified");
+                    }
+                }
+                node = node.getNextSibling();
+            }
         }
     }
 }

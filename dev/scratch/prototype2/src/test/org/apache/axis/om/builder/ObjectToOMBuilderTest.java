@@ -1,15 +1,22 @@
 package org.apache.axis.om.builder;
 
-import junit.framework.TestCase;
-import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.om.*;
-import org.apache.axis.om.builder.dummy.DummyOutObject;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.encoding.Encoder;
+import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.builder.dummy.DummyOutObject;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,7 +39,7 @@ import java.util.Iterator;
  */
 public class ObjectToOMBuilderTest extends TestCase {
 
-    private OutObject outObject;
+    private Encoder outObject;
 
 
     private OMElement element;
@@ -41,7 +48,7 @@ public class ObjectToOMBuilderTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        OutObject outObject = new DummyOutObject();
+        Encoder outObject = new DummyOutObject();
         OMFactory omFactory = OMFactory.newInstance();
         OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
         element = omFactory.createOMElement("Body", ns);

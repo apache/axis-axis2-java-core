@@ -2,7 +2,6 @@ package org.apache.axis.om;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Stack;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -56,7 +56,7 @@ public interface EngineRegistry {
      */
     public ArrayList getPhases();
 
-    public ArrayList getTransPorts() ;
-    public void setTransPorts(ArrayList transPorts) ;
+//    public ArrayList getTransPorts() ;
+//    public void setTransPorts(ArrayList transPorts) ;
 
 }

@@ -2,6 +2,7 @@ package org.apache.axis.impl.llom.builder;
 
 import java.util.Vector;
 
+import org.apache.axis.encoding.Encoder;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
@@ -10,7 +11,8 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OutObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -33,8 +35,8 @@ import org.xml.sax.SAXException;
  * <p/>`
  */
 public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
-
-    private OutObject outObject;
+    private Log log = LogFactory.getLog(getClass());
+    private Encoder outObject;
     private OMElement startElement;
     private OMFactory omFactory;
     private boolean buildStarted = false;
@@ -64,7 +66,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
      * @param outObject
      */
 
-    public ObjectToOMBuilder(OMElement startElement, OutObject outObject) {
+    public ObjectToOMBuilder(OMElement startElement, Encoder outObject) {
         startElement.setComplete(false);
         this.outObject = outObject;
         this.startElement = startElement;
@@ -85,9 +87,9 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
                     if (externalContentHandler == null) {
                         throw new IllegalStateException("Cannot have no cache with an empty content handler");
                     }
-					outObject.startBuilding(externalContentHandler);
+					outObject.serialize(externalContentHandler);
                 }else{
-					outObject.startBuilding(this);
+					outObject.serialize(this);
                 }
                 
                 this.startElement.setComplete(true);
@@ -178,7 +180,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-
+        log.info("Building OM for Element {"+namespaceURI+"}"+ localName +" for the ObjectPusher");
         if (localName.length() == 0)
             localName = qName;
 

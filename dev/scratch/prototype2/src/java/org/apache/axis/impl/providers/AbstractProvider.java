@@ -15,6 +15,7 @@
  */
 package org.apache.axis.impl.providers;
 
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.Provider;
 
 import javax.xml.namespace.QName;
@@ -33,4 +34,8 @@ public abstract class AbstractProvider implements Provider{
     public void setName(QName name) {
         this.name = name;
     }
+
+    public void revoke(MessageContext msgContext) {
+    }
+
 }

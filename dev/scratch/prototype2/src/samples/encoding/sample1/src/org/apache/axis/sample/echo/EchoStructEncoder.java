@@ -17,10 +17,10 @@ import org.apache.axis.encoding.Encoder;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OutObject;
+
 import org.xml.sax.ContentHandler;
 
-public class EchoStructEncoder implements OutObject, Encoder {
+public class EchoStructEncoder implements Encoder {
 
 	private static final int VALUE1 = -823812896;
 	private static final int VALUE2 = -823812895;
@@ -132,13 +132,12 @@ public class EchoStructEncoder implements OutObject, Encoder {
 		writer.writeEndElement();
 	}
 
-	public void startBuilding(ContentHandler contentHandler)
+	public void serialize(ContentHandler contentHandler)
 		throws OMException {
 		if (contentHandler == null) {
 			throw new OMException("Please set the content Handler");
 		}
 		try {
-			contentHandler.startPrefixMapping("s", "http://axis.apache.org");
 			String value = "value1";
 			contentHandler.startElement(
 				"http://axis.apache.org",

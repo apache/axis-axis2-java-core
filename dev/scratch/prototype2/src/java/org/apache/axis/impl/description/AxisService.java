@@ -60,58 +60,6 @@ public class AxisService extends WSDLServiceImpl implements WSDLService,Paramete
         return (Collection)this.getComponentProperty(MODULEREF_KEY);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#setExecutableInChain(org.apache.axis.engine.ExecutionChain)
-     */
-    public void setExecutableInChain(ExecutionChain executableInChain) {
-        if(null !=executableInChain){
-            this.setComponentProperty(EXECUTION_CHAIN_KEY, executableInChain);
-        }
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getExecutableInChain()
-     */
-    public ExecutionChain getExecutableInChain() {
-        return (ExecutionChain)this.getComponentProperty(EXECUTION_CHAIN_KEY);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#setExecutableOutChain(org.apache.axis.engine.ExecutionChain)
-     */
-    public void setExecutableOutChain(ExecutionChain executableOutChain) {
-        if(null !=executableOutChain){
-            this.setComponentProperty(EXECUTION_OUT_CHAIN_KEY, executableOutChain);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getExecutableOutChain()
-     */
-    public ExecutionChain getExecutableOutChain() {
-        return (ExecutionChain)this.getComponentProperty(EXECUTION_OUT_CHAIN_KEY);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#setExecutableFaultChain(org.apache.axis.engine.ExecutionChain)
-     */
-    public void setExecutableFaultChain(ExecutionChain executableFaultChain) {
-        if(null !=executableFaultChain){
-            this.setComponentProperty(EXECUTION_FAULT_CHAIN_KEY, executableFaultChain);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getExecutableFaultChain()
-     */
-    public ExecutionChain getExecutableFaultChain() {
-        return (ExecutionChain)this.getComponentProperty(EXECUTION_FAULT_CHAIN_KEY);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getOperation(javax.xml.namespace.QName)
-     */
     public AxisOperation getOperation(QName operationName) {
         //todo The key has been changed from the qname to the local name because
         //todo when comparing the namespace will not be available

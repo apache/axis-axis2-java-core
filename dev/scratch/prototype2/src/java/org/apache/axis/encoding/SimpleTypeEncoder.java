@@ -15,28 +15,23 @@
  */
 package org.apache.axis.encoding;
 
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OutObject;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
-public class OutObjectImpl implements OutObject{
-//    private ContentHandler cHandler;
+public class SimpleTypeEncoder implements Encoder{
     private Object obj = null;
-    public OutObjectImpl(Object obj){
+    public SimpleTypeEncoder(Object obj){
        this.obj = obj;
     }
-//    public ContentHandler getContentHandler() {
-//        return cHandler;
-//    }
-//
-//    public void setContentHandler() {
-//        this.cHandler = contentHandler;
-//    }
-
-    public void startBuilding(ContentHandler cHandler) throws OMException {
+    
+    
+    public void serialize(ContentHandler cHandler) throws OMException {
         try {
             if(obj instanceof String){
                 char[] str = ((String)obj).toCharArray();
@@ -64,6 +59,20 @@ public class OutObjectImpl implements OutObject{
             throw new OMException(e);
         }
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.encoding.Encoder#deSerialize(javax.xml.stream.XMLStreamReader)
+     */
+    public Object deSerialize(XMLStreamReader xpp) throws AxisFault {
+        throw new UnsupportedOperationException();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.encoding.Encoder#setObject(java.lang.Object)
+     */
+    public void setObject(Object obj) {
+        this.obj =obj;
     }
 
 }

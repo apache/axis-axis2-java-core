@@ -69,11 +69,13 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         if (envelope != null) {
 			XMLStreamWriter outputWriter = null;
             try {
+               // org.TimeRecorder.BEFORE_SERIALIZE = System.currentTimeMillis();
                 outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                // envelope.serialize(outputWriter,false);
-			   envelope.serialize(outputWriter,true);
+			   envelope.serialize(outputWriter,false);
                 outputWriter.flush();
                 envelope.free();
+               // org.TimeRecorder.AFTER_SERIALIZE = System.currentTimeMillis();
             } catch (Exception e) {
                 throw new AxisFault("Stream error",e);
             }

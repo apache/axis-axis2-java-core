@@ -6,7 +6,7 @@
 	<property name="build.lib" location="${build}/lib"/>
 	<property name="lib" location="lib"/>
 	<property name="root" location="../../../.."/>
-	<property name="jar.dir" location="${root}/target/test-resources/deployment/services"/>
+	<property name="jar.dir" location="${root}/target/test-resources/samples/"/>
 	
 	<path id="axis.test.classpath">
 		<path refid="maven.dependency.classpath"></path>
@@ -30,8 +30,8 @@
 			</fileset>
 		</copy>
 
-		<mkdir dir="${root}/target/test-resources/samples/"/>
-		<jar jarfile="${root}/target/test-resources/samples/echo.jar" basedir="${build.classes}" >
+		<mkdir dir="${jar.dir}"/>
+		<jar jarfile="${jar.dir}/echo.jar" basedir="${build.classes}" >
 			<include name="**" />
 		</jar>
 		<delete dir="${build}"/>

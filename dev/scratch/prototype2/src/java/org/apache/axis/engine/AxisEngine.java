@@ -45,6 +45,7 @@ public class AxisEngine {
 
     public void receive(MessageContext context) throws AxisFault {
         try {
+  //          org.TimeRecorder.START = System.currentTimeMillis();
 			log.info("starting the out flow");
 			//let us always start with a fresh EC
             context.setExecutionChain(new ExecutionChain());
@@ -69,6 +70,8 @@ public class AxisEngine {
             //Start rolling the Service Handlers will,be added by the Dispatcher 
             chain.invoke(context);
 			log.info("ending the out flow");
+//            org.TimeRecorder.END = System.currentTimeMillis();
+//            org.TimeRecorder.dump();
         } catch (Throwable e) {
             handleFault(context, e);
         }

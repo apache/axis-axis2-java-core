@@ -44,6 +44,6 @@
     </goal>
     
     <goal name="samples">
-    		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/sample1"/>
+    		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
     </goal>
  </project>

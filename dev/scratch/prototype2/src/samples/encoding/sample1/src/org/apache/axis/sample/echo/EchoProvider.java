@@ -14,8 +14,8 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.OutObjectArrayImpl;
-import org.apache.axis.encoding.OutObjectImpl;
+import org.apache.axis.encoding.ArrayTypeEncoder;
+import org.apache.axis.encoding.SimpleTypeEncoder;
 import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
@@ -24,13 +24,17 @@ import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OutObject;
 import org.apache.axis.om.SOAPEnvelope;
 
 public class EchoProvider extends SimpleJavaProvider {
 
-	public Object[] deserializeParameters(XMLStreamReader xpp, Method method)
-		throws AxisFault {
+    public Object[] deserializeParameters(
+      MessageContext msgContext,
+      Method method)
+      throws AxisFault {
+      //   org.TimeRecorder.BEFORE_DESERALIZE = System.currentTimeMillis();
+      XMLStreamReader xpp =
+          msgContext.getSoapOperationElement().getPullParser(true);
 		Class[] parms = method.getParameterTypes();
 		Object[] objs = new Object[parms.length];
 		
@@ -58,10 +62,8 @@ public class EchoProvider extends SimpleJavaProvider {
 						Encoder en = new EchoStructEncoder(null);
 						objs[i] = en.deSerialize(xpp);
 					} else if (EchoStruct[].class.equals(parms[i])) {
-						objs[i] =
-							SimpleTypeEncodingUtils.deserializeArray(
-								xpp,
-								new EchoStructEncoder(null));
+                        Encoder encoder = new ArrayTypeEncoder(new EchoStructEncoder(null));
+						objs[i] = encoder.deSerialize(xpp);
 					} else {
 						throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
 					}
@@ -113,15 +115,15 @@ public class EchoProvider extends SimpleJavaProvider {
 				}
 				result = echo.echoEchoStructArray(structs);
 			}			
-			OutObject outobj = null;
+			Encoder outobj = null;
 
 			if (result instanceof String || result instanceof String[]) {
-				outobj = new OutObjectImpl(result);
+				outobj = new SimpleTypeEncoder(result);
 			} else if (result instanceof EchoStruct) {
 				outobj = new EchoStructEncoder((EchoStruct) result);
 			} else if (result instanceof EchoStruct[]) {
 				outobj =
-					new OutObjectArrayImpl(
+					new ArrayTypeEncoder(
 						(EchoStruct[]) result,
 						new EchoStructEncoder(null));
 			}
@@ -136,12 +138,15 @@ public class EchoProvider extends SimpleJavaProvider {
 			OMElement returnelement =
 				fac.createOMElement(methodName + "Return", ns);
 			responseMethodName.addChild(returnelement);
-
 			returnelement.setBuilder(
 				new ObjectToOMBuilder(returnelement, outobj));
 			returnelement.declareNamespace(
 				OMConstants.ARRAY_ITEM_NSURI,
 				"arrays");
+            returnelement.declareNamespace(
+                "http://axis.apache.org",
+                "s");
+
 			msgContext.setEnvelope(responseEnvelope);
 
 			return msgContext;
