@@ -162,7 +162,6 @@
   
   
   <goal name="dist-src" prereqs="init">
-		<ant:mkdir dir="target/dist-src"/>
 		<ant:zip file="${dist.dir}/${dist.name}-src.zip" >
 			<ant:fileset dir=".">
 				<ant:include name="**/*.java"/>
@@ -203,9 +202,8 @@
                   <ant:exclude name="**/.svn/**"/>
                   <ant:exclude name="**/bin/**"/>
             </ant:tar>
-            <gzip src="target/${dist.name}-src.tar" zipfile="${dist.dir}/${dist.name}-bin.tar.gz"/>
+            <gzip src="target/${dist.name}-src.tar" zipfile="${dist.dir}/${dist.name}-src.tar.gz"/>
             <ant:delete file="target/${dist.name}-src.tar"/>
-
   </goal>
   
   <goal name="javadoc-gen" prereqs="init">
@@ -238,5 +236,5 @@
 	<copy file="target/axis2-bin-M1.zip" tofile="target/docs/dist/axis2-bin-M1.zip"/>
 	<copy file="target/axis2.war" tofile="target/docs/dist/axis2.war"/>
   </preGoal>
-  
   </project>
+
