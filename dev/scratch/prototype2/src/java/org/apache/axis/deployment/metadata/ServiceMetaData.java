@@ -38,8 +38,6 @@ import java.util.Vector;
  */
 public class ServiceMetaData implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
-    public static String PROVIDERNAME = "provider";
-    public static String STYLENAME = "style";
 
     //TODO Complte this class
     private Vector parameters = new Vector();
@@ -116,7 +114,7 @@ public class ServiceMetaData implements DeploymentConstants {
         this.faultFlow = faultFlow;
     }
 
-    public static String CONTEXTPATHNAME = "contextPath";
+    
 
     public String getProvider() {
         return provider;

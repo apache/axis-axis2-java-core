@@ -18,6 +18,7 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.Handler;
+import org.apache.axis.impl.description.ParameterIncludeImpl;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -27,19 +28,18 @@ public class HandlerMetaData implements ParameterInclude{
     private QName name;
     private PhaseRule rules;
     private Handler handler;
-    
+    private String className;
+
+
+    public HandlerMetaData(){
+       this.parameterInclude = new ParameterIncludeImpl();
+       this.rules = new PhaseRule();
+    }
     /**
      * @return
      */
     public QName getName() {
         return name;
-    }
-
-    /**
-     * @return
-     */
-    public PhaseRule getRules() {
-        return rules;
     }
 
     /**
@@ -49,11 +49,44 @@ public class HandlerMetaData implements ParameterInclude{
         this.name = name;
     }
 
-    /**
-     * @param rule
-     */
-    public void setRules(PhaseRule rule) {
-        rules = rule;
+    public String getBefore() {
+        return rules.getBefore();
+    }
+
+    public void setBefore(String before) {
+        rules.setBefore(before);
+    }
+
+    public String getAfter() {
+        return rules.getAfter();
+    }
+
+    public void setAfter(String after) {
+        rules.setAfter(after);
+    }
+
+    public String getPhaseName() {
+        return rules.getPhaseName();
+    }
+
+    public void setPhaseName(String phaseName) {
+        rules.setPhaseName(phaseName);
+    }
+
+    public boolean isPhaseFirst() {
+        return rules.isPhaseFirst();
+    }
+
+    public void setPhaseFirst(boolean phaseFirst) {
+        rules.setPhaseFirst(phaseFirst);
+    }
+
+    public boolean isPhaseLast() {
+        return rules.isPhaseLast();
+    }
+
+    public void setPhaseLast(boolean phaseLast) {
+        rules.setPhaseLast(phaseLast);
     }
 
     /**
@@ -83,5 +116,13 @@ public class HandlerMetaData implements ParameterInclude{
      */
     public void setHandler(Handler handler) {
         this.handler = handler;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

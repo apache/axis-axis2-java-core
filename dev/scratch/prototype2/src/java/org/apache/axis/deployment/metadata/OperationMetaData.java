@@ -27,10 +27,7 @@ package org.apache.axis.deployment.metadata;
  */
 public class OperationMetaData {
 
-    public static String ATNAME = "name";
-    public static String ATQNAME = "name";
-    public static String ATSTYLE = "name";
-    public static String ATUSE = "name";
+    
 
     private String name;
     private String qname;

@@ -27,11 +27,16 @@ import org.apache.axis.impl.description.ParameterIncludeImpl;
 public class AxisModule implements FlowInclude,ParameterInclude{
     private QName name;
     
-    public AxisModule(QName name){
-        this.name = name;
-    }
+
     private FlowInclude flowInclude = new FlowIncludeImpl();
     private ParameterInclude parameters = new ParameterIncludeImpl();
+
+    public AxisModule() {
+    }
+
+    public AxisModule(QName name) {
+        this.name = name;
+    }
 
     /**
      * @return

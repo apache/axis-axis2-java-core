@@ -51,5 +51,28 @@ public interface DeploymentConstants {
 
     String SERVICETAG = "service";
 
+    // for serviemetadat
+    String PROVIDERNAME = "provider";
+    String STYLENAME = "style";
+    String CONTEXTPATHNAME = "contextPath";
+
+    // for parameters
+    String ATTNAME = "name";
+    String ATTLOCKED = "locked";
+
+   // for operatiins
+    String ATQNAME = "name";
+    String ATUSE = "use";
+
+    //for handlers
+    String REF = "ref";
+    String CLASSNAME = "class";
+    String BEFORE = "before";
+    String AFTER = "after";
+    String PHASE = "phase";
+    String PHASEFIRST = "phaseFirst";
+    String PHASELAST = "phaseLast";
+    String ORDER = "order";  // to resolve the order tag
+
 
 }

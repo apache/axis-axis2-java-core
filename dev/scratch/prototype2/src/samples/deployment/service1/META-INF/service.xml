@@ -8,8 +8,8 @@
 
 
     <!--  Service TypeMapping -->
-    <typeMapping>Type mappping should come here</typeMapping>
-    <beanMapping>bean mappping should come here</beanMapping>
+
+
 
     <!--
     Phases
@@ -55,23 +55,6 @@
 
 
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
-        <module ref="uri">
-            <parameter name="para3" locked="xsd:true">10</parameter>
-            <parameter name="para4" locked="xsd:false">LSF</parameter>
-        </module>
-
-        <inflow>
-            <handler name="h7" class="org.apache.axis.registry.Handler1"/>
-        </inflow>
-        <outflow>
-            <handler name="h8" class="org.apache.axis.registry.Handler1">
-                <order  phase="anyhase" />
-                <parameter name="para8" locked="xsd:true">123</parameter>
-                <parameter name="para9" locked="xsd:true">456</parameter>
-                <parameter name="para10" locked="xsd:true">789</parameter>
-            </handler>
-        </outflow>
-        <faultflow>
-        </faultflow>
+        
     </operation>
 </service>

@@ -1,6 +1,8 @@
 package org.apache.axis.deployment.metadata;
 
 import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
+import org.apache.axis.description.*;
+import org.apache.axis.description.HandlerMetaData;
 
 import java.util.Vector;
 
@@ -45,12 +47,6 @@ public class ServerMetaData {
         parameters.removeAllElements();
         modules.removeAllElements();
         phases.removeAllElements();
-        //dummpPhases();
-        // phases.add("service");
-        // phases.add("P1");
-        // phases.add("P2");
-        //phases.add("P3");
-
     }
 
     /**
@@ -67,19 +63,19 @@ public class ServerMetaData {
         this.name = name;
     }
 
-    public void appParameter(ParameterMetaData parameter) {
+    public void appParameter(Parameter parameter) {
         parameters.add(parameter);
         parameterCount++;
     }
 
-    public ParameterMetaData getParameter(int index) {
+    public Parameter getParameter(int index) {
         if (index <= parameterCount) {
-            return (ParameterMetaData) parameters.get(index);
+            return (Parameter) parameters.get(index);
         } else
             return null;
     }
 
-    public void addHandlers(HandlerMetaData handler) {
+    public void addHandlers(org.apache.axis.description.HandlerMetaData handler) {
         handlers.add(handler);
         handlerCount++;
     }
@@ -91,14 +87,14 @@ public class ServerMetaData {
             return null;
     }
 
-    public void addModule(ModuleMetaData module) {
+    public void addModule(AxisModule module) {
         modules.add(module);
         moduleCount++;
     }
 
-    public ModuleMetaData getModule(int index) {
+    public AxisModule getModule(int index) {
         if (index <= moduleCount) {
-            return (ModuleMetaData) modules.get(index);
+            return (AxisModule) modules.get(index);
         } else
             return null;
     }

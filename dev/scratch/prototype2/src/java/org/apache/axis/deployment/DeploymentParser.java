@@ -3,11 +3,19 @@ package org.apache.axis.deployment;
 import org.apache.axis.deployment.metadata.*;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
+import org.apache.axis.description.*;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.swing.text.Style;
 import java.io.InputStream;
 
 
@@ -97,10 +105,10 @@ public class DeploymentParser implements DeploymentConstants {
         //}
     }
 
-    public ServiceMetaData parseServiceXML() throws DeploymentException, PhaseException {
+    public void parseServiceXML(AxisService axisService) throws DeploymentException, PhaseException {
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
-        ServiceMetaData service = null;
+        //   ServiceMetaData service = null;
 
         try {
             while (!END_DOCUMENT) {
@@ -111,9 +119,8 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(serviceXMLST)) {
-                        service = procesServiceXML();
-                        service.setName(archiveName);
-                        service.setArchiveName(archiveName);
+                        procesServiceXML(axisService);
+                        axisService.setName(new QName(archiveName));
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
@@ -122,7 +129,6 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         }
-        return service;
     }
 
     /**
@@ -151,13 +157,14 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
                     } else if (ST.equals(PARAMETERST)) {
-                        ParameterMetaData parameter = processParameter();
+                        Parameter parameter = processParameter();
                         serverMetaData.appParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
                         processTypeMapping();
                     } else if (ST.equals(MODULEST)) {
-                        ModuleMetaData metaData = processModule();
-                        serverMetaData.addModule(metaData);
+                        throw new UnsupportedOperationException("This is to be implemented");
+                       // AxisModule metaData = processModule();
+                      //  serverMetaData.addModule(metaData);
                     } else if (ST.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         serverMetaData.addHandlers(handler);
@@ -176,19 +183,23 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * to process service.xml
      */
-    private ServiceMetaData procesServiceXML() throws DeploymentException {
+    private void procesServiceXML(AxisService axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
-        ServiceMetaData service = new ServiceMetaData();
         if (attribCount == 3) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(ServiceMetaData.PROVIDERNAME)) {
-                    service.setProvider(getValue(attvalue));
-                } else if (attname.equals(ServiceMetaData.STYLENAME)) {
-                    service.setStyle(getValue(attvalue));
-                } else if (attname.equals(ServiceMetaData.CONTEXTPATHNAME)) {
-                    service.setContextPath(getValue(attvalue));
+                if (attname.equals(PROVIDERNAME)) {
+                    //TODO load the java clss for this
+                    //TODO  somtimes Provider should be change
+                    SimpleJavaProvider provider = new SimpleJavaProvider();
+                    provider.setName(new QName(getValue(attvalue)));
+                    axisService.setProvider(provider);
+                } else if (attname.equals(STYLENAME)) {
+                    // axisService.setStyle();
+                    //TODO setStyle should be handle latter
+                } else if (attname.equals(CONTEXTPATHNAME)) {
+                    axisService.setContextPath(getValue(attvalue));
                 } else {
                     throw new DeploymentException("Bad arguments");
                 }
@@ -212,55 +223,66 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
                     if (ST.equals(PARAMETERST)) {
-                        ParameterMetaData parameter = processParameter();
-                        service.appParameter(parameter);
+                        Parameter parameter =  processParameter();
+                        axisService.addParameter(parameter);
+                        //axisService. .appParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
-                        processTypeMapping();
+                        throw new UnsupportedOperationException();
+                        // todo this should implemnt latter
+                      //  processTypeMapping();
                     } else if (ST.equals(BEANMAPPINGST)) {
-                        processBeanMapping();
+                        throw new UnsupportedOperationException();
+                        // todo this should implemnt latter
+                       // processBeanMapping();
                     } else if (ST.equals(OPRATIONST)) {
-                        OperationMetaData operation = processOperation();
-                        service.setOperation(operation);
+                        AxisOperation  operation = processOperation();
+                        axisService.addOperation(operation);
                     } else if (ST.equals(INFLOWST)) {
-                        InFlowMetaData inFlow = processInFlow();
-                        service.setInFlow(inFlow);
+                        Flow inFlow = processInFlow();
+                        axisService.setInFlow(inFlow);
                     } else if (ST.equals(OUTFLOWST)) {
-                        OutFlowMetaData outFlow = processOutFlow();
-                        service.setOutFlow(outFlow);
+                        Flow outFlow = processOutFlow();
+                        axisService.setOutFlow(outFlow);
                     } else if (ST.equals(FAILTFLOWST)) {
-                        FaultFlowMetaData faultFlow = processFaultFlow();
-                        service.setFaultFlow(faultFlow);
+                        Flow faultFlow = processFaultFlow();
+                        axisService.setFaultFlow(faultFlow);
                     } else if (ST.equals(MODULEST)) {
-                        ModuleMetaData moduleMetaData = getModule();//processModule();
-                        service.addModules(moduleMetaData);
+                        attribCount = pullparser.getAttributeCount();
+                        //   boolean ref_name = false;
+
+                        if (attribCount > 0) {
+                            for (int i = 0; i < attribCount; i++) {
+                                String attname = pullparser.getAttributeLocalName(i);
+                                String attvalue = pullparser.getAttributeValue(i);
+
+                                if (attname.equals(ModuleMetaData.REF)) {
+                                    axisService.addModule(new QName(attvalue));
+                                }
+                            }
+                        }
+
                     }
                 }
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         }
-        return service;
     }
 
-    /**
-     * This will process the <ParameterMetaData>....</ParameterMetaData> tag and craete a
-     * ParameterMetaData object using those values
-     *
-     * @return ParameterMetaData
-     * @throws org.apache.axis.deployment.DeploymentException
-     *
-     */
-    private ParameterMetaData processParameter() throws DeploymentException {
+
+
+
+    private Parameter processParameter() throws DeploymentException {
         String name = pullparser.getLocalName();
-        ParameterMetaData parameter = new ParameterMetaData(name);
+        Parameter parameter = new ParameterImpl();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 2) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(ParameterMetaData.ATTNAME)) {
+                if (attname.equals(ATTNAME)) {
                     parameter.setName(attvalue);
-                } else if (attname.equals(ParameterMetaData.ATTLOCKED)) {
+                } else if (attname.equals(ATTLOCKED)) {
                     String boolval = getValue(attvalue);
                     if (boolval.equals("true")) {
                         parameter.setLocked(true);
@@ -300,7 +322,7 @@ public class DeploymentParser implements DeploymentConstants {
             throw new DeploymentException("Unknown process Exception", e);
         }
         // adding element to the parameter
-        parameter.setElement(element);
+        parameter.setValue(element);
         return parameter;
     }
 
@@ -321,21 +343,23 @@ public class DeploymentParser implements DeploymentConstants {
             String attname = pullparser.getAttributeLocalName(i);
             String attvalue = pullparser.getAttributeValue(i);
 
-            if (attname.equals(HandlerMetaData.CLASSNAME)) {
+            if (attname.equals(CLASSNAME)) {
                 handler.setClassName(attvalue);
-            } else if (attname.equals(HandlerMetaData.NAME)) {
+            } else if (attname.equals(ATTNAME)) {
                 if (ref_name) {
                     throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
                 } else {
-                    handler.setName(attvalue);
+                    handler.setName(new QName(attvalue));
                     ref_name = true;
                 }
-            } else if (attname.equals(HandlerMetaData.REF)) {
+            } else if (attname.equals(REF)) {
                 if (ref_name) {
                     throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
                 } else {
-                    handler.setRef(attvalue);
                     ref_name = true;
+                    throw new UnsupportedOperationException("This should be implmented");
+                    //TODO implement this
+
                 }
             }
         }
@@ -352,26 +376,26 @@ public class DeploymentParser implements DeploymentConstants {
                     END_HANDLER = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(HandlerMetaData.ORDER)) {
+                    if (tagnae.equals(ORDER)) {
                         attribCount = pullparser.getAttributeCount();
                         for (int i = 0; i < attribCount; i++) {
                             String attname = pullparser.getAttributeLocalName(i);
                             String attvalue = pullparser.getAttributeValue(i);
 
-                            if (attname.equals(HandlerMetaData.AFTER)) {
+                            if (attname.equals(AFTER)) {
                                 handler.setAfter(attvalue);
-                            } else if (attname.equals(HandlerMetaData.BEFORE)) {
+                            } else if (attname.equals(BEFORE)) {
                                 handler.setBefore(attvalue);
-                            } else if (attname.equals(HandlerMetaData.PHASE)) {
-                                handler.setPhase(attvalue);
-                            } else if (attname.equals(HandlerMetaData.PHASEFIRST)) {
+                            } else if (attname.equals(PHASE)) {
+                                handler.setPhaseName(attvalue);
+                            } else if (attname.equals(PHASEFIRST)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
                                     handler.setPhaseFirst(true);
                                 } else if (boolval.equals("false")) {
                                     handler.setPhaseFirst(false);
                                 }
-                            } else if (attname.equals(HandlerMetaData.PHASELAST)) {
+                            } else if (attname.equals(PHASELAST)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
                                     handler.setPhaseLast(true);
@@ -382,7 +406,7 @@ public class DeploymentParser implements DeploymentConstants {
 
                         }
                     } else if (tagnae.equals(PARAMETERST)) {
-                        ParameterMetaData parameter = processParameter();
+                        Parameter parameter = processParameter();
                         handler.addParameter(parameter);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -442,22 +466,25 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    private OperationMetaData processOperation() throws DeploymentException {
+    private AxisOperation processOperation() throws DeploymentException {
         //  String name = pullparser.getLocalName();
-        OperationMetaData operation = new OperationMetaData();
+        AxisOperation operation = new SimpleAxisOperationImpl();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 4) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(OperationMetaData.ATNAME)) {
-                    operation.setName(attvalue);
-                } else if (attname.equals(OperationMetaData.ATQNAME)) {
-                    operation.setQname(attvalue);
-                } else if (attname.equals(OperationMetaData.ATSTYLE)) {
-                    operation.setStyle(attvalue);
-                } else if (attname.equals(OperationMetaData.ATUSE)) {
-                    operation.setUse(attvalue);
+                if (attname.equals(ATTNAME)) {
+                    operation.setName(new QName(attvalue));
+                } else if (attname.equals(ATQNAME)) {
+                    //TODO fill this after getting the reply for the mail
+                    //operation.setQname(attvalue);
+                } else if (attname.equals(STYLENAME)) {
+                    //TODO to be implementd after clarfing style
+                    //operation.setStyle(attvalue);
+                } else if (attname.equals(ATUSE)) {
+                    //TODO this is to be implemnt
+                  //  operation.setUse(attvalue);
                 }
             }
         } else {
@@ -477,17 +504,13 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
-                        ModuleMetaData module = processModule();
-                        operation.setModule(module);
+                       throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (ST.equals(FAILTFLOWST)) {
-                        FaultFlowMetaData faultFlow = processFaultFlow();
-                        operation.setFaultFlow(faultFlow);
+                        throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (ST.equals(INFLOWST)) {
-                        InFlowMetaData inFlow = processInFlow();
-                        operation.setInFlow(inFlow);
+                        throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (ST.equals(OUTFLOWST)) {
-                        OutFlowMetaData outFlow = processOutFlow();
-                        operation.setOutFlow(outFlow);
+                        throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     }
 
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -587,8 +610,7 @@ public class DeploymentParser implements DeploymentConstants {
             return module;
     }
 
-    public ModuleMetaData processModule() throws DeploymentException {
-        ModuleMetaData module = new ModuleMetaData();
+    public void processModule(AxisModule module) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
 
@@ -597,21 +619,21 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
 
-                if (attname.equals(ModuleMetaData.CLASSNAME)) {
-                    module.setClassName(attvalue);
-                } else if (attname.equals(ModuleMetaData.NAME)) {
+               if (attname.equals(ModuleMetaData.NAME)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
-                        module.setName(attvalue);
+                        module.setName(new QName(attvalue));
                         ref_name = true;
                     }
                 } else if (attname.equals(ModuleMetaData.REF)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
-                        module.setRef(attvalue);
+                        //TODO implement this , boz this is not complete
+                      //  module.setRef(attvalue);
                         ref_name = true;
+                        throw new UnsupportedOperationException("This should be implemented");
                     }
                 }
             }
@@ -628,16 +650,16 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(PARAMETERST)) {
-                        ParameterMetaData parameter = processParameter();
+                        Parameter parameter = processParameter();
                         module.addParameter(parameter);
                     } else if (ST.equals(FAILTFLOWST)) {
-                        FaultFlowMetaData faultFlow = processFaultFlow();
+                        Flow faultFlow = processFaultFlow();
                         module.setFaultFlow(faultFlow);
                     } else if (ST.equals(INFLOWST)) {
-                        InFlowMetaData inFlow = processInFlow();
+                        Flow inFlow = processInFlow();
                         module.setInFlow(inFlow);
                     } else if (ST.equals(OUTFLOWST)) {
-                        OutFlowMetaData outFlow = processOutFlow();
+                        Flow outFlow = processOutFlow();
                         module.setOutFlow(outFlow);
                     }
                     //todo has to be implemnt this
@@ -658,11 +680,10 @@ public class DeploymentParser implements DeploymentConstants {
             throw new DeploymentException("Unknown process Exception", e);
         }
 
-        return module;
     }
 
-    public InFlowMetaData processInFlow() throws DeploymentException {
-        InFlowMetaData inFlow = new InFlowMetaData();
+    public Flow processInFlow() throws DeploymentException {
+        Flow inFlow = new FlowImpl();
         boolean END_INFLOW = false;
         String text = ""; // to store the paramater elemnt
         try {
@@ -698,8 +719,8 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    public OutFlowMetaData processOutFlow() throws DeploymentException {
-        OutFlowMetaData outFlow = new OutFlowMetaData();
+    public Flow processOutFlow() throws DeploymentException {
+        Flow outFlow = new FlowImpl();
         boolean END_OUTFLOW = false;
         String text = ""; // to store the paramater elemnt
         try {
@@ -735,8 +756,8 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    public FaultFlowMetaData processFaultFlow() throws DeploymentException {
-        FaultFlowMetaData faultFlow = new FaultFlowMetaData();
+    public Flow processFaultFlow() throws DeploymentException {
+        Flow faultFlow = new FlowImpl();
         boolean END_FAULTFLOW = false;
         String text = ""; // to store the paramater elemnt
         try {
@@ -827,10 +848,8 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * to process either module.xml or module elemnt in the service.xml
      */
-    public ModuleMetaData procesModuleXML() throws DeploymentException {
+    public void procesModuleXML(AxisModule module) throws DeploymentException {
         boolean END_DOCUMENT = false;
-        ModuleMetaData module = null;
-
         try {
             while (!END_DOCUMENT) {
                 int eventType = pullparser.next();
@@ -840,8 +859,8 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
-                        module = processModule();
-                        module.setArchiveName(archiveName);
+                        processModule(module);
+                       // module.setArchiveName(archiveName);
                         // module.setName(archiveName);
                     }
                     //processStartElement();
@@ -851,6 +870,5 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         }
-        return module;
     }
 }

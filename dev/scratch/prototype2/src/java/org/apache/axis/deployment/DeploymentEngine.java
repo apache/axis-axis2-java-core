@@ -1,5 +1,28 @@
 package org.apache.axis.deployment;
 
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.deployment.metadata.*;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.repository.utill.HDFileItem;
+import org.apache.axis.deployment.repository.utill.UnZipJAR;
+import org.apache.axis.deployment.repository.utill.WSInfo;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
+import org.apache.axis.deployment.scheduler.Scheduler;
+import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisServiceImpl;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,45 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Vector;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.FlowMetaData;
-import org.apache.axis.deployment.metadata.HandlerMetaData;
-import org.apache.axis.deployment.metadata.ModuleMetaData;
-import org.apache.axis.deployment.metadata.OperationMetaData;
-import org.apache.axis.deployment.metadata.ParameterMetaData;
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.ServiceMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.repository.utill.HDFileItem;
-import org.apache.axis.deployment.repository.utill.UnZipJAR;
-import org.apache.axis.deployment.repository.utill.WSInfo;
-import org.apache.axis.deployment.scheduler.DeploymentIterator;
-import org.apache.axis.deployment.scheduler.Scheduler;
-import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Constants;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Phase;
-import org.apache.axis.impl.description.FlowImpl;
-import org.apache.axis.impl.description.ParameterImpl;
-import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
-import org.apache.axis.impl.engine.EngineRegistryImpl;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -150,12 +134,12 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    public void addService(ServiceMetaData serviceMetaData) throws PhaseException, AxisFault {
+    public void addService(AxisService serviceMetaData) throws PhaseException, AxisFault {
         servicelist.add(serviceMetaData);
         addnewService(serviceMetaData);
     }
 
-    public void addModule(ModuleMetaData module) throws AxisFault {
+    public void addModule(AxisModule module) throws AxisFault {
         modulelist.add(module);
         AxisModule simplemodule = castModuleMetaData(module);
         engineRegistry.addMdoule(simplemodule);
@@ -211,7 +195,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(ServiceMetaData serviceMetaData) throws AxisFault, PhaseException {
+    private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
 //        QName serviceName = new QName(serviceMetaData.getName());
 //        int count = 0;
 //
@@ -435,13 +419,13 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private AxisModule castModuleMetaData(ModuleMetaData moduelmetada) throws AxisFault {
-        ModuleMetaData modulemd = moduelmetada;
+    private AxisModule castModuleMetaData(AxisModule moduelmetada) throws AxisFault {
+       AxisModule modulemd = moduelmetada;
 
         /**
          * adding parametrs to module
          */
-        AxisModule module = new AxisModule(new QName(modulemd.getName()));
+     /*   AxisModule module = new AxisModule(new QName(modulemd.getName()));
         int count = modulemd.getParameterCount();
 
         //todo change the classloder
@@ -463,8 +447,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
         FlowImpl modulefaultflow = new FlowImpl();
         count = modulemd.getFaultFlow().getHandlercount();
-        addFlowHandlers(modulefaultflow, count, modulemd.getFaultFlow(), moduleclassLoder);
-        return module;
+        addFlowHandlers(modulefaultflow, count, modulemd.getFaultFlow(), moduleclassLoder); */
+        return modulemd;
     }
 
 
@@ -516,8 +500,9 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         {
-                            ServiceMetaData service = new ServiceMetaData();
-                            service = unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this);
+                            //todo implemnt this in right manner
+                            AxisService service = new SimpleAxisServiceImpl(null);
+                            unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             try {
                                 if (service != null) {
                                     addService(service);
@@ -531,8 +516,8 @@ public class DeploymentEngine implements DeploymentConstants {
                         }
                     case MODULE:
                         {
-                            ModuleMetaData metaData = new ModuleMetaData();
-                            metaData = unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this);
+                            AxisModule metaData = new AxisModule();
+                            unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
                             try {
                                 if (metaData != null) {
                                     addModule(metaData);

@@ -22,5 +22,9 @@ public interface Parameter {
     
     public String getName();
     public Object getValue();
+    public void setName(String name) ;
+    public void setValue(String value);
+    public boolean isLocked();
+    public void setLocked(boolean value);
     public int getParameterType();
 }

@@ -16,8 +16,57 @@
 package org.apache.axis.description;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
+ * @author Deepal Jayasinghe
  */
 public class PhaseRule {
+    //can be either name of phase or handler
+    private String before ;
+    //can be either name of phase or handler
+    private String after ;
+
+    private String phaseName;
+    private boolean phaseFirst;
+    private boolean phaseLast;
+
+    public String getBefore() {
+        return before;
+    }
+
+    public void setBefore(String before) {
+        this.before = before;
+    }
+
+    public String getAfter() {
+        return after;
+    }
+
+    public void setAfter(String after) {
+        this.after = after;
+    }
+
+    public String getPhaseName() {
+        return phaseName;
+    }
+
+    public void setPhaseName(String phaseName) {
+        this.phaseName = phaseName;
+    }
+
+    public boolean isPhaseFirst() {
+        return phaseFirst;
+    }
+
+    public void setPhaseFirst(boolean phaseFirst) {
+        this.phaseFirst = phaseFirst;
+    }
+
+    public boolean isPhaseLast() {
+        return phaseLast;
+    }
+
+    public void setPhaseLast(boolean phaseLast) {
+        this.phaseLast = phaseLast;
+    }
+
 
 }

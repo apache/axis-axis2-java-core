@@ -40,11 +40,18 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * 
      */
-    public SimpleAxisOperationImpl(QName name) {
+    public SimpleAxisOperationImpl() {
+        wsdlOperation = new WSDLOperationImpl();
+        parameters = new ParameterIncludeImpl();
+    }
+
+     public SimpleAxisOperationImpl(QName name) {
         wsdlOperation = new WSDLOperationImpl();
         wsdlOperation.setName(name);
         parameters = new ParameterIncludeImpl();
     }
+
+
     /**
      * @param param
      */

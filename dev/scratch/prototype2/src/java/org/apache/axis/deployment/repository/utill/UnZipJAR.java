@@ -26,6 +26,8 @@ import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.deployment.metadata.ModuleMetaData;
 import org.apache.axis.deployment.metadata.ServiceMetaData;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisModule;
 
 import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
@@ -41,8 +43,7 @@ public class UnZipJAR implements DeploymentConstants {
      * @param filename
      * @param engine
      */
-    public ServiceMetaData unzipService(String filename, DeploymentEngine engine) {
-        ServiceMetaData service = null;
+    public void unzipService(String filename, DeploymentEngine engine, AxisService service) {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -52,7 +53,7 @@ public class UnZipJAR implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
-                    service = schme.parseServiceXML();
+                    schme.parseServiceXML(service);
                     break;
                 }
             }
@@ -61,11 +62,9 @@ public class UnZipJAR implements DeploymentConstants {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return service;
     }
 
-    public ModuleMetaData unzipModule(String filename, DeploymentEngine engine) {
-        ModuleMetaData module = null;
+    public void unzipModule(String filename, DeploymentEngine engine,AxisModule module) {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -75,7 +74,7 @@ public class UnZipJAR implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(MODULEXML)) {
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
-                    module = schme.procesModuleXML();
+                    schme.procesModuleXML(module);
                     break;
                 }
             }
@@ -84,7 +83,6 @@ public class UnZipJAR implements DeploymentConstants {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return module;
     }
 }
 
