@@ -38,10 +38,10 @@ public class OMAttributeImpl implements OMAttribute {
         setOMNamespace(ns);
     }
 
-    private static String replaceQuoteWithEntity(String value) {
-        matcher.reset(value);
-        return matcher.replaceAll(QUOTE_ENTITY);
-    }
+//    private static String replaceQuoteWithEntity(String value) {
+//        matcher.reset(value);
+//        return matcher.replaceAll(QUOTE_ENTITY);
+//    }
 
     public QName getQName() {
         String namespaceName = namespace != null ? namespace.getName() : null;

@@ -25,8 +25,7 @@ import java.util.Stack;
  */
 public class OMLinkedListImplFactory extends OMFactory {
     public static final int MAX_TO_POOL = 100;
-    private Stack elements = new Stack();
-    private Stack textNodes = new Stack();
+ 
 
 
     public OMElement createOMElement(String localName, OMNamespace ns) {

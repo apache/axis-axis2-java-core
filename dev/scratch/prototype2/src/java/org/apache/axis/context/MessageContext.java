@@ -82,9 +82,9 @@ public class MessageContext {
     
     /**
      * 
-     * @param er
-     * @param initialProperties
-     * @param sessionContext
+     * @param Engine registry
+     * @param initialProperties of the message context, should be null if no properties  
+     * @param sessionContext of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
 

@@ -149,7 +149,6 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
             while (childrenIter.hasNext()) {
                 Object o = childrenIter.next();
                 if (!(o instanceof OMText && "".equals(((OMText) o).getValue()))) {
-                    StringWriter sw = new StringWriter();
                     return (OMNode) o;
                 }
             }
