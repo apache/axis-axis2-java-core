@@ -341,7 +341,7 @@ public class OMElementImpl extends OMNamedNodeImpl
         if (namespaces == null) {
             return null;
         }
-        if (prefix == null || "".equals("")) {
+        if (prefix == null || "".equals(prefix)) {
             Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace =
