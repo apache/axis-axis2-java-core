@@ -17,6 +17,7 @@ package org.apache.axis.engine;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
@@ -40,11 +41,11 @@ public class EngineUtils {
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
     
-    public static void addHandlers(Flow flow,ExecutionChain exeChain,String phaseName) throws AxisFault{
+    public static void addHandlers(Flow flow,Phase phase) throws AxisFault{
         if(flow != null){
             int handlerCount = flow.getHandlerCount();
             for(int i = 0;i<handlerCount;i++){
-                exeChain.addHandler(phaseName,flow.getHandler(i).getHandler());
+                phase.addHandler(flow.getHandler(i).getHandler());
             }
         }
     }
@@ -69,22 +70,9 @@ public class EngineUtils {
     }
     
     public static void createExecutionChains(AxisService service) throws AxisFault{
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setExecutableInChain(inchain);
-
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setExecutableOutChain(outchain);
-
-        ExecutionChain faultchain = new ExecutionChain();
-
-        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-
-        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setExecutableFaultChain(faultchain);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getInFlow(),EngineRegistry.INFLOW);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getOutFlow(),EngineRegistry.OUTFLOW);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getFaultFlow(),EngineRegistry.FAULTFLOW);
     }
     public static EngineRegistry createMockRegistry(QName serviceName,QName operationName,QName transportName) throws AxisFault{
         EngineRegistry engineRegistry = null;
@@ -110,33 +98,22 @@ public class EngineUtils {
         service.addModule(m1.getName());
         
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
-        
         service.addOperation(operation);
+        
         engineRegistry.addService(service);
         //create Execution Chains
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        inchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setExecutableInChain(inchain);
-        
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        outchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-        outchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setExecutableOutChain(outchain);
-        
-        ExecutionChain faultchain = new ExecutionChain();
-        
-        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        faultchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-        faultchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-        
-        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setExecutableFaultChain(faultchain);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getInFlow(),EngineRegistry.INFLOW);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getOutFlow(),EngineRegistry.OUTFLOW);
+        addPhasesToServiceFromFlow(service,Constants.PHASE_SERVICE,service.getFaultFlow(),EngineRegistry.FAULTFLOW);
         return engineRegistry;
+    }
+    
+    public static void addPhasesToServiceFromFlow(AxisService service, String phaseName, Flow flow,int flowtype) throws AxisFault{
+        ArrayList faultchain = new ArrayList();
+        Phase p = new Phase(Constants.PHASE_SERVICE);
+        faultchain.add(p);
+        EngineUtils.addHandlers(flow,p);
+        service.setPhases(faultchain,flowtype);
     }
 
 }

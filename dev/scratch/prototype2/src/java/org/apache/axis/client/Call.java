@@ -170,7 +170,6 @@ public class Call {
         MessageContext msgContext;
         try {
             msgContext = new MessageContext(engine.getRegistry());
-            msgContext.setServerSide(true);
             //TODO Thanks to the URL we need nothng here .. may be need parsing code 
 //      int level = 0;
 //      while(level != 2){

@@ -19,8 +19,6 @@ package org.apache.axis.engine;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.client.Call;
@@ -33,7 +31,6 @@ import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -63,7 +60,7 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
         engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
         AxisService service = new SimpleAxisServiceImpl(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
+        Parameter classParam = new ParameterImpl("className",Echo.class.getName());
         service.addParameter(classParam);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);

@@ -36,6 +36,15 @@ public class ExecutionChain {
         phases.put(phase.getPhaseName(), phase);
         executionList.add(phase);
     }
+    
+    
+    public void addPhases(ArrayList phases){
+        if (phases != null && !phases.isEmpty()) {
+            for (int i = 0; i < phases.size(); i++) {
+                addPhase((Phase) phases.get(i));
+            }
+        }
+    }
 
 
     public void addHandlerDirectly(Handler directHandler, int index) {

@@ -15,9 +15,11 @@
  */
 package org.apache.axis.encoding;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.engine.AxisFault;
 
@@ -53,6 +55,16 @@ public class SimpleTypeEncodingUtils {
             throw new AxisFault("Number format exception value is null");
         }
         return Integer.parseInt(val);
-    
     }
+    public static void serialize(XMLStreamWriter out,QName elementName,String value)throws AxisFault{
+        try {
+            out.writeStartElement(elementName.getNamespaceURI(),elementName.getLocalPart());
+            out.writeCharacters(value);
+            out.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+        
+    } 
+    
 }

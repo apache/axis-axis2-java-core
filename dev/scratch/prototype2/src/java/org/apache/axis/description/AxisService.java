@@ -20,7 +20,6 @@ import java.util.Collection;
 import javax.swing.text.Style;
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLService;
 
@@ -28,21 +27,10 @@ import org.apache.wsdl.WSDLService;
  * @author chathura@opensource.lk
  *
  */
-public interface AxisService extends WSDLService,ParameterInclude,FlowInclude {
+public interface AxisService extends WSDLService,ParameterInclude,FlowInclude,PhasesInclude {
     //modules
     public void addModule(QName moduleref);
     public Collection getModules();
-    
-    
-    public void setExecutableInChain(ExecutionChain executableInChain);
-    public ExecutionChain getExecutableInChain();
-    
-    public void setExecutableOutChain(ExecutionChain executableOutChain);
-    public ExecutionChain getExecutableOutChain();
-        
-    public void setExecutableFaultChain(ExecutionChain executableFaultChain);
-    public ExecutionChain getExecutableFaultChain();
-    
     public AxisOperation getOperation(QName operationName);
     public void addOperation(AxisOperation operationName);
     

@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
 
 /**
  *  The palce where all the Globel states of Axis is kept. 
@@ -31,6 +32,11 @@ import org.apache.axis.description.AxisService;
  */
 
 public interface EngineRegistry {
+    public static final int INFLOW = 10003;
+    public static final int OUTFLOW = 10004;
+    public static final int FAULTFLOW = 10005; 
+
+    
     public AxisGlobal getGlobal()throws AxisFault;
     
     public AxisService getService(QName name)throws AxisFault;
@@ -39,4 +45,7 @@ public interface EngineRegistry {
     
     public AxisModule getModule(QName name)throws AxisFault;
     public void addMdoule(AxisModule module)throws AxisFault;
+    
+    public AxisTransport getTransport(QName name) throws AxisFault;
+    public void addTransport(AxisTransport transport) throws AxisFault;
 }

@@ -80,7 +80,7 @@ public class HandlerFaliureTest extends AbstractTestCase{
         service.setInFlow(flow);
         
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
+        Parameter classParam = new ParameterImpl("className",Echo.class.getName());
         service.addParameter(classParam);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
@@ -116,29 +116,14 @@ public class HandlerFaliureTest extends AbstractTestCase{
         service.setInFlow(flow);
         
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className",EchoXML.class.getName());
+        Parameter classParam = new ParameterImpl("className",Echo.class.getName());
         service.addParameter(classParam);
         service.setProvider(new RawXMLProvider());
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
         
         service.addOperation(operation);
-        
-        ExecutionChain inchain = new ExecutionChain();
-        inchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getInFlow(),inchain,Constants.PHASE_SERVICE);
-        service.setExecutableInChain(inchain);
-        
-        ExecutionChain outchain = new ExecutionChain();
-        outchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        EngineUtils.addHandlers(service.getOutFlow(),outchain,Constants.PHASE_SERVICE);
-        service.setExecutableOutChain(outchain);
-        
-        ExecutionChain faultchain = new ExecutionChain();
-        
-        faultchain.addPhase(new Phase(Constants.PHASE_SERVICE));
-        
-        EngineUtils.addHandlers(service.getFaultFlow(),faultchain,Constants.PHASE_SERVICE);
-        service.setExecutableFaultChain(outchain);
+
+        EngineUtils.createExecutionChains(service);        
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
         callTheService();    

@@ -17,6 +17,8 @@ package org.apache.axis.description;
 
 import java.util.ArrayList;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 import org.apache.axis.impl.description.PhasesIncludeImpl;
@@ -24,11 +26,12 @@ import org.apache.axis.impl.description.PhasesIncludeImpl;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class AxisGlobal implements ParameterInclude,PhasesInclude {
+public class AxisTransport implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
+    protected QName name; 
     
-    public AxisGlobal(){
+    public AxisTransport(){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
     }
@@ -57,6 +60,20 @@ public class AxisGlobal implements ParameterInclude,PhasesInclude {
      */
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
         phasesInclude.setPhases(phases, flow);
+    }
+
+    /**
+     * @return
+     */
+    public QName getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     */
+    public void setName(QName name) {
+        this.name = name;
     }
 
 }

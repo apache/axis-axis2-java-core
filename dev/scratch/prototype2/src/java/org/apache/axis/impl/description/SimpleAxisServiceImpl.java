@@ -15,6 +15,7 @@
  */
 package org.apache.axis.impl.description;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
@@ -28,6 +29,8 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowInclude;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
+import org.apache.axis.description.PhasesInclude;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLEndpoint;
@@ -39,6 +42,7 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class SimpleAxisServiceImpl implements AxisService {
+    protected PhasesInclude phaseInclude;
     protected WSDLService wsdlService;
     protected FlowInclude flowInclude;
     protected String contextPath;
@@ -63,6 +67,7 @@ public class SimpleAxisServiceImpl implements AxisService {
         wsdlService.setName(name);
         flowInclude = new FlowIncludeImpl();
         parameters = new ParameterIncludeImpl();
+        phaseInclude = new PhasesIncludeImpl();
     }
 
     /**
@@ -244,27 +249,6 @@ public class SimpleAxisServiceImpl implements AxisService {
     }
 
     /**
-     * @param chain
-     */
-    public void setExecutableFaultChain(ExecutionChain chain) {
-        executableFaultChain = chain;
-    }
-
-    /**
-     * @param chain
-     */
-    public void setExecutableInChain(ExecutionChain chain) {
-        executableInChain = chain;
-    }
-
-    /**
-     * @param chain
-     */
-    public void setExecutableOutChain(ExecutionChain chain) {
-        executableOutChain = chain;
-    }
-
-    /**
      * @param style
      */
     public void setStyle(Style style) {
@@ -333,6 +317,24 @@ public class SimpleAxisServiceImpl implements AxisService {
 
     public void setComponentProperty(Object key, Object obj) {
         wsdlService.setComponentProperty(key,obj); 
+    }
+
+    /**
+     * @param flow
+     * @return
+     * @throws AxisFault
+     */
+    public ArrayList getPhases(int flow) throws AxisFault {
+        return phaseInclude.getPhases(flow);
+    }
+
+    /**
+     * @param phases
+     * @param flow
+     * @throws AxisFault
+     */
+    public void setPhases(ArrayList phases, int flow) throws AxisFault {
+        phaseInclude.setPhases(phases, flow);
     }
 
 }

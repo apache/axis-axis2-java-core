@@ -22,12 +22,14 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
 public class EngineRegistryImpl implements EngineRegistry{
     private HashMap modules = new HashMap();
     private HashMap services = new HashMap();
+    private HashMap transports = new HashMap();
     private AxisGlobal global;
     
     public EngineRegistryImpl(AxisGlobal global){
@@ -57,5 +59,12 @@ public class EngineRegistryImpl implements EngineRegistry{
     public  synchronized void removeService(QName name) throws AxisFault {
         services.remove(name);
     }
+    
+    public AxisTransport getTransport(QName name) throws AxisFault {
+         return (AxisTransport)transports.get(name);
+     }
 
+    public synchronized  void addTransport(AxisTransport transport) throws AxisFault {
+        transports.put(transport.getName(),transport);
+     }
 }

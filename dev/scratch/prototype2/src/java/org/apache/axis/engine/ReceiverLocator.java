@@ -21,7 +21,7 @@ import org.apache.axis.impl.receivers.InOutSyncReceiver;
 
 public class ReceiverLocator {
     public static Receiver locateReceiver(MessageContext msgCtx) throws AxisFault {
-
+        //TODO
         //File wsdlFile = msgCtx.getService().getParameter("wsdlFile");
         //parse the WSDL find the patterns 
         //create a receiver
