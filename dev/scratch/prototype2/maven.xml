@@ -20,5 +20,28 @@
 	<postGoal name="jar">
         <ant:mkdir dir="${maven.repo.local}/axis/jars"/>
 		<ant:copy file="${basedir}/target/axis2-M1.jar" tofile="${maven.repo.local}/axis/jars/axis2-M1.jar"/>
-              </postGoal>
+     </postGoal>
+    <goal name="war" prereqs="jar">
+		<war destfile="target/axis2.war" webxml="src/conf/web.xml">
+		  <fileset dir="src/html"/>
+		  <lib dir="${maven.repo.local}/stax/jars/">
+		    <include name="stax-api-1.0.jar"/>
+		    <include name="stax-1.1.1-dev.jar"/>		    
+		  </lib>  
+		  <lib dir="${maven.repo.local}/commons-logging/jars/">
+		    <include name="commons-logging-1.0.3.jar"/>
+		  </lib>  
+		  <lib dir="${maven.repo.local}/axis/jars/">
+		    <include name="axis-wsdl4j-1.2-RC1.jar"/>
+		  </lib>  
+		  <lib dir="${maven.repo.local}/log4j/jars/">
+		    <include name="log4j-1.2.8.jar"/>
+		  </lib>  
+		  <lib dir="target/">
+		    <include name="axis2*.jar"/>
+		  </lib>  
+		</war>
+
+
+    </goal>
  </project>

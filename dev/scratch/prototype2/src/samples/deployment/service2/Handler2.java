@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.registry;
+
 
 import javax.xml.namespace.QName;
 

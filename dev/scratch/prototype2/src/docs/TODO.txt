@@ -1,3 +1,12 @@
 how the DD are parsed
 
 getNSURI() for OMElement
+war/dist tragets for the axis2
+docs
+welcome page for axis2
+admin page for axis2
+axis2 "good looking sample"
+axis performance analysis
+handle the error shown by the deployment
+
+

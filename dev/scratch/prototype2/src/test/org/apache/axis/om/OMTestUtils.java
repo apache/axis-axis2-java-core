@@ -17,6 +17,8 @@
 package org.apache.axis.om;
 
 import junit.framework.TestCase;
+
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.*;
 
@@ -64,20 +66,22 @@ public class OMTestUtils {
             //go through the attributes
             NamedNodeMap map =  ele.getAttributes();
             Iterator attIterator = omele.getAttributes();
-            OMAttribute OMattribute;
-            Attr DOMAttribute;
+            OMAttribute omattribute;
+            Attr domAttribute;
             String DOMAttrName;
-            int length = map.getLength();
-            for (int i=0;i<length;i++){
-                DOMAttribute = (Attr)map.item(i);
-                DOMAttrName = DOMAttribute.getName();
-                if (!DOMAttrName.startsWith("xmlns")){
-                    TestCase.assertTrue(attIterator.hasNext());
-                    OMattribute = (OMAttribute)attIterator.next();
-                    TestCase.assertEquals(DOMAttribute.getLocalName(),OMattribute.getLocalName());
+            
+            while (attIterator.hasNext() && map == null) {
+                omattribute = (OMAttribute)attIterator.next(); 
+                
+                Node node = map.getNamedItemNS(omattribute.getNamespace().getName(),omattribute.getLocalName());
+                if(node.getNodeType() == Node.ATTRIBUTE_NODE){
+                    Attr attr = (Attr)node;
+                    TestCase.assertEquals(attr.getValue(),omattribute.getValue());
+                }else{
+                    throw new AxisFault("return type is not a Attribute");
                 }
+                
             }
-
 
             Iterator it = omele.getChildren();
             NodeList list = ele.getChildNodes();

@@ -202,7 +202,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>xpp3</groupId>
             <artifactId>xpp3</artifactId>
             <version>1.1.3.3</version>
@@ -210,6 +210,8 @@
                 <module>true</module>
             </properties>
         </dependency>
+        
+-->        
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
