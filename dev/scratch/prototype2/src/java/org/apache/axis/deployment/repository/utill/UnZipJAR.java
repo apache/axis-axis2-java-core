@@ -39,6 +39,7 @@ public class UnZipJAR implements DeploymentConstants {
      */
     public void unzipService(String filename, DeploymentEngine engine, AxisService service) throws DeploymentException {
         // get attribute values
+        boolean foundServiceXML = false;
         String strArchive = filename;
         ZipInputStream zin;
         try {
@@ -46,6 +47,7 @@ public class UnZipJAR implements DeploymentConstants {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
+                    foundServiceXML = true;
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
                     schme.parseServiceXML(service);
                     break;
@@ -53,6 +55,9 @@ public class UnZipJAR implements DeploymentConstants {
             }
             //  zin.closeEntry();
             zin.close();
+            if(! foundServiceXML){
+              throw new DeploymentException("service.xml not found");
+            }
         } catch (Exception e) {
            throw new DeploymentException(e.getMessage());
         }
@@ -60,6 +65,7 @@ public class UnZipJAR implements DeploymentConstants {
 
     public void unzipModule(String filename, DeploymentEngine engine,AxisModule module) throws DeploymentException {
         // get attribute values
+        boolean foundmoduleXML = false;
         String strArchive = filename;
         ZipInputStream zin;
         try {
@@ -67,6 +73,7 @@ public class UnZipJAR implements DeploymentConstants {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(MODULEXML)) {
+                    foundmoduleXML = true;
                     DeploymentParser schme = new DeploymentParser(zin, engine, filename);
                     schme.procesModuleXML(module);
                     break;
@@ -74,6 +81,9 @@ public class UnZipJAR implements DeploymentConstants {
             }
             //  zin.closeEntry();
             zin.close();
+            if(! foundmoduleXML){
+              throw new DeploymentException("module.xml not found");
+            }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());
         }
