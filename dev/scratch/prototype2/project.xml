@@ -60,16 +60,40 @@
       <organization></organization>
     </developer>
     <developer>
-      <name>Srinath Perera</name>
-      <id>hemapani</id>
-      <email>hemapani@apache.org</email>
+      <name>Aleksander Slominski</name>
+      <id>alek</id>
+      <email>aslom@cs.indiana.edu</email>
       <organization></organization>
     </developer>
-	<developer>
-      <name>Ajith Ranabahu</name>
-      <id>ajith</id>
-      <email>ajith@apache.org</email>
+    <developer>
+      <name>Farhaan Mohideen</name>
+      <id>farhaan</id>
+      <email>farhaan@opensource.lk</email>
       <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Eran Chinthaka</name>
+      <id>chinthaka</id>
+      <email>chinthaka@apache.org</email>
+      <organization>LSF / Eurocenter DDC</organization>
+    </developer>
+    <developer>
+      <name>Dasarath Weerathunga</name>
+      <id>dasarath</id>
+      <email>dasarath@opensource.lk</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Jaliya Ekanayake</name>
+      <id>jaliya</id>
+      <email>jaliya@opensource.lk</email>
+      <organization>Virtusa / LSF</organization>
+    </developer>
+    <developer>
+      <name>Chathura Herath</name>
+      <id>chathura</id>
+      <email>chathura@opensource.lk</email>
+      <organization>LSF/MIT</organization>
     </developer>
     <developer>
 	  <name>Deepal Jayasinghe</name>
@@ -77,6 +101,19 @@
       <email>deepal@apache.org</email>
       <organization>LSF</organization>
     </developer>
+    <developer>
+      <name>Ajith Ranabahu</name>
+      <id>ajith</id>
+      <email>ajith@apache.org</email>
+      <organization>LSF</organization>
+    </developer>
+    <developer>
+      <name>Srinath Perera</name>
+      <id>hemapani</id>
+      <email>hemapani@apache.org</email>
+      <organization></organization>
+    </developer>
+	
 	<!--- I Add few please correct the information, add others and remove this comment Srinath -->
   </developers>
 
