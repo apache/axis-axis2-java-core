@@ -16,6 +16,31 @@
  * limitations under the License.
  */
  -->
+ 
+  <!--
+       | The main goals for multi project build are:
+       |
+       | default 
+       |    Build all the modules
+       |
+       | clean
+       |    Deletes the 'target' directory in all projects
+       |
+       | war
+       |    Build the war
+       |
+       | maven war-withsamples
+       |    build the war with the default samples
+       |
+       | dist-src
+       | 	Source Distribution
+       |
+       | dist-bin 
+       |  	Binary Distribution
+       | 
+     -->
+
+ 
 <project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant">
 		 <goal name="clean">
 			<attainGoal name="multiproject:clean"/>
@@ -146,6 +171,11 @@
 		</copy> 
 		<copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
 		<copy todir="target/dist-bin/samples">
+			<fileset dir="modules/samples/conf/">
+				<include name="*.xml"/>
+			</fileset> 
+		</copy>
+		<copy todir="target/dist-bin/samples">
 			<fileset dir="modules/samples/src/java">
 				<include name="userguide/**"/>
 			</fileset> 
@@ -179,6 +209,4 @@
            </sourcepath>
   </javadoc>
   </goal>
-
-
 </project>
