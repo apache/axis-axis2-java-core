@@ -17,12 +17,14 @@
 package org.apache.axis.engine;
 
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
-
-import javax.xml.namespace.QName;
 
 /**
  *  The palce where all the Globel states of Axis is kept. 
@@ -36,16 +38,22 @@ public interface EngineRegistry {
     public static final int OUTFLOW = 10004;
     public static final int FAULTFLOW = 10005; 
 
-    
     public AxisGlobal getGlobal()throws AxisFault;
     
     public AxisService getService(QName name)throws AxisFault;
     public void addService(AxisService service)throws AxisFault;
     public void removeService(QName name)throws AxisFault;
     
+    /**
+     * Modules is read only as they can not deployed while runing 
+     */
     public AxisModule getModule(QName name)throws AxisFault;
     public void addMdoule(AxisModule module)throws AxisFault;
     
     public AxisTransport getTransport(QName name) throws AxisFault;
     public void addTransport(AxisTransport transport) throws AxisFault;
+    /**
+     * Ordred list of phases
+     */
+    public ArrayList getPhases();
 }

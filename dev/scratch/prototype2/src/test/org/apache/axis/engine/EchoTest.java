@@ -16,13 +16,9 @@
 package org.apache.axis.engine;
 
 //todo
-import java.net.URL;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.CallBack;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
@@ -33,9 +29,6 @@ import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

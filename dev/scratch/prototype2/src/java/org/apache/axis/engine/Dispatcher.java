@@ -19,7 +19,10 @@ package org.apache.axis.engine;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.impl.handlers.AbstractHandler;
-
+import org.apache.axis.impl.handlers.OpNameFinder;
+/**
+ * this find the service to invoke 
+ */
 import javax.xml.namespace.QName;
 
 public class Dispatcher extends AbstractHandler implements Handler {
@@ -60,6 +63,11 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     //let add the Handlers 
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
+                    //add invoke Phase
+                    Phase invokePhase = new Phase(Phase.SERVICE_INVOCATION);                    
+                    invokePhase.addHandler(new OpNameFinder());
+                    invokePhase.addHandler(ReceiverLocator.locateReceiver(msgctx));
+                    chain.addPhase(invokePhase);
                 } else {
                     throw new AxisFault("Service Not found");
                 }

@@ -27,6 +27,10 @@ import java.util.Stack;
  * Should this exttends Hanlders?
  */
 public class Phase extends AbstractHandler implements Handler {
+    public static final String DISPATCH_PHASE = "DispatchPhase";
+    public static final String SERVICE_INVOCATION = "ServiceInvocationPhase";
+    public static final String SENDING_PHASE = "SendPhase";
+    
     private String phaseName;
     private ArrayList handlers;
 

@@ -15,6 +15,11 @@
  */
 package org.apache.axis.impl.engine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
@@ -22,17 +27,18 @@ import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
-import javax.xml.namespace.QName;
-import java.util.HashMap;
+
 
 public class EngineRegistryImpl implements EngineRegistry{
     private HashMap modules = new HashMap();
     private HashMap services = new HashMap();
     private HashMap transports = new HashMap();
     private AxisGlobal global;
+    private ArrayList phases;
     
     public EngineRegistryImpl(AxisGlobal global){
         this.global = global;
+        phases = new ArrayList();
     }
 
     public synchronized void addMdoule(AxisModule module) throws AxisFault {
@@ -66,4 +72,18 @@ public class EngineRegistryImpl implements EngineRegistry{
     public synchronized  void addTransport(AxisTransport transport) throws AxisFault {
         transports.put(transport.getName(),transport);
      }
+    /**
+     * @return
+     */
+    public ArrayList getPhases() {
+        return phases;
+    }
+
+    /**
+     * @param list
+     */
+    public void setPhases(ArrayList list) {
+        phases = list;
+    }
+
 }

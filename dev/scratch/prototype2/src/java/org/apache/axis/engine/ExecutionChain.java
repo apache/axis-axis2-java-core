@@ -21,8 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import javax.xml.namespace.QName;
+
 /**
- * <p>This is the ordered Collection of Phases as specified by the Server.xml file.</p>
+ * <p> This is the ordered Collection of Phases as specified by the Server.xml file.
+ * this has the execution logic as well. If something goes wrong inside the 
+ * Execution Chain then the exeution chain itself revoke them.
+ * </p>
  */
 public class ExecutionChain {
     private HashMap phases;
@@ -32,6 +37,7 @@ public class ExecutionChain {
         phases = new HashMap();
         executionList = new ArrayList();
     }
+    
     public void addPhase(Phase phase) {
         phases.put(phase.getPhaseName(), phase);
         executionList.add(phase);
@@ -45,24 +51,9 @@ public class ExecutionChain {
             }
         }
     }
-
-
-    public void addHandlerDirectly(Handler directHandler, int index) {
-        phases.put(directHandler.getName(), directHandler);
-        executionList.add(index, directHandler);
-    }
-
-    public void addHandler(String phaseName, Handler handler, int index) {
-        Phase phase = (Phase) phases.get(phaseName);
-        phase.addHandler(handler, index);
-    }
-
-
-    public void addHandler(String phaseName, Handler handler) throws AxisFault {
-        Phase phase = (Phase) phases.get(phaseName);
-        if (phase == null)
-            throw new AxisFault("Can't find the Phase " + phaseName);
-        phase.addHandler(handler);
+    
+    public Phase getPhase(QName name){
+        return (Phase)phases.get(name);
     }
 
     public void invoke(MessageContext msgctx) throws AxisFault {
@@ -81,15 +72,6 @@ public class ExecutionChain {
                 handler.revoke(msgctx);
             }
             throw AxisFault.makeFault(e);
-        }
-    }
-
-    public void revoke(MessageContext msgctx) throws AxisFault {
-        for (int i = executionList.size() - 1; i > -1; i--) {
-            Phase phase = (Phase) executionList.get(i);
-            if (phase != null) {
-                phase.revoke(msgctx);
-            }
         }
     }
 }

@@ -1,13 +1,14 @@
 package org.apache.axis.phaseresolver;
 
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
-
-import javax.xml.namespace.QName;
-import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
