@@ -16,13 +16,14 @@
 	<property name="lib.dir" value="./lib" />
 	<property name="conf.dir" value="./conf"/>
 	<property name="jardrop.dir" value="services"/>
-	<property name="server.jardrop.relative.dir" value="webapps/axis2/WEB-INF/services"/>
+	<property name="axis.relativeserver.dir" value="webapps/axis2"/>
+	<property name="server.jardrop.relative.dir" value="${axis.relativeserver.dir}/WEB-INF/services"/>
 	<property environment="env"/>
 	
 	
 	
 	<path id="classpath.library">
-	        <fileset dir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
+	        <fileset dir="${env.CATALINA_HOME}/${axis.relativeserver.dir}/WEB-INF/lib">
 	            <include name="**/*.jar"/>            
 	        </fileset>
 	    </path>
@@ -49,15 +50,15 @@
 	</target>
 
 	<target name="validateTomcatHome">
-		<available file="${env.CATALINA_HOME}/webapps/axis2" type="dir" property="axis2.deployed"/>				
+		<available file="${env.CATALINA_HOME}/${axis.relativeserver.dir}" type="dir" property="axis2.deployed"/>				
 	</target>
 	
 	<target name="validateSevices.dir">
-		<available  file="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services" type="dir" property="axis2.services"/>	
+		<available  file="${env.CATALINA_HOME}/${axis.relativeserver.dir}/WEB-INF/services" type="dir" property="axis2.services"/>	
 	</target>
 	
 	<target name="validateDeploymentSettings" depends="validateTomcatHome" unless="validateSevices.dir">
-		<mkdir dir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services"/>
+		<mkdir dir="${env.CATALINA_HOME}/${axis.relativeserver.dir}/WEB-INF/services"/>
 	</target>
 	
 
@@ -68,13 +69,16 @@
 		<mkdir dir="${build.dir}/${jardrop.dir}"/>
 	</target>
 
-	<target name="compile" depends="createDir">
+	<target name="compile" depends="clean,createDir">
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" >
 			<classpath refid="classpath.library"/>
 		</javac>
+		<jar destfile="${lib.dir}/${ant.project.name}-all.jar">
+					<fileset dir="${classes.dir}"/> 
+				</jar>
 	</target>
 
-	<target name="jar" depends="clean,compile">
+	<target name="jar" depends="compile">
 		<jar destfile="${build.dir}/${jardrop.dir}/${ant.project.name}.jar">	
 			
 			<fileset dir="${classes.dir}"> 
