@@ -1,26 +1,22 @@
 package org.apache.axis.clientapi;
 
-import org.apache.axis.engine.*;
-import org.apache.axis.impl.engine.EngineRegistryImpl;
-import org.apache.axis.impl.llom.builder.StAXBuilder;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.om.*;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.addressing.EndpointReferenceType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
+import java.net.URL;
+import java.net.URLConnection;
+
+import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.TransportSenderLocator;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -40,7 +36,7 @@ import java.util.Iterator;
  *         Dec 16, 2004
  *         12:28:00 PM
  */
-public class Call {
+public class Call extends AbstractCall {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
     private EndpointReferenceType targetEPR;
@@ -83,8 +79,8 @@ public class Call {
      * @param envelope
      */
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
-        try{
-            URL url =new URL(targetEPR.getAddress());
+        try {
+            URL url = new URL(targetEPR.getAddress());
 
             final URLConnection urlConnect;
             urlConnect = url.openConnection();
@@ -172,51 +168,27 @@ public class Call {
      * @param envelope
      * @param callback
      */
-    public void sendReceiveAsync(SOAPEnvelope envelope, final CallBack callback) throws AxisFault {
+    public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback) throws AxisFault {
         try{
             URL url =new URL(targetEPR.getAddress());
-            final Correlator correlator = Correlator.getInstance();
-            final URLConnection urlConnect = url.openConnection();
-            final AxisEngine engine = new AxisEngine(registry);
-            urlConnect.setDoOutput(true);
-
+            AxisEngine engine = new AxisEngine(registry);
             final MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(envelope);
 
-            OutputStream out = urlConnect.getOutputStream();
-            msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, TransportSenderLocator.TRANSPORT_HTTP);
             msgctx.setProperty(MessageContext.REQUEST_URL, url);
-
-            engine.send(msgctx);
-            /**
-             * only the transport blocked , client dose not hang
-             */
-            if(blocked){
-                Runnable runnable = new Runnable() {
-                    MessageContext response;
-                    public void run() {
-                        try {
-                            correlator.addCorrelationInfo(msgctx.getMessageID(),callback);
-                            log.info("Starting new Thread ");
-                            response= createIncomingMessageContext(urlConnect.getInputStream(), engine);
-                            response.setServerSide(false);
-                            engine.receive(response);
-                            SOAPEnvelope envelope = response.getEnvelope();
-                            //todo craete   AsyncResult here
-                            AsyncResult result = null;
-                            correlator.getCorrelationInfo(response.getMessageID()).onComplete(result);
-                        } catch (Exception e) {
-                            correlator.getCorrelationInfo(response.getMessageID()).reportError(e);
-                        }
-                    }
-                };
-                new Thread(runnable).start();
+          
+           
+           // only the transport blocked , client dose not hang
+               if(blocked){
+                //TODO This shoudld be taken from a pool of inovkers.
+                Invoker invoker = new Invoker(msgctx,engine,callback);
+                Thread th = new Thread(invoker);
+                th.start();
             } else {
-                //todo
-                /**
-                 * impemant this using listener
-                 */
+               //TODO
+               //start the Listener at the client side
+              
             }
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
@@ -225,19 +197,6 @@ public class Call {
         }
     }
 
-    private MessageContext createIncomingMessageContext(InputStream in, AxisEngine engine) throws AxisFault {
-        MessageContext msgContext;
-        try {
-            msgContext = new MessageContext(engine.getRegistry());
-            InputStreamReader isr = new InputStreamReader(in);
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(isr);
-            StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
-        return msgContext;
-
-    }
+   
 
 }
