@@ -1,29 +1,28 @@
-package org.apache.axis.om;
-
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class IteratorTester extends AbstractTestCase {
+ 
+package org.apache.axis.om;
 
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
+
+public class IteratorTester extends AbstractTestCase {
     private SOAPEnvelope envelope = null;
 
     public IteratorTester(String testName) {
@@ -41,19 +40,16 @@ public class IteratorTester extends AbstractTestCase {
     public void testIterator() {
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
-
         while (iter.hasNext()) {
             assertNotNull(iter.next());
         }
 
     }
 
-
     /**
      * test the remove exception behavior
      */
     public void testIteratorRemove1() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
 
@@ -71,14 +67,11 @@ public class IteratorTester extends AbstractTestCase {
      * test the remove exception behavior, consecutive remove calls
      */
     public void testIteratorRemove2() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
-
         if (iter.hasNext()) {
             iter.next();
         }
-
         iter.remove();
 
         //this call must generate an exception
@@ -95,17 +88,13 @@ public class IteratorTester extends AbstractTestCase {
      * Remove all!
      */
     public void testIteratorRemove3() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
-
         while (iter.hasNext()) {
             iter.next();
             iter.remove();
         }
-
         iter = elt.getChildren();
-
         if (iter.hasNext()) {
             fail("No children should remain after removing all!");
         }
@@ -116,15 +105,11 @@ public class IteratorTester extends AbstractTestCase {
     /**
      * test whether the children count reduces.
      */
-
     public void testIteratorRemove4() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
         int firstChildrenCount = 0;
         int secondChildrenCount = 0;
-
-
         while (iter.hasNext()) {
             assertNotNull((OMNode) iter.next());
             firstChildrenCount++;
@@ -141,8 +126,6 @@ public class IteratorTester extends AbstractTestCase {
             assertNotNull((OMNode) iter.next());
             secondChildrenCount++;
         }
-
-
         assertEquals("children count must reduce from 1", firstChildrenCount - 1, secondChildrenCount);
 
     }

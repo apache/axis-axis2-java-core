@@ -1,6 +1,30 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
@@ -15,22 +39,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * <p/>
- */
 public class OMElementImpl
         extends OMNamedNodeImpl
         implements OMElement, OMConstants {
@@ -54,7 +62,6 @@ public class OMElementImpl
             setNamespace(handleNamespace(ns));
         }
         this.builder = builder;
-
         firstChild = null;
     }
 
@@ -118,22 +125,18 @@ public class OMElementImpl
                 ns = declareNamespace(namespaceURI, getNextNamespacePrefix());
             }
         }
-
         if (ns == null) {
             throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
         }
-
         this.setNamespace(ns);
     }
 
     private OMNamespace handleNamespace(OMNamespace ns) {
-
         OMNamespace namespace =
                 findInScopeNamespace(ns.getName(), ns.getPrefix());
         if (namespace == null) {
             namespace = declareNamespace(ns);
         }
-
         return namespace;
     }
 
@@ -164,13 +167,12 @@ public class OMElementImpl
 
     public OMNode getChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
-                new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                        elementQName);
+        new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
+                elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
         }
-
         return omNode;
     }
 
@@ -336,9 +338,7 @@ public class OMElementImpl
         if (attributes == null) {
             this.attributes = new HashMap(5);
         }
-
         attributes.put(attr.getQName(), attr);
-
         return attr;
     }
 
@@ -356,11 +356,11 @@ public class OMElementImpl
             namespace = findInScopeNamespace(ns.getName(), ns.getPrefix());
             if (namespace == null) {
                 throw new OMException("Given OMNamespace("
-                        + ns.getName()
-                        + ns.getPrefix()
-                        + ") for "
-                        + "this attribute is not declared in the scope of this element. First declare the namespace"
-                        + " and then use it with the attribute");
+                                + ns.getName()
+                                + ns.getPrefix()
+                                + ") for "
+                                + "this attribute is not declared in the scope of this element. First declare the namespace"
+                                + " and then use it with the attribute");
             }
         }
         return insertAttribute(new OMAttributeImpl(attributeName, ns, value));
@@ -442,7 +442,6 @@ public class OMElementImpl
     public void serialize(XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
         boolean firstElement = false;
-
         short builderType = PULL_TYPE_BUILDER; //default is pull type
         if (builder != null)
             builderType = this.builder.getBuilderType();
@@ -460,18 +459,16 @@ public class OMElementImpl
                     && !isComplete()
                     && builderType == PULL_TYPE_BUILDER) {
                 StreamingOMSerializer streamingOMSerializer =
-                        new StreamingOMSerializer();
+                new StreamingOMSerializer();
                 streamingOMSerializer.serialize(this.getPullParser(!cache),
                         writer);
                 return;
             }
         }
-
         if (!cache) {
             if (isComplete()) {
                 //serialize own normally
                 serializeNormal(writer, cache);
-
                 if (nextSibling != null) {
                     //serilize next sibling
                     nextSibling.serialize(writer, cache);
@@ -518,11 +515,9 @@ public class OMElementImpl
 
     private void serializeStartpart(XMLStreamWriter writer)
             throws XMLStreamException {
-
         String nameSpaceName = null;
         String writer_prefix = null;
         String prefix = null;
-
         if (ns != null) {
             nameSpaceName = ns.getName();
             writer_prefix = writer.getPrefix(nameSpaceName);
@@ -580,12 +575,10 @@ public class OMElementImpl
     private void serializeNormal(XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
         serializeStartpart(writer);
-
         OMNode firstChild = getFirstChild();
         if (firstChild != null) {
             firstChild.serialize(writer, cache);
         }
-
         serializeEndpart(writer);
 
     }
@@ -617,7 +610,6 @@ public class OMElementImpl
     protected void serializeNamespace(OMNamespace namespace,
                                       XMLStreamWriter writer)
             throws XMLStreamException {
-
         if (namespace != null) {
             String uri = namespace.getName();
             String prefix = writer.getPrefix(uri);

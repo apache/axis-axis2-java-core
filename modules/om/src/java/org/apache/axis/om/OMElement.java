@@ -1,30 +1,26 @@
-package org.apache.axis.om;
-
-
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * <p/>
- * One must make sure to insert relevant constructors for the classes that are implementing this interface
  */
-public interface OMElement extends OMNamedNode {
+ 
+package org.apache.axis.om;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import java.util.Iterator;
+
+public interface OMElement extends OMNamedNode {
     /**
      * This will add child to the element. One must preserve the order of children, in this operation
      * Tip : appending the new child is prefered
@@ -164,6 +160,5 @@ public interface OMElement extends OMNamedNode {
      * @param cacheOff
      * @return
      */
-
     public XMLStreamReader getPullParser(boolean cacheOff);
 }

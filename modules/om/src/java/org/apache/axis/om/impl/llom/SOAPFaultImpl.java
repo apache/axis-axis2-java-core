@@ -1,6 +1,30 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -10,24 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * <p/>
- */
 public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstants {
-
     private Exception e;
     private OMElementImpl faultCodeElement;
     private OMElementImpl faultActorElement;
@@ -49,7 +56,6 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
     }
 
     public void setFaultCode(QName faultCode) throws OMException {
-
         if (faultCodeElement != null) {
             faultCodeElement.detach();
         }
@@ -106,7 +112,6 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
         return null;
     }
 
-
     public void setFaultString(String faultString) throws OMException {
         if (faultStringElement != null) {
             faultStringElement.detach();
@@ -161,10 +166,8 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
         return null;
     }
 
-
     public Exception getException() throws OMException {
         if (e == null) {
-
             OMNode detailsInformationNode = this.getDetailInformation();
             if (detailsInformationNode instanceof OMElement) {
                 try {
@@ -177,7 +180,6 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
                     throw new OMException("Exception in StAX Writer", e1);
                 }
             } else if (detailsInformationNode instanceof OMText) {
-
                 return new Exception(((OMText) detailsInformationNode).getValue());
             }
 

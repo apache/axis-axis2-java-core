@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom.traverse;
 
 import org.apache.axis.om.OMException;
@@ -5,29 +21,11 @@ import org.apache.axis.om.OMNode;
 
 import java.util.Iterator;
 
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * <p/>
- */
 public class OMChildrenIterator implements Iterator {
-
     protected OMNode currentChild;
     protected OMNode lastChild;
     protected boolean nextCalled = false;
     protected boolean removeCalled = false;
-
 
     public OMChildrenIterator(OMNode currentChild) {
         this.currentChild = currentChild;
@@ -48,14 +46,12 @@ public class OMChildrenIterator implements Iterator {
      *                                       method.
      */
     public void remove() {
-
         if (!nextCalled) {
             throw new IllegalStateException("next method has not yet being called");
         }
         if (removeCalled) {
             throw new IllegalStateException("remove has already being called");
         }
-
         removeCalled = true;
 
         //since this acts on the last child there is no need to mess with the current child

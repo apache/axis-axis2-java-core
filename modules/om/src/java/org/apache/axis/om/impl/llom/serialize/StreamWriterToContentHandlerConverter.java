@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom.serialize;
 
 import org.apache.commons.logging.Log;
@@ -10,21 +26,6 @@ import org.xml.sax.SAXException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 public class StreamWriterToContentHandlerConverter implements ContentHandler {
     private Log log = LogFactory.getLog(getClass());
     private XMLStreamWriter writer;
@@ -93,11 +94,9 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
         return null;
     }
 
-
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         try {
             log.info("writing element {" + namespaceURI + '}' + localName + " directly to stream ");
-
             String prefix = getPrefix(qName);
             //it is only the prefix we want to learn from the QName! so we can get rid of the 
             //spliting QName
@@ -109,7 +108,6 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
             if (atts != null) {
                 int attCount = atts.getLength();
                 for (int i = 0; i < attCount; i++) {
-
                     writer.writeAttribute(atts.getURI(i),
                             localName,
                             atts.getValue(i));

@@ -1,32 +1,30 @@
-package org.apache.axis.om;
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
+ 
+package org.apache.axis.om;
 
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
 
-public class OMChildrenQNameIteratorTest extends AbstractTestCase {
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
+public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     private SOAPEnvelope envelope = null;
 
     public OMChildrenQNameIteratorTest(String testName) {
@@ -52,7 +50,6 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     public void testIterator() {
         OMElement elt = envelope;
         Iterator iter = elt.getChildrenWithName(getBodyQname());
-
         while (iter.hasNext()) {
             assertNotNull(iter.next());
         }
@@ -63,7 +60,6 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
      * test the remove exception behavior
      */
     public void testIteratorRemove1() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildrenWithName(getBodyQname());
 
@@ -81,14 +77,11 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
      * test the remove exception behavior, consecutive remove calls
      */
     public void testIteratorRemove2() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildrenWithName(getBodyQname());
-
         if (iter.hasNext()) {
             iter.next();
         }
-
         iter.remove();
 
         //this call must generate an exception
@@ -105,17 +98,13 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
      * Remove all!
      */
     public void testIteratorRemove3() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildrenWithName(getBodyQname());
-
         while (iter.hasNext()) {
             iter.next();
             iter.remove();
         }
-
         iter = elt.getChildrenWithName(getBodyQname());
-
         if (iter.hasNext()) {
             fail("No children should remain after removing all!");
         }
@@ -126,15 +115,11 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     /**
      * test whether the children count reduces.
      */
-
     public void testIteratorRemove4() {
-
         OMElement elt = envelope;
         Iterator iter = elt.getChildrenWithName(getBodyQname());
         int firstChildrenCount = 0;
         int secondChildrenCount = 0;
-
-
         while (iter.hasNext()) {
             assertNotNull((OMNode) iter.next());
             firstChildrenCount++;
@@ -151,8 +136,6 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
             assertNotNull((OMNode) iter.next());
             secondChildrenCount++;
         }
-
-
         assertEquals("children count must reduce from 1", firstChildrenCount - 1, secondChildrenCount);
 
     }

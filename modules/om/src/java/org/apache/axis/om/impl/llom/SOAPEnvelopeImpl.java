@@ -1,23 +1,31 @@
-package org.apache.axis.om.impl.llom;
-
-import org.apache.axis.om.*;
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * <p/>
  */
+ 
+package org.apache.axis.om.impl.llom;
+
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPHeader;
+
 public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMConstants {
     /**
      * @param builder
@@ -38,24 +46,23 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
     }
 
     /**
-     * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
-     * SOAPEnvelope</CODE> object.
-     * <p/>
-     * <P> This SOAPHeader will just be a container for all the headers in the
-     * <CODE>OMMessage</CODE>
-     * </P>
-     *
-     * @return the <CODE>SOAPHeader</CODE> object or <CODE>
-     *         null</CODE> if there is none
-     * @throws org.apache.axis.om.OMException if there is a problem
-     *                                        obtaining the <CODE>SOAPHeader</CODE> object
-     */
+         * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
+         * SOAPEnvelope</CODE> object.
+         * <P> This SOAPHeader will just be a container for all the headers in the
+         * <CODE>OMMessage</CODE>
+         * </P>
+         *
+         * @return the <CODE>SOAPHeader</CODE> object or <CODE>
+         *         null</CODE> if there is none
+         * @throws org.apache.axis.om.OMException if there is a problem
+         *                                        obtaining the <CODE>SOAPHeader</CODE> object
+         */
     public SOAPHeader getHeader() throws OMException {
-//		if(builder != null){
-//	    	while(header == null && body == null){
-//	    		builder.next();
-//	    	}
-//		}
+        //		if(builder != null){
+        //	    	while(header == null && body == null){
+        //	    		builder.next();
+        //	    	}
+        //		}
         OMNode node = getFirstChild();
         while (node != null) {
             if (node != null && node.getType() == OMNode.ELEMENT_NODE) {
@@ -86,14 +93,14 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
     public SOAPBody getBody() throws OMException {
         //Look at this . this code forces the OM  to build the whole thing because
         //the iterator needs to stay <i>ahead</i> one node.We need to do this manually
-//    	if(builder != null){
-//			while( body == null){
-//				builder.next();
-//			}
-//			
-//    	}
+        //    	if(builder != null){
+        //			while( body == null){
+        //				builder.next();
+        //			}
+        //			
+        //    	}
 
-//    	return body;
+        //    	return body;
 
         OMNode node = getFirstChild();
         while (node != null) {
@@ -106,13 +113,13 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
             node = node.getNextSibling();
         }
         return null;
-//        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
-//        SOAPBody soapBody = null;
-//        if (bodyIterator.hasNext()) {
-//            soapBody = (SOAPBody) bodyIterator.next();
-//        }
-//
-//        return soapBody;
+        //        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
+        //        SOAPBody soapBody = null;
+        //        if (bodyIterator.hasNext()) {
+        //            soapBody = (SOAPBody) bodyIterator.next();
+        //        }
+        //
+        //        return soapBody;
     }
 
     public void detach() throws OMException {

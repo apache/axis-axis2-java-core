@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.seriliazer;
 
 import org.apache.axis.om.AbstractTestCase;
@@ -16,24 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 public class OMSerailizerTest extends AbstractTestCase {
-
     private XMLStreamReader reader;
     private XMLStreamWriter writer;
     private File tempFile;
@@ -48,8 +47,8 @@ public class OMSerailizerTest extends AbstractTestCase {
         tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile));
-//        writer = XMLOutputFactory.newInstance().
-//                createXMLStreamWriter(System.out);
+        //        writer = XMLOutputFactory.newInstance().
+        //                createXMLStreamWriter(System.out);
     }
 
     public void testRawSerializer() throws Exception {
@@ -81,10 +80,8 @@ public class OMSerailizerTest extends AbstractTestCase {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-
         serializer.serialize(body.getPullParser(false), writer);
     }
-
 
     protected void tearDown() throws Exception {
         writer.flush();

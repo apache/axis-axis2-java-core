@@ -1,6 +1,28 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom.builder;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNodeImpl;
 
@@ -8,34 +30,16 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * <p/>
- */
-
-/**
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
-
     protected OMFactory ombuilderFactory;
     protected XMLStreamReader parser;
     protected OMFactory omfactory;
 
     protected OMNode lastNode;
-//returns the state of completion
+    //returns the state of completion
     protected boolean done = false;
 
     //keeps the state of the cache
@@ -100,14 +104,12 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     public void discard(OMElement el) throws OMException {
-
         OMElementImpl elementImpl = null;
         if (el instanceof OMElementImpl) {
             elementImpl = (OMElementImpl) el;
         } else {
             throw new OMException();
         }
-
         if (elementImpl.isComplete() || !cache)
             throw new OMException();
         try {
@@ -218,17 +220,15 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     protected abstract OMNode createOMElement() throws OMException;
 
     /**
-     * This should proceed the parser one step further, if parser is not completed yet.
-     * If this has been called whist parser is done, then throw an OMException.
-     * <p/>
-     * If the cache is set to false, then should be return the event, *without* building the OM tree.
-     * <p/>
-     * If the cache is set to true, then this should handle all the events within this, and should build
-     * the object structure appropriately and return the event.
-     *
-     * @return
-     * @throws OMException
-     */
+         * This should proceed the parser one step further, if parser is not completed yet.
+         * If this has been called whist parser is done, then throw an OMException.
+         * If the cache is set to false, then should be return the event, *without* building the OM tree.
+         * If the cache is set to true, then this should handle all the events within this, and should build
+         * the object structure appropriately and return the event.
+         *
+         * @return
+         * @throws OMException
+         */
     public abstract int next() throws OMException;
 
     /**

@@ -1,32 +1,46 @@
-package org.apache.axis.om.impl.llom.factory;
-
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.*;
-
-import javax.xml.namespace.QName;
-import java.util.Stack;
-
-
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * <p/>
  */
+ 
+package org.apache.axis.om.impl.llom.factory;
+
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.OMElementImpl;
+import org.apache.axis.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis.om.impl.llom.OMTextImpl;
+import org.apache.axis.om.impl.llom.SOAPBodyImpl;
+import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.om.impl.llom.SOAPFaultImpl;
+import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
+import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
+
+import javax.xml.namespace.QName;
+
 public class OMLinkedListImplFactory extends OMFactory {
     public static final int MAX_TO_POOL = 100;
- 
-
 
     public OMElement createOMElement(String localName, OMNamespace ns) {
         OMElementImpl element = new OMElementImpl(localName, ns);
@@ -57,7 +71,7 @@ public class OMLinkedListImplFactory extends OMFactory {
 
     public OMText createText(String s) {
         OMTextImpl textNode = new OMTextImpl(s);
-        ;
+    ;
         return textNode;
     }
 
@@ -106,7 +120,6 @@ public class OMLinkedListImplFactory extends OMFactory {
         //Create an envelop
         OMNamespace ns = new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
-
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         env.addChild(bodyImpl);
         //env.setBody(bodyImpl);

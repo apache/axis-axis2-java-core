@@ -1,6 +1,29 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package org.apache.axis.om.impl.llom.builder;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis.om.impl.llom.exception.OMBuilderException;
@@ -10,25 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
-/**
- * Copyright 2001-2004 The Apache Software Foundation.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * <p/>
- * Note - OM navigator has been removed to simplify the build process
- */
 public class StAXSOAPModelBuilder extends StAXBuilder {
-
     private SOAPEnvelopeImpl envelope;
     private boolean headerPresent = false;
     private boolean bodyPresent = false;
@@ -59,7 +64,6 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     protected OMNode createOMElement() throws OMException {
         OMElement node;
         String elementName = parser.getLocalName();
-
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
         } else if (lastNode.isComplete()) {
@@ -81,10 +85,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     }
 
     private OMElement constructNode(OMElement parent, String elementName, boolean isEnvelope) {
-
         OMElement element = null;
         if (isEnvelope) {
-
             if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
                 throw new OMException("First Element must contain the local name, " + OMConstants.SOAPENVELOPE_LOCAL_NAME);
             }
@@ -132,33 +134,25 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             element = ombuilderFactory.createOMElement(elementName, null, parent, this);
             processNamespaceData(element, false);
         }
-
         return element;
     }
 
-
     public int next() throws OMException {
         try {
-
             if (done)
                 throw new OMException();
-
             int token = parser.next();
-
             if (!cache) {
                 return token;
             }
-
             switch (token) {
                 case XMLStreamConstants.START_ELEMENT:
                     elementLevel++;
                     lastNode = createOMElement();
                     break;
-
                 case XMLStreamConstants.CHARACTERS:
                     lastNode = createOMText();
                     break;
-
                 case XMLStreamConstants.END_ELEMENT:
                     if (lastNode.isComplete()) {
                         OMElement parent = lastNode.getParent();
@@ -170,15 +164,12 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     }
                     elementLevel--;
                     break;
-
                 case XMLStreamConstants.END_DOCUMENT:
                     done = true;
-
                     break;
                 case XMLStreamConstants.SPACE:
                     next();
                     break;
-
                 default :
                     throw new OMException();
             }
@@ -202,17 +193,16 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         //set the own namespace
         OMNamespace namespace = node.findInScopeNamespace(parser.getNamespaceURI(), parser.getPrefix());
-//TODO we got to have this to make sure OM reject mesagess that are not sname space qualified
-//But got to comment this to interop with Axis.1.x
-//        if (namespace == null) {
-//            throw new OMException("All elements must be namespace qualified!");
-//        }
+        //TODO we got to have this to make sure OM reject mesagess that are not sname space qualified
+        //But got to comment this to interop with Axis.1.x
+        //        if (namespace == null) {
+        //            throw new OMException("All elements must be namespace qualified!");
+        //        }
 
         if (isSOAPElement) {
             if (!namespace.getName().equals(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI))
                 throw new OMBuilderException("invalid SOAP namespace URI");
         }
-
         node.setNamespace(namespace);
     }
 
