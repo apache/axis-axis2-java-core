@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+
+<!-- Author: Alek -->
+
+<project name="AXIOM" default="compile" basedir=".">
+
+<!-- set global properties for this build -->
+
+    <property environment="env" />
+    <property name="JAVA_HOME" value="${env.JAVA_HOME}" />
+    <property name="PROJECT" value="${ant.project.name}" />
+    <property name="VERSION" value="1.0-b2" />
+
+    <!-- Parent source directory -->
+    <property name="src" value=""/>
+    <property name="src_api" value="infoset_api"/>
+
+    <!-- Lib directory -->
+    <property name="lib" value="lib" />
+
+    <!-- Build directory -->
+    <property name="build" value="build" />
+    <property name="build_classes" value="build/classes" />
+
+    <!-- The base directory -->
+    <property name="basedir" value="." /> 
+
+    <target name="help">
+        <echo message="Re-run with arg -projecthelp to find out available targets."/>
+        <echo message="Here are the basic target"/>
+        <echo message="ant all will re-compile the project"/>
+        <echo message="ant junit will run unit tests"/>
+    </target>
+
+    <!-- Initialization stuff -->
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp />
+        <echo message="Project: ${ant.project.name} (${VERSION})"/>
+        <echo message="${ant.version}"/>
+        <echo message="${JAVA_HOME}"/>
+        <echo message="Java version: ${ant.java.version}"/>
+        <mkdir dir="${build_classes}"/>
+        <mkdir dir="${lib}"/>
+        <available property="junit_present" classname="junit.framework.TestCase" />
+    </target>
+
+    <target name="check_junit" unless="junit_present" depends="init">
+      <echo message="Warning: JUnit dependencies were not resolved."/>
+    </target>
+
+    <path id="common_libraries">
+        <fileset dir="${lib}">
+            <include name="xpp3/*.jar" />
+        </fileset>
+        <pathelement path="${build_classes}"/>
+    </path>
+
+    <path id="all_libraries">
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+        <dirset dir="${build_classes}">
+            <include name="*" />
+        </dirset>
+    </path>
+
+
+	<!--- COMPILING -->
+
+    <target name="all" depends="clean,compile" />
+    <target name="compile" depends="api" />
+
+    <target name="api" depends="init">
+        <mkdir dir="${build_classes}"/>
+	<touch file="${build_classes}/axiom-${VERSION}" />
+        <javac srcdir="${src_api}" destdir="${build_classes}" debug="on" source="1.4">
+            <classpath refid="common_libraries"/>
+        </javac>
+    </target>
+	
+    <target name="jar" depends="compile">
+      <jar jarfile="${om_jar}">
+        <fileset dir="${build_classes}"/>
+      </jar>
+    </target>
+
+
+
+    <!-- Clean up -->
+    <target name="clean">
+        <!-- Delete the ${build} directory trees -->
+        <delete dir="${build}" />
+        <delete>
+            <fileset dir="${src}" defaultexcludes="no">
+                <include name="**/*~" />
+            </fileset>
+        </delete>
+    </target>
+
+    <!-- SAMPLES -->
+    <target name="samples" depends="jar">
+        <mkdir dir="${build_samples}"/>
+        <javac srcdir="${src_samples}" destdir="${build_samples}" debug="on" source="1.4"
+          excludes="xsul_sample_wsa/**"
+        >
+            <classpath refid="all_libraries"/>
+        </javac>
+    </target>
+
+    <!-- TESTS -->
+    <target name="tests" depends="check_junit,compile" if="junit_present">
+        <mkdir dir="${build_tests}"/>
+        <javac srcdir="${src_tests}" destdir="${build_tests}" debug="on" source="1.4">
+            <classpath refid="all_libraries"/>
+        </javac>
+    </target>
+
+
+    <target name="junit" depends="tests" if="junit_present">
+      <java classname="AllTests"
+          classpathref="all_libraries"
+          fork="yes"
+          failonerror="true"
+          >
+      </java>
+    </target>
+  
+  
+</project>
