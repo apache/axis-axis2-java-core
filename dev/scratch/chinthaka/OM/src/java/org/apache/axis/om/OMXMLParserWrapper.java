@@ -53,4 +53,21 @@ public interface OMXMLParserWrapper {
      * @throws OMException
      */
     public void setCache(boolean b) throws OMException;
+
+    /**
+     * Allows to access the underlying parser. Since the parser
+     * depends on the underlying implementation,an Object is returned
+     * However the implementations may have restrictions in letting access to
+     * the parser
+     * @return
+     */
+    public Object getParser();
+
+    /**
+     *
+     * @return the complete status
+     */
+    public boolean isCompleted();
+
+
 }

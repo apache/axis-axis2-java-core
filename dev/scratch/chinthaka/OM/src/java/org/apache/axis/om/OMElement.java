@@ -95,4 +95,17 @@ public interface OMElement extends OMNamedNode {
     public void insertAttribute(OMAttribute attr);
     public void removeAttribute(OMAttribute attr);
 
+    void setPreviousSibling(OMNode lastNode);
+
+    /**
+     * Set the first child
+     * @param node
+     */
+    void setFirstChild(OMNode node);
+
+    /**
+     * Get the first child
+     * @return
+     */
+    OMNode getFirstChild();
 }

@@ -28,18 +28,16 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
 
     private SOAPEnvelope envelope;
     private OMXMLParserWrapper parserWrapper;
-    private OMFactory omFactory;
 
     public SOAPMessageImpl(OMXMLParserWrapper parserWrapper) {
         this.parserWrapper = parserWrapper;
-        omFactory = new OMLinkedListImplFactory();
     }
 
     public SOAPMessageImpl(Object[] obj) {
         //TODO create the OM from Obj
     }
 
-    
+
     public void setEnvelope(SOAPEnvelopeImpl root) {
         this.envelope = root;
     }
@@ -50,7 +48,7 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
      * @return the envelope element
      */
     public SOAPEnvelope getEnvelope() {
-        while (envelope == null) {
+        if (envelope == null) {
             parserWrapper.next();
         }
         return envelope;
@@ -66,5 +64,9 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
      */
     public MimeHeaders getMimeHeaders() {
         throw new UnsupportedOperationException(); //TODO implement this
+    }
+
+    public void setEnvelope(SOAPEnvelope envelope) {
+        this.setEnvelope((SOAPEnvelopeImpl)envelope);
     }
 }

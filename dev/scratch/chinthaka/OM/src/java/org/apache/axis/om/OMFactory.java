@@ -170,7 +170,7 @@ public abstract class OMFactory {
     /**
      * @param envelope
      */
-    public abstract SOAPHeader creatHeader(SOAPEnvelope envelope);
+    public abstract SOAPHeader createHeader(SOAPEnvelope envelope);
 
     /**
      * @param localName
@@ -179,7 +179,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPHeader creatHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
     // --------------------------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ public abstract class OMFactory {
      * @param localName
      * @param ns
      */
-    public abstract SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns);
+    public abstract SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns);
 
     /**
      * @param localName
@@ -197,7 +197,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
     // --------------------------------------------------------------------------------------------------------------
     // -----------------------------   OM SOAPMessage -----------------------------------------------------------------

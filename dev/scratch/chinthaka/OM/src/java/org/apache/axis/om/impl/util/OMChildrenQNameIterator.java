@@ -33,7 +33,7 @@ public class OMChildrenQNameIterator implements Iterator {
 
     private boolean picked = false;
 
-    public OMChildrenQNameIterator(OMNodeImpl firstChild, QName qName) {
+    public OMChildrenQNameIterator(OMNode firstChild, QName qName) {
         this.omNode = firstChild;
         this.givenQName = qName;
     }

@@ -1,6 +1,7 @@
-package org.apache.axis.om.impl;
+package org.apache.axis.om.impl.factory;
 
 import org.apache.axis.om.*;
+import org.apache.axis.om.impl.*;
 import org.apache.axis.om.soap.*;
 
 /**
@@ -23,6 +24,7 @@ import org.apache.axis.om.soap.*;
  * Time: 2:21:13 PM
  */
 public class OMLinkedListImplFactory extends OMFactory {
+
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent) {
         return new OMAttributeImpl(localName, ns, value, parent);
     }
@@ -36,7 +38,9 @@ public class OMLinkedListImplFactory extends OMFactory {
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns) {
-        return new OMElementImpl(localName, ns);
+        OMElementImpl omElement = new OMElementImpl(localName, ns);
+        omElement.setComplete(true);
+        return omElement;
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
@@ -91,19 +95,20 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPEnvelopeImpl(localName, ns);
     }
 
-    public SOAPHeader creatHeader(SOAPEnvelope envelope) {
-        return new SOAPHeaderImpl(envelope);
+    public SOAPHeader createHeader(SOAPEnvelope envelope) {
+        SOAPHeaderImpl soapHeader = new SOAPHeaderImpl(envelope);
+        return soapHeader;
     }
 
-    public SOAPHeader creatHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderImpl(localName, ns, parent, builder);
     }
 
-    public SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns) {
+    public SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns) {
         return new SOAPHeaderElementImpl(localName, ns);
     }
 
-    public SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderElementImpl(localName, ns, parent, builder);
     }
 

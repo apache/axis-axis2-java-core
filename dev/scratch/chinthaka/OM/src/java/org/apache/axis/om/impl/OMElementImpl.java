@@ -28,6 +28,7 @@ import java.util.Iterator;
  * Time: 1:16:10 PM
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
+
     private OMNodeImpl firstChild;
     OMXMLParserWrapper builder;
     OMAttributeImpl firstAttribute;
@@ -199,49 +200,49 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         builder.next();
     }
 
-    public OMNodeImpl getFirstChild() {
+    public OMNode getFirstChild() {
         if (firstChild == null && !done)
             buildNext();
         return firstChild;
     }
 
 
-    public void setFirstChild(OMNodeImpl firstChild) {
-        this.firstChild = firstChild;
+    public void setFirstChild(OMNode firstChild) {
+        this.firstChild = (OMNodeImpl)firstChild;
     }
 
-    public void print(PrintStream s) throws OMException {
-        s.print('<');
-        super.print(s);
-
-        OMNodeImpl node = firstAttribute;
-        while (node != null) {
-            s.print(" ");
-            node.print(s);
-            node = (OMNodeImpl) node.getNextSibling();
-        }
-
-        node = firstNamespace;
-        while (node != null) {
-            s.print(" ");
-            node.print(s);
-            node = (OMNodeImpl) node.getNextSibling();
-        }
-
-        node = getFirstChild();
-        if (node != null) {
-            s.print('>');
-            while (node != null) {
-                node.print(s);
-                node = (OMNodeImpl) node.getNextSibling();
-            }
-            s.print('<');
-            s.print('/');
-            super.print(s);
-        } else
-            s.print('/');
-        s.print('>');
-    }
+//    public void print(PrintStream s) throws OMException {
+//        s.print('<');
+//        super.print(s);
+//
+//        OMNode node = firstAttribute;
+//        while (node != null) {
+//            s.print(" ");
+//            node.print(s);
+//            node = (OMNodeImpl) node.getNextSibling();
+//        }
+//
+//        node = firstNamespace;
+//        while (node != null) {
+//            s.print(" ");
+//            node.print(s);
+//            node = (OMNodeImpl) node.getNextSibling();
+//        }
+//
+//        node = getFirstChild();
+//        if (node != null) {
+//            s.print('>');
+//            while (node != null) {
+//                node.print(s);
+//                node = (OMNodeImpl) node.getNextSibling();
+//            }
+//            s.print('<');
+//            s.print('/');
+//            super.print(s);
+//        } else
+//            s.print('/');
+//        s.print('>');
+//    }
 
     /**
      * This will remove this information item and its children, from the model completely

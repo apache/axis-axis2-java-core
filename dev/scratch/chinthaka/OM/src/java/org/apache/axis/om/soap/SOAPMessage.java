@@ -34,6 +34,12 @@ public interface SOAPMessage extends OMNode {
     public SOAPEnvelope getEnvelope();
 
     /**
+     *
+     * @param envelope
+     */
+    public void setEnvelope(SOAPEnvelope envelope);
+
+    /**
      * Returns all the transport-specific MIME headers for this
      * <CODE>SOAPMessage</CODE> object in a transport-independent
      * fashion.
