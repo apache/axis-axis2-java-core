@@ -129,9 +129,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.0.3</version>
             <properties>
                 <module>true</module>
             </properties>

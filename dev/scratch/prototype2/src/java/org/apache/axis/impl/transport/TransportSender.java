@@ -19,11 +19,13 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMEnvelope;
 
 import java.io.OutputStream;
 
 /**
+ * 
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class TransportSender extends AbstractHandler implements Handler {
@@ -33,6 +35,7 @@ public class TransportSender extends AbstractHandler implements Handler {
     }
     public void invoke(MessageContext msgContext) throws AxisFault {
         OMEnvelope envelope = msgContext.getEnvelope();
-        //Serialize the Mesage
+        SimpleOMSerializer serializer = new SimpleOMSerializer();
+        serializer.serialize(envelope,this.out);
     }
 }
