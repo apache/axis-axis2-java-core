@@ -1,492 +1,1748 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
 <html>
+
 <head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 11 (filtered)">
 <title>Axis 2 Architecture Guide</title>
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+	{font-family:Verdana;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	line-height:normal;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:Arial;
+	font-weight:bold;}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	line-height:normal;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-weight:bold;
+	font-style:italic;}
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	line-height:normal;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:Arial;
+	font-weight:bold;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p
+	{margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:18.75pt;
+	line-height:18.0pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+p.MsoCommentSubject, li.MsoCommentSubject, div.MsoCommentSubject
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	font-weight:bold;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:normal;
+	font-size:8.0pt;
+	font-family:Tahoma;}
+ins
+	{text-decoration:none;}
+span.msoIns
+	{text-decoration:underline;}
+span.msoDel
+	{text-decoration:line-through;
+	color:red;}
+ /* Page Definitions */
+ @page Section1
+	{size:595.35pt 842.0pt;
+	margin:28.35pt 28.35pt 28.35pt 56.7pt;}
+div.Section1
+	{page:Section1;}
+@page Section2
+	{size:595.35pt 842.0pt;
+	margin:28.35pt 28.35pt 28.35pt 56.7pt;}
+div.Section2
+	{page:Section2;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
 </head>
-<body>
-<h1>Axis 2 Architecture Guide</h1>
-<h2>1.1	Introduction</h2> 
-This document describes some of the rationale of the architecture and design of Axis2. 
-<h2>1.2 Architecture overview </h2>
-<p>Axis consists of several sub components working together, as we shall see later. In this section
-We will give you an overview of how the core of Axis works.</p>
 
-<h2>1.3 Axis2 sub components</h2>
-Axis2 consists of following high level sub components, and those are described one by one in the document. 
-  <li>Engine</li>
-	<li>Engine Registry</li>
-	<li>Message Context</li>
-	<li>Deployment</li>
-	<li>Axis Object Model (AXIOM)</li>
-	<li>Handler framework and Phase rules </li>
-	<li>WSDL Object model.</li>
-	<li>Client API.</li>
+<body lang=EN-US link=blue vlink=purple>
 
+<div class=Section1>
 
-<h2>2.0 Axis Engine</h2>
-<p>The Exaction Model or the Engine in Axis terminology, addresses how the components of the Apache Axis2 is executed or how the control is passed from the component to component. The Axis Execution Model does not assume any specific "Message Exchange Patterns" or "synchronous, Asynchronous behavior" in its Execution.
-The Axis Engine is build on top of two flows they are called in-flow and out-flow respectively (in addition to that there is a flow called fault flow which is used when engine gets processing errors). Each flow encompassing set of components namely  "Handlers", "Transport Senders", "Transport Receivers", "Receivers", "Senders" and "Providers".</p>
-  <li>"Handlers" are the extension mechanism for Axis and represents an "atomic unit of execution logic" which can be configured with the deployment. Each handler is executed in the order specified by the configuration at the deployment.</li> 
-	<li>"Transport senders" and "Transport Receivers" handle the sending and receiving of a SOAP message via specific transport.</li> 
-	<li>"Senders" and "Receivers" control the Message Exchange patterns and Synchronous and Asynchronous behavior.</li>
-	<li>"Provider" take care of the real "java implementation" invocation of the Web Service (this does not mean the java object, but mean to suggest implementation of the web service in the form of java, that can be a java class, XSLT engine ECT...).</li>    
-<br>
-<img alt="engine1 (4K)" src="images/engine1.PNG" height="120" width="473" />
-<br>
-Axis2 Execution Model does not aware of the Message Exchange patterns or the Synchronous or Asynchronous Behavior and all it does is to construct inflow or out flow or both by picking the right components using WSDL or Deployment information and executing them.  
+<h1 style='text-align:justify'><a name="_Toc95620155"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>Axis 2 Architecture
+Guide</span></a></h1>
 
+<h1 style='text-align:justify'><a name="_Toc95620156"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>Table of contents</span></a></h1>
 
-<h2>3.0 Engine Registry</h2>
-Engine registry is the runtime registry of the current state of the Axis engine. It contains the real objects like Handlers...ect. By changing them on the runtime the user can change the engine configuration. The deployment provides the implementation of this interface. 
+<p class=MsoToc1><span
+class=MsoHyperlink><a href="#_Toc95620155">Axis 2 Architecture Guide<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>i</span></a></span></p>
 
- Srinath will complete
-<h2>4.0 Message Context</h2>
- Srinath will complete 
-<h2>5.0 Deployment</h2>
-There are two types of deployment in Axis2, namely; service deployment and module deployment. 
-<h3>5.1 Module deployment:</h3>
-Axis 2 provides J2EE like deployment (has to create axis archive file and drop in to correct directory) for both modules and services. User can deploy a module or a service as an ".aar" file (module1.aar, service1.aar). Module hot deployment will not be supported in M1, but will be supported in later releases. When the axis engine get starts all the aar files in the WEB-INF/Repository/modules will get deployed. But if someone wants to add a new restarting of the engine is required, after putting the new .aar file in the above mentioned folder.
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620156">Table of
+contents<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>i</span></a></span></p>
 
-<h3>5.2 Service Deployment </h3>
-<p>One of the key improvements introduced with Axis 2 is the capability to "hot deploy" web services. And in this M1 release only J2EE like deployment is supported that is user has to create an axis archive file including all the files that he want and drop the archive file into WEB-INF/Repository/services directory. Following three features are associated with service deployment;</p> 
-	<li>Hot Deployment </li>
-	<li>Hot un deployment </li>
-	<li>Hot update </li>
-	<p>Hot Deployment is all about the ability to of deploying new web service while the axis engine is up and running.  
-Hot un-deployment is ability to remove a web service (services) while the system is running.
-Hot update is ability deploy new version of existing web service without restarting the server. And it is handling as un -deployment followed by a hot deployment. 
-The directory structure that modules and services should deployed.</p> 
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620157">1.1<span
+style='color:windowtext;text-decoration:none'>       </span>Introduction<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>1</span></a></span></p>
 
-	<li>WEB-INF/Repository/modules</li>
-	<li>WEB-INF/Repository/services</li>
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620158">1.2
+Architecture overview<span style='color:windowtext;display:none;text-decoration:
+none'>.. </span><span
+style='color:windowtext;display:none;text-decoration:none'>1</span></a></span></p>
 
-<p><i>The required directory structure for a modules archive file is as follows;</i>
-<br>m1.aar
-<br>
-    META-INF/module.xml
-    lib/
-    classes/
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620159">1.3 Axis2 sub
+components<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>1</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620160">2.0 Axis Engine<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>1</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620161">3.0 Engine
+Registry<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>2</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620162">4.0 Message
+Context<span style='color:windowtext;display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620163">5.0
+Deployment<span style='color:windowtext;display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620164"><span
+lang=EN>5.1 Module deployment:</span><span style='color:windowtext;display:
+none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620165"><span
+lang=EN>5.2 Service Deployment</span><span style='color:windowtext;display:
+none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620166"><span
+lang=EN>5.4 Scheduler</span><span style='color:windowtext;display:none;
+text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620167"><span
+lang=EN>5.5 Listener</span><span style='color:windowtext;display:none;
+text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620168"><span
+lang=EN>5.6 Repository</span><span style='color:windowtext;display:none;
+text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620169"><span
+lang=EN>5.7 DeploymentEngine</span><span style='color:windowtext;display:none;
+text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620170"><span
+lang=EN>5.8 DeploymentParser</span><span style='color:windowtext;display:none;
+text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620171"><span
+lang=EN>5.8 Deployment Engine initialization</span><span style='color:windowtext;
+display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620172"><span
+lang=EN>5.9 Adding new web service</span><span style='color:windowtext;
+display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620173">6.0 AXIOM –
+AXIs Object Model<span style='color:windowtext;display:none;text-decoration:
+none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620174">6.1
+Introduction<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620175">6.2 High
+Level Architecture<span style='color:windowtext;display:none;text-decoration:
+none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620176">7.0 Handler
+Frame work and Phase Rules<span style='color:windowtext;display:none;
+text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>9</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620177">7.1 Phase<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>9</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620178">7.2 Handler
+chain<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>10</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620179">8.0 WSDL
+Object model.<span style='color:windowtext;display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>10</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc95620180">9.0 Client
+API.<span style='color:windowtext;display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>10</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620181">9.1 sendAsync
+Invocation<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>12</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620182">9.2 send
+Invocation<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>12</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620183">9.3
+sendReceive Invocation<span style='color:windowtext;display:none;text-decoration:
+none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>12</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620184">9.4
+sendReceiveAsync Invocation<span style='color:windowtext;display:none;
+text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>13</span></a></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><a href="#_Toc95620185">9.5
+sendReceiveAsync Invocation with One way transport<span style='color:windowtext;
+display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>14</span></a></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:14.0pt'> </span></p>
+
+</div>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman"'><br clear=all
+style='page-break-before:always'>
+</span>
+
+<div class=Section2>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<h1 style='margin-left:21.0pt;text-align:justify;text-indent:-21.0pt'><a
+name="_Toc95620157"><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>1.1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span><span
+style='font-size:14.0pt;font-family:"Times New Roman";font-weight:normal'>Introduction</span></a><span
+style='font-size:14.0pt;font-family:"Times New Roman";font-weight:normal'> </span></h1>
+
+<p class=MsoNormal style='text-align:justify'>This document describes some of
+the rationale behind the architecture and design of Axis2. </p>
+
+<h1 style='text-align:justify'><a name="_Toc95620158"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>1.2 Architecture
+overview</span></a><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'> </span></h1>
+
+<p class=MsoNormal style='text-autospace:none'>Axis consists of several sub
+components working together, as we shall see later. In this section we will
+give you an overview of how the core of Axis works.</p>
+
+<p class=MsoNormal style='text-autospace:none'>&nbsp;</p>
+
+<h1 style='text-align:justify'><a name="_Toc95620159"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>1.3 Axis2 sub
+components</span></a></h1>
+
+<p class=MsoNormal style='text-autospace:none'>Axis2 consists of the following
+high level sub components, and those are described one by one in the document. </p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Engine</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Engine Registry</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Message Context</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Deployment</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Axis Object Model (AXIOM)</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Handler framework and Phase rules </p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>WSDL Object model.</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;text-autospace:
+none'><span style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Client API.</p>
+
+<p class=MsoNormal style='margin-left:21.0pt;text-autospace:none'>&nbsp;</p>
+
+<h1 style='text-align:justify'><a name="_Toc95620160"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>2.0 Axis Engine</span></a></h1>
+
+<p class=MsoNormal style='text-align:justify'>The Exaction Model or the Engine in
+Axis terminology, addresses how the components of Apache Axis2 are executed or
+how control is passed from one component to another. The Axis Execution Model
+does not assume any specific “<i>Message Exchange Patterns</i>” or <i>“synchronous,
+Asynchronous behavior”</i> in its<span class=msoIns><ins cite="mailto:%20"
+datetime="2005-02-11T11:28"> </ins></span>execution.</p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>The Axis Engine is built on top
+of two <i>flows,</i> they are called <i>in-flow</i> and <i>out-flow </i>respectively
+(in addition to that there is a flow called fault flow which is used when the engine
+gets processing errors). Each flow encompasses a set of components, namely<span
+class=msoDel><del cite="mailto:Srinath%20Perera" datetime="2005-02-15T09:57"> </del></span> “<i>Handlers”</i>,
+“<i>Transport Senders”</i>, <i>“Transport Receivers”</i>, “<i>Receivers”</i>, “<i>Senders</i>”
+and <i>“Providers”.</i></p>
+
+<p class=MsoNormal style='text-indent:0in'><i><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:31">&nbsp;</ins></span></i></p>
+
+<p class=MsoNormal><span style='font-weight:normal !msorm;font-style:italic !msorm'><b><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:31">Handlers</ins></span></b></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><strike><font color=red>·</font></strike>The
+“<i>Handlers”</i> are the extension mechanism for Axis and represents an <i>“atomic
+unit of execution logic”</i> which can be configured with the deployment. Each
+handler is executed in the order specified by the configuration at the time of deployment.
 </p>
-<p><i>The required directory structure for a service archive file is as follows;</i> 
-<br>s1.aar
-   <br>
-	  META-INF/service.xml
-    lib/
-    classes/
-</p>
-<br>
-<p><i>The structure of module.xml file looks like as follows; </i></p>
-<img alt="module (3K)" src="images/module.PNG" height="111" width="496" />
-<br>
-<p><i>The structure of service.xml file looks like as;</i></p>
-<img alt="service (6K)" src="images/service.PNG" height="151" width="599" />
-<br>
-<p><i>The architecture of hot deployment consists of the following components;</i></p> 
-<img alt="deploymetncomponent (7K)" src="images/deploymetncomponent.png" height="332" width="462" />
-<br>
-<ol>
-1.	Scheduler periodically invokes listener to check for updates
-</ol>
-<ol>
-2.	If Listener found an update it passes that information to the Repositary
-</ol> 
-<ol>
-3.	Repository hand over the document to DeploymentParser 
-</ol>
-<ol>
-4.	Having parsed the document, the DeploymentParser returns the corresponding object
-</ol>
-<ol>
-5.	update the toDeploy and toUnDeploy list
-</ol> 
-<ol>
-6.	inform Listener to update system
-</ol> 
-<ol>
-7.	inform DeploymentEngine to do update (both deploy and undeploy)
-</ol> 
-<br>
-<h3>5.3 Scheduler</h3>
-<p>This component itself is a thread and performs a specific task forever in given time interval. In this case it is periodically ask Listener to listen to the file system events. Here the file system is not the entire file system it is only the sub directories of WEB_INF/Repository that is modules and services.</p> 
 
-<h3>5.4 Listener</h3>
-<p>As mentioned above Listener listen to file system events, it checks both the modules and services directories. Then lists all the archive files in those two directories, next compare those against the repository to check whether new service(s) has added or any service(s) has been modified. And then it informs DeploymentEngine to execute the required methods.</p> 
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:34">&nbsp;</ins></span></p>
 
-<h3>5.5 Repository</h3> 
-<p>Repository stores data about already deployed modules and services. At the initialization process this loads data about all the modules and services in the module and service directories. And then deploy all those loaded modules and services. The repository store data about name of the archive file and the last modified date. And it can be possible to perform following operation to Repository;</p> 
-<li>Add new entry to Repository </li>
-<li>Remove entry from Repository ,and</li> 
-<li>Modify entry in the Repository.</li>
-<p>
-Those operations correspond to Hot Deployment, Hot unDeployment and Hot Update. 
-In the add operation it check whether the entry which is going to add already in the Repository if so it ignore the operation else it will add the entry to Repository and also it would add an entry to a list maintaining in DeploymentEngine (toDeploy list). 
-In the remove operation it directly removes the entry from the repository and will adds an entry to a list maintaining in DeploymentEngine (toUnDeploy list) 
-In modify operation it will be added entry to both the list in DeploymentEngine. 
-</p> 
-<h3>5.6 DeploymentEngine</h3>
-<p>DeploymentEngine is the main component of deployment sub component. And it is the one which interact with the axis engine and engineregistry, when new service is added or removed existing service it will update the engineregistry. The deployment procedure is as follows;</p>
-<li>First check toUnDeploy list, if it is not empty then removed corresponding web service from the engineregistry.</li>
-<li>Next it checks toDeploy list if it is not empty then added</li>
-<li>Then for each and every item in the list passes to DeploymentParser and create corresponding axis service object, and then that will be added to the engineregistry.</li> 
+<p class=MsoNormal style='text-indent:0in'><span style='font-weight:normal !msorm'><b><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:34">Transport
+Senders</ins></span></b></span><b><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">/</ins></span>Receivers</b></p>
 
-<h3>5.7 DeploymentParser</h3>
-<p>All the following three types of xml document are parsed by DeploymentParser and its underline parser is stax.</p>
-<li>server.xml</li> 
-<li>service.xml</li> 
-<li>module.xml</li>
+<p class=MsoNormal style='text-indent:0in'><strike><font color=red>·</font></strike>The
+<i>“Transport senders</i>” and “<i>Transport Receivers</i>” handle the sending
+and receiving of a SOAP message via specific transport. </p>
 
-<p><i>Parsing server.xml is done as follows;</i>
-<br>
-DeploymentEngine will create an AxisGlobal object and pass that to DeploymentParser, then DeploymentParser will be modified the object according to server.xml.</p>
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">&nbsp;</ins></span></p>
 
-<p><i>Parsing service.xml is done as follows;</i>
-<br>
-DeploymentEngine will create an AxisService object and passed to DeploymentParser, and then it will be updated that object according to service.xml.</p>
+<p class=MsoNormal style='text-indent:0in'><span style='font-weight:normal !msorm'><b><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">Senders/</ins></span></b></span><b>Receivers</b></p>
 
-Parsing module.xml is same as above only difference is instead of AxisService this time it passed AxisModule.   
+<p class=MsoNormal style='text-indent:0in'><strike><font color=red>·</font></strike>The
+<i>“Senders”</i> and “<i>Receivers”</i> control the Message Exchange patterns
+and Synchronous and Asynchronous behavior.</p>
 
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">&nbsp;</ins></span></p>
 
-<p><h3>5.8 Deployment Engine initialization</h3>
-Initialization process of the DeploymentEngine is consisting of following steps;
-<li>First it check whether server.xml is located in repository directory , if it is then it load it and get it parsed , if it is not then create default server.xml and put it to the repository.</li>
-<li>Next it check whether modules and services directory are available under repository, if not it will be created them.</li> 
-<li>After parsing server.xml it will be created an AxisGlobal object.</li>
-<li>Next load all the axis archives files in both modules and services directories, parse them and create AxisService and AxisModule objects.</li>
-<li>If server.xml has references to modules then check whether those are valid modules, (it is valid if it is in the modules directory), if it not valid throws an exception else;</li> 
-<li>Build the GlobalChains (GlobalInChain , GlobalOutChain , GlobalFaultChain) using phase rules by the PhaseResolver.</li>
-<li>Next will be added all the available services and modules to engineRegistry.</li>
-<li>Finally return the engineRegistry.</li>
-</p>
+<p class=MsoNormal style='text-indent:0in'><b>Provider</b></p>
 
- <p><h3>5.9 Adding new web service</h3>
-Adding a new web service starting from putting it to service directory consists of following steps;
-<li>1.	First unzip the aar file and take its service.xml, next using DeploymentParser get it parsed.</li> 
-<li>2.	While processing the service.xml it will be created an AxisService obejct and will update that.</li>
-<li>3.	Next will be added crated object to DeploymentEngine.</li>
-<li>4.	Then by the DeploymentEngine added the service calssLoader and provider class to AxisService object.</li>
-<li>5.	Next it will be build the Handler chain, by resolving phase rules.</li>
-(It should be notice here that Handler Chain is consisting of HandlerMetadata which having all the phase rules data , and actual executable handler )
-<li>6.	Then the created object will be added to EngineRegistry.</li>
+<p class=MsoNormal style='text-indent:0in'><strike><font color=red>·</font></strike>The
+<i>“Provider”</i> takes care of the real <i>“java implementation” </i>invocation
+of the Web Service (this does not refer to the java object, but refers to the
+implementation of the web service in the form of java, that can be a java
+class, XSLT engine ETC...).    </p>
 
-<h2>6.0 AXIOM - AXIs Object Model</h2>
-<p><h3>6.1 Introduction</h3>
-AXIOM (also know as OM -Object Model) is used to refer to the new and efficient XML info set model that is developed for Axis 2. Most of the XML object model used today are based on two major methods, namely;
-</p>
-<li>1.	DOM based - where the whole document is parsed and held in the memory</li>
-<li>2.	event based (SAX like) - whole document is parsed at once, but no model in the memory is created and the user has to catch the relevant events which can not be stopped or reversed.</li>
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
 
-<p>AXIOM gets the best from both the options and builds a better object model on top of pull parsing methodology. It controls the phase of the parsing and builds a memory model if required of the information that's being parsed so far. That means at once instance, AXIOM has not fully built object model and rest of the information still in the stream.
-The most important feature of this OM is that it is lightweight and differed built based on StAX (JSR 173), the streaming pull parser. 
-The object model can be manipulated as any other object model (Such as jdom) but underneath, the objects will be created only when its is absolutely required. Hence this model is much more efficient.
-AXIOM interacts with outside world using the StAX API, that means it serialize and de0serialize using the StAX writer and StAX reader interfaces.
-</p>
-<img alt="OM1 (13K)" src="images/OM1.PNG" height="306" width="779" />
-<p>
-Since most of the data binding tools support SAX based interfaces, AXIOM comes with an adapter to be used between StAX and SAX.
-</p> 
-<h3>6.2 High Level Architecture</h3>
-<img alt="om2 (53K)" src="images/om2.PNG" height="409" width="709" />
-<p>
-AXIOM "sees" the XML input stream through the StAX stream reader, which is being wrapped by a builder interface provided. Current implementation has two builders, namely; 
-<li>OM Builder - this will build full XML info-set supported general XML model. But the current implementation lack the support for Processing Instructions and DTDs.</li>
-<li>SOAP Builder - this will build SOAP XML specific object model. Object model will contain SOAP-Specific objects like the SOAPEnvelope, SOAPHeader etc.</li> 
-</p>
-<p>
-Each of these builders has the support for differed building and caching. User has the option of building the memory model or not. He can control this via setting the cache on or off. </p>
-<p>
-( Since the object model is pull based, the StAX API is tightly bound to OM. To work with OM a StAX compliant parser and the API must be present in the classpath. )
-</p>
+<p class=MsoNormal><img width=576 height=120
+src="Axis2%20Archteture%20Guide_files/image001.gif"></p>
 
-<p>
-The OM API works on top of the builder interface and provides the user, may he be an engine developer, handler developer or anyone. This will provide the highest flexibility as one can change builders and object model implementations completely independent to one another.
-OM has a defined set of APIs and one can implement his own memory model based on that. Current AXIS 2, comes with a linked list based implementation of those set of APIs. (There was an effort to build another OM on a table based model. It's now on halt.) 
-Therefore one can find a factory to create OM objects, which will help to switch between different implementations of object model.
-</p>
-<img alt="om3 (37K)" src="images/om3.PNG" height="450" width="502" />
-<br>
-<h2>7.0 Handler Frame work and Phase Rules </h2>
-<h3>7.1 Phase</h3>
-<p>Phase is a logically ordered collection of handlers. And the handler inside a phase is ordered by phase rules. By using phase rules user can specify where handler should be logically placed. There are some of valid attribute associated with phase rule as listed in the following table;
-</p>
+<p class=MsoNormal>&nbsp;</p>
 
-<table border="1" cellpadding="1" cellspacing="1" >
-<th>Attribute Name</th><th>Value</th>
-<tr><td>Before</td><td>Can be either a handler or a phase *</td></tr>
-<tr><td>After</td><td>Can be either a handler or a phase  *</td></tr>
-<tr><td>Phase </td><td>Valid phase name **</td></tr>
-<tr><td>PhaseFirst </td><td>Boolean ***</td></tr>
-<tr><td>PhaseLast</td><td>Boolean ***</td></tr>
+<p class=MsoNormal style='text-align:justify'>The Axis2 Execution Model is not
+aware of the Message Exchange patterns or the Synchronous or Asynchronous
+Behavior. All it does is to construct an inflow or out flow or both, by picking
+the right components using WSDL or Deployment information and executing them.  </p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:18">&nbsp;</ins></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'>Implementation<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:18">
+of the above logical flow is </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:19">achieved</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:18">
+using </ins></span>an<span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:18"> architecture that consists of “Handlers</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:19">”,
+“</ins></span>Phases<span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:19">” and </ins></span>Execution Chain<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:19">. 
+</ins></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">&nbsp;</ins></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'><span
+style='font-weight:normal !msorm'><b><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:35">Phases</ins></span></b></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:28">The Phases </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:30">are
+Mechanism</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:25"> to specify the order of the handlers without
+knowing the *absolute position* of each handler in the </ins></span>Handler Chain<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">. </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:40">The
+Phase is a defined area (place holder for the handlers) in the Execution Chain.</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:41"> </ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in !msorm;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">For
+an example </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:36">say the </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">handler </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:36">Developer
+want</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:37">s</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:36"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">(RM),
+</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:37">the Handler </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">to run after the
+&quot;Encryption</ins></span>” and<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25"> before the</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:36"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">&quot;</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:37">T</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">ransaction&quot;.
+But </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:37">as the </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:30">Handler</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:37">is
+</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:25">A can be </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:38">used in</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">
+different Web Services </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:38">the developer </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">do
+not know the absolute position the </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:38">Handler at the
+Execution Chain</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:25">.</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:28"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39">Phases
+will handle</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:38"> this by </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39">following</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:38"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39">declaration.
+</ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in !msorm;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39">&lt;handler
+name=&quot;A&quot; ..... before=&quot;Transaction&quot;
+after=&quot;Encryption&quot; ../&gt;</ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in !msorm;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:28">Then
+the Axis</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:29"> </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39">will</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:28">
+make sure the rules are met</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:40">, but please note
+the support for the before and after is not implemented in M1. </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:28">&nbsp;</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:39"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25"><br>
+</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:41">As far as the implementation is concerned a </ins></span>Phase<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:41">
+is </ins></span>an<span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:41"> ordered collection of Handlers that are arranged </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:42">according</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:41"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:42">to
+the Phase rules. This can be viewed as </ins></span>an<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:42"> “<span
+style='font-style:normal !msorm'><i>improved</i></span>” </ins></span>Handler
+Chain<span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T12:42"> from Axis 1.x.</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25"><br>
+ </ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span style='font-weight:normal !msorm'><b><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:40">Module</ins></span></b></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">&nbsp;</ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:26">- </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">Module
+is a logical collection of Handlers that act together but expected to have
+little bit more than being </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:43">just</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">
+“Package”. One such possibility is WSDL “Code Generation” extension</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:43">s</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">.
+For an example the users would like to have ability to have Service ref</ins></span>er<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25"> a
+module and have it enabled as the j2ee does.</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:27"> </ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">&lt;service
+name=&quot;foo&quot;&gt;</ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in !msorm;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">&lt;module
+ref=&quot;Authentication&quot;/&gt;</ins></span></p>
+
+<p class=MsoNormal style='text-indent:0in'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:25">&lt;/service&gt;</ins></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:43">Then
+the service foo has the authentication enabled, but those things are not in the
+lines of M1 </ins></span>release<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T12:43">.</ins></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='text-align:justify'><a name="_Toc95620161"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>3.0 Engine Registry</span></a></h1>
+
+<p style='margin-left:0in'><span lang=EN style='color:black'>The Engine
+registry is the runtime registry of the current state of the Axis engine. It
+contains the real objects like Handlers etc. By changing them at runtime the
+user can change the engine configuration. </span></p>
+
+<p style='margin-left:0in;text-indent:0in'><span lang=EN style='color:black'>The
+deployment provides the implementation of <span class=msoDel><del
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:05">this interface. </del></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:01">Engine
+Registry out of the Deployment </ins></span>Descriptors<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:01"> and keep the Engine
+Registry in sync with the </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03">Deployment
+configuration </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:01">repository</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03">. In this way the
+Engine does not aware about the deployment </ins></span>mechanism<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03">
+and all the Engine knows in that there is </ins></span>an<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03"> Engine </ins></span>Registry<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03">
+that is </ins></span>maintained<span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:03">. </ins></span></span></p>
+
+<p style='margin-left:0in;text-indent:0in'><span lang=EN style='color:black'>Default<span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:09"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:06">Engine
+Registry</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:09"> implementation </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:06">is synchr</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:08">o</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:06">nized
+</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:08">, and this is necessary for the support the hot
+deployment. </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:09">It is possible to have not synchronized Engine</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:10">
+give that the hot deployment feature is not disabled. </ins></span></span></p>
+
+<p style='margin-left:0in;text-indent:0in'><span lang=EN style='color:black'><span
+class=msoDel><del cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:10">&nbsp;</del></span></span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'><span class=msoDel><del
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:10"> &lt;&lt;&lt;
+Srinath will complete &gt;&gt;&gt;</del></span></p>
+
+<h1 style='text-align:justify'><a name="_Toc95620162"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>4.0 <span
+class=msoDel><del cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:11">Message
+</del></span>Context</span></a></h1>
+
+<p class=MsoNormal style='margin-top:12.0pt !msorm;margin-right:0in !msorm;
+margin-bottom:3.0pt !msorm;margin-left:0in !msorm;text-align:justify !msorm;
+text-indent:0in !msorm;page-break-after:avoid !msorm;text-indent:0in'><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:39">The
+Axis2 has three Contexts, Global context, Session Contexts and the </ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'>Message
+Context</span><span style='font-size:16.0pt !msorm;font-family:Arial !msorm;
+font-weight:bold !msorm'><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:44"> and they are the placeholders for the inform</ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:44">ation
+in the Axis2</ins></span></span><span style='font-size:16.0pt !msorm;
+font-family:Arial !msorm;font-weight:bold !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:39">.</ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:45">
+They follow the mediator pattern and all the </ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:46">components</ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:45">
+interact</ins></span></span><span style='font-size:16.0pt !msorm;font-family:
+Arial !msorm;font-weight:bold !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:46"> and share the
+information with</ins></span></span><span style='font-size:16.0pt !msorm;
+font-family:Arial !msorm;font-weight:bold !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:45"> </ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:46">each
+other though the </ins></span></span><span style='font-size:16.0pt !msorm;
+font-family:Arial !msorm;font-weight:bold !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:48">three</ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:47">
+context</ins></span></span><span style='font-size:16.0pt !msorm;font-family:
+Arial !msorm;font-weight:bold !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:50">s</ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:47">. </ins></span></span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:49">The
+contexts enable the Axis to be </ins></span></span><span style='font-size:16.0pt !msorm;
+font-family:Arial !msorm;font-weight:bold !msorm'>built</span><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:49">
+on loosely coupled Components. </ins></span></span></p>
+
+<p class=MsoNormal style='margin-top:12.0pt !msorm;margin-right:0in !msorm;
+margin-bottom:3.0pt !msorm;margin-left:0in !msorm;text-align:justify !msorm;
+text-indent:0in !msorm;page-break-after:avoid !msorm;text-indent:0in'><span
+style='font-size:16.0pt !msorm;font-family:Arial !msorm;font-weight:bold !msorm'><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:45">&nbsp;</ins></span></span></p>
+
+<p class=MsoNormal style='text-align:justify !msorm'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:39"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:42">Most</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:39"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:40">components</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:39">
+of the </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:40">Axis2 are stateless across the two invocations of
+the </ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:41">component</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:40">. </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:41">(The
+Engine Registry is part of the Global Context.) . The developer should store
+all st</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:42">a</ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:41">tes in the </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:42">in
+one of the context and the All the context are </ins></span><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:43">accessible</ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:42"> </ins></span><span
+class=msoIns><ins cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:43">across
+the Message context which would be pass through the Handlers in the Execution
+Chain.</ins></span><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:44"> </ins></span><span class=msoDel><del
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:11">&lt;&lt;&lt; Srinath
+will complete &gt;&gt;&gt;</del></span></p>
+
+<p class=MsoNormal style='margin-top:12.0pt !msorm;margin-right:0in !msorm;
+margin-bottom:3.0pt !msorm;margin-left:0in !msorm;text-align:justify !msorm;
+text-indent:0in !msorm;page-break-after:avoid !msorm;text-indent:0in'><a
+name="_Toc95620163"><span style='font-family:Arial !msorm;font-weight:normal !msorm'><b><span
+style='font-size:14.0pt'><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:11">&nbsp;</ins></span></span></b></span></a></p>
+
+<h1 style='text-align:justify'><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>5.0 Deployment</span></h1>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='color:black'>There
+are two types of deployment in Axis2, namely; service deployment and module
+deployment. </span></p>
+
+<h2><a name="_Toc95620164"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.1 Module deployment:</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='color:black'>Axis
+2 provides a J2EE like deployment (An axis archive file has to be created and
+dropped into the correct directory) for both modules and services. A user can
+deploy a module or a service as an “.aar” file (module1.aar, service1.aar). Module
+hot deployment will not be supported in M1, but will be supported in later
+releases. When the axis engine is started all the .aar files in the
+WEB-INF/Repository/modules will get deployed. But if someone wants to add a new
+module or service, a restarting of the engine is required, after putting the new
+.aar file in the above mentioned folder.</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='font-size:
+9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
+
+<h2><a name="_Toc95620165"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.2 Service Deployment</span></a><span
+lang=EN style='font-size:12.0pt;font-family:"Times New Roman";font-style:normal'>
+</span></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='color:black'>One
+of the key improvements introduced with Axis 2 is the capability to “hot
+deploy” web services. And in this M1 release only a J2EE like deployment is
+supported. That is a user has to create an axis archive file that includes all
+the files that he/she wants and drop that archive file into the WEB-INF/Repository/services
+directory. The following three features are associated with service deployment;
+</span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:66.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='font-family:Symbol;color:black'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN style='color:black'>Hot Deployment </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:66.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='font-family:Symbol;color:black'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN style='color:black'>Hot un deployment</span><span
+lang=EN style='color:black'> </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:66.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='font-family:Symbol;color:black'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN style='color:black'>Hot update</span><span lang=EN
+style='color:black'> </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;text-align:justify'><span
+lang=EN style='color:black'>Hot Deployment is all about the ability to deploy a
+new web service while the axis engine is up and running.  </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;text-align:justify'><span
+lang=EN style='color:black'>Hot un-deployment is the ability to remove a web
+service (services) while the system is running.</span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;text-align:justify'><span
+lang=EN style='color:black'>Hot update is the ability to deploy a new version
+of an existing web service without restarting the server. It is handled as un -deployment
+followed by a hot deployment. </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;text-align:justify'><span
+lang=EN style='color:black'>The directory structure to which modules and
+services should deployed to be: </span></p>
+
+<ul type=disc>
+ <li class=MsoNormal style='color:black;margin-bottom:3.0pt;text-align:justify'><span
+     lang=EN>WEB-INF/<span class=msoIns><ins cite="mailto:Srinath%20Perera"
+     datetime="2005-02-15T10:52"> </ins></span><span class=msoDel><del
+     cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:52">Repository/</del></span>modules</span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:3.0pt;text-align:justify'><span
+     lang=EN style='color:windowtext'>WEB-INF/<span class=msoDel><del
+     cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:52">Repository/</del></span>services</span></li>
+</ul>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><b><i><span lang=EN>The required
+directory structure for a modules archive file is as follows;</span></i></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>m1.aar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+META-INF/module.xml</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+lib/</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+classes/</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='font-size:
+9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><b><i><span lang=EN
+style='color:black'>The required directory structure for a service archive file
+is as follows; </span></i></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>s1.aar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+META-INF/service.xml</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+lib/</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>   
+classes/</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><b><i><span lang=EN
+style='color:black'>The structure of module.xml file is  as follows; </span></i></b></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:0in'><b><i><span
+lang=EN style='color:black'>&nbsp;</span></i></b></p>
+
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span
+style='color:windowtext !msorm;font-weight:normal !msorm;font-style:normal !msorm'><b><i><span
+lang=EN style='color:black'><span class=msoIns><ins cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T10:58"><img width=680 height=195
+src="Axis2%20Archteture%20Guide_files/image002.gif"></ins></span></span></i></b></span><span
+lang=EN style='font-size:9.5pt;font-family:Verdana;color:black'><span
+class=msoDel><del cite="mailto:Srinath%20Perera" datetime="2005-02-15T10:58"><img
+width=510 height=106 src="Axis2%20Archteture%20Guide_files/image003.jpg"></del></span></span></p>
+
+<p style='margin-left:0in;text-align:justify;line-height:normal'><b><i><span
+lang=EN style='color:black'>The structure of service.xml file is as follows; </span></i></b></p>
+
+<p style='margin-left:0in;text-align:justify;text-indent:0in;line-height:normal'><span
+style='position:relative;z-index:6'><span style='left:0px;position:absolute;
+left:55px;top:-251px;width:438px;height:186px'>
+
+<table cellpadding=0 cellspacing=0>
+ <tr>
+  <td width=438 height=186 bgcolor=white style='border:.75pt solid white;
+  vertical-align:top;background:white'><span style='position:absolute;
+  left:0pt;z-index:6'>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td>
+    <div style='padding:4.35pt 7.95pt 4.35pt 7.95pt'>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;module
+    name=”xs:anyURI”&gt;</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>      &lt;parameter/&gt;*</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>      &lt;typeMapping/&gt;*</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>      &lt;inflow/&gt;?</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>      &lt;outflow/&gt;?</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>      &lt;faultflow/&gt;?</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;/module&gt;</span></p>
+    <p class=MsoNormal style='text-indent:0in'><span style='font-size:10.0pt;
+    font-family:"Courier New"'>&nbsp;</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>OR
+    module can be specified as </span></p>
+    <p class=MsoNormal style='text-indent:0in'><span style='font-size:10.0pt;
+    font-family:"Courier New"'>&nbsp;</span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;module
+    ref=”xs:anyURI”/&gt;</span></p>
+    <p class=MsoNormal style='text-indent:0in'><span style='font-size:10.0pt;
+    font-family:"Courier New"'> </span></p>
+    </div>
+    </td>
+   </tr>
+  </table>
+  </span>&nbsp;</td>
+ </tr>
 </table>
-<p>* - If "before" or "after" attribute of a handler is another handler, then the referenced handler must be belong to the same phase.  And if before or after attribute is a phase , in that case there can not have phase attribute of that handler. If one of before or after is a handler other can not be a phase.</p> 
 
-<p>** - valid phase is a phase that is listed in the server.xml, if the phase name is not there then the phase name is not a valid phase.</p>
+</span></span><b><i><span lang=EN style='color:black'><span class=msoIns><ins
+cite="mailto:Srinath%20Perera" datetime="2005-02-15T11:00"><img width=680
+height=195 src="Axis2%20Archteture%20Guide_files/image004.gif"></ins></span></span></i></b></p>
 
-<p>*** - if both PhaseFirst and PhaseLast attributes of some handler are true, in that case phase only has one handler.</p> 
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='color:black'><span class=msoDel><del cite="mailto:Srinath%20Perera"
+datetime="2005-02-15T11:05"><img width=655 height=153
+src="Axis2%20Archteture%20Guide_files/image005.jpg"></del></span></span></p>
 
-<p>N:B : if user going to use handles as before and attributes , then there is no need to use PahseFirst and PhaseLast  because , those are ignored by the rule engine.</p>
+<p style='margin-left:0in;text-align:justify;line-height:normal'><a
+name=head-54798dc9598f237260f809f79bb08abb199></a><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
 
-<p><h3>7.2 Handler chain</h3>
-Handler chain is collection of phases and handlers, the order of phases in the chain is described in server.xml, and for one service it can have three handler chains;
-<li>1.	Inflow</li>
-<li>2.	Outflow</li>
-<li>3.	Faultflow.</li>
-</p>
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
 
-For each and every handler chain, handlers can come in different ways as follows;
-<li>Corresponding flow of service.xml</li>
-<li>If there are any references to modules then the handlers from correspondence flow.</li>
-<li>Operation specific handlers corresponding flow</li>
-<h2>8.0 WSDL Architecture.</h2>	
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
 
-WSDL Module of Axis2 was architected with both WSDL version 1.1 and version 2.0 Component model in mind. The entire architecture of the aforesaid Module is built around an Object Model called  
-WSDL Object Model which will be refered to as WOM here fourth. 
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
 
-<br/>
-<br/>
-<h3> 8.1 Overview of the Axis2 WSDL Module </h3>
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
 
-WSDL Module can be mainly broken down into two major functionalities:
-<ul>
-<li> Service Description Functionality.
-<li>WSDL Processing functionality(e.g. WSDL2Java, WSDL24J, Java2WSDL)
+<p style='margin-left:0in;text-align:justify;line-height:normal'><b><i><span
+lang=EN style='color:black'>The architecture of hot deployment consists of the
+following components; </span></i></b></p>
+
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN
+style='font-size:9.5pt;font-family:Verdana;color:black'><img width=423
+height=304 src="Axis2%20Archteture%20Guide_files/image006.jpg"></span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>The Scheduler periodically invokes the Listener to
+check for updates</span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>If the Listener finds an update, it passes that
+information to the Repository </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>3.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>The Repository hands over the document to the Deployment
+Parser </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>4.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>Having parsed the document, the Deployment Parser
+returns the corresponding object</span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>5.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>The Repository updates the toDeploy and toUnDeploy
+list </span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>6.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>The Repository informs the Listener to update the system
+</span></p>
+
+<p class=MsoNormal style='margin-bottom:3.0pt;margin-left:48.0pt;text-align:
+justify;text-indent:-.25in'><span lang=EN style='color:black'>7.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+lang=EN style='color:black'>The Listener informs the Deployment Engine to do the
+update (both deploy and undeploy) </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<h2><a name="_Toc95620166"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.4 Scheduler</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>This component
+itself is a thread that performs a specific task forever in a given time
+interval. In this case it periodically asks the Listener to listen to the file
+system events. Here the file system is not the entire file system, it is only
+the sub directories of WEB_INF/Repository where the modules and services
+reside.</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<h2><a name="_Toc95620167"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.5 Listener</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><a
+name=head-37ea46b5942beaeb21bb4e06a14e4f7232d></a><span lang=EN>As mentioned
+above the Listener listens for file system events. In order to do this it
+checks both the modules and services directories. Then it lists all the archive
+files in those two directories and compares those against the repository to
+check if a new service(s) has been added or if any service(s) has been
+modified. Then it informs DeploymentEngine to execute the required methods. </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN style='font-size:
+9.5pt;font-family:Verdana;color:black'>&nbsp;</span></p>
+
+<h2><a name="_Toc95620168"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.6 Repository</span></a><span lang=EN
+style='font-weight:normal'> </span></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The Repository stores
+data about modules and services that have already been deployed. At the
+initialization process this loads data about all the modules and services into
+the module and service directories. It then deploys all those loaded modules
+and services. The repository stores the name of the archive file and its’ last
+modified date. It is possible to perform the following operations to the Repository;
+</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Add a new entry
+     to the Repository </span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Remove an entry
+     from the Repository </span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Modify an entry
+     in the Repository. </span></li>
 </ul>
-Service Description will provide an API to the Axis2 Engine that will expose the sufficient statistics about the web service that has been described in the WSDL file. WSDL Processing basically involves WSDL2Java, WSDL24J, and Java2WSDL.
-Following sections will give a further overview of each of the above functionalities.
-<br/>
-<br/>
 
-<!-- An image that shows all that the 
-	WSDL2Java
-	Java2WSDL
-	Service Description -->
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN>These
+operations correspond to Hot Deployment, Hot unDeployment and Hot Update. </span></p>
 
- 
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN>In
+the add operation it checks whether the entry which is going to be added
+already exists in the Repository. If so it ignores the operation else it will
+add the entry to the Repository and add an entry to a list maintained in the DeploymentEngine
+(toDeploy list). </span></p>
 
-<image src="images/Architecture.gif" align=”middle”>
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN>In
+the remove operation it directly removes the entry from the repository and adds
+an entry to a list maintained in the DeploymentEngine (toUnDeploy list) </span></p>
 
-<br/>
-<br/>
+<p style='margin-left:0in;text-align:justify;line-height:normal'><span lang=EN>In
+the modify operation it adds entries to both lists in the DeploymentEngine. </span></p>
 
-<h3>8.2 WOM</h3>
-WOM is engineered based on WSDL 2.0 component model, but it does not restrict its functionality to prior WSDL versions. Rather both WSDL 1.1 and WSDL 2.0 versions will be supported on top of the WOM. WOM consists of components such as Description, Interface, Service, etc, as shown in the following diagram. All those Components extend from one super interface called org.apache.wsdl.Component which will prove to be very useful in the implementation of the Service Desc.
-<br/>
-<br/>
+<h2><a name="_Toc95620169"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.7 DeploymentEngine</span></a><a
+name=head-c22edd7a305a0a97447ce349e4733cfa6d5></a></h2>
 
-<!—a class diagram of the WOM interfaces -->
-<image src=" images/wom.PNG" align=”middle”>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The DeploymentEngine
+is the main component of the deployment sub component. It interacts with the
+axis engine and the engine registry by updating the engine registry when a new
+service is added or an existing service is removed. The deployment procedure is
+as follows;</span></p>
 
-<br/>
-<br/>
-
-
-WOM is a runtime representation of the WSDL file and it will provide the web service description functionality. As the following diagram illustrate the WOM will be the common Object model that will be used in bothWSDL2Java and Java2WSDL functionality. This intermediary object model ease the discussion since the WSDL processing can be broken down into the following four sub modules.   
-<ul>
-<li>WOM Builder.
-<li> WSDL Emitter.
-<li> Code Generator.
-<li> Code Parser.
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Check the toUnDeploy
+     list. If it is not empty then remove the corresponding web service from
+     the engine registry.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Check the
+     toDeploy list. If it is not empty then add the corresponding web service
+     to the engine registry.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>For each and
+     every item in the list that is passed to the DeploymentParser, create a corresponding
+     axis service object and add it to the engine registry. </span></li>
 </ul>
 
-<h3> 8.3 Service Description</h3>
-<p>
-Service Description (also known as Service Desc) is an API by which the necessary statistics will be made available to the Axis2 Engine at the runtime. </p>
-<p>
-The functionality of the WOM is very much similar to the functionality expected from that of the Service Desc. Both behave as runtime description of the web service. Difference is that WOM is a clean component model that is not dependent on Axis2 or any other SOAP Engine and Service Desc is the Axis2 specific description of the web service. Thus it was necessary that the Axis Service Desc to extend the WOM to incorporate the additional Axis specific deployment information such as handlers, modules, providers, etc. The actual implementation of such extensions has been achieved using the extension capability provided by the WOM itself. 
-</p>
-<p>
-As mentioned above all the Components in the WOM extend from a super interface org.apache.wsdl.Component. Service Desc makes use of the functionality provided by org.apache.wsdl.Component to interface the WOM to behave as a Service Desc. org.apache.wsdl.Component has the following class diagram.
-</p>
-<br/>
-<br/>
-<image src=" images/Component.PNG" align=”middle”>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
 
-<br/>
-<br/>
-<p>
-As the diagram illustrate the Component class provides the functionality of storing properties. Since all the WSDL Components extend from this class directly or indirectly, this functionality get inherited to all the WSDL Components. The Service Desc makes use of this functionality to store Axis2 specific properties using the WOM. In that sense the Axis2 Service Desc is a wrapper to the WOM.
-</p>
-	
-Following is the Class diagram of the top level component of the description Component 
-<font face=”Courier”>org.apache.axis.description.impl.AxisService.</font>
-<br/>
-<br/>
+<h2><a name="_Toc95620170"><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman";font-style:normal'>5.8 DeploymentParser</span></a></h2>
 
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The following three
+types of xml document are parsed by the DeploymentParser<span class=msoIns><ins
+cite="mailto:%20" datetime="2005-02-11T12:04">.</ins></span> Its’ underlying
+parser is StAX.</span></p>
 
-<image src=" images/AxisService.JPG" align=”middle”>
-
-<br/>
-<br/>
-
-org.apache.axis.description.impl.AxisService extends from the org.apache.wsdl.WSDLService and thus inherits the functionality of the org.apache.wsdl.WSDLService. The Axis2 specific properties like provider, ServiceClass are stored using the org.apache.wsdl.Component class which org.apache.wsdl.WSDLService extends from.
-
-The deployment Module will pick up the deployed service and it will build the Service Desc and deploy in the Engine Registry. There will be an underlying WOM for each Service Desc deployed in the Engine Registry.
-<br/>
-<br/>
-
-
-<image src=" images/ServiceDesc.gif" align=”middle”>
-
-<br/>
-<br/>
-
-
-<h3>8.4 WSDL Processing</h3><p>
-WSDL Processing can be identified as of operations performed on or performed using the WOM. Such definition is made possible because of the intermediary object model i.e. WOM always acts as an intermediary state. For example if WSDL2Java is considered: </p>
-WSDL2Java = WSDL-->WOM (WSDL2WOMBuilder), WOM-->Java (Code Generation Module).
-<p>
-The point to note is that the above allows the WSDL-->WOM (WSDL2WOMBuilder) to be identified as an independent module, not tied to the WSDL2Java operation. There are four such modules identified in the WSDL Processing Module of Axis2.
-</p>
-<ul>
-<li>WOM Builder.
-<li> WSDL Emitter.
-<li> Code Generator.
-<li> Code Parser.
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>server.xml </span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>service.xml </span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>module.xml </span></li>
 </ul>
 
-<h4>8.5 WOM Builder Module</h4>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
 
-WOM has an external building mechanism and it gets built by an external builder. Since WOM is both WSDL 1.1 and WSDL 2.0 compliant it can get built from an either of the WSDL versions. Currently WSDL1ToWOMBuilder uses the WSDL4J for the WSDL Parsing. In that implementation the WOM gets populated from a WSDL4J object structure. Following is the class diagram of the WOM build mechanism.
+<p class=MsoNormal style='text-align:justify'><span lang=EN>Parsing of server.xml
+is done as follows;</span></p>
 
-<!—The Figure of WOM Builder-->	
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The DeploymentEngine
+will create an AxisGlobal object and pass that to the DeploymentParser. Then the
+DeploymentParser will modify the object according to server.xml.</span></p>
 
-<br/>
-<br/>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
 
+<p class=MsoNormal style='text-align:justify'><span lang=EN>Parsing of service.xml
+is done as follows;</span></p>
 
-<image src=" images/WomBuilder.PNG" align=”middle”>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The DeploymentEngine
+will create an AxisService object and pass that to the DeploymentParser. Then
+it will be updated according to service.xml.</span></p>
 
-<br/>
-<br/>
- 
-The WSDL2ToWOMBuilder is to be implemented and the WSDL24J is going to be part of this implementation.
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
 
-<h2>9.0 Client API.</h2>
-Types of Client programming model that Axis 2 support. 
-<li>1.	Synchronous Invocation</li>
-<li>2.	Asynchronous invocation using callback , with two way transport</li>
-<li>3.	Asynchronous invocation using callbacks, transport is also one way (Addressing information is required.)</li>  
-<br>
-The following diagram described all the invocations between subcomponents in the client side.
-<img alt="clientAPi (7K)" src="images/clientAPi.png" height="330" width="602" />
-<br>
-<p><i>Call Class consist of following methods (Call API)</i><br>
-<img alt="call (6K)" src="images/call.PNG" height="200" width="582" /></p>
-<p><i>Callback Interface</i><br>
-<img alt="callback (1K)" src="images/callback.PNG" height="59" width="499" /></p>
-<p><i>AyncResult </i><br>
-<img alt="ayncresult (1K)" src="images/ayncresult.PNG" height="59" width="499" /></p>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>Parsing module.xml
+is the same as above except for it been passed an AxisModule object instead of
+an AxisService object. </span></p>
 
-<p><i>Correlator</i><br>
-<img alt="correlator (2K)" src="images/correlator.PNG" height="73" width="539" /></p>
+<p class=MsoNormal style='text-align:justify'><a name="_Toc95620171"><span
+lang=EN>5.8 Deployment Engine initialization</span></a></p>
 
-<p><h3>9.1 sendAsync Invocation</h3> 
-This invocation is similar to fire and forget, just send the request and dose not accept at least acknowledgment. And invocation will consist of following steps;   
-<br>
-a -> call.sendAsync(SOAPEnvelope)
-<br>
-b -> engine.send( ..)
-<br>
-c -> Send the SOAP message
-<br>
-<br>
-<i>Code Snippet: 
-</i>
-<br>
-<ul>
-call.setTargetURL(URL)<br>
-call.setAction(String)<br>
-call.sendAsync(SOAPEnvelope)<br>
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The Initialization
+process of the DeploymentEngine consists of the following steps:</span></p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Checks whether
+     server.xml is located in the repository directory. If it exists, then it is
+     loaded and parsed. If not then a default server.xml is created and placed
+     in the repository.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Checks whether
+     modules and services directories are available under the repository. If
+     not they will be created.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>After server.xml is
+     parsed, an AxisGlobal object is created.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>Load all the axis
+     archive files to both the modules and services directories, parse them and
+     create AxisService and AxisModule objects.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>If server.xml has
+     references to modules, then it checks whether those modules are valid, (it
+     is valid if it is in the modules directory), If it is not valid an
+     exception is thrown.</span></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='text-align:justify'><span lang=EN>If those modules
+      are valid, the GlobalChains are built by the PhaseResolver (GlobalInChain
+      , GlobalOutChain , and GlobalFaultChain) using phase rules.</span></li>
+ </ul>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>All the available
+     services and modules will be added to the engineRegistry.</span></li>
+ <li class=MsoNormal style='text-align:justify'><span lang=EN>The
+     engineRegistry is returned.</span></li>
 </ul>
-<br>
-<i>Sequence diagram</i><br>
-<img alt="sendAsync (3K)" src="images/sendAsync.png" height="159" width="465" />
-</p>
-<p><h3>9.2 send Invocation</h3>
-The service invocation is a void invocation. No return value, but wait for acknowledgment or SOAP Fault and it is consisting of the following steps. 
-<br>
-a -> call.send(SOAPEnvelope)<br>
-b -> engine.send( ..)<br>
-c -> Send the SOAP message<br>
 
-<br>
-<br>
-<i>Code Snippet:</i>
-<br> 
-call.setTargetURL(URL)<br>
-call.setAction(String)<br>
-call.send(SOAPEnvelope)<br>
-<br>
-Sequence diagram
-<br>
-<img alt="send (2K)" src="images/send.png" height="175" width="436" />
-</p>
-<p>
-<h3>9.3 sendReceive Invocation</h3>
-The service method has a response and the communication happens synchronously using a bi-directional protocol. Client hangs until the response (or fault) is returned. 
-<br>
-a -> call.sendReceive(SOAPEnvelope)<br>
-b- > engine.send (..)<br>
-c -> Send the SOAP message<br>
-d -> Receive the response over the synchronous transport<br>
-w -> ProviderX will be called as the last step in engine.receive(..) <br>
-e -> provider returns       <br>
-f -> Call hand over the response to the client <br>
-<br>
-<i>Code Snippet: </i><br>
-call.setTargetURL(URL)<br>
-call.setAction(String)<br>
-SOAPEnvelope env=call.sendReceive(SOAPEnvelope)<br>
-<br>
-<i>Sequence diagram</i>
-<br>
-<img alt="sendRecievce (5K)" src="images/sendRecievce.png" height="218" width="455" />
-</p>
-<p>
-<h3>9.4 sendReceiveAsync Invocation</h3>
-The service method has a response and the communication happens synchronously using a bi-directional protocol. Client DOES NOT hangs until the response (or fault) is returned. Client uses callback mechanism to retrieve the response. Call API uses threads from a thread pool for each invocation. 
-<br>
-a -> call.sendReceiveAsync (SOAPEnvelope, callbackObj)<br>
-p -> correlator.addCorrelationInfor(msgID,allbackObjRef)<br>
-b- > engine.send (..)<br>
-c -> Send the SOAP message<br>
-d -> Receive the response over the synchronous transport<br>
-w -> ProviderX will be called as the last step in engine.receive(..)<br> 
-q -> correlator.getCorrelationInfo(msgID)<br>
-g -> callbackObj.onComplet()<br><br>
-<i>Code Snippet:</i> <br>
-call.setTargetURL(URL)<br>
-call.setAction(String)<br>
-call.setListenerTransport("http", true)		<br>			
-call.sendReceiveAsync (SOAPEnvelope, Callback)<br>
-<br>
-<br>
-<i>Sequence diagram</i>  
-<br>
-<img alt="sendRecieveAsync (10K)" src="images/sendRecieveAsync.png" height="270" width="726" />
-</p>
-<p>
-<h3>9.5 sendReceiveAsync Invocation with One way transport</h3>
-The service method has a response and the communication happens asynchronously using a uni-directional protocol. Client DOES NOT hangs until the response (or fault) is returned. Client uses callback mechanism to retrieve the response. Call API uses threads from a thread pool for each invocation. 
-<br>
-a -> call.sendReceiveAsync (SOAPEnvelope, callbackObj)<br>
-p -> correlator.addCorrelationInfor(msgID,allbackObjRef)<br>
-b- > engine.send (..)<br>
-c -> Send the SOAP message<br>
-r -> Receive the response by the listener<br>
-s -> engine.receive(..)<br>
-w -> ProviderX will be called as the last step in engine.receive(..) <br>
-q -> correlator.getCorrelationInfo(msgID)<br>
-g -> callbackObj.onComplet()<br><br>
-<i>Code Snippet: </i><br>
-call.setTargetURL(URL)<br>
-call.setAction(String)<br>
-call.setListenerTransport("http", false)<br>
-call.sendReceiveAsync(SOAPEnvelope, Callback)<br>
-<br>
-<i>Sequence diagram </i><br>
-<img alt="sendRecieveWithListnere (12K)" src="images/sendRecieveWithListnere.png" height="310" width="809" />
+<h2><span lang=EN style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'> <a name="_Toc95620172">5.9 Adding a new web service</a></span></h2>
 
+<p class=MsoNormal style='text-align:justify;text-indent:21.0pt'><span lang=EN>Adding
+a new web service consists of the following steps;</span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>Unzip the aar file and take its’ service.xml and
+parse it using the DeploymentParser. </span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>While processing the service.xml an AxisService object
+gets created and that object will be updated.</span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>The created object is deployed to the DeploymentEngine.</span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>Using the DeploymentEngine the service classLoader
+and the provider class will be added to the AxisService object.</span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>The Handler chain will be built by resolving the phase
+rules.<br>
+(It should be noted here that the Handler Chain consists of the HandlerMetadata
+which has  all the phase rules data  and the actual executable handler )</span></p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-align:justify;text-indent:
+-.25in'><span lang=EN>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN>The created object will be added to the EngineRegistry.
+</span></p>
+
+<h1 style='text-align:justify'><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>&nbsp;</span></h1>
+
+<h1 style='text-align:justify'><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>&nbsp;</span></h1>
+
+<h1 style='text-align:justify'><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>&nbsp;</span></h1>
+
+<h1 style='text-align:justify'><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'>&nbsp;</span></h1>
+
+<span style='font-size:14.0pt;font-family:"Times New Roman"'><br clear=all
+style='page-break-before:always'>
+</span>
+
+<h1 style='text-align:justify'><a name="_Toc95620173"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>6.0 AXIOM – AXIs Object
+Model</span></a></h1>
+
+<h2><a name="_Toc95620174"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>6.1 Introduction</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'>AXIOM (also know as OM –<b>O</b>bject <b>M</b>odel) is used to refer to the new and efficient XML info set model
+that has been developed for Axis 2. Most of the XML object models used today
+are based on two major methods, namely;</p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='text-align:justify'>DOM based – where the whole
+     document is parsed and held in the memory</li>
+ <li class=MsoNormal style='text-align:justify'>Event based (SAX like) – where
+     the whole document is parsed at once, but no model is created in the
+     memory and where the user has to catch the relevant events, which can not
+     be stopped or reversed.</li>
+</ol>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>AXIOM gets the best from both these
+options and builds a better object model on top of a pull parsing methodology.
+It controls the phase of the parsing and builds a memory model if required from
+the information that’s being parsed so far. That means at a given instance,
+AXIOM does not have a fully built object model with the rest of the information
+still in the stream.</p>
+
+<p class=MsoNormal style='text-align:justify'>The most important feature of
+this OM is that it is lightweight and is differed built based on <a
+href="http://www.jcp.org/en/jsr/detail?id=173">StAX (JSR 173)</a>, the
+streaming pull parser. </p>
+
+<p class=MsoNormal style='text-align:justify'>The object model can be
+manipulated like any other object model (Such as jdom), but underneath the
+objects will be created only when they are absolutely required. Hence this
+model is much more efficient.</p>
+
+<p class=MsoNormal style='text-align:justify'>AXIOM interacts with the outside
+world using the StAX API, that means it serializes and de-serializes using the
+StAX writer and StAX reader interfaces.</p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt'><img
+border=0 width=552 height=217
+src="Axis2%20Archteture%20Guide_files/image007.jpg"></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'>Since most of the data binding
+tools support <span class=msoIns><ins cite="mailto:%20"
+datetime="2005-02-11T14:19"> </ins></span>SAX based interfaces, AXIOM comes
+with an adapter to be used between StAX and SAX.</p>
+
+<h2><a name="_Toc95620175"></a><a name="_Toc94950521"><span style='font-size:
+12.0pt;font-family:"Times New Roman";font-style:normal'>6.2 High Level
+Architecture</span></a></h2>
+
+<p class=MsoNormal align=center style='text-align:center'>
+
+<table cellpadding=0 cellspacing=0 align=left>
+ <tr>
+  <td width=64 height=0></td>
+ </tr>
+ <tr>
+  <td></td>
+  <td><img width=490 height=282
+  src="Axis2%20Archteture%20Guide_files/image008.jpg"></td>
+ </tr>
+</table>
+
+<br clear=ALL>
 </p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'>AXIOM “sees” the XML input stream
+through the StAX stream reader, which is being wrapped by a builder interface
+provided. Current implementation has two builders, namely; </p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify'>OM Builder – This will build a full
+     XML info-set supported general XML model. But the current implementation
+     lacks the support for Processing Instructions and DTD’s.</li>
+ <li class=MsoNormal style='text-align:justify'>SOAP Builder – This will build a
+     SOAP XML specific object model. The Object model will contain
+     SOAP-Specific objects like the SOAPEnvelope, SOAPHeader etc. </li>
+</ul>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>Each of these builders has the
+support for differed building and caching. User has the option of building the
+memory model or not. He can control this via setting the cache on or off. </p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>( Since the object model is pull
+based, the StAX API is tightly bound to OM. To work with OM a StAX compliant
+parser and the API <b><i>must</i></b> be present in the classpath. )</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal>The OM API works on top of the builder interface and
+provides for users, be they an engine developer, handler developer or anyone
+else. This will provide the highest flexibility as one can change builders and
+object model implementations completely independent to one another.</p>
+
+<p class=MsoNormal style='text-align:justify'>The OM has a defined set of APIs
+and one can implement his/her own memory model based on that. The current AXIS
+2, comes with a linked list based implementation of those set of APIs. (There
+was an effort to build another OM on a table based model. It’s now on hold.) </p>
+
+<p class=MsoNormal style='text-align:justify'>
+
+<table cellpadding=0 cellspacing=0>
+ <tr>
+  <td width=72 height=0></td>
+ </tr>
+ <tr>
+  <td></td>
+  <td><img width=420 height=246
+  src="Axis2%20Archteture%20Guide_files/image009.jpg"></td>
+ </tr>
+</table>
+
+<br clear=ALL>
+Therefore one can find a factory to create OM objects, which will help to
+switch between different implementations of the object model.</p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt;
+font-family:Tahoma'>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt;
+font-family:Tahoma'>&nbsp;</span></p>
+
+<p class=MsoNormal> </p>
+
+<h1 style='text-align:justify'><a name="_Toc95620176"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>7.0 Handler Frame work
+and Phase Rules</span></a><span style='font-size:14.0pt;font-family:"Times New Roman";
+font-weight:normal'> </span></h1>
+
+<h2><a name="_Toc95620177"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>7.1 Phase</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'>Phase is a logically ordered
+collection of handlers. The handler inside a phase is ordered by phase rules.
+By using phase rules a user can specify where the handler should be logically
+placed. Some of the valid attributes associated with phase rules are listed in
+the following table;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<div align=center>
+
+<table class=MsoTableProfessional border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none'>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  background:black;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><b>Attribute Name</b></p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border:solid black 1.0pt;
+  border-left:none;background:black;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><b>Value</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Before</p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Can be either a handler or a
+  phase *</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>After</p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Can be either a handler or a
+  phase  *</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Phase </p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Valid phase name **</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>PhaseFirst </p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Boolean ***</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=139 valign=top style='width:1.45in;border:solid black 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>PhaseLast</p>
+  </td>
+  <td width=348 valign=top style='width:261.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'>Boolean ***</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>* - If the “before” or “after”
+attribute of a handler is another handler, then the referenced handler must
+belong to the same phase.  If the before or after attribute is a phase, there
+cannot be a phase attribute of that handler. If one of before or after is a
+handler other can not be a phase. </p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>** - valid phase is a phase that
+is listed in the server.xml. If the phase name is not there then the phase name
+is not a valid phase.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>*** - If both the PhaseFirst and
+PhaseLast attributes of some handler are true, then the case phase only has one
+handler. </p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>N:B : If the user going to use
+handles and attributes as before , then there is no need to use PhaseFirst and
+PhaseLast  because those are ignored by the rule engine.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<h2><a name="_Toc95620178"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>7.2 Handler chain</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'>The Handler chain is a collection
+of phases and handlers. The order of phases in the chain is described in
+server.xml. One service can have three handler chains;</p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='text-align:justify'>Inflow</li>
+ <li class=MsoNormal style='text-align:justify'>Outflow</li>
+ <li class=MsoNormal style='text-align:justify'>Faultflow.</li>
+</ol>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>For each and every handler chain,
+handlers can come in different ways as follows<span class=msoIns><ins
+cite="mailto:%20" datetime="2005-02-11T16:07">:</ins></span></p>
+
+<ol style='margin-top:0in' start=3 type=1>
+ <ul style='margin-top:0in' type=disc>
+  <li class=MsoNormal style='text-align:justify'>Corresponding flow of
+      service.xml</li>
+  <li class=MsoNormal style='text-align:justify'>If there are any references to
+      modules then the handlers from correspondence flow.</li>
+  <li class=MsoNormal style='text-align:justify'>Operation specific handlers
+      corresponding flow</li>
+ </ul>
+</ol>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>   </p>
+
+<h1 style='text-align:justify'><a name="_Toc95620179"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>8.0 WSDL Object model.</span></a></h1>
+
+<p class=MsoNormal style='text-align:justify'>&lt;&lt;&lt; Chathura will be
+completed &gt;&gt;&gt;</p>
+
+<h1 style='text-align:justify'><a name="_Toc95620180"><span style='font-size:
+14.0pt;font-family:"Times New Roman";font-weight:normal'>9.0 Client API.</span></a></h1>
+
+<p class=MsoNormal style='text-align:justify'>Types of Client programming models
+that Axis 2 support<span class=msoIns><ins cite="mailto:%20"
+datetime="2005-02-11T16:16">:</ins></span> </p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='text-align:justify'>Synchronous Invocation</li>
+ <li class=MsoNormal style='text-align:justify'>Asynchronous invocation using
+     callback , with two way transport</li>
+ <li class=MsoNormal style='text-align:justify'>Asynchronous invocation using
+     callbacks, transport is also one way (Addressing information is
+     required.)  </li>
+</ol>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>The following diagram described
+all the invocations between subcomponents in the client side.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=576
+height=315 src="Axis2%20Archteture%20Guide_files/image010.jpg">  </p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'><b><i>Call Class consist of
+following methods (Call API)</i></b></p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=582
+height=200 src="Axis2%20Archteture%20Guide_files/image011.jpg"></p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<pre style='text-align:justify'><b><i><span lang=EN>Callback Interface</span></i></b></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><span lang=EN><img border=0 width=499 height=56
+src="Axis2%20Archteture%20Guide_files/image012.jpg"></span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><b><i><span lang=EN style='font-size:12.0pt;
+font-family:"Times New Roman"'>AyncResult </span></i></b></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><span lang=EN><img border=0 width=430 height=48
+src="Axis2%20Archteture%20Guide_files/image013.jpg"></span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><b><i><span lang=EN>Correlator</span></i></b></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=539
+height=73 src="Axis2%20Archteture%20Guide_files/image014.jpg"></p>
+
+<h2><a name="_Toc95620181"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>9.1 sendAsync Invocation</span></a><span style='font-size:
+12.0pt;font-family:"Times New Roman";font-style:normal'> </span></h2>
+
+<p class=MsoNormal style='text-align:justify'>This invocation is similar to
+fire and forget where a request is sent and an acknowledgement is not expected..
+An invocation will consist of the following steps;   </p>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=318
+height=53 src="Axis2%20Archteture%20Guide_files/image015.jpg"></p>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Code Snippet: </span></i></p>
+
+<pre style='text-align:justify'><span lang=EN><img border=0 width=318
+height=59 src="Axis2%20Archteture%20Guide_files/image016.jpg"></span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><i><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman"'>Sequence diagram</span></i></pre><pre style='text-align:
+justify'><span lang=EN>&nbsp;</span></pre><pre style='text-align:justify'><span
+lang=EN><img border=0 width=434 height=147
+src="Axis2%20Archteture%20Guide_files/image017.jpg"></span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre>
+
+<h2><a name="_Toc95620182"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>9.2 send Invocation</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The service
+invocation is a void invocation. There is no return value, but there is a wait
+for an acknowledgment or a SOAP Fault, It consists of the following steps. </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<pre style='text-align:justify'><span lang=EN>a -&gt; call.send(SOAPEnvelope)</span></pre><pre
+style='text-align:justify'><span lang=EN>b -&gt; engine.send( ..)</span></pre><pre
+style='text-align:justify'><span lang=EN>c -&gt; Send the SOAP message</span></pre>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Code Snippet: </span></i></p>
+
+<pre style='text-align:justify'><span lang=EN>call.setTargetURL(URL)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setAction(String)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.send(SOAPEnvelope)</span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Sequence diagram</span></i></p>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=416
+height=149 src="Axis2%20Archteture%20Guide_files/image018.jpg"></p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<h2><a name="_Toc95620183"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>9.3 sendReceive Invocation</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The service method
+has a response and the communication happens synchronously using a
+bi-directional protocol. The Client hangs until the response (or fault) is
+returned. </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<pre style='text-align:justify'><span lang=EN>a -&gt; call.sendReceive(SOAPEnvelope)</span></pre><pre
+style='text-align:justify'><span lang=EN>b- &gt; engine.send (..)</span></pre><pre
+style='text-align:justify'><span lang=EN>c -&gt; Send the SOAP message</span></pre><pre
+style='text-align:justify'><span lang=EN>d -&gt; Receive the response over the synchronous transport</span></pre><pre
+style='text-align:justify'><span lang=EN>w -&gt; ProviderX will be called as the last step in engine.receive(..) </span></pre><pre
+style='text-align:justify'><span lang=EN>e -&gt; provider returns       </span></pre><pre
+style='text-align:justify'><span lang=EN>f -&gt; Call hand over the response to the client</span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre>
+
+<p class=MsoNormal style='text-align:justify'><i><span lang=EN>Code Snippet: </span></i></p>
+
+<pre style='text-align:justify'><span lang=EN>call.setTargetURL(URL)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setAction(String)</span></pre><pre
+style='text-align:justify'><span lang=EN>SOAPEnvelope env=call.sendReceive(SOAPEnvelope)</span></pre>
+
+<p class=MsoNormal><a name=head-78ed36ab5d1e55c1107e22dbdd97f57656a></a><i><span
+lang=EN>&nbsp;</span></i></p>
+
+<p class=MsoNormal><i><span lang=EN>Sequence diagram</span></i></p>
+
+<p class=MsoNormal><span lang=EN><img border=0 width=439 height=199
+src="Axis2%20Archteture%20Guide_files/image019.jpg"></span></p>
+
+<h2><a name="_Toc95620184"><span style='font-size:12.0pt;font-family:"Times New Roman";
+font-style:normal'>9.4 sendReceiveAsync Invocation</span></a></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The service method
+has a response and the communication happens synchronously using a
+bi-directional protocol. Client DOES NOT hangs until the response (or fault) is
+returned. The Client uses a callback mechanism to retrieve the response. The Call
+API uses threads from a thread pool for each invocation. </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<pre style='text-align:justify'><span lang=EN>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</span></pre><pre
+style='text-align:justify'><span lang=EN>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</span></pre><pre
+style='text-align:justify'><span lang=EN>b- &gt; engine.send (..)</span></pre><pre
+style='text-align:justify'><span lang=EN>c -&gt; Send the SOAP message</span></pre><pre
+style='text-align:justify'><span lang=EN>d -&gt; Receive the response over the synchronous transport</span></pre><pre
+style='text-align:justify'><span lang=EN>w -&gt; ProviderX will be called as the last step in engine.receive(..) </span></pre><pre
+style='text-align:justify'><span lang=EN>q -&gt; correlator.getCorrelationInfo(msgID)</span></pre><pre
+style='text-align:justify'><span lang=EN>g -&gt; callbackObj.onComplete()</span></pre>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Code Snippet: </span></i></p>
+
+<pre style='text-align:justify'><span lang=EN>call.setTargetURL(URL)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setAction(String)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setListenerTransport(“http”, true)                           </span></pre><pre
+style='text-align:justify'><span lang=EN>call.sendReceiveAsync (SOAPEnvelope, Callback)</span></pre><pre
+style='text-align:justify'><span lang=EN>&nbsp;</span></pre><pre
+style='text-align:justify'><i><span lang=EN style='font-size:12.0pt;font-family:
+"Times New Roman"'>Sequence diagram  </span></i></pre><pre style='text-align:
+justify'><span lang=EN>&nbsp;</span></pre><pre style='text-align:justify'><span
+lang=EN><img border=0 width=648 height=225
+src="Axis2%20Archteture%20Guide_files/image020.jpg"></span></pre>
+
+<h2><a name="_Toc95620185"></a><a
+name=head-6b6f0ac54f2e98ce920bf68485a695e1d2b></a><span style='font-size:12.0pt;
+font-family:"Times New Roman";font-style:normal'>9.5 sendReceiveAsync
+Invocation with One way transport</span></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>The service method
+has a response and the communication happens asynchronously using a
+uni-directional protocol. The Client DOES NOT hang until the response (or
+fault) is returned. The Client uses a callback mechanism to retrieve the
+response. The Call API uses threads from a thread pool for each invocation. </span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN>&nbsp;</span></p>
+
+<pre style='text-align:justify'><span lang=EN>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</span></pre><pre
+style='text-align:justify'><span lang=EN>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</span></pre><pre
+style='text-align:justify'><span lang=EN>b- &gt; engine.send (..)</span></pre><pre
+style='text-align:justify'><span lang=EN>c -&gt; Send the SOAP message</span></pre><pre
+style='text-align:justify'><span lang=EN>r -&gt; Receive the response by the listener</span></pre><pre
+style='text-align:justify'><span lang=EN>s -&gt; engine.receive(..)</span></pre><pre
+style='text-align:justify'><span lang=EN>w -&gt; ProviderX will be called as the last step in engine.receive(..) </span></pre><pre
+style='text-align:justify'><span lang=EN>q -&gt; correlator.getCorrelationInfo(msgID)</span></pre><pre
+style='text-align:justify'><span lang=EN>g -&gt; callbackObj.onComplete()</span></pre>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Code Snippet: </span></i></p>
+
+<pre style='text-align:justify'><span lang=EN>call.setTargetURL(URL)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setAction(String)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.setListenerTransport(“http”, false)</span></pre><pre
+style='text-align:justify'><span lang=EN>call.sendReceiveAsync(SOAPEnvelope, Callback)</span></pre>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p style='margin-left:0in;text-align:justify'><i><span lang=EN>Sequence diagram
+</span></i></p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'><img border=0 width=648
+height=234 src="Axis2%20Archteture%20Guide_files/image021.jpg"></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
 </body>
+
 </html>
