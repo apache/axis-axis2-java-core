@@ -33,31 +33,16 @@
         </dependency>
         <dependency>
             <groupId>axis</groupId>
-            <artifactId>axis2-om</artifactId>
+            <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis2-http</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis2-deployment</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis2-mail</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -100,8 +85,8 @@
     <!-- build information for the project -->
   <build>
     <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-    <sourceDirectory>src/java</sourceDirectory>
-    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <sourceDirectory>src</sourceDirectory>
+    <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
     <unitTest>
 

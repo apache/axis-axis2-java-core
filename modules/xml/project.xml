@@ -20,8 +20,8 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-om</id>
-    <name>om</name>
+    <id>axis2-xml</id>
+    <name>xml</name>
     <description>AXIOM, The Object Model of Axis 2.0. This helps Axis 2.0 to have a light weight, efficient object model on StAX</description>
 
 

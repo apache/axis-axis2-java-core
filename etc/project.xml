@@ -152,8 +152,8 @@
   <!-- build information for the project -->
   <build>
     <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-    <sourceDirectory>src/java</sourceDirectory>
-    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <sourceDirectory>src</sourceDirectory>
+    <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
     <unitTest>
     
