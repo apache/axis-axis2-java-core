@@ -11,7 +11,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.wrapper.OMStAXWrapper;
+import org.apache.axis.impl.llom.OMStAXWrapper;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
@@ -36,7 +36,6 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
     private SimpleOMSerializer serilizer;
-    private OMXMLParserWrapper builder;
     private File tempFile;
     private XMLStreamReader parser;
 
@@ -47,13 +46,12 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), xmlStreamReader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), xmlStreamReader);
 
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         serilizer = new SimpleOMSerializer();
         tempFile = File.createTempFile("temp", "xml");
 
-        parser = new OMStAXWrapper(builder, envelope);
     }
 
 
@@ -61,7 +59,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         assertNotNull(envelope);
         //this serializing will cause the OM to fully build!
         serilizer.serialize(envelope, new FileOutputStream(tempFile));
-
+        parser = envelope.getPullParser(false);
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
@@ -71,7 +69,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     public void testWrapperHalfOM() throws Exception {
         assertNotNull(envelope);
-
+        parser = envelope.getPullParser(false);
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
@@ -80,9 +78,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     public void testWrapperHalfOMWithCacheOff() throws Exception {
         assertNotNull(envelope);
-
-        parser = new OMStAXWrapper(builder, envelope, true);
-
+        parser = envelope.getPullParser(true);
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
@@ -91,7 +87,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     public void testWrapperElementEventGenerationWithHalfOMWithCacheOff() throws XMLStreamException {
         assertNotNull(envelope);
-        parser = new OMStAXWrapper(builder, envelope, true);
+        parser = envelope.getPullParser(true);
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
@@ -107,7 +103,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     public void testWrapperElementEventGenerationWithHalfOM() throws Exception {
         assertNotNull(envelope);
-
+        parser = envelope.getPullParser(false);
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);

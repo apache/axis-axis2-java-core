@@ -2,9 +2,11 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.impl.llom.OMStAXWrapper;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -319,5 +321,12 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      */
     public short getType() throws OMException {
         return OMNode.ELEMENT_NODE;
+    }
+
+    /**
+     *
+     */
+    public XMLStreamReader getPullParser(boolean cacheOff) {
+       return new OMStAXWrapper(builder,this,cacheOff);
     }
 }

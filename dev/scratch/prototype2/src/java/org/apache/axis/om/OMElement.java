@@ -4,6 +4,7 @@ package org.apache.axis.om;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -137,4 +138,13 @@ public interface OMElement extends OMNamedNode {
      * @return
      */
     public OMNode getFirstChild();
+
+    /**
+     * Returns the pull parser that will generate the pull
+     * events relevant to THIS element
+     * @param cacheOff
+     * @return
+     */
+
+    public XMLStreamReader getPullParser(boolean cacheOff);
 }

@@ -1,4 +1,4 @@
-package org.apache.axis.impl.llom.wrapper;
+package org.apache.axis.impl.llom;
 
 import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.exception.OMStreamingException;
@@ -88,11 +88,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * the end of the given element. hence care should be taken to pass the
      * root element if the entire document is needed
      */
-    public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode) {
+   OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode) {
         this(builder,startNode,false);
     }
 
-    public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,boolean cacheOff) {
+   OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,boolean cacheOff) {
         //create a navigator
         this.navigator = new OMNavigator(startNode);
         this.builder = builder;
