@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLDescription {
+public interface WSDLDescription extends Component{
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding. 
@@ -171,4 +171,72 @@ public interface WSDLDescription {
      * @param wsdlInclude
      */
     public void addInclude(WSDLInclude wsdlInclude);
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLDescription</code>
+     */
+    public WSDLDescription createDescription();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLService</code>
+     */
+    public WSDLService createService();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLInterface</code>
+     */
+    public WSDLInterface createInterface();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLTypes</code>
+     */
+    public WSDLTypes createTypes();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLBinding</code>
+     */
+    public WSDLBinding createBinding();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLOperation</code>
+     */
+    public WSDLOperation createOperation();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLEndpoint</code>
+     */
+    public WSDLEndpoint createEndpoint();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLFault</code>
+     */
+    public WSDLFault createFault();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLFeature</code>
+     */
+    public WSDLFeature createFeature();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLImport</code>
+     */
+    public WSDLImport createImport();
+
+    /**
+     * 
+     * @return A new instance of type <code>WSDLInclude</code>
+     */
+    public WSDLInclude createInclude();
+
+    public WSDLProperty createProperty();
 }
