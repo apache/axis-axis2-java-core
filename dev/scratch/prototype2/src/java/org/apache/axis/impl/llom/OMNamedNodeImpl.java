@@ -29,8 +29,8 @@ import java.io.PrintStream;
  */
 public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
-    private OMNamespace ns;
-    String localName;
+    protected OMNamespace ns;
+    protected String localName;
 
 
     public OMNamedNodeImpl(String localName, OMNamespace ns, OMElement parent) {
@@ -52,6 +52,8 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
     }
 
     public OMNamespace getNamespace() throws OMException {
+        if (ns==null)
+            throw new OMException("all elements in a soap message must be namespace qualified");
         return ns;
     }
 

@@ -74,5 +74,9 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
             nextSibling.setPreviousSibling(previousSibling);
     }
 
+    //overidden to force even null namepaces
+    public OMNamespace getNamespace() throws OMException {
+        return ns;
+    }
 
 }

@@ -116,23 +116,14 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
 
     public void endDocument() throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.endDocument");
         lastNode.setComplete(true);
-//        ((Printable)startElement).print(System.out);
-
     }
 
     public void startDocument() throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.startDocument");
         lastNode = this.startElement;
     }
 
     public void characters(char ch[], int start, int length) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.characters");
-
         OMText text = omFactory.createText(null, (new StringBuffer().append(ch, start, length).toString()));
         addNewNode(text, lastNode);
         text.setComplete(true);
@@ -140,49 +131,29 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.ignorableWhitespace");
-//        buffer.append(ch, start, length);
     }
 
     public void endPrefixMapping(String prefix) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.endPrefixMapping");
-//        System.out.println("prefix = " + prefix);
     }
 
     public void skippedEntity(String name) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.skippedEntity");
     }
 
     public void setDocumentLocator(Locator locator) {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.setDocumentLocator");
     }
 
     public void processingInstruction(String target, String data) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.processingInstruction");
     }
 
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.startPrefixMapping");
-//        System.out.println("prefix = " + prefix + " uri = " + uri);
         nameSpaces.add(omFactory.createOMNamespace(uri, prefix));
     }
 
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.endElement");
-//        System.out.println("namespaceURI = " + namespaceURI);
-        System.out.println("localName = " + localName);
-//        System.out.println("qName = " + qName);
+
 
         if (lastNode.isComplete()) {
             OMElement parent = lastNode.getParent();
-            System.out.println("parent.getLocalName() = " + parent.getLocalName());
             parent.setComplete(true);
             lastNode = parent;
         } else {
@@ -194,14 +165,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-//        System.out.println("==================================");
-//        System.out.println("ContentHandlerImpl.startElement");
-//        System.out.println("namespaceURI = " + namespaceURI);
-//        System.out.println("localName = " + localName);
-//        System.out.println("qName = " + qName);
 
-
-        // ===================================================================
         if (localName.length() == 0)
             localName = qName;
 
@@ -241,10 +205,6 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
         element.setComplete(false);
         lastNode = element;
-        // ===================================================================
-
-//        buffer = new StringBuffer();
-//        textBufferStack.push(buffer);
 
     }
 

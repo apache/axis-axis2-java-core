@@ -23,23 +23,28 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.apache.axis.impl.llom.builder.OMStAXBuilder;
+import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class OMTestUtils {
 
-    public static OMXPPWrapper getOMBuilder(File file) throws Exception {
-        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-        parser.setInput(new FileReader(file));
-        OMXPPWrapper omXmlPullParserWrapper = new OMXPPWrapper(parser);
-        return omXmlPullParserWrapper;
+    public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
+
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+        OMStAXBuilder builder =   new OMStAXBuilder(new OMLinkedListImplFactory(),parser);
+
+        return builder;
     }
     
     public static void walkThrough(OMElement omEle){
