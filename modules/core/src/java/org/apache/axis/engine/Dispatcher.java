@@ -73,11 +73,13 @@ public class Dispatcher extends AbstractHandler implements Handler {
                 }
 
             } else {
-                throw new AxisFault("Both the URI and SOAP_ACTION Is Null");
+                throw new AxisFault("Both the URI and SOAP_ACTION are Null");
             }
 
             if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
                 String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+                soapAction = soapAction.replace('"',' ').trim();
+                
                 if (soapAction != null && soapAction.trim().length() > 0) {
                     QName operationName = new QName(soapAction);
                     AxisOperation op = service.getOperation(operationName);
