@@ -37,11 +37,14 @@
       <name>Axis Developer List</name>
       <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
       <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
+        <archive>http://marc.theaimsgroup.com/?l=axis-dev&amp;r=1&amp;w=2</archive>
+
     </mailingList>
     <mailingList>
       <name>Axis User List</name>
       <subscribe>axis-user-subscribe@ws.apache.org</subscribe>
       <unsubscribe>axis-user-unsubscribe@ws.apache.org</unsubscribe>
+        <archive>http://marc.theaimsgroup.com/?l=axis-user&amp;r=1&amp;w=2</archive>
     </mailingList>
   </mailingLists>
 
@@ -85,14 +88,14 @@
       <id>hemapani</id>
       <email>hemapani@apache.org</email>
       <organization>Lanka Software Foundation</organization>
-      <url>www.apache.org/~hemapani</url>
+      <url>http://www.apache.org/~hemapani</url>
      </developer>
     <developer>
       <name>Eran Chinthaka</name>
       <id>chinthaka</id>
       <email>chinthaka@apache.org</email>
       <organization>Lanka Software Foundation / Eurocenter DDC</organization>
-      <url>www.apache.org/~chinthaka</url>
+      <url>http://www.apache.org/~chinthaka</url>
     </developer>
     <developer>
       <name>Dasarath Weerathunga</name>
@@ -105,7 +108,7 @@
       <id>jaliya</id>
       <email>jaliya@opensource.lk</email>
       <organization>Virtusa / Lanka Software Foundation</organization>
-      <url>www.apache.org/~jaliya</url>
+      <url>http://www.apache.org/~jaliya</url>
     </developer>
     <developer>
       <name>Chathura Herath</name>
@@ -119,12 +122,16 @@
       <id>deepal</id>
       <email>deepal@apache.org</email>
       <organization>Lanka Software Foundation</organization>
+        <url>http://www.apache.org/~deepal</url>
+
     </developer>
     <developer>
       <name>Ajith Ranabahu</name>
       <id>ajith</id>
       <email>ajith@apache.org</email>
       <organization>Lanka Software Foundation / Eurocenter DDC</organization>
+        <url>http://www.apache.org/~ajith</url>
+
     </developer>
     <developer>
       <name>Changshin Lee</name>
@@ -203,16 +210,16 @@
     <!-- Reports -->
     <!-- ======= -->
 
-    <!-- reports>
-        <report>maven-license-plugin</report>
+    <reports>
+        <!-- report>maven-license-plugin</report>
         <report>maven-checkstyle-plugin</report>
         <report>maven-pmd-plugin</report>
         <report>maven-jdepend-plugin</report>
         <report>maven-jxr-plugin</report>
         <report>maven-javadoc-plugin</report>
-        <report>maven-junit-report-plugin</report>
+        <report>maven-junit-report-plugin</report -->
         <report>maven-clover-plugin</report>
-    </reports -->
+    </reports>
     
 </project>
 

@@ -15,14 +15,7 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis.om.impl.llom.exception.OMBuilderException;
@@ -57,8 +50,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * element level 1 = envelope level
-     * element level 2 = Header or Body level
+     * element level 1 = envelope level element level 2 = Header or Body level
      * element level 3 = HeaderElement or BodyElement level
      */
     private int elementLevel = 0;
@@ -120,7 +112,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         // fill in the attributes
         processAttributes(node);
         log.info("Build the OMElelment {" + node.getNamespaceName() + '}'
-                        + node.getLocalName() + "By the StaxSOAPModelBuilder");
+                + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
 
@@ -136,15 +128,13 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                                     boolean isEnvelope) {
         OMElement element = null;
         if (isEnvelope) {
-            if (!elementName.equalsIgnoreCase(
-                    OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
-                throw new OMException(
-                        "First Element must contain the local name, "
-                                + OMConstants.SOAPENVELOPE_LOCAL_NAME);
+            if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
+                throw new OMException("First Element must contain the local name, "
+                        + OMConstants.SOAPENVELOPE_LOCAL_NAME);
             }
             envelope =
-            (SOAPEnvelopeImpl) ombuilderFactory.createSOAPEnvelope(null,
-                    this);
+                    (SOAPEnvelopeImpl) ombuilderFactory.createSOAPEnvelope(null,
+                            this);
             element = (OMElementImpl) envelope;
             processNamespaceData(element, true);
         } else if (elementLevel == 2) {
@@ -152,47 +142,41 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             // this is either a header or a body
             if (elementName.equals(OMConstants.HEADER_LOCAL_NAME)) {
                 if (headerPresent) {
-                    throw new OMBuilderException(
-                            "Multiple headers encountered!");
+                    throw new OMBuilderException("Multiple headers encountered!");
                 }
                 if (bodyPresent) {
                     throw new OMBuilderException("Header Body wrong order!");
                 }
                 headerPresent = true;
                 element =
-                ombuilderFactory.createSOAPHeader((SOAPEnvelope) parent,
-                        this);
+                        ombuilderFactory.createSOAPHeader((SOAPEnvelope) parent,
+                                this);
 
                 // envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
             } else if (elementName.equals(OMConstants.BODY_LOCAL_NAME)) {
                 if (bodyPresent) {
-                    throw new OMBuilderException(
-                            "Multiple body elements encountered");
+                    throw new OMBuilderException("Multiple body elements encountered");
                 }
                 bodyPresent = true;
                 element =
-                ombuilderFactory.createSOAPBody((SOAPEnvelope) parent,
-                        this);
+                        ombuilderFactory.createSOAPBody((SOAPEnvelope) parent,
+                                this);
 
                 // envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
             } else {
-                throw new OMBuilderException(
-                        elementName
-                                + " is not supported here. Envelope can not have elements other than Header and Body.");
+                throw new OMBuilderException(elementName
+                        + " is not supported here. Envelope can not have elements other than Header and Body.");
             }
         } else if ((elementLevel == 3)
-                && parent.getLocalName().equalsIgnoreCase(
-                        OMConstants.HEADER_LOCAL_NAME)) {
+                && parent.getLocalName().equalsIgnoreCase(OMConstants.HEADER_LOCAL_NAME)) {
 
             // this is a headerblock
             element = ombuilderFactory.createSOAPHeaderBlock(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
-        } else if ((elementLevel == 3) && parent.getLocalName().equalsIgnoreCase(
-                        OMConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(
-                        OMConstants.BODY_FAULT_LOCAL_NAME)) {
+        } else if ((elementLevel == 3) && parent.getLocalName().equalsIgnoreCase(OMConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(OMConstants.BODY_FAULT_LOCAL_NAME)) {
 
             // this is a headerblock
             element = ombuilderFactory.createSOAPFault(null, (SOAPBody) parent,
@@ -285,16 +269,19 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         String namespaceURI = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
         OMNamespace namespace = null;
-        if(!"".equals(namespaceURI)){
-             if("".equals(prefix)){
-               // this means, this elements has a default namespace
-                  namespace = node.declareNamespace(namespaceURI, "");
-             }else{
-                 namespace = node.findInScopeNamespace(namespaceURI, prefix);
-              }
+        if (!"".equals(namespaceURI)) {
+            if (prefix == null) {
+                // this means, this elements has a default namespace or it has inherited a default namespace from its parent
+                namespace = node.findDeclaredNamespace(namespaceURI, "");
+                if (namespace == null) {
+                    namespace = node.declareNamespace(namespaceURI, "");
+                }
+            } else {
+                namespace = node.findInScopeNamespace(namespaceURI, prefix);
+            }
             node.setNamespace(namespace);
-        }else{
-            
+        } else {
+
         }
 
 
@@ -305,8 +292,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         // throw new OMException("All elements must be namespace qualified!");
         // }
         if (isSOAPElement) {
-            if (node.getNamespace() != null && !node.getNamespace().getName().equals(
-                    OMConstants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            if (node.getNamespace() != null && !node.getNamespace().getName().equals(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw new OMBuilderException("invalid SOAP namespace URI");
             }
         }

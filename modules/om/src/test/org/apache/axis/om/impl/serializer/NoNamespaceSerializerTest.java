@@ -1,22 +1,18 @@
 package org.apache.axis.om.impl.serializer;
 
-import org.apache.axis.om.OMXMLParserWrapper;
+import junit.framework.TestCase;
+import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
-
-import junit.framework.TestCase;
+import java.io.InputStreamReader;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -35,43 +31,66 @@ import junit.framework.TestCase;
  *
  * 
  */
-public class NoNamespaceSerializerTest extends TestCase{
 
-    private String xmlText = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+public class NoNamespaceSerializerTest extends TestCase {
+
+    private String xmlTextOne = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
             "<soapenv:Body>\n" +
             "   <ns1:getBalance xmlns:ns1=\"http://localhost:8081/axis/services/BankPort/\">\n" +
             "      <accountNo href=\"#id0\"/>\n" +
             "   </ns1:getBalance>\n" +
             " </soapenv:Body></soapenv:Envelope>";
 
-    private XMLStreamReader reader;
+    private String xmlTextTwo = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+            "<soapenv:Body>\n" +
+            "   <getBalance xmlns=\"http://localhost:8081/axis/services/BankPort/\">\n" +
+            "      <accountNo href=\"#id0\"/>\n" +
+            "   </getBalance>\n" +
+            " </soapenv:Body></soapenv:Envelope>";
+
+    private XMLStreamReader readerOne;
+    private XMLStreamReader readerTwo;
     private XMLStreamWriter writer;
-    private OMXMLParserWrapper builder;
-   // private File tempFile;
+    private OMXMLParserWrapper builderOne;
+    private OMXMLParserWrapper builderTwo;
+    // private File tempFile;
 
 
     protected void setUp() throws Exception {
-        reader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText.getBytes())));
+        readerOne = XMLInputFactory.newInstance().
+                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextOne.getBytes())));
+        readerTwo = XMLInputFactory.newInstance().
+                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(System.out);
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+        builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerOne);
+        builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerTwo);
     }
 
-    public void testSerilizationWithCacheOff() throws Exception{
-       SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-       env.serialize(writer,false);
-       writer.flush();
+//    public void testSerilizationWithCacheOff() throws Exception {
+//        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
+//        env.serialize(writer, false);
+//        writer.flush();
+//
+//
+//    }
+//
+//    public void testSerilizationWithCacheOn() throws Exception {
+//        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
+//        env.serialize(writer, true);
+//        writer.flush();
+//    }
 
+    public void testSerilizationWithDefaultNamespaces() throws Exception {
+        SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
+        env.serialize(writer, true);
+        OMElement balanceElement = env.getBody().getFirstElement();
+        assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespaceName(), "http://localhost:8081/axis/services/BankPort/");
 
-    }
+        OMElement accountNo = balanceElement.getFirstElement();
+        assertEquals("Deafualt namespace of children has not been set properly", accountNo.getNamespaceName(), "http://localhost:8081/axis/services/BankPort/");
 
-    public void testSerilizationWithCacheOn() throws Exception{
-       SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-       env.serialize(writer,true);
-       writer.flush();
-
-
+        writer.flush();
     }
 
 
