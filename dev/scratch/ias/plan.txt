@@ -10,6 +10,8 @@ saaj-ng: SAAJ NG is first going to meet DOM level 3, then we need to talk about 
 
 axis4tiger: the current Axis Java is not compilable on J2SE 5.0 mainly due to some package names including a new keyword "enum" and SAAJ 1.2's low DOM level. Axis for Tiger is also supposed to be improved based on J2SE 1.4. In summary, J2SE 1.4 is required and J2SE 5 is OK for building Axis for Tiger.
 
+xml-bc: XML Binary Characterization.
+
 Thanks,
 
 Ias
