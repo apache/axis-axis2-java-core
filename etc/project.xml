@@ -25,18 +25,23 @@
   <url>http://ws.apache.org/axis2/</url>
   <issueTrackingUrl>http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
   <siteAddress>ws.apache.org/axis2</siteAddress>
-  <siteDirectory>/www/axi2.ws.apache.org/</siteDirectory>
+  <siteDirectory>/www/ws.apache.org/axis2/</siteDirectory>
   <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
-	<repository>
-        <connection>scm:subversion:http://svn.apache.org/repos/asf/webservices/axis/trunk</connection>
-        <developerConnection>scm:subversion:https://svn.apache.org/repos/asf/webservices/axis/trunk</developerConnection>
+	<!-- repository>
+        <connection>scm|svn|http://svn.apache.org/repos/asf/webservices/axis/trunk</connection>
+        <developerConnection>scm|svn|https://svn.apache.org/repos/asf/webservices/axis/trunk</developerConnection>
         <url>http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN</url>
-    </repository>
+    </repository -->
   <mailingLists>
     <mailingList>
       <name>Axis Developer List</name>
       <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
       <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
+    </mailingList>
+    <mailingList>
+      <name>Axis User List</name>
+      <subscribe>axis-user-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>axis-user-unsubscribe@ws.apache.org</unsubscribe>
     </mailingList>
   </mailingLists>
 
@@ -49,19 +54,19 @@
       <name>Davanum Srinivas</name>
       <id>dims</id>
       <email>dims@apache.org</email>
-      <organization></organization>
+      <organization>Computer Associates</organization>
     </developer>
     <developer>
       <name>Sanjiva Weerawarana</name>
       <id>sanjiva</id>
       <email>sanjiva@apache.org</email>
-      <organization></organization>
+      <organization>IBM / Lanka Software Foundation</organization>
     </developer>
     <developer>
       <name>Glen Daniels</name>
       <id>gdaniels</id>
       <email>gdaniels@apache.org</email>
-      <organization></organization>
+      <organization>Sonic Software</organization>
     </developer>
     <developer>
       <name>Aleksander Slominski</name>
@@ -73,33 +78,33 @@
       <name>Farhaan Mohideen</name>
       <id>farhaan</id>
       <email>farhaan@opensource.lk</email>
-      <organization>LSF</organization>
+      <organization>Lanka Software Foundation</organization>
     </developer>
     <developer>
       <name>Srinath Perera</name>
       <id>hemapani</id>
       <email>hemapani@apache.org</email>
-      <organization></organization>
+      <organization>Lanka Software Foundation</organization>
       <url>www.apache.org/~hemapani</url>
      </developer>
     <developer>
       <name>Eran Chinthaka</name>
       <id>chinthaka</id>
       <email>chinthaka@apache.org</email>
-      <organization>LSF / Eurocenter DDC</organization>
+      <organization>Lanka Software Foundation / Eurocenter DDC</organization>
       <url>www.apache.org/~chinthaka</url>
     </developer>
     <developer>
       <name>Dasarath Weerathunga</name>
       <id>dasarath</id>
       <email>dasarath@opensource.lk</email>
-      <organization>LSF</organization>
+      <organization>Lanka Software Foundation</organization>
     </developer>
     <developer>
       <name>Jaliya Ekanayake</name>
       <id>jaliya</id>
       <email>jaliya@opensource.lk</email>
-      <organization>Virtusa / LSF</organization>
+      <organization>Virtusa / Lanka Software Foundation</organization>
       <url>www.apache.org/~jaliya</url>
     </developer>
     <developer>
@@ -113,13 +118,13 @@
 	  <name>Deepal Jayasinghe</name>
       <id>deepal</id>
       <email>deepal@apache.org</email>
-      <organization>LSF</organization>
+      <organization>Lanka Software Foundation</organization>
     </developer>
     <developer>
       <name>Ajith Ranabahu</name>
       <id>ajith</id>
       <email>ajith@apache.org</email>
-      <organization>LSF</organization>
+      <organization>Lanka Software Foundation / Eurocenter DDC</organization>
     </developer>
     <developer>
       <name>Changshin Lee</name>
@@ -131,7 +136,7 @@
       <name>Rajith Priyanga</name>
       <id>priyanga</id>
       <email>priyanga@opensource.lk</email>
-      <organization>LSF</organization>
+      <organization>Lanka Software Foundation</organization>
     </developer>
   </developers>
 

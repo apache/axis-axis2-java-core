@@ -283,12 +283,22 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         // set the own namespace
         String namespaceURI = parser.getNamespaceURI();
-        if(namespaceURI != ""){
-        OMNamespace namespace =
-                node.findInScopeNamespace(parser.getNamespaceURI(),
-                parser.getPrefix());
+        String prefix = parser.getPrefix();
+        OMNamespace namespace = null;
+        if(!"".equals(namespaceURI)){
+             if("".equals(prefix)){
+               // this means, this elements has a default namespace
+                  namespace = node.declareNamespace(namespaceURI, "");
+             }else{
+                 namespace = node.findInScopeNamespace(namespaceURI, prefix);
+              }
             node.setNamespace(namespace);
+        }else{
+            
         }
+
+
+
         // TODO we got to have this to make sure OM reject mesagess that are not sname space qualified
         // But got to comment this to interop with Axis.1.x
         // if (namespace == null) {
