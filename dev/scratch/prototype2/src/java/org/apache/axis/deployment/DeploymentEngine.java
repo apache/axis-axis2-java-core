@@ -13,8 +13,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.FlowMetaData;
-import org.apache.axis.deployment.metadata.HandlerMetaData;
 import org.apache.axis.deployment.metadata.ModuleMetaData;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
@@ -24,14 +22,10 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.commons.logging.Log;
@@ -146,9 +140,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void addModule(AxisModule module) throws AxisFault {
         modulelist.add(module);
-        AxisModule simplemodule = castModuleMetaData(module);
-        engineRegistry.addMdoule(simplemodule);
-
+        addNewModule(module);
     }
 
     public ModuleMetaData getModule(String moduleName) {
@@ -171,224 +163,34 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private EngineRegistry createEngineRegistry() throws AxisFault {
         EngineRegistry newEngineRegisty;
-        //todo the below line dse not need ask from srinath why
-        // do we need to have this line
-        QName transportName = new QName("Transport");
-
-        /**
-         * adding Global
-         */
 
         AxisGlobal global = new AxisGlobal();
         newEngineRegisty = new EngineRegistryImpl(global);
-        /**
-         * adding transport
-         */
-        FlowImpl transportinflow = new FlowImpl();
-        FlowImpl transportoutflow = new FlowImpl();
-        FlowImpl transportfaultflow = new FlowImpl();
 
-
-        /**
-         * adding services
-         */
-        /*   for (int i = 0; i < servicelist.size(); i++) {
-        ServiceMetaData serviceMetaData = (ServiceMetaData) servicelist.elementAt(i);
-        addnewService(serviceMetaData);
-        } */
         return newEngineRegisty;
     }
 
 
     private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
-//        QName serviceName = new QName(serviceMetaData.getName());
-//        int count = 0;
-//
-//        FlowImpl serviceinflow = new FlowImpl();
-//        FlowImpl serviceoutflow = new FlowImpl();
-//        FlowImpl servicefaultflow = new FlowImpl();
-//
-//        AxisService service = new SimpleAxisServiceImpl(serviceName);
-//        service.setInFlow(serviceinflow);
-//        service.setOutFlow(serviceoutflow);
-//        service.setFaultFlow(servicefaultflow);
-//        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-//
-//
-//        ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
-//        /**
-//         * ****************************************************************************
-//         * ****************************************************************************
-//         * Adding service inflow detail
-//         */
-//        count = serviceMetaData.getInFlow().getHandlercount();
-//        addFlowHandlers(serviceinflow, count, serviceMetaData.getInFlow(), serviceClassLoader);
-//
-//        /**
-//         * ****************************************************************************
-//         * ****************************************************************************
-//         * Adding service outflow detail
-//         */
-//        count = serviceMetaData.getOutFlow().getHandlercount();
-//        addFlowHandlers(serviceoutflow, count, serviceMetaData.getOutFlow(), serviceClassLoader);
-//
-//        /**
-//         * ****************************************************************************
-//         * ****************************************************************************
-//         * Adding service fault detail
-//         */
-//        count = serviceMetaData.getFaultFlow().getHandlercount();
-//        addFlowHandlers(servicefaultflow, count, serviceMetaData.getFaultFlow(), serviceClassLoader);
-//
-//        /**
-//         * ****************************************************************************
-//         * ****************************************************************************
-//         * Adding service parameters
-//         */
-//        count = serviceMetaData.getParametercount();
-//        for (int j = 0; j < count; j++) {
-//            ParameterMetaData paraMD = serviceMetaData.getParameter(j);
-//            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-//            service.addParameter(parameter);
-//        }
-//
-//        /**
-//         * ****************************************************************************
-//         * ****************************************************************************
-//         * setting  service provider
-//         */
-//        service.setProvider(new SimpleJavaProvider());
-//
-//        OperationMetaData oprationmd = serviceMetaData.getOperation();
-//        ModuleMetaData modulemd = oprationmd.getModule();
-//
-//        /**
-//         * adding parametrs to module
-//         */
-//        AxisModule module = new AxisModule(new QName(modulemd.getRef()));
-//        service.addModule(module.getName());
-//        count = modulemd.getParameterCount();
-//
-//        for (int j = 0; j < count; j++) {
-//            ParameterMetaData paraMD = modulemd.getParameter(j);
-//            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-//            module.addParameter(parameter);
-//        }
-//
-//        FlowImpl operationinflow = new FlowImpl();
-//        count = oprationmd.getInFlow().getHandlercount();
-//        addFlowHandlers(operationinflow, count, oprationmd.getInFlow(), serviceClassLoader);
-//
-//        FlowImpl operationutflow = new FlowImpl();
-//        count = oprationmd.getOutFlow().getHandlercount();
-//        addFlowHandlers(operationutflow, count, oprationmd.getOutFlow(), serviceClassLoader);
-//
-//        FlowImpl operationfaultflow = new FlowImpl();
-//        count = oprationmd.getFaultFlow().getHandlercount();
-//        addFlowHandlers(operationfaultflow, count, oprationmd.getFaultFlow(), serviceClassLoader);
-//
-//
-//        QName opname = new QName(oprationmd.getName());
-//        AxisOperation operation = new SimpleAxisOperationImpl(opname);
-//
-//        service.addOperation(operation);
-//
-//
-//        ExecutionChain inchain = new ExecutionChain();
-//        inchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-//        inchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-//
-//        /**
-//         * todo in this implematation all the handers in the servcie
-//         * i have asume as one phase bt that is not the case
-//         * I have to modify that getting all the pahse and
-//         * accooding tp that i have to create phases
-//         */
-//        Phase inservicephase = new Phase(Constants.PHASE_SERVICE);
-//        HandlerMetaData[] handlerMetaDatas = serviceMetaData.getFlowHandlers(INFLOWST);
-//        for (int i = 0; i < handlerMetaDatas.length; i++) {
-//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-//            //TODO
-//            //handler.setName(new QName(handlerMetaData.getName()));
-//            inservicephase.addHandler(handler);
-//        }
-//        inchain.addPhase(inservicephase);
-//
-//
-//        ExecutionChain outchain = new ExecutionChain();
-//        outchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-//        outchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-//
-//        Phase outservicephase = new Phase(Constants.PHASE_SERVICE);
-//        handlerMetaDatas = serviceMetaData.getFlowHandlers(OUTFLOWST);
-//        for (int i = 0; i < handlerMetaDatas.length; i++) {
-//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-//            handler.setName(new QName(handlerMetaData.getName()));
-//            outservicephase.addHandler(handler);
-//        }
-//        outchain.addPhase(outservicephase);
-//
-//
-//        ExecutionChain faultchain = new ExecutionChain();
-//        faultchain.addPhase(new Phase(Constants.PHASE_TRANSPORT));
-//        faultchain.addPhase(new Phase(Constants.PHASE_GLOBAL));
-//
-//        Phase faultservicephase = new Phase(Constants.PHASE_SERVICE);
-//        handlerMetaDatas = serviceMetaData.getFlowHandlers(FAILTFLOWST);
-//        for (int i = 0; i < handlerMetaDatas.length; i++) {
-//            HandlerMetaData handlerMetaData = handlerMetaDatas[i];
-//            Handler handler = castHandlerMetaData(handlerMetaData, serviceClassLoader);
-//            handler.setName(new QName(handlerMetaData.getName()));
-//            faultservicephase.addHandler(handler);
-//        }
-//        outchain.addPhase(faultservicephase);
-//
-//        service.setExecutableInChain(inchain);
-//        service.setExecutableOutChain(outchain);
-//        service.setExecutableFaultChain(faultchain);
-//
-//        engineRegistry.addService(service);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        Flow inflow = serviceMetaData.getInFlow();
+        addFlowHandlers(inflow,classLoader);
+
+        Flow outFlow = serviceMetaData.getOutFlow();
+        addFlowHandlers(outFlow,classLoader);
+
+        Flow faultFlow = serviceMetaData.getFaultFlow();
+        addFlowHandlers(faultFlow,classLoader);
+
     }
 
 
-    /**
-     * this method used to add handlers to given Flow
-     *
-     * @param flow
-     * @param count
-     */
-    private void addFlowHandlers(Flow flow, int count, FlowMetaData flowmetadata, ClassLoader parent) throws AxisFault {
-//        for (int j = 0; j < count; j++) {
-//            //todo handle exception in properway
-//            HandlerMetaData handlermd = flowmetadata.getHandler(j);
-//            Class handlerClass = null;
-//            Handler handler;
-//            handlerClass = getHandlerClass(handlermd.getClassName(), currentFileItem.getFile(), parent);
-//            try {
-//                handler = (Handler) handlerClass.newInstance();
-//            } catch (InstantiationException e) {
-//                throw new AxisFault(e.getMessage());
-//            } catch (IllegalAccessException e) {
-//                throw new AxisFault(e.getMessage());
-//            }
-//            handler.setName(new QName(handlermd.getName()));
-//            int paracount = handlermd.getParacount();
-//            for (int k = 0; k < paracount; k++) {
-//                ParameterMetaData paraMD = handlermd.getParameter(k);
-//                //todo check with srinath whether this is correct
-////FIXME 
-////                Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-////                handler.addParameter(parameter);
-//            }
-//            flow.addHandler(handler);
-//        }
-    }
 
-
-    public Class getHandlerClass(String className, File file, ClassLoader parent) throws AxisFault {
-        Class handlerClass = null;
+    private void addFlowHandlers(Flow flow, ClassLoader parent) throws AxisFault {
+        int count = flow.getHandlerCount();
+        File file = currentFileItem.getFile();
+        URLClassLoader loader1 = null;
         if (file != null) {
             URL[] urlsToLoadFrom = new URL[0];
             try {
@@ -397,16 +199,41 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
             } catch (MalformedURLException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            }
-            URLClassLoader loader1 = new URLClassLoader(urlsToLoadFrom, parent);
-
-            try {
-                handlerClass = Class.forName(className, true, loader1);
-            } catch (ClassNotFoundException e) {
                 throw new AxisFault(e.getMessage());
             }
+            loader1 = new URLClassLoader(urlsToLoadFrom, parent);
         }
+
+        for (int j = 0; j < count; j++) {
+            //todo handle exception in properway
+            HandlerMetaData handlermd = flow.getHandler(j);
+            Class handlerClass = null;
+            Handler handler;
+            handlerClass = getHandlerClass(handlermd.getClassName(), loader1);
+            try {
+                handler = (Handler) handlerClass.newInstance();
+                handler.init(handlermd);
+                handlermd.setHandler(handler);
+
+            } catch (InstantiationException e) {
+                throw new AxisFault(e.getMessage());
+            } catch (IllegalAccessException e) {
+                throw new AxisFault(e.getMessage());
+            }
+
+        }
+    }
+
+
+    public Class getHandlerClass(String className, URLClassLoader loader1) throws AxisFault {
+        Class handlerClass = null;
+
+        try {
+            handlerClass = Class.forName(className, true, loader1);
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage());
+        }
+
         try {
             Handler handler = (Handler) handlerClass.newInstance();
             MessageContext msgContext = null;
@@ -424,60 +251,20 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private AxisModule castModuleMetaData(AxisModule moduelmetada) throws AxisFault {
-       AxisModule modulemd = moduelmetada;
+    private void addNewModule(AxisModule moduelmetada) throws AxisFault {
 
-        /**
-         * adding parametrs to module
-         */
-     /*   AxisModule module = new AxisModule(new QName(modulemd.getName()));
-        int count = modulemd.getParameterCount();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        //todo change the classloder
-        ClassLoader moduleclassLoder = Thread.currentThread().getContextClassLoader();
+        Flow inflow = moduelmetada.getInFlow();
+        addFlowHandlers(inflow,classLoader);
 
-        for (int j = 0; j < count; j++) {
-            ParameterMetaData paraMD = modulemd.getParameter(j);
-            Parameter parameter = new ParameterImpl(paraMD.getName(), paraMD.getElement());
-            module.addParameter(parameter);
-        }
+        Flow outFlow = moduelmetada.getOutFlow();
+        addFlowHandlers(outFlow,classLoader);
 
-        FlowImpl moduleinflow = new FlowImpl();
-        count = modulemd.getInFlow().getHandlercount();
-        addFlowHandlers(moduleinflow, count, modulemd.getInFlow(), moduleclassLoder);
+        Flow faultFlow = moduelmetada.getFaultFlow();
+        addFlowHandlers(faultFlow,classLoader);
 
-        FlowImpl moduleoutflow = new FlowImpl();
-        count = modulemd.getOutFlow().getHandlercount();
-        addFlowHandlers(moduleoutflow, count, modulemd.getOutFlow(), moduleclassLoder);
-
-        FlowImpl modulefaultflow = new FlowImpl();
-        count = modulemd.getFaultFlow().getHandlercount();
-        addFlowHandlers(modulefaultflow, count, modulemd.getFaultFlow(), moduleclassLoder); */
-        return modulemd;
-    }
-
-
-    /**
-     * this method used to cast Hander Metta data into hander
-     *
-     * @param handlerMetaData
-     * @param serviceClassLoader
-     * @return
-     * @throws AxisFault
-     */
-    private Handler castHandlerMetaData(HandlerMetaData handlerMetaData, ClassLoader serviceClassLoader) throws AxisFault {
-        Class handlerClass = null;
-        Handler handler;
-        // handlerClass = Class.forName(handlerMetaData.getClassName(), true, serviceClassLoader);
-        handlerClass = getHandlerClass(handlerMetaData.getClassName(), currentFileItem.getFile(), serviceClassLoader);//Class.forName(handlerMetaData.getClassName(), true, serviceClassLoader);
-        try {
-            handler = (Handler) handlerClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new AxisFault();
-        } catch (IllegalAccessException e) {
-            throw new AxisFault();
-        }
-        return handler;
+        engineRegistry.addMdoule(moduelmetada);
     }
 
 
@@ -512,11 +299,15 @@ public class DeploymentEngine implements DeploymentConstants {
                                 if (service != null) {
                                     addService(service);
                                     log.info("Deployement WS Name  " + currentFileItem.getName());
+
                                 }
                             } catch (PhaseException e) {
                                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
                             } catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                            } finally {
+                                currentFileItem = null;
+                                break;
                             }
                         }
                     case MODULE:
@@ -527,10 +318,15 @@ public class DeploymentEngine implements DeploymentConstants {
                                 if (metaData != null) {
                                     addModule(metaData);
                                     log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
+                                    break;
                                 }
                             } catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                            }finally {
+                                currentFileItem = null;
+                                break;
                             }
+
                         }
                 }
             }

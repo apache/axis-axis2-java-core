@@ -75,7 +75,7 @@ public class ServerMetaData {
             return null;
     }
 
-    public void addHandlers(org.apache.axis.description.HandlerMetaData handler) {
+    public void addHandlers(HandlerMetaData handler) {
         handlers.add(handler);
         handlerCount++;
     }

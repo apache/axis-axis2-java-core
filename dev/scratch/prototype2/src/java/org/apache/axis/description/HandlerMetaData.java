@@ -42,51 +42,19 @@ public class HandlerMetaData implements ParameterInclude{
         return name;
     }
 
+    public PhaseRule getRules() {
+        return rules;
+    }
+
+    public void setRules(PhaseRule rules) {
+        this.rules = rules;
+    }
+
     /**
      * @param name
      */
     public void setName(QName name) {
         this.name = name;
-    }
-
-    public String getBefore() {
-        return rules.getBefore();
-    }
-
-    public void setBefore(String before) {
-        rules.setBefore(before);
-    }
-
-    public String getAfter() {
-        return rules.getAfter();
-    }
-
-    public void setAfter(String after) {
-        rules.setAfter(after);
-    }
-
-    public String getPhaseName() {
-        return rules.getPhaseName();
-    }
-
-    public void setPhaseName(String phaseName) {
-        rules.setPhaseName(phaseName);
-    }
-
-    public boolean isPhaseFirst() {
-        return rules.isPhaseFirst();
-    }
-
-    public void setPhaseFirst(boolean phaseFirst) {
-        rules.setPhaseFirst(phaseFirst);
-    }
-
-    public boolean isPhaseLast() {
-        return rules.isPhaseLast();
-    }
-
-    public void setPhaseLast(boolean phaseLast) {
-        rules.setPhaseLast(phaseLast);
     }
 
     /**

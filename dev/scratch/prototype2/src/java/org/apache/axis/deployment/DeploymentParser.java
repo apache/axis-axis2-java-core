@@ -388,24 +388,24 @@ public class DeploymentParser implements DeploymentConstants {
                             String attvalue = pullparser.getAttributeValue(i);
 
                             if (attname.equals(AFTER)) {
-                                handler.setAfter(attvalue);
+                                handler.getRules().setAfter(attvalue);
                             } else if (attname.equals(BEFORE)) {
-                                handler.setBefore(attvalue);
+                                handler.getRules().setBefore(attvalue);
                             } else if (attname.equals(PHASE)) {
-                                handler.setPhaseName(attvalue);
+                                handler.getRules().setPhaseName(attvalue);
                             } else if (attname.equals(PHASEFIRST)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
-                                    handler.setPhaseFirst(true);
+                                    handler.getRules().setPhaseFirst(true);
                                 } else if (boolval.equals("false")) {
-                                    handler.setPhaseFirst(false);
+                                    handler.getRules().setPhaseFirst(false);
                                 }
                             } else if (attname.equals(PHASELAST)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
-                                    handler.setPhaseLast(true);
+                                    handler.getRules().setPhaseLast(true);
                                 } else if (boolval.equals("false")) {
-                                    handler.setPhaseLast(false);
+                                    handler.getRules().setPhaseLast(false);
                                 }
                             }
 
