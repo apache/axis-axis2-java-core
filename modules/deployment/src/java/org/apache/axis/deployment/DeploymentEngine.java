@@ -425,12 +425,15 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException de) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("DeploymentException  " + de);
+                            de.printStackTrace();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("AxisFault  " + axisFault);
+                            axisFault.printStackTrace();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentFileItem.getName() );
                             log.info("Exception  " + e);
+                            e.printStackTrace();
                         } finally {
                             currentFileItem = null;
                         }

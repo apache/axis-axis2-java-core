@@ -38,7 +38,7 @@
         </handler>
 
         <handler name="h6" class="Handler2">
-            <order phase="service" phaseFirst="true" phaseLast="false"/>
+            <order phase="service" phaseLast="false"/>
         </handler>
     </faultflow>
     <operation name="opname"/>

@@ -27,7 +27,7 @@ public class DeploymentotalTest extends TestCase {
     EngineRegistry er;
 
     public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
-        String filename = "./target/test-resources/deployment";
+        String filename = "./modules/deployment/target/test-resources/deployment";
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         er = deploymentEngine.start();
     }

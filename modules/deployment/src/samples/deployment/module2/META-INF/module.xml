@@ -1,7 +1,7 @@
 <module name="module2" class="module1.java">
     <inflow>
         <handler name="h1" class="org.apache.axis.registry.Handler4">
-            <order phase="global" phaseFirst="true"/>
+            <order phase="global" />
         </handler>
         <handler name="h2" class="org.apache.axis.registry.Handler4"/>
     </inflow>

@@ -50,7 +50,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         Class.forName("Echo2", true, cl);
         assertNotNull(service.getName());
         assertEquals(service.getStyle(),"rpc");
-        
+
         Flow flow = service.getFaultFlow();
         assertTrue(flow.getHandlerCount() > 0);
         flow = service.getInFlow();
