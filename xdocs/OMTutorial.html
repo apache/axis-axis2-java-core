@@ -39,7 +39,7 @@ Following is a short feature overview of OM.</p>
 <p class="special">
 <table width="100%">
 			 <tr>
-			 		 <td><img src="images/image005.gif" alt="Rememeber this"/></td>
+			 		 <td><img src="images/OM005.gif" alt="Rememeber this"/></td>
 					 <td class="special-td">OM is tightly bound to StAX API. To work with OM a StAX compliant parser and the API must be present in the classpath. <td>
 			 </tr>
 </table>
@@ -94,9 +94,7 @@ OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OM
 SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
 
 </pre>
-<center><b>Code listing 2.1</b></center>
-
-
+<div align="left"><b>Code listing 2.1</b></div>
 <p>As the example shows, creating an OM from an input stream is pretty straightforward. However elements and nodes can be created programmatically to modify the structure as well.
 The recommended way to create OM objects programmatically is to use the factory. OMFactory.newInstance() will return the proper factory and the creator methods for each type should be called. Currently OM has two builders, namely the OM builder and the SOAP model builder. These builders provide the necessary information to the XML info set model to build itself.  </p>
 <!-- Image -->
@@ -118,8 +116,7 @@ OMElement root = factory.createOMElement("root",ns1);
 OMElement elt11 = factory.createOMElement("foo1",ns1);
 OMElement elt12 = factory.createOMElement("foo2",ns1);
 </pre>
-<center><b>Code listing 2.2</b></center>
-
+<div align="left"><b>Code listing 2.2</b></div>
 <p>The reason to have a set of factory.createXXX methods is to cater for different implementations but keep the programmers code intact. Its highly recommend to use the factory for creating OM objects as this will ease the switching of different OM implementations.
 Several differences exist between a programmatically created OMNode and a conventionally built OMNode. The most important difference is that the former will have no builder object enclosed where as the latter always carries a reference to its builder. As stated earlier in this tutorial, since the object model is built as and when required, each and every OMNode should have a reference to its builder. If this information is not available, it is due to the Object being created without a builder.  In other words programmatically built OMNodes do not have a reference to a builder. This difference becomes evident when the user tries to get a non caching pull parser from the OMElement. This will be discussed in more detail in the advanced operations section.
 In order to understand the requirement of the builder reference in each and every OMNode, consider the following scenario. Assume that the parent element is built but the children elements are not. If the parent is asked to iterate through its children, this information is not readily available to the parent element and it should build its children first before attempting to iterate them. In order to provide a reference of the builder, each and every node of an OM structure should carry the reference to its builder. Each and every OmNode carries a flag that states its build status.
@@ -134,7 +131,7 @@ Need an image here -->
 public void addChild(OMNode omNode);
 public void insertAttribute(OMAttribute attr);
 </pre>
-<center><b>Code listing 2.3</b></center>
+<div align="left"><b>Code listing 2.3</b></div>
 <p>This code segment shows how the addition takes place. Note that it is related to the code segment shown in the creation section.</p>
 <pre class="code" >
 //set the children
@@ -143,7 +140,7 @@ elt12.addChild(elt22);
 root.addChild(elt11);
 root.addChild(elt12);
 </pre>
-<center><b>Code listing 2.4</b></center>
+<div align="left"><b>Code listing 2.4</b></div>
 <p>Note that AddChild method will always add the child as the first child of the parent.
 Removal of Nodes
 A given node can be removed from the tree by calling the detach() method.
@@ -159,8 +156,7 @@ public OMNamespace declareNamespace(OMNamespace namespace);
 public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException;
 public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException;
 </pre>
-<center><b>Code listing 2.5</b></center>
-
+<div align="left"><b>Code listing 2.5</b></div>
 <p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. These namespace declarations will serialize into â€œxmlns:prefix=â€uriâ€â€ type string inside an element.
 FindInscopeNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if itâ€™s not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
 
@@ -168,7 +164,7 @@ FindInscopeNamespaces is a very handy method to locate a namespace object higher
 <p class="special">
 <table width="100%">
 			 <tr>
-			 		 <td><img src="images/image005.gif" alt="Rememeber this"/></td>
+			 		 <td><img src="images/OM005.gif" alt="Rememeber this"/></td>
 					 <td class="special-td">FindInscopeNamespaces method can be computationally expensive, if the search commenced from a deep branch of the tree and hence should be used with caution.<td>
 			 </tr>
 </table>
@@ -190,7 +186,7 @@ elt2.addChild(txt1);
 elt1.addChild(elt2);
 root.addChild(elt1);
 </pre>
-<center><b>Code listing 2.6</b></center>
+<div align="left"><b>Code listing 2.6</b></div>
 <p>Serilization of the root element produces the following XML </p>
 <pre class="xml">
 &lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;
@@ -208,14 +204,14 @@ While(children.hasNext()){
 	OMNode node = (OMNode)children.next();
 }
 </pre>
-<center><b>Code listing 2.7</b></center>
+<div align="left"><b>Code listing 2.7</b></div>
 <p>Apart from this every OMNode has links to its siblings. If more thorough navigation is needed the nextSibling() and PreviousSibling() methods can be used.
 A more selective set can be chosen by using the getChildrenWithName(QName) methods. The getChildWithName(Qname) method returns the first child that matches the given QName and getChildrenWithName(QName) returns a collection containing all the matching children. The advantage of these iterators is that they won't build the whole object structure at once, until its required.</p>
 <!-- Special section -->
 <p class="special">
 <table width="100%">
 			 <tr>
-			 		 <td><img src="images/image005.gif" alt="Rememeber this"/></td>
+			 		 <td><img src="images/OM005.gif" alt="Rememeber this"/></td>
 					 <td class="special-td">
 					 All iterator implementations internally stay one step ahead of their apparent location to provide the correct value for the hasNext() method. This hidden advancement can build elements that are not intended to be built at all. Hence these iterators are recommended only when caching is not a concern. <td>
 			 </tr>
@@ -242,8 +238,7 @@ XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(Sy
 //dump the output to console with caching
 envelope.serialize(writer,true);
 </pre>
-<center><b>Code listing 2.8</b></center>
-
+<div align="left"><b>Code listing 2.8</b></div>
 <p>The above mentioned features of the serializer forces a correct serialization even if only a part of the OM tree is serialized. The following serializations show how the serialization mechanism takes the trouble to accurately figure out the namespaces.
 The example is from code listing 2.6 which creates a small OM programmatically.
 Serialization of the root element produces</p>
@@ -281,8 +276,7 @@ XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(Sy
 //dump the out put to console with caching
 envelope.serialize(writer,true);
 </pre>
-<center><b>Code listing 2.9</b></center>
-
+<div align="left"><b>Code listing 2.9</b></div>
 <h2>Section 3 - Advanced Operations with OM</h2>
 <h3>Use of the OMNavigator for Traversal</h3>
 <p>OM provides a utility class to navigate the OM structure. The navigator provides an in-order traversal of the OM tree up to the last-built node. 
@@ -298,7 +292,7 @@ while (navigator.isNavigable()) {
      node = navigator.next();
 }
 </pre>
-<center><b>Code listing 3.1</b></center>
+<div align="left"><b>Code listing 3.1</b></div>
 <h3>Accessing the Pull Parser </h3>
 <p>OM is tightly integrated with StAX and the getPullParser(Boolean cache) method in the OMElement provides a XMLStreamReader object. 
 This XMLStreamReader instance has a special capability of switching between the underlying stream and the OM object tree if the cache setting is off. However this functionality is completely transparent to the user. This is further explained in the following paragraphs.
@@ -310,7 +304,7 @@ The getPullparser() method is very useful when the events need to be handled in 
 <p class="special">
 <table width="100%">
 			 <tr>
-			 		 <td><img src="images/image005.gif" alt="Rememeber this"/></td>
+			 		 <td><img src="images/OM005.gif" alt="Rememeber this"/></td>
 					 <td class="special-td">
 					 For consistency reasons once the cache is switched off it cannot be switched on again. <td>
 			 </tr>
@@ -334,7 +328,7 @@ OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE
 OutObject outObject = // get the third party object here
 new ObjectToOMBuilder(element,outObject).next();
 </pre>
-<center><b>Code listing 3.2</b></center>
+<div align="left"><b>Code listing 3.2</b></div>
 <h2>Section 4 - Known Limitations of OM</h2>
 <h3>Incomplete XML Info set support</h3>
 <p>The OM deliberately dropped the support for XML info set items such as DTDs and  Processing Instructions (PI's). Hence the OM cannot be called a complete info set representation. The initial reason for this was because the design goal of the OM was not to be "yet-another-object-model" but to be a SOAP specific Object model. Since DTD's and PI's are not supposed to be present in SOAP messages.</p>
@@ -356,7 +350,7 @@ elt1.addChild(elt2);
 <b>elt1.addChild(elt3);</b>
 root.addChild(elt1);
 </pre>
-<center><b>Code listing 4.1</b></center>
+<div align="left"><b>Code listing 4.1</b></div>
 <p>Serialization of the root element provides the following XML</p>
 
 <pre class="xml">
@@ -432,7 +426,7 @@ For basics in XML
 <table width="100%">
  <tr>
    <td align="center">All rights reserved by Apache Software Foundation</td>
-   </tr>
+  </tr>
 </table>
 <!-- End of footer -->
 </body>

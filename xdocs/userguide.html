@@ -5,6 +5,18 @@
 <title>Axis 2.0 User's Guide</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
+<style type="text/css">
+<!--
+.style1 {font-family: "Courier New", Courier, mono}
+.style2 {font-size: 14px}
+.style3 {color: #990000}
+.style4 {
+	font-family: "Courier New", Courier, mono;
+	font-size: 14px;
+	color: #990000;
+}
+-->
+</style>
 </head>
 
 <body>
@@ -262,7 +274,7 @@ Echo String&lt;/sample1:Text&gt;</p>
 <h2><a name="_Toc96698092"></a><a name="_Toc96697867">Sample2 : Echo Synchronous call with a phased handler. </a></h2>
 <p>This example will go one step forward from the example above and will deploy a web service with a Logging handler. The client application will not change, of course with an exception; the Endpoint Reference will be changed to refer the new service <strong>“Sample1WithHandler” </strong>. </p>
 <p>There is a Handler (LoggingHandler.java) that is introduced in this case and it will basically log the fact that it got called. The code can be found in LoggingHandler.java. </p>
-<p class="style1 style2">public void invoke(MessageContext msgContext) throws AxisFault {
+<p class="style1 style2 style3">public void invoke(MessageContext msgContext) throws AxisFault {
 <br>&nbsp;&nbsp;log.info(&quot;Incoming message From &quot;+msgContext.getTo().getAddress()); 
 
 <br><br>public void revoke(MessageContext msgContext){ 
@@ -272,7 +284,7 @@ Echo String&lt;/sample1:Text&gt;</p>
 <p>Building the sample once will build all required classes and jars for all three cases. The ant task would be ant Compile. Please refer the building of the <strong>“Echo Synchronous call” </strong> above. </p>
 <h3><strong>Deploying the sample </strong></h3>
 <p>The implementation of the web service will be EchoXML, operation will be echo and the provider will be org.apache.axis.providers.RawXMLProvider, which are similar to that of the <strong>“Echo Synchronous call” </strong>. The difference is that there will be a handler that will be added in the server side. For further discussion refer the following service.xml which will be used in deploying the service. </p>
-<p class="style1 style2">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br>
+<p class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br>
 &nbsp;&lt;java:implementation class=&quot;EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; 
 &nbsp;&nbsp;&lt;inflow&gt; 
 <br>
@@ -297,43 +309,55 @@ Echo String&lt;/sample1:Text&gt;</p>
 </ol>
 <p>These refer to the flows of the Axis2 server and further information of each could be found in the Architecture Guide. Using these elements the deployer can specify what handlers should go into which each flow. It can be further explained by referring to the entries in the above service.xml. In the above descriptor for the inflow and the faultfow there is a handler element that is added. At the deployment time, Axis2 will incorporate that handler to both the inflow and the fault flow. Since there is no such entry for the outflow no handler will be associated with the outflow. </p>
 <p>Handler should specify the implementation class and the phase that it belongs to. In this case the handler belong to the <strong>Logging </strong> phase and this phase name should be one of that is defined in the <strong>server.xml </strong>(not service.xml). So this <strong>Logging </strong> phase should be defined there in the server.xml which is located in AXIS_HOME/ axis2/WEB-INF. The following is the default server.xml that is shipped with axis2.war. </p>
-<p class="style1 style9"><strong>&lt;server name=&quot;AxisJava2.0&quot;&gt;
-<br>&nbsp;&nbsp;&lt;parameter name=&quot;hotdeployment&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
-<br>&nbsp;&nbsp;&lt;parameter name=&quot;hotupdate&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
-<br>&nbsp;&nbsp;&lt;transports&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;http&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;smtp&quot;/&gt; 
-<br>&nbsp;&nbsp;&lt;/transports&gt; 
-<br>&nbsp;&nbsp;&lt;phaseOrder&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;global&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;transport&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;Logging&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;module&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;service&quot;/&gt; 
-<br>&nbsp;&nbsp;&lt;/phaseOrder&gt; 
-<br>&lt;/server&gt;  </strong></p>
+<p class="style1 style9  style2 style3">&lt;server name=&quot;AxisJava2.0&quot;&gt;
+  <br>
+  &nbsp;&nbsp;&lt;parameter name=&quot;hotdeployment&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
+  <br>
+  &nbsp;&nbsp;&lt;parameter name=&quot;hotupdate&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt; 
+  <br>
+  &nbsp;&nbsp;&lt;transports&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;http&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;transport name=&quot;smtp&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&lt;/transports&gt; 
+  <br>
+  &nbsp;&nbsp;&lt;phaseOrder&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;global&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;transport&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;Logging&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;module&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;phase name=&quot;service&quot;/&gt; 
+  <br>
+  &nbsp;&nbsp;&lt;/phaseOrder&gt; 
+  <br>
+&lt;/server&gt;  </p>
 <p>Since the Logging phase is there in the default server.xml the user who runs these samples need not edit the server.xml at all. </p>
 <p>Nevertheless deploying the sample is very easy and it can be done in any of the three methods described in the <strong>“Echo Synchronous call” </strong> case. Infact had the use typed </p>
 <p>&gt;ant deploy </p>
 <p>and deployed the service in the <strong>“Echo Synchronous call” </strong> case then this service too will be deployed. The relevant jar file is <strong>sample1WithHandler.jar </strong> and will be packed to \build\services directory if the user wants to deploy it manually or upload using the web application. </p>
 <h3><strong>Running the sample </strong></h3>
 <p>In this case the client side is similar to that of <strong>“Echo Synchronous call” </strong>. The changes are happening in the server side in this case. The same SynchronousClient.java can be used to invoke the service by changing the command line arguments. Refer the ant target for details </p>
-<p>&lt;target name= &quot;echo&quot; depends= &quot;compile&quot; &gt; </p>
-<p><span class="style11" body="bold">&lt;java classname= &quot;SynchronousClient&quot;&gt;
-  </span>
-</p>
-<p class="style10">&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; </p>
-<p class="style10">&lt;arg value= &quot;8080&quot; /&gt; </p>
-<p class="style10">&lt;arg value= &quot;/axis2/services/sample1&quot; /&gt; </p>
-<p class="style10">&lt;/java&gt; </p>
-<p class="style10">&lt;/target&gt; </p>
-<p class="style10">&lt;target name= &quot;echoWithHandler&quot; &gt; </p>
-<p class="style10">&lt;java classname= &quot;SynchronousClient&quot; &gt; </p>
-<p class="style10">&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; </p>
-<p class="style10">&lt;arg value= &quot;8080&quot; /&gt; </p>
-<p class="style10">&lt;arg value= &quot;/axis2/services/sample1WithHandler&quot; /&gt; </p>
-<p class="style10">&lt;/java&gt; </p>
-<p class="style10">&lt;/target&gt; </p>
+<p class="style4">&lt;target name= &quot;echo&quot; depends= &quot;compile&quot; &gt; 
+<br>&nbsp;&nbsp;&lt;java classname= &quot;SynchronousClient&quot;&gt;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;8080&quot; /&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;/axis2/services/sample1&quot; /&gt; 
+<br>&nbsp;&nbsp;&lt;/java&gt; 
+<br>&lt;/target&gt; 
+<br><br>&lt;target name= &quot;echoWithHandler&quot; &gt; 
+<br>&nbsp;&nbsp;&lt;java classname= &quot;SynchronousClient&quot; &gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;8080&quot; /&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;/axis2/services/sample1WithHandler&quot; /&gt; 
+<br>&nbsp;&nbsp;&lt;/java&gt; 
+<br>&lt;/target&gt; </p>
 <p>To run the sample first the user must start the servlet container and run the client by simply typing </p>
 <p>&gt;ant echoWithHandler </p>
 <p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
@@ -363,19 +387,21 @@ Echo String&lt;/sample1:Text&gt;</p>
 <p><strong>&#149;&nbsp; Writing a new Web Service implementation class </strong></p>
 <p>Axis2 M1 does not support data binding and supports only the XML level messaging. The default provider (do not worry about this if you do not know what it is) only supports the java methods having the return type as OMElement and only parameter as an OMElement. </p>
 <p>The OMElement is a Streaming representation of XML Message Element Information Item (Even though the user sees the OMElement as a tree based DOM/JDOM like node, it reads the information from the stream only when its absolutely required.). For more information refer the <a href="OMTutorial.html">OM Tutorial </a>. </p>
-<p>public class &lt;class-name&gt;{ </p>
-<p>public OMElelemnt &lt;method-name&gt;(OMEllemnt){ </p>
-<p>&lt;business logic&gt; </p>
-<p>} </p>
-<p>..... </p>
-<p>} </p>
+<p class="style4">public class &lt;class-name&gt;{ 
+<br>&nbsp;&nbsp;public OMElelemnt &lt;method-name&gt;(OMEllemnt){ 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;business logic&gt; 
+<br>&nbsp;&nbsp;} 
+<br>&nbsp;&nbsp;..... 
+<br>} </p>
 <p><strong>&#149;&nbsp; Write the service.xml file </strong></p>
 <p>the following XML snippet is a very simple service.xml file. </p>
-<p>&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; &gt; </p>
-<p>&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot; </p>
-<p>xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; </p>
-<p>&lt;operation name=&quot;&lt;method-name&gt;&quot; qname=&quot;&lt;method-name&gt;&quot;/&gt;... </p>
-<p>&lt;/service&gt; </p>
+<p class="style4">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; &gt; 
+<br>&nbsp;&nbsp;&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot; 
+xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; 
+<br>
+ &nbsp;&nbsp;&lt;operation name=&quot;&lt;method-name&gt;&quot; qname=&quot;&lt;method-name&gt;&quot;/&gt; ... 
+<br>
+&lt;/service&gt; </p>
 <p>Here the org.apache.axis.providers.RawXMLProvider is the default provider for the Apache Axis2 M1, the provider can be changed by specifying the relevant parameter. Note that &lt;method-name&gt; should be replaced by the relevant method name. </p>
 <p><strong>&#149;&nbsp; Create an archive with the service.xml file and with class files </strong></p>
 <p>Compile the the Web Service implementation class and any other supporting class. Archive them in to a jar file. Place the service.xml file in the META-INF directory. </p>
@@ -388,56 +414,55 @@ Echo String&lt;/sample1:Text&gt;</p>
 <p>&#149;&nbsp; Non blocking invocation of type in-out (Without a separate Listener) </p>
 <p>for more information about the interaction patterns, visit the <a href="ClientAPI.html">Client API Tutorial </a>. </p>
 <p>To invoke the web service, user needs to build the the SOAPEnvelope himself. The SOAPEnvelope can be built by the following code. </p>
-<p>OMFactory fac = OMFactory.newInstance(); </p>
-<p>SOAPEnvelope envelope = fac.getDefaultEnvelope(); </p>
-<p>OMElement omElement = ..... </p>
-<p>envelope.getBody().addChild(omElement); </p>
-<p>&nbsp; </p>
+<p class="style4">OMFactory fac = OMFactory.newInstance(); 
+<br>SOAPEnvelope envelope = fac.getDefaultEnvelope(); 
+<br>OMElement omElement = ..... 
+<br>envelope.getBody().addChild(omElement); </p>
 <p>OMElement can be build using one of the following methods; </p>
 <ol>
-  <li>Create a OM by building the OM tree </li>
+  <li>Create a OM by building the OM tree <br>
+  <span class="style4">fac.createOMElement(method, ns);</span></li>
 </ol>
-<p class="style1">	fac.createOMElement(method, ns); </p>
+
 <ol>
-  <li>Create a OM Element from a XML file </li>
+  <li>Create a OM Element from a XML file 
+ <br>
+ <span class="style4">XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); <br>
+  OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(), parser); <br>
+builder.getDocumentElement();
+ </span></li>
 </ol>
-<p class="style1">XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file)); <br>
-  OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(), parser); </p>
-<p class="style1">builder.getDocumentElement(); </p>
-<p class="style1">for more information in handling the OM objects please read the <a href="OMTutorial.html">OM Tutorial </a>. </p>
+<p>for more information in handling the OM objects please read the <a href="OMTutorial.html">OM Tutorial </a>. </p>
 <h3><a name="_Toc96698097"></a><a name="_Toc96697872">Synchronous Client </a></h3>
 <p>Invoking the synchronous web service call can be done with the following code. </p>
-<p class="style1">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) + &quot;/axis/services/echo&quot; ); </p>
-<p class="style1">Call call = <strong>new </strong>Call(); </p>
-<p class="style1">call.setTo(targetEPR); </p>
-<p class="style1">SOAPEnvelope responseEnv = call.sendReceive(envelope); </p>
-<p class="style1">&nbsp; </p>
-<p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
+<p class="style4">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) + &quot;/axis/services/echo&quot; ); 
+<br>Call call = <strong>new </strong>Call(); 
+<br>call.setTo(targetEPR); 
+<br>SOAPEnvelope responseEnv = call.sendReceive(envelope); </p> 
+<p><p class="style1">&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
 <p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
 <p>&#149;&nbsp; call.sendRecieve() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
 <h3><a name="_Toc96698098"></a><a name="_Toc96697873">Asynchronous Client </a></h3>
 <p>Invoking the asynchronous web service call can be done with the following code. </p>
-<p class="style1">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT) </p>
-<p class="style1">+ &quot;/axis/services/echo&quot; ); </p>
-<p class="style1">Call call = <strong>new </strong>Call(); </p>
-<p class="style1">call.setTo(targetEPR); </p>
-<p class="style1">call.setListenerTransport(Constants.TRANSPORT_HTTP, <strong>true </strong>); </p>
-<p class="style1">SOAPEnvelope responseEnv = call.sendReceiveAsync(envelope,callback); </p>
-<p>&nbsp; </p>
+<p class="style4">EndpointReference targetEPR = <strong>new </strong>EndpointReference(AddressingConstants.WSA_TO, &quot;http://127.0.0.1:&quot; + (EngineUtils.TESTING_PORT)+ &quot;/axis/services/echo&quot; ); 
+<br>Call call = <strong>new </strong>Call(); 
+<br>call.setTo(targetEPR); 
+<br>call.setListenerTransport(Constants.TRANSPORT_HTTP, <strong>true </strong>); 
+<br>SOAPEnvelope responseEnv = call.sendReceiveAsync(envelope,callback); </p>
 <p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
 <p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
 <p>&#149;&nbsp; call.sendRecieveAsync() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
 <p>&#149;&nbsp; The LitenerTransport is type of the trasport to be used. Axis2-M1 only supports the http and the second parameter express the should the seperate listener is to be started or not. Axis-M1 suppoerts only the true for this. </p>
 <p>&#149;&nbsp; callback it the Callback to handle the response e.g. </p>
-<p class="style1">Callback callback = <strong>new </strong> Callback() { </p>
-<p class="style1"><strong>public void </strong>onComplete(AsyncResult result) { </p>
-<p class="style1">//process the result </p>
-<p class="style1">} </p>
-<p class="style1">&nbsp; </p>
-<p class="style1"><strong>public void </strong>reportError(Exception e) { </p>
-<p class="style1">//handler error </p>
-<p class="style1">} </p>
-<p class="style1">}; </p>
+<p class="style1 style2 style3">Callback callback = <strong>new </strong> Callback() { 
+<br><strong>&nbsp;&nbsp;public void </strong>onComplete(AsyncResult result) { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;//process the result 
+<br>&nbsp;&nbsp;} 
+<br>&nbsp; 
+<br><strong>&nbsp;&nbsp;public void </strong>reportError(Exception e) { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;//handler error 
+<br>&nbsp;&nbsp;} 
+<br>}</p>
 <p>&nbsp; </p>
 <p>&nbsp; </p>
 </body>
