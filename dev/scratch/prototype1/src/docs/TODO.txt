@@ -1,0 +1,3 @@
+how the DD are parsed
+
+getNSURI() for OMElement

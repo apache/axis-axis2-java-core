@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+  <!-- a unique name for this project -->
+  <id>axis2</id>
+  
+  <!-- a short but descriptive name for the project -->
+  <name>Axis2.0</name>
+  
+  <!-- The version of the project under development, e.g.
+       1.1, 1.2, 2.0-SNAPSHOT -->
+  <currentVersion>1.0</currentVersion>
+  
+  <!-- details about the organization that 'owns' the project -->
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+    <logo>http://ws.apache.org/images/jakarta-logo-blue.gif</logo>
+  </organization>
+  
+  <!-- the year the project started -->
+  <inceptionYear>2003</inceptionYear>
+  <package>org.apache.axis</package>
+  <logo>http://maven.apache.org/images/maven.jpg</logo>
+  <description>Next Generation of Apache Axis 2.0</description>
+  <!-- a short description of what the project does -->
+  <shortDescription>Axis 2.0</shortDescription>
+
+  <!-- the project home page -->
+  <url>http://ws.apache.org/axis2/</url>
+  <issueTrackingUrl>http://nagoya.apache.org/scarab/servlet/scarab/</issueTrackingUrl>
+  <siteAddress>ws.apache.org</siteAddress>
+  <siteDirectory>/www/ews.ws.apache.org/</siteDirectory>
+  <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
+
+  <!-- the version control repository and http url for online access
+       the connection element has the form:
+       scm:<system>:<system specific connection string> -->
+<!--
+  <repository>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-axis/contrib/ews</connection>
+    <url>http://cvs.apache.org/viewcvs/ws-axis/contrib/ews/</url>
+  </repository>
+-->
+  <!-- any mailing lists for the project -->
+  <mailingLists>
+    <mailingList>
+      <name>Axis Developer List</name>
+      <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
+    </mailingList>
+  </mailingLists>
+
+  <!-- ========== -->
+  <!-- Developers -->
+  <!-- ========== -->
+  
+  <developers>
+	<!-- e.g.
+    <developer>
+      <name>Davanum Srinivas</name>
+      <id>dims</id>
+      <email>dims@apache.org</email>
+      <organization></organization>
+    </developer>
+    -->
+  </developers>
+
+  
+  
+  <!-- build information for the project -->
+  <build>
+    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+      </includes>
+     <resources>
+         <resource>
+             <directory>${basedir}/src/test-resources</directory>
+          </resource>
+      </resources>
+
+    </unitTest>
+
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <includes>
+          <include>**/*Provider</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          <include>**/*Provider</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>schema</directory>
+        <includes>
+              <include>*.dtd</include>
+		  <include>*.xsd</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+    <!-- ============ -->
+    <!-- Dependencies -->
+    <!-- ============ -->
+
+    <dependencies>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>jaxrpc</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>saaj</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3</artifactId>
+            <version>1.1.3.3</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+    </dependencies>
+</project>
+
