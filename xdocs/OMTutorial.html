@@ -20,6 +20,13 @@ The objective of this tutorial is to introduce the basics of OM and explain the 
 <h3>For whom is this Tutorial?</h3>
 <p>This tutorial can be used by anybody who is interested in OM and needs to go deeper in it. However it is assumed that the reader has a basic understanding of the concepts of XML (such as Namespaces) and a working knowledge of tools such as Ant.  Knowledge in similar object models such as DOM will be quite helpful in understanding but such knowledge is not assumed.
 Several Links are listed in the appendix/ links section that will help anybody who lacks the basic understanding of XML.</p>
+<h3>What is pull parsing ?</h3>
+Pull parsing is a recent trend in XML processing. The previously popular XML processing frameworks such as SAX and DOM were "push-based" which means
+the control of the parsing was with the parser itself. This approach is fine and easy to use but it was not efficient in 
+handling large XML documents since a complete memory model will be generated in the memory. Pull parsing inverts the control
+and hence the parser only proceeds at the users command. The user can decide to store or discard events generated from the
+parser.
+OM is based on pull parsing. To learn more about XML pull parsing see the <a href="http://www.bearcave.com/software/java/xml/xmlpull.html">XML pull parsing introduction</a>.  
 <h3>A Bit of History</h3>
 <p>The original OM was proposed as a store for the pull parser events for later processing, at the Axis summit held at Colombo during September 2004. However this approach was soon improved and OM was pursued as a complete info set model due to its flexibility.
 Several implementation techniques were attempted during the initial phases. The two most promising techniques were the table based technique and the link list based technique. During the intermediate performance tests the link list based technique proved to be much more memory efficient for smaller and mid sized XML documents (the advantage of the table based OM was only visible for the large and very large XML documents) and hence the link list based technique was chosen as the most suitable. 
@@ -60,8 +67,14 @@ Caching refers to the creation of the objects while parsing the pull stream.
 The reason why this is so important is because caching can be turned off in certain situations. In this situation
 the  parser proceeds without building the object structure. User can extract the raw pull stream from OM and use 
 that instead of the OM and in this case it is sometimes beneficial to switch off caching.
-The advanced operations section explains more on accessing the raw pull stream.
+The advanced operations section explains more on accessing the raw pull stream and switching the caching on and off.
 </p> 
+<h3>Where does SOAP come into play?</h3>
+<p>In a nutshell SOAP is a information exchange protocol based on XML. SOAP has a defined set of
+XML elements that should be used in messages. Since Axis is a "SOAP Engine" and OM is built for Axis, A set of SOAP
+specific objects were also defined along with OM. These SOAP Objects are extensions of the general OM objects.
+To <a href="http://www.w3schools.com/SOAP/soap_intro.asp">learn more on SOAP</a></p>
+
 
 <!--<p>This abstraction provides</p>
 <ul>
@@ -75,10 +88,17 @@ The advanced operations section explains more on accessing the raw pull stream.
 <h3>Obtaining the OM binary</h3>
 <p>OM is not a separate product but part of Axis2. However since Axis 2 has a modular build structure
 It is possible to obtain a "OM only" jar. 
-Axis build is based on Maven. For further information on Maven (and the binary download) please visit http://maven.apache.org.</p>
-<p>Once Maven is properly installed the source should be downloaded from the SVN repository. For further information on SVN and client programs for both windows and Linux please visit http://svn.tigris.org.</p>
-<p>After the source download OM-binary can be built . All other necessary jars will be automatically downloaded.
-Once the Axis-M1.jar is created (which can be found in the newly created targets directory) it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-M1.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
+<p>
+The easiest way to obtain the OM binary is to download the Axis2 binary distribution. The lib directory will
+contain the axis2-om-M1.jar. However more adventures users can build the OM from source. The next section describes how
+to build Om from source.
+</p>
+Axis build is based on Maven. For further information on Maven (and the binary download) please visit <a href="http://maven.apache.org.">the Maven site</a></p>
+<p>Once Maven is properly installed the source should be downloaded from the <a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java/modules/om">Axis 2 SVN repository</a>. (For further information on SVN and client programs for both windows and Linux please visit <a href="http://svn.tigris.org">svn.tigris.org</a></p>
+<p>After the source download OM-binary can be built. 
+For both Windows and Linux move to the project directory and execute the command "maven jar". All other necessary jars will be automatically downloaded.
+When the build finishes successfully, the axis2-om-M1.jar can be found in the newly created "targets" directory</p>
+<p>Once the Om-binary is obtained by any of the mentioned means,it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-M1.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
 </p><h3>Creation</h3>
 <p>Creation is the first and foremost action in using an Object representation. This part explains how OM can be built from an existing document or just programmatically.
 OM provides a notion of a factory and a builder to create objects. The factory helps to keep the code at the interface level and the implementations separately (Figure 2). Since OM is tightly bound to StAX, a StAX compliant reader should be created first with the desired input stream. Then the reader should be fed into the OMXMLBuilderFactory to instantiate a suitable builder.
@@ -419,6 +439,8 @@ writer.flush();
 For basics in XML
 		<ul>
 				<li><a href="http://www-128.ibm.com/developerworks/xml/newto/index.html">Developerworks Introduction to XML</a></li>
+				<li><a href="http://www.bearcave.com/software/java/xml/xmlpull.html">Introduction to Pull parsing</a></li>
+				
 		</ul>
 
 <!-- Start of footer -->
