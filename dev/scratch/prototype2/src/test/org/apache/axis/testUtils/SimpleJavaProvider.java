@@ -103,7 +103,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
         Object[] objs = new Object[parms.length];
 
         for (int i = 0; i < parms.length; i++) {
-            if (int.class.equals(parms[i])) {
+            if (int.class.equals(parms[i])|| Integer.class.equals(parms[i])) {
                 objs[i] =
                     new Integer(SimpleTypeEncodingUtils.deserializeInt(xpp));
             } else if (String.class.equals(parms[i])) {
