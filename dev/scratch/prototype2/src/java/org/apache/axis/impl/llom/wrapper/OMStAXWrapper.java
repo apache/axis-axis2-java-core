@@ -5,9 +5,11 @@ import org.apache.axis.impl.llom.exception.OMStreamingException;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.Location;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -31,7 +33,7 @@ import java.util.Stack;
  *         Note  - This class also implements the streaming constants interface
  *         to get access to the StAX constants
  */
-public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
+public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
 
     private OMNavigator navigator;
@@ -87,6 +89,10 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
      * root element if the entire document is needed
      */
     public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode) {
+        this(builder,startNode,false);
+    }
+
+    public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,boolean cacheOff) {
         //create a navigator
         this.navigator = new OMNavigator(startNode);
         this.builder = builder;
@@ -96,9 +102,11 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         //returns the starting node at the first call to it
         currentNode = navigator.next();
         nextNode = navigator.next();
-
+        switchingAllowed = cacheOff;
     }
-
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getPrefix()
+     */
     public String getPrefix() {
         String returnStr = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT) {
@@ -113,7 +121,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @see javax.xml.stream.XMLStreamReader#getNamespaceURI()
      */
     public String getNamespaceURI() {
         String returnStr = null;
@@ -130,7 +138,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @see javax.xml.stream.XMLStreamReader#hasName()
      */
     public boolean hasName() {
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT) {
@@ -141,7 +149,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @return
+     *@see javax.xml.stream.XMLStreamReader#getLocalName()
      */
     public String getLocalName() {
         String returnStr = null;
@@ -156,8 +164,10 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnStr;
     }
 
+    /**
+     *@see javax.xml.stream.XMLStreamReader#getName()
+     */
     public QName getName() {
-
         QName returnName = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT) {
             if (navigable) {
@@ -170,6 +180,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#hasText()
+     */
     public boolean hasText() {
         return (currentEvent == CHARACTERS ||
                 currentEvent == DTD ||
@@ -178,6 +191,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 currentEvent == SPACE);
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getTextLength()
+     */
     public int getTextLength() {
         int returnLength = 0;
         if (hasText()) {
@@ -192,6 +208,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnLength;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getTextStart()
+     */
     public int getTextStart() {
         int returnLength = 0;
         if (hasText()) {
@@ -203,7 +222,11 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnLength;
     }
 
-    public int getTextCharacters(int i, char[] chars, int i1, int i2) throws OMStreamingException {
+    /**
+     *
+     *  @see javax.xml.stream.XMLStreamReader#getTextCharacters(int, char[], int, int)
+     */
+    public int getTextCharacters(int i, char[] chars, int i1, int i2) throws XMLStreamException {
         int returnLength = 0;
         if (hasText()) {
             if (!navigable) {
@@ -219,7 +242,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @see javax.xml.stream.XMLStreamReader#getTextCharacters()
      */
     public char[] getTextCharacters() {
         char[] returnArray = null;
@@ -237,7 +260,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @see javax.xml.stream.XMLStreamReader#getText()
      */
     public String getText() {
         String returnString = null;
@@ -252,11 +275,18 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getEventType()
+     */
     //todo this should be improved
     public int getEventType() {
         return currentEvent;
     }
 
+    /**
+     * @see  javax.xml.stream.XMLStreamReader#getNamespaceURI
+     *
+     */
     public String getNamespaceURI(int i) {
         String returnString = null;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
@@ -269,6 +299,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getNamespacePrefix
+     */
     public String getNamespacePrefix(int i) {
         String returnString = null;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
@@ -281,6 +314,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getNamespaceCount()
+     */
     public int getNamespaceCount() {
         int returnCount = 0;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
@@ -293,6 +329,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnCount;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#isAttributeSpecified
+     */
     public boolean isAttributeSpecified(int i) {
         boolean returnValue = false;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -307,6 +346,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnValue;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getAttributeValue
+     */
     public String getAttributeValue(int i) {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -324,6 +366,10 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     *
+     * @see javax.xml.stream.XMLStreamReader#getAttributeType
+     */
     public String getAttributeType(int i) {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -338,6 +384,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getAttributePrefix
+     */
     public String getAttributePrefix(int i) {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -358,6 +407,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getAttributeLocalName
+     */
     public String getAttributeLocalName(int i) {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -375,6 +427,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getAttributeNamespace
+     */
     public String getAttributeNamespace(int i) {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
@@ -396,8 +451,6 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     /**
-     * @param i
-     * @return
      * @see javax.xml.stream.XMLStreamReader#getAttributeName
      */
     public QName getAttributeName(int i) {
@@ -436,8 +489,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
 
+    //todo
     public String getAttributeValue(String s, String s1) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public boolean isWhiteSpace() {
@@ -471,6 +525,17 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return b;
     }
 
+    /**
+     * @see javax.xml.stream.XMLStreamReader#require(int, String, String)
+     * @param i
+     * @param s
+     * @param s1
+     * @throws XMLStreamException
+     */
+    public void require(int i, String s, String s1) throws XMLStreamException {
+        throw new XMLStreamException();
+    }
+
     public boolean isStartElement() {
         boolean b;
         if (navigable) {
@@ -493,19 +558,16 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnString;
     }
 
-    public void close() throws OMStreamingException {
+    public void close() throws XMLStreamException {
         //this doesnot mean anything with respect to the OM
         if (!navigable) {
-            try {
-                parser.close();
-            } catch (XMLStreamException e) {
-                throw new OMStreamingException(e);
-            }
+            parser.close();
+
         }
 
     }
 
-    public boolean hasNext() throws OMStreamingException {
+    public boolean hasNext() throws XMLStreamException {
         return !complete;
     }
 
@@ -516,11 +578,14 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
      * @throws org.apache.axis.impl.llom.exception.OMStreamingException
      *
      */
-    public int nextTag() throws OMStreamingException {
-        return 0;
+    public int nextTag() throws XMLStreamException {
+        throw new UnsupportedOperationException();
     }
 
-    public String getElementText() throws OMStreamingException {
+    /**
+     * @see javax.xml.stream.XMLStreamReader#getElementText()
+     */
+    public String getElementText() throws XMLStreamException {
 
         String returnText = "";
 
@@ -539,16 +604,16 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         return returnText;
     }
 
-    public int next() throws OMStreamingException {
+    public int next() throws XMLStreamException {
 
         if (complete) {
             throw new OMStreamingException("Parser completed!");
         }
 
         if (switched){
-             //set navigable to false.Now the subsequent requests will be directed to
-                //the parser
-                navigable = false;
+            //set navigable to false.Now the subsequent requests will be directed to
+            //the parser
+            navigable = false;
         }
         if (navigable) {
             currentEvent = generateEvents(currentNode);
@@ -562,7 +627,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     public Object getProperty(String s) throws IllegalArgumentException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 
@@ -573,7 +638,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
      * At the same time the parser and builder are set up for the upcoming event
      * generation
      */
-    private void updateNextNode() throws OMStreamingException {
+    private void updateNextNode() throws XMLStreamException {
         lastNode = currentNode;
         currentNode = nextNode;
 
@@ -596,7 +661,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 try {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (ClassCastException e) {
-                    throw new OMStreamingException("incompatible parser found!", e);
+                    throw new XMLStreamException("incompatible parser found!", e);
                 }
 
                 switched = true;
@@ -608,7 +673,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     }
 
     private void updateCompleteStatus() {
-        //todo this needs to be done correctly
+
         if (!navigable) {
             complete = (currentEvent == END_DOCUMENT);
         } else {
@@ -618,6 +683,43 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 else
                     complete = true;
         }
+    }
+
+
+    public NamespaceContext getNamespaceContext() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getEncoding() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Location getLocation() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getVersion() {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isStandalone() {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean standaloneSet() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getCharacterEncodingScheme() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getPITarget() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getPIData() {
+        throw new UnsupportedOperationException();
     }
 
     /*

@@ -7,16 +7,15 @@ import java.io.FileReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.llom.wrapper.OMStAXWrapper;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.StreamingWrapper;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -39,6 +38,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     private SimpleOMSerializer serilizer;
     private OMXMLParserWrapper builder;
     private File tempFile;
+    private XMLStreamReader parser;
 
     public OMStaxStreamingWrapperTest(String testName) {
         super(testName);
@@ -52,83 +52,76 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         serilizer = new SimpleOMSerializer();
         tempFile = File.createTempFile("temp", "xml");
+
+        parser = new OMStAXWrapper(builder, envelope);
     }
 
 
-    public void testWrapperFullOM() throws FileNotFoundException {
+    public void testWrapperFullOM() throws Exception {
         assertNotNull(envelope);
         //this serializing will cause the OM to fully build!
         serilizer.serialize(envelope, new FileOutputStream(tempFile));
 
-        //now the OM is fully created. Create the wrapper and see
-        StreamingWrapper wrapper = new OMStAXWrapper(builder, envelope);
-
-        while (wrapper.hasNext()) {
-            int event = wrapper.next();
+        while (parser.hasNext()) {
+            int event = parser.next();
             assertTrue(event > 0);
         }
 
     }
 
-    public void testWrapperHalfOM() {
+    public void testWrapperHalfOM() throws Exception {
         assertNotNull(envelope);
 
-        //now the OM is not fully created. Create the wrapper and see
-        StreamingWrapper wrapper = new OMStAXWrapper(builder, envelope);
-        while (wrapper.hasNext()) {
-            int event = wrapper.next();
+        while (parser.hasNext()) {
+            int event = parser.next();
             assertTrue(event > 0);
         }
     }
 
-    public void testWrapperHalfOMWithCacheOff() {
+    public void testWrapperHalfOMWithCacheOff() throws Exception {
         assertNotNull(envelope);
-        //now the OM is not fully created. Create the wrapper and see
-        StreamingWrapper wrapper = new OMStAXWrapper(builder, envelope);
-        //set the switching allowed flag
-        wrapper.setAllowSwitching(true);
-        while (wrapper.hasNext()) {
-            int event = wrapper.next();
+
+        parser = new OMStAXWrapper(builder, envelope, true);
+
+        while (parser.hasNext()) {
+            int event = parser.next();
             assertTrue(event > 0);
         }
     }
 
-    public void testWrapperElementEventGenerationWithHalfOMWithCacheOff() {
+    public void testWrapperElementEventGenerationWithHalfOMWithCacheOff() throws XMLStreamException {
         assertNotNull(envelope);
-        StreamingWrapper wrapper = new OMStAXWrapper(builder, envelope);
-        wrapper.setAllowSwitching(true);
-
-        while (wrapper.hasNext()) {
-            int event = wrapper.next();
+        parser = new OMStAXWrapper(builder, envelope, true);
+        while (parser.hasNext()) {
+            int event = parser.next();
             assertTrue(event > 0);
             if (event == XMLStreamReader.START_ELEMENT) {
-                checkStartElement(wrapper);
-            }else if (event == XMLStreamReader.CHARACTERS){
-                checkCharacters(wrapper);
+                checkStartElement(parser);
+            } else if (event == XMLStreamReader.CHARACTERS) {
+                checkCharacters(parser);
             }
         }
 
 
     }
 
-    public void testWrapperElementEventGenerationWithHalfOM() {
+    public void testWrapperElementEventGenerationWithHalfOM() throws Exception {
         assertNotNull(envelope);
-        StreamingWrapper wrapper = new OMStAXWrapper(builder, envelope);
 
-        while (wrapper.hasNext()) {
-            int event = wrapper.next();
+        while (parser.hasNext()) {
+            int event = parser.next();
             assertTrue(event > 0);
             if (event == XMLStreamReader.START_ELEMENT) {
-                checkStartElement(wrapper);
-            }else if (event == XMLStreamReader.CHARACTERS){
-                checkCharacters(wrapper);
+                checkStartElement(parser);
+            } else if (event == XMLStreamReader.CHARACTERS) {
+                checkCharacters(parser);
             }
         }
 
 
     }
 
-    private void checkCharacters(StreamingWrapper wrapper){
+    private void checkCharacters(XMLStreamReader wrapper) {
         assertFalse(wrapper.isStartElement());
         assertFalse(wrapper.isEndElement());
         assertFalse(wrapper.isWhiteSpace());
@@ -136,10 +129,10 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         assertTrue(wrapper.isCharacters());
 
         assertNotNull(wrapper.getText());
-        assertTrue(wrapper.getTextLength()>0);
+        assertTrue(wrapper.getTextLength() > 0);
     }
 
-    private void checkStartElement(StreamingWrapper wrapper) {
+    private void checkStartElement(XMLStreamReader wrapper) {
         assertTrue(wrapper.isStartElement());
         assertTrue(wrapper.hasName());
         assertFalse(wrapper.isEndElement());

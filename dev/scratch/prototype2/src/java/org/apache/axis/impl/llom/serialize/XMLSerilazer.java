@@ -1,8 +1,6 @@
 package org.apache.axis.impl.llom.serialize;
 
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.StreamingWrapper;
-
 import javax.xml.stream.XMLStreamReader;
 
 /**
@@ -23,11 +21,11 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class XMLSerilazer {
     private static StringBuffer b;
-    private StreamingWrapper streamingWrapper;
+    private XMLStreamReader parser;
     private OMElement startingElement;
 
-    public XMLSerilazer(StreamingWrapper streamingWrapper) {
-        this.streamingWrapper = streamingWrapper;
+    public XMLSerilazer(XMLStreamReader streamingWrapper) {
+        this.parser = streamingWrapper;
 
     }
 
@@ -37,33 +35,33 @@ public class XMLSerilazer {
     }
 
 
-    public static String printEvent(StreamingWrapper streamingWrapper) {
+    public static String printEvent(XMLStreamReader parser) {
 
-        switch (streamingWrapper.getEventType()) {
+        switch (parser.getEventType()) {
             case XMLStreamReader.START_ELEMENT:
                 b.append("<");
-                printName(streamingWrapper, b);
-                for (int i = 0; i < streamingWrapper.getNamespaceCount(); i++) {
+                printName(parser, b);
+                for (int i = 0; i < parser.getNamespaceCount(); i++) {
                     b.append(" ");
-                    String n = streamingWrapper.getNamespacePrefix(i);
+                    String n = parser.getNamespacePrefix(i);
                     if ("xmlns".equals(n)) {
-                        b.append("xmlns=\"" + streamingWrapper.getNamespaceURI(i) + "\"");
+                        b.append("xmlns=\"" + parser.getNamespaceURI(i) + "\"");
                     } else {
                         b.append("xmlns:" + n);
                         b.append("=\"");
-                        b.append(streamingWrapper.getNamespaceURI(i));
+                        b.append(parser.getNamespaceURI(i));
                         b.append("\"");
                     }
                 }
 
-                for (int i = 0; i < streamingWrapper.getAttributeCount(); i++) {
+                for (int i = 0; i < parser.getAttributeCount(); i++) {
                     b.append(" ");
-                    printName(streamingWrapper.getAttributePrefix(i),
-                            streamingWrapper.getAttributeNamespace(i),
-                            streamingWrapper.getAttributeLocalName(i),
+                    printName(parser.getAttributePrefix(i),
+                            parser.getAttributeNamespace(i),
+                            parser.getAttributeLocalName(i),
                             b);
                     b.append("=\"");
-                    b.append(streamingWrapper.getAttributeValue(i));
+                    b.append(parser.getAttributeValue(i));
                     b.append("\"");
                 }
 
@@ -71,16 +69,16 @@ public class XMLSerilazer {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 b.append("</");
-                printName(streamingWrapper, b);
-                for (int i = 0; i < streamingWrapper.getNamespaceCount(); i++) {
+                printName(parser, b);
+                for (int i = 0; i < parser.getNamespaceCount(); i++) {
                     b.append(" ");
-                    String n = streamingWrapper.getNamespacePrefix(i);
+                    String n = parser.getNamespacePrefix(i);
                     if ("xmlns".equals(n)) {
-                        b.append("xmlns=\"" + streamingWrapper.getNamespaceURI(i) + "\"");
+                        b.append("xmlns=\"" + parser.getNamespaceURI(i) + "\"");
                     } else {
                         b.append("xmlns:" + n);
                         b.append("=\"");
-                        b.append(streamingWrapper.getNamespaceURI(i));
+                        b.append(parser.getNamespaceURI(i));
                         b.append("\"");
                     }
                 }
@@ -88,30 +86,30 @@ public class XMLSerilazer {
                 break;
             case XMLStreamReader.SPACE:
             case XMLStreamReader.CHARACTERS:
-                int start = streamingWrapper.getTextStart();
-                int length = streamingWrapper.getTextLength();
-                b.append(new String(streamingWrapper.getTextCharacters(),
+                int start = parser.getTextStart();
+                int length = parser.getTextLength();
+                b.append(new String(parser.getTextCharacters(),
                         start,
                         length));
                 break;
             case XMLStreamReader.CDATA:
                 b.append("<![CDATA[");
-                if (streamingWrapper.hasText())
-                    b.append(streamingWrapper.getText());
+                if (parser.hasText())
+                    b.append(parser.getText());
                 b.append("]]>");
                 break;
 
             case XMLStreamReader.COMMENT:
                 b.append("<!--");
-                if (streamingWrapper.hasText())
-                    b.append(streamingWrapper.getText());
+                if (parser.hasText())
+                    b.append(parser.getText());
                 b.append("-->");
                 break;
             case XMLStreamReader.START_DOCUMENT:
 //                b.append("<?xml");
-//                b.append(" version='" + streamingWrapper.getVersion() + "'");
-//                b.append(" encoding='" + streamingWrapper.getCharacterEncodingScheme() + "'");
-//                if (streamingWrapper.isStandalone())
+//                b.append(" version='" + parser.getVersion() + "'");
+//                b.append(" encoding='" + parser.getCharacterEncodingScheme() + "'");
+//                if (parser.isStandalone())
 //                    b.append(" standalone='yes'");
 //                else
 //                    b.append(" standalone='no'");
@@ -131,11 +129,11 @@ public class XMLSerilazer {
         if (localName != null) b.append(localName);
     }
 
-    private static void printName(StreamingWrapper streamingWrapper, StringBuffer b) {
-        if (streamingWrapper.hasName()) {
-            String prefix = streamingWrapper.getPrefix();
-            String uri = streamingWrapper.getNamespaceURI();
-            String localName = streamingWrapper.getLocalName();
+    private static void printName(XMLStreamReader parser, StringBuffer b) {
+        if (parser.hasName()) {
+            String prefix = parser.getPrefix();
+            String uri = parser.getNamespaceURI();
+            String localName = parser.getLocalName();
             printName(prefix, uri, localName, b);
         }
     }
