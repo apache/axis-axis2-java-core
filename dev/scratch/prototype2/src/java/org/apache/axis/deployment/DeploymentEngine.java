@@ -1,27 +1,38 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.deployment.repository.utill.HDFileItem;
-import org.apache.axis.deployment.repository.utill.UnZipJAR;
-import org.apache.axis.deployment.repository.utill.WSInfo;
-import org.apache.axis.deployment.scheduler.DeploymentIterator;
-import org.apache.axis.deployment.scheduler.Scheduler;
-import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.*;
-import org.apache.axis.engine.*;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.phaseresolver.PhaseResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis.deployment.repository.utill.HDFileItem;
+import org.apache.axis.deployment.repository.utill.UnZipJAR;
+import org.apache.axis.deployment.repository.utill.WSInfo;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
+import org.apache.axis.deployment.scheduler.Scheduler;
+import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.deployment.listener.RepositoryListenerImpl;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryImpl;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Provider;
+import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.phaseresolver.PhaseResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -42,6 +53,12 @@ import java.util.List;
 public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
     private final Scheduler scheduler = new Scheduler();
+
+    private boolean hotdeployment = true;   //to do hot deployment or not
+    private boolean hotupdate = true;  // to do hot update or not
+
+
+
     /**
      * This will store all the web Services to deploy
      */
@@ -84,33 +101,32 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, "server.xml");
+        this(RepositaryName,"server.xml");
 
     }
-
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
         this.folderName = RepositaryName;
         File repository = new File(RepositaryName);
-        if (!repository.exists()) {
+        if(!repository.exists()){
             repository.mkdirs();
-            File servcies = new File(repository, "services");
-            File modules = new File(repository, "modules");
+            File servcies = new File(repository,"services");
+            File modules = new File(repository,"modules");
             modules.mkdirs();
             servcies.mkdirs();
         }
-        File serverConf = new File(repository, serverXMLFile);
-        if (!serverConf.exists()) {
+        File serverConf = new File(repository,serverXMLFile);
+        if(!serverConf.exists()){
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
-            if (in != null) {
+            if(in != null){
                 try {
                     serverConf.createNewFile();
                     FileOutputStream out = new FileOutputStream(serverConf);
                     int BUFSIZE = 512; // since only a test file going to load , the size has selected
                     byte[] buf = new byte[BUFSIZE];
                     int read;
-                    while ((read = in.read(buf)) > 0) {
-                        out.write(buf, 0, read);
+                    while((read = in.read(buf)) > 0){
+                        out.write(buf,0,read);
                     }
                     in.close();
                     out.close();
@@ -119,7 +135,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
 
-            } else {
+            } else{
                 throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
 
             }
@@ -139,7 +155,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * tio get ER
-     *
      * @return
      */
     public EngineRegistry getEngineRegistry() {
@@ -155,7 +170,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public EngineRegistry start() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
         //String fileName;
-        if (serverconfigName == null) {
+        if(serverconfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
         File tempfile = new File(serverconfigName);
@@ -165,23 +180,48 @@ public class DeploymentEngine implements DeploymentConstants {
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
-            throw new AxisFault("Exception at deployment", e);
+            throw new AxisFault("Exception at deployment",e);
+        }
+        setDeploymentFeatures();
+        if(hotdeployment){
+            startSearch(this);
+        } else {
+            RepositoryListenerImpl repository = new RepositoryListenerImpl(folderName,this);
+        }
+        valideServerModule() ;
+        return engineRegistry;
+    }
+
+    /**
+     * To set hotdeployment and hot update
+     */
+    private void setDeploymentFeatures() {
+        String value;
+        Parameter parahotdeployment = server.getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = server.getParameter(HOTUPDATE);
+        if(parahotdeployment != null ){
+            value = (String)parahotdeployment.getValue();
+            if("false".equals(value))
+                hotdeployment=  false;
+        }
+        if(parahotupdate != null){
+            value =(String)parahotupdate.getValue();
+            if("false".equals(value))
+                hotupdate =false;
+
         }
 
-        startSearch(this);
-        valideServerModule();
-        return engineRegistry;
     }
 
     /**
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void valideServerModule() throws AxisFault, PhaseException {
-        Iterator itr = server.getModules().iterator();
+    private void valideServerModule() throws AxisFault, PhaseException{
+        Iterator itr= server.getModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
-            if (getModule(qName) == null) {
+            if(getModule(qName) == null ){
                 throw new AxisFault(server + " Refer to invalid module " + qName + " has not bean deployed yet !");
             }
         }
@@ -204,7 +244,7 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineRegistry createEngineRegistry() {
+    private EngineRegistry createEngineRegistry()  {
         EngineRegistry newEngineRegisty;
 
         server = new AxisGlobal();
@@ -218,28 +258,28 @@ public class DeploymentEngine implements DeploymentConstants {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        loadServiceClass(serviceMetaData, classLoader);
+        loadServiceClass(serviceMetaData,classLoader);
 
         Flow inflow = serviceMetaData.getInFlow();
-        if (inflow != null) {
-            addFlowHandlers(inflow, classLoader);
+        if(inflow != null ){
+            addFlowHandlers(inflow,classLoader);
         }
 
         Flow outFlow = serviceMetaData.getOutFlow();
-        if (outFlow != null) {
-            addFlowHandlers(outFlow, classLoader);
+        if(outFlow != null){
+            addFlowHandlers(outFlow,classLoader);
         }
 
         Flow faultFlow = serviceMetaData.getFaultFlow();
-        if (faultFlow != null) {
-            addFlowHandlers(faultFlow, classLoader);
+        if(faultFlow != null) {
+            addFlowHandlers(faultFlow,classLoader);
         }
-        PhaseResolver reolve = new PhaseResolver(engineRegistry, serviceMetaData);
+        PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
         reolve.buildchains();
         engineRegistry.addService(serviceMetaData);
     }
 
-    private void loadServiceClass(AxisService service, ClassLoader parent) throws AxisFault {
+    private void loadServiceClass(AxisService service, ClassLoader parent) throws AxisFault{
         File file = currentFileItem.getFile();
         Class serviceclass = null;
         URLClassLoader loader1 = null;
@@ -255,20 +295,20 @@ public class DeploymentEngine implements DeploymentConstants {
 
                 String readInClass = currentFileItem.getClassName();
 
-                if (readInClass != null && !"".equals(readInClass)) {
+                if(readInClass != null && !"".equals(readInClass)){
                     serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
                 }
                 service.setServiceClass(serviceclass);
 
                 String readInProviderName = currentFileItem.getProvideName();
-                if (readInProviderName != null && !"".equals(readInProviderName)) {
-                    Class provider = Class.forName(currentFileItem.getProvideName(), true, loader1);
-                    service.setProvider((Provider) provider.newInstance());
+                if(readInProviderName != null && ! "".equals(readInProviderName)){
+                    Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
+                    service.setProvider((Provider)provider.newInstance());
                 }
             } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage(), e);
+                throw new AxisFault(e.getMessage(),e);
             } catch (Exception e) {
-                throw new AxisFault(e.getMessage(), e);
+                throw new AxisFault(e.getMessage(),e);
             }
 
         }
@@ -331,13 +371,13 @@ public class DeploymentEngine implements DeploymentConstants {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Flow inflow = moduelmetada.getInFlow();
-        addFlowHandlers(inflow, classLoader);
+        addFlowHandlers(inflow,classLoader);
 
         Flow outFlow = moduelmetada.getOutFlow();
-        addFlowHandlers(outFlow, classLoader);
+        addFlowHandlers(outFlow,classLoader);
 
         Flow faultFlow = moduelmetada.getFaultFlow();
-        addFlowHandlers(faultFlow, classLoader);
+        addFlowHandlers(faultFlow,classLoader);
 
         engineRegistry.addMdoule(moduelmetada);
     }
@@ -405,15 +445,42 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void doUnDeploye() {
         //todo complete this
-        if (wsToUnDeploy.size() > 0) {
-            for (int i = 0; i < wsToUnDeploy.size(); i++) {
-                WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
-                log.info("UnDeployement WS Name  " + wsInfo.getFilename());
-            }
+        String serviceName ="";
+        try{
+            if (wsToUnDeploy.size() > 0) {
+                for (int i = 0; i < wsToUnDeploy.size(); i++) {
+                    WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
+                    serviceName = getAxisServiceName(wsInfo.getFilename());
+                    engineRegistry.removeService(new QName(serviceName));
+                    log.info("UnDeployement WS Name  " + wsInfo.getFilename());
+                }
 
+            }
+        }catch(AxisFault e){
+            throw new RuntimeException(e.getMessage());
         }
         wsToUnDeploy.clear();
     }
 
+    public boolean isHotupdate() {
+        return hotupdate;
+    }
+
+    /**
+     * This method is used to retrive service name form the arechive file name
+     * if the archive file name is service1.aar , then axis service name would be service1
+     * @param fileName
+     * @return
+     */
+    private String getAxisServiceName(String fileName){
+        char seperator = '.';
+        String value = null;
+        int index = fileName.indexOf(seperator);
+        if (index > 0) {
+            value = fileName.substring(0 , index);
+            return value;
+        }
+        return fileName;
+    }
 
 }

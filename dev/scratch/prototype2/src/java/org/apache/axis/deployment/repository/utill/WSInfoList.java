@@ -201,8 +201,10 @@ public class WSInfoList implements DeploymentConstants {
      *
      */
     public void update() {
-        checkForUndeploye();
-        deplorer.doUnDeploye();
+        if(deplorer.isHotupdate()) {
+            checkForUndeploye();
+            deplorer.doUnDeploye();
+        }
         deplorer.doDeploy();
 
     }

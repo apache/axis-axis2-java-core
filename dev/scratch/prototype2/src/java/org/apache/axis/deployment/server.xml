@@ -1,4 +1,6 @@
 <server name="AxisJava2.0">
+    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
+    <parameter name="hotupdate" locked="xsd:false">true</parameter>
     <transports>
         <transport name="http"/>
         <transport name="smtp"/>
