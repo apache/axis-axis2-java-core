@@ -200,6 +200,6 @@ public class Call extends AbstractCall {
 
 
     public Object getTO() {
-        return null;  //TODO implement this
+        return this.targetEPR;
     }
 }
