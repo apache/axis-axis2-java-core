@@ -319,7 +319,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
                         " and then use it with the attribute");
             }
         }
-        return insertAttribute(new OMAttributeImpl(localName, ns, value));
+        return insertAttribute(new OMAttributeImpl(attributeName, ns, value));
     }
 
     public void setBuilder(OMXMLParserWrapper wrapper) {
