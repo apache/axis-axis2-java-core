@@ -142,14 +142,7 @@ public interface OMNode {
      */
     public void setPreviousSibling(OMNode previousSibling);
 
-    /**
-     * Writes the necessary serialization to a XMLStreamWriter object
-     * @param writer
-     * @param cache
-     * @param namespacePrefixStack
-     */
-    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException ;
-
+    
     /**
      * 
      * @param writer

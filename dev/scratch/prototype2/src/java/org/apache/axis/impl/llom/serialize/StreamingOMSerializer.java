@@ -1,12 +1,13 @@
 package org.apache.axis.impl.llom.serialize;
 
 import org.apache.axis.om.OMSerializer;
+import org.apache.axis.om.OMException;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Stack;
+//import java.util.Stack;
 
 
 /**
@@ -26,17 +27,17 @@ import java.util.Stack;
  */
 public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
-    private Stack namespacePrefixStack = new Stack();
-    private Stack namespaceCountStack = new Stack();
+//    private Stack namespacePrefixStack = new Stack();
+//    private Stack namespaceCountStack = new Stack();
 
-    public Stack getNamespacePrefixStack() {
-        return namespacePrefixStack;
-    }
-
-    public void setNamespacePrefixStack(Stack namespacePrefixStack) {
-        if (namespacePrefixStack != null)
-            this.namespacePrefixStack = namespacePrefixStack;
-    }
+//    public Stack getNamespacePrefixStack() {
+//        return namespacePrefixStack;
+//    }
+//
+//    public void setNamespacePrefixStack(Stack namespacePrefixStack) {
+//        if (namespacePrefixStack != null)
+//            this.namespacePrefixStack = namespacePrefixStack;
+//    }
 
     public void serialize(Object obj, XMLStreamWriter writer) throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
@@ -78,17 +79,14 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      */
     protected void serializeElement(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
 
-        int nsPushCount = 0;
-
         String prefix = reader.getPrefix();
         String nameSpaceName = reader.getNamespaceURI();
 
-        if (prefix != null) {
-            writer.writeStartElement(prefix, reader.getLocalName(), nameSpaceName);
-            if (serializeNamespace(prefix, nameSpaceName, writer)) nsPushCount++;
+        if (nameSpaceName != null) {
+            writer.writeStartElement(nameSpaceName ,reader.getLocalName() );
+            serializeNamespace(prefix, nameSpaceName, writer);
         } else {
-            writer.writeStartElement(nameSpaceName, reader.getLocalName());
-            //add the own namespace
+            throw new OMException("Non namespace qualified elements are not allowed");
         }
         
         //add attributes
@@ -96,20 +94,20 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
         //add the namespaces
         int count = reader.getNamespaceCount();
         for (int i = 0; i < count; i++) {
-            if (serializeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i), writer)) nsPushCount++;
+            serializeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i), writer);
         }
 
-        namespaceCountStack.push(new Integer(nsPushCount));
+        //namespaceCountStack.push(new Integer(nsPushCount));
 
     }
 
     protected void serializeEndElement(XMLStreamWriter writer) throws XMLStreamException {
-        if (!namespaceCountStack.isEmpty()) {
-            Integer removeCount = (Integer) namespaceCountStack.pop();
-            int count = removeCount.intValue();
-            for (int i = 0; i < count; i++)
-                namespacePrefixStack.pop();
-        }
+//        if (!namespaceCountStack.isEmpty()) {
+//            Integer removeCount = (Integer) namespaceCountStack.pop();
+//            int count = removeCount.intValue();
+//            for (int i = 0; i < count; i++)
+//                namespacePrefixStack.pop();
+//        }
         writer.writeEndElement();
        
     }
@@ -155,14 +153,13 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
         }
     }
 
-    private boolean serializeNamespace(String prefix, String URI, XMLStreamWriter writer) throws XMLStreamException {
-        boolean nsWritten = false;
-        if (!namespacePrefixStack.contains(prefix)) {
-            writer.writeNamespace(prefix, URI);
-            namespacePrefixStack.push(prefix);
-            nsWritten = true;
-        }
-        return nsWritten;
+    private void serializeNamespace(String prefix, String URI, XMLStreamWriter writer) throws XMLStreamException {
+            String prefix1 = writer.getPrefix(URI);
+            if (prefix1==null) {
+                writer.writeNamespace(prefix, URI);
+                writer.setPrefix(prefix,URI);
+            }
+
     }
 
 }

@@ -21,7 +21,7 @@ import java.util.Stack;
  */
 public interface OMSerializer {
     void serialize(Object obj,XMLStreamWriter writer) throws XMLStreamException ;
-    Stack getNamespacePrefixStack();
-    void setNamespacePrefixStack(Stack namespacePrefixStack); 
+//    Stack getNamespacePrefixStack();
+//    void setNamespacePrefixStack(Stack namespacePrefixStack); 
 
 }

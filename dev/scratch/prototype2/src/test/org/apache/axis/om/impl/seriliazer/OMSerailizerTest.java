@@ -56,7 +56,7 @@ public class OMSerailizerTest extends AbstractTestCase {
 
     public void testRawSerializer() throws Exception {
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.setNamespacePrefixStack(new Stack());
+        //serializer.setNamespacePrefixStack(new Stack());
         serializer.serialize(reader,writer);
 
     }
@@ -89,6 +89,7 @@ public class OMSerailizerTest extends AbstractTestCase {
 
 
     protected void tearDown() throws Exception {
+        writer.flush();
         tempFile.delete();
     }
 }

@@ -201,16 +201,14 @@ public class OMNodeImpl implements OMNode {
         this.previousSibling = (OMNodeImpl) previousSibling;
     }
 
-    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
        //Do nothing. Relevant children will put relevant things here
     }
 
-    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
-        serialize(writer,cache,null);
-    }
 	public void free(){
 		OMFactory.newInstance().free(this);
 		nextSibling.free();
 	}
+
 
 }

@@ -50,7 +50,7 @@ public class ElementSerializerTest extends AbstractTestCase {
 
     public void testElementSerilization() throws Exception{
         OMElement elt = builder.getDocumentElement();
-        elt.serialize(writer,true, null);
+        elt.serialize(writer,true);
 
     }
 
@@ -124,6 +124,7 @@ public class ElementSerializerTest extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
+        writer.flush();
         tempFile.delete();
     }
 }

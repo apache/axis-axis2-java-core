@@ -75,14 +75,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /**
      * @param writer
      * @param cache
-     * @param namespacePrefixStack
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
-        boolean isFirst = false;
-        if (namespacePrefixStack == null) {
-            isFirst = true;
-        }
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+
+
         if (textType == TEXT_NODE)
             writer.writeCharacters(this.value);
         else if (textType == COMMENT_NODE)
@@ -90,14 +87,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         else if (textType == CDATA_SECTION_NODE) {
             writer.writeCData(this.value);
         }
-        //In this case we have to advance the parser (even when not cached) upto the
-        //next *element*. You cannot ask for a pull parser from the text node!!!
-        //by advancing the parser
-        if (!isFirst) {
-            OMNode nextSibling = this.getNextSibling();
-            if (nextSibling != null) {
-                nextSibling.serialize(writer, cache, namespacePrefixStack);
-            }
+
+        OMNode nextSibling = this.getNextSibling();
+        if (nextSibling != null) {
+            nextSibling.serialize(writer, cache);
         }
     }
 }
+

@@ -44,38 +44,34 @@ import org.apache.axis.om.OMXMLParserWrapper;
  * <p/>
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConstants {
-	private OMNode firstChild;
+    private OMNode firstChild;
     protected OMXMLParserWrapper builder;
     private HashMap namespaces;
     private HashMap attributes;
-    private Stack namespaceStack;
 
 
-	public OMElementImpl(){
+    public OMElementImpl(){
 		namespaces = new HashMap(5);
 		this.attributes = new HashMap();
 	}
 
+    public void free(){
+            this.namespaces.clear();
+            this.attributes.clear();
+            firstChild.free();
+            OMFactory.newInstance().free(this);
+            nextSibling.free();
+        }
 
-	public void free(){
-		this.namespaces.clear();
-		this.attributes.clear();
-		firstChild.free();
-		OMFactory.newInstance().free(this);
-		nextSibling.free();
-	}
-	
-	
-	public void init(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public void init(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
 		super.init(localName, null, parent);
 		if (ns != null) {
 			setNamespace(handleNamespace(ns));
 		}
 		this.builder = builder;
-		namespaceStack = null;
+
 		firstChild = null;
 	}
-
 
     public void init(String localName, OMNamespace ns) {
         super.init(localName, null, null);
@@ -83,7 +79,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         if (ns != null) {
             setNamespace(handleNamespace(ns));
         }
-        done = true;
+
     }
 
     private OMNamespace handleNamespace(OMNamespace ns) {
@@ -227,7 +223,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      */
     public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException {
         if (prefix == null) {
-			Iterator namespaceListIterator = namespaces.values().iterator();
+            Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
                 if (omNamespace.getName().equals(uri)) {
@@ -279,7 +275,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     }
 
     public void removeAttribute(OMAttribute attr) {
-	    attributes.remove(attr.getQName());
+        attributes.remove(attr.getQName());
     }
 
     public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns) {
@@ -311,7 +307,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     }
 
     public OMNode getFirstChild() {
-        if (firstChild == null && !done)
+        while (firstChild == null && !done)
             buildNext();
         return firstChild;
     }
@@ -371,17 +367,9 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     }
 
 
-    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
         boolean firstElement = false;
 
-        if (namespacePrefixStack == null) {
-            this.namespaceStack = new Stack();
-            firstElement = true;
-        } else {
-            this.namespaceStack = namespacePrefixStack;
-        }
-
-        int namespaceCount = 0;
 
         short builderType = PULL_TYPE_BUILDER; //default is pull type
         if (builder != null)
@@ -395,7 +383,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         if (!cache) {
             if (firstChild == null && nextSibling == null && !isComplete() && builderType == PULL_TYPE_BUILDER) {
                 StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
-                streamingOMSerializer.setNamespacePrefixStack(namespaceStack);
                 streamingOMSerializer.serialize(this.getPullParser(!cache), writer);
                 return;
             }
@@ -408,7 +395,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
 
                 if (nextSibling != null) {
                     //serilize next sibling
-                    nextSibling.serialize(writer, cache, namespaceStack);
+                    nextSibling.serialize(writer, cache);
                 } else {
                     if (parent == null) {
                         return;
@@ -417,23 +404,23 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
                     } else {
                         //do the special serialization
                         //Only the push serializer is left now
-                         builder.setCache(cache);
+                        builder.setCache(cache);
                         builder.next();
                     }
 
 
                 }
             } else if (firstChild != null) {
-                namespaceCount = serializeStartpart(writer);
-                firstChild.serialize(writer, cache, namespaceStack);
-                serializeEndpart(writer, namespaceCount);
+                serializeStartpart(writer);
+                firstChild.serialize(writer, cache);
+                serializeEndpart(writer);
             } else {
                 //do the special serilization
                 //Only the push serializer is left now
                 builder.setCache(cache);
-                namespaceCount = serializeStartpart(writer);
+                serializeStartpart(writer);
                 builder.next();
-                serializeEndpart(writer, namespaceCount);
+                serializeEndpart(writer);
             }
 
 
@@ -442,8 +429,9 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
             serializeNormal(writer, cache);
             //serialize the siblings if this is not the first element
             if (!firstElement){
-                if (this.getNextSibling() != null) {
-                    this.getNextSibling().serialize(writer, cache, namespaceStack);
+                OMNode nextSibling = this.getNextSibling();
+                if (nextSibling != null) {
+                    nextSibling.serialize(writer, cache);
                 }
             }
         }
@@ -451,56 +439,54 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
 
     }
 
-    private int serializeStartpart(XMLStreamWriter writer) throws XMLStreamException {
-        int nsPushCount = 0;
-        String prefix = null;
+    private void serializeStartpart(XMLStreamWriter writer) throws XMLStreamException {
+
         String nameSpaceName = null;
 
         if (ns != null) {
-            prefix = ns.getPrefix();
             nameSpaceName = ns.getName();
-            if (prefix != null && nameSpaceName != null) {
-                writer.writeStartElement(prefix, this.getLocalName(), nameSpaceName);
-                if (serializeNamespace(ns, writer)) nsPushCount++;
+            if (nameSpaceName != null) {
+                writer.writeStartElement( nameSpaceName, this.getLocalName());
+                serializeNamespace(ns, writer);
             } else {
-                writer.writeStartElement(nameSpaceName, this.getLocalName());
+                throw new OMException("Non namespace qualified elements are not allowed");
 
             }
+
+        }else{
+            throw new OMException("Non namespace qualified elements are not allowed");
         }
+
         //add the elements attributes
         if (attributes != null) {
-        	Iterator attributesList = attributes.values().iterator();
+            Iterator attributesList = attributes.values().iterator();
             while(attributesList.hasNext()) {
                 serializeAttribute((OMAttribute) attributesList.next(), writer);
             }
         }
+
         //add the namespaces
         Iterator namespaces = this.getAllDeclaredNamespaces();
         while (namespaces.hasNext()) {
-            if (serializeNamespace((OMNamespace) namespaces.next(), writer)) nsPushCount++;
+            serializeNamespace((OMNamespace) namespaces.next(), writer) ;
         }
 
-        return nsPushCount;
+
     }
 
-    private void serializeEndpart(XMLStreamWriter writer, int namespaceCount) throws XMLStreamException {
-
-        for (int i = 0; i < namespaceCount; i++) {
-            namespaceStack.pop();
-        }
-
+    private void serializeEndpart(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeEndElement();
     }
 
     private void serializeNormal(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+        serializeStartpart(writer);
 
-       int namespaceCount = serializeStartpart(writer);
-
-        if (getFirstChild() != null) {
-            getFirstChild().serialize(writer, cache, namespaceStack);
+        OMNode firstChild = getFirstChild();
+        if (firstChild != null) {
+           firstChild.serialize(writer, cache);
         }
 
-        serializeEndpart(writer, namespaceCount);
+        serializeEndpart(writer);
 
     }
 
@@ -522,24 +508,23 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         }
     }
 
-    protected boolean serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
-        boolean nsWritten = false;
+    protected void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+
         if (namespace != null) {
-            String prefix = namespace.getPrefix();
-            if (!namespaceStack.contains(prefix)) {
-                writer.writeNamespace(prefix, namespace.getName());
-                namespaceStack.push(prefix);
-                nsWritten = true;
+            String uri = namespace.getName();                   
+            String prefix = writer.getPrefix(uri);
+            String ns_prefix = namespace.getPrefix();
+            if (prefix==null) {
+                writer.writeNamespace(ns_prefix, namespace.getName());
+                writer.setPrefix(ns_prefix,uri);
             }
         }
-
-        return nsWritten;
     }
 
-	protected void finalize() throws Throwable {
-		CollectionPool.returnHashMap(attributes);
-		CollectionPool.returnHashMap(namespaces);		
-		super.finalize();
-	}
+    protected void finalize() throws Throwable {
+        CollectionPool.returnHashMap(attributes);
+        CollectionPool.returnHashMap(namespaces);
+        super.finalize();
+    }
 
 }
