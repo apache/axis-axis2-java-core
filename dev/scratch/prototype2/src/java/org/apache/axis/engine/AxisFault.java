@@ -36,17 +36,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 
 public class AxisFault extends java.rmi.RemoteException {
-    /**
-     * 
-     */
-    public AxisFault() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param arg0
-     */
     public AxisFault(String arg0) {
         super(arg0);
         // TODO Auto-generated constructor stub
