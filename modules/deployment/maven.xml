@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
+
+<project default="jar"
+    xmlns:j="jelly:core"
+    xmlns:maven="jelly:maven"
+    xmlns:deploy="deploy"
+    xmlns:ant="jelly:ant">
+    <postGoal name="test:compile">
+        <j:jelly xmlns="jelly:ant">
+<!--		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service1"/> -->
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service2"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module1"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module2"/>
+	</j:jelly>
+      <ant:copy file="${basedir}/src/test-resources/deployment/server.xml" tofile="${basedir}/target/test-resources/deployment/server.xml"/>
+    </postGoal> 
+ </project>

@@ -144,11 +144,13 @@
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
-	    <exclude>**/**.java</exclude>
+		<exclude>**/*MessageWithServerTest.java</exclude> 
+		<exclude>**/*TransportDeploymentTest.java</exclude> 
+		<exclude>**/*BuildERWithDeploymentTest.java</exclude> 
       </excludes>
- <!--     <includes>
+     <includes>
         <include>**/*Test.java</include>
-      </includes> -->
+      </includes> 
      <resources>
          <resource>
              <directory>${basedir}/src/test-resources</directory>

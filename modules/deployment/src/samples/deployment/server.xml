@@ -1,0 +1,12 @@
+<server name ="AxisJava2.0" >
+    <phaseOrder>
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="p2"/>
+        <phase name="p1"/>
+        <phase name="p3"/>
+        <phase name="anyhase"/>
+        <phase name="service"/>
+    </phaseOrder>
+</server>
+

@@ -1,0 +1,24 @@
+<service provider="org.apache.axis.sample.echo.EchoProvider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="org.apache.axis.sample.echo.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+    
+   <inflow>
+        <handler name="logging" class="org.apache.axis.sample.handlers.LoggingHandler">
+            <order phase="Logging" phaseFirst="true"/>
+         </handler>
+   </inflow>
+
+    <outflow>
+    </outflow>
+
+    <faultflow>
+        <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler">
+            
+        </handler>
+    </faultflow>
+
+
+    <operation name="echoString" qname="echoString" style="anyStyle" use="anyUse"/>
+    <operation name="echoStringArray" qname="echoStringArray" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStruct" qname="echoEchoStruct" style="anyStyle" use="anyUse"/>
+    <operation name="echoEchoStructArray" qname="echoEchoStructArray" style="anyStyle" use="anyUse"/>
+</service>

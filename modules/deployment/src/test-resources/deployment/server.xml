@@ -1,0 +1,27 @@
+<server name ="AxisJava2.0" >
+    <parameter name="para1" locked="xsd:true">10</parameter>
+    <parameter name="para2" locked="xsd:false">Colombo</parameter>
+
+    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
+        <parameter name="hotupdate" locked="xsd:false">true</parameter>
+    
+    <module ref="module1"> </module>
+    <transports>
+        <transport name ="HTTP"/>
+        <transport name ="SMTP"/>
+    </transports>
+  <!--
+    <module ref="uri">
+        <parameter name="para3" locked="xsd:true">10</parameter>
+        <parameter name="para4" locked="xsd:false">LSF</parameter>
+    </module>
+   -->
+    <phaseOrder>
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="module"/>
+        <phase name="service"/>
+    </phaseOrder>
+</server>
+
