@@ -17,6 +17,8 @@
 package org.apache.axis.integration;
 
 import junit.framework.TestCase;
+
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -79,6 +81,7 @@ public class EchoTest extends TestCase {
                 + "/axis/services/echo");
         Call call = new Call();
         call.setTo(targetEPR);
+        call.setListenerTransport(Constants.TRANSPORT_HTTP,true);
         SOAPEnvelope responseEnv = call.sendReceive(envelope);
 
         SOAPBody body = responseEnv.getBody();
