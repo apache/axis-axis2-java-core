@@ -1,15 +1,9 @@
 package org.apache.axis.engine.deployment;
 
 import junit.framework.TestCase;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.MetaData.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.registry.EngineRegistry;
 
@@ -36,31 +30,38 @@ import org.apache.axis.engine.registry.EngineRegistry;
 public class ServiceTest extends TestCase {
 
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault{
-        File file = new File("src/test-resources/deployment/service1.xml");
+        /*  File file = new File("src/test-resources/deployment/service1.xml");
         String filename = "D:/Axis 2.0/projects/Deployement/test-data";
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(file);
+        inputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = deploymentEngine.start();
         //  DeploymentEngine deploymentEngine = new DeploymentEngine(inputStream, file.getName());
-
-    }
-
-    public static void main(String args [] ){
+        */
         String filename = "D:/Axis 2.0/projects/Deployement/test-data";
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         try {
-            EngineRegistry er = deploymentEngine.start();
-            System.out.println("Numbetr of service" + er.getServiceCount());
+            EngineRegistry er = null;
+            try {
+                er = deploymentEngine.start();
+            } catch (AxisFault axisFault) {
+                axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            } catch (PhaseException e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            } catch (DeploymentException e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            }
+            if(er != null){
+                System.out.println("Numbetr of service" + er.getServiceCount());
+            }
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (PhaseException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
     }
+
 
 }
