@@ -51,6 +51,8 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
 		Provider provider = msgContext.getService().getProvider();
 		log.info("start invoke the web service impl");
 		MessageContext outMsgContext = provider.invoke(msgContext);
+		msgContext.getEnvelope().free();
+		
 		log.info("Invoked the Web Servivces impl");
         Sender sender = new Sender();
         sender.send(msgContext);

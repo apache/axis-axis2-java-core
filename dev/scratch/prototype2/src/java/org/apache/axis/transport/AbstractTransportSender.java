@@ -16,17 +16,17 @@
 
 package org.apache.axis.transport;
 
+import java.io.OutputStream;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.OutputStream;
 
 /**
  */
@@ -58,6 +58,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter,false);
                 outputWriter.flush();
+                envelope.free();
             } catch (Exception e) {
                 throw new AxisFault("Stream error",e);
             }

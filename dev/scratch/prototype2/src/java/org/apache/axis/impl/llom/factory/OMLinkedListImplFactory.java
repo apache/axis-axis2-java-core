@@ -3,9 +3,7 @@ package org.apache.axis.impl.llom.factory;
 import java.util.Stack;
 
 import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMNamedNodeImpl;
 import org.apache.axis.impl.llom.OMNamespaceImpl;
-import org.apache.axis.impl.llom.OMNodeImpl;
 import org.apache.axis.impl.llom.OMTextImpl;
 import org.apache.axis.impl.llom.SOAPBodyImpl;
 import org.apache.axis.impl.llom.SOAPEnvelopeImpl;
@@ -15,7 +13,6 @@ import org.apache.axis.impl.llom.SOAPHeaderImpl;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
@@ -43,16 +40,43 @@ import org.apache.axis.om.SOAPHeaderBlock;
  * <p/>
  */
 public class OMLinkedListImplFactory extends OMFactory {
+	public static final int MAX_TO_POOL = 100;
 	private Stack elements = new Stack();
 	private Stack textNodes = new Stack();
+
+	private OMElementImpl findElement(){
+		OMElementImpl element = null;
+		if(elements.isEmpty()){
+			element = new OMElementImpl();
+		}else{
+			element = (OMElementImpl)elements.pop();
+		}
+		return element;
+	}
+
+	private OMTextImpl findText(){
+		OMTextImpl text = null;
+		if(elements.isEmpty()){
+			text = new OMTextImpl();
+		}else{
+			text = (OMTextImpl)textNodes.pop();
+		}
+		return text;
+	}
 	
 	public void free(OMNode node){
 		int type = node.getType();
 		switch(type){
 			case OMNode.ELEMENT_NODE:
-			elements.push(node);
+				if(elements.size() < MAX_TO_POOL){
+					elements.push(node);				
+				}
+			break;
 			case OMNode.TEXT_NODE:
-			textNodes.push(node);
+			if(textNodes.size() < MAX_TO_POOL){
+				textNodes.push(node);
+			}
+			break;
 			default:
 			//NOOP;
 			
@@ -61,19 +85,13 @@ public class OMLinkedListImplFactory extends OMFactory {
 
 
     public OMElement createOMElement(String localName, OMNamespace ns) {
-		OMElementImpl element = null;
-		if(elements.isEmpty()){
-			element = new OMElementImpl();
-		}
+		OMElementImpl element = findElement();
 		element.init(localName, ns);
 		return element;
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-    	OMElementImpl element = null;
-    	if(elements.isEmpty()){
-    		element = new OMElementImpl();
-    	}
+    	OMElementImpl element = findElement();
         element.init(localName, ns, parent, builder);
         return element;
     }
@@ -95,19 +113,13 @@ public class OMLinkedListImplFactory extends OMFactory {
 //    }
 
     public OMText createText(OMElement parent, String text) {
-		OMTextImpl textNode = null;
-		if(textNodes.isEmpty()){
-			textNode = new OMTextImpl();
-		}
+		OMTextImpl textNode = findText();
 		textNode.init(parent, text);
 		return textNode;
     }
 
     public OMText createText(String s) {
-		OMTextImpl textNode = null;
-		if(textNodes.isEmpty()){
-			textNode = new OMTextImpl();
-		}
+		OMTextImpl textNode = findText();
 		textNode.init(s);
 		return textNode;
     }

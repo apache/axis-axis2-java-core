@@ -58,9 +58,15 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     public void free(){
             this.namespaces.clear();
             this.attributes.clear();
-            firstChild.free();
+            if(firstChild != null){
+				firstChild.free();
+            }
+            
             OMFactory.newInstance().free(this);
-            nextSibling.free();
+            if(nextSibling != null){
+				nextSibling.free();	
+            }
+            
         }
 
     public void init(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
