@@ -3,16 +3,16 @@
         <transport name ="http">
             <parameter name="para1" locked="xsd:true">10</parameter>
 			<inflow>
-    			<handler name="h1" class="Handler1"/>
-		        <handler name="h2" class="Handler1"/>
+    			<handler name="h1" class="org.apache.axis.description.SpeakingHandler"/>
+		        <handler name="h2" class="org.apache.axis.description.SpeakingHandler"/>
     		</inflow>
 		    <outflow>
-		        <handler name="h3" class="Handler1"/>
+		        <handler name="h3" class="org.apache.axis.description.SpeakingHandler"/>
 		    </outflow>
         </transport>
         <transport name ="smtp">
 		    <faultflow>
-        		<handler name="h4" class="Handler1"/>
+        		<handler name="h4" class="org.apache.axis.description.SpeakingHandler"/>
 		    </faultflow>
         </transport>
     </transports>

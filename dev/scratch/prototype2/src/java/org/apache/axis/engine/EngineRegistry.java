@@ -24,6 +24,7 @@ import org.apache.axis.impl.description.AxisService;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *  The palce where all the Globel states of Axis is kept. 
@@ -51,6 +52,7 @@ public interface EngineRegistry {
     
     public AxisTransport getTransport(QName name) throws AxisFault;
     public void addTransport(AxisTransport transport) throws AxisFault;
+    public HashMap getTransports() throws AxisFault;
     /**
      * Ordred list of phases
      */

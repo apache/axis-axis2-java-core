@@ -192,6 +192,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
         phaseResolver.buildGlobalChains(server);
+        phaseResolver.buildTranspotsChains();
 
     }
 

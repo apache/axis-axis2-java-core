@@ -3,9 +3,11 @@ package org.apache.axis.phaseresolver;
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.AxisTransport;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Phase;
+import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -207,6 +209,97 @@ public class PhaseHolder implements DeploymentConstants {
         } 
     }
 
+    public void buildTransportChain(AxisTransport trnsport , int chainType) throws PhaseException {
+        try{
+            OrderdPhases();
+            Vector tempHander = new Vector();
+            HandlerMetaData[] handlers;
+            Class handlerClass = null;
+            Handler handler;
+            switch (chainType) {
+                case 1 : {
+                    ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            try{
+                                handlerClass = Class.forName(handlers[j].getClassName(), true, Thread.currentThread().getContextClassLoader());//getHandlerClass(handlermd.getClassName(), loader1);
+                                handler = (Handler) handlerClass.newInstance();
+                                handler.init(handlers[j]);
+                                handlers[j].setHandler(handler);
+                                axisPhase.addHandler(handlers[j].getHandler());
+                            }catch (ClassNotFoundException e){
+                                throw new PhaseException(e);
+                            } catch (IllegalAccessException e) {
+                                throw new PhaseException(e);
+                            } catch (InstantiationException e) {
+                                throw new PhaseException(e);
+                            }
+                        }
+                        inChain.add(axisPhase);
+                    }
+                    trnsport.setPhases(inChain,EngineRegistry.INFLOW);
+                    break;
+                }
+                case 2 : {
+                    ArrayList outChain =new ArrayList();// service.getExecutableOutChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            try{
+                                handlerClass = Class.forName(handlers[j].getClassName(), true, Thread.currentThread().getContextClassLoader());//getHandlerClass(handlermd.getClassName(), loader1);
+                                handler = (Handler) handlerClass.newInstance();
+                                handler.init(handlers[j]);
+                                handlers[j].setHandler(handler);
+                                axisPhase.addHandler(handlers[j].getHandler());
+                            }catch (ClassNotFoundException e){
+                                throw new PhaseException(e);
+                            } catch (IllegalAccessException e) {
+                                throw new PhaseException(e);
+                            } catch (InstantiationException e) {
+                                throw new PhaseException(e);
+                            }
+                        }
+                        outChain.add(axisPhase);
+                    }
+                    trnsport.setPhases(outChain,EngineRegistry.OUTFLOW);
+                    break;
+                }
+                case 3 : {
+                    ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            try{
+                                handlerClass = Class.forName(handlers[j].getClassName(), true, Thread.currentThread().getContextClassLoader());//getHandlerClass(handlermd.getClassName(), loader1);
+                                handler = (Handler) handlerClass.newInstance();
+                                handler.init(handlers[j]);
+                                handlers[j].setHandler(handler);
+                                axisPhase.addHandler(handlers[j].getHandler());
+                            }catch (ClassNotFoundException e){
+                                throw new PhaseException(e);
+                            } catch (IllegalAccessException e) {
+                                throw new PhaseException(e);
+                            } catch (InstantiationException e) {
+                                throw new PhaseException(e);
+                            }
+                        }
+                        faultChain.add(axisPhase);
+                    }
+                    trnsport.setPhases(faultChain,EngineRegistry.FAULTFLOW);
+                    break;
+                }
+            }
+        }   catch (AxisFault e) {
+            throw new PhaseException(e);
+        }
+    }
 
     public  void buildGoblalChain(AxisGlobal axisGlobal, int chainType) throws PhaseException {
         try {

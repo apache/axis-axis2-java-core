@@ -72,6 +72,11 @@ public class EngineRegistryImpl implements EngineRegistry{
     public synchronized  void addTransport(AxisTransport transport) throws AxisFault {
         transports.put(transport.getName(),transport);
      }
+
+    public HashMap getTransports() throws AxisFault {
+        return transports;
+    }
+
     /**
      * @return
      */
