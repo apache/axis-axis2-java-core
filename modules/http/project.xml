@@ -20,17 +20,11 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-Samples</id>
-    <name>samples</name>
-    <description>Set of samples available for Axis 2.0.</description>
-
+    <id>axis2-http</id>
+    <name>http</name>
+    <description>HTTP transport module</description>
 
     <dependencies>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis2-core</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis2-om</artifactId>
@@ -39,17 +33,12 @@
 
         <dependency>
             <groupId>axis</groupId>
-            <artifactId>axis2-http</artifactId>
+            <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis2-wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis2-deployment</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
@@ -58,6 +47,14 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.0.3</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+	 <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-servlet</artifactId>
+            <version>2.4-rc3</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -91,61 +88,4 @@
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
     </dependencies>
-
-    <!-- build information for the project -->
-  <build>
-    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-    <sourceDirectory>src/java</sourceDirectory>
-    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-
-    <unitTest>
-
-      <excludes>
-        <exclude>**/*Abstract*.java</exclude>
-	    <exclude>**/*Util*.java</exclude>
-		<exclude>**/*InteropStubTest.java</exclude>
-		<!-- <exclude>**/*TransportDeploymentTest.java</exclude>  -->
-		<!-- <exclude>**/*BuildERWithDeploymentTest.java</exclude>  -->
-      </excludes>
-     <includes>
-        <include>**/*Test.java</include>
-      </includes>
-
-     <resources>
-         <resource>
-             <directory>${basedir}/src/test-resources</directory>
-          </resource>
-          <resource>
-        	<directory>conf</directory>
-       			 <includes>
-          			<include>**/*.properties</include>
-        		</includes>
-      </resource>
-      <resource>
-        <directory>src/java</directory>
-        <includes>
-          	<include>**/*.properties</include>
-          	<include>**/*.xml</include>
-        </includes>
-      </resource>
-     </resources>
-    </unitTest>
-
-    <resources>
-      <resource>
-        <directory>conf</directory>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/java</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-  </build>
-
 </project>

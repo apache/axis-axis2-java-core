@@ -18,7 +18,12 @@ package org.apache.axis.engine;
 
 //todo
 
-import org.apache.axis.AbstractTestCase;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import junit.framework.TestCase;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
@@ -27,6 +32,8 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.SimpleAxisOperationImpl;
+import org.apache.axis.encoding.EncodingTest.Echo;
+import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -37,11 +44,7 @@ import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
-public class EchoRawXMLTest extends AbstractTestCase {
+public class EchoRawXMLTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
@@ -93,7 +96,7 @@ public class EchoRawXMLTest extends AbstractTestCase {
         reqEnv.getBody().addChild(method);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
+        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService");
         call.setTo(targetEPR);
         SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
@@ -114,7 +117,7 @@ public class EchoRawXMLTest extends AbstractTestCase {
         reqEnv.getBody().addChild(method);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
+        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService");
         call.setTo(targetEPR);
         call.setListenerTransport("http", true);
 

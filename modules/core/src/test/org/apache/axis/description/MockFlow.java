@@ -16,7 +16,7 @@
  
 package org.apache.axis.description;
 
-import org.apache.axis.engine.EngineUtils;
+import org.apache.axis.util.Utils;
 
 
 public class MockFlow extends FlowImpl implements Flow {
@@ -24,7 +24,7 @@ public class MockFlow extends FlowImpl implements Flow {
         super();
         for (int i = 0; i < length; i++) {
             SpeakingHandler1 h1 = new SpeakingHandler1("Executing " + i + " inside " + message);
-            EngineUtils.addHandler(this, h1);
+            Utils.addHandler(this, h1);
         }
     }
 

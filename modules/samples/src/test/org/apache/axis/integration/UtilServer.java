@@ -28,6 +28,9 @@ import java.net.ServerSocket;
 public class UtilServer {
     private static int count = 0;
     private static SimpleHTTPServer reciver;
+    public static final int TESTING_PORT = 5555;
+    public static final String FAILURE_MESSAGE = "Intentional Faliure";
+
 
 
     public static synchronized void deployService(AxisService service)

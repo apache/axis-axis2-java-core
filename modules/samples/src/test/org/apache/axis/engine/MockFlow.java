@@ -14,22 +14,20 @@
  * limitations under the License.
  */
  
-package org.apache.axis.transport;
+package org.apache.axis.engine;
 
-import org.apache.axis.Constants;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.http.HTTPTransportReceiver;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.FlowImpl;
+import org.apache.axis.util.Utils;
 
-public class TransportReciverLocator {
-    
-    public static TransportReceiver locate(MessageContext msgContext)
-            throws AxisFault {
-        String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
-        if (Constants.TRANSPORT_HTTP.equals(type)) {
-            return new HTTPTransportReceiver();
-        } else {
-            throw new AxisFault("No tranport found");
+
+public class MockFlow extends FlowImpl implements Flow {
+    public MockFlow(String message, int length) {
+        super();
+        for (int i = 0; i < length; i++) {
+            SpeakingHandler1 h1 = new SpeakingHandler1("Executing " + i + " inside " + message);
+            Utils.addHandler(this, h1);
         }
     }
+
 }

@@ -18,7 +18,10 @@ package org.apache.axis.engine;
 
 //todo
 
-import org.apache.axis.AbstractTestCase;
+import javax.xml.namespace.QName;
+
+import junit.framework.TestCase;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -29,8 +32,8 @@ import org.apache.axis.description.FlowImpl;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.SimpleAxisOperationImpl;
-import org.apache.axis.description.SpeakingHandler;
 import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -38,13 +41,12 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 
-
-public class HandlerFailureTest extends AbstractTestCase {
+public class HandlerFailureTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
@@ -70,12 +72,12 @@ public class HandlerFailureTest extends AbstractTestCase {
         AxisService service = new AxisService(serviceName);
 
         Flow flow = new FlowImpl();
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, culprit);
-        EngineUtils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, culprit);
+        Utils.addHandler(flow, new SpeakingHandler());
         service.setInFlow(flow);
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
@@ -86,7 +88,7 @@ public class HandlerFailureTest extends AbstractTestCase {
 
         service.addOperation(operation);
 
-        EngineUtils.createExecutionChains(service);
+        Utils.createExecutionChains(service);
 
         UtilServer.start();
         UtilServer.deployService(service);
@@ -102,21 +104,21 @@ public class HandlerFailureTest extends AbstractTestCase {
         AxisService service = new AxisService(serviceName);
 
         Flow flow = new FlowImpl();
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
         service.setInFlow(flow);
 
 
         flow = new FlowImpl();
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, new SpeakingHandler());
-        EngineUtils.addHandler(flow, culprit);
-        EngineUtils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, culprit);
+        Utils.addHandler(flow, new SpeakingHandler());
         service.setInFlow(flow);
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
@@ -127,7 +129,7 @@ public class HandlerFailureTest extends AbstractTestCase {
 
         service.addOperation(operation);
 
-        EngineUtils.createExecutionChains(service);
+        Utils.createExecutionChains(service);
         UtilServer.start();
         UtilServer.deployService(service);
         try {
@@ -157,8 +159,8 @@ public class HandlerFailureTest extends AbstractTestCase {
             reqEnv.getBody().addChild(method);
 
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-            //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
-            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (EngineUtils.TESTING_PORT) + "/axis/services/EchoXMLService");
+            //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
+            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
@@ -170,7 +172,7 @@ public class HandlerFailureTest extends AbstractTestCase {
             }
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
-            assertTrue((e.getMessage().indexOf(EngineUtils.FAILURE_MESSAGE)) > 0);
+            assertTrue((e.getMessage().indexOf(UtilServer.FAILURE_MESSAGE)) > 0);
             return;
         }
 
@@ -178,7 +180,7 @@ public class HandlerFailureTest extends AbstractTestCase {
 
     private Handler culprit = new AbstractHandler() {
         public void invoke(MessageContext msgContext) throws AxisFault {
-            throw new AxisFault(EngineUtils.FAILURE_MESSAGE);
+            throw new AxisFault(UtilServer.FAILURE_MESSAGE);
         }
     };
 }

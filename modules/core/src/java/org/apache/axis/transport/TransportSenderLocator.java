@@ -18,7 +18,6 @@ package org.apache.axis.transport;
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.http.HTTPTransportSender;
 
 /**
  * Class TransportSenderLocator
@@ -31,12 +30,20 @@ public class TransportSenderLocator {
      * @return
      * @throws AxisFault
      */
-    public static TransportSender locate(MessageContext msgContext)
-            throws AxisFault {
-        String type =
-                (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
-        if (Constants.TRANSPORT_HTTP.equals(type)) {
-            return new HTTPTransportSender();
+    public static TransportSender locate(MessageContext msgContext) throws AxisFault {
+        try {
+            String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+            if (Constants.TRANSPORT_HTTP.equals(type)) {
+                Class className =
+                    Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
+                return (TransportSender) className.newInstance();
+            }
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage(), e);
+        } catch (InstantiationException e) {
+            throw new AxisFault(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            throw new AxisFault(e.getMessage(), e);
         }
         throw new AxisFault("No transport found");
     }
