@@ -1,12 +1,9 @@
 <!-- Created By Eran Chinthaka -->
 <project name="Axis2.0">
-  <title>Axis2.0</title>
+  <title>Axis 2.0</title>
   <body>
   <search/>
-    <links>
-      <item href="http://maven.apache.org/" name="Maven">
-      </item>
-    </links>
+    
     <menu name="Axis 2.0">
       <item name="Introduction" href="intro.html"/>
       
@@ -24,7 +21,10 @@
       <item name="References">
         <item name="Documentation" href="docs.html" />
       	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
+      	<item name="User Guide" href="userguide.html" />
       	<item name="AXIOM Tutorial" href="OMTutorial.html" /> 
+      	<item name="Client API Tutorial" href="ClientAPI.html" />
+      	     	
       </item>
       
       <item name="Downloads">
