@@ -20,10 +20,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.impl.description.FlowIncludeImpl;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class AxisModule implements FlowInclude,ParameterInclude{
     private QName name;
     

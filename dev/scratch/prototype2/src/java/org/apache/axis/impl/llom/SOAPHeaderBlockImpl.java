@@ -1,9 +1,13 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.*;
-
 import javax.xml.namespace.QName;
-import java.util.Iterator;
+
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPHeaderBlock;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -20,9 +24,6 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 2, 2004
- * Time: 3:19:20 PM
  */
 public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBlock {
 

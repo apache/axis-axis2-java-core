@@ -36,8 +36,6 @@ import java.util.Iterator;
 
 /**
  * This is a Simple java Provider.
- *
- * @author Srinath Perera(hemapani@opensource.lk)
  */
 
 public class RawXMLProvider extends AbstractProvider implements Provider {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.transport;
+package org.apache.axis.transport;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -27,7 +27,6 @@ import org.apache.axis.om.SOAPEnvelope;
 import java.io.OutputStream;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
  */
 public abstract class AbstractTrasnportSender extends AbstractHandler implements TransportSender {
     public final void invoke(MessageContext msgContext) throws AxisFault {

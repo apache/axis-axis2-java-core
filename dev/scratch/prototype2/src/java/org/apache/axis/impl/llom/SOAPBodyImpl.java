@@ -20,9 +20,6 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 2, 2004
- * Time: 4:29:00 PM
  */
 public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants {
 

@@ -18,10 +18,6 @@ package org.apache.axis.impl.transport.http;
 
 /**
  * HTTP protocol and message context constants.
- *
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Doug Davis (dug@us.ibm.com)
- * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class HTTPConstants {
     /**

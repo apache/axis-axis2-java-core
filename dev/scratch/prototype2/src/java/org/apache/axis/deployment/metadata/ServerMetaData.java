@@ -21,10 +21,6 @@ import java.util.Vector;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Deepal Jayasinghe
- *         Oct 18, 2004
- *         4:18:09 PM
  */
 public class ServerMetaData {
 

@@ -24,9 +24,6 @@ import java.util.Vector;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>`
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 19, 2004
- * Time: 2:17:19 PM
  */
 public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     private OutObject outObject;

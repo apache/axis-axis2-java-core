@@ -16,10 +16,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:39:01 AM
- * <p/>
  * OMElement and OMAttribute must have namespace support and those two behave in same manner as far as the namespaces are concerned.
  * So one can implement this interface specific methods in an abstract class.
  */

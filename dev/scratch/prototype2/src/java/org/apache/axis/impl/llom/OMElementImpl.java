@@ -25,9 +25,6 @@ import java.util.ListIterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 5, 2004
- * Time: 1:16:10 PM
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
 

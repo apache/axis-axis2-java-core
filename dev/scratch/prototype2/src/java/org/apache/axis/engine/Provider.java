@@ -21,8 +21,6 @@ import java.io.Serializable;
 /**
  * This Provider is the workhorse who locate the implementation of the Web Service and
  * invoke the Web Service.
- *
- * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface Provider extends Serializable{
     public MessageContext invoke(MessageContext msgCtx)throws AxisFault;

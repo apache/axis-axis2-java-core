@@ -25,11 +25,9 @@ import java.util.Stack;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- *         Date: Nov 18, 2004
- *         Time: 2:16:09 PM
- *         <p/>
+ */
+
+/**
  *         Note  - This class also implements the streaming constants interface
  *         to get access to the StAX constants
  */

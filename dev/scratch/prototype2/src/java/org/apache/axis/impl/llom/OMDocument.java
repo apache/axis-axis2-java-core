@@ -18,9 +18,6 @@ import org.apache.axis.om.OMXMLParserWrapper;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 7, 2004
- * Time: 9:46:52 AM
  */
 public class OMDocument {
     private OMElement rootElement;

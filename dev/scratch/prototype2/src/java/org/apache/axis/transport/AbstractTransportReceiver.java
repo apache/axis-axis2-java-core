@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.transport;
+package org.apache.axis.transport;
 
 
 import org.apache.axis.context.MessageContext;
@@ -38,10 +38,6 @@ import java.net.Socket;
  * Note this classes uses static objects to provide a thread pool, so you should
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
- *
- * @author Sam Ruby (ruby@us.ibm.com)
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
  */
 public abstract class AbstractTransportReceiver implements Runnable {
     protected Log log =

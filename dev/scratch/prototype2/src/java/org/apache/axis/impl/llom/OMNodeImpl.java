@@ -19,9 +19,6 @@ import org.apache.axis.om.OMNode;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 5, 2004
- * Time: 12:54:08 PM
  */
 public class OMNodeImpl implements OMNode {
     protected OMElementImpl parent;

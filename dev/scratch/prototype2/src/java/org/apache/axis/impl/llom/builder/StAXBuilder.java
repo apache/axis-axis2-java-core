@@ -23,10 +23,8 @@ import javax.xml.stream.XMLStreamReader;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 6, 2004
- * Time: 3:58:31 PM
- * <p/>
+ */
+/**
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */

@@ -25,9 +25,6 @@ import org.apache.axis.om.*;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
-/**
- * @author Srinath Perera (hemapani@opensource.lk)
- */
 public class OpNameFinder extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         int style = msgContext.getMessageStyle();

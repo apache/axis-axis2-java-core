@@ -17,10 +17,6 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:49:01 AM
- * <p/>
  * One must implement relevant constructors for the class implementing this interface
  * all the things like namespace, parent, value, etc., that should come in this are defined in base classes
  */

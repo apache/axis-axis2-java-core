@@ -24,10 +24,6 @@ import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.wom.WSDLService;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface AxisService extends WSDLService,ParameterInclude,FlowInclude {
     //modules
     public void addModule(QName moduleref);

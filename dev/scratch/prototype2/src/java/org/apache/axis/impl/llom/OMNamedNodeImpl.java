@@ -22,9 +22,6 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 5, 2004
- * Time: 1:17:37 PM
  */
 public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 

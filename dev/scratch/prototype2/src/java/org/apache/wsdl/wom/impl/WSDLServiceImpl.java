@@ -23,11 +23,6 @@ import org.apache.wsdl.wom.WSDLEndpoint;
 import org.apache.wsdl.wom.WSDLInterface;
 import org.apache.wsdl.wom.WSDLService;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLServiceImpl extends ComponentImpl implements WSDLService   {
 
     /**

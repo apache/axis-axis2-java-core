@@ -23,8 +23,6 @@ import java.util.Stack;
 
 /**
  * <p>This is the ordered Collection of Phases as specified by the Server.xml file.</p>
- *
- * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class ExecutionChain {
     private HashMap phases;

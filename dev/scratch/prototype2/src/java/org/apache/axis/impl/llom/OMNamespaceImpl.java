@@ -17,9 +17,6 @@ import org.apache.axis.om.OMNamespace;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 6, 2004
- * Time: 11:43:32 AM
  */
 public class OMNamespaceImpl implements OMNamespace {
     private String prefix;

@@ -16,9 +16,6 @@
 package org.apache.axis.description;
 
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public interface ParameterInclude {
     //parameters
     public void addParameter(Parameter param);

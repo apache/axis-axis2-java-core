@@ -15,9 +15,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:47:19 AM
  */
 public class OMException extends RuntimeException {
     public OMException() {

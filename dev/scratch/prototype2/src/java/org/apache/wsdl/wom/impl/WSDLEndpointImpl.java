@@ -18,12 +18,6 @@ package org.apache.wsdl.wom.impl;
 import org.apache.wsdl.wom.WSDLBinding;
 import org.apache.wsdl.wom.WSDLEndpoint;
 
-
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLEndpointImpl extends  ComponentImpl implements WSDLEndpoint {
 
     private String name;

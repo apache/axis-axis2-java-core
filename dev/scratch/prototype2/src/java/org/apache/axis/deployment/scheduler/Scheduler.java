@@ -18,10 +18,6 @@ import java.util.TimerTask;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Deepal Jayasinghe
- *         Oct 5, 2004
- *         9:48:42 AM
  */
 public class Scheduler {
 

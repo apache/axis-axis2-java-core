@@ -19,9 +19,6 @@ package org.apache.axis.engine;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.receivers.InOutSyncReceiver;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class ReceiverLocator {
     public static Receiver locateReceiver(MessageContext msgCtx) throws AxisFault {
 

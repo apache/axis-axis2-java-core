@@ -23,9 +23,6 @@ import org.apache.axis.impl.transport.tcp.TCPTrasnportSender;
 import java.io.OutputStream;
 
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class TransportSenderLocator {
     public static final String TRANSPORT_TCP = "TRANSPORT_TCP";
     public static final String TRANSPORT_HTTP = "TRANSPORT_HTTP";

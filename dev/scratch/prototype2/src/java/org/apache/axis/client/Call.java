@@ -44,8 +44,6 @@ import java.util.Iterator;
  * This is conveneice API for the User who do not need to see the complexity of the
  * Engine.
  * //TODO this a a MOCK call things are subjected to be decided
- *
- * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Call {
     private EngineRegistry registry;

@@ -22,9 +22,9 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.impl.transport.AbstractTransportReceiver;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.transport.AbstractTransportReceiver;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

@@ -15,10 +15,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Axis team
- *         Date: Dec 3, 2004
- *         Time: 10:16:43 AM
- *         <p/>
  *         This is the static factory finder. It searches for the relevant class
  *         Note - It has only package access!!!
  */

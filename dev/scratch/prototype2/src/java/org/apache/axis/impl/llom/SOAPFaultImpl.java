@@ -21,9 +21,6 @@ import java.util.Locale;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 8, 2004
- * Time: 2:02:25 PM
  */
 public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstants {
 

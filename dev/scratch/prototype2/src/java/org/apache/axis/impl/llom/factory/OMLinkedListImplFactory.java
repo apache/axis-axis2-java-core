@@ -18,9 +18,6 @@ import org.apache.axis.om.*;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 11, 2004
- * Time: 2:21:13 PM
  */
 public class OMLinkedListImplFactory extends OMFactory {
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {

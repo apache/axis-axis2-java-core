@@ -34,8 +34,6 @@ import java.lang.reflect.Method;
 
 /**
  * This is a Simple java Provider.
- *
- * @author Srinath Perera(hemapani@opensource.lk)
  */
 
 public class SimpleJavaProvider extends AbstractProvider implements Provider {

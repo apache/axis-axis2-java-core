@@ -15,10 +15,6 @@
  */
 package org.apache.wsdl.wom;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface MessageReference  extends ExtensibleComponent{
     public String getDirection();
 

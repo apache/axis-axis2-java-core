@@ -17,10 +17,6 @@ package org.apache.wsdl.wom.impl;
 
 import org.apache.wsdl.wom.WSDLFeature;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLFeatureImpl extends ComponentImpl implements WSDLFeature {
 
 	

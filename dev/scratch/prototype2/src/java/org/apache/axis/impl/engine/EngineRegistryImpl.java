@@ -25,9 +25,6 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class EngineRegistryImpl implements EngineRegistry{
     private HashMap modules = new HashMap();
     private HashMap services = new HashMap();

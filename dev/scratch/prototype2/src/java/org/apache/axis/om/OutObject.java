@@ -17,10 +17,9 @@ import org.xml.sax.ContentHandler;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 19, 2004
- * Time: 2:20:29 PM
- * <p/>
+ */
+
+/**
  * From the point of view of AXIOM, we expect something from the OUT object provided by the provider.
  * Especially AXIOM expects a SAX interface from the Object AXIOM recieves.
  * <p/>

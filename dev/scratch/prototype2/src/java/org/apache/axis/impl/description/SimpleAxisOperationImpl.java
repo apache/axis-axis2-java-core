@@ -30,9 +30,6 @@ import org.apache.wsdl.wom.WSDLOperation;
 import org.apache.wsdl.wom.WSDLProperty;
 import org.apache.wsdl.wom.impl.WSDLOperationImpl;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class SimpleAxisOperationImpl implements AxisOperation {
     protected WSDLOperation wsdlOperation;
     protected ParameterInclude parameters;

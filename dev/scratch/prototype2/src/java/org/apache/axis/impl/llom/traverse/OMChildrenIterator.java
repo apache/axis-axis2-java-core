@@ -20,9 +20,6 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 11, 2004
- * Time: 11:23:07 AM
  */
 public class OMChildrenIterator implements Iterator {
 

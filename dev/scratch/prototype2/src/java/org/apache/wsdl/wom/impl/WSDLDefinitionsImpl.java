@@ -24,13 +24,6 @@ import org.apache.wsdl.wom.WSDLDefinitions;
 import org.apache.wsdl.wom.WSDLInterface;
 import org.apache.wsdl.wom.WSDLService;
 
-
-
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions    {
 
 	/**

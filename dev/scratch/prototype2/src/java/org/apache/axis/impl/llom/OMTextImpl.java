@@ -20,9 +20,6 @@ import org.apache.axis.om.OMText;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 6, 2004
- * Time: 1:36:55 PM
  */
 public class OMTextImpl extends OMNodeImpl implements OMText {
 

@@ -14,10 +14,6 @@ package org.apache.axis.om;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- *         Date: Dec 3, 2004
- *         Time: 10:30:05 AM
  *         <p/>
  *         Exception thrown when the factory returns an error
  */

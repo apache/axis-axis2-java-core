@@ -19,9 +19,6 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 2, 2004
- * Time: 2:45:24 PM
  */
 public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 

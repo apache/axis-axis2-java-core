@@ -15,14 +15,6 @@
  */
 package org.apache.axis.engine;
 
-//
-//import org.xml.sax.Attributes;
-//
-//import javax.xml.namespace.QName;
-//
-///**
-// * @author Srinath Perera(hemapani@opensource.lk)
-// */
 
 public class Constants {
     public static final int SOAP_STYLE_RPC_ENCODED = 1000;

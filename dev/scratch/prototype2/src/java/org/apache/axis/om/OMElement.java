@@ -1,9 +1,9 @@
 package org.apache.axis.om;
 
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -19,10 +19,6 @@ import java.util.Iterator;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 4, 2004
- * Time: 11:52:18 AM
  * <p/>
  * One must make sure to insert relevant constructors for the classes that are implementing this interface
  */

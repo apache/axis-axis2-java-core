@@ -16,9 +16,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 1, 2004
- * Time: 3:36:14 PM
  */
 public interface OMNode {
     //==================================================================================

@@ -21,8 +21,6 @@ import javax.xml.namespace.QName;
 /**
  * This is the Absract provider. It is just a another handler. the
  * protected abstract methods are only for the sake of braking down the logic
- *
- * @author Srinath Perera(hemapani@opensource.lk)
  */
 public abstract class AbstractProvider implements Provider{
     protected QName name;

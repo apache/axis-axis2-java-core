@@ -16,9 +16,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 7, 2004
- * Time: 10:28:21 AM
  */
 public interface OMXMLParserWrapper {
     /**

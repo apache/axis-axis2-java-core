@@ -17,9 +17,6 @@ import org.apache.axis.om.OMException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 22, 2004
- * Time: 10:43:32 AM
  */
 public class OMBuilderException extends OMException {
     public OMBuilderException(String s) {

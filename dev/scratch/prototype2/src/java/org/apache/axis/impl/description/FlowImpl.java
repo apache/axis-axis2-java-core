@@ -21,9 +21,6 @@ import java.util.Vector;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 
-/**
- * @author hemapani@opensource.lk
- */
 public class FlowImpl implements Flow {
    protected Vector list = null; 
    public FlowImpl(){

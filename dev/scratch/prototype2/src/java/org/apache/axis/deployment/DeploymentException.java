@@ -15,9 +15,6 @@ package org.apache.axis.deployment;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Deepal Jayasinghe
- *         Oct 5, 2004
- *         2:51:57 PM
  */
 public class DeploymentException extends Exception {
     public DeploymentException(Throwable cause) {

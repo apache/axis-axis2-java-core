@@ -17,10 +17,6 @@ package org.apache.axis.description;
 
 import org.apache.wsdl.wom.WSDLOperation;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface AxisOperation extends WSDLOperation,ParameterInclude  {
 //    public Flow getInFlow();
 //    

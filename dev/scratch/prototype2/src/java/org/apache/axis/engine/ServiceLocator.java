@@ -22,9 +22,6 @@ import org.apache.axis.description.AxisService;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class ServiceLocator {
     public static AxisService locateService(MessageContext msgctx) throws AxisFault{
         String uri = null;

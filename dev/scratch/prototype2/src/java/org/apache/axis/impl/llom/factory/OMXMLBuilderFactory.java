@@ -21,9 +21,6 @@ import javax.xml.stream.XMLStreamReader;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 7, 2004
- * Time: 11:40:32 AM
  */
 public class OMXMLBuilderFactory {
     public static final String PARSER_XPP = "XPP";

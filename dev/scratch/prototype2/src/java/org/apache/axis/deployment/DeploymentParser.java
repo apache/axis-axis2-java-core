@@ -1,21 +1,26 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
-import org.apache.axis.description.*;
-import org.apache.axis.impl.description.FlowImpl;
-import org.apache.axis.impl.description.ParameterImpl;
-import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
-import org.apache.axis.engine.AxisFault;
+import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
+
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
 
 
 /**
@@ -32,11 +37,6 @@ import java.io.InputStream;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Deepal Jayasinghe
- *         Oct 19, 2004
- *         11:41:32 AM
- *
  */
 
 

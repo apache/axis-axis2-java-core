@@ -18,10 +18,6 @@ package org.apache.wsdl.wom.impl;
 import org.apache.wsdl.wom.MessageReference;
 
 
-/**
- * @author Chathura Herath
- *
- */
 public class MessageReferenceImpl  extends ExtensibleComponentImpl implements MessageReference  {
 
 			

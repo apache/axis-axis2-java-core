@@ -23,9 +23,6 @@ import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 
-/**
- * @author Srinath Perera (hemapani@opensource.lk)
- */
 public abstract class AbstractHandler implements Handler {
     protected HandlerMetaData handlerDesc;
     

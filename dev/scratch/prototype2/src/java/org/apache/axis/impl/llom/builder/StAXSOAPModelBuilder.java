@@ -22,10 +22,6 @@ import javax.xml.stream.XMLStreamReader;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Axis team
- *         Date: Nov 18, 2004
- *         Time: 2:30:17 PM
- *         <p/>
  *         Note - OM navigator has been removed to simplify the build process
  */
 public class StAXSOAPModelBuilder extends StAXBuilder {

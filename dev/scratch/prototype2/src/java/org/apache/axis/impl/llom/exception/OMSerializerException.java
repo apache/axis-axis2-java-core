@@ -15,9 +15,6 @@ package org.apache.axis.impl.llom.exception;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 18, 2004
- * Time: 12:14:23 PM
  */
 public class OMSerializerException extends Exception {
 }

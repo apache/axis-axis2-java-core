@@ -20,11 +20,6 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- *
- * @author Eran Chinthaka - Lanka Software Foundation
- * @author Ajith Ranabahu
- *         Date: Oct 13, 2004
- *         Time: 11:25:29 AM
  */
 public class OMChildrenQNameIterator extends OMChildrenIterator {
 

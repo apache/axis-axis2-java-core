@@ -16,8 +16,5 @@
 
 package org.apache.axis.engine;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public interface TransportSender extends Handler {
 }

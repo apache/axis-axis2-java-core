@@ -16,11 +16,6 @@ import java.io.File;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Deepal Jayasinghe
- *         Oct 18, 2004
- *         2:54:07 PM
- *
  */
 
 /**

@@ -25,8 +25,6 @@ import java.util.Stack;
  * <p>This is Phase, a orderd collection of Handlers.
  * seems this is Handler Chain with order.</p>
  * Should this exttends Hanlders?
- *
- * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class Phase extends AbstractHandler implements Handler {
     private String phaseName;

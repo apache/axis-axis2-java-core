@@ -22,10 +22,9 @@ import javax.xml.stream.XMLStreamReader;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Dec 6, 2004
- * Time: 4:37:02 PM
- * <p/>
+ */
+
+/** 
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
  * And this will habe the Document concept also.
  */

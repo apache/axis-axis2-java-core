@@ -17,12 +17,7 @@ package org.apache.wsdl.wom.impl;
 
 import org.apache.wsdl.wom.WSDLProperty;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WDSLPropertyImpl extends ComponentImpl implements WSDLProperty  {
-
 	
 	private String uri;
 	

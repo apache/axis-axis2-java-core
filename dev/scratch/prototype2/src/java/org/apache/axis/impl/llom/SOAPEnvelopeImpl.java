@@ -20,9 +20,6 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Oct 29, 2004
- * Time: 3:41:59 PM
  */
 public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMConstants {
 

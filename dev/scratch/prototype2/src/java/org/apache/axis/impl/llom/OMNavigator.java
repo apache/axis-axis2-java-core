@@ -26,10 +26,8 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
 
 /**
- * @author Dasarath Weeratunge
- * @author (modifier) Ajith Ranabahu
- *         Refer to the testClass to find out how to use
- *         features like isNavigable, isComplete and step
+ * Refer to the testClass to find out how to use
+ * features like isNavigable, isComplete and step
  */
 public class OMNavigator {
 

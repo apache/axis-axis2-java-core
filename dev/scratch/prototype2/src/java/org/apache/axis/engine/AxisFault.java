@@ -29,10 +29,6 @@ import java.lang.reflect.InvocationTargetException;
  * <li>A fault actor
  * <li>Fault details; an xml tree of fault specific stuff
  * </ol>
- *
- * @author Doug Davis (dug@us.ibm.com)
- * @author James Snell (jasnell@us.ibm.com)
- * @author Steve Loughran
  */
 
 public class AxisFault extends java.rmi.RemoteException {

@@ -23,10 +23,6 @@ import java.util.Iterator;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- *         Date: Nov 18, 2004
- *         Time: 4:09:19 PM
  */
 public class SimpleOMSerializer {
 //determines whether the seriliased output contains new line characters

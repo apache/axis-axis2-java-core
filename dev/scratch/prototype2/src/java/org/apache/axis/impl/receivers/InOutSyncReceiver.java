@@ -25,9 +25,6 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class InOutSyncReceiver extends AbstractHandler implements Receiver {
     protected Log log = LogFactory.getLog(getClass());
 
@@ -36,7 +33,7 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
             Runnable runner = new Runnable() {
                 public void run() {
                     try {
-                        send(msgContext);
+                        invokeAndsend(msgContext);
                     } catch (AxisFault e) {
                         log.error("Exception occured in new thread starting response", e);
                     }
@@ -46,11 +43,11 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
             Thread thread = new Thread(runner);
             thread.start();
         } else {
-            send(msgContext);
+            invokeAndsend(msgContext);
         }
     }
 
-    public void send(MessageContext msgContext) throws AxisFault {
+    public void invokeAndsend(MessageContext msgContext) throws AxisFault {
         Provider provider = msgContext.getService().getProvider();
         MessageContext outMsgContext = provider.invoke(msgContext);
         Sender sender = new Sender();

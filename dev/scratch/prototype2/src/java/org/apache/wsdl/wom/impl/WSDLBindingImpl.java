@@ -23,10 +23,6 @@ import javax.xml.namespace.QName;
 import org.apache.wsdl.wom.WSDLBinding;
 import org.apache.wsdl.wom.WSDLInterface;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding  {
 
 	private QName name;

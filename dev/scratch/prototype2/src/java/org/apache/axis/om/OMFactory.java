@@ -16,10 +16,6 @@ package org.apache.axis.om;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
- * Date: Nov 11, 2004
- * Time: 10:53:06 AM
- * <p/>
  * This will help to create OM API object. This will ease the switching from one OM impl to another.
  */
 public abstract class OMFactory {
