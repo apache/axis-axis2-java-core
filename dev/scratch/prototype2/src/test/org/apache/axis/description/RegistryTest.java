@@ -18,12 +18,18 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.axis.impl.handlers.AbstractHandler;
+import org.apache.axis.impl.providers.RawXMLProvider;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -38,6 +44,7 @@ public class RegistryTest extends AbstractTestCase{
 
     public void testRegistry() throws Exception {
         AxisGlobal ag = new AxisGlobal();
+        testParameteInClude(ag);
         reg = new EngineRegistryImpl(ag);
         
         QName moduleName = new QName("module1");
@@ -99,5 +106,28 @@ public class RegistryTest extends AbstractTestCase{
         assertSame(flow2,flowInclude.getFaultFlow());
         assertSame(flow3,flowInclude.getOutFlow());
     }
+    public void testProviders(){
+        RawXMLProvider xmlprovider = new RawXMLProvider();
+        QName name = new QName("Hi","testing");
+        xmlprovider.setName(name);
+        assertEquals(xmlprovider.getName(),name);
+        
+        SimpleJavaProvider provider = new SimpleJavaProvider();
+        provider.setName(name);
+        assertEquals(provider.getName(),name);
+
+    }
+    
+    public void testHandlers() throws AxisFault{
+        Handler handler = new AbstractHandler() {
+            public void invoke(MessageContext msgContext) throws AxisFault {
+            }
+        };
+        handler.init(new HandlerMetaData());
+        assertNull(handler.getName());
+        assertNull(handler.getParameter("hello"));
+        handler.cleanup();
+    }
+
     
 }

@@ -17,14 +17,11 @@ package org.apache.axis.misc;
 
 import java.lang.reflect.InvocationTargetException;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.GlobalContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.context.SimpleSessionContext;
-import org.apache.axis.impl.providers.RawXMLProvider;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -52,18 +49,16 @@ public class MiscTest extends AbstractTestCase {
         Object val  = new Object();
         gc.put(key,val);
         assertEquals(gc.get(key),val);
+        gc.setRegistry(null);
+        assertNull(null);
     }
 
 
     public void testAxisFault(){
         Exception e = new InvocationTargetException(new Exception());
         assertNotSame(AxisFault.makeFault(e),e);
+        
+        e = new AxisFault();
     }
     
-    public void testProviders(){
-        RawXMLProvider xmlprovider = new RawXMLProvider();
-        QName name = new QName("Hi","testing");
-        xmlprovider.setName(name);
-        assertEquals(xmlprovider.getName(),name);
-    }
 }
