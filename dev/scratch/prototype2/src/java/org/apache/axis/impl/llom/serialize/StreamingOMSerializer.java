@@ -4,6 +4,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
+import java.util.Vector;
 
 
 /**
@@ -22,6 +23,8 @@ import javax.xml.stream.XMLStreamConstants;
  * limitations under the License.
  */
 public class StreamingOMSerializer implements XMLStreamConstants {
+
+    private Vector prefixList = new Vector();
 
     public void serialize(Object obj, XMLStreamWriter writer) throws XMLStreamException {
 
@@ -62,11 +65,19 @@ public class StreamingOMSerializer implements XMLStreamConstants {
         String nameSpaceName = reader.getNamespaceURI();
         if (prefix != null) {
             writer.writeStartElement(prefix, reader.getLocalName(), nameSpaceName);
+            //add the own namespace
+            if (!prefixList.contains(prefix)) {
+                writer.writeNamespace(prefix, nameSpaceName);
+                prefixList.add(prefix);
+            }
         } else {
             writer.writeStartElement(nameSpaceName, reader.getLocalName());
+            //add the own namespace
+            writer.writeDefaultNamespace(nameSpaceName);
+
         }
-        //add the own namespace
-        writer.writeNamespace(prefix == null ? "" : prefix, nameSpaceName);
+
+
 
         //add attributes
         serializeAttributes(reader, writer);
@@ -118,17 +129,19 @@ public class StreamingOMSerializer implements XMLStreamConstants {
                 writer.writeAttribute(reader.getAttributeLocalName(i),
                         reader.getAttributeValue(i));
             }
-
         }
-
-
     }
 
 
     protected void serializeNamespaces(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
         int count = reader.getNamespaceCount();
+        String namespacePrefix;
         for (int i = 0; i < count; i++) {
-            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+            namespacePrefix = reader.getNamespacePrefix(i);
+            if (!prefixList.contains(namespacePrefix)) {
+                writer.writeNamespace(namespacePrefix, reader.getNamespaceURI(i));
+                prefixList.add(namespacePrefix);
+            }
         }
 
     }

@@ -48,6 +48,8 @@ public class OMSerailizerTest extends AbstractTestCase {
         tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile));
+//         writer = XMLOutputFactory.newInstance().
+//                createXMLStreamWriter(System.out);
     }
 
     public void testRawSerializer() throws Exception {

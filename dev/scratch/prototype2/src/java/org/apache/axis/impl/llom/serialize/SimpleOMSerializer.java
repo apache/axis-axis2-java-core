@@ -66,17 +66,15 @@ public class SimpleOMSerializer {
             nameSpaceName = ns.getName();
             if (prefix != null) {
                 writer.writeStartElement(prefix, element.getLocalName(), nameSpaceName);
-                if (!prefixList.contains(prefix)){
-                    writer.writeNamespace(prefix,nameSpaceName);
+                if (!prefixList.contains(prefix)) {
+                    writer.writeNamespace(prefix, nameSpaceName);
                     prefixList.add(prefix);
                 }
             } else {
                 writer.writeStartElement(nameSpaceName, element.getLocalName());
                 //add the own namespace
-                if (!prefixList.contains(prefix)){
-                    writer.writeDefaultNamespace(nameSpaceName);
-                    prefixList.add(prefix);
-                }
+                writer.writeDefaultNamespace(nameSpaceName);
+
 
             }
         }
@@ -91,7 +89,7 @@ public class SimpleOMSerializer {
 
         //add the namespaces
         Iterator namespaces = element.getAllDeclaredNamespaces();
-        if (namespaces!=null){
+        if (namespaces != null) {
             while (namespaces.hasNext()) {
                 serializeNamespace((OMNamespace) namespaces.next(), writer);
             }
@@ -140,7 +138,7 @@ public class SimpleOMSerializer {
         String prefix = null;
         String namespaceName = null;
         if (ns != null) {
-            //add the prefix if it's availble
+//add the prefix if it's availble
             prefix = ns.getPrefix();
             namespaceName = ns.getName();
 
@@ -160,7 +158,7 @@ public class SimpleOMSerializer {
             String prefix = namespace.getPrefix();
             if (!prefixList.contains(prefix))
                 writer.writeNamespace(prefix, namespace.getName());
-            
+
         }
     }
 

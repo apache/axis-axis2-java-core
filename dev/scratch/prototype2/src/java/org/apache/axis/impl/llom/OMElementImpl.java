@@ -325,8 +325,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      *
      */
     public XMLStreamReader getPullParser(boolean cacheOff) {
-        if (builder==null)
-            throw new UnsupportedOperationException("This element was not created in a mnner to be switched");
+        if (builder==null && cacheOff)
+            throw new UnsupportedOperationException("This element was not created in a manner to be switched");
         return new OMStAXWrapper(builder, this, cacheOff);
     }
 }
