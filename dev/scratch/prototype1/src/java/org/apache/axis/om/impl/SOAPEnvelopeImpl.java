@@ -1,10 +1,13 @@
 package org.apache.axis.om.impl;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.util.SOAPConstants;
 import org.apache.axis.om.soap.SOAPBody;
 import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.soap.SOAPHeader;
-import org.apache.axis.om.impl.util.SOAPConstants;
 import org.apache.xml.utils.QName;
 
 import java.util.Iterator;

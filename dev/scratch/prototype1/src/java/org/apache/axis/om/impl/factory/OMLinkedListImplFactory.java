@@ -1,6 +1,18 @@
-package org.apache.axis.om.impl;
+package org.apache.axis.om.impl.factory;
 
 import org.apache.axis.om.*;
+import org.apache.axis.om.impl.OMAttributeImpl;
+import org.apache.axis.om.impl.OMElementImpl;
+import org.apache.axis.om.impl.OMNamedNodeImpl;
+import org.apache.axis.om.impl.OMNamespaceImpl;
+import org.apache.axis.om.impl.OMNodeImpl;
+import org.apache.axis.om.impl.OMTextImpl;
+import org.apache.axis.om.impl.SOAPBodyElementImpl;
+import org.apache.axis.om.impl.SOAPBodyImpl;
+import org.apache.axis.om.impl.SOAPEnvelopeImpl;
+import org.apache.axis.om.impl.SOAPHeaderElementImpl;
+import org.apache.axis.om.impl.SOAPHeaderImpl;
+import org.apache.axis.om.impl.SOAPMessageImpl;
 import org.apache.axis.om.soap.*;
 
 /**
@@ -91,19 +103,19 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPEnvelopeImpl(localName, ns);
     }
 
-    public SOAPHeader creatHeader(SOAPEnvelope envelope) {
+    public SOAPHeader createHeader(SOAPEnvelope envelope) {
         return new SOAPHeaderImpl(envelope);
     }
 
-    public SOAPHeader creatHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderImpl(localName, ns, parent, builder);
     }
 
-    public SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns) {
+    public SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns) {
         return new SOAPHeaderElementImpl(localName, ns);
     }
 
-    public SOAPHeaderElement createSOAPEnvelopeElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeaderElement createSOAPHeaderElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderElementImpl(localName, ns, parent, builder);
     }
 

@@ -56,11 +56,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     }
 
     public OMNode getFirstChild() throws OMException {
-        throw new OMException();
+        throw new UnsupportedOperationException();
     }
 
     public void setFirstChild(OMNode node) throws OMException {
-        throw new OMException();
+        throw new UnsupportedOperationException();
     }
 
     public void print(PrintStream s) throws OMException {

@@ -29,10 +29,9 @@ import java.io.PrintStream;
  */
 public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
-    OMNamespace ns;
+    private OMNamespace ns;
     String localName;
 
-    
 
     public OMNamedNodeImpl(String localName, OMNamespace ns, OMElement parent) {
         super(parent);
@@ -65,8 +64,12 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
     public void print(PrintStream ps) throws OMException {
         if (ns != null && !ns.isDefaultNs()) {
-            ps.print(ns.getPrefix());
-            ps.print(':');
+            String prefix = ns.getPrefix();
+            if (prefix != "") {
+                ps.print(prefix);
+                ps.print(':');
+            }
+
         }
         ps.print(localName);
     }

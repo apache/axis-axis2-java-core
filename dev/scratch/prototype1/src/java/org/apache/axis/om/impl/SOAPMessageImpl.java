@@ -1,9 +1,11 @@
 package org.apache.axis.om.impl;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.factory.OMLinkedListImplFactory;
+import org.apache.axis.om.mime.MimeHeaders;
 import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.soap.SOAPMessage;
-import org.apache.axis.om.mime.MimeHeaders;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -37,10 +39,11 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
 
     public SOAPMessageImpl(Object[] obj) {
         //TODO create the OM from Obj
+        throw new UnsupportedOperationException();
     }
 
     
-    public void setEnvelope(SOAPEnvelopeImpl root) {
+    public void setEnvelope(SOAPEnvelope root) {
         this.envelope = root;
     }
 
@@ -50,7 +53,7 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
      * @return the envelope element
      */
     public SOAPEnvelope getEnvelope() {
-        while (envelope == null) {
+        while (envelope == null && !parserWrapper.isCompleted()) {
             parserWrapper.next();
         }
         return envelope;

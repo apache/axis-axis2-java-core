@@ -15,8 +15,6 @@
 
 package org.apache.axis.om.mime;
 
-import org.apache.axis.om.mime.MimeHeader;
-
 import java.util.Iterator;
 import java.util.Vector;
 

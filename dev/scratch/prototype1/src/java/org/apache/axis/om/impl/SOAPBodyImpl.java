@@ -1,6 +1,9 @@
 package org.apache.axis.om.impl;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.soap.SOAPBody;
 import org.apache.axis.om.soap.SOAPBodyElement;
 import org.apache.axis.om.soap.SOAPEnvelope;
@@ -86,6 +89,7 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
     public SOAPBodyElement addBodyElement(String localName, OMNamespace ns) throws OMException {
         SOAPBodyElement soapBodyElement = new SOAPBodyElementImpl(localName, ns);
         this.addChild(soapBodyElement);
+        soapBodyElement.setComplete(true);
         return soapBodyElement;
     }
 

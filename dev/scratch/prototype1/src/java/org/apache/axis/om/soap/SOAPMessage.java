@@ -1,8 +1,7 @@
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.mime.MimeHeaders;
-import org.apache.axis.om.soap.SOAPEnvelope;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.mime.MimeHeaders;
 
 
 /**
@@ -32,6 +31,7 @@ public interface SOAPMessage extends OMNode {
      * @return the root element
      */
     public SOAPEnvelope getEnvelope();
+    public void setEnvelope(SOAPEnvelope soapEnvelope);
 
     /**
      * Returns all the transport-specific MIME headers for this

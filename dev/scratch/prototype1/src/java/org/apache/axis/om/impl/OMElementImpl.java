@@ -28,16 +28,16 @@ import java.util.Iterator;
  * Time: 1:16:10 PM
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
-    private OMNodeImpl firstChild;
-    OMXMLParserWrapper builder;
-    OMAttributeImpl firstAttribute;
-    OMNamespaceImpl firstNamespace;
+    private OMNode firstChild;
+    private OMXMLParserWrapper builder;
+    private OMAttributeImpl firstAttribute;
+    private OMNamespace firstNamespace;
 
     public OMElementImpl(OMElement parent) {
         super(parent);
+        done = true;
     }
 
-    
 
     public OMElementImpl(String localName, OMNamespace ns) {
         super(localName, ns, null);
@@ -71,7 +71,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @throws org.apache.axis.om.OMException
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
-        return new OMChildrenQNameIterator(getFirstChild(), elementQName);
+        return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(), elementQName);
     }
 
     private void addChild(OMNodeImpl child) {
@@ -79,10 +79,12 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
             builder.next();
         child.setPreviousSibling(null);
         child.setNextSibling(firstChild);
-        if (firstChild != null)
-            firstChild.setPreviousSibling(child);
+        if (firstChild != null) {
+            OMNodeImpl firstChildImpl = (OMNodeImpl) firstChild;
+            firstChildImpl.setPreviousSibling(child);
+        }
         child.setParent(this);
-        child.setComplete(true);
+//        child.setComplete(true);
         firstChild = child;
     }
 
@@ -118,6 +120,16 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         ns.setNextSibling(firstNamespace);
         firstNamespace = ns;
         return ns;
+    }
+
+    /**
+     * @param namespace
+     * @return
+     */
+    public OMNamespace createNamespace(OMNamespace namespace) {
+        namespace.setNextSibling(firstNamespace);
+        firstNamespace = namespace;
+        return namespace;
     }
 
     /**
@@ -158,7 +170,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      *
      * @return
      */
-    public OMAttribute getFirstAttribute() {
+    private OMAttribute getFirstAttribute() {
         return firstAttribute;
     }
 
@@ -192,6 +204,14 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         attr.detach();
     }
 
+    public void setBuilder(OMXMLParserWrapper wrapper) {
+        this.builder = wrapper;
+    }
+
+    public OMXMLParserWrapper getBuilder() {
+        return builder;
+    }
+
     /**
      * This will force the parser to proceed, if parser has not yet finished with the XML input
      */
@@ -199,14 +219,14 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         builder.next();
     }
 
-    public OMNodeImpl getFirstChild() {
+    public OMNode getFirstChild() {
         if (firstChild == null && !done)
             buildNext();
         return firstChild;
     }
 
 
-    public void setFirstChild(OMNodeImpl firstChild) {
+    public void setFirstChild(OMNode firstChild) {
         this.firstChild = firstChild;
     }
 
@@ -214,25 +234,25 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         s.print('<');
         super.print(s);
 
-        OMNodeImpl node = firstAttribute;
+        OMNode node = firstAttribute;
         while (node != null) {
             s.print(" ");
-            node.print(s);
-            node = (OMNodeImpl) node.getNextSibling();
+            ((Printable) node).print(s);
+            node = ((OMNodeImpl) node).getNextSibling();
         }
 
         node = firstNamespace;
         while (node != null) {
             s.print(" ");
-            node.print(s);
+            ((Printable) node).print(s);
             node = (OMNodeImpl) node.getNextSibling();
         }
 
-        node = getFirstChild();
+        node = (OMNodeImpl) getFirstChild();
         if (node != null) {
             s.print('>');
             while (node != null) {
-                node.print(s);
+                ((Printable) node).print(s);
                 node = (OMNodeImpl) node.getNextSibling();
             }
             s.print('<');

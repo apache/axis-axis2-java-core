@@ -16,7 +16,6 @@
 package org.apache.axis.om.soap;
 
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.soap.SOAPBodyElement;
 
 import java.util.Locale;
 

@@ -4,8 +4,8 @@ import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.soap.SOAPHeaderElement;
 import org.apache.axis.om.impl.util.SOAPConstants;
+import org.apache.axis.om.soap.SOAPHeaderElement;
 import org.apache.xml.utils.QName;
 
 import java.util.Iterator;

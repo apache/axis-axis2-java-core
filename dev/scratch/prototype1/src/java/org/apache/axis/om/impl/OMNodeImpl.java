@@ -31,7 +31,8 @@ public class OMNodeImpl implements OMNode, Printable {
     protected OMNodeImpl nextSibling;
     protected OMNodeImpl previousSibling;
     protected String value;
-    protected boolean done;
+    protected boolean done = false;
+    protected short nodeType;
 
     public OMNodeImpl() {
     }
@@ -185,11 +186,11 @@ public class OMNodeImpl implements OMNode, Printable {
      * @throws org.apache.axis.om.OMException
      */
     public short getType() throws OMException {
-        throw new UnsupportedOperationException();
+        return nodeType;
     }
 
     public void setType(short nodeType) throws OMException {
-        throw new UnsupportedOperationException();
+        this.nodeType = nodeType;
     }
 
     public OMNode getPreviousSibling() {

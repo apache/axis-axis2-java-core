@@ -56,8 +56,15 @@ public interface OMElement extends OMNamedNode {
      * @param uri
      * @param prefix
      * @return
-     */
+     */ 
     public OMNamespace createNamespace(String uri, String prefix);
+
+    /**
+     *
+     * @param namespace
+     * @return
+     */
+    public OMNamespace createNamespace(OMNamespace namespace);
 
     /**
      * This will find a namespace with the given uri and prefix, in the scope of the docuemnt.
@@ -95,4 +102,18 @@ public interface OMElement extends OMNamedNode {
     public void insertAttribute(OMAttribute attr);
     public void removeAttribute(OMAttribute attr);
 
+    public void setBuilder(OMXMLParserWrapper wrapper);
+    public OMXMLParserWrapper getBuilder();
+
+    /**
+     * Set the first child
+     * @param node
+     */
+    public void setFirstChild(OMNode node);
+    
+    /**
+     * Get the first child
+     * @return
+     */
+    public OMNode getFirstChild();
 }

@@ -1,8 +1,7 @@
 package org.apache.axis.om.impl;
 
-import org.apache.axis.om.soap.SOAPBodyElement;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.soap.SOAPBodyElement;
 

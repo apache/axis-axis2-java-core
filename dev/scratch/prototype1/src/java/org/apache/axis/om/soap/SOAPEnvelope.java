@@ -25,7 +25,6 @@ package org.apache.axis.om.soap;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.soap.SOAPBody;
 
 
 public interface SOAPEnvelope extends OMElement {
