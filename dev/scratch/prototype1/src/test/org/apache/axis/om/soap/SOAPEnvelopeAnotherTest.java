@@ -19,8 +19,8 @@
 */
 package org.apache.axis.om.soap;
 
-import org.apache.axis.om.OMTestUtils;
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.om.OMTestUtils;
 
 
 public class SOAPEnvelopeAnotherTest extends AbstractTestCase {

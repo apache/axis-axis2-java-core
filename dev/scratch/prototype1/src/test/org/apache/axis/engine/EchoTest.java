@@ -15,21 +15,15 @@
  */
 package org.apache.axis.engine;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
 import org.apache.axis.transport.http.SimpleAxisServer;
+
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

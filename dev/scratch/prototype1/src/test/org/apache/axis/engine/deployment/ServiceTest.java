@@ -44,7 +44,7 @@ public class ServiceTest extends TestCase {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
             if(er != null){
-                System.out.println("Numbetr of service" + er.getServiceCount());
+                System.out.println("Number of service" + er.getServiceCount());
             }
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.

@@ -16,11 +16,11 @@
 
 package org.apache.axis.engine.registry;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.context.MessageContext;
+
+import javax.xml.namespace.QName;
 
 public class SpeakingHandler extends AbstractEngineElement implements Handler {
     private String message;

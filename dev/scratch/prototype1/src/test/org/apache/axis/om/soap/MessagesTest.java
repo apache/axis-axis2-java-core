@@ -19,9 +19,9 @@
 */
 package org.apache.axis.om.soap;
 
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMTestUtils;
-import org.apache.axis.AbstractTestCase;
 
 
 public class MessagesTest extends AbstractTestCase {

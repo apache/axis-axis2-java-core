@@ -16,14 +16,12 @@
 
 package org.apache.axis.engine;
 
-import java.io.OutputStream;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
+
+import javax.xml.namespace.QName;
+import java.io.OutputStream;
 
 /**
  * @author hemapani@opensource.lk

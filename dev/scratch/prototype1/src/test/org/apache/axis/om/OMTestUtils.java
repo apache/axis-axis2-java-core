@@ -16,16 +16,14 @@
 
 package org.apache.axis.om;
 
-import java.io.FileReader;
-import java.io.File;
-import java.util.Iterator;
-
-
 import junit.framework.TestCase;
-
 import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.Iterator;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

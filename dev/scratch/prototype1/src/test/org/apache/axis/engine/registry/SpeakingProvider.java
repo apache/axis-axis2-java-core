@@ -16,13 +16,12 @@
 
 package org.apache.axis.engine.registry;
 
-import java.lang.reflect.Method;
-
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.providers.AbstractProvider;
+
+import java.lang.reflect.Method;
 
 public class SpeakingProvider extends AbstractProvider implements Provider {
     private String message;

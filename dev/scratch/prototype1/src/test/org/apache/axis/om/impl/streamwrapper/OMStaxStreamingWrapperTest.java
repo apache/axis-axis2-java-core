@@ -1,19 +1,17 @@
 package org.apache.axis.om.impl.streamwrapper;
 
-import junit.framework.TestCase;
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.impl.factory.OMLinkedListImplFactory;
 import org.apache.axis.om.impl.serialize.SimpleOMSerializer;
 import org.apache.axis.om.soap.SOAPMessage;
-import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
-import java.io.FileReader;
-import java.io.FileOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

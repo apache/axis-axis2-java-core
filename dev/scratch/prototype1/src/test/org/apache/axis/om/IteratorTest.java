@@ -1,9 +1,8 @@
 package org.apache.axis.om;
 
-import junit.framework.TestCase;
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.om.impl.streamwrapper.OMStAXBuilder;
 import org.apache.axis.om.soap.SOAPMessage;
-import org.apache.axis.AbstractTestCase;
 
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;
@@ -29,11 +28,11 @@ import java.util.Iterator;
  * Time: 12:34:15 PM
  * 
  */
-public class IteratorTester extends AbstractTestCase{
+public class IteratorTest extends AbstractTestCase{
 
     SOAPMessage message = null;
 
-    public IteratorTester(String testName) {
+    public IteratorTest(String testName) {
         super(testName);
     }
 
