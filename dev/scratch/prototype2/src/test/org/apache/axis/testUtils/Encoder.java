@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package org.apache.axis.encoding;
+package org.apache.axis.testUtils;
 
 import javax.xml.stream.XMLStreamReader;
 

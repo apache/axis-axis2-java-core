@@ -5,8 +5,6 @@
  * by the Apache Axis 1.2RC1 Sep 29, 2004 (08:29:40 EDT) WSDL2Java emitter.
  */
 
-package org.apache.axis.sample.echo;
-
 public class EchoImpl {
 	public EchoImpl(){}
 	public java.lang.String echoString(java.lang.String in) {
@@ -15,12 +13,12 @@ public class EchoImpl {
 	public java.lang.String[] echoStringArray(java.lang.String[] in) {
 		return in;
 	}
-	public org.apache.axis.sample.echo.EchoStruct echoEchoStruct(
-		org.apache.axis.sample.echo.EchoStruct in) {
+	public EchoStruct echoEchoStruct(
+		EchoStruct in) {
 		return in;
 	}
-	public org.apache.axis.sample.echo.EchoStruct[] echoEchoStructArray(
-		org.apache.axis.sample.echo.EchoStruct[] in) {
+	public EchoStruct[] echoEchoStructArray(
+		EchoStruct[] in) {
 		return in;
 	}
 }

@@ -1,9 +1,8 @@
-package org.apache.axis.om.impl.llom.builder;
+package org.apache.axis.testUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.encoding.Encoder;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;

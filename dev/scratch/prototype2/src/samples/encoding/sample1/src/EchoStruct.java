@@ -5,8 +5,6 @@
  * by the Apache Axis 1.2RC1 Sep 29, 2004 (08:29:40 EDT) WSDL2Java emitter.
  */
 
-package org.apache.axis.sample.echo;
-
 public class EchoStruct implements java.io.Serializable {
     private java.lang.String value1;
     private java.lang.String value10;

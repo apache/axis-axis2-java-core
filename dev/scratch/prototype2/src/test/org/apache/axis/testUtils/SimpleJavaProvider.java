@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.providers;
+package org.apache.axis.testUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,9 +26,6 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.SimpleTypeEncoder;
-import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
@@ -37,7 +34,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.ObjectToOMBuilder;
+import org.apache.axis.providers.AbstractProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

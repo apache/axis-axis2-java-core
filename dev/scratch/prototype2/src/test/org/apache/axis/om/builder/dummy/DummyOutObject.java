@@ -7,9 +7,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.encoding.Encoder;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
+import org.apache.axis.testUtils.Encoder;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;

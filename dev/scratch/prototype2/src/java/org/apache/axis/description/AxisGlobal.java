@@ -15,12 +15,13 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.AxisFault;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.AxisFault;
 
 /**
  * <p>This holds the information shown in the global scope. The information are all 

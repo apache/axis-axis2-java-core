@@ -15,9 +15,9 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.AxisFault;
-
 import java.util.ArrayList;
+
+import org.apache.axis.engine.AxisFault;
 
 
 public interface PhasesInclude {

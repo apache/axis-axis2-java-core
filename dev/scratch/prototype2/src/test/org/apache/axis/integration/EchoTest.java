@@ -31,10 +31,6 @@ import junit.framework.TestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
-import org.apache.axis.encoding.ArrayTypeEncoder;
-import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.SimpleTypeEncoder;
-import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.EngineUtils;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
@@ -42,7 +38,11 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.ObjectToOMBuilder;
+import org.apache.axis.testUtils.ArrayTypeEncoder;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.ObjectToOMBuilder;
+import org.apache.axis.testUtils.SimpleTypeEncoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 
 public class EchoTest extends TestCase {

@@ -1,6 +1,5 @@
 package org.apache.axis.clientapi;
 
-import java.util.Hashtable;
 import java.util.HashMap;
 
 /**

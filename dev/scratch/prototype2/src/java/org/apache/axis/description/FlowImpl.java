@@ -17,9 +17,8 @@
 package org.apache.axis.description;
 
 
-import java.util.Vector;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlowImpl implements Flow {
    protected List list;

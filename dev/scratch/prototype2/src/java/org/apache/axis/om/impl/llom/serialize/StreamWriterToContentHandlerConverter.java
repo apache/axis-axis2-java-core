@@ -1,4 +1,4 @@
-package org.apache.axis.om.impl.llom.util;
+package org.apache.axis.om.impl.llom.serialize;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

@@ -17,10 +17,10 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.om.impl.llom.util.StreamWriterToContentHandlerConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

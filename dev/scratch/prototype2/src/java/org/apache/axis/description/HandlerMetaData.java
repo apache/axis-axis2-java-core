@@ -15,9 +15,9 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.Handler;
-
 import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.Handler;
 
 /**
  * represent the deployment information about the handler

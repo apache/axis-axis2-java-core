@@ -25,7 +25,7 @@ import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.providers.RawXMLProvider;
-import org.apache.axis.providers.SimpleJavaProvider;
+import org.apache.axis.testUtils.SimpleJavaProvider;
 
 public class RegistryTest extends AbstractTestCase{
     private EngineRegistry reg;

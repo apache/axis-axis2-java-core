@@ -29,7 +29,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.MockFlow;
 import org.apache.axis.description.SimpleAxisOperationImpl;
-import org.apache.axis.providers.SimpleJavaProvider;
+import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.transport.http.SimpleHTTPReceiver;
 
 public class EngineUtils {

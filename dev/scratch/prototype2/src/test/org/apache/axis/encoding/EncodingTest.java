@@ -27,6 +27,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 
 public class EncodingTest extends AbstractTestCase {

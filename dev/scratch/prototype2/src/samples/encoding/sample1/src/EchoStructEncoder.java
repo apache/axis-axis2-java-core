@@ -4,8 +4,6 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.sample.echo;
-
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -13,10 +11,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 import org.xml.sax.ContentHandler;
 
 public class EchoStructEncoder implements Encoder {

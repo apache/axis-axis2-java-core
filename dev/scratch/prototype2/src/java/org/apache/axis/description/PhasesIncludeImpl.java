@@ -15,10 +15,10 @@
  */
 package org.apache.axis.description;
 
+import java.util.ArrayList;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
-
-import java.util.ArrayList;
 
 /**
  * Util class to implements the Phases include with delegation 

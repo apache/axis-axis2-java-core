@@ -4,8 +4,6 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.sample.echo;
-
 import java.lang.reflect.Method;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -13,18 +11,18 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.encoding.ArrayTypeEncoder;
-import org.apache.axis.encoding.Encoder;
-import org.apache.axis.encoding.SimpleTypeEncoder;
-import org.apache.axis.encoding.SimpleTypeEncodingUtils;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.providers.SimpleJavaProvider;
+import org.apache.axis.testUtils.ArrayTypeEncoder;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.ObjectToOMBuilder;
+import org.apache.axis.testUtils.SimpleJavaProvider;
+import org.apache.axis.testUtils.SimpleTypeEncoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 public class EchoProvider extends SimpleJavaProvider {
 

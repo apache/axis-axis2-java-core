@@ -34,7 +34,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.MockFlow;
 import org.apache.axis.description.SimpleAxisOperationImpl;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.providers.SimpleJavaProvider;
+import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.transport.http.SimpleHTTPReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
