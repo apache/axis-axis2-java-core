@@ -50,11 +50,11 @@ public class StaxParserTest extends AbstractTestCase {
 
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(),
                 XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
-        parser3 = builder.getDocumentElement().getPullParser(true);
-        
+        parser3 = builder2.getDocumentElement().getPullParser(true);
+
     }
 
-    public void xtestParserEvents() throws Exception{
+    public void testParserEventsWithCache() throws Exception{
 
         assertEquals(parser1.getEventType(),parser2.getEventType());
 
@@ -67,7 +67,20 @@ public class StaxParserTest extends AbstractTestCase {
 
     }
 
-    public void testParserEvents2() throws Exception{
+     public void testParserEventsWithoutCache() throws Exception{
+
+        assertEquals(parser1.getEventType(),parser3.getEventType());
+
+        while(parser1.hasNext()){
+            int parser1Event = parser1.next();
+            int parser2Event = parser3.next();
+            assertEquals(parser1Event,parser2Event);
+        }
+
+
+    }
+
+    public void testParserEvents2WithCache() throws Exception{
         while(parser1.hasNext()){
             int parser1Event = parser1.getEventType();
             int parser2Event = parser2.getEventType();
