@@ -88,6 +88,6 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
 
         log.info("Invoked the Web Servivces impl");
         Sender sender = new Sender();
-        sender.send(msgContext);
+        sender.send(outMsgContext);
     }
 }
