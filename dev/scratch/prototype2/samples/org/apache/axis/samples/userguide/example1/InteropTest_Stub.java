@@ -17,8 +17,6 @@ package org.apache.axis.samples.userguide.example1;
 
 import java.util.Iterator;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
@@ -44,17 +42,19 @@ public class InteropTest_Stub {
 	
 		
 	
-	
-	//////////////////////User setter methods//////////////////////
+	/////////////////////////////////////////////////////////////
+	///					  User setter methods                 ///
+	/////////////////////////////////////////////////////////////
 	
 	public void setEnePointReference(EndpointReference epr){
 		this.call.setTo(epr);		
 	}
 	
-	//\\\\\\\\\\\\\\\\\\End user setter methods\\\\\\\\\\\\\\\\\\//
 	
 	
-	/////////////////////Webservice Operations/////////////////////
+	///////////////////////////////////////////////////////////////
+	///                  Webservice Operations					///
+	///////////////////////////////////////////////////////////////
 	
 	public java.lang.String echoString(java.lang.String inputValue)throws AxisFault{
 		this.validate();
@@ -69,12 +69,6 @@ public class InteropTest_Stub {
 	}
 	
 	
-	//\\\\\\\\\\\\\\\\End Webservice Operations\\\\\\\\\\\\\\\\\\//
-	
-	
-	
-	
-	
 	
 	////////////////////////////////////////////////////////////////
 	//						Util Methods						  //
@@ -84,7 +78,7 @@ public class InteropTest_Stub {
 	protected SOAPEnvelope getSOAPEnvelopForEchoString(String value){
 		SOAPEnvelope envelop = OMFactory.newInstance().getDefaultEnvelope();
 		OMNamespace interopNamespace = envelop.declareNamespace("http://soapinterop.org/", "interop");
-		OMElement echoStringMessage = omFactory.createOMElement("echoStringRequest", interopNamespace);
+		OMElement echoStringMessage = omFactory.createOMElement("echoString", interopNamespace);
 		OMElement text = omFactory.createOMElement("Text", interopNamespace);
 		text.addChild(omFactory.createText(value));
 		echoStringMessage.addChild(text);
@@ -104,7 +98,7 @@ public class InteropTest_Stub {
 	}
 	
 	
-	protected String getEchoStringFromSOAPEnvelop(SOAPEnvelope envelop){
+	protected String getEchoStringFromSOAPEnvelop(SOAPEnvelope envelop) throws AxisFault{
 		OMElement body = envelop.getBody();
 		OMElement response = null;
 		Iterator childrenIter = body.getChildren();
@@ -114,12 +108,20 @@ public class InteropTest_Stub {
 				response = (OMElement)child;				
 			}
 		}		
-		Iterator textChild = response.getChildrenWithName(new QName("", "Text"));
-		String value= null;
-		if(textChild.hasNext()){
-			 value = ((String)((OMElement)textChild.next()).getValue());
+		Iterator textChild = response.getChildren();
+		while(textChild.hasNext()){
+			OMNode  child = (OMNode) textChild.next();
+			if(child instanceof OMElement && "echoStringReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
+				
+				OMNode val =((OMElement)child).getFirstChild();
+				if(val instanceof OMText)
+					return new String(((OMText)val).getValue());
+				
+			}
 		}
-		return value;		
+		
+		this.log.info("Invalid data Binding");
+		throw new AxisFault("Invalid data Binding");		
 	}
 	
 	protected Integer getEchoIntFromSOAPEnvelop(SOAPEnvelope envelop) throws AxisFault{
@@ -152,18 +154,13 @@ public class InteropTest_Stub {
 	
 	protected void validate() throws AxisFault{
 		String errorMessage = null;
-		
 		if(null == this.call.getTO())
 			errorMessage = "End Point reference is not set: ";
-		
-		
 		
 		if(null != errorMessage){
 			errorMessage = "One or more Errors occured :: "+ errorMessage;
 			throw new AxisFault(errorMessage);
 		}
-		
-		
 	}
 	
 }

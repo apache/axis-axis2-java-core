@@ -31,7 +31,7 @@ public class EchoString {
 		InteropTest_Stub stub =new InteropTest_Stub();
 		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
 		stub.setEnePointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		stub.echoString("does this damn think work");
+		System.out.println(stub.echoString("does this damn think work"));
 		
 		
 	}
