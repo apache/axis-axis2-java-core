@@ -102,8 +102,10 @@ public class ExecutionChain {
                 Phase phase = (Phase) executionList.get(i);
                 if (phase != null) {
                     log.info("Invoke the Phase " + phase.getPhaseName());
-                    executionStack.push(phase);
                     phase.invoke(msgctx);
+                    //This line should be after the invoke as if the invocation failed this phases is takn care of and 
+                    //no need to revoke agien
+                    executionStack.push(phase);
                 }
             }
         } catch (Exception e) {

@@ -15,6 +15,14 @@
  */
 package org.apache.axis.transport.http;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -25,13 +33,6 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportReceiver;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class HTTPTransportReceiver
@@ -115,8 +116,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
 
                 // TODO take care of other HTTP Headers
             }
-            AxisEngine axisEngine =
-            new AxisEngine(msgContext.getGlobalContext().getRegistry());
+            AxisEngine axisEngine = new AxisEngine();
             try {
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(in);

@@ -28,8 +28,7 @@ public class Sender {
      * @throws AxisFault
      */
     public void send(MessageContext msgCtx) throws AxisFault {
-        AxisEngine engine =
-        new AxisEngine(msgCtx.getGlobalContext().getRegistry());
+        AxisEngine engine = new AxisEngine();
         engine.send(msgCtx);
     }
 }

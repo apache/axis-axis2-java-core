@@ -116,8 +116,10 @@ public class Phase extends AbstractHandler implements Handler {
                 if (handler != null) {
                     log.info("Invoke the Handler " + handler.getName()
                                     + "with in the Phase " + phaseName);
-                    executionStack.push(handler);
                     handler.invoke(msgctx);
+                    //This line should be after the invoke as if the invocation failed this handlers is takn care of and 
+                    //no need to revoke agien
+                    executionStack.push(handler);
                 }
             }
         } catch (Exception e) {

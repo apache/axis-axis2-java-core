@@ -38,19 +38,14 @@ public class AxisEngine {
      */
     private Log log = LogFactory.getLog(getClass());
 
-    /**
-     * Field registry
-     */
-    private final EngineRegistry registry;
 
     /**
      * Constructor AxisEngine
      *
      * @param registry
      */
-    public AxisEngine(EngineRegistry registry) {
+    public AxisEngine() {
         log.info("Axis Engine Started");
-        this.registry = registry;
     }
 
     /**

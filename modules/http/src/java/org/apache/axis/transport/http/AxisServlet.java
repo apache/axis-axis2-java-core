@@ -15,6 +15,24 @@
  */
 package org.apache.axis.transport.http;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -29,23 +47,6 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
 
 /**
  * Class AxisServlet
@@ -139,7 +140,7 @@ public class AxisServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             res.setContentType("text/xml; charset=utf-8");
-            AxisEngine engine = new AxisEngine(engineRegistry);
+            AxisEngine engine = new AxisEngine();
             Object sessionContext = req.getSession().getAttribute(
                     Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {

@@ -153,7 +153,7 @@ public class Call {
     public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
         Writer out = null;
         try {
-            final AxisEngine engine = new AxisEngine(registry);
+            final AxisEngine engine = new AxisEngine();
             MessageContext msgctx = new MessageContext(registry, null, null);
             msgctx.setEnvelope(envelope);
             msgctx.setTo(targetEPR);
@@ -192,7 +192,7 @@ public class Call {
         } else {
             MessageContext request = null;
             try {
-                final AxisEngine engine = new AxisEngine(registry);
+                final AxisEngine engine = new AxisEngine();
                 request = new MessageContext(registry, null, null);
                 request.setEnvelope(envelope);
                 request.setProperty(MessageContext.TRANSPORT_TYPE, transport);
@@ -254,7 +254,7 @@ public class Call {
                     "This invocation support only for bi-directional transport");
         }
         try {
-            AxisEngine engine = new AxisEngine(registry);
+            AxisEngine engine = new AxisEngine();
             MessageContext msgctx = new MessageContext(registry, null, null);
             msgctx.setEnvelope(envelope);
             msgctx.setProperty(MessageContext.TRANSPORT_TYPE, transport);
@@ -290,7 +290,7 @@ public class Call {
     public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback)
             throws AxisFault {
         try {
-            AxisEngine engine = new AxisEngine(registry);
+            AxisEngine engine = new AxisEngine();
             final MessageContext msgctx = new MessageContext(registry, null,
                     null);
             msgctx.setEnvelope(envelope);
