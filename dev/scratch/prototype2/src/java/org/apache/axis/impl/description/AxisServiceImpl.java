@@ -33,6 +33,8 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
 
 
 public class AxisServiceImpl extends WSDLServiceImpl implements AxisService , DescriptionConstants{
+    private String serviceClassName;
+    private Class serviceClass;
 
     public AxisServiceImpl(){
         this.setComponentProperty(MODULEREF_KEY,new ArrayList());
@@ -201,6 +203,22 @@ public class AxisServiceImpl extends WSDLServiceImpl implements AxisService , De
     public Style getStyle() {
         // TODO Auto-generated method stub
         return (Style)this.getComponentProperty(STYLE_KEY);
+    }
+
+    public void setServiceClass(Class serviceclass) {
+        this.serviceClass = serviceclass;
+    }
+
+    public Class getServiceClass() {
+        return serviceClass;
+    }
+
+    public void setServiceClassName(String className) {
+       this.serviceClassName =  className;
+    }
+
+    public String getServiceClassName() {
+        return serviceClassName;  
     }
 
     public void setPhases(ArrayList phases, int flow) throws AxisFault{

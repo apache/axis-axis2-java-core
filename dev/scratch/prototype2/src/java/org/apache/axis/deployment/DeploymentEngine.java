@@ -157,7 +157,7 @@ public class DeploymentEngine implements DeploymentConstants {
             Parameter parameter = server.getParameter(i);
             global.addParameter(parameter);
         }
-        
+
         PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
         phaseResolver.buildGlobalChains(global);
 
@@ -190,6 +190,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
+        loadServiceClass(serviceMetaData,classLoader);
+
         Flow inflow = serviceMetaData.getInFlow();
         if(inflow != null ){
             addFlowHandlers(inflow,classLoader);
@@ -209,6 +211,28 @@ public class DeploymentEngine implements DeploymentConstants {
         engineRegistry.addService(serviceMetaData);
     }
 
+    private void loadServiceClass(AxisService service, ClassLoader parent) throws AxisFault{
+        File file = currentFileItem.getFile();
+        URLClassLoader loader1 = null;
+        if (file != null) {
+            URL[] urlsToLoadFrom = new URL[0];
+            try {
+                if (!file.exists()) {
+                    throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
+                }
+                urlsToLoadFrom = new URL[]{file.toURL()};
+                loader1 = new URLClassLoader(urlsToLoadFrom, parent);
+                Class serviceclass = Class.forName(service.getServiceClassName(), true, loader1);
+                service.setServiceClass(serviceclass);
+            } catch (MalformedURLException e) {
+                throw new AxisFault(e.getMessage());
+            } catch (Exception e) {
+                throw new AxisFault(e.getMessage());
+            }
+
+        }
+
+    }
 
 
     private void addFlowHandlers(Flow flow, ClassLoader parent) throws AxisFault {

@@ -47,4 +47,12 @@ public interface AxisService extends WSDLService,ParameterInclude,FlowInclude,Ph
     //style    
     public void setStyle(Style style);
     public Style getStyle();
+
+    public void setServiceClass(Class serviceclass);
+    public Class getServiceClass();
+
+    public void setServiceClassName(String className);
+    public String getServiceClassName();
+
+
 }

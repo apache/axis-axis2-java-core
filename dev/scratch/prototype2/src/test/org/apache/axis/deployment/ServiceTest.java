@@ -35,7 +35,7 @@ public class ServiceTest extends TestCase {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
-    /*
+
     public static void main(String args []){
         String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
@@ -52,5 +52,5 @@ public class ServiceTest extends TestCase {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
     }
-      */
+     
 }

@@ -226,7 +226,20 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter =  processParameter();
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
-                    } else if (ST.equals(TYPEMAPPINGST)) {
+                    } else if (ST.equals(JAVAIMPL)){
+                        if(pullparser.getNamespaceURI().equals(JAVAST)){
+                            attribCount = pullparser.getAttributeCount();
+                            if (attribCount > 0) {
+                                for (int i = 0; i < attribCount; i++) {
+                                    String attname = pullparser.getAttributeLocalName(i);
+                                    String attvalue = pullparser.getAttributeValue(i);
+                                    axisService.setServiceClassName(attvalue);
+                                }
+                            }
+                        } else {
+                            throw new UnsupportedOperationException("Illegal namespace");
+                        }
+                    }else if (ST.equals(TYPEMAPPINGST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
                         //  processTypeMapping();

@@ -1,4 +1,6 @@
-<service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath">
+<service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath" xmlns:java = "java">
+    <java:implementation class="Echo1"/>
+
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>

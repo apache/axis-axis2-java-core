@@ -46,7 +46,9 @@ public class SimpleAxisServiceImpl implements AxisService {
     protected HashMap operations;
     protected ParameterInclude parameters;
     protected ClassLoader classLoader;
-    
+    private String serviceClassName;
+    private Class serviceClass;
+
     /**
      * 
      */
@@ -229,6 +231,22 @@ public class SimpleAxisServiceImpl implements AxisService {
      */
     public Style getStyle() {
         return style;
+    }
+
+    public void setServiceClass(Class serviceclass) {
+        this.serviceClass = serviceclass;
+    }
+
+    public Class getServiceClass() {
+        return serviceClass;
+    }
+
+    public void setServiceClassName(String className) {
+       this.serviceClassName =  className;
+    }
+
+    public String getServiceClassName() {
+        return serviceClassName;
     }
 
     /**
