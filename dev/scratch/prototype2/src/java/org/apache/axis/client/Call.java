@@ -126,7 +126,7 @@ public class Call {
             Runnable runnable = new Runnable() {
                 public void run() {
                     try {
-                        System.out.println("Starting new Thread "); 
+                        log.info("Starting new Thread "); 
                         MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
                         reposne.setServerSide(false);
                         engine.recive(reposne);

@@ -1,4 +1,8 @@
 package org.apache.axis.registry;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /*
  * Copyright 2003,2004 The Apache Software Foundation.
  * 
@@ -18,7 +22,8 @@ package org.apache.axis.registry;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class EchoService {
+    private Log log = LogFactory.getLog(getClass());
     public void echoVoid(){
-        System.out.println("echo Service Called");
+        log.info("echo Service Called");
     }
 }

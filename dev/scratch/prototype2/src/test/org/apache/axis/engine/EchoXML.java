@@ -24,7 +24,6 @@ import org.apache.axis.om.OMElement;
 public class EchoXML{
     public EchoXML(){}
     public OMElement echoOMElement(OMElement omEle){
-        System.out.println(omEle);
         omEle.setLocalName(omEle.getLocalName()+"Response");
         return omEle;
     }

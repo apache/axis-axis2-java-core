@@ -2,6 +2,9 @@ package org.apache.axis.deployment.metadata;
 
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -23,6 +26,7 @@ import java.util.Vector;
  *
  */
 public class HandlerMetaData {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Following constant values need to parse the <handler>..<handler> tag
      */
@@ -156,11 +160,11 @@ public class HandlerMetaData {
     }
 
     public void printMe() {
-        System.out.println("===========================================");
-        System.out.println("Name : " + getName());
-        System.out.println("Ref : " + getRef());
-        System.out.println("Class : " + getClassName());
-        System.out.println("PhaseMetaData : " + getPhase());
-        System.out.println("===========================================");
+        log.info("===========================================");
+        log.info("Name : " + getName());
+        log.info("Ref : " + getRef());
+        log.info("Class : " + getClassName());
+        log.info("PhaseMetaData : " + getPhase());
+        log.info("===========================================");
     }
 }

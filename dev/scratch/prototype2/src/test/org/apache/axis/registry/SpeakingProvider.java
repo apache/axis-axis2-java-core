@@ -22,19 +22,22 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.providers.AbstractProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SpeakingProvider extends AbstractProvider implements Provider {
+    private Log log = LogFactory.getLog(getClass());
     private String message;
     public SpeakingProvider(){}
 
 
     public MessageContext invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am Speaking Provider Running :)");
+        log.info("I am Speaking Provider Running :)");
         return msgContext;
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am Speaking Provider revoking :)");
+        log.info("I am Speaking Provider revoking :)");
     }
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractProvider#deserializeParameters(org.apache.axis.engine.MessageContext, java.lang.reflect.Method)

@@ -31,11 +31,14 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.transport.http.SimpleAxisServer;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class EchoTest extends AbstractTestCase{
+    private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("","EchoService");
     private QName operationName = new QName("http://ws.apache.org/axis2","echoVoid");
     private QName transportName = new QName("","NullTransport");
@@ -82,7 +85,7 @@ public class EchoTest extends AbstractTestCase{
     	Reader rReader = new InputStreamReader(respose);
     	char[] charBuf = new char[1024];
     	while((index = rReader.read(charBuf)) > 0){
-    	        System.out.println(new String(charBuf));
+    	        log.info(new String(charBuf));
     	}
     	
     	in.close();

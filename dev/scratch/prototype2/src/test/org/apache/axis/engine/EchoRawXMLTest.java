@@ -37,11 +37,14 @@ import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
 import org.apache.axis.registry.Service;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class EchoRawXMLTest extends AbstractTestCase{
+    private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("","EchoXMLService");
     private QName operationName = new QName("http://localhost/my","echoOMElement");
     private QName transportName = new QName("http://localhost/my","NullTransport");
@@ -145,13 +148,13 @@ public class EchoRawXMLTest extends AbstractTestCase{
 
                 }
                 public void reportError(Exception e) {
-                    System.out.println("reporting error from callback !");
+                    log.info("reporting error from callback !");
                     e.printStackTrace();
                 }
             };
             
             call.asyncCall(method,url,callback);
-            System.out.println("send the reqest");
+            log.info("send the reqest");
             
             Thread.sleep(1000);
         }catch(Exception e){

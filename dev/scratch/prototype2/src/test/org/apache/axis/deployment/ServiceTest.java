@@ -1,13 +1,12 @@
 package org.apache.axis.deployment;
 
+import javax.xml.stream.XMLStreamException;
+
 import junit.framework.TestCase;
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeploymentException;
+
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.registry.EngineRegistry;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -22,8 +22,11 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.registry.AbstractEngineElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SpeakingHandler extends AbstractEngineElement implements Handler {
+    private Log log = LogFactory.getLog(getClass());
     private String message;
     private QName name;
     public SpeakingHandler() {
@@ -34,11 +37,11 @@ public class SpeakingHandler extends AbstractEngineElement implements Handler {
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am " + message + " Handler Running :)");
+        log.info("I am " + message + " Handler Running :)");
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am " + message + " Handler Running :)");
+        log.info("I am " + message + " Handler Running :)");
     }
 
     public void setName(QName name) {

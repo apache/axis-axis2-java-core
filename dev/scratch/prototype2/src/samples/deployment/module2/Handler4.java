@@ -24,7 +24,7 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.registry.AbstractEngineElement;
 
 public class Handler4 extends AbstractEngineElement implements Handler {
-    private String message;
+    private Log log = LogFactory.getLog(getClass());private String message;
     private QName name;
     public Handler4() {
        this.message = "inside Module 2";
@@ -34,11 +34,11 @@ public class Handler4 extends AbstractEngineElement implements Handler {
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am " + message + " Handler Running :)");
+        log.info("I am " + message + " Handler Running :)");
     }
 
     public void revoke(MessageContext msgContext) {
-        System.out.println("I am " + message + " Handler Running :)");
+        log.info("I am " + message + " Handler Running :)");
     }
 
     public void setName(QName name) {

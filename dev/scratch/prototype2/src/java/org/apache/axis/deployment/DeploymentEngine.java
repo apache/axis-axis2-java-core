@@ -1,7 +1,25 @@
 package org.apache.axis.deployment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.*;
+import org.apache.axis.deployment.metadata.FlowMetaData;
+import org.apache.axis.deployment.metadata.HandlerMetaData;
+import org.apache.axis.deployment.metadata.ModuleMetaData;
+import org.apache.axis.deployment.metadata.OperationMetaData;
+import org.apache.axis.deployment.metadata.ParameterMetaData;
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.ServiceMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
@@ -9,8 +27,16 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.engine.*;
-import org.apache.axis.impl.engine.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Constants;
+import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.impl.engine.GlobalImpl;
+import org.apache.axis.impl.engine.ModuleImpl;
+import org.apache.axis.impl.engine.OperationImpl;
+import org.apache.axis.impl.engine.ServiceImpl;
+import org.apache.axis.impl.engine.TransportImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.registry.EngineRegistryImpl;
 import org.apache.axis.impl.registry.FlowImpl;
@@ -23,17 +49,8 @@ import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
 import org.apache.axis.registry.Service;
 import org.apache.axis.registry.Transport;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Vector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -57,7 +74,7 @@ import java.util.Vector;
  *
  */
 public class DeploymentEngine implements DeploymentConstants {
-
+    private Log log = LogFactory.getLog(getClass());
     private final Scheduler scheduler = new Scheduler();
     /**
      * This will store all the web Services to deploye
@@ -141,7 +158,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public void addService(ServiceMetaData serviceMetaData) throws PhaseException, AxisFault {
         servicelist.add(serviceMetaData);
         addnewService(serviceMetaData);
-        System.out.println("Numbetr of service" + engineRegistry.getServiceCount());
+        log.info("Numbetr of service" + engineRegistry.getServiceCount());
     }
 
     public void addModule(ModuleMetaData module) throws AxisFault {
