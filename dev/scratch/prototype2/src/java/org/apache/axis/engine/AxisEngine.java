@@ -84,14 +84,13 @@ public class AxisEngine {
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
-            AxisService service = context.getService();
             context.setProcessingFault(true);
             
             //create a SOAP envelope with the Fault
             SOAPEnvelope envelope =
                     OMFactory.newInstance().getDefaultEnvelope();
             //TODO do we need to set old Headers back?
-            envelope.getBody().addFault(new AxisFault("", e));
+            envelope.getBody().addFault(new AxisFault(e.getMessage(), e));
             context.setEnvelope(envelope);
             //send the error
             executeOutFlow(context, EngineRegistry.FAULTFLOW);

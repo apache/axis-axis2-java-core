@@ -215,6 +215,7 @@ public class Call {
             } else {
                 //TODO
                 //start the Listener at the client side
+                throw new UnsupportedOperationException("Unblocking transports are not supported yet");
 
             }
         } catch (OMException e) {

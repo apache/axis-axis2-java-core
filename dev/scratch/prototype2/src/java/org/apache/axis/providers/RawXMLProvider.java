@@ -36,10 +36,8 @@ import java.lang.reflect.Method;
  * This is a Simple java Provider.
  */
 
-public class RawXMLProvider extends AbstractProvider implements Provider {
+public class RawXMLProvider extends AbstractProvider implements Provider {    
     protected Log log = LogFactory.getLog(getClass());
-
-    private String message;
     private String scope;
     private Method method;
     private ClassLoader classLoader;
@@ -124,6 +122,5 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     }
 
     public void revoke(MessageContext msgContext) {
-        log.info("I am Speaking Provider revoking :)");
     }
 }
