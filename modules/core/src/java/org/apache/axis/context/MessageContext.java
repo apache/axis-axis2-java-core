@@ -175,6 +175,21 @@ public class MessageContext {
     
     private boolean paused = false;
     
+    
+    
+    public MessageContext(MessageContext oldMessageContext) throws AxisFault {
+        this(	oldMessageContext.getGlobalContext().getRegistry(), 
+                oldMessageContext.getProperties(), 
+                oldMessageContext.getSessionContext(), 
+                oldMessageContext.getTransportIn(), 
+                oldMessageContext.getTransportOut());
+        this.messageInformationHeaders = oldMessageContext.getMessageInformationHeaders();
+        this.serverSide = oldMessageContext.isServerSide();
+        this.service = oldMessageContext.getService();
+        
+    }
+    
+    
 
     /**
      * @param er            registry
