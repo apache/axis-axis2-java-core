@@ -96,7 +96,7 @@ public class EchoRawXMLTest extends TestCase {
         reqEnv.getBody().addChild(method);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT-1) + "/axis/services/EchoXMLService");
+        EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService");
         call.setTo(targetEPR);
         SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
