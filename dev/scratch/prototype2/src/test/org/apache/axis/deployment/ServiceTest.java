@@ -4,7 +4,7 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaseresolver.PhaseException;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 

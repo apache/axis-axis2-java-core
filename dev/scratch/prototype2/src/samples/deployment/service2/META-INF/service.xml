@@ -53,6 +53,6 @@
 
 
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
-        
+
     </operation>
 </service>

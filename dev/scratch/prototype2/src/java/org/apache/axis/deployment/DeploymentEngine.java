@@ -2,7 +2,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaseresolver.PhaseException;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;
@@ -18,6 +18,7 @@ import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,9 +68,6 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private EngineRegistry engineRegistry = null;
 
-    private Vector modulelist = new Vector();
-
-    private Vector servicelist = new Vector();
     /**
      * this constaructor for the testing
      */
@@ -126,28 +124,29 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         engineRegistry = createEngineRegistry();
         startSearch(this);
+        valideServerModule() ;
         return engineRegistry;
     }
 
-
-    public void addService(AxisService serviceMetaData) throws PhaseException, AxisFault {
-        servicelist.add(serviceMetaData);
-        addnewService(serviceMetaData);
-    }
-
-    public void addModule(AxisModule module) throws AxisFault {
-        modulelist.add(module);
-        addNewModule(module);
-    }
-
-    public AxisModule getModule(String moduleName) {
-        for (int i = 0; i < modulelist.size(); i++) {
-            AxisModule metaData = (AxisModule) modulelist.elementAt(i);
-            if (metaData.getName().equals(moduleName)) {
-                return metaData;
+    /**
+     * This methode used to check the modules referd by server.xml
+     * are exist , or they have deployed
+     */
+    private void valideServerModule() throws AxisFault{
+        int moduleCount = server.getModuleCount();
+        QName moduleName;
+        for (int i = 0; i < moduleCount ; i++) {
+            moduleName = server.getModule(i);
+            if(getModule(moduleName) == null ){
+                throw new AxisFault(server.getName() + " Refer to invalid module " + moduleName + " has not bean deployed yet !");
             }
         }
-        return null;
+
+    }
+
+    public AxisModule getModule(QName moduleName) throws AxisFault {
+        AxisModule metaData = engineRegistry.getModule(moduleName);
+        return metaData;
     }
 
     /**
@@ -158,7 +157,7 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineRegistry createEngineRegistry() throws AxisFault {
+    private EngineRegistry createEngineRegistry()  {
         EngineRegistry newEngineRegisty;
 
         AxisGlobal global = new AxisGlobal();
@@ -168,17 +167,23 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+    private void addnewService(AxisService serviceMetaData) throws AxisFault {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Flow inflow = serviceMetaData.getInFlow();
-        addFlowHandlers(inflow,classLoader);
+        if(inflow != null ){
+            addFlowHandlers(inflow,classLoader);
+        }
 
         Flow outFlow = serviceMetaData.getOutFlow();
-        addFlowHandlers(outFlow,classLoader);
+        if(outFlow != null){
+            addFlowHandlers(outFlow,classLoader);
+        }
 
         Flow faultFlow = serviceMetaData.getFaultFlow();
-        addFlowHandlers(faultFlow,classLoader);
+        if(faultFlow != null) {
+            addFlowHandlers(faultFlow,classLoader);
+        }
 
     }
 
@@ -294,14 +299,12 @@ public class DeploymentEngine implements DeploymentConstants {
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             try {
                                 if (service != null) {
-                                    addService(service);
+                                    addnewService(service);
                                     log.info("Deployement WS Name  " + currentFileItem.getName());
                                     currentFileItem = null;
                                     break;
                                 }
-                            } catch (PhaseException e) {
-                                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                            } catch (AxisFault axisFault) {
+                            }catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
                             }
                         }
@@ -311,7 +314,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
                             try {
                                 if (metaData != null) {
-                                    addModule(metaData);
+                                    addNewModule(metaData);
                                     log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                                     currentFileItem = null;
                                     break;

@@ -1,13 +1,14 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
+import org.apache.axis.deployment.metadata.phaseresolver.PhaseException;
+import org.apache.axis.deployment.metadata.phaseresolver.PhaseMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.engine.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -160,9 +161,16 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (ST.equals(TYPEMAPPINGST)) {
                         processTypeMapping();
                     } else if (ST.equals(MODULEST)) {
-                        throw new UnsupportedOperationException("This is to be implemented");
-                       // AxisModule metaData = processModule();
-                      //  serverMetaData.addModule(metaData);
+                        int attribCount = pullparser.getAttributeCount();
+                        if (attribCount > 0) {
+                            for (int i = 0; i < attribCount; i++) {
+                                String attname = pullparser.getAttributeLocalName(i);
+                                String attvalue = pullparser.getAttributeValue(i);
+                                if (attname.equals(REF)) {
+                                    serverMetaData.addModule(new QName(attvalue));
+                                }
+                            }
+                        }
                     } else if (ST.equals(HANDERST)) {
                         HandlerMetaData handler = processHandler();
                         serverMetaData.addHandlers(handler);
@@ -227,11 +235,11 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (ST.equals(TYPEMAPPINGST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
-                      //  processTypeMapping();
+                        //  processTypeMapping();
                     } else if (ST.equals(BEANMAPPINGST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
-                       // processBeanMapping();
+                        // processBeanMapping();
                     } else if (ST.equals(OPRATIONST)) {
                         AxisOperation  operation = processOperation();
                         axisService.addOperation(operation);
@@ -246,15 +254,15 @@ public class DeploymentParser implements DeploymentConstants {
                         axisService.setFaultFlow(faultFlow);
                     } else if (ST.equals(MODULEST)) {
                         attribCount = pullparser.getAttributeCount();
-                        //   boolean ref_name = false;
-
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
-
                                 if (attname.equals(REF)) {
-                                    axisService.addModule(new QName(attvalue));
+                                    if(dpengine.getModule(new QName(attvalue)) == null){
+                                        throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
+                                    } else
+                                        axisService.addModule(new QName(attvalue));
                                 }
                             }
                         }
@@ -264,6 +272,8 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException("Module referece error , module dosenoot exist !!");
         }
     }
 
@@ -482,7 +492,7 @@ public class DeploymentParser implements DeploymentConstants {
                     //operation.setStyle(attvalue);
                 } else if (attname.equals(ATUSE)) {
                     //TODO this is to be implemnt
-                  //  operation.setUse(attvalue);
+                    //  operation.setUse(attvalue);
                 }
             }
         } else {
@@ -502,7 +512,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
-                       throw new UnsupportedOperationException("nexted elements are not allowed for M1");
+                        throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (ST.equals(FAILTFLOWST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (ST.equals(INFLOWST)) {
@@ -572,7 +582,7 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
 
-               if (attname.equals(ATTNAME)) {
+                if (attname.equals(ATTNAME)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
@@ -584,7 +594,7 @@ public class DeploymentParser implements DeploymentConstants {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
                         //TODO implement this , boz this is not complete
-                      //  module.setRef(attvalue);
+                        //  module.setRef(attvalue);
                         ref_name = true;
                         throw new UnsupportedOperationException("This should be implemented");
                     }
@@ -758,9 +768,8 @@ public class DeploymentParser implements DeploymentConstants {
                     if (tagnae.equals(PHASEST)) {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
-                        if (attname.equals(PhaseMetaData.PHASE_NAME)) {
-                            PhaseMetaData phase = new PhaseMetaData(attvalue);
-                            server.addPhases(phase);
+                        if (attname.equals(ATTNAME)) {
+                            server.addPhases(attvalue);
                         }
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -813,7 +822,7 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(moduleXMLST)) {
                         processModule(module);
-                       // module.setArchiveName(archiveName);
+                        // module.setArchiveName(archiveName);
                         // module.setName(archiveName);
                     }
                     //processStartElement();

@@ -1,9 +1,10 @@
 package org.apache.axis.deployment.metadata;
 
-import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
+import org.apache.axis.deployment.metadata.phaseresolver.PhaseMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.description.HandlerMetaData;
 
+import javax.xml.namespace.QName;
 import java.util.Vector;
 
 /**
@@ -85,27 +86,31 @@ public class ServerMetaData {
             return null;
     }
 
-    public void addModule(AxisModule module) {
-        modules.add(module);
+    public void addModule(QName moduleName) {
+        modules.add(moduleName);
         moduleCount++;
     }
 
-    public AxisModule getModule(int index) {
+    public QName getModule(int index) {
         if (index <= moduleCount) {
-            return (AxisModule) modules.get(index);
+            return (QName) modules.get(index);
         } else
             return null;
     }
 
-    public void addPhases(PhaseMetaData phase) {
-        phases.add(phase);
+    public int getModuleCount() {
+        return moduleCount;
+    }
+
+    public void addPhases(String phaseName) {
+        phases.add(phaseName);
         phaseCount++;
     }
 
     public boolean isPhaseExist(String phaseName) {
         for (int i = 0; i < phases.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phases.elementAt(i);
-            if (phase.getName().equals(phaseName)) {
+            String phase = (String) phases.elementAt(i);
+            if (phase.equals(phaseName)) {
                 return true;
             }
         }
