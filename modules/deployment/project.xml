@@ -20,8 +20,10 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-deployment</id>
+    <id>axis2-Deployment</id>
     <name>deployment</name>
+    <description>Deployment module of Axis 2.0.</description>
+
 
     <dependencies>
         <dependency>

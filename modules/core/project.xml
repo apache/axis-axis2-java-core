@@ -20,8 +20,9 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-core</id>
+    <id>axis2-Core</id>
     <name>core</name>
+    <description>Core Parts of Axis 2.0.</description>
 
     <dependencies>
         <dependency>

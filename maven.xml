@@ -16,7 +16,7 @@
  * limitations under the License.
  */
  -->
-<project default="multiproject:install" xmlns:m="jelly:maven">
+<project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant">
 		 <goal name="clean">
 			 	<attainGoal name="multiproject:clean"/>
 		</goal>
@@ -106,19 +106,20 @@
     <attainGoal name="html2xdoc"/>
   </preGoal>
   
-  <goal
-    name="multiproject-javadoc"
-    description="Generate the javadoc the entire project">
-
-    <!-- Generate the javadoc for each of the components. -->
-
-    
-      <m:reactor basedir="${basedir}/modules"
-               includes="*/project.xml"
-               goals="javadoc"
-               banner="Building"
-               ignoreFailures="false"/>
-
+  <goal name="dist-bin">
+	<mkdir dir="target/dist-bin"/>
+	<mkdir dir="target/dist-bin/docs"/>
+	<mkdir dir="target/dist-bin/bin"/>
+	<mkdir dir="target/dist-bin/lib"/>
+	<mkdir dir="target/dist-bin/samples"/>
+	<mkdir dir="target/dist-bin/webapps"/> 
+		<copy todir="target/dist-bin/docs">
+			<fileset dir="modules">
+				<include name="**/target/docs/apidocs/*"/>
+			</fileset> 
+		</copy> 
+		
   </goal>
+
 
 </project>

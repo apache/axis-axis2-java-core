@@ -19,8 +19,10 @@
 <project>
 	<pomVersion>3</pomVersion>
 	<extend>../../etc/project.xml</extend>
-	<id>axis2-tools</id>
+	<id>axis2-Tools</id>
 	<name>tool</name>
+	<description>Tools available for Axis 2.0.</description>
+
 	<dependencies>
 		<!-- external JARs -->
 		<dependency>

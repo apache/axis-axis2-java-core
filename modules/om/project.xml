@@ -20,8 +20,10 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-om</id>
+    <id>axis2-OM</id>
     <name>om</name>
+    <description>AXIOM, The Object Model of Axis 2.0.</description>
+
 
     <dependencies>
         <!-- external JARs -->
