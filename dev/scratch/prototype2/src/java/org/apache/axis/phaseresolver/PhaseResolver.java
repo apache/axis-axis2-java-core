@@ -1,17 +1,17 @@
 package org.apache.axis.phaseresolver;
 
-import java.util.Vector;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.description.*;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.impl.description.AxisService;
+
+import javax.xml.namespace.QName;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -36,7 +36,6 @@ public class PhaseResolver {
     private PhaseHolder phaseHolder ;
 
 
-    private ServerMetaData server = DeploymentEngine.getServerMetaData();
 
     /**
      * default constructor , to obuild chains for AxisGlobal
@@ -163,7 +162,7 @@ public class PhaseResolver {
                 allHandlers.add(metadata);
             }
         }
-        phaseHolder = new PhaseHolder(server,axisService);
+        phaseHolder = new PhaseHolder(engineRegistry,axisService);
 
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.elementAt(i);
@@ -180,7 +179,7 @@ public class PhaseResolver {
         AxisModule module;
         Flow flow = null;
         for(int type = 1 ; type < 4 ; type ++){
-            phaseHolder = new PhaseHolder(server,null);
+            phaseHolder = new PhaseHolder(engineRegistry,null);
             for(int intA=0 ; intA < count; intA ++){
                 moduleName = (QName)modules.get(intA);
                 module = engineRegistry.getModule(moduleName);

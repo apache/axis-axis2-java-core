@@ -40,7 +40,8 @@ public class AxisGlobal implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
     protected Vector modules;
-    
+
+    //TODO provide a way to store name (name attribute value server.xml)
     public AxisGlobal(){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();

@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
 public class ServiceTest extends TestCase {
     EngineRegistry er = null;
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
-        String filename = "./target/test-resources/deployment" ;
+       String filename = "./target/test-resources/deployment" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         er = deploymentEngine.start();
         try {

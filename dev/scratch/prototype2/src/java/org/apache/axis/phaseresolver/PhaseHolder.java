@@ -1,10 +1,6 @@
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import org.apache.axis.deployment.DeploymentConstants;
-import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
@@ -13,6 +9,9 @@ import org.apache.axis.engine.Phase;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -43,12 +42,12 @@ public class PhaseHolder implements DeploymentConstants {
     /**
      * Referance to ServerMetaData inorder to get information about phases.
      */
-    private ServerMetaData serverMetaData;// = new  ServerMetaData();
+    private EngineRegistry registry;// = new  ServerMetaData();
     private AxisService service;
 
 
-    public PhaseHolder(ServerMetaData serverMetaDatain,AxisService serviceIN) {
-        this.serverMetaData = serverMetaDatain;
+    public PhaseHolder(EngineRegistry registry,AxisService serviceIN) {
+        this.registry = registry;
         this.service = serviceIN;
     }
 
@@ -63,13 +62,24 @@ public class PhaseHolder implements DeploymentConstants {
         return false;
     }
 
+    private boolean isPhaseExistinER(String phaseName){
+        ArrayList pahselist = registry.getPhases();
+        for (int i = 0; i < pahselist.size(); i++) {
+            String pahse = (String) pahselist.get(i);
+            if(pahse.equals(phaseName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addHandler(HandlerMetaData handler) throws PhaseException {
         String phaseName = handler.getRules().getPhaseName();
 
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
-            if (serverMetaData.isPhaseExist(phaseName)) {
+            if (isPhaseExistinER(phaseName)) {
                 PhaseMetaData newpPhase = new PhaseMetaData(phaseName);
                 addPhase(newpPhase);
                 newpPhase.addHandler(handler);
@@ -102,7 +112,7 @@ public class PhaseHolder implements DeploymentConstants {
             PhaseMetaData tempphase = (PhaseMetaData) phaseholder.elementAt(i);
             phase[i] = tempphase;
         }
-        phase = serverMetaData.getOrderPhases(phase);
+        phase = getOrderPhases(phase);
         // remove all items inorder to rearrange them
         phaseholder.removeAllElements();
 
@@ -112,6 +122,27 @@ public class PhaseHolder implements DeploymentConstants {
 
         }
     }
+
+
+    private PhaseMetaData[] getOrderPhases(PhaseMetaData[] phasesmetadats) {
+        PhaseMetaData[] temppahse = new PhaseMetaData[phasesmetadats.length];
+        int count = 0;
+        ArrayList pahselist = registry.getPhases();
+        for (int i = 0; i < pahselist.size(); i++) {
+            String phasemetadata = (String) pahselist.get(i);
+            for (int j = 0; j < phasesmetadats.length; j++) {
+                PhaseMetaData tempmetadata = phasesmetadats[j];
+                if (tempmetadata.getName().equals(phasemetadata)) {
+                    temppahse[count] = tempmetadata;
+                    count++;
+                }
+            }
+
+
+        }
+        return temppahse;
+    }
+
 
     /**
      * cahinType
@@ -126,7 +157,7 @@ public class PhaseHolder implements DeploymentConstants {
             OrderdPhases();
             Vector tempHander = new Vector();
             HandlerMetaData[] handlers;
-            
+
             switch (chainType) {
                 case 1 : {
                     ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();

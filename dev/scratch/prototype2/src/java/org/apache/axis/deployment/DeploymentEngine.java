@@ -1,18 +1,15 @@
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Vector;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;
@@ -80,7 +77,8 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * This to keep a referance to serverMetaData object
      */
-    private static ServerMetaData server = new ServerMetaData();
+    // private static ServerMetaData server = new ServerMetaData();
+    private AxisGlobal server;
 
 
     private HDFileItem currentFileItem = null;
@@ -92,8 +90,42 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param RepositaryName is the path to which Repositary Listner should
      *                       listent.
      */
-    public DeploymentEngine(String RepositaryName) {
+    public DeploymentEngine(String RepositaryName) throws DeploymentException {
         this.folderName = RepositaryName;
+        File repository = new File(RepositaryName);
+        if(!repository.exists()){
+            repository.mkdirs();
+            File servcies = new File(repository,"services");
+            File modules = new File(repository,"modules");
+            modules.mkdirs();
+            servcies.mkdirs();
+        }
+        File serverConf = new File(repository,"server.xml");
+        if(!serverConf.exists()){
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
+            if(in != null){
+                try {
+                    serverConf.createNewFile();
+                    FileOutputStream out = new FileOutputStream(serverConf);
+                    byte[] buf = new byte[512];
+                    int read;
+                    while((read = in.read(buf)) > 0){
+                        out.write(buf,0,read);
+                    }
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    throw new DeploymentException(e.getMessage());
+                }
+
+
+            } else{
+                throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
+
+            }
+        }
+
         this.serverconfigName = RepositaryName + "/server.xml";
     }
 
@@ -106,16 +138,14 @@ public class DeploymentEngine implements DeploymentConstants {
         return currentFileItem;
     }
 
+
     /**
-     * This method should use inorder to get the referance to servermetadata
-     * object which keep all the detail about all the phases
-     *
+     * tio get ER
      * @return
      */
-    public static ServerMetaData getServerMetaData() {
-        return server;
+    public EngineRegistry getEngineRegistry() {
+        return engineRegistry;
     }
-
 
     /**
      * This method will fill the engine registry and return it to Engine
@@ -128,18 +158,19 @@ public class DeploymentEngine implements DeploymentConstants {
         String fileName;
         if(serverconfigName != null) {
             fileName = serverconfigName;
-        } else
-            fileName = "src/test-resources/deployment/server.xml";
-
+        } else{
+            throw new DeploymentException("path to Server.xml can not be NUll");
+        }
         File tempfile = new File(fileName);
         try {
             InputStream in = new FileInputStream(tempfile);
+            engineRegistry = createEngineRegistry();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
             throw new AxisFault(e.getMessage());
         }
-        engineRegistry = createEngineRegistry();
+
         startSearch(this);
         valideServerModule() ;
         return engineRegistry;
@@ -150,25 +181,15 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void valideServerModule() throws AxisFault, PhaseException{
-        int moduleCount = server.getModuleCount();
-        AxisGlobal global = engineRegistry.getGlobal();
-        QName moduleName;
-        for (int i = 0; i < moduleCount ; i++) {
-            moduleName = server.getModule(i);
-            if(getModule(moduleName) == null ){
-                throw new AxisFault(server.getName() + " Refer to invalid module " + moduleName + " has not bean deployed yet !");
-            } else
-                global.addModule(moduleName);
+        Iterator itr= server.getModules().iterator();
+        while (itr.hasNext()) {
+            QName qName = (QName) itr.next();
+            if(getModule(qName) == null ){
+                throw new AxisFault(server + " Refer to invalid module " + qName + " has not bean deployed yet !");
+            }
         }
-        int paraCount = server.getParameterCount();
-
-        for(int i = 0 ; i < paraCount ; i++ ){
-            Parameter parameter = server.getParameter(i);
-            global.addParameter(parameter);
-        }
-
         PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
-        phaseResolver.buildGlobalChains(global);
+        phaseResolver.buildGlobalChains(server);
 
     }
 
@@ -188,8 +209,8 @@ public class DeploymentEngine implements DeploymentConstants {
     private EngineRegistry createEngineRegistry()  {
         EngineRegistry newEngineRegisty;
 
-        AxisGlobal global = new AxisGlobal();
-        newEngineRegisty = new EngineRegistryImpl(global);
+        server = new AxisGlobal();
+        newEngineRegisty = new EngineRegistryImpl(server);
 
         return newEngineRegisty;
     }

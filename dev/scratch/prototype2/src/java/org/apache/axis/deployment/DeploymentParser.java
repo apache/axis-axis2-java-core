@@ -1,12 +1,12 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.phaseresolver.PhaseException;
 
@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -128,7 +129,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void procesServerXML(ServerMetaData serverMetaData) throws DeploymentException {
+    public void procesServerXML(AxisGlobal serverMetaData) throws DeploymentException {
         try {
             boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
@@ -139,20 +140,9 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if (ST.equals(serverXMLST)) {
-                        int attribCount = pullparser.getAttributeCount();
-                        if (attribCount > 0) {
-                            for (int i = 0; i < attribCount; i++) {
-                                String attname = pullparser.getAttributeLocalName(i);
-                                String attvalue = pullparser.getAttributeValue(i);
-                                if (attname.equals(ServerMetaData.SERVERNAME)) {
-                                    serverMetaData.setName(attvalue);
-                                }
-                            }
-                        }
-                    } else if (ST.equals(PARAMETERST)) {
+                    if (ST.equals(PARAMETERST)) {
                         Parameter parameter = processParameter();
-                        serverMetaData.appParameter(parameter);
+                        serverMetaData.addParameter(parameter);
                     } else if (ST.equals(TYPEMAPPINGST)) {
                         processTypeMapping();
                     } else if (ST.equals(MODULEST)) {
@@ -166,11 +156,8 @@ public class DeploymentParser implements DeploymentConstants {
                                 }
                             }
                         }
-                    } else if (ST.equals(HANDERST)) {
-                        HandlerMetaData handler = processHandler();
-                        serverMetaData.addHandlers(handler);
                     } else if (ST.equals(PHASE_ORDER)) {
-                        processPhaseOrder(serverMetaData);
+                      ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
                     }
                 }
             }
@@ -763,8 +750,9 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    public void processPhaseOrder(ServerMetaData server) throws DeploymentException {
+    public ArrayList processPhaseOrder() throws DeploymentException {
         boolean END_PHASEORDER = false;
+        ArrayList pahseList = new ArrayList();
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_PHASEORDER) {
@@ -777,7 +765,7 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (attname.equals(ATTNAME)) {
-                            server.addPhases(attvalue);
+                            pahseList.add(attvalue);
                         }
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -795,6 +783,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
+        return pahseList;
     }
 
 
@@ -816,7 +805,7 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
     private String getShortFileName(String fileName){
-      char seperator = '.';
+        char seperator = '.';
         String value = null;
         int index = fileName.indexOf(seperator);
         if (index > 0) {
