@@ -22,7 +22,7 @@
 
     <id>axis2-om</id>
     <name>om</name>
-    <description>AXIOM, The Object Model of Axis 2.0.</description>
+    <description>AXIOM, The Object Model of Axis 2.0. This helps Axis 2.0 to have a light weight, efficient object model on StAX</description>
 
 
     <dependencies>

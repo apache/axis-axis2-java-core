@@ -22,7 +22,7 @@
 
     <id>axis2-wsdl</id>
     <name>wsdl</name>
-    <description>WSDL Parts of Axis 2.0.</description>
+    <description>WSDL Parts of Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
 
 
     <dependencies>

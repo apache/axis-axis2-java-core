@@ -7,9 +7,9 @@ distributions and follow the instructions in their documentation. Make sure you
 don't forget to put MAVEN_HOME/bin directory in the path. </p>
 <h2>Checking out Axis 2.0</h2>
 <p>Checkout latest source from
-<a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java/src">here</a> 
+<a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java">here</a> 
 using your favorite svn client. If you are a committer get a commiter check out 
-from <a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java/src">
+from <a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java">
 here</a>.</p>
 <h2>Running the build</h2>
 <div align="center">
@@ -20,20 +20,36 @@ here</a>.</p>
 		</tr>
 		<tr>
 			<td width="176">maven clean</td>
-			<td>Erase all the stuff built earlier</td>
+			<td>Deletes the 'target' directory in all projects. Target directory contains the stuff created during build, site, etc., </td>
 		</tr>
 		<tr>
 			<td width="176">maven</td>
-			<td>Compile and Run the tests in Axis 2.0</td>
+			<td>Build all modules and run the tests in Axis 2.0</td>
 		</tr>
 		<tr>
-			<td width="176">maven site</td>
+			<td width="176">maven multiproject:site</td>
 			<td>Create the site for the Master project only </td>
 		</tr>
 		<tr>
 			<td width="176">maven multiproject:site </td>
 			<td>Builds the whole site </td>
 		</tr>
+		<tr>
+		  <td>maven war </td>
+		  <td>Build the war</td>
+	  </tr>
+		<tr>
+		  <td>maven war-withsamples </td>
+		  <td>build the war with the default samples and interop tests </td>
+	  </tr>
+		<tr>
+		  <td>maven dist-src </td>
+		  <td>Creates the source distribution </td>
+	  </tr>
+		<tr>
+		  <td>maven dist-bin </td>
+		  <td>Creates the binary distribution </td>
+	  </tr>
 	</table>
 </div>
 <h2>FAQ</h2>

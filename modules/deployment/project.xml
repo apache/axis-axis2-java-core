@@ -22,7 +22,7 @@
 
     <id>axis2-deployment</id>
     <name>deployment</name>
-    <description>Deployment module of Axis 2.0.</description>
+    <description>This is the deployment mechanism in Axis 2.o which has in-built support for hot deployment</description>
 
 
     <dependencies>

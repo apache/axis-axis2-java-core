@@ -23,7 +23,7 @@
       	<item name="User Guide" href="userguide.html" />
       	<item name="AXIOM Tutorial" href="OMTutorial.html" /> 
       	<item name="Client API Tutorial" href="ClientAPI.html" />
-      	     	
+      	<item name="Complete API" href="api/index.html" />      	     	
       </item>
       
       <item name="Downloads">
@@ -32,11 +32,11 @@
       	<item name="Source Code" href="cvs-usage.html" />  
       </item>
       <item name="Modules">
-      	<item name="Core" href="multiproject/axis2-Core/index.html" /> 
-      	<item name="Deployment" href="multiproject/axis2-Deployment/index.html" />
-      	<item name="OM" href="multiproject/axis2-OM/index.html" /> 
-      	<item name="WSDL" href="multiproject/axis2-WSDL/index.html" />
-      	<item name="Samples" href="multiproject/axis2-Samples/index.html" /> 
+      	<item name="Core" href="multiproject/axis2-core/index.html" /> 
+      	<item name="Deployment" href="multiproject/axis2-deployment/index.html" />
+      	<item name="OM" href="multiproject/axis2-om/index.html" /> 
+      	<item name="WSDL" href="multiproject/axis2-wsdl/index.html" />
+      	<item name="Samples" href="multiproject/axis2-samples/index.html" /> 
       </item> 
        
     </menu>

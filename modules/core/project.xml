@@ -22,7 +22,7 @@
 
     <id>axis2-core</id>
     <name>core</name>
-    <description>Core Parts of Axis 2.0.</description>
+    <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
 
     <dependencies>
         <dependency>
