@@ -19,7 +19,7 @@ import org.apache.axis.om.OMEnvelope;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class Echo {
+public class Echo1 {
     public OMEnvelope echo(OMEnvelope in){
         return in;
     }    

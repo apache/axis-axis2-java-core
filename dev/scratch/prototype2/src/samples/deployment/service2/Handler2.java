@@ -23,9 +23,9 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.registry.AbstractEngineElement;
 
 
-public class Handler1 extends AbstractEngineElement implements Handler {
+public class Handler2 extends AbstractEngineElement implements Handler {
     private QName name;
-    public Handler1() {
+    public Handler2() {
     }
     public QName getName() {
         return name;
