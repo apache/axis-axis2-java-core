@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://axis.apache.org/sample/echo" xmlns:impl="http://axis.apache.org/sample/echo" xmlns:intf="http://axis.apache.org/sample/echo" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<!--WSDL created by Apache Axis version: 1.2RC1
+Built on Sep 29, 2004 (08:29:40 EDT)-->
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://axis.apache.org/sample/echo">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="EchoStruct">
+    <sequence>
+     <element name="value13" nillable="true" type="xsd:string"/>
+     <element name="value7" nillable="true" type="xsd:string"/>
+     <element name="value2" nillable="true" type="xsd:string"/>
+     <element name="value10" nillable="true" type="xsd:string"/>
+     <element name="value12" nillable="true" type="xsd:string"/>
+     <element name="value5" nillable="true" type="xsd:string"/>
+     <element name="value6" nillable="true" type="xsd:string"/>
+     <element name="value9" nillable="true" type="xsd:string"/>
+     <element name="value1" nillable="true" type="xsd:string"/>
+     <element name="value11" nillable="true" type="xsd:string"/>
+     <element name="value4" nillable="true" type="xsd:string"/>
+     <element name="value8" nillable="true" type="xsd:string"/>
+     <element name="value3" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="ArrayOfEchoStruct">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="impl:EchoStruct[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="echoEchoStructArrayResponse">
+
+      <wsdl:part name="echoEchoStructArrayReturn" type="impl:ArrayOfEchoStruct"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoEchoStructRequest">
+
+      <wsdl:part name="in" type="impl:EchoStruct"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringArrayResponse">
+
+      <wsdl:part name="echoStringArrayReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringResponse">
+
+      <wsdl:part name="echoStringReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoEchoStructArrayRequest">
+
+      <wsdl:part name="in" type="impl:ArrayOfEchoStruct"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringRequest">
+
+      <wsdl:part name="in" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoStringArrayRequest">
+
+      <wsdl:part name="in" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="echoEchoStructResponse">
+
+      <wsdl:part name="echoEchoStructReturn" type="impl:EchoStruct"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="Echo">
+
+      <wsdl:operation name="echoString" parameterOrder="in">
+
+         <wsdl:input name="echoStringRequest" message="impl:echoStringRequest"/>
+
+         <wsdl:output name="echoStringResponse" message="impl:echoStringResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoStringArray" parameterOrder="in">
+
+         <wsdl:input name="echoStringArrayRequest" message="impl:echoStringArrayRequest"/>
+
+         <wsdl:output name="echoStringArrayResponse" message="impl:echoStringArrayResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoEchoStruct" parameterOrder="in">
+
+         <wsdl:input name="echoEchoStructRequest" message="impl:echoEchoStructRequest"/>
+
+         <wsdl:output name="echoEchoStructResponse" message="impl:echoEchoStructResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoEchoStructArray" parameterOrder="in">
+
+         <wsdl:input name="echoEchoStructArrayRequest" message="impl:echoEchoStructArrayRequest"/>
+
+         <wsdl:output name="echoEchoStructArrayResponse" message="impl:echoEchoStructArrayResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="echoSoapBinding" type="impl:Echo">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="echoString">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoStringRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoStringResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoStringArray">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoStringArrayRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoStringArrayResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoEchoStruct">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoEchoStructRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoEchoStructResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="echoEchoStructArray">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="echoEchoStructArrayRequest">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="echoEchoStructArrayResponse">
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis.apache.org/sample/echo"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="EchoService">
+
+      <wsdl:port name="echo" binding="impl:echoSoapBinding">
+
+         <wsdlsoap:address location="http://localhost:8080/axis/services/echo"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

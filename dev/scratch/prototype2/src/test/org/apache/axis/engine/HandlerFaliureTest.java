@@ -89,9 +89,12 @@ public class HandlerFaliureTest extends AbstractTestCase {
 
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
-        callTheService();
-        EngineUtils.stopServer();
-        Thread.sleep(1000);
+        try{
+	        callTheService();
+        }finally{
+			EngineUtils.stopServer();
+			Thread.sleep(1000);
+        }
     }
 
     public void testFailureAtServerResponseFlow() throws Exception {
@@ -126,9 +129,12 @@ public class HandlerFaliureTest extends AbstractTestCase {
         EngineUtils.createExecutionChains(service);
         engineRegistry.addService(service);
         sas = EngineUtils.startServer(engineRegistry);
-        callTheService();
-        EngineUtils.stopServer();
-        Thread.sleep(1000);
+		try{
+			callTheService();
+		}finally{
+			EngineUtils.stopServer();
+			Thread.sleep(1000);
+		}
     }
 
 
@@ -150,7 +156,8 @@ public class HandlerFaliureTest extends AbstractTestCase {
             reqEnv.getBody().addChild(method);
 
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
+            //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + EngineUtils.TESTING_PORT + "/axis/services/EchoXMLService");
+			EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (EngineUtils.TESTING_PORT )+ "/axis/services/EchoXMLService");
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 

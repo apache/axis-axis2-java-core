@@ -5,12 +5,12 @@
 	<property name="build.classes" location="${build}/classes"/>
 	<property name="build.lib" location="${build}/lib"/>
 	<property name="lib" location="lib"/>
-	<property name="root" location="../../../../"/>
+	<property name="root" location="../../../"/>
 	<property name="jar.dir" location="${root}/target/test-resources/deployment/services"/>
 	
 	<path id="axis.test.classpath">
 		<path refid="maven.dependency.classpath"></path>
-		<pathelement location="../../../../target/classes"/>
+		<pathelement location="${root}/target/classes"/>
 	</path>
 	
 	<target name="compile" depends="init" unless="jars.uptodate">
