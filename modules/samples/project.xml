@@ -102,8 +102,62 @@
             </properties>
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
-
-
-
     </dependencies>
+
+    <!-- build information for the project -->
+  <build>
+    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+
+    <unitTest>
+
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+	    <exclude>**/*Util*.java</exclude>
+		<exclude>**/*InteropStubTest.java</exclude>
+		<!-- <exclude>**/*TransportDeploymentTest.java</exclude>  -->
+		<!-- <exclude>**/*BuildERWithDeploymentTest.java</exclude>  -->
+      </excludes>
+     <includes>
+        <include>**/*Test.java</include>
+      </includes>
+
+     <resources>
+         <resource>
+             <directory>${basedir}/src/test-resources</directory>
+          </resource>
+          <resource>
+        	<directory>conf</directory>
+       			 <includes>
+          			<include>**/*.properties</include>
+        		</includes>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          	<include>**/*.properties</include>
+          	<include>**/*.xml</include>
+        </includes>
+      </resource>
+     </resources>
+    </unitTest>
+
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
 </project>

@@ -21,8 +21,7 @@ import junit.framework.TestCase;
 */
 public class InteropStubTest extends TestCase{
 
-//    private static String ASP_NET_ENDPOINT = "http://mssoapinterop.org/asmx/wsdl/InteropTestDocLit.asmx";
-    private static String ASP_NET_ENDPOINT = "http://localhost:8081/asmx/wsdl/InteropTestDocLit.asmx";
+    private static String ASP_NET_ENDPOINT = "http://mssoapinterop.org/asmx/wsdl/InteropTestDocLit.asmx";
     private static String OPENLINK_ENDPOINT = "http://demo.openlinksw.com/r3/DocLit";
 
 
@@ -65,13 +64,15 @@ public class InteropStubTest extends TestCase{
     }
 
     public void testASPEndPoint(){
-//       testEchoString(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
-//        testEchoStringArray(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
+        testEchoString(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
+        testEchoStringArray(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
         testEchoStruct(ASP_NET_ENDPOINT,"\"http://soapinterop.org/\"");
 
     }
     public void testOpenlinkEndPoint(){
         testEchoString(OPENLINK_ENDPOINT,null);
+        testEchoStringArray(OPENLINK_ENDPOINT,null);
+        testEchoStruct(OPENLINK_ENDPOINT,null);
 
     }
 

@@ -96,13 +96,11 @@ public class SimpleTypeEncodingUtils {
                 event = xpp.next();
             }
             event = xpp.next();
-            System.out.println("Element name    ----" + xpp.getLocalName());
             while (XMLStreamConstants.END_ELEMENT != event) {
                 if (XMLStreamConstants.CHARACTERS == event && !xpp.isWhiteSpace()) {
                     value = xpp.getText();
                 }
                 event = xpp.next();
-                System.out.println("Element name    ----" + xpp.getLocalName());
             }
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
