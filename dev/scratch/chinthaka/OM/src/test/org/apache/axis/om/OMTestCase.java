@@ -36,8 +36,6 @@ public class OMTestCase extends TestCase  {
     protected SOAPMessage soapMessage;
     protected SOAPEnvelope soapEnvelope;
 
-    public static void main(String[] args) {
-    }
 
     protected void setUp() throws Exception {
         super.setUp();

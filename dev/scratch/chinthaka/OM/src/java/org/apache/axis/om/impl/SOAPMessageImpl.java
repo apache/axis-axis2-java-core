@@ -33,7 +33,12 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
         this.parserWrapper = parserWrapper;
     }
 
-   public void setEnvelope(SOAPEnvelopeImpl root) {
+    public SOAPMessageImpl(Object[] obj) {
+        //TODO create the OM from Obj
+    }
+
+    
+    public void setEnvelope(SOAPEnvelopeImpl root) {
         this.envelope = root;
     }
 
