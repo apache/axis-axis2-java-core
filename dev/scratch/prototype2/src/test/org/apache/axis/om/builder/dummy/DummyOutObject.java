@@ -3,11 +3,13 @@ package org.apache.axis.om.builder.dummy;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.encoding.Encoder;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMException;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -38,30 +40,24 @@ public class DummyOutObject implements Encoder {
     String fileName = "src/test-resources/soapmessage.xml";
 
 
-    public DummyOutObject() {
+    public DummyOutObject() throws SAXException, ParserConfigurationException {
         setup();
     }
 
-    private void setup() {
-        try {
+    private void setup() throws SAXException, ParserConfigurationException {
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);
             parser = saxParserFactory.newSAXParser().getXMLReader();
            
-        } catch (Exception e) {
-            e.printStackTrace();  //TODO implement this
-        }
 
     }
 
 
-    public void serialize(ContentHandler contentHandler) {
+    public void serialize(ContentHandler contentHandler) throws OMException{
         try {
             parser.parse(new InputSource(new FileReader(fileName)));
-        } catch (IOException e) {
-            e.printStackTrace();  //TODO implement this
-        } catch (SAXException e) {
-            e.printStackTrace();  //TODO implement this
+        } catch (Exception e) {
+           throw new OMException(e);
         }
 
     }

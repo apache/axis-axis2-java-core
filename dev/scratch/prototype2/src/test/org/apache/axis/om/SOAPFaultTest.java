@@ -1,7 +1,6 @@
 package org.apache.axis.om;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.om.*;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -42,8 +41,7 @@ public class SOAPFaultTest extends AbstractTestCase{
                             createXMLStreamWriter(System.out);
     }
 
-    public void testSOAPFault(){
-        try {
+    public void testSOAPFault() throws Exception{
             soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getDocumentElement();
             SOAPBody soapBody = soapEnvelope.getBody();
 
@@ -59,9 +57,7 @@ public class SOAPFaultTest extends AbstractTestCase{
 
             
 
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+ 
     }
 
     private void print() throws XMLStreamException {

@@ -27,7 +27,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 
 public class EngineUtils {
-    public static final int TESTING_PORT = 3333;
+    public static final int TESTING_PORT = 4444;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
     private static SimpleHTTPReceiver sas;

@@ -140,7 +140,7 @@
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
-	    <exclude>**/*EchoTest*.java</exclude>
+	   <!-- <exclude>**/*EchoTest*.java</exclude> -->
       </excludes>
       <includes>
         <include>**/*Test.java</include>

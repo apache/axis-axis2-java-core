@@ -6,7 +6,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;

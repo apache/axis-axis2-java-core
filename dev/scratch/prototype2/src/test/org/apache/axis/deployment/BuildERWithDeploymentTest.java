@@ -25,8 +25,7 @@ import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.providers.RawXMLProvider;
 
-
-public class BuildERWithDeploymentTest extends AbstractTestCase{
+public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**
      * @param testName
      */
@@ -34,37 +33,34 @@ public class BuildERWithDeploymentTest extends AbstractTestCase{
         super(testName);
     }
 
-    public void testDeployment(){
-        try{
-            String filename = "./target/test-resources/deployment" ;
-            DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
-            EngineRegistry er = deploymentEngine.start();
-            assertNotNull(er);
-            assertNotNull(er.getGlobal());
+    public void testDeployment() throws Exception {
+        String filename = "./target/test-resources/deployment";
+        DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
+        EngineRegistry er = deploymentEngine.start();
+        assertNotNull(er);
+        assertNotNull(er.getGlobal());
 
-            AxisService service = er.getService(new QName("echo"));
-            assertNotNull(service);
-            Provider provider = service.getProvider();
-            assertNotNull(provider);
-            assertTrue(provider instanceof RawXMLProvider);
-            ClassLoader cl = service.getClassLoader();
-            assertNotNull(cl);
-            Class.forName("org.apache.axis.engine.Echo",true,cl);
-            assertNotNull(service.getName());
-            assertEquals(service.getContextPath(),"axis/service/echo");
+        AxisService service = er.getService(new QName("echo"));
+        assertNotNull(service);
+        Provider provider = service.getProvider();
+        assertNotNull(provider);
+        assertTrue(provider instanceof RawXMLProvider);
+        ClassLoader cl = service.getClassLoader();
+        assertNotNull(cl);
+        Class.forName("org.apache.axis.engine.Echo", true, cl);
+        assertNotNull(service.getName());
+        assertEquals(service.getContextPath(), "axis/service/echo");
 
-            Flow flow = service.getFaultFlow();
-            assertTrue(flow == null || flow.getHandlerCount() == 0);
-            flow = service.getInFlow();
-            assertTrue(flow == null || flow.getHandlerCount() == 0);
-            flow = service.getOutFlow();
-            assertTrue(flow == null || flow.getHandlerCount() == 0);
-            assertNull(service.getParameter("hello"));
+        Flow flow = service.getFaultFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        flow = service.getInFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        flow = service.getOutFlow();
+        assertTrue(flow == null || flow.getHandlerCount() == 0);
+        assertNull(service.getParameter("hello"));
 
-            AxisOperation op = service.getOperation(new QName("echo"));
-            assertNotNull(op);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        AxisOperation op = service.getOperation(new QName("echo"));
+        assertNotNull(op);
+
     }
 }

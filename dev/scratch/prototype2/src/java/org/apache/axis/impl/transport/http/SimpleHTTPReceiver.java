@@ -142,7 +142,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             DeploymentEngine deploymentEngine = new DeploymentEngine(dir);
             EngineRegistry er = deploymentEngine.start();
             try {
-                Thread.sleep(9000);
+                Thread.sleep(2000);
             } catch (InterruptedException e1) {
 				throw new AxisFault("Thread interuptted",e1);
             }

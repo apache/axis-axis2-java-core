@@ -3,15 +3,21 @@ package org.apache.axis.impl.llom;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPFault;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

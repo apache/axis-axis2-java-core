@@ -15,18 +15,24 @@
  */
 package org.apache.axis.impl.description;
 
-import org.apache.axis.description.*;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.engine.Provider;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.impl.WSDLServiceImpl;
-
-import javax.swing.text.Style;
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
+import javax.swing.text.Style;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.DescriptionConstants;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.FlowInclude;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ParameterInclude;
+import org.apache.axis.description.PhasesInclude;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Provider;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.impl.WSDLServiceImpl;
 
 
 public class AxisService extends WSDLServiceImpl implements WSDLService,ParameterInclude,FlowInclude,PhasesInclude , DescriptionConstants{

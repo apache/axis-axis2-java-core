@@ -41,6 +41,7 @@ import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 
 
@@ -95,7 +96,12 @@ public class EchoTest extends TestCase {
         Call call = new Call();
         call.setTo(targetEPR);
         SOAPEnvelope responseEnv = call.sendReceive(envelope);
-        XMLStreamReader xpp = responseEnv.getBody().getPullParser(true);
+        
+        SOAPBody body = responseEnv.getBody();
+        if(body.hasFault()){
+            throw body.getFault().getException();
+        }
+        XMLStreamReader xpp = body.getPullParser(true);
 
         int event = xpp.next();
         while (event != XMLStreamConstants.START_ELEMENT) {

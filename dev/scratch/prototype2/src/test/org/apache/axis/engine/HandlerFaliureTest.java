@@ -17,9 +17,11 @@ package org.apache.axis.engine;
 
 //todo
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.Flow;
@@ -32,28 +34,26 @@ import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-import org.apache.axis.om.*;
+import org.apache.axis.integration.UtilServer;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 
 
 public class HandlerFaliureTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    
 
-    private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
     private SimpleHTTPReceiver sas;
-    private int testingPort = 7777;
-    private int testCount = 0;
-
+    
     public HandlerFaliureTest() {
         super(HandlerFaliureTest.class.getName());
     }
@@ -63,7 +63,6 @@ public class HandlerFaliureTest extends AbstractTestCase {
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = EngineUtils.createMockRegistry(serviceName, operationName, transportName);
     }
 
 
@@ -89,13 +88,13 @@ public class HandlerFaliureTest extends AbstractTestCase {
 
         EngineUtils.createExecutionChains(service);
 
-        engineRegistry.addService(service);
-        sas = EngineUtils.startServer(engineRegistry);
+        UtilServer.start();
+        UtilServer.deployService(service);
         try{
 	        callTheService();
         }finally{
-			EngineUtils.stopServer();
-			Thread.sleep(1000);
+            UtilServer.unDeployService(serviceName);
+            UtilServer.stop();
         }
     }
 
@@ -129,13 +128,13 @@ public class HandlerFaliureTest extends AbstractTestCase {
         service.addOperation(operation);
 
         EngineUtils.createExecutionChains(service);
-        engineRegistry.addService(service);
-        sas = EngineUtils.startServer(engineRegistry);
+        UtilServer.start();
+        UtilServer.deployService(service);
 		try{
 			callTheService();
 		}finally{
-			EngineUtils.stopServer();
-			Thread.sleep(1000);
+            UtilServer.unDeployService(serviceName);
+            UtilServer.stop();
 		}
     }
 
@@ -163,23 +162,18 @@ public class HandlerFaliureTest extends AbstractTestCase {
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().
-                                        createXMLStreamWriter(System.out);
-            resEnv.serialize(writer, true);
-            writer.flush();
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
                 String message = sb.getFault().getException().getMessage();
-                System.out.println("message = " + message);
                 throw new AxisFault(message);
             }
+            fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
             assertTrue((e.getMessage().indexOf(EngineUtils.FAILURE_MESSAGE)) > 0);
-            tearDown();
             return;
         }
-        fail("the test must fail due to bad service Name");
+       
     }
 
     private Handler culprit = new AbstractHandler() {

@@ -31,6 +31,7 @@ import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -61,8 +62,7 @@ public class EchoRawXMLTest extends AbstractTestCase{
     }
 
     protected void setUp() throws Exception {
-        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
-
+        UtilServer.start();
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
@@ -70,25 +70,17 @@ public class EchoRawXMLTest extends AbstractTestCase{
         AxisOperation operation = new SimpleAxisOperationImpl(operationName);
 
         service.addOperation(operation);
-
-        EngineUtils.createExecutionChains(service);
-        engineRegistry.addService(service);
-
-        sas = EngineUtils.startServer(engineRegistry);
-        finish=false;
+        UtilServer.deployService(service);
     }
 
 
      protected void tearDown() throws Exception {
-        while(!finish){
-           Thread.sleep(500);
-        }
-        EngineUtils.stopServer();
-      }
+         UtilServer.unDeployService(serviceName);
+         UtilServer.stop();
+     }
 
 
     public void testEchoXMLSync() throws Exception{
-        try{
             OMFactory fac = OMFactory.newInstance();
 
             SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
@@ -106,19 +98,10 @@ public class EchoRawXMLTest extends AbstractTestCase{
             SOAPEnvelope resEnv = call.sendReceive(reqEnv);
 
             resEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),true);
-
-            finish=true;
-
             OMNode omNode = resEnv.getBody().getFirstChild();
             assertNotNull(omNode);
-        }catch(Exception e){
-            e.printStackTrace();
-            tearDown();
-            throw e;
-        }    
     }
     public void testEchoXMLASync() throws Exception{
-        try{
             OMFactory fac = OMFactory.newInstance();
 
             SOAPEnvelope reqEnv=fac.getDefaultEnvelope();
@@ -148,17 +131,16 @@ public class EchoRawXMLTest extends AbstractTestCase{
                 }
                 public void reportError(Exception e){
                     e.printStackTrace();
+                    finish=true;
                 }
             };
 
             call.sendReceiveAsync(reqEnv,callback);
+            while(!finish){
+                Thread.sleep(1000);
+            }
+            
             log.info("send the reqest");
-
-        }catch(Exception e){
-            e.printStackTrace();
-            tearDown();
-            throw e;
-        }    
     }
 
 }

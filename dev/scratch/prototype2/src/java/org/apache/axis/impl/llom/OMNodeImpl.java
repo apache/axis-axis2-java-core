@@ -5,7 +5,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNode;
 
 /**

@@ -19,6 +19,8 @@ package org.apache.axis.integration;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineUtils;
 import org.apache.axis.impl.description.AxisService;
@@ -31,6 +33,11 @@ public class UtilServer {
     public static synchronized void deployService(AxisService service)
         throws AxisFault {
         reciver.getEngineReg().addService(service);
+    }
+    
+    public static synchronized void unDeployService(QName service)
+        throws AxisFault {
+        reciver.getEngineReg().removeService(service);
     }
 
     public static synchronized void start() throws IOException {
@@ -45,17 +52,19 @@ public class UtilServer {
 
             try {
                 thread.start();
+                System.out.print("Server started .....");
             } finally {
 
             }
-        } else {
-            count++;
-        }
+        } 
+        count++;
     }
 
     public static synchronized void stop() {
         if (count == 1) {
             reciver.stop();
+            count = 0;
+            System.out.print("Server stopped .....");
         } else {
             count--;
         }
