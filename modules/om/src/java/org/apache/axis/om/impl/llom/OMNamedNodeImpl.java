@@ -21,8 +21,8 @@ import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Class OMNamedNodeImpl
@@ -48,13 +48,13 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
     }
 
     /**
-         * Method serialize
-         *
-         * @param writer
-         * @param cache
-         * @throws javax.xml.stream.XMLStreamException
-         *
-         */
+     * Method serialize
+     *
+     * @param writer
+     * @param cache
+     * @throws javax.xml.stream.XMLStreamException
+     *
+     */
     public void serialize(XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
         //TODO: do we need to do something here?
@@ -102,8 +102,7 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
             ns = parent.getNamespace();
         }
         if (ns == null) {
-            throw new OMException(
-                    "all elements in a soap message must be namespace qualified");
+            throw new OMException("all elements in a soap message must be namespace qualified");
         }
         return ns;
     }
@@ -133,7 +132,13 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
      * @return
      */
     public QName getQName() {
-        QName qName = new QName(ns.getName(), localName, ns.getPrefix());
+        QName qName = null;
+
+        if (ns != null) {
+            qName = new QName(ns.getName(), localName, ns.getPrefix());
+        }else{
+            qName = new QName(localName);
+        }
         return qName;
     }
 }
