@@ -467,20 +467,22 @@
         if(serviceStatus){
    %>
        <p>
+       <font color="blue" >
        Found the echo service and Axis2 is working properly, and now you can drop any web service in
        to axis2/WEB-INF/service and check it is working.and got the following result
        <br>
-       <font color="blue" ><%= error%> </font>
+       <%= error%> </font>
        </p>
        <hr>
    <%
         }   else {
     %>
      <p>
+      <font color="red" >
      Not found echo service or Axis2 is not working properly, check whether the echo.jar is in
      webapps/axis2/WEB-INF/service if it is then report the following error to the mailing list.
       <br>
-      <font color="red" > <%= error%></font>
+     <%= error%></font>
      </p>
      <hr>
     <%
