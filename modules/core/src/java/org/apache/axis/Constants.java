@@ -30,9 +30,9 @@ public class Constants {
     public static final int SOAP_STYLE_RPC_LITERAL = 1001;
 
     /**
-     * Field SOAP_STYLE_DOC_LITRAL_WRAPPED
+     * Field SOAP_STYLE_DOC_LITERAL_WRAPPED
      */
-    public static final int SOAP_STYLE_DOC_LITRAL_WRAPPED = 1002;
+    public static final int SOAP_STYLE_DOC_LITERAL_WRAPPED = 1002;
 
     /**
      * Field APPLICATION_SCOPE
