@@ -26,7 +26,7 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.engine.EngineUtils;
 import org.apache.axis.testUtils.SimpleJavaProvider;
-import org.apache.axis.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +45,7 @@ public class SampleEnvironmentCreator {
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
-    private SimpleHTTPReceiver sas;
+    private SimpleHTTPServer sas;
     
     public SampleEnvironmentCreator(){
        
