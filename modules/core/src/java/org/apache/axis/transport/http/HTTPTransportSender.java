@@ -60,7 +60,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 try {
                     URL url = new URL(toURL.getAddress());
                     SocketAddress add = new InetSocketAddress(url.getHost(),
-                            url.getPort());
+                            url.getPort()==-1?80:url.getPort());
                     socket = new Socket();
                     socket.connect(add);
                     OutputStream outS = socket.getOutputStream();
