@@ -23,7 +23,7 @@ import org.apache.axis.phaseresolver.PhaseException;
 
 
 public class EngineRegistryFactory {
-    public EngineRegistry createEngineRegistry(String file)throws AxisFault{
+    public static EngineRegistry createEngineRegistry(String file)throws AxisFault{
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();

@@ -15,11 +15,13 @@
  */
 package org.apache.axis.impl.transport.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
@@ -47,8 +50,14 @@ import org.apache.axis.om.SOAPEnvelope;
 public class AxisServlet extends HttpServlet{
     private EngineRegistry engineRegistry;
     
-    public void init(ServletConfig arg0) throws ServletException {
-        //TODO create a ER here
+    public void init(ServletConfig config) throws ServletException {
+        try {
+            ServletContext context = config.getServletContext();
+            String repoDir = context.getRealPath("/WEB-INF");
+            engineRegistry = EngineRegistryFactory.createEngineRegistry(repoDir);
+        } catch (AxisFault e) {
+            throw new ServletException(e);
+        }
     }
 
     

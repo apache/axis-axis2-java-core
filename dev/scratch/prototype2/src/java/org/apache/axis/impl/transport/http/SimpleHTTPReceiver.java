@@ -139,10 +139,6 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      */
     public SimpleHTTPReceiver(AxisEngine myAxisServer) {
         super(myAxisServer);
-        
-        
-        
-        
     }
     
     public SimpleHTTPReceiver(String dir) throws AxisFault {
@@ -504,6 +500,13 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
+    }
+
+    /**
+     * @return
+     */
+    public AxisEngine getEngine() {
+        return engine;
     }
 
 }

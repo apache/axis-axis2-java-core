@@ -15,22 +15,49 @@
  */
 package org.apache.axis.engine;
 
-import javax.xml.stream.XMLStreamException;
+import java.net.URL;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReferenceType;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPEnvelope;
 
 
 public class EngineAndDeploymentTest extends AbstractTestCase{
+    private EngineRegistry er;
+    private SimpleHTTPReceiver sas;
     /**
      * @param testName
      */
-    public EngineAndDeploymentTest(String testName) {
+    public EngineAndDeploymentTest(String testName) throws Exception{
         super(testName);
-        // TODO Auto-generated constructor stub
+        er = EngineRegistryFactory.createEngineRegistry("target/test-resources/deployment");
+        sas = EngineUtils.startServer(er);
+        
     }
 
-    public void testRunServiceWithDeployment() throws AxisFault, PhaseException, DeploymentException, XMLStreamException{
+    public void testRunServiceWithDeployment() throws Exception{
+            OMFactory fac = OMFactory.newInstance();
+            
+            SOAPEnvelope envelope = fac.getDefaultEnvelope(); 
+
+            OMNamespace omNs = fac.createOMNamespace("http://localhost/my","my");
+            OMElement method =  fac.createOMElement("echo",omNs) ;
+            OMElement value =  fac.createOMElement("myValue",omNs) ;
+            value.setValue("Isaac Assimov, the foundation Sega");
+            method.addChild(value);
+            
+            envelope.getBody().addChild(method);
+            
+            Call call = new Call();
+            URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoXMLService");
+            call.setTo(new EndpointReferenceType(AddressingConstants.WSA_TO,url.toString()));
+            OMElement omele = call.sendReceive(envelope);
+            assertNotNull(omele);
     }
 }

@@ -19,5 +19,11 @@ import org.apache.axis.om.OMElement;
 public class Echo {
     public OMElement echo(OMElement in){
         return in;
-    }    
+    } 
+    public int echoInt(int in){
+        return in;
+    }
+    public int echoString(int in){
+        return in;
+    }
 }
