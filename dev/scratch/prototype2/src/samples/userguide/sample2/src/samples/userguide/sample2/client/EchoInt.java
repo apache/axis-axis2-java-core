@@ -21,7 +21,6 @@ import java.net.URL;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineUtils;
 
 
 /**
@@ -33,10 +32,16 @@ public class EchoInt {
 	
 	
 	public static void main(String[] args) throws Exception {
+		
+		if(2!= args.length ){
+			System.out.println("Usage <Port> <Echo Message>");
+			
+		}
+		
 		InteropTest_Stub clientStub = new InteropTest_Stub();
 		URL url= null;
 		try {
-			url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/echo");
+			url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis/services/sample2");
 		} catch (MalformedURLException e) {
 			
 			e.printStackTrace();
@@ -47,7 +52,7 @@ public class EchoInt {
 		clientStub.setListenerTransport("http", true);
 		try {
 			System.out.println("Sending the Async message ....");
-			clientStub.echoInt(new Integer(794), new EchoIntCallBackHandler());
+			clientStub.echoInt(new Integer(args[1]), new EchoIntCallBackHandler());
 			
 		} catch (AxisFault e1) {
 			
