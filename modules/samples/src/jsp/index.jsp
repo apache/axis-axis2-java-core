@@ -57,7 +57,6 @@
     <%
       if (request.getParameter("submit") != null) {
           int type = interopBean.getType();
-          System.out.println("type = " + type);
           switch(type){
               case Constants.InteropConstants.ECHO_STRING_SERVICE: {
                    interopBean.setStringValue((String)request.getParameter("StringValue"));
@@ -65,9 +64,10 @@
               }
               case Constants.InteropConstants.ECHO_STRING_ARRAY_SERVICE: {
                   String [] values = new String[10];
-                  for(int i =0 ; i< 9 ; i++){
-                     values[i] =(String)request.getParameter("arryValue" + (i+1));
-                      System.out.println("values[i] = " + values[i]);
+                  for(int i =0 ; i< values.length ; i++){
+                      String s = (String)request.getParameter("arryValue" + (i+1));
+                      values[i] =s==null?"":s;
+//                      values[i] = "ss" +i;
                   }
                   interopBean.setArraValue(values);
                   break;
@@ -79,7 +79,11 @@
                   break;
               }
           }
-        new InteropRequestHandler().handleInteropRequest(interopBean);
+          try {
+              new InteropRequestHandler().handleInteropRequest(interopBean);
+          } catch (Exception e) {
+             out.write(" Exception occured!!!");
+          }
       }
     %>
 
@@ -88,6 +92,8 @@
 
        	<h3>Welcome to Axis interop testing.</h3><br/>
         <br>
+        You can use this web page to do a doclit standard interop test. For more detail and test server information please visit the
+        <a href="http://www.whitemesa.com/r3/interop3.html">whitemesa interop test page.</a>
         <form method="post" name="InteropTesting" action="index.jsp">
          <table border="0" width="100%" cellspacing="1" cellpadding="1">
           <tr>
@@ -172,20 +178,24 @@
           <td></td>
           <td>
           <table border="0" width="100%" cellspacing="1" cellpadding="1">
+          <tr><td vAlign="top" align="right" class="formText">Enter values for the SOAP Structure</td>
+            <td>
+              &nbsp;
+            </td></tr>
           <tr>
-            <td vAlign="top" align="right" class="formText">Enter String values for array :</td>
+            <td vAlign="top" align="right" class="formText">String Value</td>
             <td>
               <input name="structValue1" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
             </td>
           </tr>
             <tr>
-            <td vAlign="top" align="right" class="formText">Enter integer value for array :</td>
+            <td vAlign="top" align="right" class="formText">Integer Value</td>
             <td>
               <input name="structValue2" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
             </td>
           </tr>
             <tr>
-            <td vAlign="top" align="right" class="formText">Enter float values for array :</td>
+            <td vAlign="top" align="right" class="formText">Float Value</td>
             <td>
               <input name="structValue3" maxlength="99" size="38" type="text" class="textBox">&nbsp;<small></small>
             </td>

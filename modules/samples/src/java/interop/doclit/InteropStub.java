@@ -160,7 +160,7 @@ public class InteropStub {
                 throw new AxisFault("Return element not found");
             }
 
-            return SimpleTypeEncodingUtils.deserializeStringArray(elt.getPullParser(true));
+            return SimpleTypeEncodingUtils.deserializeStringArray(elt.getPullParser(false));
 
 
         } catch (AxisFault axisFault) {
