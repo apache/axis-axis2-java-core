@@ -19,7 +19,6 @@ import java.net.URL;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.engine.EngineUtils;
 
 /**
  * @author chathura@opensource.lk
@@ -28,10 +27,14 @@ import org.apache.axis.engine.EngineUtils;
 public class EchoString {
 
 	public static void main(String[] args) throws Exception{
+		if(2!= args.length ){
+			System.out.println("Usage <Port> <Echo Message>");
+			
+		}
 		InteropTest_Stub stub =new InteropTest_Stub();
-		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis2/services/sample3");
+		URL url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis2/services/sample3");
 		stub.setEndPointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		System.out.println(stub.echoString("Hi Axis2 Sync with a Logging Handler"));
+		System.out.println(stub.echoString(args[1]));
 		
 		
 	}

@@ -28,10 +28,15 @@ import org.apache.axis.engine.EngineUtils;
 public class EchoInt {
 	
 	public static void main(String[] args) throws Exception {
+		
+		if(2!= args.length ){
+			System.out.println("Usage <Port> <Echo Message>");
+			
+		}
 		InteropTest_Stub clientStub = new InteropTest_Stub();
-		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis2/services/sample3");
+		URL url = new URL("http","127.0.0.1",new Integer(args[0]).intValue(),"/axis2/services/sample3");
 		clientStub.setEndPointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		Integer echoInt = clientStub.echoInt(new Integer(794));
+		Integer echoInt = clientStub.echoInt(new Integer(args[1]));
 		System.out.println(echoInt);
 		
 	}
