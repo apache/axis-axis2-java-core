@@ -18,7 +18,12 @@
  -->
 <project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant">
 		 <goal name="clean">
-			 	<attainGoal name="multiproject:clean"/>
+			<attainGoal name="multiproject:clean"/>
+			<delete >
+				<fileset dir="${maven.repo.local}">
+					<include name="axis/jars/axis2*.jar"/>
+				</fileset>
+			</delete>
 		</goal>
 
 
@@ -118,7 +123,21 @@
 				<include name="**/target/docs/apidocs/*"/>
 			</fileset> 
 		</copy> 
-		
+		<copy todir="target/dist-bin/lib">
+			<fileset dir="${maven.repo.local}">
+				<include name="stax/jars/stax-api-1.0.jar"/>
+				<include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+				<include name="log4j/jars/log4j-1.2.8.jar"/>
+				<include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<include name="stax/jars/stax-1.1.1-dev.jar"/>
+			</fileset> 
+			<fileset dir="modules">
+				<include name="**/target/axis2*.jar"/>
+			</fileset> 
+		</copy> 
+		<copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
   </goal>
 
 

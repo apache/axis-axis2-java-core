@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-WSDL</id>
+    <id>axis2-wsdl</id>
     <name>wsdl</name>
     <description>WSDL Parts of Axis 2.0.</description>
 
