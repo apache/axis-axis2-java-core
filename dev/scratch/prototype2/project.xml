@@ -93,7 +93,7 @@
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
-        <exclude>**/*BadInputTest.java</exclude>
+        <!-- <exclude>**/*BadInputTest.java</exclude> -->
         <exclude>**/*ServiceTest.java</exclude>
       </excludes>
       <includes>
