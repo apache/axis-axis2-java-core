@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis;
+package org.apache.axis.providers;
 
-import javax.xml.namespace.QName;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Provider;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.Sender;
+import org.apache.axis.handlers.AbstractHandler;
 
 /**
- * This Provider is the workhorse who locate the implementation of the Web Service and 
- * invoke the Web Service. 
- * @author Srinath Perera(hemapani@opensource.lk)
+ * @author Srinath Perera (hemapani@opensource.lk)
  */
-public interface Provider extends Handler{
-}    
+public class ASyncProvider extends AbstractHandler{
+    private Provider doworkProvider;
+    public ASyncProvider(Provider doworkProvider){
+        this.doworkProvider = doworkProvider;
+    }
+
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        msgContext.getGlobalContext().getQueue().submitAJob(msgContext);
+    }
+}

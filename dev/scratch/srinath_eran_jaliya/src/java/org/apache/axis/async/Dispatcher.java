@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis;
-
-import javax.xml.namespace.QName;
+package org.apache.axis.async;
 
 /**
- * This Provider is the workhorse who locate the implementation of the Web Service and 
- * invoke the Web Service. 
- * @author Srinath Perera(hemapani@opensource.lk)
+ * @author Srinath Perera (hemapani@opensource.lk)
  */
-public interface Provider extends Handler{
-}    
+public class Dispatcher {
+
+}

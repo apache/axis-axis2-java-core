@@ -27,6 +27,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.Service;
+import org.apache.axis.message.OMMessage;
 import org.apache.axis.registry.Parameter;
 
 /**
@@ -123,8 +124,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Handler {
             Object[] parms = deserializeParameters(msgContext,method);
             //invoke the WebService 
             Object result = method.invoke(obj,parms);
-            //TODO create a OM and put this back to the MessgaeContext 
-            
+            msgContext.setOutMessage(new OMMessage(parms)); 
         }  catch (SecurityException e) {
             throw AxisFault.makeFault(e);
         } catch (IllegalArgumentException e) {
@@ -132,6 +132,8 @@ public class SimpleJavaProvider extends AbstractProvider implements Handler {
         } catch (IllegalAccessException e) {
             throw AxisFault.makeFault(e);
         } catch (InvocationTargetException e) {
+            throw AxisFault.makeFault(e);
+        } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }

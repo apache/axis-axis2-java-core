@@ -57,7 +57,6 @@ public abstract class ConcreateCommonExecuter
         flowInclude = new ConcreateFlowInclude();
         modules = new ConcreateModuleInclude();
         typemappings = new ConcreateTypeMappingInclude();
-
     }
     /**
      * @return
@@ -200,7 +199,4 @@ public abstract class ConcreateCommonExecuter
         invoker.invoke(mc);
         log.info("invoked "+getClass());
     }
-
-
-
 }

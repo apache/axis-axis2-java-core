@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.encoding;
+package org.apache.axis.transport;
+
+import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeaders;
+import org.apache.axis.Handler;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.message.OMMessage;
+import org.apache.axis.registry.Parameter;
 
 /**
- * <p>All the Deserialization Happen through the DeSerializationContext interface. 
- * The Axis Transport shuould create and add the DeserializationContexts for 
- * the Message Context. The Output Streams are hidden behind this. This is the only
- * Way the engine can read something out.</p>
- * @author Srinath Perera(hemapani@opensource.lk)
+ * @author Srinath Perera (hemapani@opensource.lk)
  */
-public interface DeseializationContext {
-    public SOAPEnvelope parseEnvelope()throws AxisFault;
-    
-    public SOAPHeaders parseHeaders() throws AxisFault;
-    public QName enterTheBody(int style) throws AxisFault;
+public class TransportSender extends AbstractHandler implements Handler {
+    private OutputStream out;
+    public TransportSender(OutputStream out){
+        this.out = out;
+    }
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        OMMessage message = msgContext.getOutMessage();
+        message.serialize(out);
+    }
 }

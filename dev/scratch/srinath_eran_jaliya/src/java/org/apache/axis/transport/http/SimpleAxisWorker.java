@@ -24,13 +24,10 @@ import javax.xml.soap.MimeHeaders;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.encoding.Base64;
-import org.apache.axis.encoding.ConcreateDeserializationContext;
-import org.apache.axis.encoding.ConcreateSerializationContext;
-import org.apache.axis.encoding.DeseializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.Message;
+import org.apache.axis.message.OMMessage;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.transport.TransportSender;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -159,8 +156,7 @@ public class SimpleAxisWorker implements Runnable {
         // create an Axis server
 
         MessageContext msgContext = new MessageContext(engine.getRegistry());
-        Message requestMessage = null;
-        Message resposeMessage = null;
+
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =
@@ -271,43 +267,36 @@ public class SimpleAxisWorker implements Runnable {
                         msgContext.setUseSOAPAction(true);
                         msgContext.setSoapAction(soapActionString);
                     }
-                    DeseializationContext dc = new ConcreateDeserializationContext(is); 
-                    msgContext.setSourceIn(dc);
-                    requestMessage = new Message(dc);
+
+                    // Send it on its way...
+                    OutputStream out = socket.getOutputStream();
+                    out.write(HTTP);
+                    out.write(status);
+                    log.info("status written");
+                    msgContext.setTransportSender(new TransportSender(out));
+
+                    msgContext.setInMessage(new OMMessage(is));
+                    EngineRegistry reg = engine.getRegistry();
+                    // invoke the Axis engine
+                    engine.recive(msgContext);
+                    log.info("revice done");
+                    out.flush();
                 }
 
-                msgContext.setInMessage(requestMessage);
-                EngineRegistry reg = engine.getRegistry();
-
-                // invoke the Axis engine
-                engine.recive(msgContext);
-                log.info("revice done");
-                engine.send(msgContext);
-                log.info("send done");
-                // Retrieve the response from Axis
-                resposeMessage = msgContext.getOutMessage();
             } catch (Exception e) {
             	e.printStackTrace();
             }
 
-            // Send it on its way...
-            OutputStream out = socket.getOutputStream();
-            out.write(HTTP);
-            out.write(status);
-            log.info("status written");
 
-            if (resposeMessage != null) {
-
-                //out.write(XML_MIME_STUFF);
-                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " +resposeMessage.getContentType()).getBytes());
-
-                out.write(SEPARATOR);
-                SerializationContext sc= new ConcreateSerializationContext(out);
-                resposeMessage.serialize(sc);
-            }
+//            if (resposeMessage != null) {
+//
+//                //out.write(XML_MIME_STUFF);
+//                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " +resposeMessage.getContentType()).getBytes());
+//
+//            }
 
             // out.write(response);
-            out.flush();
+            
         } catch (Exception e) {
             log.info(Messages.getMessage("exception00"), e);
         } finally {

@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.CommonExecutor;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.encoding.DeseializationContext;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,9 +127,9 @@ public class AxisEngine {
         globel = registry.getGlobal();
         
         
-        DeseializationContext deserializationContext = mc.getSourceIn();
-        mc.getInMessage().setEnvelope(deserializationContext.parseEnvelope());
-        mc.getInMessage().setHeaders(deserializationContext.parseHeaders());
+//        DeseializationContext deserializationContext = mc.getSourceIn();
+//        mc.getInMessage().setEnvelope(deserializationContext.parseEnvelope());
+//        mc.getInMessage().setHeaders(deserializationContext.parseHeaders());
         
         
 
@@ -141,12 +140,6 @@ public class AxisEngine {
             globel.recive(mc);
             executionStack.push(globel);
 
-            QName operationName = deserializationContext.enterTheBody(mc.getMessageStyle());
-            if(operationName != null){
-                mc.setCurrentOperation(operationName);
-            }else{
-                //TODO if the Operation is null find it in some other way
-            }
 
             log.info("Dispatch Service Name");
             //dispatch the service Name

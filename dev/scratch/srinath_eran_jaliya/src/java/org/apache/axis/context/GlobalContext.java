@@ -15,8 +15,10 @@
  */
 package org.apache.axis.context;
 
+
 import java.util.HashMap;
 
+import org.apache.axis.async.MessageQueue;
 import org.apache.axis.registry.EngineRegistry;
 
 /**
@@ -26,7 +28,21 @@ public class GlobalContext {
     
     private EngineRegistry registry;
     private HashMap map = new HashMap();
+    private MessageQueue queue;
     
+    
+    /**
+     * @return Returns the queue.
+     */
+    public MessageQueue getQueue() {
+        return queue;
+    }
+    /**
+     * @param queue The queue to set.
+     */
+    public void setQueue(MessageQueue queue) {
+        this.queue = queue;
+    }
     public GlobalContext(EngineRegistry er){
         this.registry = er;
     }

@@ -21,10 +21,10 @@ import java.util.HashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.DeseializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.engine.Message;
+import org.apache.axis.message.OMMessage;
 import org.apache.axis.registry.EngineRegistry;
+import org.apache.axis.transport.TransportSender;
 /**
  *  The palce where all the service specific states are kept. 
  *  All the Global states kept in the <code>EngineRegistry</code> and all the 
@@ -33,6 +33,7 @@ import org.apache.axis.registry.EngineRegistry;
  */
 public class MessageContext {
     private int messageStyle = Constants.SOAP_STYLE_RPC_ENCODED;
+    private HashMap messages = new HashMap();
     /**
      * @return Returns the faultOut.
      */
@@ -44,18 +45,6 @@ public class MessageContext {
      */
     public void setFaultOut(SerializationContext faultOut) {
         this.faultOut = faultOut;
-    }
-    /**
-     * @return Returns the sourceIn.
-     */
-    public DeseializationContext getSourceIn() {
-        return sourceIn;
-    }
-    /**
-     * @param sourceIn The sourceIn to set.
-     */
-    public void setSourceIn(DeseializationContext sourceIn) {
-        this.sourceIn = sourceIn;
     }
     /**
      * @return Returns the sourceOut.
@@ -77,7 +66,6 @@ public class MessageContext {
         globalContext = new GlobalContext(er);
         sessionContext = new SimpleSessionContext();
     }
-    private DeseializationContext sourceIn;
     private SerializationContext sourceOut;
     private SerializationContext faultOut;
     
@@ -88,8 +76,22 @@ public class MessageContext {
     private HashMap properties = new HashMap();
     private boolean useSOAPAction = true;
     private String soapAction = "";   
-    private Message inMessage;
-    private Message outMessage;
+    private OMMessage inMessage;
+    private OMMessage outMessage;
+    private TransportSender transportSender;
+    
+    /**
+     * @return Returns the transportSender.
+     */
+    public TransportSender getTransportSender() {
+        return transportSender;
+    }
+    /**
+     * @param transportSender The transportSender to set.
+     */
+    public void setTransportSender(TransportSender transportSender) {
+        this.transportSender = transportSender;
+    }
 	/**
 	 * @return Returns the soapAction.
 	 */
@@ -207,25 +209,25 @@ public class MessageContext {
 	/**
 	 * @return Returns the inMessage.
 	 */
-	public Message getInMessage() {
+	public OMMessage getInMessage() {
 		return inMessage;
 	}
 	/**
 	 * @param inMessage The inMessage to set.
 	 */
-	public void setInMessage(Message inMessage) {
+	public void setInMessage(OMMessage inMessage) {
 		this.inMessage = inMessage;
 	}
 	/**
 	 * @return Returns the outMessage.
 	 */
-	public Message getOutMessage() {
+	public OMMessage getOutMessage() {
 		return outMessage;
 	}
 	/**
 	 * @param outMessage The outMessage to set.
 	 */
-	public void setOutMessage(Message outMessage) {
+	public void setOutMessage(OMMessage outMessage) {
 		this.outMessage = outMessage;
 	}
     /**
@@ -240,4 +242,8 @@ public class MessageContext {
     public void setMessageStyle(int messageStyle) {
         this.messageStyle = messageStyle;
     }
+    
+   public void addRelatedMessageContext(String key,MessageContext msgctx){
+       messages.put(key,msgctx);
+   }
 }

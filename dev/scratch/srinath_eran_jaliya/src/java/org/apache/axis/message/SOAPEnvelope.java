@@ -15,12 +15,15 @@
  */
 package org.apache.axis.message;
 
+import java.util.Iterator;
+
 import javax.xml.soap.SOAPConstants;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
@@ -28,13 +31,14 @@ import org.apache.axis.om.OMNamespace;
 public class SOAPEnvelope {
     private SOAPConstants soapcostants;
     private OMElement envelope;
+    private SOAPHeaders headers;
+    private OMElement body;
     
     public SOAPEnvelope(OMElement envelope) throws AxisFault{
         this.envelope = envelope;
         String localName = envelope.getLocalName();
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new AxisFault(Constants.ELEM_ENVELOPE + " Tag not found ... not a SOAP message");
-
         
         OMNamespace omns = envelope.getNamespace();
         if(omns != null){
@@ -49,25 +53,36 @@ public class SOAPEnvelope {
                }
             }
         }else{
-            throw new AxisFault("the Envelope got to be Name spache qualified");
+            throw new AxisFault("the Envelope got to be Name space qualified");
+        }
+        Iterator childeren = this.envelope.getChildren();
+        
+        OMElement omele = null;
+        
+        while(childeren.hasNext()){
+            OMNode node = (OMNode)childeren.next();
+            if(node.getType() == OMNode.ELEMENT_NODE){
+                omele = (OMElement)node;
+                if(Constants.ELEM_HEADER.equals(omele.getLocalName())){
+                    if(body != null){
+                        throw new AxisFault("Body can never come before the Haders ");
+                    }
+                    if(headers != null){
+                        throw new AxisFault("Only one Header block allowed");
+                    }
+                    headers =  new SOAPHeaders(omele);
+                }else if(Constants.ELEM_BODY.equals(omele.getLocalName())){
+                    if(headers != null){
+                        throw new AxisFault("Only one Body block allowed");
+                    }
+                    body = omele;
+                }else{
+                    throw new AxisFault("Only Body and Header allowed");
+                }
+            } 
         }
     }
     
-    /**
-     * @return Returns the omelement.
-     */
-    public OMElement getOmelement() {
-        return envelope;
-    }
-    /**
-     * @param omelement The omelement to set.
-     */
-    public void setOmelement(OMElement omelement) {
-        this.envelope = omelement;
-    }
-    /**
-     * @return Returns the soapcostants.
-     */
     public SOAPConstants getSoapcostants() {
         return soapcostants;
     }
@@ -76,5 +91,29 @@ public class SOAPEnvelope {
      */
     public void setSoapcostants(SOAPConstants soapcostants) {
         this.soapcostants = soapcostants;
+    }
+    /**
+     * @return Returns the body.
+     */
+    public OMElement getBody() {
+        return body;
+    }
+    /**
+     * @param body The body to set.
+     */
+    public void setBody(OMElement body) {
+        this.body = body;
+    }
+    /**
+     * @return Returns the headers.
+     */
+    public SOAPHeaders getHeaders() {
+        return headers;
+    }
+    /**
+     * @param headers The headers to set.
+     */
+    public void setHeaders(SOAPHeaders headers) {
+        this.headers = headers;
     }
 }
