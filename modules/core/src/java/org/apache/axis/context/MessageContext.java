@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.context;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -33,6 +27,9 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.wsdl.WSDLService;
 
+import javax.xml.stream.XMLStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The palce where all the service specific states are kept.
@@ -42,9 +39,9 @@ import org.apache.wsdl.WSDLService;
  */
 public class MessageContext {
     private String messageStyle = WSDLService.STYLE_RPC;
-    
+
     /**
-     *  Follwing are the defined properties that are stored in the message Context 
+     * Follwing are the defined properties that are stored in the message Context
      */
     public static final String USER_NAME = "USER";
     public static final String PASSWORD = "PASSWD";
@@ -83,30 +80,26 @@ public class MessageContext {
     private boolean newThreadRequired = false;
     private XMLStreamReader xpp;
     private OMElement soapOperationElement;
-    
+
     /**
-     * 
-     * @param Engine registry
-     * @param initialProperties of the message context, should be null if no properties  
-     * @param sessionContext of the message context, should be null if no sessionContext
+     * @param Engine            registry
+     * @param initialProperties of the message context, should be null if no properties
+     * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
-
-    public MessageContext(EngineRegistry er, Map initialProperties,SessionContext sessionContext) throws AxisFault {
+    public MessageContext(EngineRegistry er, Map initialProperties, SessionContext sessionContext) throws AxisFault {
         this.globalContext = new GlobalContext(er);
-        if(sessionContext == null){
+        if (sessionContext == null) {
             this.sessionContext = new SimpleSessionContext();
-        }else{
+        } else {
             this.sessionContext = sessionContext;
         }
-        
         if (initialProperties == null) {
             initialProperties = new HashMap();
         }
         properties = initialProperties;
         chain = new ExecutionChain();
     }
-
 
     /**
      * @return
@@ -149,7 +142,6 @@ public class MessageContext {
     public String getMessageID() {
         return messageID;
     }
-
 
     /**
      * @return
@@ -242,7 +234,6 @@ public class MessageContext {
         messageID = string;
     }
 
-
     /**
      * @param b
      */
@@ -286,7 +277,6 @@ public class MessageContext {
         serverSide = b;
     }
 
-
     /**
      * @param referance
      */
@@ -300,7 +290,6 @@ public class MessageContext {
     public AxisService getService() {
         return service;
     }
-
 
     /**
      * @return
@@ -337,8 +326,6 @@ public class MessageContext {
         this.service = service;
     }
 
-
-
     /**
      * @return
      */
@@ -350,11 +337,10 @@ public class MessageContext {
      * @param i
      */
     public void setMessageStyle(String i) {
-        if(i != null){
+        if (i != null) {
             messageStyle = i;
         }
     }
-
 
     public ExecutionChain getExecutionChain() {
         return this.chain;
@@ -366,7 +352,6 @@ public class MessageContext {
     public void setExecutionChain(ExecutionChain chain) {
         this.chain = chain;
     }
-
 
     /**
      * @return

@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.addressing;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
 public class AnyContentType {
-
     private String anyContentTypeName;
     private HashMap valueHolder;
 

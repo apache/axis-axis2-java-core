@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport.http;
 
 import org.apache.axis.addressing.EndpointReference;
@@ -37,23 +36,19 @@ public class HTTPTransportSender extends AbstractTransportSender {
     protected Writer out;
     private Socket socket;
 
-
     protected Writer obtainOutputStream(MessageContext msgContext)
             throws AxisFault {
-
         if (!msgContext.isServerSide()) {
             EndpointReference toURL = msgContext.getTo();
-
             if (toURL != null) {
                 try {
                     URL url = new URL(toURL.getAddress());
                     SocketAddress add = new InetSocketAddress(url.getHost(), url.getPort());
                     socket = new Socket();
                     socket.connect(add);
-                    
                     outS = socket.getOutputStream();
                     out = new BufferedWriter(new OutputStreamWriter(outS));
-                    writeTransportHeaders(out,url);
+                    writeTransportHeaders(out, url);
                     msgContext.setProperty(MessageContext.TRANSPORT_READER, new BufferedReader(new InputStreamReader(socket.getInputStream())));
                     msgContext.setProperty(HTTPConstants.SOCKET, socket);
                 } catch (MalformedURLException e) {
@@ -68,9 +63,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
         } else {
             out =
-                    (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+            (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
         }
-
         if (out == null) {
             throw new AxisFault("can not find the suffient information to find endpoint");
         } else {
@@ -91,16 +85,16 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     protected void startSending(MessageContext msgContext) throws AxisFault {
     }
-    
-    protected void writeTransportHeaders(Writer out,URL url) throws IOException{
+
+    protected void writeTransportHeaders(Writer out, URL url) throws IOException {
         StringBuffer buf = new StringBuffer();
-            buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
-            buf.append("Content-Type: text/xml; charset=utf-8\n");
-            buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
-            buf.append("Host: ").append(url.getHost()).append("\n");
-            buf.append("Cache-Control: no-cache\n");
-            buf.append("Pragma: no-cache\n");
-            buf.append("SOAPAction: \"\"\n\n");
-            out.write(buf.toString().toCharArray());
+        buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
+        buf.append("Content-Type: text/xml; charset=utf-8\n");
+        buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
+        buf.append("Host: ").append(url.getHost()).append("\n");
+        buf.append("Cache-Control: no-cache\n");
+        buf.append("Pragma: no-cache\n");
+        buf.append("SOAPAction: \"\"\n\n");
+        out.write(buf.toString().toCharArray());
     }
 }

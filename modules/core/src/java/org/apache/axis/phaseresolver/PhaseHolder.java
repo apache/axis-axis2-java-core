@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.phaseresolver;
-
 
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
@@ -34,7 +32,6 @@ import java.util.ArrayList;
  * This class hold all the phases found in the service.xml and server.xml
  */
 public class PhaseHolder {
-
     private Log log = LogFactory.getLog(getClass());
     private ArrayList phaseholder = new ArrayList();
 
@@ -43,7 +40,6 @@ public class PhaseHolder {
      */
     private final EngineRegistry registry;// = new  ServerMetaData();
     private final AxisService service;
-
 
     public PhaseHolder(EngineRegistry registry, AxisService serviceIN) {
         this.registry = registry;
@@ -74,7 +70,6 @@ public class PhaseHolder {
 
     public void addHandler(HandlerMetadata handler) throws PhaseException {
         String phaseName = handler.getRules().getPhaseName();
-
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
@@ -114,14 +109,12 @@ public class PhaseHolder {
         phase = getOrderPhases(phase);
         // remove all items inorder to rearrange them
         phaseholder.clear();
-
         for (int i = 0; i < phase.length; i++) {
             PhaseMetadata phaseMetaData = phase[i];
             phaseholder.add(phaseMetaData);
 
         }
     }
-
 
     private PhaseMetadata[] getOrderPhases(PhaseMetadata[] phasesmetadats) {
         PhaseMetadata[] temppahse = new PhaseMetadata[phasesmetadats.length];
@@ -142,7 +135,6 @@ public class PhaseHolder {
         return temppahse;
     }
 
-
     /**
      * cahinType
      * 1 : inFlowExcChain
@@ -158,7 +150,6 @@ public class PhaseHolder {
             OrderdPhases();
             //     Vector tempHander = new Vector();
             HandlerMetadata[] handlers;
-
             switch (chainType) {
                 case 1:
                     {
@@ -306,12 +297,11 @@ public class PhaseHolder {
         }
     }
 
-    public void buildGoblalChain(AxisGlobal axisGlobal, int chainType) throws PhaseException {
+    public void buildGlobalChain(AxisGlobal axisGlobal, int chainType) throws PhaseException {
         try {
             OrderdPhases();
             //     Vector tempHander = new Vector();
             HandlerMetadata[] handlers;
-
             switch (chainType) {
                 case 1:
                     {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport;
 
 import org.apache.axis.addressing.EndpointReference;
@@ -51,7 +50,7 @@ public abstract class AbstractTransportSender
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {
                 log.info("Obtain the output stream to send the fault flow to "
-                        + msgContext.getFaultTo().getAddress());
+                                + msgContext.getFaultTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getFaultTo());
             } else {
                 log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
@@ -60,11 +59,11 @@ public abstract class AbstractTransportSender
         } else {
             if (msgContext.getTo() != null) {
                 log.info("Obtain the output stream to send to To flow to "
-                        + msgContext.getTo().getAddress());
+                                + msgContext.getTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else if (msgContext.getReplyTo() != null) {
                 log.info("Obtain the output stream to send to ReplyTo flow to "
-                        + msgContext.getReplyTo().getAddress());
+                                + msgContext.getReplyTo().getAddress());
                 out = obtainOutputStream(msgContext, msgContext.getTo());
             } else {
                 log.info("Obtain the output stream to send the fault flow to ANONYMOUS");
@@ -78,7 +77,7 @@ public abstract class AbstractTransportSender
             try {
                 // org.TimeRecorder.BEFORE_SERIALIZE = System.currentTimeMillis();
                 outputWriter =
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter, false);
                 outputWriter.flush();
                 if (outS != null) {
@@ -91,7 +90,6 @@ public abstract class AbstractTransportSender
                 throw new AxisFault("Stream error", e);
             }
         }
-
         finalizeSending(msgContext);
         log.info("Send the Response");
     }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.context;
 
 import org.apache.axis.engine.EngineRegistry;
@@ -27,7 +26,6 @@ import java.util.HashMap;
 public class GlobalContext {
     private EngineRegistry registry;
     private final HashMap map = new HashMap(10);
-
 
     public GlobalContext(EngineRegistry er) {
         this.registry = er;

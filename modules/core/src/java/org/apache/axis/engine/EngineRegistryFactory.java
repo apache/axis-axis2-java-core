@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
-
-
 public interface EngineRegistryFactory {
-    public  EngineRegistry createEngineRegistry(String file) throws AxisFault;
+    public EngineRegistry createEngineRegistry(String file) throws AxisFault;
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport.http;
 
 /**
@@ -25,14 +24,12 @@ public class HTTPConstants {
      * (Maybe this should be more specific, like "http_servlet",
      * whaddya think? - todo by Jacek)
      */
-
     public static final String PROTOCOL_VERSION = "PROTOCOL";
     public static final String REQUEST_URI = "REQUEST_URI";
     public static final String RESPONSE_CODE = "RESPONSE_CODE";
     public static final String RESPONSE_WORD = "RESPONSE_WORD";
     public static final String RESPONSE_ACK_CODE_VAL = "202";
     public static final String SOCKET = "SOCKET";
-
 
     public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
     public static final String HEADER_PROTOCOL_11 = "HTTP/1.1";
@@ -58,7 +55,6 @@ public class HTTPConstants {
     public static final String HEADER_PRAGMA = "Pragma";
     public static final String HEADER_LOCATION = "Location";
 
-
     public static final String REQUEST_HEADERS = "HTTP-Request-Headers";
     public static final String RESPONSE_HEADERS = "HTTP-Response-Headers";
 
@@ -75,7 +71,6 @@ public class HTTPConstants {
     public static final String HEADER_ACCEPT_APPL_SOAP = "application/soap+xml";
     public static final String HEADER_ACCEPT_MULTIPART_RELATED = "multipart/related";
     public static final String HEADER_ACCEPT_APPLICATION_DIME = "application/dime";
-
 
     /**
      * Cookie headers
@@ -111,7 +106,6 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETLOCATION = "transport.http.servletLocation";
     public static String MC_HTTP_SERVLETPATHINFO = "transport.http.servletPathInfo";
 
-
     /**
      * HTTP header field values
      */
@@ -120,7 +114,6 @@ public class HTTPConstants {
     /**
      * AXIS servlet plugin parameter names.
      */
-
     public static final String PLUGIN_NAME = "transport.http.plugin.pluginName";
     public static final String PLUGIN_SERVICE_NAME = "transport.http.plugin.serviceName";
     public static final String PLUGIN_IS_DEVELOPMENT = "transport.http.plugin.isDevelopment";
@@ -129,7 +122,6 @@ public class HTTPConstants {
     public static final String PLUGIN_WRITER = "transport.http.plugin.writer";
     public static final String PLUGIN_LOG = "transport.http.plugin.log";
     public static final String PLUGIN_EXCEPTION_LOG = "transport.http.plugin.exceptionLog";
-
 
     public static final char OK[] = ("200 OK").toCharArray();
     public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();

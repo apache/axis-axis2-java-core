@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.addressing;
 
 import javax.xml.namespace.QName;
 
 public class EndpointReference {
-
     /**
      * this can be one of the followings
      * AddressingConstants.WSA_FROM

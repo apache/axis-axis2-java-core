@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.clientapi;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportReciverLocator;
+import org.apache.axis.transport.TransportReceiverLocator;
 
 public class Invoker implements Runnable {
-
     private AxisEngine engine;
     private EngineRegistry registry;
 
@@ -46,27 +44,22 @@ public class Invoker implements Runnable {
         final Correlator correlator = Correlator.getInstance();
         final String messageID = Long.toString(System.currentTimeMillis());
         try {
-
             reqMsgContext.setMessageID(messageID);
-
             engine.send(reqMsgContext);
             correlator.addCorrelationInfo(reqMsgContext.getMessageID(),
                     callback);
-
-            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties(),reqMsgContext.getSessionContext());
-
+            MessageContext resMsgContext = new MessageContext(registry, reqMsgContext.getProperties(), reqMsgContext.getSessionContext());
             resMsgContext.setServerSide(false);
-//            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-//            Constants.TRANSPORT_HTTP);
+            //            resMsgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+            //            Constants.TRANSPORT_HTTP);
             TransportReceiver receiver =
-                    TransportReciverLocator.locate(resMsgContext);
+                    TransportReceiverLocator.locate(resMsgContext);
             receiver.invoke(resMsgContext);
-
             AsyncResult result = new AsyncResult();
             result.setResult(resMsgContext.getEnvelope());
             resMsgContext.setMessageID(messageID);
             callback =
-                    correlator.getCorrelationInfo(resMsgContext.getMessageID());
+            correlator.getCorrelationInfo(resMsgContext.getMessageID());
             callback.setComplete(true);
             callback.setResult(result);
             callback.onComplete(result);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.description;
 
 import org.apache.axis.engine.Handler;
@@ -29,7 +28,6 @@ public class HandlerMetadata implements ParameterInclude {
     private PhaseRule rules;
     private Handler handler;
     private String className;
-
 
     public HandlerMetadata() {
         this.parameterInclude = new ParameterIncludeImpl();

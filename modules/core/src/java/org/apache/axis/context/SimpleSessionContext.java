@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.context;
-
 
 import java.util.HashMap;
 
 public class SimpleSessionContext implements SessionContext {
     private HashMap map = new HashMap();
-    
 
     public Object get(Object key) {
         return map.get(key);

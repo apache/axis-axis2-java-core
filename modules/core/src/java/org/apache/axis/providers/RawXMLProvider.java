@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis.providers;
-
-import java.lang.reflect.Method;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
@@ -32,10 +27,12 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
+
 /**
  * This is a Simple java Provider.
  */
-
 public class RawXMLProvider extends AbstractProvider implements Provider {
     protected Log log = LogFactory.getLog(getClass());
     private String scope;
@@ -48,7 +45,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     }
 
     protected Object makeNewServiceObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
             AxisService service = msgContext.getService();
             classLoader = service.getClassLoader();
@@ -60,7 +57,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
     }
 
     public Object getTheImplementationObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         AxisService service = msgContext.getService();
         QName serviceName = service.getName();
         if (Constants.APPLICATION_SCOPE.equals(scope)) {
@@ -95,7 +92,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
             //find the WebService method  
             Class ImplClass = obj.getClass();
             String methodName =
-                msgContext.getOperation().getName().getLocalPart();
+                    msgContext.getOperation().getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
@@ -105,30 +102,28 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
             }
             Class[] parameters = method.getParameterTypes();
             if (parameters != null
-                && parameters.length == 1
-                && OMElement.class.getName().equals(parameters[0].getName())) {
+                    && parameters.length == 1
+                    && OMElement.class.getName().equals(parameters[0].getName())) {
                 OMElement methodElement =
-                    msgContext.getEnvelope().getBody().getFirstElement();
+                        msgContext.getEnvelope().getBody().getFirstElement();
                 OMElement parmeter = methodElement.getFirstElement();
-
-                Object[] parms = new Object[] { parmeter };
+                Object[] parms = new Object[]{parmeter};
                 //invoke the WebService 
                 OMElement result = (OMElement) method.invoke(obj, parms);
                 MessageContext msgContext1 =
-                    new MessageContext(
+                new MessageContext(
                         msgContext.getGlobalContext().getRegistry(),
                         msgContext.getProperties(),
                         msgContext.getSessionContext());
-
                 SOAPEnvelope envelope =
-                    OMFactory.newInstance().getDefaultEnvelope();
+                        OMFactory.newInstance().getDefaultEnvelope();
                 envelope.getBody().setFirstChild(result);
                 msgContext1.setEnvelope(envelope);
                 return msgContext1;
             } else {
                 throw new AxisFault(
-                    "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                                + "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
 
         } catch (Exception e) {

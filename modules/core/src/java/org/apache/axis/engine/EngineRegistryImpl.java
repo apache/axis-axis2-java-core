@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
 import org.apache.axis.description.AxisGlobal;
@@ -25,14 +24,12 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class EngineRegistryImpl implements EngineRegistry {
     private final HashMap modules = new HashMap();
     private final HashMap services = new HashMap();
     private final HashMap transports = new HashMap();
     private final AxisGlobal global;
     private ArrayList phases;
-
 
     public EngineRegistryImpl(AxisGlobal global) {
         this.global = global;

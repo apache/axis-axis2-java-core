@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport;
 
 import org.apache.axis.Constants;
@@ -21,14 +20,12 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPTransportSender;
 
-
 public class TransportSenderLocator {
- 
     public static TransportSender locate(MessageContext msgContext) throws AxisFault {
         String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
         if (Constants.TRANSPORT_HTTP.equals(type)) {
             return new HTTPTransportSender();
         }
-        throw new AxisFault("No tranport found");
+        throw new AxisFault("No transport found");
     }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
@@ -41,14 +40,15 @@ public class AxisEngine {
 
     /**
      * This methods represents the outflow of the Axis, this could be either at the server side or the client side.
-     * Here the <code>ExecutionChain</code> is created using the Phases. The Handlers at the each Phases is ordered in 
+     * Here the <code>ExecutionChain</code> is created using the Phases. The Handlers at the each Phases is ordered in
      * deployment time by the deployment module
+     *
+     * @param context
+     * @throws AxisFault
      * @see MessageContext
      * @see ExecutionChain
      * @see Phase
      * @see Handler
-     * @param context
-     * @throws AxisFault
      */
     public void send(MessageContext context) throws AxisFault {
         executeOutFlow(context, EngineRegistry.OUTFLOW);
@@ -57,16 +57,16 @@ public class AxisEngine {
 
     /**
      * This methods represents the inflow of the Axis, this could be either at the server side or the client side.
-     * Here the <code>ExecutionChain</code> is created using the Phases. The Handlers at the each Phases is ordered in 
+     * Here the <code>ExecutionChain</code> is created using the Phases. The Handlers at the each Phases is ordered in
      * deployment time by the deployment module
+     *
+     * @param context
+     * @throws AxisFault
      * @see MessageContext
      * @see ExecutionChain
      * @see Phase
      * @see Handler
-     * @param context
-     * @throws AxisFault
      */
-
     public void receive(MessageContext context) throws AxisFault {
         try {
             //          org.TimeRecorder.START = System.currentTimeMillis();
@@ -83,7 +83,7 @@ public class AxisEngine {
             }
             //Add the phases that are are at Global scope
             AxisGlobal global =
-                context.getGlobalContext().getRegistry().getGlobal();
+                    context.getGlobalContext().getRegistry().getGlobal();
             chain.addPhases(global.getPhases(EngineRegistry.INFLOW));
 
             //create a Dispatch Phase and add it to the Execution Chain
@@ -103,15 +103,16 @@ public class AxisEngine {
     }
 
     /**
-     * If error occurs at inflow or the out flow this method will call to handle the error. But if the 
-     * execution reach this method twice, means the sending the error handling failed an in that case the 
-     * this method just log the error and exit</p> 
+     * If error occurs at inflow or the out flow this method will call to handle the error. But if the
+     * execution reach this method twice, means the sending the error handling failed an in that case the
+     * this method just log the error and exit</p>
+     *
      * @param context
      * @param e
      * @throws AxisFault
      */
     private void handleFault(MessageContext context, Throwable e)
-        throws AxisFault {
+            throws AxisFault {
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
@@ -119,7 +120,7 @@ public class AxisEngine {
 
             //create a SOAP envelope with the Fault
             SOAPEnvelope envelope =
-                OMFactory.newInstance().getDefaultEnvelope();
+                    OMFactory.newInstance().getDefaultEnvelope();
             //TODO do we need to set old Headers back?
             envelope.getBody().addFault(new AxisFault(e.getMessage(), e));
             context.setEnvelope(envelope);
@@ -133,21 +134,21 @@ public class AxisEngine {
             log.error("Error in fault flow", e);
         }
     }
-    
+
     /**
-     *  <p>This method shows the execution of sending the SOAP message. That can be either a 
-     * sending the message at the Client side or the sending the response at the Server side or the 
-     * Seding the fault flow at the Server side.</p>  
-     * @param context
-     * @param flow
-     * @throws AxisFault
-     */
+         * <p>This method shows the execution of sending the SOAP message. That can be either a
+         * sending the message at the Client side or the sending the response at the Server side or the
+         * Seding the fault flow at the Server side.</p>
+         *
+         * @param context
+         * @param flow
+         * @throws AxisFault
+         */
     private void executeOutFlow(MessageContext context, int flow)
-        throws AxisFault {
+            throws AxisFault {
         try {
             context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
-
             AxisService service = context.getService();
             if (service != null) {
                 //what are we suppose to do in the client side 
@@ -160,7 +161,7 @@ public class AxisEngine {
             }
             //Add the phases that are are at Global scope
             AxisGlobal global =
-                context.getGlobalContext().getRegistry().getGlobal();
+                    context.getGlobalContext().getRegistry().getGlobal();
             chain.addPhases(global.getPhases(flow));
 
             // Receiving is always a matter of running the transport handlers first

@@ -13,35 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.description;
+package org.apache.axis.transport;
 
-public class FlowIncludeImpl implements FlowInclude {
-    private Flow in;
-    private Flow out;
-    private Flow fault;
+import org.apache.axis.Constants;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.http.HTTPTransportReceiver;
 
-    public Flow getFaultFlow() {
-        return fault;
+public class TransportReceiverLocator {
+    public static TransportReceiver locate(MessageContext msgContext)
+            throws AxisFault {
+        String type = (String) msgContext.getProperty(MessageContext.TRANSPORT_TYPE);
+        if (Constants.TRANSPORT_HTTP.equals(type)) {
+            return new HTTPTransportReceiver();
+        } else {
+            throw new AxisFault("No transport found");
+        }
     }
-
-    public Flow getInFlow() {
-        return in;
-    }
-
-    public Flow getOutFlow() {
-        return out;
-    }
-
-    public void setFaultFlow(Flow flow) {
-        this.fault = flow;
-    }
-
-    public void setInFlow(Flow flow) {
-        this.in = flow;
-    }
-
-    public void setOutFlow(Flow flow) {
-        this.out = flow;
-    }
-
 }

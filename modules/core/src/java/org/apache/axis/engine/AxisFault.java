@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
 import java.lang.reflect.InvocationTargetException;
-
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -30,7 +28,6 @@ import java.lang.reflect.InvocationTargetException;
  * <li>Fault details; an xml tree of fault specific stuff
  * </ol>
  */
-
 public class AxisFault extends java.rmi.RemoteException {
     /**
      * 
@@ -73,11 +70,9 @@ public class AxisFault extends java.rmi.RemoteException {
                 e = (Exception) t;
             }
         }
-
         if (e instanceof AxisFault) {
             return (AxisFault) e;
         }
-
         return new AxisFault(e.getMessage(), e);
     }
 

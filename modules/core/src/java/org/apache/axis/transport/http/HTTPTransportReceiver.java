@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport.http;
 
 import org.apache.axis.addressing.AddressingConstants;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HTTPTransportReceiver extends TransportReceiver {
-
     private static final int END = 1;
     private static final int END_OF_LINE = 2;
     private static final int BEFORE_SEPERATOR = 3;
@@ -57,30 +55,29 @@ public class HTTPTransportReceiver extends TransportReceiver {
                 msgContext.setProperty(MessageContext.SOAP_ACTION,
                         map.get(HTTPConstants.HEADER_SOAP_ACTION));
                 msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                        (String) map.get(HTTPConstants.REQUEST_URI)));
+                                (String) map.get(HTTPConstants.REQUEST_URI)));
                 //TODO see is it a Service request e.g. WSDL, list ....
                 //              TODO take care of the other HTTPHeaders
 
             } else {
                 if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(map.get(HTTPConstants.RESPONSE_CODE))) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_SUCCEED,HTTPConstants.RESPONSE_ACK_CODE_VAL);
+                    msgContext.setProperty(MessageContext.TRANSPORT_SUCCEED, HTTPConstants.RESPONSE_ACK_CODE_VAL);
                     return;
                 }
                 //TODO take care of other HTTP Headers
             }
             AxisEngine axisEngine =
-                    new AxisEngine(msgContext.getGlobalContext().getRegistry());
+            new AxisEngine(msgContext.getGlobalContext().getRegistry());
             try {
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder =
-                        new StAXSOAPModelBuilder(OMFactory.newInstance(),
-                                xmlreader);
+                new StAXSOAPModelBuilder(OMFactory.newInstance(),
+                        xmlreader);
                 msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }
-
             axisEngine.receive(msgContext);
         } else {
             throw new AxisFault("Input reader not found");
@@ -100,7 +97,6 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * Pragma: no-cache
      * SOAPAction: ""
      * Content-Length: 73507
-     * <p/>
      * HTTP/1.1 200 OK
      * Content-Type: text/xml;charset=utf-8
      * Date: Sat, 12 Feb 2005 10:39:39 GMT
@@ -110,21 +106,15 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * @param reader
      * @return
      */
-
     public HashMap parseTheHeaders(Reader reader, boolean serverSide)
             throws AxisFault {
         HashMap map = new HashMap();
         try {
-
             StringBuffer str = new StringBuffer();
-
             int state = BEFORE_SEPERATOR;
-
             String key = null;
             String value = null;
-
             int start = 0;
-
             length = readLine(reader, buf);
             if (serverSide) {
                 if (buf[0] == 'P'
@@ -148,10 +138,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
                 value = readFirstLineArg('\n');
                 map.put(HTTPConstants.RESPONSE_WORD, value);
             }
-
             state = BEFORE_SEPERATOR;
-
-
             while (!done) {
                 length = readLine(reader, buf);
                 if (length <= 0) {
@@ -164,7 +151,6 @@ public class HTTPTransportReceiver extends TransportReceiver {
                                 key = str.toString();
                                 str = new StringBuffer();
                                 state = AFTER_SEPERATOR;
-
                                 if (buf[i + 1] == ' ') {
                                     i++; //ignore next space
                                 }
@@ -193,12 +179,11 @@ public class HTTPTransportReceiver extends TransportReceiver {
                             //                                break;
                             //                            case END:
                             //                            break;    
-                        default :
+                            default :
                             throw new AxisFault("Error Occured Unknown state " + state);
 
                     }
                 }
-
                 state = BEFORE_SEPERATOR;
 
             }
@@ -314,7 +299,6 @@ public class HTTPTransportReceiver extends TransportReceiver {
     private String readFirstLineArg(char terminal) throws AxisFault {
         StringBuffer str = new StringBuffer();
         try {
-
             while (buf[index] != terminal && index < length) {
                 str.append(buf[index]);
                 index++;
@@ -344,7 +328,6 @@ public class HTTPTransportReceiver extends TransportReceiver {
         } else {
             c = lastRead;
         }
-
         int off = 0;
         while (c != -1) {
             if (c != '\n' && c != '\r') {

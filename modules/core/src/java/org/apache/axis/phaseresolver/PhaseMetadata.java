@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.phaseresolver;
-
 
 import org.apache.axis.description.HandlerMetadata;
 
 import java.util.ArrayList;
 
-
 public class PhaseMetadata {
-
-
     private static final int BOTH_BEFORE_AFTER = 0;
     private static final int BEORE = 1;
     private static final int AFTER = 2;
     private static final int ANYWHERE = 3;
-
 
     private String name;
 
@@ -150,8 +144,6 @@ public class PhaseMetadata {
          * order the handlers
          */
         orderHandlers();
-
-
         HandlerMetadata handler [];
         if (isonehanlder) {
             size = 1;
@@ -170,13 +162,11 @@ public class PhaseMetadata {
         }
         size = phaseHandlers.size();
         handler = new HandlerMetadata[size];
-
         for (int i = 0; i < phaseHandlers.size(); i++) {
             handler[i] = (HandlerMetadata) phaseHandlers.get(i);
         }
         return handler;
     }
-
 
     private void orderHandlers() throws PhaseException {
         validatebefore();
@@ -206,7 +196,6 @@ public class PhaseMetadata {
             return;
     }
 
-
     /**
      * This method is to check user try to add or plase a hander after the phaseLast
      * that operation dose not allowd  so then this throw a exception
@@ -222,8 +211,7 @@ public class PhaseMetadata {
                     throw new PhaseException("Try to plase a Hander " + handler.getName() + " after phaseLast " + phaseLastName);
                 }
             }
-        } else
-            return;
+        }
     }
 
     private void arrangeHanders() throws PhaseException {
@@ -236,7 +224,6 @@ public class PhaseMetadata {
                 handler = (HandlerMetadata) phaseHandlers.get(0);
             } else
                 handler = (HandlerMetadata) phaseHandlers.get(count);
-
             status = false;
             if (count > phaseHandlers.size()) {
                 throw new PhaseException("Incorrect hander order for " + handler.getName());
@@ -360,7 +347,6 @@ public class PhaseMetadata {
                 return true;
             }
         }
-
         for (int i = 0; i < orderHanders.size(); i++) {
             HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
             if (handler.getRules().getAfter().equals(temphandler.getName())) {

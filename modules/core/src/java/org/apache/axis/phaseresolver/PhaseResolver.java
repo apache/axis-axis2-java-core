@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.phaseresolver;
 
 import org.apache.axis.description.AxisGlobal;
@@ -33,11 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PhaseResolver {
-
     private final EngineRegistry engineRegistry;
     private AxisService axisService;
     private PhaseHolder phaseHolder;
-
 
     /**
      * default constructor , to obuild chains for AxisGlobal
@@ -143,7 +140,6 @@ public class PhaseResolver {
                 }
             }
         }
-
         switch (flowtype) {
             case 1:
                 {
@@ -172,7 +168,6 @@ public class PhaseResolver {
             }
         }
         phaseHolder = new PhaseHolder(engineRegistry, axisService);
-
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetadata handlerMetaData = (HandlerMetadata) allHandlers.get(i);
             phaseHolder.addHandler(handlerMetaData);
@@ -272,7 +267,7 @@ public class PhaseResolver {
                     }
                 }
             }
-            phaseHolder.buildGoblalChain(global, type);
+            phaseHolder.buildGlobalChain(global, type);
         }
     }
 

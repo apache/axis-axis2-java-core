@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
@@ -40,7 +39,6 @@ public class Phase extends AbstractHandler implements Handler {
     private String phaseName;
     private ArrayList handlers;
     private Log log = LogFactory.getLog(getClass());
-
 
     public Phase(String phaseName) {
         handlers = new ArrayList();
@@ -69,7 +67,6 @@ public class Phase extends AbstractHandler implements Handler {
      * @param msgctx
      * @throws AxisFault
      */
-
     public void invoke(MessageContext msgctx) throws AxisFault {
         Stack executionStack = new Stack();
         try {

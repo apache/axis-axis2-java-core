@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis.handlers;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
@@ -28,11 +25,11 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.wsdl.WSDLService;
 
+import javax.xml.namespace.QName;
 
 public class OpNameFinder extends AbstractHandler {
-
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "OpNameFinder");
+            new QName("http://axis.ws.apache.org", "OpNameFinder");
 
     public OpNameFinder() {
         init(new HandlerMetadata(NAME));
@@ -43,11 +40,10 @@ public class OpNameFinder extends AbstractHandler {
         if (style.equals(WSDLService.STYLE_RPC)) {
             SOAPEnvelope envelope = msgContext.getEnvelope();
             SOAPBody body = envelope.getBody();
-
             OMElement bodyChild = body.getFirstElement();
             msgContext.setSoapOperationElement(bodyChild);
             QName opName =
-                new QName(
+            new QName(
                     bodyChild.getNamespaceName(),
                     bodyChild.getLocalName());
             AxisService service = msgContext.getService();

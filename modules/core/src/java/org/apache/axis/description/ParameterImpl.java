@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.description;
-
 
 public class ParameterImpl implements Parameter {
     private String name;
@@ -46,7 +44,6 @@ public class ParameterImpl implements Parameter {
     public void setLocked(boolean value) {
         locked = value;
     }
-
 
     public String getName() {
         return name;

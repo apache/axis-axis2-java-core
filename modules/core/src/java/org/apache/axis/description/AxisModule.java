@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.description;
-
 
 import javax.xml.namespace.QName;
 
@@ -29,9 +27,7 @@ import javax.xml.namespace.QName;
  * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
 public class AxisModule implements FlowInclude, ParameterInclude {
-
     private QName name;
-
 
     private final FlowInclude flowInclude = new FlowIncludeImpl();
     private final ParameterInclude parameters = new ParameterIncludeImpl();

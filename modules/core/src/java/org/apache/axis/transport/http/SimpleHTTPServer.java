@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.transport.http;
 
 import org.apache.axis.Constants;
@@ -37,7 +36,6 @@ import java.net.Socket;
  * SOAP requests via Apache's xml-axis.  This is not intended for production
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
- * <p/>
  * Note this classes uses static objects to provide a thread pool, so you should
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
@@ -61,9 +59,8 @@ public class SimpleHTTPServer implements Runnable {
     public SimpleHTTPServer(String dir) throws AxisFault {
         try {
             Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
+            EngineRegistryFactory erfac = (EngineRegistryFactory) erClass.newInstance();
             this.engineReg = erfac.createEngineRegistry(dir);
-
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);
@@ -102,13 +99,12 @@ public class SimpleHTTPServer implements Runnable {
                             throw new AxisFault("Engine Must be null");
                         }
                         Writer out =
-                                new OutputStreamWriter(socket.getOutputStream());
+                        new OutputStreamWriter(socket.getOutputStream());
                         Reader in =
-                                new InputStreamReader(socket.getInputStream());
+                        new InputStreamReader(socket.getInputStream());
                         MessageContext msgContext =
-                                new MessageContext(this.engineReg, null,null);
+                        new MessageContext(this.engineReg, null, null);
                         msgContext.setServerSide(true);
-
                         out.write(HTTPConstants.HTTP);
                         out.write(HTTPConstants.OK);
                         out.write("\n\n".toCharArray());
@@ -122,7 +118,7 @@ public class SimpleHTTPServer implements Runnable {
                         msgContext.setProperty(MessageContext.TRANSPORT_READER,
                                 in);
                         HTTPTransportReceiver reciver =
-                                new HTTPTransportReceiver();
+                        new HTTPTransportReceiver();
                         reciver.invoke(msgContext);
 
                     }
@@ -169,7 +165,6 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Stop this server. Can be called safely if the system is already stopped,
      * or if it was never started.
-     * <p/>
      * This will interrupt any pending accept().
      */
     public void stop() {
@@ -183,7 +178,6 @@ public class SimpleHTTPServer implements Runnable {
          * the socket is closing.
          */
         stopped = true;
-
         try {
             if (serverSocket != null) {
                 serverSocket.close();
@@ -214,13 +208,11 @@ public class SimpleHTTPServer implements Runnable {
             System.out.println("SimpeHttpReciver repositoryLocation port");
         }
         SimpleHTTPServer reciver = new SimpleHTTPServer(args[0]);
-
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
         reciver.setServerSocket(serverSoc);
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);
-
         try {
             thread.start();
             System.in.read();

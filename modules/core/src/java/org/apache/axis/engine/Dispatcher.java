@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
 
 import org.apache.axis.Constants;
@@ -25,7 +24,6 @@ import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.handlers.OpNameFinder;
 import org.apache.wsdl.WSDLService;
-
 
 import javax.xml.namespace.QName;
 
@@ -41,49 +39,44 @@ public class Dispatcher extends AbstractHandler implements Handler {
             EndpointReference toEPR = msgctx.getTo();
             String filePart = toEPR.getAddress();
             String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
-
             int index = filePart.lastIndexOf('/');
             String serviceAndMethodStr = null;
             if (index > 0) {
                 serviceAndMethodStr = filePart.substring(index + 1);
 
             }
-
-            if(serviceAndMethodStr == null){
+            if (serviceAndMethodStr == null) {
                 serviceAndMethodStr = soapAction;
             }
-            
             index = serviceAndMethodStr.lastIndexOf(Constants.METHOD_NAME_ESCAPE_CHARACTOR);
-
             QName serviceName = null;
             QName operationName = null;
             if (index > 0) {
-                serviceName = new QName(serviceAndMethodStr.substring(0,index - 1));
+                serviceName = new QName(serviceAndMethodStr.substring(0, index - 1));
                 operationName = new QName(serviceAndMethodStr.substring(index + 1));
-            }else{
+            } else {
                 serviceName = new QName(serviceAndMethodStr);
             }
-                
             if (serviceName != null) {
                 EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
                 AxisService service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
                     msgctx.setMessageStyle(service.getStyle());
-                    if(!WSDLService.STYLE_RPC.equals(msgctx.getMessageStyle())){
-                        if(operationName != null){
+                    if (!WSDLService.STYLE_RPC.equals(msgctx.getMessageStyle())) {
+                        if (operationName != null) {
                             AxisOperation op = service.getOperation(operationName);
-                            if(op != null){
+                            if (op != null) {
                                 msgctx.setOperation(op);
-                            }else{
+                            } else {
                                 throw new AxisFault("Operation not found " + operationName);
                             }
-                        }else{
+                        } else {
                             throw new AxisFault("Operation Name not specifed");
                         }
                     }
-                    
-                    
+
+
                     //let add the Handlers 
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));

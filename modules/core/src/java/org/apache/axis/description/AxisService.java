@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.description;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class AxisService extends WSDLServiceImpl implements WSDLService, ParameterInclude, FlowInclude, PhasesInclude, DescriptionConstants {
     /**
-     * TODO this should be in the WSDLInterface, yet we want it to have in the the 
+     * TODO this should be in the WSDLInterface, yet we want it to have in the the
      * Services, so we put this here for M1 until we foud better way to do that
      */
     protected final HashMap operationsMap = new HashMap();

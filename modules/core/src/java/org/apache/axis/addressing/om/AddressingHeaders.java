@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.addressing.om;
 
 import org.apache.axis.addressing.EndpointReference;
@@ -21,7 +20,6 @@ import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.om.SOAPHeader;
 
 public class AddressingHeaders {
-
     private EndpointReference wsaTo;
     private EndpointReference wsaFrom;
     private EndpointReference wsaReply;

@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.clientapi;
 
 public abstract class Callback {
     private boolean complete = false;
     private AsyncResult result;
+
     public abstract void onComplete(AsyncResult result);
+
     public abstract void reportError(Exception e);
-    public boolean isComplete(){
+
+    public boolean isComplete() {
         return complete;
     }
-    public void setComplete(boolean complete){
+
+    public void setComplete(boolean complete) {
         this.complete = complete;
     }
 

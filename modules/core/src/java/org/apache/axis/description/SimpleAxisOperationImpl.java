@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.description;
 
 import org.apache.wsdl.MessageReference;
@@ -43,7 +42,6 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setName(name);
         parameters = new ParameterIncludeImpl();
     }
-
 
     /**
      * @param param
@@ -198,7 +196,6 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     public void setInputMessage(MessageReference inputMessage) {
         wsdlOperation.setInputMessage(inputMessage);
     }
-
 
     /**
      * @param name

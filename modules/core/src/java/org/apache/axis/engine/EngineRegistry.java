@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.engine;
-
 
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
@@ -27,12 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The palce where all the Globel states of Axis is kept.
+ * The palce where all the Global states of Axis is kept.
  * All the Global states kept in the <code>EngineRegistry</code> and all the
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
  */
-
 public interface EngineRegistry {
     public static final int INFLOW = 10003;
     public static final int OUTFLOW = 10004;
@@ -65,8 +62,4 @@ public interface EngineRegistry {
     public ArrayList getPhases();
 
     public HashMap getServices();
-
-//    public ArrayList getTransPorts() ;
-//    public void setTransPorts(ArrayList transPorts) ;
-
 }
