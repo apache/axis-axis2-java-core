@@ -128,6 +128,7 @@ public class AxisEngine {
             //startet rolling
             chain.invoke(context);
         } catch (AxisFault error) {
+        	//error.printStackTrace();
             handleFault(context, error);
         }
     }

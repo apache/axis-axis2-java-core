@@ -207,7 +207,10 @@ public class OMNodeImpl implements OMNode {
 
 	public void free(){
 		OMFactory.newInstance().free(this);
-		nextSibling.free();
+		if(nextSibling != null){
+			nextSibling.free();
+		}
+		
 	}
 
 
