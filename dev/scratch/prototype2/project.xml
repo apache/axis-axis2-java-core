@@ -140,9 +140,6 @@
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
-	    
-       <exclude>**/*BuildERWithDeploymentTest.java</exclude>
-       <exclude>**/*DeploymentotalTest.java</exclude>
       </excludes>
       <includes>
         <include>**/*Test.java</include>
