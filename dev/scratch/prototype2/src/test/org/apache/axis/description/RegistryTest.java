@@ -15,21 +15,21 @@
  */
 package org.apache.axis.description;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
-
-import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase{
     private EngineRegistry reg;
@@ -49,7 +49,7 @@ public class RegistryTest extends AbstractTestCase{
         reg.addMdoule(modlue);
         
         QName serviceName = new QName("service");
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
+        AxisService service = new AxisService(serviceName);
         reg.addService(service);       
         
         assertSame(modlue,reg.getModule(moduleName));
@@ -65,7 +65,7 @@ public class RegistryTest extends AbstractTestCase{
     }
 
     public void testService(){
-        AxisService service = new SimpleAxisServiceImpl(new QName("Service1"));
+        AxisService service = new AxisService(new QName("Service1"));
         testParameteInClude(service);
         testFlowIncludeTest(service);
         

@@ -16,19 +16,19 @@
 package org.apache.axis.engine;
 
 //todo
+import java.net.ServerSocket;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Parameter;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-
-import javax.xml.namespace.QName;
-import java.net.ServerSocket;
 
 public class SimpleAxisServerTest extends AbstractTestCase{
     private QName serviceName = new QName("","EchoXMLService");
@@ -53,7 +53,7 @@ public class SimpleAxisServerTest extends AbstractTestCase{
 
     protected void setUp() throws Exception {
         engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className",Echo.class.getName());
         service.addParameter(classParam);

@@ -15,17 +15,25 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.description.*;
-import org.apache.axis.impl.description.ParameterImpl;
-import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
-import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
-
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.EchoService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.MockFlow;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.impl.description.AxisService;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 
 public class EngineUtils {
     public static final int TESTING_PORT = 7777;
@@ -72,7 +80,7 @@ public class EngineUtils {
         
 
         
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setInFlow(new MockFlow("service inflow",4));
         service.setOutFlow(new MockFlow("service outflow",5));
         service.setFaultFlow(new MockFlow("service faultflow",1));

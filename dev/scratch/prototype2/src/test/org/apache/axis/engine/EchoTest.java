@@ -16,21 +16,20 @@
 package org.apache.axis.engine;
 
 //todo
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Parameter;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class EchoTest extends AbstractTestCase{
     private Log log = LogFactory.getLog(getClass());
@@ -56,7 +55,7 @@ public class EchoTest extends AbstractTestCase{
         AxisGlobal global = new AxisGlobal();
         engineRegistry = new org.apache.axis.impl.engine.EngineRegistryImpl(global);
         
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className",Echo.class.getName());
         service.addParameter(classParam);

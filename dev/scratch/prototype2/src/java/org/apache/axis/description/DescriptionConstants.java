@@ -34,4 +34,6 @@ public interface DescriptionConstants {
     public static final String OUTFLOW_KEY = "OUTFLOW_KEY";
     public static final String FAULTFLOW_KEY = "FAULTFLOW_KEY";
     public static final String PHASES_KEY = "PHASES_KEY";
+    public static final String SERVICE_CLASS = "SERVICE_CLASS";
+    public static final String SERVICE_CLASS_NAME = "SERVICE_CLASS_NAME";
 }

@@ -11,6 +11,7 @@ import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.impl.description.AxisService;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

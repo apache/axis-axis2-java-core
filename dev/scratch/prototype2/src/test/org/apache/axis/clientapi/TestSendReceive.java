@@ -23,14 +23,13 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReferenceType;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.Echo;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineUtils;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.providers.RawXMLProvider;
@@ -69,7 +68,7 @@ public class TestSendReceive extends AbstractTestCase {
     protected void setUp() throws Exception {
         engineRegistry = EngineUtils.createMockRegistry(serviceName, operationName, transportName);
 
-        AxisService service = new SimpleAxisServiceImpl(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className", Echo.class.getName());
         service.addParameter(classParam);

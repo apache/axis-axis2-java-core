@@ -3,6 +3,7 @@ package org.apache.axis.deployment;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;

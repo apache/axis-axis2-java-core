@@ -17,7 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.handlers.OpNameFinder;
 /**
