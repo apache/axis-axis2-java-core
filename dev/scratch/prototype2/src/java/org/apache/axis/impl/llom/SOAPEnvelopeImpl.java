@@ -32,7 +32,7 @@ import org.apache.axis.om.SOAPHeader;
  * Date: Oct 29, 2004
  * Time: 3:41:59 PM
  */
-public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope {
+public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMConstants {
 
     /**
      *
@@ -40,6 +40,8 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope {
      */
     public SOAPEnvelopeImpl(OMXMLParserWrapper builder){
          super("",null,null,builder);
+        this.localName = SOAPENVELOPE_LOCAL_NAME;
+        
     }
 
     public SOAPEnvelopeImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {

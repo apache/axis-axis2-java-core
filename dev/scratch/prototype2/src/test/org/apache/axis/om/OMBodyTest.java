@@ -22,8 +22,9 @@ package org.apache.axis.om;
 import java.util.Iterator;
 
 import org.apache.axis.impl.llom.OMNamespaceImpl;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 
-public class OMBodyTest extends OMTestCase {
+public class OMBodyTest extends OMTestCase implements OMConstants{
 
     SOAPBody soapBody;
 
@@ -46,34 +47,17 @@ public class OMBodyTest extends OMTestCase {
      * Class under test for SOAPFault addFault()
      */
     public void testAddFault() {
-        //TODO Implement addFault().
+        System.out.println("Adding SOAP fault to body ....");
+        soapBody.addChild(ombuilderFactory.createSOAPFault(soapBody));
+
+        System.out.println("\t checking for SOAP Fault ...");
+        assertTrue("SOAP body has no SOAP fault", soapBody.hasFault());
+
+        System.out.println("\t checking for not-nullity ...");
+        assertTrue("SOAP body has no SOAP fault", soapBody.getFault() != null);
+
+//        SimpleOMSerializer simpleOMSerializer = new SimpleOMSerializer();
+//        simpleOMSerializer.serialize(soapBody, System.out);
     }
-
-    public void testHasFault() {
-        //TODO Implement hasFault().
-    }
-
-    public void testGetFault() {
-        //TODO Implement getFault().
-    }
-
-    public void testAddBodyElement() {
-         String newElementName = "MyBodyElement";
-        soapBody.addChild(ombuilderFactory.createOMElement(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf")));
-
-        Iterator children = soapBody.getChildren();
-        // TODO test this
-    }
-
-    /*
-     * Class under test for void addFault(SOAPFault)
-     */
-    public void testAddFaultSOAPFault() {
-        //TODO Implement addFault().
-    }
-
-    public void testAddDocument() {
-        //TODO Implement addDocument().
-    }
-
+              
 }

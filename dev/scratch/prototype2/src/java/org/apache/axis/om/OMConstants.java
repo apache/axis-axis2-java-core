@@ -19,7 +19,7 @@ package org.apache.axis.om;
  * Date: Nov 8, 2004
  * Time: 3:38:10 PM
  */
-public class OMConstants {
+public interface OMConstants {
 
     public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
     public static final String SOAPENVELOPE_NAMESPACE_PREFIX = "soapenv";
@@ -38,4 +38,8 @@ public class OMConstants {
     // Attribute names of a SOAP Envelope
     public static final String ATTR_ACTOR = "actor";
     public static final String ATTR_MUSTUNDERSTAND = "mustUnderstand";
+
+    public static final String SOAPFAULT_LOCAL_NAME = "Fault";
+    public static final String SOAPFAULT_NAMESPACE_URI = SOAP_ENVELOPE_NAMESPACE_URI;
+    public static final String SOAPFAULT_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
 }

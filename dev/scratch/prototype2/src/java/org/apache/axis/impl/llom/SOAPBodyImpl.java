@@ -1,13 +1,9 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -28,8 +24,9 @@ import org.apache.axis.om.SOAPEnvelope;
  * Date: Nov 2, 2004
  * Time: 4:29:00 PM
  */
-public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
+public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants {
 
+    private boolean hasSOAPFault = false;
 
 
     /**
@@ -53,7 +50,9 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      */
     public SOAPFault addFault() throws OMException {
-        throw new UnsupportedOperationException(); //TODO implement this
+        SOAPFault soapFault = new SOAPFaultImpl(this);
+        addFault(soapFault);
+        return soapFault;
     }
 
     /**
@@ -65,7 +64,16 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
      *         otherwise
      */
     public boolean hasFault() {
-        throw new UnsupportedOperationException(); //TODO implement this
+        if (hasSOAPFault) {
+            return true;
+        } else {
+            Iterator soapFaultChildren = getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_LOCAL_NAME));
+            if (soapFaultChildren.hasNext()) {
+                hasSOAPFault = true;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -76,7 +84,12 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
      *         object
      */
     public SOAPFault getFault() {
-        throw new UnsupportedOperationException(); //TODO implement this
+        Iterator soapFaultChildren = getChildrenWithName(new QName(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_LOCAL_NAME));
+        if (soapFaultChildren.hasNext()) {
+            SOAPFault soapFault = (SOAPFault) soapFaultChildren.next();
+            return soapFault;
+        }
+        return null;
     }
 
 
@@ -85,7 +98,12 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
      * @throws org.apache.axis.om.OMException
      */
     public void addFault(SOAPFault soapFault) throws OMException {
-        throw new UnsupportedOperationException(); //TODO implement this
+        if(hasSOAPFault){
+            throw new OMException("SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
+        }
+        addChild(soapFault);
+        hasSOAPFault = true;
+
     }
 
 

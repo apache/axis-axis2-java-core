@@ -65,7 +65,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
         OMElementImpl node;
         String elementName = parser.getName();
         if (lastNode == null) {
-            envelope = ombuilderFactory.createOMEnvelope(elementName, null, null, this);
+            envelope = ombuilderFactory.createSOAPEnvelope(elementName, null, null, this);
             node = (OMElementImpl) envelope;
 //            root = new OMElementImpl(parser.getName(), null, null, this);
 //            node = root;

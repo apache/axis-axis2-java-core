@@ -1,5 +1,6 @@
 package org.apache.axis.om;
 
+import org.apache.axis.impl.llom.OMNodeImpl;
 
 
 /**

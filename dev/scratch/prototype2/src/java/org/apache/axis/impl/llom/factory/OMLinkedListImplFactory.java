@@ -1,28 +1,7 @@
 package org.apache.axis.impl.llom.factory;
 
-import org.apache.axis.impl.llom.OMAttributeImpl;
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMNamedNodeImpl;
-import org.apache.axis.impl.llom.OMNamespaceImpl;
-import org.apache.axis.impl.llom.OMNodeImpl;
-import org.apache.axis.impl.llom.OMTextImpl;
-import org.apache.axis.impl.llom.SOAPBodyImpl;
-import org.apache.axis.impl.llom.SOAPEnvelopeImpl;
-import org.apache.axis.impl.llom.SOAPHeaderBlockImpl;
-import org.apache.axis.impl.llom.SOAPHeaderImpl;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamedNode;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.impl.llom.*;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -88,19 +67,19 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new OMTextImpl(s);
     }
 
-    public SOAPBody createOMBody(SOAPEnvelope envelope) {
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope) {
         return new SOAPBodyImpl(envelope);
     }
 
-    public SOAPBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPBody createSOAPBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPBodyImpl(localName, ns, parent, builder);
     }
 
-    public SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPEnvelopeImpl(localName, ns, parent, builder);
     }
 
-    public SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns) {
+    public SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns) {
         return new SOAPEnvelopeImpl(localName, ns);
     }
 
@@ -110,20 +89,28 @@ public class OMLinkedListImplFactory extends OMFactory {
 
     //TODO there should be a method to create an SOAPEnvelope giving OMXMLParserWrapper, as OMMessage is no longer there
 
-    public SOAPHeader createHeader(SOAPEnvelope envelope) {
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) {
         return new SOAPHeaderImpl(envelope);
     }
 
-    public SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeader createSOAPHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderImpl(localName, ns, parent, builder);
     }
 
-    public SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns) {
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns) {
         return new SOAPHeaderBlockImpl(localName, ns);
     }
 
-    public SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         return new SOAPHeaderBlockImpl(localName, ns, parent, builder);
+    }
+
+    public SOAPFault createSOAPFault(SOAPBody parent) {
+        return new SOAPFaultImpl(parent);
+    }
+
+    public SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent, OMXMLParserWrapper builder) {
+        return new SOAPFaultImpl(ns, parent, builder);
     }
 
     public SOAPEnvelope getDefaultEnvelope() {

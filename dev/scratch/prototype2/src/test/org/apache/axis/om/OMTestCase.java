@@ -26,7 +26,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * Date: Nov 2, 2004
  * Time: 2:15:28 PM
  */
-public abstract class OMTestCase extends AbstractTestCase {
+public class OMTestCase extends AbstractTestCase {
 
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
     protected OMXPPWrapper omXmlPullParserWrapper;

@@ -1,7 +1,6 @@
 package org.apache.axis.om;
 
 
-
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -101,7 +100,7 @@ public abstract class OMFactory {
      * @param envelope
      * @return
      */
-    public abstract SOAPBody createOMBody(SOAPEnvelope envelope);
+    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
 
     /**
      * @param localName
@@ -110,7 +109,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPBody createSOAPBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
     /**
@@ -120,18 +119,18 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
     /**
      * @param localName
      * @param ns
      */
-    public abstract SOAPEnvelope createOMEnvelope(String localName, OMNamespace ns);
+    public abstract SOAPEnvelope createSOAPEnvelope(String localName, OMNamespace ns);
 
     /**
      * @param envelope
      */
-    public abstract SOAPHeader createHeader(SOAPEnvelope envelope);
+    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
 
     /**
      * @param localName
@@ -140,15 +139,14 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
-
+    public abstract SOAPHeader createSOAPHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
     /**
      * @param localName
      * @param ns
      */
-    public abstract SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns);
+    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns);
 
     /**
      * @param localName
@@ -157,14 +155,28 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract SOAPHeaderBlock createOMHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
+
+    /**
+     * @param parent
+     * @return
+     */
+    public abstract SOAPFault createSOAPFault(SOAPBody parent);
+
+    /**
+     * @param ns
+     * @param parent
+     * @param builder
+     * @return
+     */
+    public abstract SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent, OMXMLParserWrapper builder);
 
 
     //make the constructor protected
     protected OMFactory() {
     }
 
-    public static OMFactory newInstance(){
+    public static OMFactory newInstance() {
         return FactoryFinder.findFactory(null);
     }
 

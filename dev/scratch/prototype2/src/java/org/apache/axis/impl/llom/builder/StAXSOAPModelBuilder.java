@@ -62,7 +62,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         String elementName = parser.getLocalName();
 
         if (lastNode == null) {
-            envelope = ombuilderFactory.createOMEnvelope(elementName, null, null, this);
+            envelope = ombuilderFactory.createSOAPEnvelope(elementName, null, null, this);
             node = (OMElementImpl) envelope;
         } else if (lastNode.isComplete()) {
             node = constructNode(lastNode.getParent(), elementName);
@@ -91,10 +91,10 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
             // this is either a header or a body
             if (elementName.equalsIgnoreCase("Header")) {
                 //since its level 2 parent MUST be the envelope
-                element = ombuilderFactory.createHeader(elementName, null, parent, this);
+                element = ombuilderFactory.createSOAPHeader(elementName, null, parent, this);
             } else if (elementName.equalsIgnoreCase("Body")) {
                 //since its level 2 parent MUST be the envelope
-                element = ombuilderFactory.createOMBody(elementName, null, parent, this);
+                element = ombuilderFactory.createSOAPBody(elementName, null, parent, this);
             } else {
                 // can there be Elements other than Header and Body in Envelope. If yes, what are they and is it YAGNI ??
                 throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
@@ -102,11 +102,11 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
 
         } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase("Header")) {
             // this is a headerblock
-            element = ombuilderFactory.createOMHeaderBlock(elementName, null, parent, this);//todo NS is required here
+            element = ombuilderFactory.createSOAPHeaderBlock(elementName, null, parent, this);//todo NS is required here
 
         } else {
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, null, parent, this);//todo put the namespace
+            element = ombuilderFactory.createOMElement(elementName, null, parent, this);//todo put the name
         }
 
         return element;
