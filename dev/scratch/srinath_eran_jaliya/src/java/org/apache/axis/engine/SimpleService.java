@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
+import org.apache.axis.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

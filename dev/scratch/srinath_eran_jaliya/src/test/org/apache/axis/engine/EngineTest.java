@@ -20,6 +20,8 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.registry.EchoService;
 import org.apache.axis.engine.registry.MockFlow;
 import org.apache.axis.providers.SimpleJavaProvider;
 import org.apache.axis.registry.ConcreateParameter;

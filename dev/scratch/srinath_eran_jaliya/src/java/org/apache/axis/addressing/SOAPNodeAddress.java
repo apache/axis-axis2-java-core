@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.engine;
+package org.apache.axis.addressing;
 
 /**
- * @author Srinath Perera(hemapani@opensource.lk)
+ * @author Srinath Perera (hemapani@opensource.lk)
  */
-public class EchoService {
-    public void echoVoid(){
-        System.out.println("echo Service Called");
-    }
+public class SOAPNodeAddress {
+
 }

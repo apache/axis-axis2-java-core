@@ -22,6 +22,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.CommonExecutor;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.encoding.DeseializationContext;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +57,16 @@ public class AxisEngine {
         currentTansportName = mc.getCurrentTansport();
         log.info("Dispatch transport");
         transport = registry.getTransPort(currentTansportName);
+        
+        transport = registry.getTransPort(currentTansportName);
+        if(transport == null){
+            //try find the transport 
+            if(registry.getTransportCount() == 0)
+                throw new AxisFault("transport can not be null" + currentTansportName);
+            transport = registry.getTransPort(0);
+        }
+
+        
         log.info("Axis Engine Dispatch Global");
         globel = registry.getGlobal();
 
@@ -101,12 +113,26 @@ public class AxisEngine {
         Operation operation = null;
         
         log.info("Start the recive()");
+
         //Dispatch the Global and Transport. 
         currentTansportName = mc.getCurrentTansport();
-        log.info("Dispatch transport");
+        log.info("Dispatch transport" + currentTansportName);
         transport = registry.getTransPort(currentTansportName);
+        if(transport == null){
+        	//try find the transport 
+        	if(registry.getTransportCount() == 0)
+        		throw new AxisFault("transport can not be null" + currentTansportName);
+        	transport = registry.getTransPort(0);
+        }
         log.info("Axis Engine Dispatch Global");
         globel = registry.getGlobal();
+        
+        
+        DeseializationContext deserializationContext = mc.getSourceIn();
+        mc.getInMessage().setEnvelope(deserializationContext.parseEnvelope());
+        mc.getInMessage().setHeaders(deserializationContext.parseHeaders());
+        
+        
 
         try{
             transport.recive(mc); 
@@ -114,7 +140,14 @@ public class AxisEngine {
         
             globel.recive(mc);
             executionStack.push(globel);
-            
+
+            QName operationName = deserializationContext.enterTheBody(mc.getMessageStyle());
+            if(operationName != null){
+                mc.setCurrentOperation(operationName);
+            }else{
+                //TODO if the Operation is null find it in some other way
+            }
+
             log.info("Dispatch Service Name");
             //dispatch the service Name
             currentServiceName = mc.getCurrentService();
@@ -141,4 +174,16 @@ public class AxisEngine {
         }
         log.info("end the recive()");
     }    
+	/**
+	 * @return Returns the registry.
+	 */
+	public EngineRegistry getRegistry() {
+		return registry;
+	}
+	/**
+	 * @param registry The registry to set.
+	 */
+	public void setRegistry(EngineRegistry registry) {
+		this.registry = registry;
+	}
 }

@@ -15,6 +15,7 @@
  */
 package org.apache.axis.encoding;
 import java.io.IOException;
+
 import org.apache.xml.utils.QName;
 /**
  * I consider this to be a interface as the Axis may use differant serializers and deserializers 

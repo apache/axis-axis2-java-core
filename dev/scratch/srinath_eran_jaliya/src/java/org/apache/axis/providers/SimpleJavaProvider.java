@@ -24,8 +24,8 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.engine.MessageContext;
 import org.apache.axis.engine.Service;
 import org.apache.axis.registry.Parameter;
 

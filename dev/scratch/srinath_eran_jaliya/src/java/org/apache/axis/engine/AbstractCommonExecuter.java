@@ -18,6 +18,7 @@ package org.apache.axis.engine;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.CommonExecutor;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.registry.AbstractEngineElement;
 
 public abstract class AbstractCommonExecuter extends AbstractEngineElement implements CommonExecutor {

@@ -16,7 +16,7 @@
 
 package org.apache.axis;
 
-import org.apache.axis.engine.MessageContext;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.registry.EngineElement;
 
 /**

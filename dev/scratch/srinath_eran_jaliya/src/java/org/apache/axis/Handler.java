@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.MessageContext;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.registry.NamedEngineElement;
 
 public interface Handler extends Serializable,NamedEngineElement {
