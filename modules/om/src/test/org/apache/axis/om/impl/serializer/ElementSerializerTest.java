@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package org.apache.axis.om.impl.seriliazer;
+package org.apache.axis.om.impl.serializer;
 
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMElement;
