@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.wsdl.wsdltowom;
 
 import org.apache.wsdl.WSDLConstants;
@@ -30,13 +29,10 @@ import java.io.InputStream;
  * @author chathura@opensource.lk
  */
 public class WOMBuilderFactory {
-
     public static final int WSDL11 = 1;
     public static final int wsdl20 = 2;
 
-
     public static WOMBuilder getBuilder(int wsdlDocumentType) throws WSDLException {
-
         if (wsdlDocumentType == WSDL11) {
             return new WSDL1ToWOMBuilder();
         }
@@ -45,7 +41,6 @@ public class WOMBuilderFactory {
         }
         throw new WSDLException(WSDLException.INVALID_WSDL, "The document type specified is not valid");
     }
-
 
     public static WOMBuilder getBuilder(InputStream in) throws WSDLException {
         // Load the wsdl as a DOM
@@ -59,17 +54,15 @@ public class WOMBuilderFactory {
         } catch (SAXException e2) {
             throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Exception", e2);
         }
-        
-        
+
+
         //Check the target namespace of the WSDL and determine the WSDL version.
         int version = getWSDLVersion(doc);
-
         if (version == WSDL11) {
             return (WOMBuilder) new WSDL1ToWOMBuilder();
         } else if (version == wsdl20) {
             return (WOMBuilder) new WSDL2ToWOMBuilder();
         }
-
         throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
     }
 
@@ -88,7 +81,6 @@ public class WOMBuilderFactory {
         } else if (WSDLConstants.WSDL1_1_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())) {
             return WSDL11;
         }
-
         throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
     }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.wsdl.wsdltowom;
 
 import org.apache.wsdl.WSDLDescription;
@@ -25,11 +24,7 @@ import java.io.InputStream;
  * @author chathura@opensource.lk
  */
 public class WSDL2ToWOMBuilder implements WOMBuilder {
-
     public WSDLDescription build(InputStream in) throws WSDLException {
-
-        throw new UnsupportedOperationException("Fill the imps");
-
-
+        throw new UnsupportedOperationException("Fill the implementations");
     }
 }

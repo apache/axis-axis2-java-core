@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.axis.wsdl.wsdltowom;
 
 import org.apache.wsdl.WSDLDescription;
@@ -34,19 +33,14 @@ import java.io.InputStream;
  * @author chathura@opensource.lk
  */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
-
     public WSDLDescription build(InputStream in) throws WSDLException {
-
         WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
-
         WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in));
         pump.pump();
-
         return wsdlDefinitions;
     }
 
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
-
         WSDLReader reader =
                 WSDLFactory.newInstance().newWSDLReader();
         Document doc;
@@ -60,7 +54,6 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
         }
-
         return reader.readWSDL(null, doc);
     }
 
