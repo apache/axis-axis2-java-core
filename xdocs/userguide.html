@@ -107,7 +107,7 @@
 <h2><a name="_Toc96698087"></a><a name="_Toc96697862">Running the Axis2 standalone server </a></h2>
 <p>Since a J2EE servlet container can be heavy in certain cases, a simple socket server is provided with Axis2. </p>
 <h1><a name="_Toc96697863"></a><a name="_Toc96698088">Samples </a></h1>
-<p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under src\samples\userguide\sample1. </p>
+<p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under ../modules/samples/src/java/userguide/sample1. </p>
 <ol>
   <li>Case1: Echo Synchronous call. </li>
   <li>Case2: Echo Synchronous call with a phased handler. </li>
@@ -117,26 +117,16 @@
 <p align="center"><img src="images/cases.jpg"></p>
 
 <p> Axis2 M1 currently does not support the data binding, thus in the samples the operation that will be supported will be the echoing of xml without data binding. The message that will be sent and echoed will be the following.</p>
-<p class="style1 style2">&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-xmlns:sample1="http://sample1.org/sample1"&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soapenv:Header/&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soapenv:Body&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;sample1:echo&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;sample1:Text&gt;Axis2
-Echo String&lt;/sample1:Text&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/sample1:echo&gt;</p>
-
-<p class="style1 style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/soapenv:Body&gt;</p>
-
-<p class="style1 style2">&lt;/soapenv:Envelope&gt;</p>
+<p class="style1 style2 style3">&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;soapenv:Header/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;soapenv:Body&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;sample1:echo&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;sample1:Text&gt;Axis2
+  Echo String&lt;/sample1:Text&gt; &nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/sample1:echo&gt;<br/>
+&nbsp;&nbsp;&nbsp; &lt;/soapenv:Body&gt;<br/>
+&lt;/soapenv:Envelope&gt;<br/>
 <p>The Sample1 can be located at the src/samples/userguide/sample1 directory and it will have (or eventually have after the build) the following files. </p>
 <p>&nbsp;</p>
 <table width="756" align="center" border="1"  cellpadding="0" cellspacing="0">
@@ -146,12 +136,12 @@ Echo String&lt;/sample1:Text&gt;</p>
     <td width="371" valign="top"><p align="center">Description </p></td>
   </tr>
   <tr>
-    <td valign="top"><p>. </p></td>
+    <td valign="top"><p>modules/samples</p></td>
     <td valign="top"><p>build.xml </p></td>
     <td valign="top"><p>Ant build file to compile, deploy and run the sample </p></td>
   </tr>
   <tr>
-    <td valign="top"><p>src </p></td>
+    <td valign="top"><p>modules/samples/src </p></td>
     <td valign="top"><p>EchoXML.java </p></td>
     <td valign="top"><p>Actual web service </p></td>
   </tr>
@@ -194,7 +184,7 @@ Echo String&lt;/sample1:Text&gt;</p>
     <td colspan="3" valign="top"><p>&nbsp; </p></td>
   </tr>
   <tr>
-    <td valign="top"><p>conf </p></td>
+    <td valign="top"><p>modules/samples/conf </p></td>
     <td valign="top"><p>service.xml </p></td>
     <td valign="top"><p>The deployment descriptor for the service sample1. </p></td>
   </tr>
@@ -204,7 +194,8 @@ Echo String&lt;/sample1:Text&gt;</p>
     <td valign="top"><p>The deployment descriptor for the service sample1WithHandler. </p></td>
   </tr>
   <tr>
-    <td valign="top"><p>build/services </p></td>
+    <td valign="top"><p>modules/samples/</p>
+      <p>build/services </p></td>
     <td valign="top"><p>sample1.jar </p></td>
     <td valign="top"><p>The deployable jar that is created after building the sample. </p></td>
   </tr>
@@ -214,7 +205,9 @@ Echo String&lt;/sample1:Text&gt;</p>
     <td valign="top"><p>The deployable jar of the web service sample1WithHandler that is created after building this sample.</p></td>
   </tr>
   <tr>
-    <td valign="top"><p>lib </p></td>
+    <td valign="top"><p>modules/samples/</p>
+      <p>build/lib </p>
+    </td>
     <td valign="top"><p>sample1-all.jar </p></td>
     <td valign="top"><p>The jar that bundles the server side and client side code. </p></td>
   </tr>
@@ -234,25 +227,26 @@ Echo String&lt;/sample1:Text&gt;</p>
   <li>Running the client  </li>
 </ul>
 <h3><strong>Building the sample </strong></h3>
-<p>Building the sample will take only one step provided that pre conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the src/samples/userguide/sample1 directory and type </p>
+<p>Building the sample will take only one step provided that pre conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the &quot;modules/samples&quot; directory and type </p>
 <p>&gt;ant compile </p>
 <p>and it will show the following output. </p>
 <p align="center"><img width="648" height="362" src="images/clip_image016.jpg"></p>
-<p>Now the user can actually go check for the sample1-all.jar in the lib directory and the packaged web service in the <strong>sample1.jar </strong>in the build\services directory. </p>
+<p>Now the user can actually go check for the sample1-all.jar in the lib directory and the packaged web service in the <strong>sample1.jar </strong>in the modules\samples\build\services directory. </p>
 <h3><strong>Deploying the sample </strong></h3>
 <p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis 2 engine at the runtime. </p>
-<p class="style1 style2">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br> 
- &nbsp;&nbsp;&lt;java:implementation class=&quot;EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;<br>&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt;  
+<p class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; <br> 
+ &nbsp;&nbsp;&lt;java:implementation class=&quot;userguide.sample1.EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;<br>&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt;  
 <br>&lt;/service&gt;
-<p>Above service.xml provides three required types of information. </p>
+<p>Above service.xml provides five required types of information. </p>
 <ul>
   <li>Provider – Provider that will invoke the service. </li>
+  <li>Style - Style of the operations of the service. </li>
   <li>Implementation – Actual web service implementation class, in this case EchoXML. </li>
   <li>Operation – The operations that the web service implementation supports or needs to be exposed. </li>
 </ul>
 <p>Once the service.xml and the web service (in this case EchoXML) is ready it is necessary to package it to a jar. Actually with the above </p>
 <p>&gt;ant compile </p>
-<p>The web service will get packaged into the build\services directory. Now user can deploy the service by one of the following methods. Since Axis2 supports the hot deployment of services can be deployed while the container is up and running. For option 2 below actually requires the container to be online. </p>
+<p>The web service will get packaged into the build\services directory. Now the user can deploy the service by one of the following methods. Since Axis2 supports the hot deployment of services can be deployed while the container is up and running. For option 2 below actually requires the container to be online. </p>
 <p>&gt;ant deploy </p>
 <p align="center"><img width="648" height="467" src="images/clip_image018.jpg"></p>
 <p>&nbsp; </p>
@@ -284,23 +278,39 @@ Echo String&lt;/sample1:Text&gt;</p>
 <p>Building the sample once will build all required classes and jars for all three cases. The ant task would be ant Compile. Please refer the building of the <strong>“Echo Synchronous call” </strong> above. </p>
 <h3><strong>Deploying the sample </strong></h3>
 <p>The implementation of the web service will be EchoXML, operation will be echo and the provider will be org.apache.axis.providers.RawXMLProvider, which are similar to that of the <strong>“Echo Synchronous call” </strong>. The difference is that there will be a handler that will be added in the server side. For further discussion refer the following service.xml which will be used in deploying the service. </p>
-<p class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot;&gt; <br>
-&nbsp;&lt;java:implementation class=&quot;EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; 
-&nbsp;&nbsp;&lt;inflow&gt; 
+<p class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; <br>
+&nbsp;&lt;java:implementation class=&quot;userguide.sample1.EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;
+&nbsp;&nbsp;
+<p class="style1 style2 style3">&nbsp;&nbsp;&lt;inflow&gt; 
+  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;userguide.sample1.LoggingHandler&quot;&gt; 
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;samples.userguide.sample3.server.LoggingHandler&quot;&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
-<br>&nbsp;&nbsp;&lt;/inflow&gt; 
-<br><br>&nbsp;&nbsp;&lt;outflow&gt; 
-<br>&nbsp;&nbsp;&lt;/outflow&gt; 
-<br><br>&nbsp;&nbsp;&lt;faultflow&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;LoggingHandler&quot;&gt; 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
-<br>&nbsp;&nbsp;&lt;/faultflow&gt; 
-<br><br>&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt; 
-<br>&lt;/service&gt; </p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt; 
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
+<br>
+&nbsp;&nbsp;&lt;/inflow&gt; 
+<br>
+<br>
+&nbsp;&nbsp;&lt;outflow&gt; 
+<br>
+&nbsp;&nbsp;&lt;/outflow&gt; 
+<br>
+<br>
+&nbsp;&nbsp;&lt;faultflow&gt; 
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;userguide.sample1.LoggingHandler&quot;&gt; 
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/handler&gt; 
+<br>
+&nbsp;&nbsp;&lt;/faultflow&gt; 
+<br>
+<br>
+&nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt; 
+<br>
+&lt;/service&gt; </p>
 <p>In extra this service.xml has defined three elements </p>
 <ol>
   <li>inflow </li>
@@ -345,14 +355,16 @@ Echo String&lt;/sample1:Text&gt;</p>
 <h3><strong>Running the sample </strong></h3>
 <p>In this case the client side is similar to that of <strong>“Echo Synchronous call” </strong>. The changes are happening in the server side in this case. The same SynchronousClient.java can be used to invoke the service by changing the command line arguments. Refer the ant target for details </p>
 <p class="style4">&lt;target name= &quot;echo&quot; depends= &quot;compile&quot; &gt; 
-<br>&nbsp;&nbsp;&lt;java classname= &quot;SynchronousClient&quot;&gt;
+<br>
+&nbsp;&nbsp;&lt;java classname= &quot;userguide.sample1.SynchronousClient&quot;&gt;
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;8080&quot; /&gt; 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;/axis2/services/sample1&quot; /&gt; 
 <br>&nbsp;&nbsp;&lt;/java&gt; 
 <br>&lt;/target&gt; 
 <br><br>&lt;target name= &quot;echoWithHandler&quot; &gt; 
-<br>&nbsp;&nbsp;&lt;java classname= &quot;SynchronousClient&quot; &gt; 
+<br>
+&nbsp;&nbsp;&lt;java classname= &quot;userguide.sample1.SynchronousClient&quot; &gt; 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath refid= &quot;classpath.runtimelibraries&quot; /&gt; 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;8080&quot; /&gt; 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg value= &quot;/axis2/services/sample1WithHandler&quot; /&gt; 
@@ -395,8 +407,9 @@ Echo String&lt;/sample1:Text&gt;</p>
 <br>} </p>
 <p><strong>&#149;&nbsp; Write the service.xml file </strong></p>
 <p>the following XML snippet is a very simple service.xml file. </p>
-<p class="style4">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; &gt; 
-<br>&nbsp;&nbsp;&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot; 
+<p class="style4">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; 
+<br>
+&nbsp;&nbsp;&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot; 
 xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; 
 <br>
  &nbsp;&nbsp;&lt;operation name=&quot;&lt;method-name&gt;&quot; qname=&quot;&lt;method-name&gt;&quot;/&gt; ... 
