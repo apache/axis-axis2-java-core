@@ -7,7 +7,7 @@ chinthaka/OM	OM API???
 chinthaka/OMAPI_with_Impl	OM impl with embedded in element linked list (next, up)
 chinthaka_ajith/OmtableModelAPI	OM impl with table model
 dasarath	???
-deepal	???
+deepal	Deployment module
 gdaniels	toy engine impl
 ias	???
 om_xmlbeanch	???
