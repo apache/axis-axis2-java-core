@@ -27,7 +27,7 @@ described in the next section of this document.</P>
   <LI>Axis Object Model (AXIOM)
   <LI>WSDL Object Model. <LI>Client API. </LI></OL>
 <IMG height=568 alt="TotalArch (17K)" 
-src="Axis2ArchitectureGuide_files/TotalArch.png" width=673> 
+src="images/TotalArch.png" width=673> 
 <H2>1. Core of Apache Axis2</H2>
 <H3>The Big Picture</H3>
 <P>Just like Axis 1.x family Axis2 is all about processing Messages. It is 
@@ -86,7 +86,7 @@ There are six types of special handlers
 diagram below. At the server side it will be an inflow followed by an outflow or a 
 fault flow and in the client side out flow followed by the inflow.</P>
 <H3>Server Side Invocation</H3><IMG 
-src="Axis2ArchitectureGuide_files/serverSide.png"> 
+src="images/serverSide.png"> 
 <OL>
   <LI>At the Server side the invocation is started by the Transport Receiver 
   that listens for an incoming SOAP Message. Once the Message comes in, the 
@@ -108,7 +108,7 @@ src="Axis2ArchitectureGuide_files/serverSide.png">
   would send the Response SOAP message back to the Client. </LI>
 </OL>
 <H3>Client Side Invocation</H3><IMG 
-src="Axis2ArchitectureGuide_files/clientside.png" width="712" height="260"> 
+src="images/clientside.png" width="712" height="260"> 
 <OL>
   <LI>Client Side invocation is driven by the Call object. The Call object will 
   load the EngineRegistry (by default) . 
@@ -225,15 +225,15 @@ follows; </EM></STRONG></P>
 <P>classes/</P>
 <P><STRONG><EM>The structure of module.xml file is as follows; 
 </EM></STRONG></P>
-<P><STRONG><EM><IMG height=127 src="Axis2ArchitectureGuide_files/archi002.gif" 
+<P><STRONG><EM><IMG height=127 src="images/archi002.gif" 
 width=347 DESIGNTIMEURL="images/archi002.gif"></EM></STRONG></P>
 <P><STRONG><EM>The structure of service.xml file is as follows; 
 </EM></STRONG></P>
-<P><STRONG><EM><IMG height=195 src="Axis2ArchitectureGuide_files/archi003.gif" 
+<P><STRONG><EM><IMG height=195 src="images/archi003.gif" 
 width=680 DESIGNTIMEURL="images/archi003.gif"></EM></STRONG></P>
 <P><STRONG><EM>The architecture of hot deployment consists of the following 
 components; </EM></STRONG></P>
-<P><IMG height=304 src="Axis2ArchitectureGuide_files/archi004.jpg" width=423 
+<P><IMG height=304 src="images/archi004.jpg" width=423 
 border=0 DESIGNTIMEURL="images/archi004.jpg"></P>
 <P>1. The Scheduler periodically invokes the Listener to check for updates</P>
 <P>2. If the Listener finds an update, it passes that information to the 
@@ -372,7 +372,7 @@ required. Hence this model is much more efficient.</P>
 <P>AXIOM interacts with the outside world using the StAX API, that means it 
 serializes and de-serializes using the StAX writer and StAX reader 
 interfaces.</P>
-<P><IMG height=217 src="Axis2ArchitectureGuide_files/archi005.jpg" width=552 
+<P><IMG height=217 src="images/archi005.jpg" width=552 
 border=0 DESIGNTIMEURL="images/archi005.jpg"></P>
 <P>Since most of the data binding tools support SAX based interfaces, AXIOM 
 comes with an adapter to be used between StAX and SAX.</P>
@@ -384,7 +384,7 @@ Architecture</A></H3>
     <TD width=64 height=0></TD></TR>
   <TR>
     <TD></TD>
-    <TD><IMG height=282 src="Axis2ArchitectureGuide_files/archi006.jpg" 
+    <TD><IMG height=282 src="images/archi006.jpg" 
       width=490 DESIGNTIMEURL="images/archi006.jpg"></TD></TR></TBODY></TABLE><BR>
 <P></P>
 <P>AXIOM sees the XML input stream through the StAX stream reader, which is 
@@ -417,7 +417,7 @@ a table based model. Its now on hold.) </P>
     <TD width=72 height=0></TD></TR>
   <TR>
     <TD></TD>
-    <TD><IMG height=246 src="Axis2ArchitectureGuide_files/archi007.jpg" 
+    <TD><IMG height=246 src="images/archi007.jpg" 
       width=420 
 DESIGNTIMEURL="images/archi007.jpg"></TD></TR></TBODY></TABLE><BR>Therefore one 
 can find a factory to create OM objects, which will help to switch between 
@@ -505,7 +505,7 @@ the sufficient statistics about the web service that has been described in the
 WSDL file. WSDL Processing basically involves WSDL2Java, WSDL24J, and Java2WSDL. 
 Following sections will give a further overview of each of the above 
 functionalities. <BR><BR><IMG height=339 
-src="Axis2ArchitectureGuide_files/archi008.gif" width=579 border=0 
+src="images/archi008.gif" width=579 border=0 
 DESIGNTIMEURL="images/archi008.gif"></P>
 <H3><A name=_Toc96747292>5.2 WOM</A></H3>
 <P>WOM is engineered based on WSDL 2.0 component model, but it does not restrict 
@@ -542,9 +542,9 @@ capability provided by the WOM itself. </P>
 interface org.apache.wsdl.Component. Service Desc makes use of the functionality 
 provided by org.apache.wsdl.Component to interface the WOM to behave as a 
 Service Desc. org.apache.wsdl.Component has the following class diagram. </P>
-<P><IMG height=121 src="Axis2ArchitectureGuide_files/archi010.jpg" width=487 
+<P><IMG height=121 src="images/archi010.jpg" width=487 
 border=0 DESIGNTIMEURL="images/archi010.jpg"><BR><IMG height=32 
-src="Axis2ArchitectureGuide_files/archi011.gif" width=32 border=0 
+src="images/archi011.gif" width=32 border=0 
 DESIGNTIMEURL="images/archi011.gif"></P>
 <P>As the diagram illustrate the Component class provides the functionality of 
 storing properties. Since all the WSDL Components extend from this class 
@@ -554,7 +554,7 @@ specific properties using the WOM. In that sense the Axis2 Service Desc is a
 wrapper to the WOM. </P>
 <P>Following is the Class diagram of the top level component of the description 
 Component org.apache.axis.description.impl.AxisService. <BR><BR><IMG height=391 
-src="Axis2ArchitectureGuide_files/archi012.jpg" width=292 border=0 
+src="images/archi012.jpg" width=292 border=0 
 DESIGNTIMEURL="images/archi012.jpg"><BR><BR>org.apache.axis.description.impl.AxisService 
 extends from the org.apache.wsdl.WSDLService and thus inherits the functionality 
 of the org.apache.wsdl.WSDLService. The Axis2 specific properties like provider, 
@@ -563,9 +563,9 @@ org.apache.wsdl.WSDLService extends from. The deployment Module will pick up the
 deployed service and it will build the Service Desc and deploy in the Engine 
 Registry. There will be an underlying WOM for each Service Desc deployed in the 
 Engine Registry. <BR><IMG height=350 
-src="Axis2ArchitectureGuide_files/archi013.gif" width=576 border=0 
+src="images/archi013.gif" width=576 border=0 
 DESIGNTIMEURL="images/archi013.gif"><BR><IMG height=32 
-src="Axis2ArchitectureGuide_files/archi011.gif" width=32 border=0 
+src="images/archi011.gif" width=32 border=0 
 DESIGNTIMEURL="images/archi011.gif"></P>
 <H3><A name=_Toc96747294>5.4 WSDL Processing</A></H3>
 <P>WSDL Processing can be identified as of operations performed on or performed 
@@ -594,28 +594,28 @@ Above four modules are yet to be implemented / in-progress.
   (Addressing information is required.) </LI></OL>
 <P>The following diagram describes all the invocations between sub components in 
 the client side.</P>
-<P><IMG height=315 src="Axis2ArchitectureGuide_files/archi015.jpg" width=576 
+<P><IMG height=315 src="images/archi015.jpg" width=576 
 border=0 DESIGNTIMEURL="images/archi015.jpg"> </P>
 <P><STRONG><EM>Call Class consist of following methods (Call 
 API)</EM></STRONG></P>
-<P><IMG height=200 src="Axis2ArchitectureGuide_files/archi016.jpg" width=582 
-border=0 DESIGNTIMEURL="images/archi016.jpg"></P><PRE><STRONG><EM>Callback Interface</EM></STRONG></PRE><PRE></PRE><PRE><IMG height=56 src="Axis2ArchitectureGuide_files/archi017.jpg" width=499 border=0 DESIGNTIMEURL="images/archi017.jpg"></PRE><PRE></PRE><PRE><STRONG><EM>AsyncResult </EM></STRONG></PRE><PRE></PRE><PRE><IMG height=48 src="Axis2ArchitectureGuide_files/archi018.jpg" width=430 border=0 DESIGNTIMEURL="images/archi018.jpg"></PRE><PRE></PRE><PRE><STRONG><EM>Correlator</EM></STRONG></PRE><PRE></PRE>
-<P><IMG height=73 src="Axis2ArchitectureGuide_files/archi019.jpg" width=539 
+<P><IMG height=200 src="images/archi016.jpg" width=582 
+border=0 DESIGNTIMEURL="images/archi016.jpg"></P><PRE><STRONG><EM>Callback Interface</EM></STRONG></PRE><PRE></PRE><PRE><IMG height=56 src="images/archi017.jpg" width=499 border=0 DESIGNTIMEURL="images/archi017.jpg"></PRE><PRE></PRE><PRE><STRONG><EM>AsyncResult </EM></STRONG></PRE><PRE></PRE><PRE><IMG height=48 src="images/archi018.jpg" width=430 border=0 DESIGNTIMEURL="images/archi018.jpg"></PRE><PRE></PRE><PRE><STRONG><EM>Correlator</EM></STRONG></PRE><PRE></PRE>
+<P><IMG height=73 src="images/archi019.jpg" width=539 
 border=0 DESIGNTIMEURL="images/archi019.jpg"></P>
 <H3><A name=_Toc96747297>6.1 sendAsync Invocation</A> </H3>
 <P>This invocation is similar to fire and forget where a request is sent and an 
 acknowledgement is not expected. An invocation will consist of the following 
 steps : </P>
-<P><IMG height=53 src="Axis2ArchitectureGuide_files/archi020.jpg" width=318 
+<P><IMG height=53 src="images/archi020.jpg" width=318 
 border=0 DESIGNTIMEURL="images/archi020.jpg"></P>
-<P><EM>Code Snippet: </EM></P><PRE><IMG height=59 src="Axis2ArchitectureGuide_files/archi021.jpg" width=318 border=0 DESIGNTIMEURL="images/archi021.jpg"></PRE><PRE></PRE><PRE><EM>Sequence diagram</EM></PRE><PRE></PRE><PRE><IMG height=147 src="Axis2ArchitectureGuide_files/archi022.jpg" width=434 border=0 DESIGNTIMEURL="images/archi022.jpg"></PRE>
+<P><EM>Code Snippet: </EM></P><PRE><IMG height=59 src="images/archi021.jpg" width=318 border=0 DESIGNTIMEURL="images/archi021.jpg"></PRE><PRE></PRE><PRE><EM>Sequence diagram</EM></PRE><PRE></PRE><PRE><IMG height=147 src="images/archi022.jpg" width=434 border=0 DESIGNTIMEURL="images/archi022.jpg"></PRE>
 <H3><A name=_Toc96747298>6.2 send Invocation</A></H3>
 <P>The service invocation is a void invocation. There is no return value, but 
 there is a wait for an acknowledgment or a SOAP Fault, It consists of the 
 following steps :</P><PRE>a -&gt; call.send(SOAPEnvelope)</PRE><PRE>b -&gt; engine.send( ..)</PRE><PRE>c -&gt; Send the SOAP message</PRE>
 <P><EM>Code Snippet: </EM></P><PRE>call.setTargetURL(URL)</PRE><PRE>call.setAction(String)</PRE><PRE>call.send(SOAPEnvelope)</PRE><PRE></PRE>
 <P><EM>Sequence diagram</EM></P>
-<P><IMG height=149 src="Axis2ArchitectureGuide_files/archi023.jpg" width=416 
+<P><IMG height=149 src="images/archi023.jpg" width=416 
 border=0 DESIGNTIMEURL="images/archi023.jpg"></P>
 <H3><A name=_Toc96747299>6.3 sendReceive Invocation</A></H3>
 <P>The service method has a response and the communication happens synchronously 
@@ -623,14 +623,14 @@ using a bi-directional protocol. The Client hangs until the response (or fault)
 is returned. </P><PRE>a -&gt; call.sendReceive(SOAPEnvelope)</PRE><PRE>b- &gt; engine.send (..)</PRE><PRE>c -&gt; Send the SOAP message</PRE><PRE>d -&gt; Receive the response over the synchronous transport</PRE><PRE>w -&gt; ProviderX will be called as the last step in engine.receive(..) </PRE><PRE>e -&gt; provider returns </PRE><PRE>f -&gt; Call hand over the response to the client</PRE><PRE></PRE>
 <P><EM>Code Snippet: </EM></P><PRE>call.setTargetURL(URL)</PRE><PRE>call.setAction(String)</PRE><PRE>SOAPEnvelope env=call.sendReceive(SOAPEnvelope)</PRE>
 <P><EM>Sequence diagram</EM></P>
-<P><IMG height=199 src="Axis2ArchitectureGuide_files/archi024.jpg" width=439 
+<P><IMG height=199 src="images/archi024.jpg" width=439 
 border=0 DESIGNTIMEURL="images/archi024.jpg"></P>
 <H3><A name=_Toc96747300>6.4 sendReceiveAsync Invocation</A></H3>
 <P>The service method has a response and the communication happens synchronously 
 using a bi-directional protocol. Client DOES NOT hangs until the response (or 
 fault) is returned. The Client uses a callback mechanism to retrieve the 
 response. The Call API uses threads from a thread pool for each invocation. </P><PRE>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</PRE><PRE>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</PRE><PRE>b- &gt; engine.send (..)</PRE><PRE>c -&gt; Send the SOAP message</PRE><PRE>d -&gt; Receive the response over the synchronous transport</PRE><PRE>w -&gt; ProviderX will be called as the last step in engine.receive(..) </PRE><PRE>q -&gt; correlator.getCorrelationInfo(msgID)</PRE><PRE>g -&gt; callbackObj.onComplete()</PRE>
-<P><EM>Code Snippet: </EM></P><PRE>call.setTargetURL(URL)</PRE><PRE>call.setAction(String)</PRE><PRE>call.setListenerTransport(http, true) </PRE><PRE>call.sendReceiveAsync (SOAPEnvelope, Callback)</PRE><PRE></PRE><PRE><EM>Sequence diagram </EM></PRE><PRE></PRE><PRE><IMG height=225 src="Axis2ArchitectureGuide_files/archi025.jpg" width=648 border=0 DESIGNTIMEURL="images/archi025.jpg"></PRE>
+<P><EM>Code Snippet: </EM></P><PRE>call.setTargetURL(URL)</PRE><PRE>call.setAction(String)</PRE><PRE>call.setListenerTransport(http, true) </PRE><PRE>call.sendReceiveAsync (SOAPEnvelope, Callback)</PRE><PRE></PRE><PRE><EM>Sequence diagram </EM></PRE><PRE></PRE><PRE><IMG height=225 src="images/archi025.jpg" width=648 border=0 DESIGNTIMEURL="images/archi025.jpg"></PRE>
 <H3><A name=_Toc96747301></A><A 
 name=head-6b6f0ac54f2e98ce920bf68485a695e1d2b></A>6.5 sendReceiveAsync 
 Invocation with One way transport</H3>
@@ -641,5 +641,5 @@ retrieve the response. The Call API uses threads from a thread pool for each
 invocation. </P><PRE>a -&gt; call.sendReceiveAsync (SOAPEnvelope, callbackObj)</PRE><PRE>p -&gt; correlator.addCorrelationInfor(msgID,allbackObjRef)</PRE><PRE>b- &gt; engine.send (..)</PRE><PRE>c -&gt; Send the SOAP message</PRE><PRE>r -&gt; Receive the response by the listener</PRE><PRE>s -&gt; engine.receive(..)</PRE><PRE>w -&gt; ProviderX will be called as the last step in engine.receive(..) </PRE><PRE>q -&gt; correlator.getCorrelationInfo(msgID)</PRE><PRE>g -&gt; callbackObj.onComplete()</PRE>
 <P><EM>Code Snippet: </EM></P><PRE>call.setTargetURL(URL)</PRE><PRE>call.setAction(String)</PRE><PRE>call.setListenerTransport(http, false)</PRE><PRE>call.sendReceiveAsync(SOAPEnvelope, Callback)</PRE>
 <P><EM>Sequence diagram </EM></P>
-<P><IMG height=234 src="Axis2ArchitectureGuide_files/archi026.jpg" width=648 
+<P><IMG height=234 src="images/archi026.jpg" width=648 
 border=0 DESIGNTIMEURL="images/archi026.jpg"> </P></BODY></HTML>
