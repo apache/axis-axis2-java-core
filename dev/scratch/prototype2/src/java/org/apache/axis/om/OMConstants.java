@@ -39,4 +39,9 @@ public interface OMConstants {
     public static final String SOAPFAULT_LOCAL_NAME = "Fault";
     public static final String SOAPFAULT_NAMESPACE_URI = SOAP_ENVELOPE_NAMESPACE_URI;
     public static final String SOAPFAULT_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
+
+    //OMBuilder constants
+    public static final short PUSH_TYPE_BUILDER=0;
+    public static final short PULL_TYPE_BUILDER=1;
+
 }

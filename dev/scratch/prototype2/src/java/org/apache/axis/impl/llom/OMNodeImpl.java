@@ -4,6 +4,10 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
+import java.util.Stack;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -196,5 +200,12 @@ public class OMNodeImpl implements OMNode {
         this.previousSibling = (OMNodeImpl) previousSibling;
     }
 
+    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
+       //Do nothing. Relevant children will put relevant things here
+    }
+
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+        serialize(writer,cache,null);
+    }
 
 }

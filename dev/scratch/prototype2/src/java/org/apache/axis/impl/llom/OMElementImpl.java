@@ -2,13 +2,19 @@ package org.apache.axis.impl.llom;
 
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
+
+import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Stack;
 
 
 /**
@@ -27,13 +33,13 @@ import java.util.ListIterator;
  * limitations under the License.
  * <p/>
  */
-public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
+public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConstants {
 
     private OMNode firstChild;
-    private OMXMLParserWrapper builder;
-    private OMAttributeImpl firstAttribute;
+    protected OMXMLParserWrapper builder;
     private ArrayList namespaces;
     private ArrayList attributes;
+    private Stack namespaceStack;
 
     public OMElementImpl(OMElement parent) {
         super(parent);
@@ -396,4 +402,168 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
             throw new UnsupportedOperationException("This element was not created in a manner to be switched");
         return new OMStAXWrapper(builder, this, cacheOff);
     }
+
+
+    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
+        boolean firstElement = false;
+
+        if (namespacePrefixStack == null) {
+            this.namespaceStack = new Stack();
+            firstElement = true;
+        } else {
+            this.namespaceStack = namespacePrefixStack;
+        }
+
+        int namespaceCount = 0;
+
+        short builderType = PULL_TYPE_BUILDER; //default is pull type
+        if (builder != null)
+            builderType = this.builder.getBuilderType();
+        if (builderType == PUSH_TYPE_BUILDER) {
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer)); //for now only SAX
+        }
+
+        //Special case for the pull type building with cache off
+        //The getPullParser method returns the current elements itself.
+        if (!cache) {
+            if (firstChild == null && nextSibling == null && !isComplete() && builderType == PULL_TYPE_BUILDER) {
+                StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
+                streamingOMSerializer.setNamespacePrefixStack(namespaceStack);
+                streamingOMSerializer.serialize(this.getPullParser(!cache), writer);
+                return;
+            }
+        }
+
+        if (!cache) {
+            if (isComplete()) {
+                //serialize own normally
+                serializeNormal(writer, cache);
+
+                if (nextSibling != null) {
+                    //serilize next sibling
+                    nextSibling.serialize(writer, cache, namespaceStack);
+                } else {
+                    if (parent == null) {
+                        return;
+                    } else if (parent.isComplete()) {
+                        return;
+                    } else {
+                        //do the special serialization
+                        //Only the push serializer is left now
+                        builder.next();
+                    }
+
+
+                }
+            } else if (firstChild != null) {
+                namespaceCount = serializeStartpart(writer);
+                firstChild.serialize(writer, cache, namespaceStack);
+                serializeEndpart(writer, namespaceCount);
+            } else {
+                //do the special serilization
+                //Only the push serializer is left now
+                builder.next();
+            }
+
+
+        } else {
+            //serialize own normally
+            serializeNormal(writer, cache);
+            //serialize the siblings if this is not the first element
+            if (!firstElement){
+                if (this.getNextSibling() != null) {
+                    this.getNextSibling().serialize(writer, cache, namespaceStack);
+                }
+            }
+        }
+
+
+    }
+
+    private int serializeStartpart(XMLStreamWriter writer) throws XMLStreamException {
+        int nsPushCount = 0;
+        String prefix = null;
+        String nameSpaceName = null;
+
+        if (ns != null) {
+            prefix = ns.getPrefix();
+            nameSpaceName = ns.getName();
+            if (prefix != null) {
+                writer.writeStartElement(prefix, this.getLocalName(), nameSpaceName);
+                if (serializeNamespace(ns, writer)) nsPushCount++;
+            } else {
+                writer.writeStartElement(nameSpaceName, this.getLocalName());
+
+            }
+        }
+        //add the elements attributes
+        if (attributes != null) {
+            int attCount = attributes.size();
+            for (int i = 0; i < attCount; i++) {
+                serializeAttribute((OMAttribute) attributes.get(i), writer);
+            }
+        }
+        //add the namespaces
+        Iterator namespaces = this.getAllDeclaredNamespaces();
+        while (namespaces.hasNext()) {
+            if (serializeNamespace((OMNamespace) namespaces.next(), writer)) nsPushCount++;
+        }
+
+        return nsPushCount;
+    }
+
+    private void serializeEndpart(XMLStreamWriter writer, int namespaceCount) throws XMLStreamException {
+
+        for (int i = 0; i < namespaceCount; i++) {
+            namespaceStack.pop();
+        }
+
+        writer.writeEndElement();
+        writer.flush();
+    }
+
+    private void serializeNormal(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+
+        int namespaceCount = serializeStartpart(writer);
+
+        if (getFirstChild() != null) {
+            getFirstChild().serialize(writer, cache, namespaceStack);
+        }
+
+        serializeEndpart(writer, namespaceCount);
+
+    }
+
+    protected void serializeAttribute(OMAttribute attr, XMLStreamWriter writer) throws XMLStreamException {
+        //first check whether the attribute is associated with a namespace
+        OMNamespace ns = attr.getNamespace();
+        String prefix = null;
+        String namespaceName = null;
+        if (ns != null) {
+            //add the prefix if it's availble
+            prefix = ns.getPrefix();
+            namespaceName = ns.getName();
+            if (prefix != null)
+                writer.writeAttribute(prefix, namespaceName, attr.getLocalName(), attr.getValue());
+            else
+                writer.writeAttribute(namespaceName, attr.getLocalName(), attr.getValue());
+        } else {
+            writer.writeAttribute(attr.getLocalName(), attr.getValue());
+        }
+    }
+
+    protected boolean serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+        boolean nsWritten = false;
+        if (namespace != null) {
+            String prefix = namespace.getPrefix();
+            if (!namespaceStack.contains(prefix)) {
+                writer.writeNamespace(prefix, namespace.getName());
+                namespaceStack.push(prefix);
+                nsWritten = true;
+            }
+        }
+
+        return nsWritten;
+    }
+
 }

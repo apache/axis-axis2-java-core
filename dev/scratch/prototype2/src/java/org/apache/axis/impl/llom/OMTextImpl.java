@@ -1,9 +1,11 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
+import org.apache.axis.om.*;
+import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
+
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
+import java.util.Stack;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -21,9 +23,9 @@ import org.apache.axis.om.OMText;
  * limitations under the License.
  * <p/>
  */
-public class OMTextImpl extends OMNodeImpl implements OMText {
+public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
-    protected short textType;
+    protected short textType = TEXT_NODE;
 
     public OMTextImpl(OMElement parent, String text) {
         super(parent);
@@ -43,7 +45,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
      * @param type
      */
     public void setTextType(short type) {
-        this.textType = type;
+        if (type == TEXT_NODE || type == COMMENT_NODE || type == CDATA_SECTION_NODE)
+            this.textType = type;
+        else
+            throw new UnsupportedOperationException("Attempt to set wrong type");
     }
 
     public short getTextType() {
@@ -59,14 +64,39 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     }
 
     /**
-     * This is to get the type of node, as this is the super class of all the nodes
-     *
      * @return
      * @throws org.apache.axis.om.OMException
      */
     public short getType() throws OMException {
-        return OMNode.TEXT_NODE;
+        return textType;
     }
 
-
+    /**
+     * @param writer
+     * @param cache
+     * @param namespacePrefixStack
+     * @throws XMLStreamException
+     */
+    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException {
+        boolean isFirst = false;
+        if (namespacePrefixStack == null) {
+            isFirst = true;
+        }
+        if (textType == TEXT_NODE)
+            writer.writeCharacters(this.value);
+        else if (textType == COMMENT_NODE)
+            writer.writeComment(this.value);
+        else if (textType == CDATA_SECTION_NODE) {
+            writer.writeCData(this.value);
+        }
+        //In this case we have to advance the parser (even when not cached) upto the
+        //next *element*. You cannot ask for a pull parser from the text node!!!
+        //by advancing the parser
+        if (!isFirst) {
+            OMNode nextSibling = this.getNextSibling();
+            if (nextSibling != null) {
+                nextSibling.serialize(writer, cache, namespacePrefixStack);
+            }
+        }
+    }
 }

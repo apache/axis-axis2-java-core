@@ -31,15 +31,11 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     private OMElement startElement;
     private OMFactory omFactory;
     private boolean buildStarted = false;
-    private boolean cache=true;
+    private boolean cache = true;
     private ContentHandler externalContentHandler = null;
 
     // ============= For content handler ============
     private OMNode lastNode = null;
-    private StringBuffer buffer = new StringBuffer();
-    private Stack textBufferStack = new Stack();
-    private OMNode currentNode;
-//    private OMElement parent = null;
     private Vector nameSpaces = new Vector();
     // ==============================================
 
@@ -53,9 +49,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         return externalContentHandler;
     }
 
-    public void setExternalContentHandler(ContentHandler externalContentHandler) {
-        this.externalContentHandler = externalContentHandler;
-    }
+
 
     /**
      * @param startElement - this refers to the element the object should come under.
@@ -81,9 +75,9 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
             if (!buildStarted) {
                 buildStarted = true;
                 //if not to be cached then switch the contenthandler
-                if (!cache){
-                    if (externalContentHandler==null){
-                        throw new IllegalStateException("Cannot have a cache with an empty content handler");
+                if (!cache) {
+                    if (externalContentHandler == null) {
+                        throw new IllegalStateException("Cannot have no cache with an empty content handler");
                     }
                     outObject.setContentHandler(externalContentHandler);
                 }
@@ -112,10 +106,10 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
      * @throws OMException
      */
     public void setCache(boolean b) throws OMException {
-        if (!cache && b){
+        if (!cache && b) {
             throw new UnsupportedOperationException("cache cannot be reset once set");
         }
-        cache=b;
+        cache = b;
     }
 
     public Object getParser() {
@@ -130,13 +124,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-
-
     // ====================  ContentHandler Implementations ========================
-
-
-
-
     public void endDocument() throws SAXException {
         lastNode.setComplete(true);
     }
@@ -172,8 +160,6 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-
-
         if (lastNode.isComplete()) {
             OMElement parent = lastNode.getParent();
             parent.setComplete(true);
@@ -181,9 +167,6 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         } else {
             lastNode.setComplete(true);
         }
-
-//        String elementText = buffer.toString();
-//        textBufferStack.pop();
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
@@ -191,8 +174,6 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         if (localName.length() == 0)
             localName = qName;
 
-        // Out current parser (Piccolo) does not error when a
-        // namespace is used and not defined.  Check for these here
         //todo In-insert this if needed!!!!!!
 //        if (qName.indexOf(':') >= 0 && namespaceURI.length() == 0) {
 //            throw new SAXException("Use of undefined namespace prefix: " +
@@ -245,4 +226,14 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         }
     }
 
+    public short getBuilderType() {
+        return OMConstants.PUSH_TYPE_BUILDER;
+    }
+
+    public void registerExternalContentHandler(Object obj) {
+        if (obj instanceof ContentHandler)
+            this.externalContentHandler = (ContentHandler)obj;
+        else
+            throw new IllegalArgumentException("Attempt to register wrong type of content handler");
+    }
 }

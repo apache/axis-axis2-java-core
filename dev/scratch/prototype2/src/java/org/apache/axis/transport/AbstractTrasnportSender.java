@@ -20,7 +20,6 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.addressing.EndpointReferenceType;
 
@@ -55,9 +54,8 @@ public abstract class AbstractTrasnportSender extends AbstractHandler implements
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope != null) {
             try {
-                SimpleOMSerializer serializer = new SimpleOMSerializer();
                 XMLStreamWriter outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-                serializer.serialize(envelope, outputWriter);
+                envelope.serialize(outputWriter,true);
             } catch (XMLStreamException e) {
                 throw new AxisFault("Stream error",e);
             }

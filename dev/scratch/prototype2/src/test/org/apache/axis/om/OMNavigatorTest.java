@@ -3,7 +3,6 @@ package org.apache.axis.om;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -31,7 +30,6 @@ import java.io.FileReader;
 public class OMNavigatorTest extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
-    private SimpleOMSerializer serilizer;
     private OMXMLParserWrapper builder;
     private File tempFile;
     private XMLStreamWriter writer;
@@ -46,7 +44,6 @@ public class OMNavigatorTest extends AbstractTestCase {
         OMFactory factory = OMFactory.newInstance();
         builder = new StAXSOAPModelBuilder(factory, xmlStreamReader);
         envelope = (SOAPEnvelope)builder.getDocumentElement();
-        serilizer = new SimpleOMSerializer();
         tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
 
@@ -58,7 +55,7 @@ public class OMNavigatorTest extends AbstractTestCase {
 
         assertNotNull(envelope);
         //dump the out put to a  temporary file
-        serilizer.serialize(envelope,writer);
+        envelope.serialize(writer,true);
 
         //now the OM is fully created test the navigation
         OMNavigator navigator = new OMNavigator(envelope);

@@ -2,13 +2,14 @@ package org.apache.axis.om.builder;
 
 import junit.framework.TestCase;
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.impl.llom.serialize.SimpleObjectOMSerializer;
 import org.apache.axis.om.*;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,43 +33,40 @@ import java.util.Iterator;
 public class ObjectToOMBuilderTest extends TestCase {
 
     private OutObject outObject;
-    private ObjectToOMBuilder objectToOMBuilder;
-    private OMFactory omFactory;
+
+
     private OMElement element;
-    private SimpleObjectOMSerializer serializer;
+    private XMLStreamWriter writer;
+    private File tempFile;
 
     protected void setUp() throws Exception {
         super.setUp();
-        outObject = new DummyOutObject();
-        omFactory = OMFactory.newInstance();
-
+        OutObject outObject = new DummyOutObject();
+        OMFactory omFactory = OMFactory.newInstance();
         OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-
         element = omFactory.createOMElement("Body", ns);
-        objectToOMBuilder = new ObjectToOMBuilder(element, outObject);
-        omFactory.createOMElement(null, null, element, objectToOMBuilder);
-        serializer = new SimpleObjectOMSerializer();
+        new ObjectToOMBuilder(element,outObject);
+        tempFile = File.createTempFile("temp","xml");
+        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
+
     }
 
     public void testBuilding() {
-        objectToOMBuilder.next();
         Iterator children = element.getChildren();
         while (children.hasNext()) {
             OMNode omNode = (OMNode) children.next();
             assertNotNull(omNode);
         }
-
-
     }
 
     public void testSerialization() throws Exception {
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        serializer.serialize(element, writer, true);
+        element.serialize(writer, true);
     }
 
-    public void testSerializationWithCacheOff() throws Exception {
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        serializer.serialize(element, writer, false);
+
+
+    protected void tearDown() throws Exception {
+        tempFile.delete();
     }
 
 }

@@ -2,7 +2,6 @@ package org.apache.axis.om.impl.streamwrapper;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
@@ -35,7 +34,6 @@ public class OmStAXBuilderTest extends AbstractTestCase{
 
     private OMFactory factory =null;
     private OMXMLParserWrapper builder;
-    private SimpleOMSerializer serilizer;
     private File tempFile;
 
     public OmStAXBuilderTest(String testName) {
@@ -47,8 +45,6 @@ public class OmStAXBuilderTest extends AbstractTestCase{
         XMLStreamReader reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory,reader);
-        serilizer = new SimpleOMSerializer();
-
         tempFile = File.createTempFile("temp", "xml");
     }
 
@@ -58,7 +54,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
         assertNotNull(envelope);
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
 //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        serilizer.serialize(envelope,writer);
+        envelope.serialize(writer,true);
 
 
     }

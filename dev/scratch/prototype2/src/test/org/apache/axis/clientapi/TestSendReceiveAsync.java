@@ -26,7 +26,6 @@ import org.apache.axis.engine.EngineUtils;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMFactory;
@@ -110,10 +109,10 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
         Callback callback = new Callback(){
             public void onComplete(AsyncResult result){
-                SimpleOMSerializer sOMSerializer = new SimpleOMSerializer();
+
                 try {
-                    sOMSerializer.serialize(result.getResponseEnvelope(), XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out));
+                   result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(System.out),true);
                 } catch (XMLStreamException e) {
                     reportError(e);
 

@@ -22,6 +22,12 @@ import org.apache.axis.om.*;
 public class OMLinkedListImplFactory extends OMFactory {
 
 
+//    public OMElement createOMElement(OMElement parent, OutObject object) {
+//        ObjectToOMBuilder objectToOMBuilder = new ObjectToOMBuilder(parent, object);
+//        createOMElement(null, null, parent, objectToOMBuilder);
+//        return parent;
+//    }
+
     public OMElement createOMElement(OMElement parent) {
         return new OMElementImpl(parent);
     }

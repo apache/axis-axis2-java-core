@@ -2,7 +2,6 @@ package org.apache.axis.om.impl.streamwrapper;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
@@ -30,7 +29,6 @@ import java.io.FileReader;
 public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     private SOAPEnvelope envelope = null;
-    private SimpleOMSerializer serilizer;
     private File tempFile;
     private XMLStreamReader parser;
 
@@ -44,7 +42,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), xmlStreamReader);
 
         envelope = (SOAPEnvelope) builder.getDocumentElement();
-        serilizer = new SimpleOMSerializer();
+
         tempFile = File.createTempFile("temp", "xml");
 
     }
@@ -54,7 +52,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         assertNotNull(envelope);
         //this serializing will cause the OM to fully build!
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
-        serilizer.serialize(envelope,writer);
+        envelope.serialize(writer,true);
         parser = envelope.getPullParser(false);
         while (parser.hasNext()) {
             int event = parser.next();

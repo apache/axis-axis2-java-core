@@ -31,7 +31,6 @@ import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMFactory;
@@ -94,10 +93,8 @@ public class TestSendReceive extends AbstractTestCase {
         Call call = new Call();
         call.setTo(targetEPR);
         SOAPEnvelope responseEnv = call.sendReceive(envelope);
-
-        SimpleOMSerializer sOMSerializer = new SimpleOMSerializer();
-        sOMSerializer.serialize(responseEnv, XMLOutputFactory.newInstance().createXMLStreamWriter(
-                System.out));
+        responseEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+                System.out),true);
 
     }
 

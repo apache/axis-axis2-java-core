@@ -1,5 +1,9 @@
 package org.apache.axis.om;
 
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
+import java.util.Stack;
+
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -119,7 +123,6 @@ public interface OMNode {
 
     /**
      * This is to get the type of node, as this is the super class of all the nodes
-     *
      * @return
      * @throws OMException
      */
@@ -129,16 +132,30 @@ public interface OMNode {
 
     /**
      * get the previous sibling
-     *
      * @return
      */
     public OMNode getPreviousSibling();
 
     /**
      * Set the previous sibling
-     *
      * @param previousSibling
      */
     public void setPreviousSibling(OMNode previousSibling);
+
+    /**
+     * Writes the necessary serialization to a XMLStreamWriter object
+     * @param writer
+     * @param cache
+     * @param namespacePrefixStack
+     */
+    public void serialize(XMLStreamWriter writer, boolean cache, Stack namespacePrefixStack) throws XMLStreamException ;
+
+    /**
+     * 
+     * @param writer
+     * @param cache
+     * @throws XMLStreamException
+     */
+    public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException ;
 
 }

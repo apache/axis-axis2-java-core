@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
+
     protected OMFactory ombuilderFactory;
     protected XMLStreamReader parser;
 
@@ -226,4 +227,16 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @throws OMException
      */
     public abstract int next() throws OMException;
+
+    /**
+     *
+     * @return
+     */
+    public short getBuilderType() {
+        return OMConstants.PULL_TYPE_BUILDER;
+    }
+
+    public void registerExternalContentHandler(Object obj) {
+        throw new UnsupportedOperationException();
+    }
 }

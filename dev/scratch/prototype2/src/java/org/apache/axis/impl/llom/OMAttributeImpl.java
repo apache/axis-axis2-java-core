@@ -44,13 +44,10 @@ public class OMAttributeImpl implements OMAttribute {
     }
 
     public QName getQName(){
-
-
         String namespaceName = namespace != null ? namespace.getName() : null;
         return new QName(namespaceName, localName);
     }
 
-    // -------- Getters and Setters
     public String getLocalName() {
         return localName;
     }
@@ -74,5 +71,7 @@ public class OMAttributeImpl implements OMAttribute {
     public OMNamespace getNamespace(){
         return namespace;
     }
+
+
 
 }

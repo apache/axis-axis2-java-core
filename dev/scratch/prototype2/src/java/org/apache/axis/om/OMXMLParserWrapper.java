@@ -57,7 +57,24 @@ public interface OMXMLParserWrapper {
     boolean isCompleted();
 
     /**
+     * @return the document element
+     */
+    OMElement getDocumentElement();
+
+    /**
+     * Returns the type of the builder.
+     * Can be either the
+     * PUSH_TYPE_BUILDER or PULL_TYPE_BUILDER
      * @return
      */
-    public OMElement getDocumentElement();
+    short getBuilderType();
+
+    /**
+     * Registers an external content handler. Especially useful for
+     * push type builders. will throw an unsupportedOperationExcveption if
+     * such handler registration is not supported     
+     * @param obj
+     */
+    void registerExternalContentHandler(Object obj);
+
 }
