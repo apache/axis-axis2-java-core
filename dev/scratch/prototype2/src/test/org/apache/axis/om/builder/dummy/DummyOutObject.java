@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 public class DummyOutObject implements OutObject {
     private XMLReader parser;
-    String fileName = "E:\\projects\\PrototypeOne\\src\\test-resources\\soapmessage.xml";
+    String fileName = "src/test-resources/soapmessage.xml";
 
 
     public DummyOutObject() {
