@@ -9,7 +9,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -21,6 +20,7 @@ import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.SimpleJavaProvider;
+import org.apache.axis.phaseresolver.PhaseException;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.apache.axis.deployment.metadata.phaserule;
+package org.apache.axis.phaseresolver;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.metadata.ServerMetaData;
@@ -6,6 +6,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Phase;
+import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +26,11 @@ import java.util.Vector;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Deepal Jayasinghe
+ *         Nov 8, 2004
+ *         2:21:17 PM
+ *
  */
 
 
@@ -115,7 +121,7 @@ public class PhaseHolder implements DeploymentConstants {
      *  2 : OutFlowExeChain
      *  3 : FaultFlowExcechain
      * @param chainType
-     * @throws PhaseException
+     * @throws org.apache.axis.phaseresolver.PhaseException
      */
     public  void getOrderdHandlers(int chainType) throws PhaseException {
         OrderdPhases();

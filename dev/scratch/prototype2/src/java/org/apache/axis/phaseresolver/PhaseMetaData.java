@@ -1,6 +1,7 @@
-package org.apache.axis.deployment.metadata.phaserule;
+package org.apache.axis.phaseresolver;
 
 import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.phaseresolver.PhaseException;
 
 import java.util.Vector;
 
@@ -18,6 +19,10 @@ import java.util.Vector;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Deepal Jayasinghe
+ *         Nov 8, 2004
+ *         1:57:15 PM
  */
 public class PhaseMetaData {
 

@@ -1,8 +1,6 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.metadata.phaserule.PhaseResolver;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
 import org.apache.axis.deployment.repository.utill.WSInfo;
@@ -15,6 +13,8 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
+import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -181,8 +181,9 @@ public class DeploymentEngine implements DeploymentConstants {
         if(faultFlow != null) {
             addFlowHandlers(faultFlow,classLoader);
         }
-            PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
-            reolve.buildchains();
+        PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
+        reolve.buildchains();
+        engineRegistry.addService(serviceMetaData);
     }
 
 

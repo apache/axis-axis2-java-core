@@ -1,4 +1,4 @@
-package org.apache.axis.deployment.metadata.phaserule;
+package org.apache.axis.phaseresolver;
 
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.metadata.ServerMetaData;
@@ -8,6 +8,8 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.phaseresolver.PhaseHolder;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
@@ -26,6 +28,10 @@ import java.util.Vector;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Deepal Jayasinghe
+ *         Dec 10, 2004
+ *         5:27:11 PM
  */
 public class PhaseResolver {
 
