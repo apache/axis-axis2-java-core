@@ -84,10 +84,10 @@ public class Call {
             msgctx.setProperty(MessageContext.REQUEST_URL,url);
             engine.send(msgctx);
             
-            MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
-            reposne.setServerSide(false);
-            engine.receive(reposne);
-            SOAPEnvelope envelope = reposne.getEnvelope();
+            MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(),engine);
+            response.setServerSide(false);
+            engine.receive(response);
+            SOAPEnvelope envelope = response.getEnvelope();
             
             SOAPBody body = envelope.getBody();
             
@@ -147,10 +147,10 @@ public class Call {
                 public void run() {
                     try {
                         log.info("Starting new Thread "); 
-                        MessageContext reposne = createIncomingMessageContext(urlConnect.getInputStream(),engine);
-                        reposne.setServerSide(false);
-                        engine.receive(reposne);
-                        SOAPEnvelope envelope = reposne.getEnvelope();
+                        MessageContext response = createIncomingMessageContext(urlConnect.getInputStream(),engine);
+                        response.setServerSide(false);
+                        engine.receive(response);
+                        SOAPEnvelope envelope = response.getEnvelope();
                         
                         SOAPBody body = envelope.getBody();
                         
