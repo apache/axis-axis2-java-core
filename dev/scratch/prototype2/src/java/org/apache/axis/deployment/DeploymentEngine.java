@@ -1,19 +1,6 @@
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.metadata.ModuleMetaData;
 import org.apache.axis.deployment.metadata.ServerMetaData;
 import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
@@ -30,6 +17,16 @@ import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Vector;
 
 
 /**
@@ -143,9 +140,9 @@ public class DeploymentEngine implements DeploymentConstants {
         addNewModule(module);
     }
 
-    public ModuleMetaData getModule(String moduleName) {
+    public AxisModule getModule(String moduleName) {
         for (int i = 0; i < modulelist.size(); i++) {
-            ModuleMetaData metaData = (ModuleMetaData) modulelist.elementAt(i);
+            AxisModule metaData = (AxisModule) modulelist.elementAt(i);
             if (metaData.getName().equals(moduleName)) {
                 return metaData;
             }
@@ -299,15 +296,13 @@ public class DeploymentEngine implements DeploymentConstants {
                                 if (service != null) {
                                     addService(service);
                                     log.info("Deployement WS Name  " + currentFileItem.getName());
-
+                                    currentFileItem = null;
+                                    break;
                                 }
                             } catch (PhaseException e) {
                                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
                             } catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                            } finally {
-                                currentFileItem = null;
-                                break;
                             }
                         }
                     case MODULE:
@@ -318,15 +313,12 @@ public class DeploymentEngine implements DeploymentConstants {
                                 if (metaData != null) {
                                     addModule(metaData);
                                     log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
+                                    currentFileItem = null;
                                     break;
                                 }
                             } catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
-                            }finally {
-                                currentFileItem = null;
-                                break;
                             }
-
                         }
                 }
             }

@@ -33,13 +33,11 @@ public class ServerMetaData {
     private Vector parameters = new Vector();
     private Vector handlers = new Vector();
     private Vector modules = new Vector();
-    private Vector typemappings = new Vector();
     private Vector phases = new Vector();
 
     private int parameterCount = 0;
     private int handlerCount = 0;
     private int moduleCount = 0;
-    private int typemappingCount = 0;
     private int phaseCount = 0;
 
     public ServerMetaData() {
@@ -95,18 +93,6 @@ public class ServerMetaData {
     public AxisModule getModule(int index) {
         if (index <= moduleCount) {
             return (AxisModule) modules.get(index);
-        } else
-            return null;
-    }
-
-    public void addTypeMapping(TypeMappingMetaData typeMapping) {
-        typemappings.add(typeMapping);
-        typemappingCount++;
-    }
-
-    public TypeMappingMetaData getTypeMapping(int index) {
-        if (index <= typemappingCount) {
-            return (TypeMappingMetaData) typemappings.get(index);
         } else
             return null;
     }

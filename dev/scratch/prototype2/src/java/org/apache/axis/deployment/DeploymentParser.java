@@ -1,27 +1,20 @@
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
+import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.deployment.metadata.phaserule.PhaseException;
+import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
+import org.apache.axis.description.*;
+import org.apache.axis.impl.description.FlowImpl;
+import org.apache.axis.impl.description.ParameterImpl;
+import org.apache.axis.impl.description.SimpleAxisOperationImpl;
+import org.apache.axis.impl.providers.SimpleJavaProvider;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.deployment.metadata.ModuleMetaData;
-import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.deployment.metadata.phaserule.PhaseException;
-import org.apache.axis.deployment.metadata.phaserule.PhaseMetaData;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.impl.description.FlowImpl;
-import org.apache.axis.impl.description.ParameterImpl;
-import org.apache.axis.impl.description.SimpleAxisOperationImpl;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
+import java.io.InputStream;
 
 
 /**
@@ -260,7 +253,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
 
-                                if (attname.equals(ModuleMetaData.REF)) {
+                                if (attname.equals(REF)) {
                                     axisService.addModule(new QName(attvalue));
                                 }
                             }
@@ -569,51 +562,6 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
-    private ModuleMetaData getModule() throws DeploymentException {
-        String moduleref = "";
-        int attribCount = pullparser.getAttributeCount();
-        //   boolean ref_name = false;
-
-        if (attribCount > 0) {
-            for (int i = 0; i < attribCount; i++) {
-                String attname = pullparser.getAttributeLocalName(i);
-                String attvalue = pullparser.getAttributeValue(i);
-
-                if (attname.equals(ModuleMetaData.REF)) {
-                    moduleref = attvalue;
-                }
-            }
-        }
-        boolean END_MODULE = false;
-        String text = ""; // to store the paramater elemnt
-        try {
-            while (!END_MODULE) {
-                int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.END_DOCUMENT) {
-                    // document end tag met , break the loop
-                    // but the doc end tag wont meet here :)
-                    END_MODULE = true;
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(moduleXMLST)) {
-                        END_MODULE = true;
-                        break;
-                    }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
-                }
-            }
-        } catch (XMLStreamException e) {
-            throw new DeploymentException("parser Exception", e);
-        } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
-        }
-        ModuleMetaData module = dpengine.getModule(moduleref);
-        if (module == null) {
-            throw new DeploymentException(moduleref + " is not a valid module ");
-        } else
-            return module;
-    }
 
     public void processModule(AxisModule module) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
@@ -624,14 +572,14 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
 
-               if (attname.equals(ModuleMetaData.NAME)) {
+               if (attname.equals(ATTNAME)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
                         module.setName(new QName(attvalue));
                         ref_name = true;
                     }
-                } else if (attname.equals(ModuleMetaData.REF)) {
+                } else if (attname.equals(REF)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {

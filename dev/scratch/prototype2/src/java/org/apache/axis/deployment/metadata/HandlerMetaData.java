@@ -44,7 +44,6 @@ public class HandlerMetaData {
      * ************************
      * HandlerMetaData properties
      */
-    private Vector parameters = new Vector();
 
     private String ref;
 
@@ -70,12 +69,8 @@ public class HandlerMetaData {
         this.phaseFirst = false;
         this.phaseLast = false;
 
-        parameters.removeAllElements();
     }
 
-    public Vector getParameters() {
-        return parameters;
-    }
 
     public int getParacount() {
         return paracount;
@@ -145,18 +140,6 @@ public class HandlerMetaData {
         this.name = name;
     }
 
-    public void addParameter(ParameterMetaData parameter) {
-        parameters.add(parameter);
-        paracount++;
-    }
-
-    public ParameterMetaData getParameter(int index) {
-        if (index < paracount) {
-            return (ParameterMetaData) parameters.get(index);
-        } else {
-            return null;
-        }
-    }
 
     public void printMe() {
         log.info("===========================================");
