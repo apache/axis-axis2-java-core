@@ -93,16 +93,16 @@
 <h3><a name="_Toc96698086"></a>Installing Axis2 in a Servlet container </h3>
 <p>Installation of the WAR is quite simple. It's a matter of dropping the war in the webapps folders and most servlet containers will automatically install the war. However some servlet containers may require a restart in order to capture the new web application. Please refer your servlet container documentation for more information about this. </p>
 <p>Once the WAR is successfully installed it can be tested by pointing the web browser to the <strong>http:// &lt;host :port&gt;/ axis2. </strong>It should produce the following page. </p>
-<p align="center"><strong><img width="624" height="439" src="images/clip_image006.jpg"></strong></p>
+<p align="center"><strong><img src="images/clip_image006.jpg"></strong></p>
 <p><strong>&nbsp; </strong>To ensure that everything is fine and smooth, a probing of the system can be done through the validate link. If the validation fails then the war has failed to install properly or some essential jars are missing. At such a situation the documentation of the particular servlet container should be consulted to find the problem. The following page is a successful validation. Note the statement “core axis libraries are present”. </p>
-<p align="center"><img width="647" height="469" src="images/clip_image008.jpg"></p>
+<p align="center"><img src="images/clip_image008.jpg"></p>
 <p>The axis web application also provides an interface to upload services. Once a service is created according to the service specification (see the service jar file format structure) that jar file can be uploaded using the upload page. </p>
-<p align="center"><img width="647" height="469" src="images/clip_image010.jpg"></p>
+<p align="center"><img src="images/clip_image010.jpg"></p>
 <p>&nbsp; </p>
 <p>The uploaded jar files will be stored in the default service directory. For Axis2 this will be the &lt;webapps&gt;/axis2/WEB-INF/services directory. Once a service is uploaded it will be instantly installed. </p>
 <p>Since Axis2 supports hot deployment one can drop the service jar directly through the file system to the above mentioned services directory and it will also cause the service to be automatically installed without the container being restarted. </p>
 <p>To check the successful installation of a service <strong><em>available services link </em></strong> is provided. The services and the operations of successfully installed services will be displayed in the available services page. </p>
-<p align="center"><img width="647" height="469" src="images/clip_image012.jpg"></p>
+<p align="center"><img  src="images/clip_image012.jpg"></p>
 <p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. However whether the service is
 present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;port&gt;/axis2/services/&lt;service name&gt;</b>. This should provide a page similar to the following
 </p>
