@@ -6,7 +6,7 @@
 	<property name="build.lib" location="${build}/lib"/>
 	<property name="lib" location="lib"/>
 	<property name="root" location="../../../../"/>
-	<property name="jar.dir" location="${root}/src/test-resources/deployment/modules/"/>
+	<property name="jar.dir" location="${root}/target/test-resources/modules/"/>
 	
 	<path id="axis.test.classpath">
 		<path refid="maven.dependency.classpath"></path>

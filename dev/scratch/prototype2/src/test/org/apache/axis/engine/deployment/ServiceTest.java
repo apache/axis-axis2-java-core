@@ -30,7 +30,8 @@ import org.apache.axis.engine.registry.EngineRegistry;
 public class ServiceTest extends TestCase {
 
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault{
-        String filename = "src/test-resources/deployment";
+        //String filename = "src/test-resources/deployment";
+        String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         try {
             EngineRegistry er = null;
