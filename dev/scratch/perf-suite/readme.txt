@@ -1,0 +1,1 @@
+You all have the Axis2 jars in your maven classapth, so will not get in to trouble with that, but if do not have the jars for the Axis1.x in the maven reposirty please drop them to the lib dir so that the they will be picked up

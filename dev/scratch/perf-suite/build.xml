@@ -1,10 +1,15 @@
 <project name="perf-suite" basedir="." default="test">
 	<property name="maven.repo" value="${user.home}/.maven/repository/"/>
 	<property name="build" value="build"/>
-<property name="axis.classes" value="build/axis-classes"/>
-<property name="axis2.classes" value="build/axis2-classes"/>
+	<property name="axis.classes" value="build/axis-classes"/>
+	<property name="axis2.classes" value="build/axis2-classes"/>
+	<property name="lib" value="lib"/>
 	
 	<path id="axis.classpath">
+			<fileset dir="${lib}">
+					<include name="*.jar"/>
+			</fileset>
+
 			<fileset dir="${maven.repo}">
 					<include name="axis/jars/activation.jar"/>
 					<include name="axis/jars/axis-jaxrpc-1.2-RC3.jar"/>
