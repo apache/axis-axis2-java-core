@@ -30,7 +30,7 @@
     <goal name="war" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
         <mkdir dir="target"/>
-		<war destfile="target/axis2.war" webxml="modules/src/conf/web.xml">
+		<war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
 		  <fileset dir="modules/core/src/html"/>
 		  <lib dir="${maven.repo.local}/stax/jars/">
 		    <include name="stax-api-1.0.jar"/>
