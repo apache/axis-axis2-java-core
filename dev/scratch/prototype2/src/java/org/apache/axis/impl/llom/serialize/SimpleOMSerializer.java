@@ -6,7 +6,7 @@ import org.apache.axis.om.*;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.Stack;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -25,7 +25,8 @@ import java.util.Vector;
  */
 public class SimpleOMSerializer {
 
-    private Vector prefixList = new Vector();
+    private Stack prefixStack = new Stack();
+
 
     public void serialize(Object omNode, XMLStreamWriter writer) throws XMLStreamException {
 
@@ -58,28 +59,25 @@ public class SimpleOMSerializer {
      */
     protected void serializeElement(OMElement element, XMLStreamWriter writer) throws XMLStreamException {
 
+        int nsPushCount = 0;
         OMNamespace ns = element.getNamespace();
         String prefix = null;
         String nameSpaceName = null;
+
         if (ns != null) {
             prefix = ns.getPrefix();
             nameSpaceName = ns.getName();
+
             if (prefix != null) {
                 writer.writeStartElement(prefix, element.getLocalName(), nameSpaceName);
-                if (!prefixList.contains(prefix)) {
-                    writer.writeNamespace(prefix, nameSpaceName);
-                    prefixList.add(prefix);
-                }
+                if (serializeNamespace(ns, writer))
+                        nsPushCount++;
             } else {
                 writer.writeStartElement(nameSpaceName, element.getLocalName());
                 //add the own namespace
-                writer.writeDefaultNamespace(nameSpaceName);
-
-
+                // writer.writeDefaultNamespace(nameSpaceName);
             }
         }
-
-
 
         //add the elements attributes
         Iterator attributes = element.getAttributes();
@@ -89,15 +87,13 @@ public class SimpleOMSerializer {
 
         //add the namespaces
         Iterator namespaces = element.getAllDeclaredNamespaces();
-        if (namespaces != null) {
-            while (namespaces.hasNext()) {
-                serializeNamespace((OMNamespace) namespaces.next(), writer);
-            }
+        while (namespaces.hasNext()) {
+            if (serializeNamespace((OMNamespace) namespaces.next(), writer))
+                    nsPushCount++;
         }
 
-        //add the children                                        hiiii
+        //add the children
         Iterator children = element.getChildren();
-
         while (children.hasNext()) {
             Object node = children.next();
             if (node != null) {
@@ -106,7 +102,10 @@ public class SimpleOMSerializer {
         }
 
         writer.writeEndElement();
-
+        //remove the namespace prefixes from the stack
+        for (int i=0;i<nsPushCount;i++){
+            prefixStack.pop();
+        }
     }
 
     /**
@@ -138,7 +137,7 @@ public class SimpleOMSerializer {
         String prefix = null;
         String namespaceName = null;
         if (ns != null) {
-//add the prefix if it's availble
+            //add the prefix if it's availble
             prefix = ns.getPrefix();
             namespaceName = ns.getName();
 
@@ -153,13 +152,28 @@ public class SimpleOMSerializer {
     }
 
 
-    protected void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+//    protected void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+//        if (namespace != null) {
+//            String prefix = namespace.getPrefix();
+//            if (!prefixStack.contains(prefix)) {
+//                writer.writeNamespace(prefix, namespace.getName());
+//                prefixStack.add(prefix);
+//            }
+//        }
+//    }
+
+    protected boolean serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+        boolean nsWritten = false;
         if (namespace != null) {
             String prefix = namespace.getPrefix();
-            if (!prefixList.contains(prefix))
+            if (!prefixStack.contains(prefix)) {
                 writer.writeNamespace(prefix, namespace.getName());
-
+                prefixStack.push(prefix);
+                nsWritten = true;
+            }
         }
+
+        return nsWritten;
     }
 
 }

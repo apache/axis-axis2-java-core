@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -35,7 +36,7 @@ public class OMTestUtils {
 
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        StAXBuilder builder =   new StAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+        OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),parser);
         return builder;
     }
     
