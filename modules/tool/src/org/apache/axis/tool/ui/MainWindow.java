@@ -1,13 +1,18 @@
 package org.apache.axis.tool.ui;
 
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import org.apache.axis.tool.bean.WizardBean;
 import org.apache.axis.tool.control.Controller;
 import org.apache.axis.tool.control.ProcessException;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

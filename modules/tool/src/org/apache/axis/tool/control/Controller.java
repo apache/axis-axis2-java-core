@@ -1,5 +1,9 @@
 package org.apache.axis.tool.control;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.apache.axis.tool.bean.Page1Bean;
 import org.apache.axis.tool.bean.Page2Bean;
 import org.apache.axis.tool.bean.Page3Bean;
@@ -8,10 +12,6 @@ import org.apache.axis.tool.core.ClassFileHandler;
 import org.apache.axis.tool.core.FileCopier;
 import org.apache.axis.tool.core.JarFileWriter;
 import org.apache.axis.tool.core.ServiceFileCreator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Map;
 
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPTransportReceiver;

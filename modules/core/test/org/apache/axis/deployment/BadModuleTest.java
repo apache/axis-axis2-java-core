@@ -16,6 +16,7 @@
  
 package org.apache.axis.deployment;
 
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisGlobal;
 
 import java.io.FileInputStream;
