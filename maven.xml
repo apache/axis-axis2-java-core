@@ -24,6 +24,7 @@
 					<include name="axis/jars/axis2*.jar"/>
 				</fileset>
 			</delete>
+			<delete dir="target"/>
 		</goal>
 
 
@@ -111,19 +112,25 @@
     <attainGoal name="html2xdoc"/>
   </preGoal>
   
-  <goal name="dist-bin">
+  <goal name="dist-bin" prereqs="war,javadoc-gen">
 	<mkdir dir="target/dist-bin"/>
 	<mkdir dir="target/dist-bin/docs"/>
 	<mkdir dir="target/dist-bin/bin"/>
 	<mkdir dir="target/dist-bin/lib"/>
 	<mkdir dir="target/dist-bin/samples"/>
 	<mkdir dir="target/dist-bin/webapps"/> 
-		<copy todir="target/dist-bin/docs">
-			<fileset dir="modules">
-				<include name="**/target/docs/apidocs/*"/>
+    <mkdir dir="target/dist-bin/docs/api"/> 
+		<copy todir="target/dist-bin/docs/api">
+			<fileset dir="target/apidocs/">
+				<include name="**"/>
 			</fileset> 
 		</copy> 
-		<copy todir="target/dist-bin/lib">
+		<copy todir="target/dist-bin/docs">
+			<fileset dir="xdocs">
+				<include name="**"/>
+			</fileset> 
+		</copy> 
+		<copy todir="target/dist-bin/lib" flatten="true">
 			<fileset dir="${maven.repo.local}">
 				<include name="stax/jars/stax-api-1.0.jar"/>
 				<include name="stax/jars/stax-1.1.1-dev.jar"/>
@@ -138,6 +145,39 @@
 			</fileset> 
 		</copy> 
 		<copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
+		<copy todir="target/dist-bin/samples">
+			<fileset dir="modules/samples/src/java">
+				<include name="userguide/**"/>
+			</fileset> 
+		</copy> 
+  </goal>
+  <goal name="dist-src">
+		<mkdir dir="target/dist-src"/>
+		<zip file="target/axis2-src-M1.zip" >
+			<fileset dir=".">
+				<include name="**"/>
+				<exclude name="**/target/**"/>
+				<exclude name="**/.svn/**"/>
+				<exclude name="**/bin/**"/>
+			</fileset> 
+		</zip> 
+  </goal>
+  
+  <goal name="javadoc-gen">
+	  <javadoc packagenames="org.apache.axis.*"
+           defaultexcludes="yes"
+           destdir="target/apidocs"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="Axis2 API">
+           		<sourcepath>
+	           		<pathelement location="modules/core/src/java"/>
+	           		<pathelement location="modules/deployment/src/java"/>	           		
+	           		<pathelement location="modules/wsdl/src/java"/>
+	           		<pathelement location="modules/om/src/java"/>
+           </sourcepath>
+  </javadoc>
   </goal>
 
 
