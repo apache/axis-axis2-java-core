@@ -1,19 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.apache.axis.deployment;
 
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
@@ -173,7 +173,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws AxisFault
      * @throws PhaseException
      */
-    public EngineRegistry start() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
+    public EngineRegistry start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
         if(serverconfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
@@ -191,10 +191,15 @@ public class DeploymentEngine implements DeploymentConstants {
         if(hotdeployment){
             startSearch(this);
         } else {
-            RepositoryListenerImpl repository = 
+            RepositoryListenerImpl repository =
                     new RepositoryListenerImpl(folderName,this);
         }
-        valideServerModule() ;
+        try {
+            valideServerModule() ;
+        } catch (PhaseException e) {
+            log.info("Module validation failed"  + e.getMessage());
+        }
+
         return engineRegistry;
     }
 
@@ -417,13 +422,17 @@ public class DeploymentEngine implements DeploymentConstants {
                             AxisService service = new AxisService();
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
+                            log.info("Invalid service" + currentFileItem.getName() );
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("DeploymentException  " + de);
                         } catch (AxisFault axisFault) {
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("AxisFault  " + axisFault);
                             throw new RuntimeException(axisFault);
                         } catch (Exception e) {
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("Exception  " + e);
                         } finally {
                             currentFileItem = null;
@@ -434,10 +443,13 @@ public class DeploymentEngine implements DeploymentConstants {
                             AxisModule metaData = new AxisModule();
                             unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this, metaData);
                             addNewModule(metaData);
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("DeploymentException  " + e);
                         } catch (AxisFault axisFault) {
+                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("AxisFault  " + axisFault);
                         } finally {
                             currentFileItem = null;
@@ -460,6 +472,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     if(wsInfo.getType()==SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
                         engineRegistry.removeService(new QName(serviceName));
+                        log.info("Invalid service" + currentFileItem.getName() );
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
                 }
