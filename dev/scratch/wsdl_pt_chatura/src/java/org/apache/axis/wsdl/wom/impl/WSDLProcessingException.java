@@ -15,42 +15,13 @@
  */
 package org.apache.axis.wsdl.wom.impl;
 
-import java.net.URI;
-
-import org.apache.axis.wsdl.wom.WDSLProperty;
-
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty {
+public class WSDLProcessingException extends RuntimeException {
 
-	
-	private URI name;
-	
-	//TODO replace with the  data binding object structure
-	private Object constraint;
-	
-	//TODO replace with the  data binding object structure
-	private Object value;
-	
-	
-	public Object getConstraint() {
-		return constraint;
-	}
-	public void setConstraint(Object constraint) {
-		this.constraint = constraint;
-	}
-	public URI getName() {
-		return name;
-	}
-	public void setName(URI name) {
-		this.name = name;
-	}
-	public Object getValue() {
-		return value;
-	}
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public WSDLProcessingException(String message){
+        super(message);
+    }
 }

@@ -29,7 +29,7 @@ import org.apache.axis.wsdl.wom.WSDLInterface;
  * @author Chathura Herath
  *  
  */
-public class WSDLInterfaceImpl implements  WSDLInterface {
+public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 	
 	
 	private String name;

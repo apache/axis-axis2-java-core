@@ -15,10 +15,38 @@
  */
 package org.apache.axis.wsdl.wom.impl;
 
+import java.util.HashMap;
+
+
+
+import org.apache.axis.wsdl.wom.Component;
+import org.apache.axis.wsdl.wom.WSDLConstants;
+import org.apache.xml.utils.QName;
+
+
+
+
 /**
  * @author Chathura Herath
  *
  */
-public class ComponentImpl {
+public class ComponentImpl implements Component, WSDLConstants{
 
+    protected HashMap componentProperties = new HashMap();
+    
+    
+    public HashMap getComponentProperties() {
+        return componentProperties;
+    }
+    public void setComponentProperties(HashMap properties) {
+        this.componentProperties = properties;
+    }
+    
+    protected void checkValidityOfNamespaceWRTWSDLContext(QName qName){
+        for(int i=0; i< WSDL_NAMESPACES.length; i++){
+            if(qName.getNamespaceURI() == WSDL_NAMESPACES[i]) 
+               return;
+        }
+        throw new WSDLProcessingException("The Namespace of the QName is not a valid WSDL namespace");
+    }
 }

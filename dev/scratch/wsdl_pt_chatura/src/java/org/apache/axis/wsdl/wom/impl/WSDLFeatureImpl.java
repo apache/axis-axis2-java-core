@@ -23,7 +23,7 @@ import org.apache.axis.wsdl.wom.WSDLFeature;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLFeatureImpl implements WSDLFeature {
+public class WSDLFeatureImpl extends ComponentImpl implements WSDLFeature {
 
 	
 	private URI name;

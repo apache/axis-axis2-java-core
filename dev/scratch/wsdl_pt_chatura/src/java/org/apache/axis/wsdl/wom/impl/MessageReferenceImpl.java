@@ -21,7 +21,7 @@ import org.apache.axis.wsdl.wom.MessageReference;
  * @author Chathura Herath
  *
  */
-public class MessageReferenceImpl implements MessageReference {
+public class MessageReferenceImpl  extends ComponentImpl implements MessageReference {
 
 			
 	//Referes to the MEP the Message relates to.

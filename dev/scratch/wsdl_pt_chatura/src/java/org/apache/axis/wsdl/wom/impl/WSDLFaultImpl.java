@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLFaultImpl implements WSDLFault {
+public class WSDLFaultImpl extends ComponentImpl implements WSDLFault {
 	
 	//TODO its a NCName so parse it. and this is required
 	private String name;

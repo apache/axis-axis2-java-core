@@ -15,10 +15,14 @@
  */
 package org.apache.axis.wsdl.wom;
 
+import java.util.HashMap;
+
 /**
  * @author chathura@opensource.lk
  *
  */
 public interface Component {
+    public HashMap getComponentProperties();
 
+    public void setComponentProperties(HashMap properties);
 }

@@ -15,30 +15,17 @@
  */
 package org.apache.axis.wsdl.wom;
 
-import java.net.URI;
-import java.util.HashMap;
-
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLService {
-    public HashMap getEndpoints();
+public interface WSDLEndpoint {
+    public WSDLBinding getBinding();
 
-    public void setEndpoints(HashMap endpoints);
-
-    public void setEndpoint(WSDLEndpoint endpoint, String nCName);
+    public void setBinding(WSDLBinding binding);
 
     public String getName();
 
     public void setName(String name);
-
-    public URI getNamespaceURI();
-
-    public void setNamespaceURI(URI namespaceURI);
-
-    public WSDLInterface getServiceInterface();
-
-    public void setServiceInterface(WSDLInterface serviceInterface);
 }

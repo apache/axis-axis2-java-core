@@ -15,42 +15,31 @@
  */
 package org.apache.axis.wsdl.wom.impl;
 
-import java.net.URI;
+import org.apache.axis.wsdl.wom.WSDLBinding;
+import org.apache.axis.wsdl.wom.WSDLEndpoint;
 
-import org.apache.axis.wsdl.wom.WDSLProperty;
+
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty {
+public class WSDLEndpointImpl extends  ComponentImpl implements WSDLEndpoint{
 
-	
-	private URI name;
-	
-	//TODO replace with the  data binding object structure
-	private Object constraint;
-	
-	//TODO replace with the  data binding object structure
-	private Object value;
-	
-	
-	public Object getConstraint() {
-		return constraint;
-	}
-	public void setConstraint(Object constraint) {
-		this.constraint = constraint;
-	}
-	public URI getName() {
-		return name;
-	}
-	public void setName(URI name) {
-		this.name = name;
-	}
-	public Object getValue() {
-		return value;
-	}
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    private String name;
+    
+    private WSDLBinding binding;
+    
+    public WSDLBinding getBinding() {
+        return binding;
+    }
+    public void setBinding(WSDLBinding binding) {
+        this.binding = binding;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 }

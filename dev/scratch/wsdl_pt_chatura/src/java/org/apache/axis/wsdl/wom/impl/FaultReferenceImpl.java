@@ -21,7 +21,7 @@ import org.apache.axis.wsdl.wom.FaultReference;
  * @author chathura@opensource.lk
  *
  */
-public class FaultReferenceImpl implements FaultReference {
+public class FaultReferenceImpl extends ComponentImpl  implements FaultReference {
 
 	//TODO make it  a QNAME
 	private String ref;

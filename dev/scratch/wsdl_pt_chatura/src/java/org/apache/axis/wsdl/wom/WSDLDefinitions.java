@@ -16,20 +16,20 @@
 package org.apache.axis.wsdl.wom;
 
 import java.net.URI;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
  *
  */
 public interface WSDLDefinitions {
-	public List getBindings();
+	public HashMap getBindings();
 
-	public void setBindings(List bindings);
+	public void setBindings(HashMap bindings);
 
-	public List getServices();
+	public HashMap getServices();
 
-	public void setServices(List services);
+	public void setServices(HashMap services);
 
 	public URI getTargetNameSpace();
 
@@ -39,7 +39,7 @@ public interface WSDLDefinitions {
 
 	public void setTypes(Object types);
 
-	public List getWsdlInterfaces();
+	public HashMap getWsdlInterfaces();
 
-	public void setWsdlInterfaces(List wsdlInterfaces);
+	public void setWsdlInterfaces(HashMap wsdlInterfaces);
 }

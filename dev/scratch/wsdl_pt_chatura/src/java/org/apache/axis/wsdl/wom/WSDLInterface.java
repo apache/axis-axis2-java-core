@@ -23,7 +23,8 @@ import java.util.List;
  *
  */
 public interface WSDLInterface {
-	public List getFeatures();
+	
+    public List getFeatures();
 
 	public void setFeatures(List features);
 
