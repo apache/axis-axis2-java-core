@@ -40,7 +40,11 @@
          </li>
          <li><a href="upload.jsp">Upload a service</a>
          <br/>
-            Upload a service. you can upload a properly packaged service here
+            Upload a service. you can upload a properly packaged service here.
+         </li>
+           <li><a href="interop.jsp">Do an interop test</a>
+         <br/>
+            You can run an interop test here
          </li>
         </ul>
 

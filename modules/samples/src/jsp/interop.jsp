@@ -94,7 +94,7 @@
         <br>
         You can use this web page to do a doclit standard interop test. For more detail and test server information please visit the
         <a href="http://www.whitemesa.com/r3/interop3.html">whitemesa interop test page.</a>
-        <form method="post" name="InteropTesting" action="index.jsp">
+        <form method="post" name="InteropTesting" action="interop.jsp">
          <table border="0" width="100%" cellspacing="1" cellpadding="1">
           <tr>
             <td vAlign="top" align="right" class="formText">Service URL :</td>
