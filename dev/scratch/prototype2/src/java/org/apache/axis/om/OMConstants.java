@@ -46,4 +46,6 @@ public interface OMConstants {
 
     public static final String ARRAY_ITEM_NSURI = "http://axis.apache.org/encoding/Arrays";
     public static final String ARRAY_ITEM_LOCALNAME = "item";
+    public static final String ARRAY_ITEM_NS_PREFIX = "arrays";
+    public static final String ARRAY_ITEM_QNAME = OMConstants.ARRAY_ITEM_NS_PREFIX + ":" +OMConstants.ARRAY_ITEM_LOCALNAME;
 }

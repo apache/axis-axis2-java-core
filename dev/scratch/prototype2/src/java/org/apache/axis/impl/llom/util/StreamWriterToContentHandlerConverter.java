@@ -68,7 +68,11 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
-        //throw new UnsupportedOperationException();
+//         try {
+//            writer.setPrefix(prefix,uri);
+//        } catch (XMLStreamException e) {
+//            throw new SAXException(e);
+//        }
     }
 
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {

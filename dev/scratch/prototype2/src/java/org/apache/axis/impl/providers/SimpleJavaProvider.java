@@ -161,7 +161,7 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
             responseMethodName.addChild(returnelement);
 
             returnelement.setBuilder(new ObjectToOMBuilder(returnelement,outobj));
-            returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,"arrays");
+            returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_NS_PREFIX);
             msgContext.setEnvelope(responseEnvelope);
             
             return msgContext;

@@ -48,10 +48,13 @@ public class OutObjectImpl implements OutObject{
                 String[] strs = (String[])obj;
                 char[] str = null;
                 for (int i = 0; i < strs.length; i++) {
-                    cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"",null);
+                    cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,
+                            OMConstants.ARRAY_ITEM_LOCALNAME,
+                            OMConstants.ARRAY_ITEM_QNAME ,
+                            null);
                     str = strs[i].toCharArray();
                     cHandler.characters(str,0,str.length);
-                    cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"");
+                    cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME, OMConstants.ARRAY_ITEM_QNAME );
                 }
 
             }else{
