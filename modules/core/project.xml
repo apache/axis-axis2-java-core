@@ -21,7 +21,7 @@
     <extend>../../etc/project.xml</extend>
 
     <id>axis2-core</id>
-    <name>Core</name>
+    <name>core</name>
 
     <dependencies>
         <dependency>
