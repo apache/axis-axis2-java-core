@@ -2,7 +2,6 @@ package org.apache.axis.impl.llom;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Stack;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +22,8 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -43,10 +44,11 @@ import org.apache.axis.om.OMXMLParserWrapper;
 public class OMElementImpl
 	extends OMNamedNodeImpl
 	implements OMElement, OMConstants {
-	private OMNode firstChild;
+	protected OMNode firstChild;
 	protected OMXMLParserWrapper builder;
 	private HashMap namespaces = null;
 	private HashMap attributes = null;
+	private Log log = LogFactory.getLog(getClass());
 
 	public OMElementImpl() {
 	}
@@ -467,6 +469,7 @@ public class OMElementImpl
 				}
 			} else if (firstChild != null) {
 				serializeStartpart(writer);
+				log.info("Serializing the Element from "+localName+ " the generated OM tree");
 				firstChild.serialize(writer, cache);
 				serializeEndpart(writer);
 			} else {

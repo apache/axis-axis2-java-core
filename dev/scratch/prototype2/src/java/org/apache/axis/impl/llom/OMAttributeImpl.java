@@ -1,11 +1,12 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMNamespace;
-
-import javax.xml.namespace.QName;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMNamespace;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -16,6 +16,12 @@
 
 package org.apache.axis.impl.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
@@ -26,15 +32,14 @@ import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.llom.builder.ObjectToOMBuilder;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OutObject;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 
 
 /**
@@ -93,18 +98,8 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
     }
 
     public Object[] deserializeParameters(MessageContext msgContext, Method method) throws AxisFault {
-        SOAPEnvelope env = msgContext.getEnvelope();
-        SOAPBody soapBody = env.getBody();
-        Iterator it = soapBody.getChildren();
-        while(it.hasNext()){
-            OMNode node = (OMNode)it.next();
-            if(node.getType() == OMNode.ELEMENT_NODE){
-            	Object[] objs = deserializeParameters(((OMElement)node).getPullParser(true),method);
-                return objs;
-            }
-        }
-        return null;
- 
+    	Object[] objs = deserializeParameters(msgContext.getSoapOperationElement().getPullParser(true),method);
+        return objs;
     }
     
     public Object[] deserializeParameters(XMLStreamReader xpp, Method method) throws AxisFault {

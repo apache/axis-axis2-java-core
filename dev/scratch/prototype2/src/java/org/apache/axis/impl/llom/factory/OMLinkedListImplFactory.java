@@ -125,7 +125,9 @@ public class OMLinkedListImplFactory extends OMFactory {
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope) {
-        return new SOAPBodyImpl(envelope);
+    	SOAPBody soapBody = new SOAPBodyImpl(envelope);
+    	soapBody.setComplete(true);
+        return soapBody;
     }
 
     public SOAPBody createSOAPBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
@@ -178,11 +180,11 @@ public class OMLinkedListImplFactory extends OMFactory {
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         bodyImpl.setComplete(true);
         env.addChild(bodyImpl);
-
+		//env.setBody(bodyImpl);
         SOAPHeaderImpl headerImpl = new SOAPHeaderImpl(env);
         headerImpl.setComplete(true);
         env.addChild(headerImpl);
-
+		//env.setHeader(headerImpl);
         return env;
     }
 }

@@ -1,11 +1,21 @@
 package org.apache.axis.impl.llom.builder;
 
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.exception.OMBuilderException;
-import org.apache.axis.om.*;
-
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.impl.llom.OMElementImpl;
+import org.apache.axis.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.impl.llom.exception.OMBuilderException;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,9 +36,10 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class StAXSOAPModelBuilder extends StAXBuilder {
 
-    private SOAPEnvelope envelope;
+    private SOAPEnvelopeImpl envelope;
     private boolean headerPresent = false;
     private boolean bodyPresent = false;
+	private Log log = LogFactory.getLog(getClass());
 
     /**
      * element level 1 = envelope level
@@ -72,7 +83,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         //fill in the attributes
         processAttributes(node);
-
+		log.info("Build the OMElelment {" + node.getNamespaceName()+ "}" + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
 
@@ -84,7 +95,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             if (!elementName.equalsIgnoreCase(OMConstants.SOAPENVELOPE_LOCAL_NAME)) {
                 throw new OMException("First Element must contain the local name, " + OMConstants.SOAPENVELOPE_LOCAL_NAME);
             }
-            envelope = ombuilderFactory.createSOAPEnvelope(null, this);
+            envelope = (SOAPEnvelopeImpl)ombuilderFactory.createSOAPEnvelope(null, this);
             element = (OMElementImpl) envelope;
             processNamespaceData(element, true);
 
@@ -99,6 +110,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 }
                 headerPresent = true;
                 element = ombuilderFactory.createSOAPHeader(elementName, null, parent, this);
+				//envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
             } else if (elementName.equals(OMConstants.BODY_LOCAL_NAME)) {
                 if (bodyPresent) {
@@ -106,6 +118,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 }
                 bodyPresent = true;
                 element = ombuilderFactory.createSOAPBody(elementName, null, parent, this);
+				//envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
             } else {
                 throw new OMBuilderException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");

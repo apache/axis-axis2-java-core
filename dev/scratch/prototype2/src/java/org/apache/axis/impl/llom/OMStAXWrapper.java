@@ -1,7 +1,7 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.impl.llom.exception.OMStreamingException;
-import org.apache.axis.om.*;
+import java.util.Iterator;
+import java.util.Stack;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -9,8 +9,17 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.Iterator;
-import java.util.Stack;
+
+import org.apache.axis.impl.llom.exception.OMStreamingException;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamedNode;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -34,7 +43,7 @@ import java.util.Stack;
  */
 public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
-
+	private Log log = LogFactory.getLog(getClass());
     private OMNavigator navigator;
     private OMXMLParserWrapper builder;
     private XMLStreamReader parser;
@@ -611,10 +620,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             throw new OMStreamingException("Parser completed!");
         }
 
-        if (switched){
+        if (switched && navigable){
             //set navigable to false.Now the subsequent requests will be directed to
             //the parser
             navigable = false;
+            log.info("Switching to the Real Stax parser to generated the future events");
         }
         if (navigable) {
             currentEvent = generateEvents(currentNode);
@@ -737,7 +747,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         int nodeType = node.getType();
         switch (nodeType) {
             case OMNode.ELEMENT_NODE:
-                returnEvent = generateElementEvents((OMElement) node);
+            	OMElement element = (OMElement) node;
+				log.info("Generating events from element {" + element.getNamespaceName()+ "}" + element.getLocalName() + " Generated OM tree");
+                returnEvent = generateElementEvents(element);
                 break;
             case OMNode.TEXT_NODE:
                 returnEvent = generateTextEvents();

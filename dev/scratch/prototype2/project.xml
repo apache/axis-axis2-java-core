@@ -125,8 +125,6 @@
       <email>priyanga@opensource.lk</email>
       <organization>LSF</organization>
     </developer>
-	
-	<!--- I Add few please correct the information, add others and remove this comment Srinath -->
   </developers>
 
   
@@ -141,8 +139,10 @@
     
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
-	    <exclude>**/*Util*.java</exclude>
-                    
+	<exclude>**/*Util*.java</exclude>
+        <exclude>**/OMStaxStreamingWrapperTest.java</exclude>
+        <exclude>**/OMSerailizerTest.java</exclude>
+        <exclude>**/ElementSerializerTest.java</exclude>
       </excludes>
       <includes>
         <include>**/*Test.java</include>
@@ -169,22 +169,13 @@
       <resource>
         <directory>conf</directory>
         <includes>
-          <include>**/*Provider</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
       <resource>
         <directory>src/java</directory>
         <includes>
-          <include>**/*Provider</include>
           <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>schema</directory>
-        <includes>
-              <include>*.dtd</include>
-		  <include>*.xsd</include>
         </includes>
       </resource>
     </resources>

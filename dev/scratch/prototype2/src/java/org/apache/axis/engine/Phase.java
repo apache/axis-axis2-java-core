@@ -59,7 +59,7 @@ public class Phase extends AbstractHandler implements Handler {
      * @param handler
      */
     public void addHandler(Handler handler) {
-		log.info("Handler "+ handler.getName() + "Added to the Phase "+phaseName );
+		log.info("Handler "+ handler.getName() + " Added to the Phase "+phaseName );
         handlers.add(handler);
     }
 

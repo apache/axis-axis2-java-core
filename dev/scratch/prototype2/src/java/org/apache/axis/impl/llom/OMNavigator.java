@@ -91,16 +91,16 @@ public class OMNavigator {
     private void updateNextNode() {
         if (next instanceof OMElement && !visited) {
 
-            OMElement e = (OMElement) next;
-            if (e.getFirstChild() != null)
-                next = e.getFirstChild();
+            OMElementImpl e = (OMElementImpl) next;
+            if (e.firstChild != null)
+                next = e.firstChild;
             else if (e.isComplete())
                 backtracked = true;
             else
                 next = null;
 
         } else {
-            OMNode nextSibling = next.getNextSibling();
+            OMNode nextSibling = ((OMNodeImpl)next).nextSibling;
             OMNode parent = next.getParent();
 
             if (nextSibling != null)

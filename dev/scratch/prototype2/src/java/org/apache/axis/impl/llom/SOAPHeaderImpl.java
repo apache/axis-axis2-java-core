@@ -1,10 +1,18 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
-import org.apache.axis.om.*;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
+
+import org.apache.axis.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

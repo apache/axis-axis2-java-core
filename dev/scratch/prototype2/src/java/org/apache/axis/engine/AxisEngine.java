@@ -79,6 +79,7 @@ public class AxisEngine {
         Throwable e)
         throws AxisFault {
         boolean serverSide = context.isServerSide();
+		log.error("Error Ocurred", e);
         if(serverSide && !context.isProcessingFault()){    
             AxisService service = context.getService();
             context.setProcessingFault(true);

@@ -15,8 +15,6 @@
  */
 package org.apache.axis.impl.handlers;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
@@ -25,10 +23,10 @@ import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.impl.description.AxisService;
-import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 
 public class OpNameFinder extends AbstractHandler {
@@ -42,38 +40,59 @@ public class OpNameFinder extends AbstractHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         int style = msgContext.getMessageStyle();
+
+
         if (Constants.SOAP_STYLE_RPC_ENCODED == style || style == Constants.SOAP_STYLE_RPC_LITERAL) {
-            SOAPEnvelope envelope = msgContext.getEnvelope();
-            OMNode node = null;
-            OMElement element = envelope.getBody();
-            if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                Iterator bodychilderen = element.getChildren();
-                while (bodychilderen.hasNext()) {
-                    node = (OMNode) bodychilderen.next();
-                    if (node.getType() == OMNode.ELEMENT_NODE) {
-                        OMElement bodyChild = (OMElement) node;
+			SOAPEnvelope envelope = msgContext.getEnvelope();
+			SOAPBody body = envelope.getBody();
+			OMNode node = body.getFirstChild();
+			int type = node.getType();
+			while(type != OMNode.ELEMENT_NODE){
+				node = node.getNextSibling();
+			}
+			OMElement bodyChild = (OMElement) node;
+			msgContext.setSoapOperationElement(bodyChild);
+			OMNamespace omns = bodyChild.getNamespace();
 
-                        OMNamespace omns = bodyChild.getNamespace();
+			if (omns != null) {
+				String ns = omns.getName();
+				if (ns != null) {
+					QName opName = new QName(ns, bodyChild.getLocalName());
+					AxisService service = msgContext.getService();
+					AxisOperation op = service.getOperation(opName);
+					if (op != null) {
+						msgContext.setOperation(op);
+					} else {
+						throw new AxisFault(opName + " operation not found");
+					}
+				}
+			} else {
+				throw new AxisFault("SOAP Body must be NS Qualified");
+			}
 
-                        if (omns != null) {
-                            String ns = omns.getName();
-                            if (ns != null) {
-                                QName opName = new QName(ns, bodyChild.getLocalName());
-                                AxisService service = msgContext.getService();
-                                AxisOperation op = service.getOperation(opName);
-                                if (op != null) {
-                                    msgContext.setOperation(op);
-                                } else {
-                                    throw new AxisFault(opName + " operation not found");
-                                }
-                            }
-                        } else {
-                            throw new AxisFault("SOAP Body must be NS Qualified");
-                        }
 
-                    }
-                }
-            }
+            
+//            try {
+//				int event = xpp.next();
+//
+//				while (event != XMLStreamConstants.START_ELEMENT) {
+//					event = xpp.next();
+//				}
+//				//Now we are at the body tag, let us move foward
+//				event = xpp.next();
+//				QName opName =
+//					new QName(xpp.getNamespaceURI(), xpp.getLocalName());
+//				AxisService service = msgContext.getService();
+//				AxisOperation op = service.getOperation(opName);
+//				if (op != null) {
+//					msgContext.setOperation(op);
+//				} else {
+//					throw new AxisFault(opName + " operation not found");
+//				}
+//			} catch (Exception e) {
+//				throw new AxisFault("Error finding the operationName",e);
+//			}
+            
         }
     }
 }

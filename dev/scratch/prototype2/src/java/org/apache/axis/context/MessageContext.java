@@ -26,9 +26,12 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.impl.context.SimpleSessionContext;
 import org.apache.axis.impl.description.AxisService;
+import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 
 import java.util.HashMap;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * The palce where all the service specific states are kept.
@@ -71,6 +74,8 @@ public class MessageContext {
     private String messageID;
     private AxisOperation operation;
     private boolean newThreadRequired = false;
+    private XMLStreamReader xpp;
+    private OMElement soapOperationElement;
 
     public MessageContext(EngineRegistry er) throws AxisFault {
         this.globalContext = new GlobalContext(er);
@@ -357,5 +362,33 @@ public class MessageContext {
     public void setTransport(AxisTransport transport) {
         this.transport = transport;
     }
+
+	/**
+	 * @return
+	 */
+	public XMLStreamReader getXpp() {
+		return xpp;
+	}
+
+	/**
+	 * @param reader
+	 */
+	public void setXpp(XMLStreamReader reader) {
+		xpp = reader;
+	}
+
+	/**
+	 * @return
+	 */
+	public OMElement getSoapOperationElement() {
+		return soapOperationElement;
+	}
+
+	/**
+	 * @param element
+	 */
+	public void setSoapOperationElement(OMElement element) {
+		soapOperationElement = element;
+	}
 
 }

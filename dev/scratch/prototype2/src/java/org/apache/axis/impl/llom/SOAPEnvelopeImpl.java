@@ -1,9 +1,14 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.om.*;
-
-import javax.xml.namespace.QName;
-import java.util.Iterator;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPHeader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -22,7 +27,6 @@ import java.util.Iterator;
  * <p/>
  */
 public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMConstants {
-
     /**
      * @param builder
      */
@@ -55,13 +59,22 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
      *                                        obtaining the <CODE>SOAPHeader</CODE> object
      */
     public SOAPHeader getHeader() throws OMException {
-        Iterator headerIterator = this.getChildrenWithName(new QName(OMConstants.HEADER_NAMESPACEURI, OMConstants.HEADER_LOCAL_NAME));
-        SOAPHeader soapHeader = null;
-        if (headerIterator.hasNext()) {
-            soapHeader = (SOAPHeader) headerIterator.next();
-        }
-
-        return soapHeader;
+//		if(builder != null){
+//	    	while(header == null && body == null){
+//	    		builder.next();
+//	    	}
+//		}	  
+		OMNode node = getFirstChild();
+		while(node != null){
+			if(node != null && node.getType() == OMNode.ELEMENT_NODE){
+				OMElement element = (OMElement)node;
+				if(OMConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())){
+					return (SOAPHeader)element;
+				}
+			}
+			node = node.getNextSibling();
+		}
+		return null;
     }
 
     /**
@@ -79,13 +92,35 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
      *                                        obtaining the <CODE>SOAPBody</CODE> object
      */
     public SOAPBody getBody() throws OMException {
-        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
-        SOAPBody soapBody = null;
-        if (bodyIterator.hasNext()) {
-            soapBody = (SOAPBody) bodyIterator.next();
-        }
+    	//Look at this . this code forces the OM  to build the whole thing because 
+    	//the iterator needs to stay <i>ahead</i> one node.We need to do this manually
+//    	if(builder != null){
+//			while( body == null){
+//				builder.next();
+//			}
+//			
+//    	}
 
-        return soapBody;
+//    	return body;
+
+		OMNode node = getFirstChild();
+		while(node != null){
+			if(node != null && node.getType() == OMNode.ELEMENT_NODE){
+				OMElement element = (OMElement)node;
+				if(OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())){
+					return (SOAPBody)element;
+				}
+			}
+			node = node.getNextSibling();
+		}
+		return null;
+//        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
+//        SOAPBody soapBody = null;
+//        if (bodyIterator.hasNext()) {
+//            soapBody = (SOAPBody) bodyIterator.next();
+//        }
+//
+//        return soapBody;
     }
 
 
