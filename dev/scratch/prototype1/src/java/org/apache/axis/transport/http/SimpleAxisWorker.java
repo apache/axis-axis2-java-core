@@ -31,7 +31,7 @@ import org.apache.axis.engine.TransportSenderLocator;
 import org.apache.axis.engine.context.MessageContext;
 import org.apache.axis.engine.registry.EngineRegistry;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.OMXMLPullParserWrapper;
+import org.apache.axis.om.impl.streamwrapper.OMXPPWrapper;
 import org.apache.axis.om.mime.MimeHeaders;
 import org.apache.axis.transport.TransportSender;
 import org.apache.axis.utils.Messages;
@@ -299,7 +299,7 @@ public class SimpleAxisWorker implements Runnable {
                     XmlPullParser  parser = pf.newPullParser();
                     parser.setInput(new InputStreamReader(is));
                     
-                    OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
+                    OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser); 
                     msgContext.setMessage(parserWrapper.getSOAPMessage());
                     EngineRegistry reg = engine.getRegistry();
                     // invoke the Axis engine
