@@ -16,13 +16,12 @@
 
 package org.apache.axis.deployment.repository.utill;
 
-import org.apache.axis.engine.Provider;
 import org.apache.axis.engine.AxisFault;
 
 import java.io.File;
-import java.net.URLClassLoader;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * HDFileItem = Hot Deployment File Item , to store infromation of the module or servise
@@ -37,9 +36,9 @@ public class HDFileItem {
     private String provideName;
     private String name;
 
-    public HDFileItem(int type , String name) {
+    public HDFileItem(int type, String name) {
         this.type = type;
-        this.name = name ;
+        this.name = name;
     }
 
     public String getClassName() {
@@ -67,8 +66,8 @@ public class HDFileItem {
         return file.getName();
     }
 
-    public String getServiceName(){
-        if(file!= null){
+    public String getServiceName() {
+        if (file != null) {
             return file.getName();
         } else
             return name;
@@ -106,9 +105,9 @@ public class HDFileItem {
                 classLoader = new URLClassLoader(urlsToLoadFrom, parent);
 
             } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage(),e);
+                throw new AxisFault(e.getMessage(), e);
             } catch (Exception e) {
-                throw new AxisFault(e.getMessage(),e);
+                throw new AxisFault(e.getMessage(), e);
             }
         }
     }

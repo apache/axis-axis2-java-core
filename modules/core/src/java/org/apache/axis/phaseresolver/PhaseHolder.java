@@ -15,10 +15,7 @@
 */
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Handler;
@@ -268,6 +265,115 @@ public class PhaseHolder {
                             faultChain.add(axisPhase);
                         }
                         service.setPhases(faultChain, EngineRegistry.FAULTFLOW);
+                        break;
+                    }
+            }
+        } catch (AxisFault e) {
+            throw new PhaseException(e);
+        }
+    }
+
+
+    public void buildTransportChain(PhasesInclude trnsport, int chainType)
+            throws PhaseException {
+        try {
+            OrderThePhases();
+
+            HandlerMetadata[] handlers;
+            Class handlerClass = null;
+            Handler handler;
+            switch (chainType) {
+                case 1:
+                    {
+                        ArrayList inChain = new ArrayList();
+                        for (int i = 0; i < phaseholder.size(); i++) {
+                            PhaseMetadata phase =
+                                    (PhaseMetadata) phaseholder.get(i);
+                            Phase axisPhase = new Phase(phase.getName());
+                            handlers = phase.getOrderedHandlers();
+                            for (int j = 0; j < handlers.length; j++) {
+                                try {
+                                    handlerClass = Class.forName(
+                                            handlers[j].getClassName(), true,
+                                            Thread.currentThread().getContextClassLoader());
+                                    handler =
+                                            (Handler) handlerClass.newInstance();
+                                    handler.init(handlers[j]);
+                                    handlers[j].setHandler(handler);
+                                    axisPhase.addHandler(handlers[j].getHandler());
+                                } catch (ClassNotFoundException e) {
+                                    throw new PhaseException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new PhaseException(e);
+                                } catch (InstantiationException e) {
+                                    throw new PhaseException(e);
+                                }
+                            }
+                            inChain.add(axisPhase);
+                        }
+                        trnsport.setPhases(inChain, EngineRegistry.INFLOW);
+                        break;
+                    }
+                case 2:
+                    {
+                        ArrayList outChain = new ArrayList();
+                        for (int i = 0; i < phaseholder.size(); i++) {
+                            PhaseMetadata phase =
+                                    (PhaseMetadata) phaseholder.get(i);
+                            Phase axisPhase = new Phase(phase.getName());
+                            handlers = phase.getOrderedHandlers();
+                            for (int j = 0; j < handlers.length; j++) {
+                                try {
+                                    handlerClass = Class.forName(
+                                            handlers[j].getClassName(), true,
+                                            Thread.currentThread().getContextClassLoader());
+                                    handler =
+                                            (Handler) handlerClass.newInstance();
+                                    handler.init(handlers[j]);
+                                    handlers[j].setHandler(handler);
+                                    axisPhase.addHandler(handlers[j].getHandler());
+                                } catch (ClassNotFoundException e) {
+                                    throw new PhaseException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new PhaseException(e);
+                                } catch (InstantiationException e) {
+                                    throw new PhaseException(e);
+                                }
+                            }
+                            outChain.add(axisPhase);
+                        }
+                        trnsport.setPhases(outChain, EngineRegistry.OUTFLOW);
+                        break;
+                    }
+                case 3:
+                    {
+                        ArrayList faultChain = new ArrayList();
+                        for (int i = 0; i < phaseholder.size(); i++) {
+                            PhaseMetadata phase =
+                                    (PhaseMetadata) phaseholder.get(i);
+                            Phase axisPhase = new Phase(phase.getName());
+                            handlers = phase.getOrderedHandlers();
+                            for (int j = 0; j < handlers.length; j++) {
+                                try {
+                                    handlerClass = Class.forName(
+                                            handlers[j].getClassName(), true,
+                                            Thread.currentThread().getContextClassLoader());
+                                    handler =
+                                            (Handler) handlerClass.newInstance();
+                                    handler.init(handlers[j]);
+                                    handlers[j].setHandler(handler);
+                                    axisPhase.addHandler(handlers[j].getHandler());
+                                } catch (ClassNotFoundException e) {
+                                    throw new PhaseException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new PhaseException(e);
+                                } catch (InstantiationException e) {
+                                    throw new PhaseException(e);
+                                }
+                            }
+                            faultChain.add(axisPhase);
+                        }
+                        trnsport.setPhases(faultChain, EngineRegistry.FAULTFLOW);
                         break;
                     }
             }

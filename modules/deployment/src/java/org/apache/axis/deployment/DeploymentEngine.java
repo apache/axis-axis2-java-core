@@ -33,9 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +45,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private boolean hotdeployment = true;   //to do hot deployment or not
     private boolean hotupdate = true;  // to do hot update or not
-
 
 
     /**
@@ -93,12 +89,14 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName,"server.xml");
+        this(RepositaryName, "server.xml");
 
     }
+
     /**
      * this constructor is used to deploy a web service programatically, by using classLoader
      * and InputStream
+     *
      * @param engineRegistry
      */
     public DeploymentEngine(EngineRegistry engineRegistry) {
@@ -108,26 +106,26 @@ public class DeploymentEngine implements DeploymentConstants {
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
         this.folderName = RepositaryName;
         File repository = new File(RepositaryName);
-        if(!repository.exists()){
+        if (!repository.exists()) {
             repository.mkdirs();
-            File servcies = new File(repository,"services");
-            File modules = new File(repository,"modules");
+            File servcies = new File(repository, "services");
+            File modules = new File(repository, "modules");
             modules.mkdirs();
             servcies.mkdirs();
         }
-        File serverConf = new File(repository,serverXMLFile);
-        if(!serverConf.exists()){
+        File serverConf = new File(repository, serverXMLFile);
+        if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
-            if(in != null){
+            if (in != null) {
                 try {
                     serverConf.createNewFile();
                     FileOutputStream out = new FileOutputStream(serverConf);
                     int BUFSIZE = 512; // since only a test file going to load , the size has selected
                     byte[] buf = new byte[BUFSIZE];
                     int read;
-                    while((read = in.read(buf)) > 0){
-                        out.write(buf,0,read);
+                    while ((read = in.read(buf)) > 0) {
+                        out.write(buf, 0, read);
                     }
                     in.close();
                     out.close();
@@ -136,7 +134,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
 
-            } else{
+            } else {
                 throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
 
             }
@@ -156,6 +154,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * tio get ER
+     *
      * @return
      */
     public EngineRegistry getEngineRegistry() {
@@ -170,7 +169,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public EngineRegistry start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
-        if(serverconfigName == null) {
+        if (serverconfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
         File tempfile = new File(serverconfigName);
@@ -180,19 +179,19 @@ public class DeploymentEngine implements DeploymentConstants {
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
-            throw new AxisFault("Exception at deployment",e);
+            throw new AxisFault("Exception at deployment", e);
         }
         setDeploymentFeatures();
-        if(hotdeployment){
+        if (hotdeployment) {
             startSearch(this);
         } else {
             RepositoryListenerImpl repository =
-                    new RepositoryListenerImpl(folderName,this);
+                    new RepositoryListenerImpl(folderName, this);
         }
         try {
-            valideServerModule() ;
+            valideServerModule();
         } catch (PhaseException e) {
-            log.info("Module validation failed"  + e.getMessage());
+            log.info("Module validation failed" + e.getMessage());
         }
 
         return engineRegistry;
@@ -205,15 +204,15 @@ public class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = server.getParameter(HOTDEPLOYMENT);
         Parameter parahotupdate = server.getParameter(HOTUPDATE);
-        if(parahotdeployment != null ){
-            value = (String)parahotdeployment.getValue();
-            if("false".equals(value))
-                hotdeployment=  false;
+        if (parahotdeployment != null) {
+            value = (String) parahotdeployment.getValue();
+            if ("false".equals(value))
+                hotdeployment = false;
         }
-        if(parahotupdate != null){
-            value =(String)parahotupdate.getValue();
-            if("false".equals(value))
-                hotupdate =false;
+        if (parahotupdate != null) {
+            value = (String) parahotupdate.getValue();
+            if ("false".equals(value))
+                hotupdate = false;
 
         }
     }
@@ -222,11 +221,11 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void valideServerModule() throws AxisFault, PhaseException{
-        Iterator itr= server.getModules().iterator();
+    private void valideServerModule() throws AxisFault, PhaseException {
+        Iterator itr = server.getModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
-            if(getModule(qName) == null ){
+            if (getModule(qName) == null) {
                 throw new AxisFault(server + " Refer to invalid module " + qName + " has not bean deployed yet !");
             }
         }
@@ -246,11 +245,11 @@ public class DeploymentEngine implements DeploymentConstants {
      * inorder to perform Hot deployment and so on..
      */
     private void startSearch(DeploymentEngine engine) {
-        scheduler =new Scheduler();
+        scheduler = new Scheduler();
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineRegistry createEngineRegistry()  {
+    private EngineRegistry createEngineRegistry() {
         EngineRegistry newEngineRegisty;
 
         server = new AxisGlobal();
@@ -265,12 +264,12 @@ public class DeploymentEngine implements DeploymentConstants {
         serviceMetaData = getRunnerbleService(serviceMetaData);
         engineRegistry.addService(serviceMetaData);
         Parameter para = serviceMetaData.getParameter("OUTSERVICE");
-        if(para != null ){
+        if (para != null) {
             String value = (String) para.getValue();
-            if("true".equals(value)){
+            if ("true".equals(value)) {
                 Class temp = serviceMetaData.getServiceClass();
                 try {
-                    Thread servie = (Thread)temp.newInstance();
+                    Thread servie = (Thread) temp.newInstance();
                     servie.start();
                 } catch (InstantiationException e) {
                     throw new AxisFault(e.getMessage());
@@ -281,9 +280,11 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
     }
+
     /**
      * This method is used to fill the axis service , it dose loading service class and also the provider class
      * and it will also load the service handlers
+     *
      * @param serviceMetaData
      * @return
      * @throws AxisFault
@@ -292,43 +293,43 @@ public class DeploymentEngine implements DeploymentConstants {
     private AxisService getRunnerbleService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         loadServiceClass(serviceMetaData);
         Flow inflow = serviceMetaData.getInFlow();
-        if(inflow != null ){
+        if (inflow != null) {
             addFlowHandlers(inflow);
         }
 
         Flow outFlow = serviceMetaData.getOutFlow();
-        if(outFlow != null){
+        if (outFlow != null) {
             addFlowHandlers(outFlow);
         }
 
         Flow faultFlow = serviceMetaData.getFaultFlow();
-        if(faultFlow != null) {
+        if (faultFlow != null) {
             addFlowHandlers(faultFlow);
         }
-        PhaseResolver reolve = new PhaseResolver(engineRegistry,serviceMetaData);
+        PhaseResolver reolve = new PhaseResolver(engineRegistry, serviceMetaData);
         reolve.buildchains();
         serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
         return serviceMetaData;
     }
 
 
-    private void loadServiceClass(AxisService service) throws AxisFault{
+    private void loadServiceClass(AxisService service) throws AxisFault {
         Class serviceclass = null;
         ClassLoader loader1 = currentFileItem.getClassLoader();
-        try{
+        try {
             service.setClassLoader(loader1);
             String readInClass = currentFileItem.getClassName();
-            if(readInClass != null && !"".equals(readInClass)){
+            if (readInClass != null && !"".equals(readInClass)) {
                 serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
             }
             service.setServiceClass(serviceclass);
             String readInProviderName = currentFileItem.getProvideName();
-            if(readInProviderName != null && ! "".equals(readInProviderName)){
-                Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
-                service.setProvider((Provider)provider.newInstance());
+            if (readInProviderName != null && !"".equals(readInProviderName)) {
+                Class provider = Class.forName(currentFileItem.getProvideName(), true, loader1);
+                service.setProvider((Provider) provider.newInstance());
             }
         } catch (Exception e) {
-            throw new AxisFault(e.getMessage(),e);
+            throw new AxisFault(e.getMessage(), e);
         }
 
     }
@@ -407,7 +408,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 currentFileItem = (HDFileItem) wsToDeploy.get(i);
                 int type = currentFileItem.getType();
                 UnZipJAR unZipJAR = new UnZipJAR();
-                String serviceStatus ="";
+                String serviceStatus = "";
                 switch (type) {
                     case SERVICE:
                         try {
@@ -417,20 +418,20 @@ public class DeploymentEngine implements DeploymentConstants {
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
-                            log.info("Invalid service" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName());
                             log.info("DeploymentException  " + de);
                             serviceStatus = "Error:\n" + de.getMessage();
                         } catch (AxisFault axisFault) {
-                            log.info("Invalid service" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName());
                             log.info("AxisFault  " + axisFault);
                             serviceStatus = "Error:\n" + axisFault.getMessage();
                         } catch (Exception e) {
-                            log.info("Invalid service" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName());
                             log.info("Exception  " + e);
                             serviceStatus = "Error:\n" + e.getMessage();
                         } finally {
-                            if(serviceStatus.startsWith("Error:")) {
-                                engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()),serviceStatus);
+                            if (serviceStatus.startsWith("Error:")) {
+                                engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
                             }
                             currentFileItem = null;
                         }
@@ -442,10 +443,10 @@ public class DeploymentEngine implements DeploymentConstants {
                             addNewModule(metaData);
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
-                            log.info("Invalid module" + currentFileItem.getName() );
+                            log.info("Invalid module" + currentFileItem.getName());
                             log.info("DeploymentException  " + e);
                         } catch (AxisFault axisFault) {
-                            log.info("Invalid module" + currentFileItem.getName() );
+                            log.info("Invalid module" + currentFileItem.getName());
                             log.info("AxisFault  " + axisFault);
                         } finally {
                             currentFileItem = null;
@@ -460,12 +461,12 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void doUnDeploye() {
         //todo complete this
-        String serviceName ="";
-        try{
+        String serviceName = "";
+        try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
-                    if(wsInfo.getType()==SERVICE) {
+                    if (wsInfo.getType() == SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
                         engineRegistry.removeService(new QName(serviceName));
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
@@ -474,7 +475,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
             }
-        }catch(AxisFault e){
+        } catch (AxisFault e) {
             log.info("AxisFault " + e);
         }
         wsToUnDeploy.clear();
@@ -487,24 +488,25 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * This method is used to retrive service name form the arechive file name
      * if the archive file name is service1.aar , then axis service name would be service1
+     *
      * @param fileName
      * @return
      */
-    private String getAxisServiceName(String fileName){
+    private String getAxisServiceName(String fileName) {
         char seperator = '.';
         String value = null;
         int index = fileName.indexOf(seperator);
         if (index > 0) {
-            value = fileName.substring(0 , index);
+            value = fileName.substring(0, index);
             return value;
         }
         return fileName;
     }
 
-    public AxisService deployService(ClassLoader classLoder , InputStream serviceStream ,String servieName) throws DeploymentException {
+    public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
         AxisService service = null;
         try {
-            currentFileItem = new HDFileItem(SERVICE,servieName);
+            currentFileItem = new HDFileItem(SERVICE, servieName);
             currentFileItem.setClassLoader(classLoder);
             service = new AxisService();
             DeploymentParser schme = new DeploymentParser(serviceStream, this, "");

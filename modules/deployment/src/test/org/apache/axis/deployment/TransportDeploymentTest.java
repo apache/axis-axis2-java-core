@@ -17,6 +17,8 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.phaseresolver.PhaseException;
@@ -36,12 +38,11 @@ public class TransportDeploymentTest extends AbstractTestCase {
         DeploymentEngine engine = new DeploymentEngine(testResourceDir + "/deployment", "server-transport.xml");
         engine.start();
         EngineRegistry er = engine.getEngineRegistry();
-        AxisTransport transport = er.getTransport(new QName("http"));
+        AxisTransportIn transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
         assertNotNull(transport.getInFlow());
-        assertNotNull(transport.getOutFlow());
-        AxisTransport transport1 = er.getTransport(new QName("smtp"));
+        AxisTransportOut transport1 = er.getTransportOut(new QName("http"));
         assertNotNull(transport1);
-        assertNotNull(transport1.getFaultFlow());
+        assertNotNull(transport1.getOutFlow());
     }
 }

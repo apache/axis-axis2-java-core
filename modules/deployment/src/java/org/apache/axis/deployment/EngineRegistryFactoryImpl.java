@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.deployment;
 
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.phaseresolver.PhaseException;
 
 import javax.xml.stream.XMLStreamException;
 
 
-public class EngineRegistryFactoryImpl implements  EngineRegistryFactory{
+public class EngineRegistryFactoryImpl implements EngineRegistryFactory {
     public EngineRegistry createEngineRegistry(String file) throws AxisFault {
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();
-        }catch (DeploymentException e) {
+        } catch (DeploymentException e) {
             throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);

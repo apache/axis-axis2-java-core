@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.deployment.DeploymentConstants;
@@ -78,7 +78,7 @@ public class UnZipJAR implements DeploymentConstants {
                     break;
                 }
             }
-           //  zin.closeEntry();
+            //  zin.closeEntry();
             zin.close();
             if (!foundmoduleXML) {
                 throw new DeploymentException("module.xml not found");

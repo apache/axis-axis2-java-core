@@ -3,13 +3,21 @@
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
 
     <parameter name="hotdeployment" locked="xsd:false">true</parameter>
-        <parameter name="hotupdate" locked="xsd:false">true</parameter>
+   <parameter name="hotupdate" locked="xsd:false">true</parameter>
     
     <module ref="module1"> </module>
-    <transports>
-        <transport name ="HTTP"/>
-        <transport name ="SMTP"/>
-    </transports>
+     <transportReceiver name="http">
+        <inflow>
+            <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler"/>
+            <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler"/>
+        </inflow>
+    </transportReceiver>
+    <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">
+        <outflow>
+            <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler"/>
+            <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler"/>
+        </outflow>
+    </transportSender>
   <!--
     <module ref="uri">
         <parameter name="para3" locked="xsd:true">10</parameter>

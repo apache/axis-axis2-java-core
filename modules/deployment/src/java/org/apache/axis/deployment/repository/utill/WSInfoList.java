@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.deployment.DeploymentConstants;
@@ -76,7 +76,7 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        if(deplorer.isHotupdate()) {
+                        if (deplorer.isHotupdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
@@ -98,7 +98,7 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, MODULE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        if(deplorer.isHotupdate()) {
+                        if (deplorer.isHotupdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
@@ -207,7 +207,7 @@ public class WSInfoList implements DeploymentConstants {
      */
     public void update() {
         checkForUndeploye();
-        if(deplorer.isHotupdate()) {
+        if (deplorer.isHotupdate()) {
             deplorer.doUnDeploye();
         }
         deplorer.doDeploy();

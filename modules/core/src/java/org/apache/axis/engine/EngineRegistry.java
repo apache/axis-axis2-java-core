@@ -21,10 +21,7 @@ import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.*;
 
 /**
  * The palce where all the Global states of Axis is kept.
@@ -138,4 +135,13 @@ public interface EngineRegistry {
     public HashMap getServices();
 
     public Hashtable getFaulytServices();
+
+
+    public AxisTransportIn getTransportIn(QName name) throws AxisFault ;
+    public  void addTransport(AxisTransportIn transport) throws AxisFault;
+    public AxisTransportOut getTransportOut(QName name) throws AxisFault ;
+    public  void addTransportOut(AxisTransportOut transport) throws AxisFault ;
+    public HashMap getTransportsIn();
+    public HashMap getTransportsOut();
+
 }

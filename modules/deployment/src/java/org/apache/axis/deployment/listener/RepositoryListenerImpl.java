@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.deployment.listener;
 
 import org.apache.axis.deployment.DeploymentConstants;
@@ -115,7 +115,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         // adding the root folder to the vector
         currentJars.add(root);
 
-        while (currentJars.size() > 0)  {        // loop until empty
+        while (currentJars.size() > 0) {        // loop until empty
             File dir = (File) currentJars.get(0); // get first dir
             currentJars.remove(0);       // remove it
             files = dir.list();              // get list of files
@@ -141,7 +141,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * @return
      */
     private boolean isJarFile(String filename) {
-        if(filename.endsWith(".jar")| filename.equals(".aar")) {
+        if (filename.endsWith(".jar") | filename.equals(".aar")) {
             return true;
         }
         return false;

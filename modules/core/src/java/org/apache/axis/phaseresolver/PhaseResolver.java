@@ -1,26 +1,21 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 
@@ -105,34 +100,34 @@ public class PhaseResolver {
         Flow flow = null;
 
         /*
-         * //adding server specific handlers  . global
-         * for(int intA=0 ; intA < count; intA ++){
-         * moduleName = server.getModule(intA);
-         * module = engineRegistry.getModule(moduleName);
-         * switch (flowtype){
-         * case 1 : {
-         * flow = module.getInFlow();
-         * break;
-         * }
-         * case  2 : {
-         * flow = module.getOutFlow();
-         * break;
-         * }
-         * case 3 : {
-         * flow = module.getFaultFlow();
-         * break;
-         * }
-         * }
-         * for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-         * HandlerMetaData metadata = flow.getHandler(j);
-         * //todo change this in properway
-         * if (metadata.getRules().getPhaseName().equals("")){
-         * metadata.getRules().setPhaseName("global");
-         * }
-         * allHandlers.add(metadata);
-         * }
-         * }
-         */
+        * //adding server specific handlers  . global
+        * for(int intA=0 ; intA < count; intA ++){
+        * moduleName = server.getModule(intA);
+        * module = engineRegistry.getModule(moduleName);
+        * switch (flowtype){
+        * case 1 : {
+        * flow = module.getInFlow();
+        * break;
+        * }
+        * case  2 : {
+        * flow = module.getOutFlow();
+        * break;
+        * }
+        * case 3 : {
+        * flow = module.getFaultFlow();
+        * break;
+        * }
+        * }
+        * for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+        * HandlerMetaData metadata = flow.getHandler(j);
+        * //todo change this in properway
+        * if (metadata.getRules().getPhaseName().equals("")){
+        * metadata.getRules().setPhaseName("global");
+        * }
+        * allHandlers.add(metadata);
+        * }
+        * }
+        */
 
         // service module handlers
         Collection collection = axisService.getModules();
@@ -217,26 +212,26 @@ public class PhaseResolver {
      * @throws PhaseException
      */
     public void buildTranspotsChains() throws PhaseException {
-        try {
-            HashMap transports = engineRegistry.getTransports();
-            Collection coltrnsport = transports.values();
-            for (Iterator iterator = coltrnsport.iterator();
-                 iterator.hasNext();) {
-                AxisTransport transport = (AxisTransport) iterator.next();
-                buildTransportChains(transport);
-            }
-        } catch (AxisFault axisFault) {
-            throw new PhaseException("AxisFault" + axisFault.getMessage());
+        HashMap axisTransportIn = engineRegistry.getTransportsIn();
+        HashMap axisTransportOut = engineRegistry.getTransportsOut();
+
+        Collection colintrnsport = axisTransportIn.values();
+        for (Iterator iterator = colintrnsport.iterator();
+             iterator.hasNext();) {
+            AxisTransportIn transport = (AxisTransportIn) iterator.next();
+            buildINTransportChains(transport);
+        }
+
+        Collection colouttrnsport = axisTransportOut.values();
+        for (Iterator iterator = colouttrnsport.iterator();
+             iterator.hasNext();) {
+            AxisTransportOut transport = (AxisTransportOut) iterator.next();
+            buildOutTransportChains(transport);
         }
     }
 
-    /**
-     * Method buildTransportChains
-     *
-     * @param transport
-     * @throws PhaseException
-     */
-    private void buildTransportChains(AxisTransport transport)
+
+    private void buildINTransportChains(AxisTransportIn transport)
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
@@ -247,6 +242,40 @@ public class PhaseResolver {
                         flow = transport.getInFlow();
                         break;
                     }
+                case 3:
+                    {
+                        flow = transport.getFaultFlow();
+                        break;
+                    }
+            }
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerMetadata metadata = flow.getHandler(j);
+
+                    // todo change this in properway
+                    if (metadata.getRules().getPhaseName().equals("")) {
+                        metadata.getRules().setPhaseName("transport");
+                    }
+                    phaseHolder.addHandler(metadata);
+                }
+            }
+            phaseHolder.buildTransportChain(transport, type);
+        }
+    }
+
+
+    /**
+     * Method buildTransportChains
+     *
+     * @param transport
+     * @throws PhaseException
+     */
+    private void buildOutTransportChains(AxisTransportOut transport)
+            throws PhaseException {
+        Flow flow = null;
+        for (int type = 1; type < 4; type++) {
+            phaseHolder = new PhaseHolder(engineRegistry, null);
+            switch (type) {
                 case 2:
                     {
                         flow = transport.getOutFlow();
@@ -274,12 +303,12 @@ public class PhaseResolver {
     }
 
     /**
-         * Method buildGlobalChains
-         *
-         * @param global
-         * @throws AxisFault
-         * @throws PhaseException
-         */
+     * Method buildGlobalChains
+     *
+     * @param global
+     * @throws AxisFault
+     * @throws PhaseException
+     */
     public void buildGlobalChains(AxisGlobal global)
             throws AxisFault, PhaseException {
         List modules = (List) global.getModules();

@@ -43,6 +43,13 @@ public class AxisTransportOut
     private Flow outFlow;
 
     /**
+     * Field flowInclude
+     */
+    private Flow faultFlow;
+
+
+
+    /**
      * Field name
      */
     protected QName name;
@@ -126,6 +133,22 @@ public class AxisTransportOut
      */
     public void setSender(TransportSender sender) {
         this.sender = sender;
+    }
+
+    public Flow getOutFlow() {
+        return outFlow;
+    }
+
+    public void setOutFlow(Flow outFlow) {
+        this.outFlow = outFlow;
+    }
+
+    public Flow getFaultFlow() {
+        return faultFlow;
+    }
+
+    public void setFaultFlow(Flow faultFlow) {
+        this.faultFlow = faultFlow;
     }
 
 }

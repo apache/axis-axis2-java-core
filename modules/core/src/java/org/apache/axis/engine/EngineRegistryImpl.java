@@ -187,10 +187,10 @@ public class EngineRegistryImpl implements EngineRegistry {
      */
     public synchronized void addTransport(AxisTransportIn transport)
             throws AxisFault {
-        transports.put(transport.getName(), transport);
+        transportsIn.put(transport.getName(), transport);
     }
     public AxisTransportOut getTransportOut(QName name) throws AxisFault {
-        return (AxisTransportOut) transports.get(name);
+        return (AxisTransportOut) transportsOut.get(name);
     }
 
     /**
@@ -201,7 +201,15 @@ public class EngineRegistryImpl implements EngineRegistry {
      */
     public synchronized void addTransportOut(AxisTransportOut transport)
             throws AxisFault {
-        transports.put(transport.getName(), transport);
+        transportsOut.put(transport.getName(), transport);
+    }
+
+    public HashMap getTransportsIn() {
+        return transports;
+    }
+
+    public HashMap getTransportsOut() {
+        return transportsOut;
     }
 
     /**

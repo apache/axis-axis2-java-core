@@ -1,35 +1,26 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.apache.axis.deployment;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransport;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.description.SimpleAxisOperationImpl;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -132,12 +123,12 @@ public class DeploymentParser implements DeploymentConstants {
                     if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
-                    } else if (TRANSPORTSTAG.equals(ST)) {
-                        ArrayList trasports = processTransport();
-                        for (int i = 0; i < trasports.size(); i++) {
-                            dpengine.getEngineRegistry().addTransport((AxisTransport) trasports.get(i));
-                        }
-
+                    } else if (TRANSPORTSENDER.equals(ST)) {
+                        AxisTransportOut transportout = proccessTrasnsportOUT();
+                        dpengine.getEngineRegistry().addTransportOut(transportout);
+                    } else if (TRANSPORTRECEIVER.equals(ST)) {
+                        AxisTransportIn transportin = proccessTrasnsportIN();
+                        dpengine.getEngineRegistry().addTransport(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
@@ -167,13 +158,14 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
-
-    public ArrayList processTransport() throws DeploymentException {
+    public AxisTransportIn proccessTrasnsportIN() throws DeploymentException {
+        AxisTransportIn transportin = null;
+        String attname = pullparser.getAttributeLocalName(0);
+        String attvalue = pullparser.getAttributeValue(0);
+        if (ATTNAME.equals(attname)) {
+            transportin = new AxisTransportIn(new QName(attvalue));
+        }
         boolean END_TRANSPORTS = false;
-        ArrayList transportList = new ArrayList();
-        AxisTransport transport = null;
-
-
         String text = ""; // to store the paramater elemnt
         try {
             while (!END_TRANSPORTS) {
@@ -182,32 +174,23 @@ public class DeploymentParser implements DeploymentConstants {
                     END_TRANSPORTS = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (TRANSPORTTAG.equals(tagnae)) {
-                        String attname = pullparser.getAttributeLocalName(0);
-                        String attvalue = pullparser.getAttributeValue(0);
-                        if (ATTNAME.equals(attname)) {
-                            transport = new AxisTransport(new QName(attvalue));
-                            transportList.add(transport);
-                        }
-                    } else if (transport != null && PARAMETERST.equals(tagnae)) {
+                    if (transportin != null && PARAMETERST.equals(tagnae)) {
                         Parameter parameter = processParameter();
-                        transport.addParameter(parameter);
-                        //axisService. .appParameter(parameter);
-                    } else if (transport != null && INFLOWST.equals(tagnae)) {
+                        transportin.addParameter(parameter);
+                    } else if (transportin != null && INFLOWST.equals(tagnae)) {
                         Flow inFlow = processInFlow();
-                        transport.setInFlow(inFlow);
-                    } else if (transport != null && OUTFLOWST.equals(tagnae)) {
-                        Flow outFlow = processOutFlow();
-                        transport.setOutFlow(outFlow);
-                    } else if (transport != null && FAILTFLOWST.equals(tagnae)) {
+                        transportin.setInFlow(inFlow);
+                    } else if (transportin != null && OUTFLOWST.equals(tagnae)) {
+                        throw new DeploymentException("OUTFlow dose not support in AxisTransportIN " + tagnae);
+                    } else if (transportin != null && FAILTFLOWST.equals(tagnae)) {
                         Flow faultFlow = processFaultFlow();
-                        transport.setFaultFlow(faultFlow);
+                        transportin.setFaultFlow(faultFlow);
                     } else {
                         throw new DeploymentException("Unknown element " + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (TRANSPORTSTAG.equals(endtagname)) {
+                    if (TRANSPORTRECEIVER.equals(endtagname)) {
                         END_TRANSPORTS = true;
                         break;
                     }
@@ -220,7 +203,73 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (Exception e) {
             throw new DeploymentException("Unknown process Exception", e);
         }
-        return transportList;
+        return transportin;
+    }
+
+    public AxisTransportOut proccessTrasnsportOUT() throws DeploymentException {
+        AxisTransportOut transportout = null;
+        String attname;
+        String attvalue;
+        int attribCount = pullparser.getAttributeCount();
+        for (int i = 0; i < attribCount; i++) {
+            attname = pullparser.getAttributeLocalName(i);
+            attvalue = pullparser.getAttributeValue(i);
+            if (ATTNAME.equals(attname)) {
+                transportout = new AxisTransportOut(new QName(attvalue));
+            } else if (transportout != null && CLASSNAME.equals(attname)) {
+                Class sender = null;
+                try {
+                    sender = Class.forName(attvalue, true, Thread.currentThread().getContextClassLoader());
+                    TransportSender transportSender = (TransportSender) sender.newInstance();
+                    transportout.setSender(transportSender);
+                } catch (ClassNotFoundException e) {
+                    throw  new DeploymentException(e.getMessage());
+                } catch (IllegalAccessException e) {
+                    throw  new DeploymentException(e.getMessage());
+                } catch (InstantiationException e) {
+                    throw  new DeploymentException(e.getMessage());
+                }
+            }
+        }
+        boolean END_TRANSPORTS = false;
+        String text = ""; // to store the paramater elemnt
+        try {
+            while (!END_TRANSPORTS) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                    END_TRANSPORTS = true;
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
+                    if (transportout != null && PARAMETERST.equals(tagnae)) {
+                        Parameter parameter = processParameter();
+                        transportout.addParameter(parameter);
+                    } else if (transportout != null && INFLOWST.equals(tagnae)) {
+                        throw new DeploymentException("InFlow dose not support in AxisTransportOut  " + tagnae);
+                    } else if (transportout != null && OUTFLOWST.equals(tagnae)) {
+                        Flow outFlow = processOutFlow();
+                        transportout.setOutFlow(outFlow);
+                    } else if (transportout != null && FAILTFLOWST.equals(tagnae)) {
+                        Flow faultFlow = processFaultFlow();
+                        transportout.setFaultFlow(faultFlow);
+                    } else {
+                        throw new DeploymentException("Unknown element " + tagnae);
+                    }
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (TRANSPORTSENDER.equals(endtagname)) {
+                        END_TRANSPORTS = true;
+                        break;
+                    }
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                    text += pullparser.getText();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("parser Exception", e);
+        } catch (Exception e) {
+            throw new DeploymentException("Unknown process Exception", e);
+        }
+        return transportout;
     }
 
     /**
@@ -247,8 +296,8 @@ public class DeploymentParser implements DeploymentConstants {
                     throw new DeploymentException("Bad arguments for the service" + axisService.getName());
                 }
             }
-            if(!proviceFound ){
-               throw new DeploymentException("Provider class has not been specified");
+            if (!proviceFound) {
+                throw new DeploymentException("Provider class has not been specified");
             }
         } else
             throw new DeploymentException("Bad arguments" + axisService.getName());

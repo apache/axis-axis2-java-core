@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.deployment;
 
 /**
@@ -56,7 +56,7 @@ public interface DeploymentConstants {
     String ATTNAME = "name";
     String ATTLOCKED = "locked";
 
-   // for operatiins
+    // for operatiins
     String ATQNAME = "name";
     String ATUSE = "use";
 
@@ -74,12 +74,12 @@ public interface DeploymentConstants {
     String JAVAIMPL = "implementation";
 
     String TRANSPORTSTAG = "transports";
-    String TRANSPORTTAG ="transport";
+    String TRANSPORTTAG = "transport";
     String TRANSPORTSENDER = "transportSender";
     String TRANSPORTRECEIVER = "transportReceiver";
 
 
     String HOTDEPLOYMENT = "hotdeployment";
-    String HOTUPDATE ="hotupdate";
+    String HOTUPDATE = "hotupdate";
 
 }
