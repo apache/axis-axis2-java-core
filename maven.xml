@@ -75,7 +75,6 @@
 					<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
 					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
 					<ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
-					
 				</ant:fileset> 
 				<ant:fileset dir="modules">
 					<ant:include name="**/target/axis2*.jar"/>
@@ -89,6 +88,7 @@
         <!-- jar the test classes -->
 		<ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
 		  	<ant:fileset dir="modules/core/src/html"/>
+    		<ant:fileset dir="modules/samples/src/jsp"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
 		  	</ant:lib>  
@@ -120,13 +120,13 @@
   </preGoal>
   
   <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
-	<ant:mkdir dir="target/dist-bin"/>
-	<ant:mkdir dir="target/dist-bin/docs"/>
-	<ant:mkdir dir="target/dist-bin/bin"/>
-	<ant:mkdir dir="target/dist-bin/lib"/>
-	<ant:mkdir dir="target/dist-bin/samples"/>
-	<ant:mkdir dir="target/dist-bin/webapps"/> 
-    <ant:mkdir dir="target/dist-bin/docs/api"/> 
+		<ant:mkdir dir="target/dist-bin"/>
+		<ant:mkdir dir="target/dist-bin/docs"/>
+		<ant:mkdir dir="target/dist-bin/bin"/>
+		<ant:mkdir dir="target/dist-bin/lib"/>
+		<ant:mkdir dir="target/dist-bin/samples"/>
+		<ant:mkdir dir="target/dist-bin/webapps"/> 
+	    <ant:mkdir dir="target/dist-bin/docs/api"/> 
 		<ant:copy todir="target/dist-bin/docs/api">
 			<ant:fileset dir="target/apidocs/">
 				<ant:include name="**"/>
@@ -153,6 +153,12 @@
 				<ant:include name="userguide/**"/>
 			</ant:fileset> 
 		</ant:copy> 
+		<ant:copy todir="target/dist-bin/">
+			<ant:fileset dir=".">
+				<ant:include name="*.html"/>
+				<ant:include name="*.txt"/>				
+			</ant:fileset> 
+		</ant:copy> 
 		<ant:zip file="${dist.dir}/${dist.name}-bin.zip" basedir="target/dist-bin"/>
 		<ant:tar tarfile="target/${dist.name}-bin.tar" basedir="target/dist-bin"/> 
 		<gzip src="target/${dist.name}-bin.tar" zipfile="${dist.dir}/${dist.name}-bin.tar.gz"/>
@@ -164,43 +170,23 @@
   <goal name="dist-src" prereqs="init">
 		<ant:zip file="${dist.dir}/${dist.name}-src.zip" >
 			<ant:fileset dir=".">
-				<ant:include name="**/*.java"/>
-				<ant:include name="**/*.xml"/>
-				<ant:include name="**/*.properties"/>
-				<ant:include name="**/*.xsd"/>
-				<ant:include name="**/*.jsp"/>
-     			<ant:include name="**/*.html"/>
-				<ant:include name="**/*.inc"/>												
-				<ant:include name="**/*.css"/>
-				<ant:include name="**/*.gif"/>
-				<ant:include name="**/*.jpg"/>
-				<ant:include name="**/*.png"/>								
-				<ant:include name="**/*.GIF"/>
-				<ant:include name="**/*.PNG"/>
-				<ant:include name="**/*.JPG"/>								
-				<ant:exclude name="**/target/**"/>
-				<ant:exclude name="**/.svn/**"/>
-				<ant:exclude name="**/bin/**"/>
+		               <ant:include name="**"/>
+		               <ant:exclude name="**/target/**"/>
+		               <ant:exclude name="**/.svn/**"/>
+        		        <ant:exclude name="**/bin/**"/>
+        		        <ant:exclude name=".*"/> 
+        		        <ant:exclude name="**/*.license"/>        		               		        
 			</ant:fileset> 
 		</ant:zip> 
-		 <ant:tar tarfile="target/${dist.name}-src.tar" basedir="." >
-               <ant:include name="**/*.java"/>
-              <ant:include name="**/*.xml"/>
-               <ant:include name="**/*.properties"/>
-              <ant:include name="**/*.xsd"/>
-               <ant:include name="**/*.jsp"/>
-                <ant:include name="**/*.html"/>
-                 <ant:include name="**/*.inc"/> 
-                <ant:include name="**/*.css"/>
-                 <ant:include name="**/*.gif"/>
-                 <ant:include name="**/*.jpg"/>
-                  <ant:include name="**/*.png"/>
-                  <ant:include name="**/*.GIF"/>
-                 <ant:include name="**/*.PNG"/>
-                 <ant:include name="**/*.JPG"/>
-                 <ant:exclude name="**/target/**"/>
-                  <ant:exclude name="**/.svn/**"/>
-                  <ant:exclude name="**/bin/**"/>
+		 <ant:tar tarfile="target/${dist.name}-src.tar" longfile="gnu" >
+				 <ant:tarfileset dir=".">
+		               <ant:include name="**"/>
+		               <ant:exclude name="**/target/**"/>
+		               <ant:exclude name="**/.svn/**"/>
+        		        <ant:exclude name="**/bin/**"/>
+        		        <ant:exclude name=".*"/>
+          		        <ant:exclude name="**/*.license"/>        		               		                		        
+			  	</ant:tarfileset>
             </ant:tar>
             <gzip src="target/${dist.name}-src.tar" zipfile="${dist.dir}/${dist.name}-src.tar.gz"/>
             <ant:delete file="target/${dist.name}-src.tar"/>
@@ -239,5 +225,5 @@
 	<!-- copy file="target/pdf/axis2.pdf" tofile="target/docs/axis2.pdf"/>
 	<ant:delete dir="target/pdf"/ -->
   </preGoal>
-  </project>
+</project>
 
