@@ -3,7 +3,7 @@
     
    <inflow>
         <handler name="logging" class="org.apache.axis.sample.handlers.LoggingHandler">
-            <order phase="p1" phaseFirst="true"/>
+            <order phase="Logging" phaseFirst="true"/>
          </handler>
    </inflow>
 

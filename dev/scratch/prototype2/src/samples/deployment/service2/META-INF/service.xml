@@ -18,42 +18,29 @@
 
     <inflow>
         <handler name="h1" class="Handler2">
-            <order phase="p1" phaseFirst="true"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
+            <order phase="service" phaseFirst="true"/>
         </handler>
         <handler name="h2" class="Handler2"/>
     </inflow>
 
     <outflow>
         <handler name="h3" class="Handler2">
-            <order phase="p2"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
+            <order phase="service"/>
         </handler>
     </outflow>
 
     <faultflow>
         <handler name="h4" class="Handler2">
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
         </handler>
 
         <handler name="h5" class="Handler2">
-            <order phase="p1"/>
+            <order phase="service"/>
         </handler>
 
         <handler name="h6" class="Handler2">
-            <order phase="anyhase" phaseFirst="true" phaseLast="false"/>
-            <parameter name="para8" locked="xsd:true">123</parameter>
-            <parameter name="para9" locked="xsd:true">456</parameter>
-            <parameter name="para10" locked="xsd:true">789</parameter>
+            <order phase="service" phaseFirst="true" phaseLast="false"/>
         </handler>
     </faultflow>
-
-
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
 
     </operation>

@@ -9,9 +9,7 @@
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>
-        <phase name="p1"/>
-        <phase name="p3"/>
-        <phase name="anyhase"/>
+        <phase name="module"/>
         <phase name="service"/>
     </phaseOrder>
 </server>
