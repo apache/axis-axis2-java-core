@@ -15,6 +15,9 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
@@ -24,9 +27,6 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNodeImpl;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
@@ -156,7 +156,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
-            OMElementImpl e = (OMElementImpl) lastNode;
+            OMElement e = (OMElement) lastNode;
             node = omfactory.createText(e, parser.getText());
             e.setFirstChild(node);
         }
