@@ -201,11 +201,11 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (attname.equals(CONTEXTPATHNAME)) {
                     axisService.setContextPath(getValue(attvalue));
                 } else {
-                    throw new DeploymentException("Bad arguments");
+                    throw new DeploymentException("Bad arguments for the service" + axisService.getName());
                 }
             }
         } else
-            throw new DeploymentException("Bad arguments");
+            throw new DeploymentException("Bad arguments" +  axisService.getName());
 
         //*********************************************************************************************//
         // This is to process remainng part of the document
@@ -485,7 +485,7 @@ public class DeploymentParser implements DeploymentConstants {
         //  String name = pullparser.getLocalName();
         AxisOperation operation = new SimpleAxisOperationImpl();
         int attribCount = pullparser.getAttributeCount();
-        if (attribCount == 4) {  // there should be two attributes
+        if (attribCount < 5) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);

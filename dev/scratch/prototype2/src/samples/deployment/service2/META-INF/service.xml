@@ -1,5 +1,5 @@
-<service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath" xmlns:java = "java">
-    <java:implementation class="Echo1"/>
+<service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath" >
+    <java:implementation class="Echo2" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
 
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>

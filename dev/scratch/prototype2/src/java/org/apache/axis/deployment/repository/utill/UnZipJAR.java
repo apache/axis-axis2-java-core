@@ -19,6 +19,7 @@ package org.apache.axis.deployment.repository.utill;
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentParser;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 
@@ -36,7 +37,7 @@ public class UnZipJAR implements DeploymentConstants {
      * @param filename
      * @param engine
      */
-    public void unzipService(String filename, DeploymentEngine engine, AxisService service) {
+    public void unzipService(String filename, DeploymentEngine engine, AxisService service) throws DeploymentException {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -53,11 +54,11 @@ public class UnZipJAR implements DeploymentConstants {
             //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
-            e.printStackTrace();
+           throw new DeploymentException(e.getMessage());
         }
     }
 
-    public void unzipModule(String filename, DeploymentEngine engine,AxisModule module) {
+    public void unzipModule(String filename, DeploymentEngine engine,AxisModule module) throws DeploymentException {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
@@ -74,7 +75,7 @@ public class UnZipJAR implements DeploymentConstants {
             //  zin.closeEntry();
             zin.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DeploymentException(e.getMessage());
         }
     }
 }

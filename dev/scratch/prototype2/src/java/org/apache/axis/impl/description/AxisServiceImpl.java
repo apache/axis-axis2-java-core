@@ -40,6 +40,7 @@ public class AxisServiceImpl extends WSDLServiceImpl implements AxisService , De
         this.setComponentProperty(MODULEREF_KEY,new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
+        this.serviceClassName = "";
     }
     /* (non-Javadoc)
      * @see org.apache.axis.description.AxisService#addModule(javax.xml.namespace.QName)

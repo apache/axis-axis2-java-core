@@ -67,8 +67,8 @@ public class PhaseResolver {
     private  void buildExcutionChains(int type) throws AxisFault, PhaseException {
         int flowtype =  type;
         Vector allHandlers = new Vector();
-        int count = server.getModuleCount();
-        QName moduleName;
+       // int count = server.getModuleCount();
+      //  QName moduleName;
         AxisModule module;
         Flow flow = null;
         /*
@@ -119,15 +119,16 @@ public class PhaseResolver {
                     break;
                 }
             }
-            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-                HandlerMetaData metadata = flow.getHandler(j);
-                //todo change this in properway
-                if (metadata.getRules().getPhaseName().equals("") ){
-                    metadata.getRules().setPhaseName("service");
+            if(flow != null ){
+                for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                    HandlerMetaData metadata = flow.getHandler(j);
+                    //todo change this in properway
+                    if (metadata.getRules().getPhaseName().equals("") ){
+                        metadata.getRules().setPhaseName("service");
+                    }
+                    allHandlers.add(metadata);
                 }
-                allHandlers.add(metadata);
             }
-
         }
 
         switch (flowtype){
@@ -144,15 +145,16 @@ public class PhaseResolver {
                 break;
             }
         }
-        for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-            HandlerMetaData metadata = flow.getHandler(j);
-            //todo change this in properway
-            if (metadata.getRules().getPhaseName().equals("")){
-                metadata.getRules().setPhaseName("service");
+        if(flow != null ){
+            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                HandlerMetaData metadata = flow.getHandler(j);
+                //todo change this in properway
+                if (metadata.getRules().getPhaseName().equals("")){
+                    metadata.getRules().setPhaseName("service");
+                }
+                allHandlers.add(metadata);
             }
-            allHandlers.add(metadata);
         }
-
         phaseHolder = new PhaseHolder(server,axisService);
 
         for (int i = 0; i < allHandlers.size(); i++) {
@@ -188,16 +190,17 @@ public class PhaseResolver {
                         break;
                     }
                 }
-                for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-                    HandlerMetaData metadata = flow.getHandler(j);
-                    //todo change this in properway
-                    if (metadata.getRules().getPhaseName().equals("")){
-                        metadata.getRules().setPhaseName("global");
+                if(flow != null ){
+                    for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                        HandlerMetaData metadata = flow.getHandler(j);
+                        //todo change this in properway
+                        if (metadata.getRules().getPhaseName().equals("")){
+                            metadata.getRules().setPhaseName("global");
+                        }
+                        phaseHolder.addHandler(metadata);
+
                     }
-                    phaseHolder.addHandler(metadata);
-
                 }
-
             }
             phaseHolder.buildGoblalChain(global, type);
         }

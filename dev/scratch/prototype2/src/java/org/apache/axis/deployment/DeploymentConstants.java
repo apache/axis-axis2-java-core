@@ -69,7 +69,7 @@ public interface DeploymentConstants {
     String PHASELAST = "phaseLast";
     String ORDER = "order";  // to resolve the order tag
 
-    String JAVAST = "java";
+    String JAVAST = "http://ws.apache.org/axis2/deployment/java";
     String JAVAIMPL = "implementation";
 
 }

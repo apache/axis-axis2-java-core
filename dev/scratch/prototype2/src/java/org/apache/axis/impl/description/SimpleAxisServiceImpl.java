@@ -60,6 +60,7 @@ public class SimpleAxisServiceImpl implements AxisService {
         flowInclude = new FlowIncludeImpl();
         parameters = new ParameterIncludeImpl();
         phaseInclude = new PhasesIncludeImpl();
+        serviceClassName = "";
     }
 
     /**

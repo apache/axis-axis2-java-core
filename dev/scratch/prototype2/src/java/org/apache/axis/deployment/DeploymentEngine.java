@@ -213,6 +213,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void loadServiceClass(AxisService service, ClassLoader parent) throws AxisFault{
         File file = currentFileItem.getFile();
+        Class serviceclass = null;
         URLClassLoader loader1 = null;
         if (file != null) {
             URL[] urlsToLoadFrom = new URL[0];
@@ -222,7 +223,9 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
-                Class serviceclass = Class.forName(service.getServiceClassName(), true, loader1);
+                if(! service.getServiceClassName().equals("")){
+                    serviceclass = Class.forName(service.getServiceClassName(), true, loader1);
+                }
                 service.setServiceClass(serviceclass);
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage());
@@ -340,38 +343,41 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         {
-                            //todo implemnt this in right manner
-                            AxisService service = new SimpleAxisServiceImpl(null);
-                            unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             try {
-                                if (service != null) {
-                                    try {
-                                        addnewService(service);
-                                    } catch (PhaseException e) {
-                                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                                    }
-                                    log.info("Deployement WS Name  " + currentFileItem.getName());
-                                    currentFileItem = null;
-                                    break;
-                                }
+                                AxisService service = new SimpleAxisServiceImpl(null);
+                                unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
+                                addnewService(service);
+                                log.info("Deployement WS Name  " + currentFileItem.getName());
+                                // currentFileItem = null;
+                                //  break;
+                            }catch (DeploymentException de){
+                                de.printStackTrace();
                             }catch (AxisFault axisFault) {
                                 axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            } finally{
+                                currentFileItem = null;
                             }
+                            break;
                         }
                     case MODULE:
                         {
-                            AxisModule metaData = new AxisModule();
-                            unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
                             try {
-                                if (metaData != null) {
-                                    addNewModule(metaData);
-                                    log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
-                                    currentFileItem = null;
-                                    break;
-                                }
+                                AxisModule metaData = new AxisModule();
+                                unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
+                                addNewModule(metaData);
+                                log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
+                                // currentFileItem = null;
+                                //  break;
+                            } catch (DeploymentException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (AxisFault axisFault) {
-                                axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                                axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }finally{
+                                currentFileItem = null;
                             }
+                            break;
                         }
                 }
             }
