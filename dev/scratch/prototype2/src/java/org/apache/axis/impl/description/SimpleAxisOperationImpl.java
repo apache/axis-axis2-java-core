@@ -15,7 +15,6 @@
  */
 package org.apache.axis.impl.description;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,12 +23,15 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
-import org.apache.wsdl.wom.MessageReference;
-import org.apache.wsdl.wom.WSDLFeature;
-import org.apache.wsdl.wom.WSDLOperation;
-import org.apache.wsdl.wom.WSDLProperty;
-import org.apache.wsdl.wom.impl.WSDLOperationImpl;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLFeature;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLProperty;
+import org.apache.wsdl.impl.WSDLOperationImpl;
 
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class SimpleAxisOperationImpl implements AxisOperation {
     protected WSDLOperation wsdlOperation;
     protected ParameterInclude parameters;
@@ -117,7 +119,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * @return
      */
-    public int getMessageExchangePattern() {
+    public String getMessageExchangePattern() {
         return wsdlOperation.getMessageExchangePattern();
     }
 
@@ -159,7 +161,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
     /**
      * @return
      */
-    public URI getTargetnemespace() {
+    public String getTargetnemespace() {
         return wsdlOperation.getTargetnemespace();
     }
 
@@ -177,6 +179,9 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setComponentProperties(properties);
     }
 
+    public void setMessageExchangePattern(String messageExchangePattern) {
+        wsdlOperation.setMessageExchangePattern(messageExchangePattern);
+    }
     /**
      * @param key
      * @param obj
@@ -199,13 +204,7 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setInputMessage(inputMessage);
     }
 
-    /**
-     * @param messageExchangePattern
-     */
-    public void setMessageExchangePattern(int messageExchangePattern) {
-        wsdlOperation.setMessageExchangePattern(messageExchangePattern);
-    }
-
+   
     /**
      * @param name
      */
@@ -241,11 +240,6 @@ public class SimpleAxisOperationImpl implements AxisOperation {
         wsdlOperation.setStyle(style);
     }
 
-    /**
-     * @param targetnemespace
-     */
-    public void setTargetnemespace(URI targetnemespace) {
-        wsdlOperation.setTargetnemespace(targetnemespace);
-    }
+    
 
 }

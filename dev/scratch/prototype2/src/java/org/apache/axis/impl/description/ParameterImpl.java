@@ -17,6 +17,12 @@ package org.apache.axis.impl.description;
 
 import org.apache.axis.description.Parameter;
 
+
+
+
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class ParameterImpl implements Parameter  {
     private String name;
     private String value;

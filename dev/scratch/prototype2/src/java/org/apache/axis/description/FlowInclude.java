@@ -15,6 +15,10 @@
  */
 package org.apache.axis.description;
 
+
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public interface FlowInclude {
     //Flow include
     public Flow getInFlow();

@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.description;
-
-import org.apache.wsdl.WSDLOperation;
+package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface AxisOperation extends WSDLOperation,ParameterInclude  {
-//    public Flow getInFlow();
-//    
-//    public void setInflow(Flow inFlow);
-//    
-//    public Flow getOutFlow();
-//    
-//    public void setOutFlow(Flow outFlow);
-//    
-//    public Flow getFaultFlow();
-//    
-//    public void setFaultFlow();
+public interface WSDLConstants {
+
+    public static final String WSDL2_0_NAMESPACE =
+        "http://www.w3.org/2004/03/wsdl";
+
+    public static final String WSDL1_1_NAMESPACE =
+        "http://schemas.xmlsoap.org/wsdl/";
+
+    public static final String[] WSDL_NAMESPACES =
+        { WSDL2_0_NAMESPACE, WSDL1_1_NAMESPACE };
+
+	//TODO Verify weather the value is right with the spec.
+	
+    public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
+    
+	//TODO Verify weather the value is right with the spec. 
+    
+    public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
 }

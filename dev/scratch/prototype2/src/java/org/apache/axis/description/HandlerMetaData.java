@@ -20,6 +20,9 @@ import javax.xml.namespace.QName;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class HandlerMetaData implements ParameterInclude{
     private  ParameterInclude parameterInclude;
     private QName name;

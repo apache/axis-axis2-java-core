@@ -30,11 +30,14 @@ import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterInclude;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Provider;
-import org.apache.wsdl.wom.WSDLEndpoint;
-import org.apache.wsdl.wom.WSDLInterface;
-import org.apache.wsdl.wom.WSDLService;
-import org.apache.wsdl.wom.impl.WSDLServiceImpl;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.impl.WSDLServiceImpl;
 
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class SimpleAxisServiceImpl implements AxisService {
     protected WSDLService wsdlService;
     protected FlowInclude flowInclude;

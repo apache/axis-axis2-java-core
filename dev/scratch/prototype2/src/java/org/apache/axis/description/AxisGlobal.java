@@ -17,6 +17,9 @@ package org.apache.axis.description;
 
 import org.apache.axis.impl.description.ParameterIncludeImpl;
 
+/**
+ * @author Srinath Perera(hemapani@opensource.lk)
+ */
 public class AxisGlobal implements ParameterInclude {
     protected ParameterInclude paramInclude;
     

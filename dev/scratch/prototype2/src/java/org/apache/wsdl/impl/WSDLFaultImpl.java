@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.wsdl.impl;
 
-package org.apache.axis.impl.description;
-
-import java.util.Vector;
-
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.wsdl.WSDLFault;
+import org.w3c.dom.Element;
 
 /**
- * @author hemapani@opensource.lk
+ * @author chathura@opensource.lk
+ *
  */
-public class FlowImpl implements Flow {
-   protected Vector list = null; 
-   public FlowImpl(){
-        list = new Vector();
-   }
-   public void addHandler(HandlerMetaData handler) {
-       list.add(handler);
-   }
-   public HandlerMetaData getHandler(int index) {
-       return (HandlerMetaData)list.get(index);
-   }
-   public int getHandlerCount() {
-       return list.size();
-   }
+public class WSDLFaultImpl extends ComponentImpl implements WSDLFault {
+	
+	//TODO its a NCName so parse it. and this is required
+	private String name;
+	
+	private Element element;
+
+	public Element getElement() {
+		return element;
+	}
+	public void setElement(Element element) {
+		this.element = element;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 }

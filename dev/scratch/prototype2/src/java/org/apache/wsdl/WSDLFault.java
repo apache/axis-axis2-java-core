@@ -13,29 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.wsdl;
 
-package org.apache.axis.impl.description;
-
-import java.util.Vector;
-
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.w3c.dom.Element;
 
 /**
- * @author hemapani@opensource.lk
+ * @author chathura@opensource.lk
+ *
  */
-public class FlowImpl implements Flow {
-   protected Vector list = null; 
-   public FlowImpl(){
-        list = new Vector();
-   }
-   public void addHandler(HandlerMetaData handler) {
-       list.add(handler);
-   }
-   public HandlerMetaData getHandler(int index) {
-       return (HandlerMetaData)list.get(index);
-   }
-   public int getHandlerCount() {
-       return list.size();
-   }
+public interface WSDLFault extends Component{
+	public Element getElement();
+
+	public void setElement(Element element);
+
+	public String getName();
+
+	public void setName(String name);
 }

@@ -13,40 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.impl.description;
+package org.apache.wsdl.util;
 
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowInclude;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class FlowIncludeImpl implements FlowInclude{
-    private Flow in;
-    private Flow out;
-    private Flow fault;
-    public Flow getFaultFlow() {
-        return fault;
+public class Utils {
+    public static Document newDocument(InputStream in) throws ParserConfigurationException, SAXException, IOException{
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.parse(in);
     }
-
-    public Flow getInFlow() {
-        return in;
-    }
-
-    public Flow getOutFlow() {
-        return out;
-    }
-
-    public void setFaultFlow(Flow flow) {
-        this.fault = flow;
-    }
-
-    public void setInFlow(Flow flow) {
-        this.in = flow;
-    }
-
-    public void setOutFlow(Flow flow) {
-        this.out = flow;
-    }
-
 }

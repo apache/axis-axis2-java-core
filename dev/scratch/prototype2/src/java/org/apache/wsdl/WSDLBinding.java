@@ -13,24 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.description;
+package org.apache.wsdl;
 
-import org.apache.wsdl.WSDLOperation;
+import java.net.URI;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface AxisOperation extends WSDLOperation,ParameterInclude  {
-//    public Flow getInFlow();
-//    
-//    public void setInflow(Flow inFlow);
-//    
-//    public Flow getOutFlow();
-//    
-//    public void setOutFlow(Flow outFlow);
-//    
-//    public Flow getFaultFlow();
-//    
-//    public void setFaultFlow();
+public interface WSDLBinding extends ExtensibleComponent{
+   
+
+    public WSDLInterface getBoundInterface();
+
+    public void setBoundInterface(WSDLInterface boundInterface);
+
+    public List getFaults();
+
+    public void setFaults(List faults);
+
+    public QName getName();
+
+    public void setName(QName name);
+
+    public List getOperations();
+
+    public void setOperations(List operations);
+
+    public URI getTargetNameSpace();
+
+    public void setTargetNameSpace(URI targetNameSpace);
 }

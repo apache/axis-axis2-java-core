@@ -22,8 +22,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.Provider;
-import org.apache.wsdl.wom.WSDLService;
+import org.apache.wsdl.WSDLService;
 
+/**
+ * @author chathura@opensource.lk
+ *
+ */
 public interface AxisService extends WSDLService,ParameterInclude,FlowInclude {
     //modules
     public void addModule(QName moduleref);

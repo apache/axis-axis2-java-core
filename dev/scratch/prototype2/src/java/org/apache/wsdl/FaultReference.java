@@ -13,24 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.description;
-
-import org.apache.wsdl.WSDLOperation;
+package org.apache.wsdl;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface AxisOperation extends WSDLOperation,ParameterInclude  {
-//    public Flow getInFlow();
-//    
-//    public void setInflow(Flow inFlow);
-//    
-//    public Flow getOutFlow();
-//    
-//    public void setOutFlow(Flow outFlow);
-//    
-//    public Flow getFaultFlow();
-//    
-//    public void setFaultFlow();
+public interface FaultReference extends Component{
+    /**
+     * Returns the direction of the Fault according the MEP
+     * @return
+     */
+    public String getDirection();
+
+    /**
+     * Sets the direction of the Fault.
+     * @param direction
+     */
+    public void setDirection(String direction);
+
+    public String getMessageLabel();
+
+    public void setMessageLabel(String messageLabel);
+
+    /**
+     * Returns the Fault reference.
+     * @return
+     */
+    public String getRef();
+
+    /**
+     * Sets the Fault reference.
+     * @param ref
+     */
+    public void setRef(String ref);
 }
