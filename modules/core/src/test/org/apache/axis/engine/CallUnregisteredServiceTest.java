@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-public class CallUnregisterdServiceTest extends AbstractTestCase {
+public class CallUnregisteredServiceTest extends AbstractTestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
@@ -45,11 +45,11 @@ public class CallUnregisterdServiceTest extends AbstractTestCase {
     private Thread thisThread;
     private SimpleHTTPServer sas;
 
-    public CallUnregisterdServiceTest() {
-        super(CallUnregisterdServiceTest.class.getName());
+    public CallUnregisteredServiceTest() {
+        super(CallUnregisteredServiceTest.class.getName());
     }
 
-    public CallUnregisterdServiceTest(String testName) {
+    public CallUnregisteredServiceTest(String testName) {
         super(testName);
     }
 
