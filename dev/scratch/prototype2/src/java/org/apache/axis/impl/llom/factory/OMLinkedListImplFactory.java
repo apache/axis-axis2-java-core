@@ -1,29 +1,7 @@
 package org.apache.axis.impl.llom.factory;
 
-import org.apache.axis.impl.llom.OMAttributeImpl;
-import org.apache.axis.impl.llom.OMBodyElementImpl;
-import org.apache.axis.impl.llom.OMBodyImpl;
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMEnvelopeImpl;
-import org.apache.axis.impl.llom.OMHeaderBlockImpl;
-import org.apache.axis.impl.llom.OMHeaderImpl;
-import org.apache.axis.impl.llom.OMNamedNodeImpl;
-import org.apache.axis.impl.llom.OMNamespaceImpl;
-import org.apache.axis.impl.llom.OMNodeImpl;
-import org.apache.axis.impl.llom.OMTextImpl;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMBody;
-import org.apache.axis.om.OMBodyBlock;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMEnvelope;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMHeader;
-import org.apache.axis.om.OMHeaderBlock;
-import org.apache.axis.om.OMNamedNode;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.impl.llom.*;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -45,7 +23,6 @@ import org.apache.axis.om.OMXMLParserWrapper;
  * Time: 2:21:13 PM
  */
 public class OMLinkedListImplFactory extends OMFactory {
-
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent) {
         return new OMAttributeImpl(localName, ns, value, parent);
     }
@@ -88,14 +65,6 @@ public class OMLinkedListImplFactory extends OMFactory {
 
     public OMText createText(String s) {
         return new OMTextImpl(s);
-    }
-
-    public OMBodyBlock createOMBodyBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new OMBodyElementImpl(localName, ns, parent, builder);
-    }
-
-    public OMBodyBlock createOMBodyBlock(String localName, OMNamespace ns) {
-        return new OMBodyElementImpl(localName, ns);
     }
 
     public OMBody createOMBody(OMEnvelope envelope) {

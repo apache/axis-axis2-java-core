@@ -1,23 +1,8 @@
 package org.apache.axis.impl.llom.wrapper;
 
-import org.apache.axis.impl.llom.OMAttributeImpl;
-import org.apache.axis.impl.llom.OMBodyElementImpl;
-import org.apache.axis.impl.llom.OMBodyImpl;
-import org.apache.axis.impl.llom.OMElementImpl;
-import org.apache.axis.impl.llom.OMHeaderBlockImpl;
-import org.apache.axis.impl.llom.OMHeaderImpl;
-import org.apache.axis.impl.llom.OMNavigator;
-import org.apache.axis.impl.llom.OMNodeImpl;
-import org.apache.axis.impl.llom.OMTextImpl;
+import org.apache.axis.impl.llom.*;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMEnvelope;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -139,16 +124,9 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
                 throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
             }
 
-        } else if (elementLevel == 3) {
-            // this is either a headerelement or a bodyelement
-            if (parent.getLocalName().equalsIgnoreCase("Header")) {
-                element = new OMHeaderBlockImpl(elementName, null, parent, this);
-            } else if (parent.getLocalName().equalsIgnoreCase("Body")) {
-                element = new OMBodyElementImpl(elementName, null, parent, this);
-            } else {
-                // can there be Elements other than Header and Body in Envelope. If yes, what are they and is it YAGNI ??
-                throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
-            }
+        } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase("Header")) {
+            // this is a headerBlock
+            element = new OMHeaderBlockImpl(elementName, null, parent, this);
 
         } else {
             // this is neither of above. Just create an element

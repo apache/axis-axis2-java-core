@@ -38,7 +38,7 @@ import java.util.Locale;
  * only to the default actor, which is the final intended
  * recipient.
  */
-public interface OMFault extends OMBodyBlock {
+public interface OMFault extends OMElement {
 
     /**
      * Sets this <CODE>OMFault</CODE> object with the given

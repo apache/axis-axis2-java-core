@@ -30,11 +30,13 @@ public class OMTestCase extends AbstractTestCase  {
 
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
     protected OMXPPWrapper omXmlPullParserWrapper;
+protected OMFactory ombuilderFactory;
 
     protected OMEnvelope soapEnvelope;
 
     public OMTestCase(String testName) {
         super(testName);
+        ombuilderFactory = OMFactory.newInstance();
     }
 
 

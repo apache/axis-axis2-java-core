@@ -24,7 +24,7 @@ package org.apache.axis.om;
  */
 public abstract class OMFactory {
 
-
+    // -----------------------------   OM Attribute -----------------------------------------------------------------
     /**
      * @param localName
      * @param ns
@@ -42,8 +42,9 @@ public abstract class OMFactory {
      */
     public abstract OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
 
+    // --------------------------------------------------------------------------------------------------------------
 
-
+    // -----------------------------   OM Element -----------------------------------------------------------------
     /**
      * @param parent
      * @return
@@ -66,6 +67,9 @@ public abstract class OMFactory {
      */
     public abstract OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
+    // --------------------------------------------------------------------------------------------------------------
+
+    // -----------------------------   OM NamedNode -----------------------------------------------------------------
 
     /**
      * @param localName
@@ -81,12 +85,17 @@ public abstract class OMFactory {
      */
     public abstract OMNamedNode createOMNamedNode(OMElement parent);
 
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM Namespace -----------------------------------------------------------------
     public abstract OMNamespace createOMNamespace(String uri, String prefix);
 
-
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM Node -----------------------------------------------------------------
 
     public abstract OMNode createOMNode(OMElement parent);
 
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM TextNode -----------------------------------------------------------------
     /**
      * @param parent
      * @param text
@@ -100,23 +109,8 @@ public abstract class OMFactory {
      */
     public abstract OMText createText(String s);
 
-
-    /**
-     * @param localName
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public abstract OMBodyBlock createOMBodyBlock(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
-
-    /**
-     * @param localName
-     * @param ns
-     * @return
-     */
-    public abstract OMBodyBlock createOMBodyBlock(String localName, OMNamespace ns);
-
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM OMBody -----------------------------------------------------------------
     /**
      * @param envelope
      * @return
@@ -132,6 +126,8 @@ public abstract class OMFactory {
      */
     public abstract OMBody createOMBody(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM OMEnvelope -----------------------------------------------------------------
 
     /**
      * @param localName
@@ -148,6 +144,8 @@ public abstract class OMFactory {
      */
     public abstract OMEnvelope createOMEnvelope(String localName, OMNamespace ns);
 
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM OMHeader -----------------------------------------------------------------
     /**
      * @param envelope
      */
@@ -163,6 +161,8 @@ public abstract class OMFactory {
     public abstract OMHeader createHeader(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
 
+    // --------------------------------------------------------------------------------------------------------------
+    // -----------------------------   OM OMHeaderBlock -----------------------------------------------------------------
     /**
      * @param localName
      * @param ns

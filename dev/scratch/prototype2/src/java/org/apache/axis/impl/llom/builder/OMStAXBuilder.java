@@ -7,13 +7,7 @@ import org.apache.axis.impl.llom.OMElementImpl;
 import org.apache.axis.impl.llom.OMNodeImpl;
 import org.apache.axis.impl.llom.OMTextImpl;
 import org.apache.axis.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMEnvelope;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -140,16 +134,9 @@ public class OMStAXBuilder implements OMXMLParserWrapper{
                 throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
             }
 
-        } else if (elementLevel == 3) {
-            // this is either a headerelement or a bodyelement
-            if (parent.getLocalName().equalsIgnoreCase("Header")) {
-                element = ombuilderFactory.createOMHeaderBlock(elementName,null,parent,this);//todo NS is required here
-            } else if (parent.getLocalName().equalsIgnoreCase("Body")) {
-                element = ombuilderFactory.createOMBodyBlock(elementName,null,parent,this);//todo put the NS here
-            } else {
-                // can there be Elements other than Header and Body in Envelope. If yes, what are they and is it YAGNI ??
-                throw new OMException(elementName + " is not supported here. Envelope can not have elements other than Header and Body.");
-            }
+        } else if (elementLevel == 3 && parent.getLocalName().equalsIgnoreCase("Header")) {
+            // this is a headerblock
+            element = ombuilderFactory.createOMHeaderBlock(elementName, null, parent, this);//todo NS is required here
 
         } else {
             // this is neither of above. Just create an element

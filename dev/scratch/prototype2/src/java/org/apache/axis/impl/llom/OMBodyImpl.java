@@ -1,7 +1,6 @@
 package org.apache.axis.impl.llom;
 
 import org.apache.axis.om.*;
-import org.apache.axis.impl.llom.OMBodyElementImpl;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -71,21 +70,6 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-    /**
-     * Creates a new <code>OMBodyBlock</code> object with the
-     * specified name and adds it to this <code>OMBody</code> object.
-     *
-     * @param element a <code>OMNamedNode</code> object with the name for the new
-     *                <code>OMBodyBlock</code> object
-     * @return the new <code>OMBodyBlock</code> object
-     * @throws org.apache.axis.om.OMException if a SOAP error occurs
-     */
-    public OMBodyBlock addBodyElement(String localName, OMNamespace ns) throws OMException {
-        OMBodyBlock omBodyElement = new OMBodyElementImpl(localName, ns);
-        this.addChild(omBodyElement);
-        omBodyElement.setComplete(true);
-        return omBodyElement;
-    }
 
     /**
      * @param omFault
@@ -95,23 +79,5 @@ public class OMBodyImpl extends OMElementImpl implements OMBody {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-    /**
-     * Adds the root node of the DOM <code>Document</code> to this
-     * <code>OMBody</code> object.
-     * <p/>
-     * Calling this method invalidates the <code>document</code> parameter. The
-     * client application should discard all references to this
-     * <code>Document</code> and its contents upon calling
-     * <code>addDocument</code>. The behavior of an application that continues
-     * to use such references is undefined.
-     *
-     * @param element the <code>Document</code> object whose root node will be
-     *                added to this <code>OMBody</code>
-     * @return the <code>OMBodyBlock</code> that represents the root node
-     *         that was added
-     * @throws org.apache.axis.om.OMException if the <code>Document</code> cannot be added
-     */
-    public OMBodyBlock addDocument(OMElement element) throws OMException {
-        throw new UnsupportedOperationException(); //TODO implement this
-    }
+   
 }

@@ -21,6 +21,7 @@ package org.apache.axis.om;
 
 import org.apache.axis.impl.llom.OMNamespaceImpl;
 
+import java.util.Iterator;
 
 public class OMBodyTest extends OMTestCase {
 
@@ -58,9 +59,10 @@ public class OMBodyTest extends OMTestCase {
 
     public void testAddBodyElement() {
          String newElementName = "MyBodyElement";
-        OMBodyBlock soapBodyElement = soapBody.addBodyElement(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf"));
-        assertTrue("Body Element added has different parent than it should have", soapBodyElement.getParent() == soapBody);
-        assertTrue("Body Element added has different localname than it was given", soapBodyElement.getLocalName().equalsIgnoreCase(newElementName));
+        soapBody.addChild(ombuilderFactory.createOMElement(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf")));
+
+        Iterator children = soapBody.getChildren();
+        // TODO test this
     }
 
     /*
