@@ -20,13 +20,19 @@ package org.apache.axis.description;
  */
 public class PhaseRule {
     //can be either name of phase or handler
-    private String before ;
+    private String before;
     //can be either name of phase or handler
-    private String after ;
+    private String after;
 
     private String phaseName;
     private boolean phaseFirst;
     private boolean phaseLast;
+
+    public PhaseRule() {
+        this.before = "";
+        this.after = "";
+        this.phaseName = "";
+    }
 
     public String getBefore() {
         return before;
