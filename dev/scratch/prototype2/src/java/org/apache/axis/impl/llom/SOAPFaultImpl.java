@@ -26,11 +26,20 @@ import java.util.Locale;
  */
 public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstants{
 
-    public SOAPFaultImpl(OMElement parent) {
+    private Exception e;
+
+    public SOAPFaultImpl(OMElement parent,Exception e){
         super(parent);
-        localName = SOAPFAULT_LOCAL_NAME;
+        this.e = e;
+        this.addChild(OMFactory.newInstance().createText(this,e.getMessage()));
+          localName = SOAPFAULT_LOCAL_NAME;
         setNamespace(new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI, SOAPFAULT_NAMESPACE_PREFIX));
     }
+
+//    public SOAPFaultImpl(OMElement parent) {
+//        super(parent);
+//
+//    }
 
      public SOAPFaultImpl(OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
         super(SOAPFAULT_LOCAL_NAME, ns, parent, builder);

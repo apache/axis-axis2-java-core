@@ -49,8 +49,8 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody, OMConstants
      * @return the new <code>SOAPFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      */
-    public SOAPFault addFault() throws OMException {
-        SOAPFault soapFault = new SOAPFaultImpl(this);
+    public SOAPFault addFault(Exception e) throws OMException {
+        SOAPFault soapFault = new SOAPFaultImpl(this,e);
         addFault(soapFault);
         return soapFault;
     }

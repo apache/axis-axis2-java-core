@@ -105,8 +105,8 @@ public class OMLinkedListImplFactory extends OMFactory {
         return new SOAPHeaderBlockImpl(localName, ns, parent, builder);
     }
 
-    public SOAPFault createSOAPFault(SOAPBody parent) {
-        return new SOAPFaultImpl(parent);
+    public SOAPFault createSOAPFault(SOAPBody parent,Exception e) {
+        return new SOAPFaultImpl(parent,e);
     }
 
     public SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent, OMXMLParserWrapper builder) {
