@@ -18,7 +18,7 @@ package org.apache.axis.engine;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Flow;
 
@@ -38,10 +38,10 @@ public class EngineUtils {
         }
     }
     
-    public static SimpleAxisServer startServer(EngineRegistry engineRegistry) throws IOException{
+    public static SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
         AxisEngine engine = new AxisEngine(engineRegistry);
         ServerSocket serverSoc = new ServerSocket(TESTING_PORT);
-        SimpleAxisServer sas = new SimpleAxisServer(engine);
+        SimpleHTTPReceiver sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(serverSoc);
         Thread thisThread = new Thread(sas);
         thisThread.setDaemon(true);

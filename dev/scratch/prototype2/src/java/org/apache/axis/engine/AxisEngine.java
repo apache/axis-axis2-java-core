@@ -42,7 +42,6 @@ public class AxisEngine {
     }
 
     public void send(MessageContext mc)throws AxisFault{
-        QName currentServiceName = null;
         Service service = null;
         //dispatch the service Name
         service = mc.getService();

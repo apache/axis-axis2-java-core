@@ -39,7 +39,6 @@ import java.lang.reflect.Method;
 
 public class SimpleJavaProvider extends AbstractProvider implements Provider {
     protected Log log = LogFactory.getLog(getClass());
-    private String message;
     private QName name;
     private String scope;
     private Method method;

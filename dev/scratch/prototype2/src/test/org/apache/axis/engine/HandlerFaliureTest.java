@@ -29,7 +29,7 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.registry.FlowImpl;
 import org.apache.axis.impl.registry.ParameterImpl;
-import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -54,7 +54,7 @@ public class HandlerFaliureTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
-    private SimpleAxisServer sas;
+    private SimpleHTTPReceiver sas;
     private int testingPort = 7777;
     private int testCount = 0;
     

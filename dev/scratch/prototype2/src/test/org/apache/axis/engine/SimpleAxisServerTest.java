@@ -26,7 +26,7 @@ import org.apache.axis.impl.engine.OperationImpl;
 import org.apache.axis.impl.engine.ServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.registry.ParameterImpl;
-import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Operation;
 import org.apache.axis.registry.Parameter;
@@ -43,7 +43,7 @@ public class SimpleAxisServerTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
-    private SimpleAxisServer sas;
+    private SimpleHTTPReceiver sas;
     private int testingPort = 7777;
     private int testCount = 0;
     private AxisEngine engine;
@@ -95,7 +95,7 @@ public class SimpleAxisServerTest extends AbstractTestCase{
 
     public void testEchoXMLSync() throws Exception{
         ServerSocket serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleAxisServer(engine);
+        sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(serverSoc);
         thisThread = new Thread(sas);
         thisThread.setDaemon(true);
@@ -103,7 +103,7 @@ public class SimpleAxisServerTest extends AbstractTestCase{
         sas.stop();
         Thread.sleep(1000);
         serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleAxisServer(engine);
+        sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(serverSoc);
         thisThread = new Thread(sas);
         thisThread.setDaemon(true);
@@ -111,7 +111,7 @@ public class SimpleAxisServerTest extends AbstractTestCase{
         sas.stop();            
         Thread.sleep(1000);
         serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleAxisServer(engine);
+        sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(serverSoc);
         thisThread = new Thread(sas);
         thisThread.setDaemon(true);

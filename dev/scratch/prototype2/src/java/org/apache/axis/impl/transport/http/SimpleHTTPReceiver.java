@@ -16,23 +16,40 @@
 
 package org.apache.axis.impl.transport.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.TransportSenderLocator;
+import org.apache.axis.impl.llom.builder.StAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.impl.transport.AbstractTransportReceiver;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.OutputStream;
 
 
-
-public abstract class SimpleHTTPHandler implements Runnable {
+public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Runnable {
     protected static Log log =
-            LogFactory.getLog(SimpleHTTPHandler.class.getName());
+            LogFactory.getLog(SimpleHTTPReceiver.class.getName());
 
     // Axis specific constants
     protected static String transportName = "SimpleHTTP";
     protected AxisEngine engine;
+  //  private SimpleAxisServer server;
+   // private Socket socket;
+    
 
     // HTTP status codes
     protected static byte OK[] = ("200 OK").getBytes();
@@ -122,22 +139,14 @@ public abstract class SimpleHTTPHandler implements Runnable {
     protected static final byte basicAuth[] = "basic ".getBytes();
 
 
+    
     /**
-     * Run method
+     * @param myAxisServer
      */
-    
-    public abstract MessageContext parseHTTPHeaders()throws AxisFault;
-    
-    public void run() {
-        try {
-            parseHTTPHeaders();
-        }catch(AxisFault e){
-            log.error(e);
-        }finally {
-            
-        }
+    public SimpleHTTPReceiver(AxisEngine myAxisServer) {
+        super(myAxisServer);
     }
-    
+
     /**
      * The main workhorse method.
      */
@@ -369,4 +378,119 @@ public abstract class SimpleHTTPHandler implements Runnable {
         }
         return count > 0 ? count : -1;
     }
+    protected MessageContext parseTheTransport(
+        AxisEngine engine,
+        InputStream in)throws AxisFault  {
+        byte buf[] = new byte[BUFSIZ];
+        // create an Axis server
+
+        MessageContext msgContext = new MessageContext(engine.getRegistry());
+        msgContext.setServerSide(true);
+
+        // Reusuable, buffered, content length controlled, InputStream
+        NonBlockingBufferedInputStream is =
+                new NonBlockingBufferedInputStream();
+
+        // buffers for the headers we care about
+        StringBuffer soapAction = new StringBuffer();
+        StringBuffer httpRequest = new StringBuffer();
+        StringBuffer fileName = new StringBuffer();
+        StringBuffer cookie = new StringBuffer();
+        StringBuffer cookie2 = new StringBuffer();
+        StringBuffer authInfo = new StringBuffer();
+        StringBuffer contentType = new StringBuffer();
+        StringBuffer contentLocation = new StringBuffer();
+
+        try{
+            // assume the best
+            byte[] status = OK;
+
+            // assume we're not getting WSDL
+            boolean doWsdl = false;
+
+            // cookie for this session, if any
+            String cooky = null;
+
+            String methodName = null;
+
+            authInfo.delete(0, authInfo.length());
+
+            // read headers
+            is.setInputStream(in);
+            // parse all headers into hashtable
+            int contentLength = parseHeaders(is, buf, contentType,
+                    contentLocation, soapAction,
+                    httpRequest, fileName,
+                    cookie, cookie2, authInfo);
+            is.setContentLength(contentLength);
+
+            int paramIdx = fileName.toString().indexOf('?');
+            if (paramIdx != -1) {
+                // Got params
+                String params = fileName.substring(paramIdx + 1);
+                fileName.setLength(paramIdx);
+
+
+                if ("wsdl".equalsIgnoreCase(params))
+                    doWsdl = true;
+
+                if (params.startsWith("method=")) {
+                    methodName = params.substring(7);
+                }
+            }
+
+
+
+            String filePart = fileName.toString();
+            msgContext.setProperty(MessageContext.REQUEST_URL,filePart);
+            if (httpRequest.toString().equals("GET")) {
+                    throw new UnsupportedOperationException("GET not supported"); 
+            } else {
+
+                // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
+                // for now, do not complain if no SOAPAction at all
+                String soapActionString = soapAction.toString();
+                if (soapActionString != null) {
+                    msgContext.setProperty(MessageContext.SOAP_ACTION,soapActionString);
+                }
+                
+
+                InputStreamReader isr = new InputStreamReader(is);
+                XMLStreamReader reader =  XMLInputFactory.newInstance().createXMLStreamReader(isr);
+                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),reader);
+                msgContext.setEnvelope((SOAPEnvelope)builder.getDocumentElement());
+
+                EngineRegistry reg = engine.getRegistry();
+                return  msgContext;
+            }    
+            }catch(IOException e){
+                throw AxisFault.makeFault(e); 
+            } catch(XMLStreamException e){
+                throw AxisFault.makeFault(e); 
+            }   
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.impl.transport.AbstractTransportReciver#storeOutputInfo(org.apache.axis.context.MessageContext, java.io.OutputStream)
+     */
+    protected void storeOutputInfo(
+        MessageContext msgContext,
+        OutputStream out)throws AxisFault {
+        try {
+            // Send it on its way...
+            out.write(HTTP);
+            out.write(OK);
+            out.write("\n\n".getBytes());
+            log.info("status written");
+            //We do not have any Addressing Headers to put
+            //let us put the information about incoming transport
+            msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
+                TransportSenderLocator.TRANSPORT_HTTP);
+            msgContext.setProperty(MessageContext.TRANSPORT_DATA,out);
+        } catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
+
 }

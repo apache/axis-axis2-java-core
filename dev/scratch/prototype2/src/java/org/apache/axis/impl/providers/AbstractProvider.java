@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
  */
 public abstract class AbstractProvider extends AbstractEngineElement implements Provider{
     private QName name;
-    private String scope;
     public QName getName() {
         return name;
     }

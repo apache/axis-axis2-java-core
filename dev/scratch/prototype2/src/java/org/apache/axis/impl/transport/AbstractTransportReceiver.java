@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.transport.http;
+package org.apache.axis.impl.transport;
 
 
 
@@ -25,7 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
+
 import java.net.Socket;
 
 /**
@@ -41,12 +44,12 @@ import java.net.Socket;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
  */
-public class SimpleAxisServer implements Runnable {
+public abstract class AbstractTransportReceiver implements Runnable {
     protected Log log =
-            LogFactory.getLog(SimpleAxisServer.class.getName());
-    private AxisEngine engine = null;
-    private ServerSocket serverSocket;  
-    private Socket socket = null;  
+            LogFactory.getLog(AbstractTransportReceiver.class.getName());
+    protected AxisEngine engine = null;
+    protected ServerSocket serverSocket;  
+    protected Socket socket = null;  
     /**
     are we stopped?
     latch to true if stop() is called
@@ -54,7 +57,7 @@ public class SimpleAxisServer implements Runnable {
     private boolean stopped = false;
     
 
-    public SimpleAxisServer(AxisEngine myAxisServer) {
+    public AbstractTransportReceiver(AxisEngine myAxisServer) {
     	this.engine = myAxisServer;
 		
     }
@@ -86,8 +89,8 @@ public class SimpleAxisServer implements Runnable {
                         break;
                     }
                     if (socket != null) {
-                        ServerHttpHandler worker = new ServerHttpHandler(this, socket,engine);
-                        MessageContext msgContext = worker.parseHTTPHeaders();
+                        MessageContext msgContext = parseTheTransport(engine,socket.getInputStream());
+                        storeOutputInfo(msgContext,socket.getOutputStream());
                         engine.recive(msgContext);
                         this.socket.close();
                         this.socket = null;
@@ -168,5 +171,7 @@ public class SimpleAxisServer implements Runnable {
         }
         log.info("Simple Axis Server Quits");
     }
-
+    
+    protected abstract MessageContext parseTheTransport(AxisEngine engine, InputStream in)throws AxisFault;
+    protected abstract void storeOutputInfo(MessageContext msgctx, OutputStream out)throws AxisFault;
 }

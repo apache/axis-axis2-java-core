@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +46,7 @@ public class EchoTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
-    private SimpleAxisServer sas;
+    private SimpleHTTPReceiver sas;
     private int testingPort = 1234;
 
     public EchoTest(String testName) {
@@ -56,7 +56,7 @@ public class EchoTest extends AbstractTestCase{
     protected void setUp() throws Exception {
         engineRegistry = Utils.createMockRegistry(serviceName,operationName,transportName);
         AxisEngine engine = new AxisEngine(engineRegistry);
-        sas = new SimpleAxisServer(engine);
+        sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(new ServerSocket(testingPort));
         thisThread = new Thread(sas);
         thisThread.start();

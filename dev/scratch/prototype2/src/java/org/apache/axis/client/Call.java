@@ -15,7 +15,6 @@
  */
 package org.apache.axis.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -182,10 +181,7 @@ public class Call {
         try {
             msgContext = new MessageContext(engine.getRegistry());
             msgContext.setServerSide(true);
-
-            String methodName = null;
-            
-            //TODO Thanks our URL we need nothng here .. may be need parsing code 
+            //TODO Thanks to the URL we need nothng here .. may be need parsing code 
 //      int level = 0;
 //      while(level != 2){
 //          byte b = (byte)inp.read();
@@ -202,13 +198,9 @@ public class Call {
 //
 //      }
             InputStreamReader isr = new InputStreamReader(in);
-            BufferedReader bufR = new BufferedReader(isr);
             XMLStreamReader reader =  XMLInputFactory.newInstance().createXMLStreamReader(isr);
-
             StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),reader);
             msgContext.setEnvelope((SOAPEnvelope)builder.getDocumentElement());
-              
-            EngineRegistry reg = engine.getRegistry();
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         } 

@@ -28,7 +28,7 @@ import org.apache.axis.impl.engine.OperationImpl;
 import org.apache.axis.impl.engine.ServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.registry.ParameterImpl;
-import org.apache.axis.impl.transport.http.SimpleAxisServer;
+import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -51,7 +51,7 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
     private EngineRegistry engineRegistry;
     private MessageContext mc;
     private Thread thisThread = null;
-    private SimpleAxisServer sas;
+    private SimpleHTTPReceiver sas;
     private int testingPort = 7777;
     private int testCount = 0;
     
@@ -95,7 +95,7 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
         
         AxisEngine engine = new AxisEngine(engineRegistry);
         ServerSocket serverSoc = new ServerSocket(testingPort);
-        sas = new SimpleAxisServer(engine);
+        sas = new SimpleHTTPReceiver(engine);
         sas.setServerSocket(serverSoc);
         thisThread = new Thread(sas);
         thisThread.setDaemon(true);

@@ -16,37 +16,41 @@
 
 package org.apache.axis.impl.transport.tcp;
 
+import java.io.OutputStream;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.TransportSender;
-import org.apache.axis.impl.handlers.AbstractHandler;
-import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.om.SOAPEnvelope;
-
-import java.io.OutputStream;
+import org.apache.axis.engine.EndpointReferance;
+import org.apache.axis.impl.transport.AbstractTrasnportSender;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class TCPTrasnportSender extends AbstractHandler implements TransportSender{
+public class TCPTrasnportSender extends AbstractTrasnportSender{
     protected OutputStream out;
     
     public TCPTrasnportSender(OutputStream out){
         this.out = out;
     }
     
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    protected OutputStream obtainOutPutStream(MessageContext msgContext) throws AxisFault {
         OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        if(envelope != null){
-            SimpleOMSerializer serializer = new SimpleOMSerializer();
-            serializer.serialize(envelope,this.out);
-            
+        if(out == null){
+            throw new AxisFault("can not find the suffient information to find endpoint");
+        }else{
+            return out;
         }
+
     }
 
-    public void revoke(MessageContext msgContext) {
+    protected OutputStream obtainOutPutStream(MessageContext msgContext,EndpointReferance epr) {
+        throw new UnsupportedOperationException("Addressing not suppotrted yet");
+    }
 
+    protected void finalizeSending() {
+    }
+
+    protected void startSending() {
     }
 
 }

@@ -65,13 +65,14 @@
       <email>hemapani@apache.org</email>
       <organization></organization>
     </developer>
-<developer>
+	<developer>
       <name>Ajith Ranabahu</name>
       <id>ajith</id>
       <email>ajith@apache.org</email>
       <organization>LSF</organization>
     </developer>
-    <name>Deepal Jayasinghe</name>
+    <developer>
+	  <name>Deepal Jayasinghe</name>
       <id>deepal</id>
       <email>deepal@apache.org</email>
       <organization>LSF</organization>
