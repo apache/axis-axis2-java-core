@@ -1,0 +1,135 @@
+<html>
+<head>
+<title>
+AXIS2:: Architecture Guide
+</title>
+</head>
+<body>
+<h2>WSDL Architecture.</h2>	
+
+WSDL Module of Axis2 was architected with both WSDL version 1.1 and version 2.0 Component model in mind. The entire architecture of the aforesaid Module is built around an Object Model called  
+WSDL Object Model which will be refered to as WOM here fourth. 
+
+<br/>
+<br/>
+<h3> Overview of the Axis2 WSDL Module </h3>
+
+WSDL Module can be mainly broken down into two major functionalities:
+<ul>
+<li> Service Description Functionality.
+<li>WSDL Processing functionality(e.g. WSDL2Java, WSDL24J, Java2WSDL)
+</ul>
+Service Description will provide an API to the Axis2 Engine that will expose the sufficient statistics about the web service that has been described in the WSDL file. WSDL Processing basically involves WSDL2Java, WSDL24J, and Java2WSDL.
+Following sections will give a further overview of each of the above functionalities.
+<br/>
+<br/>
+
+<!-- An image that shows all that the 
+	WSDL2Java
+	Java2WSDL
+	Service Description -->
+
+ 
+
+<image src="images/Architecture.gif" align=”middle”>
+
+<br/>
+<br/>
+
+<h3>WOM</h3>
+WOM is engineered based on WSDL 2.0 component model, but it does not restrict its functionality to prior WSDL versions. Rather both WSDL 1.1 and WSDL 2.0 versions will be supported on top of the WOM. WOM consists of components such as Description, Interface, Service, etc, as shown in the following diagram. All those Components extend from one super interface called org.apache.wsdl.Component which will prove to be very useful in the implementation of the Service Desc.
+<br/>
+<br/>
+
+<!—a class diagram of the WOM interfaces -->
+<image src=" images/wom.PNG" align=”middle”>
+
+<br/>
+<br/>
+
+
+WOM is a runtime representation of the WSDL file and it will provide the web service description functionality. As the following diagram illustrate the WOM will be the common Object model that will be used in bothWSDL2Java and Java2WSDL functionality. This intermediary object model ease the discussion since the WSDL processing can be broken down into the following four sub modules.   
+<ul>
+<li>WOM Builder.
+<li> WSDL Emitter.
+<li> Code Generator.
+<li> Code Parser.
+</ul>
+
+<h3> Service Description</h3>
+<p>
+Service Description (also known as Service Desc) is an API by which the necessary statistics will be made available to the Axis2 Engine at the runtime. </p>
+<p>
+The functionality of the WOM is very much similar to the functionality expected from that of the Service Desc. Both behave as runtime description of the web service. Difference is that WOM is a clean component model that is not dependent on Axis2 or any other SOAP Engine and Service Desc is the Axis2 specific description of the web service. Thus it was necessary that the Axis Service Desc to extend the WOM to incorporate the additional Axis specific deployment information such as handlers, modules, providers, etc. The actual implementation of such extensions has been achieved using the extension capability provided by the WOM itself. 
+</p>
+<p>
+As mentioned above all the Components in the WOM extend from a super interface org.apache.wsdl.Component. Service Desc makes use of the functionality provided by org.apache.wsdl.Component to interface the WOM to behave as a Service Desc. org.apache.wsdl.Component has the following class diagram.
+</p>
+<br/>
+<br/>
+<image src=" images/Component.png" align=”middle”>
+
+<br/>
+<br/>
+<p>
+As the diagram illustrate the Component class provides the functionality of storing properties. Since all the WSDL Components extend from this class directly or indirectly, this functionality get inherited to all the WSDL Components. The Service Desc makes use of this functionality to store Axis2 specific properties using the WOM. In that sense the Axis2 Service Desc is a wrapper to the WOM.
+</p>
+	
+Following is the Class diagram of the top level component of the description Component 
+<font face=”Courier”>org.apache.axis.description.impl.AxisService.</font>
+<br/>
+<br/>
+
+
+<image src=" images/AxisService.jpg" align=”middle”>
+
+<br/>
+<br/>
+
+org.apache.axis.description.impl.AxisService extends from the org.apache.wsdl.WSDLService and thus inherits the functionality of the org.apache.wsdl.WSDLService. The Axis2 specific properties like provider, ServiceClass are stored using the org.apache.wsdl.Component class which org.apache.wsdl.WSDLService extends from.
+
+The deployment Module will pick up the deployed service and it will build the Service Desc and deploy in the Engine Registry. There will be an underlying WOM for each Service Desc deployed in the Engine Registry.
+<br/>
+<br/>
+
+
+<image src=" images/ServiceDesc.gif" align=”middle”>
+
+<br/>
+<br/>
+
+
+<h3>WSDL Processing</h3><p>
+WSDL Processing can be identified as of operations performed on or performed using the WOM. Such definition is made possible because of the intermediary object model i.e. WOM always acts as an intermediary state. For example if WSDL2Java is considered: </p>
+WSDL2Java = WSDL-->WOM (WSDL2WOMBuilder), WOM-->Java (Code Generation Module).
+<p>
+The point to note is that the above allows the WSDL-->WOM (WSDL2WOMBuilder) to be identified as an independent module, not tied to the WSDL2Java operation. There are four such modules identified in the WSDL Processing Module of Axis2.
+</p>
+<ul>
+<li>WOM Builder.
+<li> WSDL Emitter.
+<li> Code Generator.
+<li> Code Parser.
+</ul>
+
+<h4>WOM Builder Module</h4>
+
+WOM has an external building mechanism and it gets built by an external builder. Since WOM is both WSDL 1.1 and WSDL 2.0 compliant it can get built from an either of the WSDL versions. Currently WSDL1ToWOMBuilder uses the WSDL4J for the WSDL Parsing. In that implementation the WOM gets populated from a WSDL4J object structure. Following is the class diagram of the WOM build mechanism.
+
+<!—The Figure of WOM Builder-->	
+
+<br/>
+<br/>
+
+
+<image src=" images/WomBuilder.PNG" align=”middle”>
+
+<br/>
+<br/>
+ 
+The WSDL2ToWOMBuilder is to be implemented and the WSDL24J is going to be part of this implementation.
+
+</body>
+</html>
+
+
