@@ -419,7 +419,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         short builderType = PULL_TYPE_BUILDER; //default is pull type
         if (builder != null)
             builderType = this.builder.getBuilderType();
-        if (builderType == PUSH_TYPE_BUILDER) {
+        if (builderType == PUSH_TYPE_BUILDER && builder.getRegisteredContentHandler()==null) {
             builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer)); //for now only SAX
         }
 

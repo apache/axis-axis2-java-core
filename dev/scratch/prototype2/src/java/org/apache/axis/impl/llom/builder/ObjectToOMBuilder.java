@@ -238,4 +238,8 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         else
             throw new IllegalArgumentException("Attempt to register wrong type of content handler");
     }
+
+    public Object getRegisteredContentHandler() {
+        return this.externalContentHandler;
+    }
 }

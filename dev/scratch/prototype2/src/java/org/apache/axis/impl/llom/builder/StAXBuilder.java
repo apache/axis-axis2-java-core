@@ -239,4 +239,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     public void registerExternalContentHandler(Object obj) {
         throw new UnsupportedOperationException();
     }
+
+    public Object getRegisteredContentHandler() {
+        throw new UnsupportedOperationException();
+    }
+
+    
 }

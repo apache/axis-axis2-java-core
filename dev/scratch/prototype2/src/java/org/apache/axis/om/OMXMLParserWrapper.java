@@ -77,4 +77,10 @@ public interface OMXMLParserWrapper {
      */
     void registerExternalContentHandler(Object obj);
 
+    /**
+     * get the registered external content handler
+     * @return
+     */
+    Object getRegisteredContentHandler();
+
 }
