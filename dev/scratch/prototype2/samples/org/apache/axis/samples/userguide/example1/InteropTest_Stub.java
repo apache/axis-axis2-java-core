@@ -26,8 +26,10 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.samples.utils.OMUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This file is hand written for the M1 demp purposes and will be 
@@ -38,6 +40,7 @@ public class InteropTest_Stub {
 
 	private OMFactory omFactory = OMFactory.newInstance();
 	private Call call = new Call();
+	protected Log log = LogFactory.getLog(this.getClass());
 	
 		
 	
@@ -56,11 +59,16 @@ public class InteropTest_Stub {
 	public java.lang.String echoString(java.lang.String inputValue)throws AxisFault{
 		this.validate();
 		SOAPEnvelope responceEnvelop = call.sendReceive(this.getSOAPEnvelopForEchoString(inputValue));	
-		return this.getEchoStringFromSOAPEnvelop(responceEnvelop);
-		
-		
-		
+		return this.getEchoStringFromSOAPEnvelop(responceEnvelop);	
 	}
+	
+	public Integer echoInt(Integer inputValue) throws AxisFault{
+		this.validate();
+		SOAPEnvelope responceEnvelop = call.sendReceive(this.getSOAPEnvelopForEchoInt(inputValue));		
+		return this.getEchoIntFromSOAPEnvelop(responceEnvelop);		
+	}
+	
+	
 	//\\\\\\\\\\\\\\\\End Webservice Operations\\\\\\\\\\\\\\\\\\//
 	
 	
@@ -74,15 +82,27 @@ public class InteropTest_Stub {
 	
 	
 	protected SOAPEnvelope getSOAPEnvelopForEchoString(String value){
-		SOAPEnvelope envelop = OMUtil.getEmptySoapEnvelop();
+		SOAPEnvelope envelop = OMFactory.newInstance().getDefaultEnvelope();
 		OMNamespace interopNamespace = envelop.declareNamespace("http://soapinterop.org/", "interop");
 		OMElement echoStringMessage = omFactory.createOMElement("echoStringRequest", interopNamespace);
-		OMElement text = omFactory.createOMElement("Text", null);
+		OMElement text = omFactory.createOMElement("Text", interopNamespace);
 		text.addChild(omFactory.createText(value));
 		echoStringMessage.addChild(text);
-		envelop.addChild(echoStringMessage);
+		envelop.getBody().addChild(echoStringMessage);
 		return envelop;
 	}
+	
+	protected SOAPEnvelope getSOAPEnvelopForEchoInt(Integer value){
+		SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
+		OMNamespace namespace = envelope.declareNamespace("http://soapinterop.org/", "interop");
+		OMElement echoIntMessage = omFactory.createOMElement("echoInt", namespace);
+		OMElement text = omFactory.createOMElement("Text", namespace);
+		text.addChild(omFactory.createText(value.toString()));
+		echoIntMessage.addChild(text);
+		envelope.getBody().addChild(echoIntMessage);
+		return envelope;		
+	}
+	
 	
 	protected String getEchoStringFromSOAPEnvelop(SOAPEnvelope envelop){
 		OMElement body = envelop.getBody();
@@ -93,17 +113,41 @@ public class InteropTest_Stub {
 			if(child instanceof OMElement && "echoStringResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				response = (OMElement)child;				
 			}
-		}
-		
+		}		
 		Iterator textChild = response.getChildrenWithName(new QName("", "Text"));
 		String value= null;
 		if(textChild.hasNext()){
 			 value = ((String)((OMElement)textChild.next()).getValue());
 		}
-		return value;
-		
+		return value;		
 	}
 	
+	protected Integer getEchoIntFromSOAPEnvelop(SOAPEnvelope envelop) throws AxisFault{
+		OMElement body = envelop.getBody();		
+		OMElement response = null;		
+		Iterator childrenIter = body.getChildren();
+		while(childrenIter.hasNext()){
+			OMNode child = (OMNode) childrenIter.next();
+			if(child instanceof OMElement && "echoIntResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
+				response = (OMElement)child;				
+			}
+		}
+		
+		Iterator textChild = response.getChildren();
+		while(textChild.hasNext()){
+			OMNode  child = (OMNode) textChild.next();
+			if(child instanceof OMElement && "echoIntReturn".equalsIgnoreCase(((OMElement)child).getLocalName())){
+				
+				OMNode val =((OMElement)child).getFirstChild();
+				if(val instanceof OMText)
+					return new Integer(((OMText)val).getValue());
+				
+			}
+		}
+		
+		this.log.info("Invalid data Binding");
+		throw new AxisFault("Invalid data Binding");	
+	}
 	
 	
 	protected void validate() throws AxisFault{
