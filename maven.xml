@@ -39,175 +39,195 @@
        |  	Binary Distribution
        | 
      -->
-
+<!--
+  <j:set var="release.id" value="${pom.standardToLegacyId(pom.id)}-${pom.currentVersion}"/>
+    <j:set var="distDir" value="target/${pom.groupId}-${pom.currentVersion}"/>
+-->
  
-<project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant">
+<project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant" xmlns:j="jelly:core">
+
 		 <goal name="clean">
 			<attainGoal name="multiproject:clean"/>
-			<delete >
-				<fileset dir="${maven.repo.local}">
-					<include name="axis/jars/axis2*.jar"/>
-				</fileset>
-			</delete>
-			<delete dir="target"/>
+			<ant:delete >
+				<ant:fileset dir="${maven.repo.local}">
+					<ant:include name="axis/jars/axis2*.jar"/>
+				</ant:fileset>
+			</ant:delete>
+			<ant:delete dir="target"/>
 		</goal>
 
 
     <goal name="war" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
-        <mkdir dir="target"/>
-		<war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
-		  <fileset dir="modules/core/src/html"/>
-		  <lib dir="${maven.repo.local}/stax/jars/">
-		    <include name="stax-api-1.0.jar"/>
-		    <include name="stax-1.1.1-dev.jar"/>		    
-		  </lib>  
-		  <lib dir="${maven.repo.local}/commons-logging/jars/">
-		    <include name="commons-logging-1.0.3.jar"/>
-		  </lib>  
-		  <lib dir="${maven.repo.local}/axis/jars/">
-		    <include name="axis-wsdl4j-1.2-RC1.jar"/>
-		  </lib>  
-		  <lib dir="${maven.repo.local}/log4j/jars/">
-		    <include name="log4j-1.2.8.jar"/>
-		  </lib>  
-		  <lib dir="modules/om/target/">
-		    <include name="axis2*.jar"/>
-		  </lib>  
-		  <lib dir="modules/core/target/">
-		    <include name="axis2*.jar"/>
-		  </lib>  
-		  <lib dir="modules/deployment/target/">
-		    <include name="axis2*.jar"/>
-		  </lib>  
-		  <lib dir="modules/wsdl/target/">
-		    <include name="axis2*.jar"/>
-		  </lib>  
-		  <lib dir="modules/samples/target/">
-		    <include name="axis2*.jar"/>
-		  </lib>  
-		<classes dir="modules/core/src/conf">
-      		    <include name="*.properties"/>
-		</classes>
-		</war>
+        <ant:mkdir dir="target"/>
+		<ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
+		  <ant:fileset dir="modules/core/src/html"/>
+		  <ant:lib dir="${maven.repo.local}/stax/jars/">
+		    <ant:include name="stax-api-1.0.jar"/>
+		    <ant:include name="stax-1.1.1-dev.jar"/>		    
+		  </ant:lib>  
+		  <ant:lib dir="${maven.repo.local}/commons-logging/jars/">
+		    <ant:include name="commons-logging-1.0.3.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="${maven.repo.local}/axis/jars/">
+		    <ant:include name="axis-wsdl4j-1.2-RC1.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="${maven.repo.local}/log4j/jars/">
+		    <ant:include name="log4j-1.2.8.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="modules/om/target/">
+		    <ant:include name="axis2*.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="modules/core/target/">
+		    <ant:include name="axis2*.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="modules/deployment/target/">
+		    <ant:include name="axis2*.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="modules/wsdl/target/">
+		    <ant:include name="axis2*.jar"/>
+		  </ant:lib>  
+		  <ant:lib dir="modules/samples/target/">
+		    <ant:include name="axis2*.jar"/>
+		  </ant:lib>  
+		<ant:classes dir="modules/core/src/conf">
+      		    <ant:include name="*.properties"/>
+		</ant:classes>
+		</ant:war>
     </goal>
     
     <goal name="war-withsamples" prereqs="multiproject:install"> 
         <!-- jar the test classes -->
-        <mkdir dir="target"/>
-               <war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
-                  <fileset dir="modules/core/src/html"/>
-		  <fileset dir="modules/samples/src/jsp"/>
-                  <webinf dir="modules/samples/target/test-resources/samples"/>
-                  <lib dir="${maven.repo.local}/stax/jars/">
-                    <include name="stax-api-1.0.jar"/>
-                    <include name="stax-1.1.1-dev.jar"/>
-                  </lib>
-                  <lib dir="${maven.repo.local}/commons-logging/jars/">
-                    <include name="commons-logging-1.0.3.jar"/>
-                  </lib>
-                  <lib dir="${maven.repo.local}/axis/jars/">
-                    <include name="axis-wsdl4j-1.2-RC1.jar"/>
-                  </lib>
-                  <lib dir="${maven.repo.local}/log4j/jars/">
-                    <include name="log4j-1.2.8.jar"/>
-                  </lib>
-				  <lib dir="modules/om/target/">
-				    <include name="axis2*.jar"/>
-				  </lib>  
-				  <lib dir="modules/core/target/">
-				    <include name="axis2*.jar"/>
-				  </lib>  
-				  <lib dir="modules/deployment/target/">
-				    <include name="axis2*.jar"/>
-				  </lib>  
-				  <lib dir="modules/wsdl/target/">
-				    <include name="axis2*.jar"/>
-				  </lib>  
-				  <lib dir="modules/samples/target/">
-				    <include name="axis2*.jar"/>
-				  </lib>  
-				<classes dir="modules/core/src/conf">
-		      		    <include name="*.properties"/>
-				</classes>
-                </war>
+        <ant:mkdir dir="target"/>
+               <ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
+                  <ant:fileset dir="modules/core/src/html"/>
+		  <ant:fileset dir="modules/samples/src/jsp"/>
+                  <ant:webinf dir="modules/samples/target/test-resources/samples"/>
+                  <ant:lib dir="${maven.repo.local}/stax/jars/">
+                    <ant:include name="stax-api-1.0.jar"/>
+                    <ant:include name="stax-1.1.1-dev.jar"/>
+                  </ant:lib>
+                  <ant:lib dir="${maven.repo.local}/commons-logging/jars/">
+                    <ant:include name="commons-logging-1.0.3.jar"/>
+                  </ant:lib>
+                  <ant:lib dir="${maven.repo.local}/axis/jars/">
+                    <ant:include name="axis-wsdl4j-1.2-RC1.jar"/>
+                  </ant:lib>
+                  <ant:lib dir="${maven.repo.local}/log4j/jars/">
+                    <ant:include name="log4j-1.2.8.jar"/>
+                  </ant:lib>
+				  <ant:lib dir="modules/om/target/">
+				    <ant:include name="axis2*.jar"/>
+				  </ant:lib>  
+				  <ant:lib dir="modules/core/target/">
+				    <ant:include name="axis2*.jar"/>
+				  </ant:lib>  
+				  <ant:lib dir="modules/deployment/target/">
+				    <ant:include name="axis2*.jar"/>
+				  </ant:lib>  
+				  <ant:lib dir="modules/wsdl/target/">
+				    <ant:include name="axis2*.jar"/>
+				  </ant:lib>  
+				  <ant:lib dir="modules/samples/target/">
+				    <ant:include name="axis2*.jar"/>
+				  </ant:lib>  
+				<ant:classes dir="modules/core/src/conf">
+		      		    <ant:include name="*.properties"/>
+				</ant:classes>
+                </ant:war>
     </goal>
 
 	<!-- to transforme htmls to xdocs -->
-    <preGoal name="xdoc:jelly-transform">
+  <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>
   </preGoal>
   
   <goal name="dist-bin" prereqs="war,javadoc-gen">
-	<mkdir dir="target/dist-bin"/>
-	<mkdir dir="target/dist-bin/docs"/>
-	<mkdir dir="target/dist-bin/bin"/>
-	<mkdir dir="target/dist-bin/lib"/>
-	<mkdir dir="target/dist-bin/samples"/>
-	<mkdir dir="target/dist-bin/webapps"/> 
-    <mkdir dir="target/dist-bin/docs/api"/> 
-		<copy todir="target/dist-bin/docs/api">
-			<fileset dir="target/apidocs/">
-				<include name="**"/>
-			</fileset> 
-		</copy> 
-		<copy todir="target/dist-bin/docs">
-			<fileset dir="xdocs">
-				<include name="**"/>
-			</fileset> 
-		</copy> 
-		<copy todir="target/dist-bin/lib" flatten="true">
-			<fileset dir="${maven.repo.local}">
-				<include name="stax/jars/stax-api-1.0.jar"/>
-				<include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-				<include name="log4j/jars/log4j-1.2.8.jar"/>
-				<include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<include name="stax/jars/stax-1.1.1-dev.jar"/>
-				<include name="stax/jars/stax-1.1.1-dev.jar"/>
-			</fileset> 
-			<fileset dir="modules">
-				<include name="**/target/axis2*.jar"/>
-			</fileset> 
-		</copy> 
-		<copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
-		<copy todir="target/dist-bin/samples">
-			<fileset dir="modules/samples/conf/">
-				<include name="*.xml"/>
-			</fileset> 
-		</copy>
-		<copy todir="target/dist-bin/samples">
-			<fileset dir="modules/samples/src/java">
-				<include name="userguide/**"/>
-			</fileset> 
-		</copy> 
+	<ant:mkdir dir="target/dist-bin"/>
+	<ant:mkdir dir="target/dist-bin/docs"/>
+	<ant:mkdir dir="target/dist-bin/bin"/>
+	<ant:mkdir dir="target/dist-bin/lib"/>
+	<ant:mkdir dir="target/dist-bin/samples"/>
+	<ant:mkdir dir="target/dist-bin/webapps"/> 
+    <ant:mkdir dir="target/dist-bin/docs/api"/> 
+		<ant:copy todir="target/dist-bin/docs/api">
+			<ant:fileset dir="target/apidocs/">
+				<ant:include name="**"/>
+			</ant:fileset> 
+		</ant:copy> 
+		<ant:copy todir="target/dist-bin/docs">
+			<ant:fileset dir="xdocs">
+				<ant:include name="**"/>
+			</ant:fileset> 
+		</ant:copy> 
+		<ant:copy todir="target/dist-bin/lib" flatten="true">
+			<ant:fileset dir="${maven.repo.local}">
+				<ant:include name="stax/jars/stax-api-1.0.jar"/>
+				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+				<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
+				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+				<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+			</ant:fileset> 
+			<ant:fileset dir="modules">
+				<ant:include name="**/target/axis2*.jar"/>
+			</ant:fileset> 
+		</ant:copy> 
+		<ant:copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
+		<ant:copy todir="target/dist-bin/samples">
+			<ant:fileset dir="modules/samples/conf/">
+				<ant:include name="*.xml"/>
+			</ant:fileset> 
+		</ant:copy>
+		<ant:copy todir="target/dist-bin/samples">
+			<ant:fileset dir="modules/samples/src/java">
+				<ant:include name="userguide/**"/>
+			</ant:fileset> 
+		</ant:copy> 
+		<ant:zip file="target/axis2-bin-M1.zip" basedir="target/dist-bin"/>
+		<!-- <ant:tar tarfile="target/axis2-bin-M1.tar" basedir="target/dist-bin"/> -->
+		<ant:delete dir="target/dist-bin"/>
   </goal>
   <goal name="dist-src">
-		<mkdir dir="target/dist-src"/>
-		<zip file="target/axis2-src-M1.zip" >
-			<fileset dir=".">
-				<include name="**"/>
-				<exclude name="**/target/**"/>
-				<exclude name="**/.svn/**"/>
-				<exclude name="**/bin/**"/>
-			</fileset> 
-		</zip> 
+		<ant:mkdir dir="target/dist-src"/>
+		<ant:zip file="target/axis2-src-M1.zip" >
+			<ant:fileset dir=".">
+				<ant:include name="**/*.java"/>
+				<ant:include name="**/*.xml"/>
+				<ant:include name="**/*.properties"/>
+				<ant:include name="**/*.xsd"/>
+				<ant:include name="**/*.jsp"/>
+     			<ant:include name="**/*.html"/>
+				<ant:include name="**/*.inc"/>												
+				<ant:include name="**/*.css"/>
+				<ant:include name="**/*.gif"/>
+				<ant:include name="**/*.jpg"/>
+				<ant:include name="**/*.png"/>								
+				<ant:include name="**/*.GIF"/>
+				<ant:include name="**/*.PNG"/>
+				<ant:include name="**/*.JPG"/>								
+				<ant:exclude name="**/target/**"/>
+				<ant:exclude name="**/.svn/**"/>
+				<ant:exclude name="**/bin/**"/>
+			</ant:fileset> 
+		</ant:zip> 
   </goal>
   
   <goal name="javadoc-gen">
-	  <javadoc packagenames="org.apache.axis.*"
+	  <ant:javadoc packagenames="org.apache.axis.*"
            defaultexcludes="yes"
            destdir="target/apidocs"
            author="true"
            version="true"
            use="true"
            windowtitle="Axis2 API">
-           		<sourcepath>
-	           		<pathelement location="modules/core/src/java"/>
-	           		<pathelement location="modules/deployment/src/java"/>	           		
-	           		<pathelement location="modules/wsdl/src/java"/>
-	           		<pathelement location="modules/om/src/java"/>
-           </sourcepath>
-  </javadoc>
+           		<ant:sourcepath>
+	           		<ant:pathelement location="modules/core/src/java"/>
+	           		<ant:pathelement location="modules/deployment/src/java"/>	           		
+	           		<ant:pathelement location="modules/wsdl/src/java"/>
+	           		<ant:pathelement location="modules/om/src/java"/>
+           </ant:sourcepath>
+  </ant:javadoc>
   </goal>
 </project>
