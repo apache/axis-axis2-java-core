@@ -43,9 +43,9 @@ import java.net.Socket;
 public abstract class AbstractTransportReceiver implements Runnable {
     protected Log log =
             LogFactory.getLog(AbstractTransportReceiver.class.getName());
-    protected EngineRegistry engineReg = null;
+    protected EngineRegistry engineReg;
     protected ServerSocket serverSocket;
-    protected Socket socket = null;
+    protected Socket socket;
     /**
      * are we stopped?
      * latch to true if stop() is called

@@ -50,7 +50,7 @@ public class DeploymentParser implements DeploymentConstants {
     // service.xml strating tag
     private static final String SERVICEXMLST = "service";
     //to get the input stream
-    private InputStream inputStream = null;
+    private InputStream inputStream;
     // Referance to XMLPullPasrser
 
     // private XmlPullParser pullparser;
@@ -207,7 +207,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -365,7 +365,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    element = element + pullparser.getText();
+                    element += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -470,7 +470,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    element = element + pullparser.getText();
+                    element += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -509,7 +509,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -574,7 +574,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -610,7 +610,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -682,7 +682,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -720,7 +720,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -758,7 +758,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -797,7 +797,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -836,7 +836,7 @@ public class DeploymentParser implements DeploymentConstants {
                         break;
                     }
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text = text + pullparser.getText();
+                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {

@@ -360,7 +360,7 @@ public class SimpleHTTPReceiver
         // positive numbers
         while (value > 0) {
             buf[--offset] = (byte) (value % 10 + '0');
-            value = value / 10;
+            value /= 10;
             len++;
         }
 

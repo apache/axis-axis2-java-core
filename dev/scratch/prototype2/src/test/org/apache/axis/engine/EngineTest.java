@@ -33,7 +33,6 @@ public class EngineTest extends TestCase{
     private MessageContext mc;
     
     public EngineTest() {
-        super();
     }
     
     public EngineTest(String arg0) {

@@ -43,10 +43,10 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     private OMFactory omFactory;
     private boolean buildStarted = false;
     private boolean cache = true;
-    private ContentHandler externalContentHandler = null;
+    private ContentHandler externalContentHandler;
 
     // ============= For content handler ============
-    private OMNode lastNode = null;
+    private OMNode lastNode;
     private List nameSpaces = new ArrayList();
     // ==============================================
 
@@ -182,7 +182,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-        log.info("Building OM for Element {"+namespaceURI+"}"+ localName +" for the ObjectPusher");
+        log.info("Building OM for Element {"+namespaceURI+'}'+ localName +" for the ObjectPusher");
         if (localName.length() == 0)
             localName = qName;
 

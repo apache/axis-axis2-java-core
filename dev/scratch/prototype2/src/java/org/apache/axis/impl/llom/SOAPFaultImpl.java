@@ -64,7 +64,7 @@ public class SOAPFaultImpl extends OMElementImpl implements SOAPFault, OMConstan
         }
         faultCodeElement = new OMElementImpl(OMConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns);
         this.addChild(faultCodeElement);
-        faultCodeElement.addChild(new OMTextImpl(faultCodeElement, faultCode.getPrefix() + ":" + faultCode.getLocalPart()));
+        faultCodeElement.addChild(new OMTextImpl(faultCodeElement, faultCode.getPrefix() + ':' + faultCode.getLocalPart()));
 
     }
 

@@ -36,7 +36,6 @@ public class AxisFault extends java.rmi.RemoteException {
      * 
      */
     public AxisFault() {
-        super();
         // TODO Auto-generated constructor stub
     }
 

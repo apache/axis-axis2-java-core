@@ -142,10 +142,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      */
     private boolean isJarFile(String filename) {
         // to check whether the file is  a jar file
-        if (!filename.endsWith(".jar")) {
-            return false;
-        } else
-            return true;
+        return filename.endsWith(".jar");
     }
 
 }

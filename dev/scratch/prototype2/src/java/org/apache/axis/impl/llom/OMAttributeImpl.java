@@ -39,7 +39,7 @@ public class OMAttributeImpl implements OMAttribute {
         setOMNamespace(ns);
     }
 
-    synchronized static String replaceQuoteWithEntity(String value) {
+    private static String replaceQuoteWithEntity(String value) {
         matcher.reset(value);
         return matcher.replaceAll(QUOTE_ENTITY);
     }

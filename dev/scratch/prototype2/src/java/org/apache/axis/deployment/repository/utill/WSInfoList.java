@@ -153,10 +153,7 @@ public class WSInfoList implements DeploymentConstants {
      * @return
      */
     public boolean isFileExist(String filename) {
-        if (getFileItem(filename) == null) {
-            return false;
-        } else
-            return true;
+        return !(getFileItem(filename) == null);
     }
 
     /**

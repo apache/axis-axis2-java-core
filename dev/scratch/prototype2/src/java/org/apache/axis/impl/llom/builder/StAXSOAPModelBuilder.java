@@ -83,7 +83,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         //fill in the attributes
         processAttributes(node);
-		log.info("Build the OMElelment {" + node.getNamespaceName()+ "}" + node.getLocalName() + "By the StaxSOAPModelBuilder");
+		log.info("Build the OMElelment {" + node.getNamespaceName()+ '}' + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
 

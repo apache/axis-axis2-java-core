@@ -21,12 +21,12 @@ import java.net.URLConnection;
 
 public class Invoker extends AbstractCall implements Runnable {
 
-    private AxisEngine engine = null;
-    private EngineRegistry registry = null;
+    private AxisEngine engine;
+    private EngineRegistry registry;
 
-    private MessageContext reqMsgContext = null;
+    private MessageContext reqMsgContext;
 
-    private Callback callback = null;
+    private Callback callback;
 
     public Invoker(MessageContext msgContext, AxisEngine engine,EngineRegistry reg, Callback callback) {
         this.engine = engine;

@@ -32,13 +32,8 @@ public class SimpleAxisServerTest extends AbstractTestCase{
     private QName transportName = new QName("http://localhost/my","NullTransport");
 
     private EngineRegistry engineRegistry;
-    private MessageContext mc;
-    private Thread thisThread = null;
-    private SimpleHTTPReceiver sas;
-    private int testingPort = 7777;
-    private int testCount = 0;
     private AxisEngine engine;
-    
+
     public SimpleAxisServerTest(){
         super(SimpleAxisServerTest.class.getName());
     }

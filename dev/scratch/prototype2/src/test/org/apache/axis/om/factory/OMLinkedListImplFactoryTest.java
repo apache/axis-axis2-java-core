@@ -53,7 +53,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
     public void testCreateOMElementWithNoBuilder() {
         OMElement omElement = omFactory.createOMElement("chinthaka", namespace);
-        assertTrue("Programatically created OMElement should have done = true ", omElement.isComplete() == true);
+        assertTrue("Programatically created OMElement should have done = true ", omElement.isComplete());
 
     }
 
@@ -63,7 +63,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             OMElement documentElement = omBuilder.getDocumentElement();
 
             OMElement child = omFactory.createOMElement("child", namespace, documentElement, omBuilder);
-            assertTrue("OMElement with a builder should start with done = false ", child.isComplete() == false);
+            assertTrue("OMElement with a builder should start with done = false ", !child.isComplete());
             assertTrue("This OMElement must have a builder ", child.getBuilder() instanceof OMXMLParserWrapper);
 
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
         OMElement omElement = omFactory.createOMElement("chinthaka", namespace);
         String text = "sampleText";
         OMText omText = omFactory.createText(omElement, text);
-        assertTrue("Programatically created OMText should have done = true ", omText.isComplete() == true);
+        assertTrue("Programatically created OMText should have done = true ", omText.isComplete());
         assertTrue("Programatically created OMText should have correct text value ", text.equals(omText.getValue()));
 
     }
@@ -92,11 +92,11 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             SOAPEnvelope soapEnvelope = (SOAPEnvelope) omBuilder.getDocumentElement();
 
             SOAPBody soapBodyOne = omFactory.createSOAPBody(soapEnvelope);
-            assertTrue("Programatically created SOAPBody should have done = true ", soapBodyOne.isComplete() == true);
+            assertTrue("Programatically created SOAPBody should have done = true ", soapBodyOne.isComplete());
             soapBodyOne.detach();
 
             SOAPBody soapBodyTwo = omFactory.createSOAPBody(soapEnvelope, omBuilder);
-            assertTrue("SOAPBody with a builder should start with done = false ", soapBodyTwo.isComplete() == false);
+            assertTrue("SOAPBody with a builder should start with done = false ", !soapBodyTwo.isComplete());
             assertTrue("This SOAPBody must have a builder ", soapBodyTwo.getBuilder() instanceof OMXMLParserWrapper);
 
 
@@ -110,10 +110,10 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             OMNamespace soapNamespace = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
 
             SOAPEnvelope soapEnvelopeTwo = omFactory.createSOAPEnvelope(soapNamespace);
-            assertTrue("Programatically created SOAPEnvelope should have done = true ", soapEnvelopeTwo.isComplete() == true);
+            assertTrue("Programatically created SOAPEnvelope should have done = true ", soapEnvelopeTwo.isComplete());
 
             SOAPEnvelope soapEnvelope = omFactory.createSOAPEnvelope(soapNamespace, OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")));
-            assertTrue("SOAPEnvelope with a builder should start with done = false ", soapEnvelope.isComplete() == false);
+            assertTrue("SOAPEnvelope with a builder should start with done = false ", !soapEnvelope.isComplete());
             assertTrue("This SOAPEnvelope must have a builder ", soapEnvelope.getBuilder() instanceof OMXMLParserWrapper);
 
 
@@ -129,11 +129,11 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             SOAPEnvelope soapEnvelope = (SOAPEnvelope) omBuilder.getDocumentElement();
 
             SOAPHeader soapHeader = omFactory.createSOAPHeader(soapEnvelope);
-            assertTrue("Programatically created SOAPHeader should have done = true ", soapHeader.isComplete() == true);
+            assertTrue("Programatically created SOAPHeader should have done = true ", soapHeader.isComplete());
             soapHeader.detach();
 
             SOAPHeader soapHeaderTwo = omFactory.createSOAPHeader(soapEnvelope, omBuilder);
-            assertTrue("SOAPHeader with a builder should start with done = false ", soapHeaderTwo.isComplete() == false);
+            assertTrue("SOAPHeader with a builder should start with done = false ", !soapHeaderTwo.isComplete());
             assertTrue("This SOAPHeader must have a builder ", soapHeaderTwo.getBuilder() instanceof OMXMLParserWrapper);
 
 
@@ -150,10 +150,10 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             SOAPHeader soapHeader = soapEnvelope.getHeader();
 
             SOAPHeaderBlock soapHeaderBlock = omFactory.createSOAPHeaderBlock("soapHeaderBlockOne", namespace);
-            assertTrue("Programatically created SOAPHeaderBlock should have done = true ", soapHeaderBlock.isComplete() == true);
+            assertTrue("Programatically created SOAPHeaderBlock should have done = true ", soapHeaderBlock.isComplete());
 
             SOAPHeaderBlock soapHeaderBlockTwo = omFactory.createSOAPHeaderBlock("soapHeaderBlockOne", namespace, soapHeader, omBuilder);
-            assertTrue("SOAPHeaderBlock with a builder should start with done = false ", soapHeaderBlockTwo.isComplete() == false);
+            assertTrue("SOAPHeaderBlock with a builder should start with done = false ", !soapHeaderBlockTwo.isComplete());
             assertTrue("This SOAPHeaderBlock must have a builder ", soapHeaderBlockTwo.getBuilder() instanceof OMXMLParserWrapper);
 
 
@@ -169,11 +169,11 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
             SOAPBody soapBody = soapEnvelope.getBody();
 
             SOAPFault soapFault = omFactory.createSOAPFault(soapBody, new Exception(" this is just a test "));
-            assertTrue("Programatically created SOAPFault should have done = true ", soapFault.isComplete() == true);
+            assertTrue("Programatically created SOAPFault should have done = true ", soapFault.isComplete());
             soapFault.detach();
 
             SOAPFault soapFaultTwo = omFactory.createSOAPFault(namespace, soapBody, omBuilder);
-            assertTrue("SOAPFault with a builder should start with done = false ", soapFaultTwo.isComplete() == false);
+            assertTrue("SOAPFault with a builder should start with done = false ", !soapFaultTwo.isComplete());
             assertTrue("This SOAPFault must have a builder ", soapFaultTwo.getBuilder() instanceof OMXMLParserWrapper);
 
 

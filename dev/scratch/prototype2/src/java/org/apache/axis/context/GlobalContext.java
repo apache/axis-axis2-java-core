@@ -25,7 +25,7 @@ import java.util.HashMap;
  */
 public class GlobalContext {
     private EngineRegistry registry;
-    private HashMap map = new HashMap();
+    private HashMap map = new HashMap(10);
 
 
     public GlobalContext(EngineRegistry er) {

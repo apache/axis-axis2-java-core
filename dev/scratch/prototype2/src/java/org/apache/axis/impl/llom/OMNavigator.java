@@ -139,10 +139,7 @@ public class OMNavigator {
     public boolean isNavigable() {
         if (end)
             return false;
-        else if (next == null)
-            return false;
-        else
-            return true;
+        else return !(next == null);
     }
 
     /**

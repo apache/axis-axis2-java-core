@@ -97,7 +97,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         try {
-            log.info("writing element {"+namespaceURI+"}"+ localName +" directly to stream ");
+            log.info("writing element {"+namespaceURI+'}'+ localName +" directly to stream ");
             
             String prefix = getPrefix(qName);
             //it is only the prefix we want to learn from the QName! so we can get rid of the 

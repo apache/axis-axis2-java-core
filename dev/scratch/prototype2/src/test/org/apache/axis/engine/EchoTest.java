@@ -38,7 +38,7 @@ public class EchoTest extends AbstractTestCase{
 
     private EngineRegistry engineRegistry;
     private MessageContext mc;
-    private Thread thisThread = null;
+    private Thread thisThread;
     private SimpleHTTPReceiver sas;
     
     public EchoTest(){

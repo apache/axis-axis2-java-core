@@ -52,11 +52,11 @@ public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
     private final Scheduler scheduler = new Scheduler();
     /**
-     * This will store all the web Services to deploye
+     * This will store all the web Services to deploy
      */
     private List wsToDeploy = new ArrayList();
     /**
-     * this will store all the web Services to undeploye
+     * this will store all the web Services to undeploy
      */
     private List wsToUnDeploy = new ArrayList();
 
@@ -65,7 +65,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private EngineRegistry engineRegistry = null;
+    private EngineRegistry engineRegistry;
 
     /**
      * this constaructor for the testing
@@ -82,7 +82,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private AxisGlobal server;
 
 
-    private HDFileItem currentFileItem = null;
+    private HDFileItem currentFileItem;
 
     /**
      * This the constructor which is used by Engine inorder to start
@@ -132,7 +132,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-            this.serverconfigName = RepositaryName + "/" + serverXMLFile;
+            this.serverconfigName = RepositaryName + '/' + serverXMLFile;
     }
 
 //    public DeploymentEngine(String RepositaryName , String configFileName) {
@@ -373,40 +373,36 @@ public class DeploymentEngine implements DeploymentConstants {
                 UnZipJAR unZipJAR = new UnZipJAR();
                 switch (type) {
                     case SERVICE:
-                        {
-                            try {
+                        try {
 //
-                                AxisService service = new AxisService();
-                                unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
-                                addnewService(service);
-                                log.info("Deployement WS Name  " + currentFileItem.getName());
-                            }catch (DeploymentException de){
-                                throw new RuntimeException(de.getMessage());
-                            }catch (AxisFault axisFault) {
-                                throw new RuntimeException(axisFault.getMessage());
-                            } catch (Exception e){
-                                   throw new RuntimeException(e.getMessage());
-                            } finally{
-                                currentFileItem = null;
-                            }
-                            break;
+                            AxisService service = new AxisService();
+                            unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
+                            addnewService(service);
+                            log.info("Deployement WS Name  " + currentFileItem.getName());
+                        } catch (DeploymentException de) {
+                            throw new RuntimeException(de.getMessage());
+                        } catch (AxisFault axisFault) {
+                            throw new RuntimeException(axisFault.getMessage());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e.getMessage());
+                        } finally {
+                            currentFileItem = null;
                         }
+                        break;
                     case MODULE:
-                        {
-                            try {
-                                AxisModule metaData = new AxisModule();
-                                unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this,metaData);
-                                addNewModule(metaData);
-                                log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
-                            } catch (DeploymentException e) {
-                                   throw new RuntimeException(e.getMessage());
-                            } catch (AxisFault axisFault) {
-                                   throw new RuntimeException(axisFault.getMessage());
-                            }finally{
-                                currentFileItem = null;
-                            }
-                            break;
+                        try {
+                            AxisModule metaData = new AxisModule();
+                            unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this, metaData);
+                            addNewModule(metaData);
+                            log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
+                        } catch (DeploymentException e) {
+                            throw new RuntimeException(e.getMessage());
+                        } catch (AxisFault axisFault) {
+                            throw new RuntimeException(axisFault.getMessage());
+                        } finally {
+                            currentFileItem = null;
                         }
+                        break;
 
                 }
             }

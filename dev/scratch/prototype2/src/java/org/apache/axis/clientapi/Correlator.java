@@ -13,17 +13,16 @@ import java.util.HashMap;
  * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * 
- * @author Deepal Jayasinghe Dec 16, 2004 2:38:51 PM
  */
 public class Correlator {
-    private static Correlator instance = null;
+    private static Correlator instance;
 
-    private static HashMap correlationHash = null;
+    private static HashMap correlationHash;
 
     private Correlator() {
         // Exists only to defeat instantiation.
 
-        correlationHash = new HashMap();
+        correlationHash = new HashMap(10);
     }
 
     public static Correlator getInstance() {

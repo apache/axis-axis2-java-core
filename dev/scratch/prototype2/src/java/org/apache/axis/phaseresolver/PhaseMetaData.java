@@ -23,10 +23,10 @@ import java.util.Vector;
 public class PhaseMetaData {
 
 
-    private final int BOTH_BEFORE_AFTER = 0;
-    private final int BEORE = 1;
-    private final int AFTER = 2;
-    private final int ANYWHERE = 3;
+    private static final int BOTH_BEFORE_AFTER = 0;
+    private static final int BEORE = 1;
+    private static final int AFTER = 2;
+    private static final int ANYWHERE = 3;
 
 
     private String name;

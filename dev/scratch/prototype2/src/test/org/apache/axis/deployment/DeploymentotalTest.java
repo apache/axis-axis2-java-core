@@ -25,7 +25,7 @@ import org.apache.axis.phaseresolver.PhaseException;
  *
  */
 public class DeploymentotalTest extends TestCase {
-    EngineRegistry er = null;
+    EngineRegistry er;
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
         String filename = "./target/test-resources/deployment" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);

@@ -49,7 +49,7 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
     private MessageContext mc;
 
-    private Thread thisThread = null;
+    private Thread thisThread;
 
     private SimpleHTTPReceiver sas;
 
