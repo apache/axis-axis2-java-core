@@ -18,12 +18,7 @@
  -->
 <project default="multiproject:install" xmlns:m="jelly:maven">
 		 <goal name="clean">
-			    <delete dir="target"/>
-			    <delete dir="modules/core/target"/>
-		            <delete dir="modules/wsdl/target"/>
-		            <delete dir="modules/deployment/target"/>						
-		            <delete dir="modules/samples/target"/>		
-				<delete dir="modules/om/target"/>
+			 	<attainGoal name="multiproject:clean"/>
 		</goal>
 
 
@@ -106,8 +101,7 @@
                 </war>
     </goal>
 
-
-    <!-- to transforme htmls to xdocs -->
+	<!-- to transforme htmls to xdocs -->
     <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>
   </preGoal>
