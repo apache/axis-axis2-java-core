@@ -67,7 +67,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         } else if (lastNode.isComplete()) {
             node = constructNode(lastNode.getParent(), elementName);
             lastNode.setNextSibling(node);
-//            node.setPreviousSibling(lastNode);
+            node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = constructNode((OMElement) lastNode, elementName);
@@ -84,10 +84,10 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
     }
 
     private OMElement constructNode(OMElement parent, String elementName) {
-        //System.out.println(parent);
+
         OMElement element = null;
         if (elementLevel == 2) {
-           
+            //todo Where would the sibling links come to these    
             // this is either a header or a body
             if (elementName.equalsIgnoreCase("Header")) {
                 //since its level 2 parent MUST be the envelope
@@ -106,7 +106,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
 
         } else {
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, null, parent, this);//todo put the name
+            element = ombuilderFactory.createOMElement(elementName, null, parent, this);//todo put the namespace
         }
 
         return element;

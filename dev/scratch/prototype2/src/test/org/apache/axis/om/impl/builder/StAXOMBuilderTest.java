@@ -51,14 +51,8 @@ public class StAXOMBuilderTest extends AbstractTestCase {
 
     public void testGetRootElement() throws Exception {
         rootElement = stAXOMBuilder.getDocumentElement();
-
-        System.out.println("Checking nullity of Root Element");
         assertTrue("Root element can not be null", rootElement != null);
-
-        System.out.println("Checking for correct root element name");
         assertTrue(" Name of the root element is wrong", rootElement.getLocalName().equalsIgnoreCase("Root"));
-
-        System.out.println("Checking number of children");
         // get the first OMElement child
         OMNode omnode = rootElement.getFirstChild();
         while(omnode instanceof OMText){

@@ -30,15 +30,19 @@ import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
  */
 public class IteratorTester extends AbstractTestCase{
 
-    SOAPEnvelope envelope = null;
+    private SOAPEnvelope envelope = null;
 
     public IteratorTester(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
-		envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
-                        new FileReader(getTestResourceFile("soap/sample1.xml")))).getOMEnvelope();
+        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(
+                new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getOMEnvelope();
+    }
+
+    protected void tearDown() throws Exception {
+        envelope = null;
     }
 
     public void testIterator(){
@@ -46,14 +50,108 @@ public class IteratorTester extends AbstractTestCase{
         Iterator iter = elt.getChildren();
 
         while (iter.hasNext()) {
-            OMNode o = (OMNode) iter.next();
-            assertNotNull(o);//todo make this better
+            assertNotNull(iter.next());//todo make this better. match this against a given XML
         }
 
     }
 
 
+    /**
+     *test the remove exception behavior
+     */
+    public void testIteratorRemove1(){
 
+        OMElement elt = envelope;
+        Iterator iter = elt.getChildren();
+
+        //this is supposed to throw an illegal state exception
+        try {
+            iter.remove();
+            assertTrue("remove should throw an exception",true);
+        } catch (IllegalStateException e) {
+            //ok. this is what should happen
+        }
+
+    }
+
+    /**
+     *test the remove exception behavior, consecutive remove calls
+     */
+    public void testIteratorRemove2(){
+
+        OMElement elt = envelope;
+        Iterator iter = elt.getChildren();
+
+        if (iter.hasNext()){
+            iter.next();
+        }
+
+        iter.remove();
+
+        //this call must generate an exception
+        try {
+            iter.remove();
+            assertTrue("calling remove twice without a call to next is prohibited",true);
+        } catch (IllegalStateException e) {
+            //ok if we come here :)
+        }
+
+    }
+
+    /**
+     * Remove all!
+     */
+    public void testIteratorRemove3(){
+
+        OMElement elt = envelope;
+        Iterator iter = elt.getChildren();
+
+        while (iter.hasNext()){
+            iter.next();
+            iter.remove();
+        }
+
+        iter=elt.getChildren();
+
+        if(iter.hasNext()){
+            assertTrue("No children should remain after removing all!",false);
+        }
+
+
+    }
+    /**
+     *test whether the children count reduces.
+     */
+
+    public void testIteratorRemove4(){
+
+        OMElement elt = envelope;
+        Iterator iter = elt.getChildren();
+        int firstChildrenCount = 0;
+        int secondChildrenCount = 0;
+
+
+        while (iter.hasNext()) {
+            assertNotNull( (OMNode) iter.next());
+            firstChildrenCount++;
+        }
+
+        //this should remove the last node
+        iter.remove();
+
+        //reloop and check the count
+        //Note- here we should get a fresh iterator since there is no method to
+        //reset the iterator
+        iter = elt.getChildren(); //reset the iterator
+        while (iter.hasNext()) {
+            assertNotNull((OMNode)iter.next());
+            secondChildrenCount++;
+        }
+
+
+        assertEquals("children count must reduce from 1",firstChildrenCount-1,secondChildrenCount);
+
+    }
 
 
 

@@ -57,6 +57,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         } else if (lastNode.isComplete()) {
             node = new OMElementImpl(elementName, null, lastNode.getParent(), this);
             lastNode.setNextSibling(node);
+            node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = new OMElementImpl(elementName, null, (OMElement) lastNode, this);

@@ -177,11 +177,11 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
         // Out current parser (Piccolo) does not error when a
         // namespace is used and not defined.  Check for these here
-
-        if (qName.indexOf(':') >= 0 && namespaceURI.length() == 0) {
-            throw new SAXException("Use of undefined namespace prefix: " +
-                    qName.substring(0, qName.indexOf(':')));
-        }
+       //todo In-insert this if needed!!!!!!
+//        if (qName.indexOf(':') >= 0 && namespaceURI.length() == 0) {
+//            throw new SAXException("Use of undefined namespace prefix: " +
+//                    qName.substring(0, qName.indexOf(':')));
+//        }
 
         String prefix = (qName.indexOf(':') >= 0) ? qName.substring(0, qName.indexOf(':')) : "";
         OMNamespace namespace = omFactory.createOMNamespace(namespaceURI, prefix);

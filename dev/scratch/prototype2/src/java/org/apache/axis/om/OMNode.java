@@ -1,6 +1,6 @@
 package org.apache.axis.om;
 
-
+import org.apache.axis.impl.llom.OMNodeImpl;
 
 
 /**
@@ -129,4 +129,17 @@ public interface OMNode {
      */
     public short getType() throws OMException;
     public void setType(short nodeType) throws OMException;
+
+    /**
+     * get the previous sibling
+     * @return
+     */
+    public OMNode getPreviousSibling();
+
+    /**
+     *  Set the previous sibling
+     * @param previousSibling
+     */
+    public void setPreviousSibling(OMNode previousSibling);
+
 }

@@ -2,6 +2,7 @@ package org.apache.axis.impl.llom.traverse;
 
 
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMException;
 
 import java.util.Iterator;
 
@@ -27,6 +28,9 @@ import java.util.Iterator;
 public class OMChildrenIterator implements Iterator {
 
     private OMNode currentChild;
+    private OMNode lastChild;
+    private boolean nextCalled=false;
+    private boolean removeCalled=false;
 
     public OMChildrenIterator(OMNode currentChild) {
         this.currentChild = currentChild;
@@ -47,9 +51,21 @@ public class OMChildrenIterator implements Iterator {
      *                                       method.
      */
     public void remove() {
-        OMNode temp = currentChild.getNextSibling();
-        currentChild.detach();
-        currentChild = temp;
+
+        if (!nextCalled){
+            throw new IllegalStateException("next method has not yet being called");
+        }
+        if (removeCalled){
+            throw new IllegalStateException("remove has already being called");
+        }
+
+        removeCalled=true;
+
+        //since this acts on the last child there is no need to mess with the current child
+        if (lastChild==null){
+            throw new OMException("cannot remove a child at this stage!");
+        }
+        lastChild.detach();
     }
 
     /**
@@ -71,11 +87,12 @@ public class OMChildrenIterator implements Iterator {
      *          iteration has no more elements.
      */
     public Object next() {
-
+        nextCalled=true;
+        removeCalled=false;
         if (hasNext()) {
-            OMNode returnNode = currentChild;
+            lastChild = currentChild;
             currentChild = currentChild.getNextSibling();
-            return returnNode;
+            return lastChild;
         }
         return null;
 

@@ -5,7 +5,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.parsers.SAXParserFactory;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -39,10 +41,8 @@ public class DummyOutObject implements OutObject {
 
     private void setup() {
         try {
-            parser = org.xml.sax.helpers.XMLReaderFactory.createXMLReader();
-            System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser");
-
-        } catch (SAXException e) {
+          parser = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+        } catch (Exception e) {
             e.printStackTrace();  //TODO implement this
         }
 

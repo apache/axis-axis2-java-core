@@ -35,8 +35,6 @@ public class ServiceTest extends TestCase {
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = null;
         er = deploymentEngine.start();
-        if(er != null){
-            System.out.println("Number of service" + er.getServiceCount());
-        }
+        
     }
 }
