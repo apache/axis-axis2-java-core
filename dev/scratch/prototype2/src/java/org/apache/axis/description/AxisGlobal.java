@@ -44,6 +44,7 @@ public class AxisGlobal implements ParameterInclude,PhasesInclude {
     public AxisGlobal(){
         paramInclude = new ParameterIncludeImpl();
         phasesInclude = new PhasesIncludeImpl();
+        modules = new Vector();
     }
     
     public void addModule(QName moduleref) {

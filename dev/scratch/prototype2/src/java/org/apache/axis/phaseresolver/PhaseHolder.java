@@ -2,6 +2,7 @@ package org.apache.axis.phaseresolver;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.metadata.ServerMetaData;
+import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
@@ -174,5 +175,62 @@ public class PhaseHolder implements DeploymentConstants {
             throw new PhaseException(e);
         } 
     }
+
+
+    public  void buildGoblalChain(AxisGlobal axisGlobal, int chainType) throws PhaseException {
+        try {
+            OrderdPhases();
+            Vector tempHander = new Vector();
+            HandlerMetaData[] handlers;
+
+            switch (chainType) {
+                case 1 : {
+                    ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            axisPhase.addHandler(handlers[j].getHandler());
+                        }
+                        inChain.add(axisPhase);
+                    }
+                    axisGlobal.setPhases(inChain,EngineRegistry.INFLOW);
+                    break;
+                }
+                case 2 : {
+                    ArrayList outChain =new ArrayList();// service.getExecutableOutChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            axisPhase.addHandler(handlers[j].getHandler());
+                        }
+                        outChain.add(axisPhase);
+                    }
+                    axisGlobal.setPhases(outChain,EngineRegistry.OUTFLOW);
+                    break;
+                }
+                case 3 : {
+                    ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
+                    for (int i = 0; i < phaseholder.size(); i++) {
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        Phase axisPhase = new Phase(phase.getName());
+                        handlers = phase.getOrderedHandlers();
+                        for (int j = 0; j < handlers.length; j++) {
+                            axisPhase.addHandler(handlers[j].getHandler());
+                        }
+                        faultChain.add(axisPhase);
+                    }
+                    axisGlobal.setPhases(faultChain,EngineRegistry.FAULTFLOW);
+                    break;
+                }
+            }
+        } catch (AxisFault e) {
+            throw new PhaseException(e);
+        }
+    }
+
 
 }

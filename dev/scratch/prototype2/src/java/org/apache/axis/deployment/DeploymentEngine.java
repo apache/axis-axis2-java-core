@@ -121,7 +121,7 @@ public class DeploymentEngine implements DeploymentConstants {
             fileName = serverconfigName;
         } else
             fileName = "src/test-resources/deployment/server.xml";
-        
+
         File tempfile = new File(fileName);
         try {
             InputStream in = new FileInputStream(tempfile);
@@ -140,15 +140,19 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void valideServerModule() throws AxisFault{
+    private void valideServerModule() throws AxisFault, PhaseException{
         int moduleCount = server.getModuleCount();
+        AxisGlobal global = engineRegistry.getGlobal();
         QName moduleName;
         for (int i = 0; i < moduleCount ; i++) {
             moduleName = server.getModule(i);
             if(getModule(moduleName) == null ){
                 throw new AxisFault(server.getName() + " Refer to invalid module " + moduleName + " has not bean deployed yet !");
-            }
+            } else
+                 global.addModule(moduleName);
         }
+        PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
+        phaseResolver.buildGlobalChains(global);
 
     }
 

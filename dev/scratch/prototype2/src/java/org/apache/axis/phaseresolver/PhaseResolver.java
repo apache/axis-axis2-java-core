@@ -2,13 +2,9 @@ package org.apache.axis.phaseresolver;
 
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.metadata.ServerMetaData;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetaData;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.ExecutionChain;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
@@ -38,6 +34,13 @@ public class PhaseResolver {
 
     private ServerMetaData server = DeploymentEngine.getServerMetaData();
 
+    /**
+     * default constructor , to obuild chains for AxisGlobal
+     */
+    public PhaseResolver(EngineRegistry engineRegistry) {
+        this.engineRegistry = engineRegistry;
+    }
+
     public PhaseResolver(EngineRegistry engineRegistry, AxisService axisService ) {
         this.engineRegistry = engineRegistry;
         this.axisService = axisService;
@@ -60,41 +63,42 @@ public class PhaseResolver {
      * @param type
      * @throws AxisFault
      */
-    public  void buildExcutionChains(int type) throws AxisFault, PhaseException {
+    private  void buildExcutionChains(int type) throws AxisFault, PhaseException {
         int flowtype =  type;
         Vector allHandlers = new Vector();
         int count = server.getModuleCount();
         QName moduleName;
         AxisModule module;
         Flow flow = null;
+        /*
         //adding server specific handlers  . global
         for(int intA=0 ; intA < count; intA ++){
-            moduleName = server.getModule(intA);
-            module = engineRegistry.getModule(moduleName);
-            switch (flowtype){
-                case 1 : {
-                    flow = module.getInFlow();
-                    break;
-                }
-                case  2 : {
-                    flow = module.getOutFlow();
-                    break;
-                }
-                case 3 : {
-                    flow = module.getFaultFlow();
-                    break;
-                }
-            }
-            for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-                HandlerMetaData metadata = flow.getHandler(j);
-                //todo change this in properway
-                if (metadata.getRules().getPhaseName().equals("")){
-                    metadata.getRules().setPhaseName("global");
-                }
-                allHandlers.add(metadata);
-            }
+        moduleName = server.getModule(intA);
+        module = engineRegistry.getModule(moduleName);
+        switch (flowtype){
+        case 1 : {
+        flow = module.getInFlow();
+        break;
         }
-
+        case  2 : {
+        flow = module.getOutFlow();
+        break;
+        }
+        case 3 : {
+        flow = module.getFaultFlow();
+        break;
+        }
+        }
+        for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+        HandlerMetaData metadata = flow.getHandler(j);
+        //todo change this in properway
+        if (metadata.getRules().getPhaseName().equals("")){
+        metadata.getRules().setPhaseName("global");
+        }
+        allHandlers.add(metadata);
+        }
+        }
+        */
         // service module handlers
         Vector modules = (Vector)axisService.getModules();
         for (int i = 0; i < modules.size(); i++) {
@@ -158,16 +162,44 @@ public class PhaseResolver {
 
     }
 
-    public void craeteChain4Flow(Flow flow , ExecutionChain chain) throws AxisFault, PhaseException{
-        phaseHolder = new PhaseHolder(server,null);
-        for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
-            HandlerMetaData metadata = flow.getHandler(j);
-            if (metadata.getRules().getPhaseName().equals("")){
-                metadata.getRules().setPhaseName("service");
-            }
-            phaseHolder.addHandler(metadata);
-        }
+    public void buildGlobalChains(AxisGlobal global) throws AxisFault, PhaseException {
+        Vector modules = (Vector)global.getModules();
+        int count = modules.size();
+        QName moduleName;
+        AxisModule module;
+        Flow flow = null;
+        for(int type = 1 ; type < 4 ; type ++){
+            phaseHolder = new PhaseHolder(server,null);
+            for(int intA=0 ; intA < count; intA ++){
+                moduleName = (QName)modules.get(intA);
+                module = engineRegistry.getModule(moduleName);
+                switch (type){
+                    case 1 : {
+                        flow = module.getInFlow();
+                        break;
+                    }
+                    case  2 : {
+                        flow = module.getOutFlow();
+                        break;
+                    }
+                    case 3 : {
+                        flow = module.getFaultFlow();
+                        break;
+                    }
+                }
+                for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+                    HandlerMetaData metadata = flow.getHandler(j);
+                    //todo change this in properway
+                    if (metadata.getRules().getPhaseName().equals("")){
+                        metadata.getRules().setPhaseName("global");
+                    }
+                    phaseHolder.addHandler(metadata);
 
+                }
+
+            }
+            phaseHolder.buildGoblalChain(global, type);
+        }
     }
 
 }
