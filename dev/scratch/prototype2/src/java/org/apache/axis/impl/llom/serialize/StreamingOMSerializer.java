@@ -87,9 +87,15 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
             if (writer_prefix!=null){
                 writer.writeStartElement(nameSpaceName, reader.getLocalName());
             }else{
-                writer.writeStartElement(prefix,nameSpaceName, reader.getLocalName());
-                writer.writeNamespace(prefix, nameSpaceName);
-                writer.setPrefix(prefix,nameSpaceName);
+                if (prefix!=null){
+                        writer.writeStartElement(prefix, reader.getLocalName(),nameSpaceName);
+                        writer.writeNamespace(prefix, nameSpaceName);
+                        writer.setPrefix(prefix,nameSpaceName);
+                    }else{
+                        writer.writeStartElement(nameSpaceName,reader.getLocalName());
+                        writer.writeDefaultNamespace(nameSpaceName);
+                        writer.setDefaultNamespace(nameSpaceName);
+                    }
             }
         } else {
             throw new OMException("Non namespace qualified elements are not allowed");

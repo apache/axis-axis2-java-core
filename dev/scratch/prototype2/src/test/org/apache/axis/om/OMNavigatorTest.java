@@ -46,6 +46,7 @@ public class OMNavigatorTest extends AbstractTestCase {
         envelope = (SOAPEnvelope)builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
+//        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 
 
     }
@@ -102,6 +103,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
+        writer.flush();
         tempFile.delete();
     }
 

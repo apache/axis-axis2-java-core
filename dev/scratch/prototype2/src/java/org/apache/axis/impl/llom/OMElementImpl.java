@@ -453,9 +453,15 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
                 if (writer_prefix!=null){
                     writer.writeStartElement(nameSpaceName, this.getLocalName());
                 }else{
-                    writer.writeStartElement(prefix,nameSpaceName, this.getLocalName());
-                    writer.writeNamespace(prefix, nameSpaceName);
-                    writer.setPrefix(prefix,nameSpaceName);
+                    if (prefix!=null){
+                        writer.writeStartElement(prefix, this.getLocalName(),nameSpaceName);
+                        writer.writeNamespace(prefix, nameSpaceName);
+                        writer.setPrefix(prefix,nameSpaceName);
+                    }else{
+                        writer.writeStartElement(nameSpaceName,this.getLocalName());
+                        writer.writeDefaultNamespace(nameSpaceName);
+                        writer.setDefaultNamespace(nameSpaceName);
+                    }
                 }
 
             } else {
