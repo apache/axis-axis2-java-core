@@ -44,6 +44,7 @@ public class OMXMLPullParserWrapper implements OMXMLParserWrapper {
 
     public OMXMLPullParserWrapper(XmlPullParser parser) {
         this.parser = parser;
+        
     }
 
 //    public OMElementImpl getSOAPMessage() throws OMException {

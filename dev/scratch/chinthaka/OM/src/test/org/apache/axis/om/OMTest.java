@@ -45,7 +45,7 @@ public class OMTest extends TestCase{
         parser.setInput(new InputStreamReader(in));
         
         OMXMLParserWrapper parserWrapper = new OMXMLPullParserWrapper(parser); 
-        omdoc = new SOAPMessageImpl(parserWrapper);
+        omdoc = parserWrapper.getSOAPMessage();
     }
 
     

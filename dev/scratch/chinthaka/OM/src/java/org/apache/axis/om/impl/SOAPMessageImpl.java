@@ -28,9 +28,11 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
 
     private SOAPEnvelope envelope;
     private OMXMLParserWrapper parserWrapper;
+    private OMFactory omFactory;
 
     public SOAPMessageImpl(OMXMLParserWrapper parserWrapper) {
         this.parserWrapper = parserWrapper;
+        omFactory = new OMLinkedListImplFactory();
     }
 
     public SOAPMessageImpl(Object[] obj) {
@@ -48,7 +50,7 @@ public class SOAPMessageImpl extends OMNodeImpl implements SOAPMessage {
      * @return the envelope element
      */
     public SOAPEnvelope getEnvelope() {
-        if (envelope == null) {
+        while (envelope == null) {
             parserWrapper.next();
         }
         return envelope;
