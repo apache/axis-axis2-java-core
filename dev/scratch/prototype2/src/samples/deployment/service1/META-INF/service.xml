@@ -2,7 +2,7 @@
     <java:implementation class="org.apache.axis.sample.echo.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
     
    <inflow>
-        <handler name="logging" class="org.apache.axis.samples.userguide.sample3.server.LoggingHandler">
+        <handler name="logging" class="org.apache.axis.samples.handlers.LoggingHandler">
             <order phase="p1" phaseFirst="true"/>
          </handler>
    </inflow>
@@ -11,7 +11,7 @@
     </outflow>
 
     <faultflow>
-        <handler name="logging2" class="org.apache.axis.samples.userguide.sample3.server.LoggingHandler">
+        <handler name="logging2" class="org.apache.axis.samples.handlers.LoggingHandler">
             
         </handler>
     </faultflow>
