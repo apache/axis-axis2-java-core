@@ -44,6 +44,14 @@ public class EchoProvider extends SimpleJavaProvider {
 				&& XMLStreamConstants.END_ELEMENT != event) {
 				event = xpp.next();
 			}
+            //now we are at the opearion element event 
+            event = xpp.next();
+            while (XMLStreamConstants.START_ELEMENT != event
+                && XMLStreamConstants.END_ELEMENT != event) {
+                event = xpp.next();
+            }
+        //          now we are at the parameter element event 
+            
 			if (XMLStreamConstants.END_ELEMENT == event) {
 				return null;
 			} else {

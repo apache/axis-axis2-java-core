@@ -20,6 +20,7 @@ package org.apache.axis.transport;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +43,7 @@ import java.net.Socket;
 public abstract class AbstractTransportReceiver implements Runnable {
     protected Log log =
             LogFactory.getLog(AbstractTransportReceiver.class.getName());
-    protected AxisEngine engine = null;
+    protected EngineRegistry engineReg = null;
     protected ServerSocket serverSocket;
     protected Socket socket = null;
     /**
@@ -52,8 +53,8 @@ public abstract class AbstractTransportReceiver implements Runnable {
     private boolean stopped = false;
 
 
-    public AbstractTransportReceiver(AxisEngine myAxisServer) {
-        this.engine = myAxisServer;
+    public AbstractTransportReceiver(EngineRegistry reg) {
+        this.engineReg = reg;
 
     }
     
@@ -88,12 +89,13 @@ public abstract class AbstractTransportReceiver implements Runnable {
                         break;
                     }
                     if (socket != null) {
-                        if(engine == null){
+                        if(engineReg == null){
                             throw new AxisFault("Engine Must be null");
                         }
-                        MessageContext msgContext = parseTheTransport(engine, socket.getInputStream());
+                        AxisEngine axisEngine = new AxisEngine(engineReg);
+                        MessageContext msgContext = parseTheTransport(axisEngine, socket.getInputStream());
                         storeOutputInfo(msgContext, socket.getOutputStream());
-                        engine.receive(msgContext);
+                        axisEngine.receive(msgContext);
                         this.socket.close();
                         this.socket = null;
                     }
@@ -177,4 +179,18 @@ public abstract class AbstractTransportReceiver implements Runnable {
     protected abstract MessageContext parseTheTransport(AxisEngine engine, InputStream in) throws AxisFault;
 
     protected abstract void storeOutputInfo(MessageContext msgctx, OutputStream out) throws AxisFault;
+    /**
+     * @param registry
+     */
+    public void setEngineReg(EngineRegistry registry) {
+        engineReg = registry;
+    }
+
+    /**
+     * @return
+     */
+    public EngineRegistry getEngineReg() {
+        return engineReg;
+    }
+
 }

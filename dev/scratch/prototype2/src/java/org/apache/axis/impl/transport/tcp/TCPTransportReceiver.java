@@ -38,8 +38,8 @@ import java.io.OutputStream;
  */
 
 public class TCPTransportReceiver extends AbstractTransportReceiver {
-    public TCPTransportReceiver(AxisEngine myAxisServer) {
-        super(myAxisServer);
+    public TCPTransportReceiver(EngineRegistry reg) {
+        super(reg);
     }
 
     protected MessageContext parseTheTransport(AxisEngine engine,

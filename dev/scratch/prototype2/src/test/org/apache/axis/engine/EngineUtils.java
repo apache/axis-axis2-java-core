@@ -42,7 +42,6 @@ public class EngineUtils {
     }
     
     public static synchronized SimpleHTTPReceiver startServer(EngineRegistry engineRegistry) throws IOException{
-        AxisEngine engine = new AxisEngine(engineRegistry);
         ServerSocket serverSoc = null;
         if(sas == null){
         }else{
@@ -55,7 +54,7 @@ public class EngineUtils {
             }
         }
         serverSoc = new ServerSocket(TESTING_PORT);
-        sas = new SimpleHTTPReceiver(engine);
+        sas = new SimpleHTTPReceiver(engineRegistry);
 
         sas.setServerSocket(serverSoc);
         Thread thisThread = new Thread(sas);
@@ -97,7 +96,7 @@ public class EngineUtils {
         service.setOutFlow(new MockFlow("service outflow",5));
         service.setFaultFlow(new MockFlow("service faultflow",1));
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.setServiceClass(EchoService.class);
+        service.setServiceClass(Echo.class);
         
         service.setProvider(new SimpleJavaProvider());
         

@@ -84,7 +84,7 @@ public class ArrayTypeEncoder implements Encoder{
                 return null;
             }
 
-            event = xpp.next();
+//            event = xpp.next();
             while (true) {
                 if (XMLStreamConstants.START_ELEMENT == event) {
                     objs.add(arrayTypeEncoder.deSerialize(xpp));

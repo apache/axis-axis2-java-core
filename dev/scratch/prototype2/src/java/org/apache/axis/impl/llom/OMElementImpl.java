@@ -12,7 +12,6 @@ import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
-import org.apache.axis.impl.utils.CollectionPool;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
@@ -192,7 +191,7 @@ public class OMElementImpl
 	 */
 	public OMNamespace declareNamespace(OMNamespace namespace) {
 		if(namespaces == null){
-			this.namespaces = CollectionPool.createHashMap(5);
+			this.namespaces = new HashMap(5);
 		}
 		namespaces.put(namespace.getPrefix(), namespace);
 		return namespace;
@@ -293,7 +292,7 @@ public class OMElementImpl
 	 */
 	public OMAttribute insertAttribute(OMAttribute attr) {
 		if(attributes == null){
-			this.attributes = CollectionPool.createHashMap(5);
+			this.attributes = new HashMap(5);
 		}
 
 		attributes.put(attr.getQName(), attr);

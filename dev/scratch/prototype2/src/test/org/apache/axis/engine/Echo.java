@@ -24,6 +24,11 @@ import org.apache.axis.om.OMElement;
 public class Echo{
     public Echo(){}
     
+    public void echoVoid(){
+        System.out.println("echo Service Called");
+    }
+ 
+    
     public OMElement echoOMElement(OMElement omEle){
         omEle.setLocalName(omEle.getLocalName()+"Response");
         return omEle;
@@ -36,4 +41,5 @@ public class Echo{
     public int echoInt(int in){
         return in;
     }
+    
 }

@@ -655,7 +655,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     throw new UnsupportedOperationException("incompatible parser found!");
                 }
                 log.info("Switching to the Real Stax parser to generated the future events");
-                currentEvent = parser.next();
+                currentEvent = parser.getEventType();
                 updateCompleteStatus();
                 break;
             case NAVIGABLE:

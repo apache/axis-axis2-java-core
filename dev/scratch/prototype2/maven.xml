@@ -9,12 +9,13 @@
     xmlns:ant="jelly:ant">
     <preGoal name="test:test">
         <j:jelly xmlns="jelly:ant">
-			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/general/sample1"/>
-			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service1"/>
-			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service2"/>
-			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module1"/>
-			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module2"/>
-        </j:jelly>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/general/sample1"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service1"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/service2"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module1"/>
+		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/deployment/module2"/>
+    		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/encoding/sample1"/>
+	</j:jelly>
       <ant:copy file="${basedir}/src/test-resources/deployment/server.xml" tofile="${basedir}/target/test-resources/deployment/server.xml"/>
     </preGoal> 
 	<postGoal name="jar">

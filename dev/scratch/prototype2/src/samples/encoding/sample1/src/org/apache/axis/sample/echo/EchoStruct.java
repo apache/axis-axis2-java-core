@@ -7,7 +7,7 @@
 
 package org.apache.axis.sample.echo;
 
-public class EchoStruct  implements java.io.Serializable {
+public class EchoStruct implements java.io.Serializable {
     private java.lang.String value1;
     private java.lang.String value10;
     private java.lang.String value11;
@@ -26,34 +26,33 @@ public class EchoStruct  implements java.io.Serializable {
     }
 
     public EchoStruct(
-           java.lang.String value1,
-           java.lang.String value10,
-           java.lang.String value11,
-           java.lang.String value12,
-           java.lang.String value13,
-           java.lang.String value2,
-           int value3,
-           java.lang.String value4,
-           java.lang.String value5,
-           java.lang.String value6,
-           java.lang.String value7,
-           java.lang.String value8,
-           java.lang.String value9) {
-           this.value1 = value1;
-           this.value10 = value10;
-           this.value11 = value11;
-           this.value12 = value12;
-           this.value13 = value13;
-           this.value2 = value2;
-           this.value3 = value3;
-           this.value4 = value4;
-           this.value5 = value5;
-           this.value6 = value6;
-           this.value7 = value7;
-           this.value8 = value8;
-           this.value9 = value9;
+        java.lang.String value1,
+        java.lang.String value10,
+        java.lang.String value11,
+        java.lang.String value12,
+        java.lang.String value13,
+        java.lang.String value2,
+        int value3,
+        java.lang.String value4,
+        java.lang.String value5,
+        java.lang.String value6,
+        java.lang.String value7,
+        java.lang.String value8,
+        java.lang.String value9) {
+        this.value1 = value1;
+        this.value10 = value10;
+        this.value11 = value11;
+        this.value12 = value12;
+        this.value13 = value13;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
+        this.value5 = value5;
+        this.value6 = value6;
+        this.value7 = value7;
+        this.value8 = value8;
+        this.value9 = value9;
     }
-
 
     /**
      * Gets the value1 value for this EchoStruct.
@@ -64,7 +63,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value1;
     }
 
-
     /**
      * Sets the value1 value for this EchoStruct.
      * 
@@ -73,7 +71,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue1(java.lang.String value1) {
         this.value1 = value1;
     }
-
 
     /**
      * Gets the value10 value for this EchoStruct.
@@ -84,7 +81,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value10;
     }
 
-
     /**
      * Sets the value10 value for this EchoStruct.
      * 
@@ -93,7 +89,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue10(java.lang.String value10) {
         this.value10 = value10;
     }
-
 
     /**
      * Gets the value11 value for this EchoStruct.
@@ -104,7 +99,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value11;
     }
 
-
     /**
      * Sets the value11 value for this EchoStruct.
      * 
@@ -113,7 +107,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue11(java.lang.String value11) {
         this.value11 = value11;
     }
-
 
     /**
      * Gets the value12 value for this EchoStruct.
@@ -124,7 +117,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value12;
     }
 
-
     /**
      * Sets the value12 value for this EchoStruct.
      * 
@@ -133,7 +125,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue12(java.lang.String value12) {
         this.value12 = value12;
     }
-
 
     /**
      * Gets the value13 value for this EchoStruct.
@@ -144,7 +135,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value13;
     }
 
-
     /**
      * Sets the value13 value for this EchoStruct.
      * 
@@ -153,7 +143,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue13(java.lang.String value13) {
         this.value13 = value13;
     }
-
 
     /**
      * Gets the value2 value for this EchoStruct.
@@ -164,7 +153,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value2;
     }
 
-
     /**
      * Sets the value2 value for this EchoStruct.
      * 
@@ -173,7 +161,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue2(java.lang.String value2) {
         this.value2 = value2;
     }
-
 
     /**
      * Gets the value3 value for this EchoStruct.
@@ -184,7 +171,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value3;
     }
 
-
     /**
      * Sets the value3 value for this EchoStruct.
      * 
@@ -193,7 +179,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue3(int value3) {
         this.value3 = value3;
     }
-
 
     /**
      * Gets the value4 value for this EchoStruct.
@@ -204,7 +189,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value4;
     }
 
-
     /**
      * Sets the value4 value for this EchoStruct.
      * 
@@ -213,7 +197,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue4(java.lang.String value4) {
         this.value4 = value4;
     }
-
 
     /**
      * Gets the value5 value for this EchoStruct.
@@ -224,7 +207,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value5;
     }
 
-
     /**
      * Sets the value5 value for this EchoStruct.
      * 
@@ -233,7 +215,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue5(java.lang.String value5) {
         this.value5 = value5;
     }
-
 
     /**
      * Gets the value6 value for this EchoStruct.
@@ -244,7 +225,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value6;
     }
 
-
     /**
      * Sets the value6 value for this EchoStruct.
      * 
@@ -253,7 +233,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue6(java.lang.String value6) {
         this.value6 = value6;
     }
-
 
     /**
      * Gets the value7 value for this EchoStruct.
@@ -264,7 +243,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value7;
     }
 
-
     /**
      * Sets the value7 value for this EchoStruct.
      * 
@@ -273,7 +251,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue7(java.lang.String value7) {
         this.value7 = value7;
     }
-
 
     /**
      * Gets the value8 value for this EchoStruct.
@@ -284,7 +261,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value8;
     }
 
-
     /**
      * Sets the value8 value for this EchoStruct.
      * 
@@ -293,7 +269,6 @@ public class EchoStruct  implements java.io.Serializable {
     public void setValue8(java.lang.String value8) {
         this.value8 = value8;
     }
-
 
     /**
      * Gets the value9 value for this EchoStruct.
@@ -304,7 +279,6 @@ public class EchoStruct  implements java.io.Serializable {
         return value9;
     }
 
-
     /**
      * Sets the value9 value for this EchoStruct.
      * 
@@ -314,4 +288,32 @@ public class EchoStruct  implements java.io.Serializable {
         this.value9 = value9;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof EchoStruct) {
+            EchoStruct val = (EchoStruct) obj;
+            if (value1.equals(val.value1)
+                && value2.equals(val.value2)
+                && (value3 == val.value3)
+                && value4.equals(val.value4)
+                && value5.equals(val.value5)
+                && value6.equals(val.value6)
+                && value7.equals(val.value7)
+                && value8.equals(val.value8)
+                && value9.equals(val.value9)
+                && value10.equals(val.value10)
+                && value11.equals(val.value11)
+                && value12.equals(val.value12)
+                && value13.equals(val.value13)) {
+                                return true;
+                           
+
+            }
+            
+        }
+        return false;
+
     }
+}

@@ -38,6 +38,10 @@ public class EchoStructEncoder implements Encoder {
 
 	private ContentHandler contentHandler;
 	private EchoStruct struct;
+    
+    
+    public EchoStructEncoder() {
+    }
 
 	public EchoStructEncoder(EchoStruct struct) {
 		this.struct = struct;

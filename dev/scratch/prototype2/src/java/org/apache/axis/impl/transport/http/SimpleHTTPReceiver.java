@@ -133,8 +133,8 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
     /**
      * @param myAxisServer
      */
-    public SimpleHTTPReceiver(AxisEngine myAxisServer) {
-        super(myAxisServer);
+    public SimpleHTTPReceiver(EngineRegistry reg) {
+        super(reg);
     }
     
     public SimpleHTTPReceiver(String dir) throws AxisFault {
@@ -146,7 +146,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
             } catch (InterruptedException e1) {
 				throw new AxisFault("Thread interuptted",e1);
             }
-            this.engine = new AxisEngine(er);
+            this.engineReg = er;
         } catch (PhaseException e) {
             throw AxisFault.makeFault(e);
         } catch (DeploymentException e) {
@@ -503,12 +503,7 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
         }
     }
 
-    /**
-     * @return
-     */
-    public AxisEngine getEngine() {
-        return engine;
-    }
+ 
     
     public static void main(String[] args) throws Exception{
 		if(args.length != 2){
@@ -529,7 +524,5 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
 			reciver.stop();
 				
 		}
-
     }
-
 }
