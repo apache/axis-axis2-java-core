@@ -171,7 +171,6 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      * @throws AxisFault
-     * @throws PhaseException
      */
     public EngineRegistry start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
@@ -422,17 +421,15 @@ public class DeploymentEngine implements DeploymentConstants {
                             AxisService service = new AxisService();
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
-                            log.info("Invalid service" + currentFileItem.getName() );
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
-                            log.info("Invalid module" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName() );
                             log.info("DeploymentException  " + de);
                         } catch (AxisFault axisFault) {
-                            log.info("Invalid module" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName() );
                             log.info("AxisFault  " + axisFault);
-                            throw new RuntimeException(axisFault);
                         } catch (Exception e) {
-                            log.info("Invalid module" + currentFileItem.getName() );
+                            log.info("Invalid service" + currentFileItem.getName() );
                             log.info("Exception  " + e);
                         } finally {
                             currentFileItem = null;
@@ -443,7 +440,6 @@ public class DeploymentEngine implements DeploymentConstants {
                             AxisModule metaData = new AxisModule();
                             unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this, metaData);
                             addNewModule(metaData);
-                            log.info("Invalid module" + currentFileItem.getName() );
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
                             log.info("Invalid module" + currentFileItem.getName() );
@@ -472,7 +468,6 @@ public class DeploymentEngine implements DeploymentConstants {
                     if(wsInfo.getType()==SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
                         engineRegistry.removeService(new QName(serviceName));
-                        log.info("Invalid service" + currentFileItem.getName() );
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
                 }

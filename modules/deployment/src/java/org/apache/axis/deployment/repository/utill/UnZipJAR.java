@@ -58,7 +58,6 @@ public class UnZipJAR implements DeploymentConstants {
                 throw new DeploymentException("service.xml not found");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new DeploymentException(e.getMessage());
         }
     }

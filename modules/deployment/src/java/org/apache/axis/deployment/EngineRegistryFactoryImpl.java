@@ -29,9 +29,7 @@ public class EngineRegistryFactoryImpl implements  EngineRegistryFactory{
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();
-        } catch (PhaseException e) {
-            throw AxisFault.makeFault(e);
-        } catch (DeploymentException e) {
+        }catch (DeploymentException e) {
             throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
