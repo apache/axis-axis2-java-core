@@ -131,7 +131,6 @@ public class WSInfoList implements DeploymentConstants {
         tempvector.removeAllElements();
         String filename = "";
         boolean exist = false;
-        try {
             while (iter.hasNext()) {
                 WSInfo fileitem = (WSInfo) iter.next();
                 exist = false;
@@ -150,9 +149,6 @@ public class WSInfoList implements DeploymentConstants {
                 }
 
             }
-        } catch (Exception e) {
-            //todo handle exc
-        }
 
         for (int i = 0; i < tempvector.size(); i++) {
             WSInfo fileItem = (WSInfo) tempvector.elementAt(i);

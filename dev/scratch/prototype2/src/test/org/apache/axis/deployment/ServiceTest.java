@@ -7,6 +7,8 @@ import org.apache.axis.deployment.metadata.phaserule.PhaseException;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.registry.EngineRegistry;
 
+import javax.xml.stream.XMLStreamException;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -28,7 +30,7 @@ import org.apache.axis.registry.EngineRegistry;
  *
  */
 public class ServiceTest extends TestCase {
-    public void testparseService1() throws PhaseException ,DeploymentException, AxisFault{
+    public void testparseService1() throws PhaseException ,DeploymentException, AxisFault, XMLStreamException{
         String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = null;

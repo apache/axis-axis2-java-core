@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.deployment.metadata.FlowMetaData;
 import org.apache.axis.deployment.metadata.HandlerMetaData;
@@ -126,7 +127,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws AxisFault
      * @throws PhaseException
      */
-    public EngineRegistry start() throws AxisFault, PhaseException,DeploymentException {
+    public EngineRegistry start() throws AxisFault, PhaseException,DeploymentException, XMLStreamException {
         String fileName = "src/test-resources/deployment/server.xml";
         File tempfile = new File(fileName);
         try {

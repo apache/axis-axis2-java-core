@@ -65,31 +65,31 @@ public class DeploymentParser implements DeploymentConstants {
      * @param engine
      * @param servicename
      */
-    public DeploymentParser(InputStream inputStream, DeploymentEngine engine, String servicename) {
+    public DeploymentParser(InputStream inputStream, DeploymentEngine engine, String servicename) throws XMLStreamException {
         this.inputStream = inputStream;
         this.dpengine = engine;
         this.servicename = servicename;
 
-        try {
+     //   try {
             pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        } catch (XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
+     //   } catch (XMLStreamException e) {
+      //      e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+      //  } catch (FactoryConfigurationError factoryConfigurationError) {
+       //     factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
+       // }
     }
 
 
-    public DeploymentParser(InputStream inputStream, DeploymentEngine engine){
+    public DeploymentParser(InputStream inputStream, DeploymentEngine engine) throws XMLStreamException {
         this.inputStream = inputStream;
         this.dpengine = engine;
-        try {
+      //  try {
             pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        } catch (XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
+       // } catch (XMLStreamException e) {
+        //    e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+       // } catch (FactoryConfigurationError factoryConfigurationError) {
+        //    factoryConfigurationError.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        //}
     }
 
     public ServiceMetaData parseServiceXML() throws DeploymentException, PhaseException {
@@ -100,11 +100,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_DOCUMENT) {
                 int eventType =  pullparser.next();
-
-                //  int eventType = pullparser.getEventType();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-                    // processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
@@ -115,36 +111,12 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    // procesEndElement();
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    // processCDATA();
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // processComment();
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    // if the event is not white space processText will invoke
-                    //  if(! pullparser.isWhitespace())
-                    //  processText();
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         }
         return service;
-    }
-
-
-    private void processStartElement() throws DeploymentException, PhaseException {
-        String ST = pullparser.getLocalName();
-        if (ST.equals(serviceXMLST)) {
-            ServiceMetaData service = procesServiceXML();
-            service.setName(servicename);
-            //  dpengine.addService(service);
-            service.prinData();
-        }
     }
 
     /**
@@ -166,8 +138,6 @@ public class DeploymentParser implements DeploymentConstants {
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
-                                String attprifix = pullparser.getAttributePrefix(i);
-                                String attnamespace = pullparser.getAttributeNamespace(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if(attname.equals(ServerMetaData.SERVERNAME)){
                                     serverMetaData.setName(attvalue);
@@ -188,16 +158,6 @@ public class DeploymentParser implements DeploymentConstants {
                     }   else if (ST.equals(PHASE_ORDER)){
                         processPhaseOrder(serverMetaData);
                     }
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    // this wont meet here :)
-                    // and to be removed
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    // I think it is not need to support this
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // I think it is not need to support this
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    // this wont meet here :)
-                    // and to be removed
                 }
             }
         } catch (XMLStreamException e) {
@@ -216,8 +176,6 @@ public class DeploymentParser implements DeploymentConstants {
         if (attribCount == 3) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
                 if (attname.equals(ServiceMetaData.PROVIDERNAME)) {
                     service.setProvider(getValue(attvalue));
@@ -270,19 +228,6 @@ public class DeploymentParser implements DeploymentConstants {
                         ModuleMetaData moduleMetaData = getModule();//processModule();
                         service.addModules(moduleMetaData);
                     }
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    // this wont meet here :)
-                    // and to be removed
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    // I think it is not need to support this
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // I think it is not need to support this
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    // this wont meet here :)
-                    // and to be removed
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -304,8 +249,6 @@ public class DeploymentParser implements DeploymentConstants {
         if (attribCount == 2) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
                 if (attname.equals(ParameterMetaData.ATTNAME)) {
                     parameter.setName(attvalue);
@@ -329,24 +272,17 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_PARAMETER) {
                 int eventType =  pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-                    // processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_PARAMETER = true;
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(PARAMETERST)) {
                         END_PARAMETER = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    //do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // do nothing
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
                 }
             }
@@ -366,15 +302,13 @@ public class DeploymentParser implements DeploymentConstants {
      * @throws org.apache.axis.deployment.DeploymentException
      */
     private HandlerMetaData processHandler() throws DeploymentException {
-        String name = pullparser.getLocalName();
+      //  String name = pullparser.getLocalName();
         boolean ref_name = false;
         HandlerMetaData handler = new HandlerMetaData();
         int attribCount = pullparser.getAttributeCount();
 
         for (int i = 0; i < attribCount; i++) {
             String attname = pullparser.getAttributeLocalName(i);
-            String attprifix = pullparser.getAttributePrefix(i);
-            String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
             String attvalue = pullparser.getAttributeValue(i);
 
             if (attname.equals(HandlerMetaData.CLASSNAME)) {
@@ -402,9 +336,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_HANDLER) {
                 int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-                    // processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+               if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_HANDLER = true;
@@ -414,8 +346,6 @@ public class DeploymentParser implements DeploymentConstants {
                         attribCount = pullparser.getAttributeCount();
                         for (int i = 0; i < attribCount; i++) {
                             String attname = pullparser.getAttributeLocalName(i);
-                            String attprifix = pullparser.getAttributePrefix(i);
-                            String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                             String attvalue = pullparser.getAttributeValue(i);
 
                             if (attname.equals(HandlerMetaData.AFTER)) {
@@ -451,15 +381,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_HANDLER = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    //do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // do nothing
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                }else if (eventType == XMLStreamConstants.CHARACTERS) {
                     element = element + pullparser.getText();
-                } else {
-                    //  throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -485,29 +408,18 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_TYPEMAPPING) {
                 int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_TYPEMAPPING = true;
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
-
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(TYPEMAPPINGST)) {
                         END_TYPEMAPPING = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -519,14 +431,12 @@ public class DeploymentParser implements DeploymentConstants {
 
 
     private OperationMetaData processOperation() throws DeploymentException {
-        String name = pullparser.getLocalName();
+      //  String name = pullparser.getLocalName();
         OperationMetaData operation = new OperationMetaData();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount == 4) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
                 if (attname.equals(OperationMetaData.ATNAME)) {
                     operation.setName(attvalue);
@@ -548,9 +458,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_OPERATION) {
                 int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_OPERATION = true;
@@ -576,15 +484,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_OPERATION = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -607,29 +508,18 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_BEANMAPPING) {
                 int eventType =pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_BEANMAPPING = true;
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
-
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                }  else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(BEANMAPPINGST)) {
                         END_BEANMAPPING = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -640,13 +530,11 @@ public class DeploymentParser implements DeploymentConstants {
     private  ModuleMetaData getModule() throws DeploymentException{
         String moduleref ="";
         int attribCount = pullparser.getAttributeCount();
-        boolean ref_name = false;
+     //   boolean ref_name = false;
 
         if(attribCount > 0 ){
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
 
                 if (attname.equals(ModuleMetaData.REF)) {
@@ -663,23 +551,14 @@ public class DeploymentParser implements DeploymentConstants {
                     // document end tag met , break the loop
                     // but the doc end tag wont meet here :)
                     END_MODULE = true;
-                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
-
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
                     if (endtagname.equals(moduleXMLST)) {
                         END_MODULE = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    //do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -702,8 +581,6 @@ public class DeploymentParser implements DeploymentConstants {
         if(attribCount > 0 ){
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
-                String attprifix = pullparser.getAttributePrefix(i);
-                String attnamespace = pullparser.getAttributeNamespace(i); // attprifix is same as attval
                 String attvalue = pullparser.getAttributeValue(i);
 
                 if (attname.equals(ModuleMetaData.CLASSNAME)) {
@@ -757,15 +634,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_MODULE = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    //do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -785,9 +655,7 @@ public class DeploymentParser implements DeploymentConstants {
             while (!END_INFLOW) {
                 pullparser.next();
                 int eventType = pullparser.getEventType();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_INFLOW = true;
@@ -803,15 +671,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_INFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    //  throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -830,9 +691,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_OUTFLOW) {
                 int eventType =  pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_OUTFLOW = true;
@@ -848,15 +707,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_OUTFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    //   throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -876,9 +728,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_FAULTFLOW) {
                 int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-// processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
 // document end tag met , break the loop
 // but the doc end tag wont meet here :)
                     END_FAULTFLOW = true;
@@ -894,15 +744,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_FAULTFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-//do nothing
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-// do nothing
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                }  else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    // throw new UnsupportedOperationException();
-//any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {
@@ -920,15 +763,12 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_PHASEORDER) {
                 int eventType = pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     END_PHASEORDER = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (tagnae.equals(PHASEST)) {
                         String attname = pullparser.getAttributeLocalName(0);
-                        String attprifix = pullparser.getAttributePrefix(0);
-                        String attnamespace = pullparser.getAttributeNamespace(0); // attprifix is same as attval
                         String attvalue = pullparser.getAttributeValue(0);
                         if(attname.equals(PhaseMetaData.PHASE_NAME)){
                             PhaseMetaData phase = new PhaseMetaData(attvalue);
@@ -941,12 +781,8 @@ public class DeploymentParser implements DeploymentConstants {
                         END_PHASEORDER = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                } else if (eventType == XMLStreamConstants.COMMENT) {
                 } else if (eventType == XMLStreamConstants.CHARACTERS) {
                     text = text + pullparser.getText();
-                } else {
-                    throw new UnsupportedOperationException();
                 }
             }
         } catch (XMLStreamException e) {
@@ -983,9 +819,7 @@ public class DeploymentParser implements DeploymentConstants {
         try {
             while (!END_DOCUMENT) {
                 int eventType =  pullparser.next();
-                if (eventType == XMLStreamConstants.START_DOCUMENT) {
-                    // processStartDocument();
-                } else if (eventType == XMLStreamConstants.END_DOCUMENT) {
+               if (eventType == XMLStreamConstants.END_DOCUMENT) {
                     // document end tag met , break the loop
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
@@ -996,19 +830,6 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                     //processStartElement();
                     break;//todo this has to be chenfed only for testng
-                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
-                    // procesEndElement();
-                } else if (eventType == XMLStreamConstants.CDATA) {
-                    // processCDATA();
-                } else if (eventType == XMLStreamConstants.COMMENT) {
-                    // processComment();
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    // if the event is not white space processText will invoke
-                    //  if(! pullparser.isWhitespace())
-                    //  processText();
-                } else {
-                    throw new UnsupportedOperationException();
-                    //any other events are not interesting :)
                 }
             }
         } catch (XMLStreamException e) {

@@ -44,7 +44,6 @@ public class UnZipJAR implements DeploymentConstants {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
-        int entrysize = 0;
         try {
             zin = new ZipInputStream(new FileInputStream(strArchive));
             ZipEntry entry;
@@ -68,7 +67,6 @@ public class UnZipJAR implements DeploymentConstants {
         // get attribute values
         String strArchive = filename;
         ZipInputStream zin;
-        int entrysize = 0;
         try {
             zin = new ZipInputStream(new FileInputStream(strArchive));
             ZipEntry entry;
