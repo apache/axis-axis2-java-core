@@ -71,7 +71,7 @@
 <h2><a name="_Toc96698081"></a><a name="_Toc96697856">Introduction </a></h2>
 <p>Axis 2.0 can be downloaded as a <a href="releases.html">zipped binary </a> or the <a href="cvs-usage.html">source </a>. This section describes how Axis2 can be installed either as a standalone server or as part of a J2EE compliant servlet container. </p>
 <h2><a name="_Toc96698082"></a><a name="_Toc96697857">Prerequisites </a></h2>
-<p>Axis 2 requires the Java Runtime Environment to be properly installed. Axis is developed to be run on JRE 1.4 and upwards but it has not been fully tested with the latest JRE 1.5. Hence it is safe to run Axis with Java 1.4. If the JRE is not already in place it must be installed to proceed further. For instructions on setting up the JRE in different operating systems, please visit <a href="http://java.sun.com/">http://java.sun.com </a>. </p>
+<p>Axis2 requires the Java Runtime Environment to be properly installed. Axis is developed to be run on JRE 1.4 and upwards but it has not been fully tested with the latest JRE 1.5. Hence it is safe to run Axis with Java 1.4. If the JRE is not already in place it must be installed to proceed further. For instructions on setting up the JRE in different operating systems, please visit <a href="http://java.sun.com/">http://java.sun.com </a>. </p>
 <p>All the required jars are shipped with the binary distribution and if the source distribution is used, running the maven build will automatically download the required jars for you. </p>
 <p>Following sections describe how each type of distribution needs to be installed. Since the process with the source distribution is similar to the binary distribution after building, the first section explains the process of building Axis from source. If you have the binary distribution you can skip the build sections and directly go to the binary installation section. </p>
 <h2><a name="_Toc96698083"></a><a name="_Toc96697858">Building Axis2 from source </a></h2>
@@ -235,7 +235,7 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 </table>
 <h2><a name="_Toc96698089"></a><a name="_Toc96697864">Pre-Conditions </a></h2>
 <p>Axis2 should be installed (see the Installation guide above). For simplicity samples will assume the servlet container is Tomcat. </p>
-<p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed asix2.) </p>
+<p>AXIS_HOME environment variable be set. (Rationale: The compile time and runtime libraries required in the classpath for the samples will be picked up form the deployed Asix2.) </p>
 <p align="center"><img width="384" height="430" src="images/clip_image014.jpg"></p>
 <p>Apache Ant should be installed and should be available in the path. It can be checked weather Ant is properly installed by simply typing ant in the command prompt. Please refer<a href="http://ant.apache.org/"> http://ant.apache.org/</a>.</p>
 <p align="center"><img src="images/ant.jpg"></p>
@@ -248,7 +248,7 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
   <li>Running the client  </li>
 </ul>
 <h3><strong>Building the sample </strong></h3>
-<p>Building the sample will take only one step provided that pre conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the &quot;modules/samples&quot; directory and type </p>
+<p>Building the sample will take only one step provided that pre-conditions are met. In the build file there is a target called compile that will compile the sample and create the sample1.jar in the build/services directory. So the user should open a command prompt and cd to the &quot;modules/samples&quot; directory and type </p>
 <p>&gt;ant compile </p>
 <p>and it will show the following output. </p>
 <p align="center"><img width="648" height="362" src="images/clip_image016.jpg"></p>
@@ -276,7 +276,7 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p><strong>The service will be deployed with the packaged jar file name. If the jar file is sample1.jar the service will be deployed with the name “sample1”. </strong></p>
 <p>Point to note here is that above ant task is going to deploy two services </p>
 <ol>
-  <li>sample1 – Required for this(Echo Sync call) and the EchoAsync Call examples(Case1 and Case3). </li>
+  <li>sample1 – Required for this(Case1) and the EchoAsync Call examples(Case1 and Case3). </li>
   <li>sample1WithHandler – required for Echo Synchronous call with a phased handler(Case2). </li>
 </ol>
 <p>If the servlet container is now running the user can go check to see weather the above services are deployed. Please refer the installation guide for further information on checking the deployed services. </p>
@@ -286,7 +286,7 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p>&gt;ant echo </p>
 <p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
 <p align="center"><img width="648" height="269" src="images/clip_image022.jpg"></p>
-<h2><a name="_Toc96698092"></a><a name="_Toc96697867">Sample2 : Echo Synchronous call with a phased handler. </a></h2>
+<h2><a name="_Toc96698092"></a><a name="_Toc96697867">Sample1 - Case2: Echo Synchronous call with a phased handler. </a></h2>
 <p>This example will go one step forward from the example above and will deploy a web service with a Logging handler. The client application will not change, of course with an exception; the Endpoint Reference will be changed to refer the new service <strong>“Sample1WithHandler” </strong>. </p>
 <p>There is a Handler (LoggingHandler.java) that is introduced in this case and it will basically log the fact that it got called. The code can be found in LoggingHandler.java. </p>
 <p class="style1 style2 style3">public void invoke(MessageContext msgContext) throws AxisFault {
@@ -396,9 +396,9 @@ xmlns:sample1="http://sample1.org/sample1"&gt;<br/>
 <p>in the command prompt. If all goes well the user will get the following output where the program will print the request SOAP message and the response SOAP message, which will be same as the request message. </p>
 <p align="center"><img width="648" height="265" src="images/clip_image024.jpg"></p>
 <p>The service <strong>“sample1withhandler” </strong> will run its logging handler as it gets called and it will log the call as the handler gets called in the inflow. This logged information can be found in the server logs. </p>
-<h2><a name="_Toc96698093"></a><a name="_Toc96697868">Sample3 : Echo Asynchronous call. </a></h2>
+<h2><a name="_Toc96698093"></a><a name="_Toc96697868">Sample1 - Case3: Echo Asynchronous call. </a></h2>
 <p>In this case the example focuses on calling a synchronous web service in an asynchronous manner in the client side. If this example is compared with the first example, which is <strong>“Echo Synchronous call” </strong>, the server side is identical for both the cases. The difference will be in the web service client that will be used. </p>
-<p>In this case the client will make a web service call and it will register a call back handler and sends the message out. The difference will be that the client application that is doing the web service call will not hang till the response. Rather it will get returned and once the response returns the client will get notified by way of the registered callback (This is one of the two methods this can be done in Axis 2.0. Refer <a href="ClientAPI.html">client api tutorial </a> for more information). </p>
+<p>In this case the client will make a web service call and it will register a call back handler and sends the message out. The difference will be that the client application that is doing the web service call will not hang till the response. Rather it will get returned and once the response returns the client will get notified by way of the registered callback (This is one of the two methods this can be done in Axis 2.0. Refer <a href="ClientAPI.html">Client Api Tutorial </a> for more information). </p>
 <p>The callback handler that will be used is ClientEchoCallbackHandler.java and the client program is AsynchronousClient.java. </p>
 <h3><strong>Building the sample </strong></h3>
 <p>Building the sample once will build all required classes and jars for all three cases. The ant task would be “ant Compile”. Please refer the building of the <strong>“Echo Synchronous call” </strong> above. </p>
@@ -491,7 +491,7 @@ builder.getDocumentElement();
 <p>&#149;&nbsp; The Endpoint Reference (EPR) is the To location of the web service. </p>
 <p>&#149;&nbsp; call.setTo() method registers the created EPR with the call object. </p>
 <p>&#149;&nbsp; call.sendRecieveAsync() method invokes the web service at the location specified by the EPR using the given SOAP Message. </p>
-<p>&#149;&nbsp; The LitenerTransport is type of the trasport to be used. Axis2-M1 only supports the http and the second parameter express the should the seperate listener is to be started or not. Axis-M1 suppoerts only the true for this. </p>
+<p>&#149;&nbsp; The LitenerTransport is type of the trasport to be used. Axis2-M1 only supports the http and the second parameter express the should the seperate listener is to be started or not. Axis-M1 supports only the true for this. </p>
 <p>&#149;&nbsp; callback it the Callback to handle the response e.g. </p>
 <p class="style1 style2 style3">Callback callback = <strong>new </strong> Callback() { 
 <br><strong>&nbsp;&nbsp;public void </strong>onComplete(AsyncResult result) { 
