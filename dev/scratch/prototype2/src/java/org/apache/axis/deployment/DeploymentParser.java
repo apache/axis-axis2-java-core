@@ -2,13 +2,11 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.FlowImpl;
 import org.apache.axis.impl.description.ParameterImpl;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
-import org.apache.axis.impl.providers.SimpleJavaProvider;
 import org.apache.axis.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;
@@ -48,9 +46,9 @@ import java.util.ArrayList;
  */
 public class DeploymentParser implements DeploymentConstants {
     //module.xml strating tag
-    private static final String moduleXMLST = "module";
+    private static final String MODULEXMLST = "module";
     // service.xml strating tag
-    private static final String serviceXMLST = "service";
+    private static final String SERVICEXMLST = "service";
     //to get the input stream
     private InputStream inputStream = null;
     // Referance to XMLPullPasrser
@@ -99,7 +97,7 @@ public class DeploymentParser implements DeploymentConstants {
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
-                    if (ST.equals(serviceXMLST)) {
+                    if (ST.equals(SERVICEXMLST)) {
                         procesServiceXML(axisService);
                         axisService.setName(new QName(getShortFileName(dpengine.getCurrentFileItem().getFile().getName())));
                     }
@@ -126,25 +124,25 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if (ST.equals(PARAMETERST)) {
+                    if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
-                    } else if (ST.equals(TYPEMAPPINGST)) {
+                    } else if (TYPEMAPPINGST.equals(ST)) {
                        throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
-                    } else if (ST.equals(MODULEST)) {
+                    } else if (MODULEST.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
-                                if (attname.equals(REF)) {
+                                if (REF.equals(attname)) {
                                     serverMetaData.addModule(new QName(attvalue));
                                 }
                             }
                         }
-                    } else if (ST.equals(PHASE_ORDER)) {
+                    } else if (PHASE_ORDER.equals(ST)) {
                       ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
-                    } else if(ST.equals(SERVERST)){
+                    } else if(SERVERST.equals(ST)){
                          //TODO process attributes
                     }  else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
@@ -167,17 +165,17 @@ public class DeploymentParser implements DeploymentConstants {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(PROVIDERNAME)) {
+                if (PROVIDERNAME.equals(attname)) {
                     //TODO load the java clss for this
                     //TODO  somtimes Provider should be change
                     dpengine.getCurrentFileItem().setProvideName(attvalue);
                   //  Provider provider = new SimpleJavaProvider();
                    // provider. .setName(new QName(getValue(attvalue)));
                    // axisService.setProvider(provider);
-                } else if (attname.equals(STYLENAME)) {
+                } else if (STYLENAME.equals(attname)) {
                     // axisService.setStyle();
                     //TODO setStyle should be handle latter
-                } else if (attname.equals(CONTEXTPATHNAME)) {
+                } else if (CONTEXTPATHNAME.equals(attname)) {
                     axisService.setContextPath(getValue(attvalue));
                 } else {
                     throw new DeploymentException("Bad arguments for the service" + axisService.getName());
@@ -202,12 +200,12 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
 
-                    if (ST.equals(PARAMETERST)) {
+                    if (PARAMETERST.equals(ST)) {
                         Parameter parameter =  processParameter();
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
-                    } else if (ST.equals(JAVAIMPL)){
-                        if(pullparser.getNamespaceURI().equals(JAVAST)){
+                    } else if (JAVAIMPL.equals(ST)){
+                        if(JAVAST.equals(pullparser.getNamespaceURI())){
                             attribCount = pullparser.getAttributeCount();
                             if (attribCount > 0) {
                                 for (int i = 0; i < attribCount; i++) {
@@ -218,33 +216,33 @@ public class DeploymentParser implements DeploymentConstants {
                         } else {
                             throw new UnsupportedOperationException("Illegal namespace");
                         }
-                    }else if (ST.equals(TYPEMAPPINGST)) {
+                    }else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
                         //  processTypeMapping();
-                    } else if (ST.equals(BEANMAPPINGST)) {
+                    } else if (BEANMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
                         // processBeanMapping();
-                    } else if (ST.equals(OPRATIONST)) {
+                    } else if (OPRATIONST.equals(ST)) {
                         AxisOperation  operation = processOperation();
                         axisService.addOperation(operation);
-                    } else if (ST.equals(INFLOWST)) {
+                    } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
                         axisService.setInFlow(inFlow);
-                    } else if (ST.equals(OUTFLOWST)) {
+                    } else if (OUTFLOWST.equals(ST)) {
                         Flow outFlow = processOutFlow();
                         axisService.setOutFlow(outFlow);
-                    } else if (ST.equals(FAILTFLOWST)) {
+                    } else if (FAILTFLOWST.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
                         axisService.setFaultFlow(faultFlow);
-                    } else if (ST.equals(MODULEST)) {
+                    } else if (MODULEST.equals(ST)) {
                         attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
-                                if (attname.equals(REF)) {
+                                if (REF.equals(attname)) {
                                     if(dpengine.getModule(new QName(attvalue)) == null){
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
                                     } else
@@ -273,9 +271,9 @@ public class DeploymentParser implements DeploymentConstants {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(ATTNAME)) {
+                if (ATTNAME.equals(attname)){
                     parameter.setName(attvalue);
-                } else if (attname.equals(ATTLOCKED)) {
+                } else if (ATTLOCKED.equals(attname)) {
                     String boolval = getValue(attvalue);
                     if (boolval.equals("true")) {
                         parameter.setLocked(true);
@@ -301,7 +299,7 @@ public class DeploymentParser implements DeploymentConstants {
                     END_PARAMETER = true;
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(PARAMETERST)) {
+                    if (PARAMETERST.equals(endtagname)) {
                         END_PARAMETER = true;
                         break;
                     }
@@ -336,16 +334,16 @@ public class DeploymentParser implements DeploymentConstants {
             String attname = pullparser.getAttributeLocalName(i);
             String attvalue = pullparser.getAttributeValue(i);
 
-            if (attname.equals(CLASSNAME)) {
+            if (CLASSNAME.equals(attname)) {
                 handler.setClassName(attvalue);
-            } else if (attname.equals(ATTNAME)) {
+            } else if (ATTNAME.equals(attname)) {
                 if (ref_name) {
                     throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
                 } else {
                     handler.setName(new QName(attvalue));
                     ref_name = true;
                 }
-            } else if (attname.equals(REF)) {
+            } else if (REF.equals(attname)) {
                 if (ref_name) {
                     throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
                 } else {
@@ -369,26 +367,26 @@ public class DeploymentParser implements DeploymentConstants {
                     END_HANDLER = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(ORDER)) {
+                    if (ORDER.equals(tagnae)) {
                         attribCount = pullparser.getAttributeCount();
                         for (int i = 0; i < attribCount; i++) {
                             String attname = pullparser.getAttributeLocalName(i);
                             String attvalue = pullparser.getAttributeValue(i);
 
-                            if (attname.equals(AFTER)) {
+                            if (AFTER.equals(attname)) {
                                 handler.getRules().setAfter(attvalue);
-                            } else if (attname.equals(BEFORE)) {
+                            } else if (BEFORE.equals(attname)) {
                                 handler.getRules().setBefore(attvalue);
-                            } else if (attname.equals(PHASE)) {
+                            } else if (PHASE.equals(attname)) {
                                 handler.getRules().setPhaseName(attvalue);
-                            } else if (attname.equals(PHASEFIRST)) {
+                            } else if (PHASEFIRST.equals(attname)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
                                     handler.getRules().setPhaseFirst(true);
                                 } else if (boolval.equals("false")) {
                                     handler.getRules().setPhaseFirst(false);
                                 }
-                            } else if (attname.equals(PHASELAST)) {
+                            } else if (PHASELAST.equals(attname)) {
                                 String boolval = getValue(attvalue);
                                 if (boolval.equals("true")) {
                                     handler.getRules().setPhaseLast(true);
@@ -404,7 +402,7 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(HANDERST)) {
+                    if (HANDERST.equals(endtagname)) {
                         END_HANDLER = true;
                         break;
                     }
@@ -443,7 +441,7 @@ public class DeploymentParser implements DeploymentConstants {
                     END_TYPEMAPPING = true;
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(TYPEMAPPINGST)) {
+                    if (TYPEMAPPINGST.equals(endtagname)) {
                         END_TYPEMAPPING = true;
                         break;
                     }
@@ -467,15 +465,15 @@ public class DeploymentParser implements DeploymentConstants {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (attname.equals(ATTNAME)) {
+                if (ATTNAME.equals(attname)) {
                     operation.setName(new QName(attvalue));
-                } else if (attname.equals(ATQNAME)) {
+                } else if (ATQNAME.equals(attname)) {
                     //TODO fill this after getting the reply for the mail
                     //operation.setQname(attvalue);
-                } else if (attname.equals(STYLENAME)) {
+                } else if (STYLENAME.equals(attname)) {
                     //TODO to be implementd after clarfing style
                     //operation.setStyle(attvalue);
-                } else if (attname.equals(ATUSE)) {
+                } else if (ATUSE.equals(attname)) {
                     //TODO this is to be implemnt
                     //  operation.setUse(attvalue);
                 }
@@ -496,19 +494,19 @@ public class DeploymentParser implements DeploymentConstants {
                     END_OPERATION = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
-                    if (ST.equals(moduleXMLST)) {
+                    if (MODULEXMLST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
-                    } else if (ST.equals(FAILTFLOWST)) {
+                    } else if (FAILTFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
-                    } else if (ST.equals(INFLOWST)) {
+                    } else if (INFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
-                    } else if (ST.equals(OUTFLOWST)) {
+                    } else if (OUTFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     }
 
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(OPRATIONST)) {
+                    if (OPRATIONST.equals(endtagname)) {
                         END_OPERATION = true;
                         break;
                     }
@@ -544,7 +542,7 @@ public class DeploymentParser implements DeploymentConstants {
                     END_BEANMAPPING = true;
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(BEANMAPPINGST)) {
+                    if (BEANMAPPINGST.equals(endtagname)) {
                         END_BEANMAPPING = true;
                         break;
                     }
@@ -567,14 +565,14 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
 
-                if (attname.equals(ATTNAME)) {
+                if (ATTNAME.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
                         module.setName(new QName(attvalue));
                         ref_name = true;
                     }
-                } else if (attname.equals(REF)) {
+                } else if (REF.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
@@ -597,16 +595,16 @@ public class DeploymentParser implements DeploymentConstants {
                     END_MODULE = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
-                    if (ST.equals(PARAMETERST)) {
+                    if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         module.addParameter(parameter);
-                    } else if (ST.equals(FAILTFLOWST)) {
+                    } else if (FAILTFLOWST.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
                         module.setFaultFlow(faultFlow);
-                    } else if (ST.equals(INFLOWST)) {
+                    } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
                         module.setInFlow(inFlow);
-                    } else if (ST.equals(OUTFLOWST)) {
+                    } else if (OUTFLOWST.equals(ST)) {
                         Flow outFlow = processOutFlow();
                         module.setOutFlow(outFlow);
                     } else {
@@ -616,7 +614,7 @@ public class DeploymentParser implements DeploymentConstants {
                     // complete implenatation
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(moduleXMLST)) {
+                    if (MODULEXMLST.equals(endtagname)) {
                         END_MODULE = true;
                         break;
                     }
@@ -646,13 +644,13 @@ public class DeploymentParser implements DeploymentConstants {
                     END_INFLOW = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(HANDERST)) {
+                    if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         inFlow.addHandler(handler);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(INFLOWST)) {
+                    if (INFLOWST.equals(endtagname)) {
                         END_INFLOW = true;
                         break;
                     }
@@ -682,13 +680,13 @@ public class DeploymentParser implements DeploymentConstants {
                     END_OUTFLOW = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(HANDERST)) {
+                    if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         outFlow.addHandler(handler);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(OUTFLOWST)) {
+                    if (OUTFLOWST.equals(endtagname)) {
                         END_OUTFLOW = true;
                         break;
                     }
@@ -719,13 +717,13 @@ public class DeploymentParser implements DeploymentConstants {
                     END_FAULTFLOW = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(HANDERST)) {
+                    if (HANDERST.equals(tagnae)) {
                         HandlerMetaData handler = processHandler();
                         faultFlow.addHandler(handler);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(FAILTFLOWST)) {
+                    if (FAILTFLOWST.equals(endtagname)) {
                         END_FAULTFLOW = true;
                         break;
                     }
@@ -753,16 +751,16 @@ public class DeploymentParser implements DeploymentConstants {
                     END_PHASEORDER = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
-                    if (tagnae.equals(PHASEST)) {
+                    if (PHASEST.equals(tagnae)) {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
-                        if (attname.equals(ATTNAME)) {
+                        if (ATTNAME.equals(attname)) {
                             pahseList.add(attvalue);
                         }
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (endtagname.equals(PHASE_ORDER)) {
+                    if (PHASE_ORDER.equals(endtagname)) {
                         END_PHASEORDER = true;
                         break;
                     }
@@ -820,7 +818,7 @@ public class DeploymentParser implements DeploymentConstants {
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
-                    if (ST.equals(moduleXMLST)) {
+                    if (MODULEXMLST.equals(ST)) {
                         processModule(module);
                         // module.setArchiveName(archiveName);
                         // module.setName(archiveName);
