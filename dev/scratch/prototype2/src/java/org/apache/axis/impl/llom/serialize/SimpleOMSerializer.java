@@ -1,13 +1,12 @@
 package org.apache.axis.impl.llom.serialize;
 
-import org.apache.axis.impl.llom.exception.OMStreamingException;
+
 import org.apache.axis.om.*;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -25,163 +24,144 @@ import java.util.Iterator;
  * limitations under the License.
  */
 public class SimpleOMSerializer {
-//determines whether the seriliased output contains new line characters
-    private boolean newLines = true;
 
-    public void setNewLines(boolean newLines) {
-        this.newLines = newLines;
-    }
+    private Vector prefixList = new Vector();
 
-    public void serialize(Object node, OutputStream stream) {
+    public void serialize(Object omNode, XMLStreamWriter writer) throws XMLStreamException {
 
-        String output = serialize(node);
-        OutputStreamWriter streamWriter = new OutputStreamWriter(stream);
-        BufferedWriter writer = new BufferedWriter(streamWriter);
-
-        try {
-            writer.write(output);
-            writer.flush();
-
-        } catch (IOException e) {
-            throw new OMStreamingException(e);
+        if (!(omNode instanceof OMNode)) {
+            throw new UnsupportedOperationException("Unsupported input object. Must be of the the type OMNode");
         }
+
+        OMNode node = (OMNode) omNode;
+        serializeNode(node, writer);
     }
 
-    private String serialize(Object o) {
-        String returnString = "";
-        OMNode node = (OMNode) o;
+    protected void serializeNode(OMNode node, XMLStreamWriter writer) throws XMLStreamException {
         short nodeType = node.getType();
         if (nodeType == OMNode.ELEMENT_NODE) {
-            returnString = serializeElement((OMElement) node);
-//        }else if (nodeType == OMNode.DOCUMENT_NODE){
-//            returnString = serializeDocment((OMMessage)node);
+            serializeElement((OMElement) node, writer);
         } else if (nodeType == OMNode.ATTRIBUTE_NODE) {
-            returnString = serializeAttribute((OMAttribute) node);
-        } else if (nodeType == OMNode.TEXT_NODE || nodeType == OMNode.COMMENT_NODE || nodeType == OMNode.CDATA_SECTION_NODE) {
-            returnString = serializeText((OMText) node);
+            serializeAttribute((OMAttribute) node, writer);
+        } else if (nodeType == OMNode.TEXT_NODE) {
+            serializeText((OMText) node, writer);
+        } else if (nodeType == OMNode.COMMENT_NODE) {
+            serializeComment((OMText) node, writer);
+        } else if (nodeType == OMNode.CDATA_SECTION_NODE) {
+            serializeCData((OMText) node, writer);
         }
-        return returnString;
+        writer.flush();
     }
-
-//    private String serializeDocment(OMMessage doc){
-//        return serializeElement(doc.getEnvelope());
-//    }
 
     /**
      * @param element
-     * @return
      */
-    private String serializeElement(OMElement element) {
+    protected void serializeElement(OMElement element, XMLStreamWriter writer) throws XMLStreamException {
 
-        //flag to say whther this element is prefixed or not
-        boolean prefixed = false;
-        String prefix = "";
-
-        //first serialize the element itself
-        String returnText = "<";
-
-        //add the namespace prefix
         OMNamespace ns = element.getNamespace();
+        String prefix = null;
+        String nameSpaceName = null;
         if (ns != null) {
-            //add the prefix if it's availble
             prefix = ns.getPrefix();
+            nameSpaceName = ns.getName();
             if (prefix != null) {
-                returnText = returnText + prefix + ":";
-                prefixed = true;
+                writer.writeStartElement(prefix, element.getLocalName(), nameSpaceName);
+                if (!prefixList.contains(prefix)){
+                    writer.writeNamespace(prefix,nameSpaceName);
+                    prefixList.add(prefix);
+                }
+            } else {
+                writer.writeStartElement(nameSpaceName, element.getLocalName());
+                //add the own namespace
+                if (!prefixList.contains(prefix)){
+                    writer.writeDefaultNamespace(nameSpaceName);
+                    prefixList.add(prefix);
+                }
+
             }
         }
-        //add the local name
-        returnText = returnText + element.getLocalName();
+
+
 
         //add the elements attributes
         Iterator attributes = element.getAttributes();
         while (attributes.hasNext()) {
-            returnText = returnText + " " + serializeAttribute((OMAttribute) attributes.next());
+            serializeAttribute((OMAttribute) attributes.next(), writer);
         }
 
         //add the namespaces
-        returnText = returnText + " " + serializeNamespace(element.getNamespace());
+        Iterator namespaces = element.getAllDeclaredNamespaces();
+        if (namespaces!=null){
+            while (namespaces.hasNext()) {
+                serializeNamespace((OMNamespace) namespaces.next(), writer);
+            }
+        }
 
-        returnText = returnText + ">";
-        //add the children
+        //add the children                                        hiiii
         Iterator children = element.getChildren();
+
         while (children.hasNext()) {
             Object node = children.next();
             if (node != null) {
-                returnText = returnText + serialize(node);
+                serializeNode((OMNode) node, writer);
             }
-            //add the line feed if specified
-
         }
 
+        writer.writeEndElement();
 
-        //add the closing tag
-        if (prefixed)
-            returnText = returnText + "</" + prefix + ":" + element.getLocalName() + ">";
-        else
-            returnText = returnText + "</" + element.getLocalName() + ">";
-
-        if (newLines)
-            returnText = returnText + "\n";
-
-        return returnText;
     }
 
     /**
-     * @param text
-     * @return
      */
-    private String serializeText(OMText text) {
-        short type = text.getType();
-        String returnText = null;
-        if (type == OMNode.COMMENT_NODE) {
-            returnText = "<!--" + text.getValue() + "-->";
-        } else if (type == OMNode.CDATA_SECTION_NODE) {
-            returnText = "<![CDATA[" + text.getValue() + "]]>";
-        } else {
-            returnText = text.getValue();
-        }
-        return returnText;
+    protected void serializeText(OMText text, XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeCharacters(text.getValue());
+    }
+
+    protected void serializeCData(OMText text, XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeCData(text.getValue());
+    }
+
+
+    protected void serializeComment(OMText text, XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeComment(text.getValue());
     }
 
     /**
      * @param attr
-     * @return
+     * @param writer
+     * @throws XMLStreamException
      */
-    private String serializeAttribute(OMAttribute attr) {
-        String returnText = "";
+
+
+    protected void serializeAttribute(OMAttribute attr, XMLStreamWriter writer) throws XMLStreamException {
+
         //first check whether the attribute is associated with a namespace
         OMNamespace ns = attr.getNamespace();
+        String prefix = null;
+        String namespaceName = null;
         if (ns != null) {
             //add the prefix if it's availble
-            String prefix = ns.getPrefix();
-            if (prefix != null)
-                returnText = returnText + prefix + ":";
-        }
-        //add the local name and the value
-        returnText = returnText + attr.getLocalName() + "=\"" + attr.getValue() + "\"";
-        return returnText;
-    }
-
-
-    private String serializeNamespace(OMNamespace namespace) {
-        String returnText = "";
-
-        if (namespace != null) {
-            //add the prefix if it's availble
-            String prefix = namespace.getPrefix();
+            prefix = ns.getPrefix();
+            namespaceName = ns.getName();
 
             if (prefix != null)
-                returnText = returnText + "xmlns:" + prefix + "=";
+                writer.writeAttribute(prefix, namespaceName, attr.getLocalName(), attr.getValue());
             else
-                returnText = returnText + "xmlns=";
-
-            returnText = returnText + "\"" + namespace.getName() + "\"";
+                writer.writeAttribute(namespaceName, attr.getLocalName(), attr.getValue());
+        } else {
+            writer.writeAttribute(attr.getLocalName(), attr.getValue());
         }
-        //add the local name and the value
 
-        return returnText;
     }
 
+
+    protected void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer) throws XMLStreamException {
+        if (namespace != null) {
+            String prefix = namespace.getPrefix();
+            if (!prefixList.contains(prefix))
+                writer.writeNamespace(prefix, namespace.getName());
+            
+        }
+    }
 
 }

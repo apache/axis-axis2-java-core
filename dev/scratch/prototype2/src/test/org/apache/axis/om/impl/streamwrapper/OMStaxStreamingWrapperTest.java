@@ -1,17 +1,13 @@
 package org.apache.axis.om.impl.streamwrapper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.*;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
-import org.apache.axis.impl.llom.OMStAXWrapper;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
@@ -58,7 +54,8 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     public void testWrapperFullOM() throws Exception {
         assertNotNull(envelope);
         //this serializing will cause the OM to fully build!
-        serilizer.serialize(envelope, new FileOutputStream(tempFile));
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
+        serilizer.serialize(envelope,writer);
         parser = envelope.getPullParser(false);
         while (parser.hasNext()) {
             int event = parser.next();
@@ -91,9 +88,9 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 checkStartElement(parser);
-            } else if (event == XMLStreamReader.CHARACTERS) {
+            } else if (event == XMLStreamConstants.CHARACTERS) {
                 checkCharacters(parser);
             }
         }
@@ -107,9 +104,9 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         while (parser.hasNext()) {
             int event = parser.next();
             assertTrue(event > 0);
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 checkStartElement(parser);
-            } else if (event == XMLStreamReader.CHARACTERS) {
+            } else if (event == XMLStreamConstants.CHARACTERS) {
                 checkCharacters(parser);
             }
         }

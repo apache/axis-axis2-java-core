@@ -24,11 +24,15 @@ import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.SOAPEnvelope;
 
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.OutputStream;
 
 /**
  */
 public abstract class AbstractTrasnportSender extends AbstractHandler implements TransportSender {
+
     public final void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = null;
         if (msgContext.isProcessingFault()) {
@@ -50,8 +54,13 @@ public abstract class AbstractTrasnportSender extends AbstractHandler implements
         startSending();
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope != null) {
-            SimpleOMSerializer serializer = new SimpleOMSerializer();
-            serializer.serialize(envelope, out);
+            try {
+                SimpleOMSerializer serializer = new SimpleOMSerializer();
+                XMLStreamWriter outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                serializer.serialize(envelope, outputWriter);
+            } catch (XMLStreamException e) {
+                throw new AxisFault("Stream error",e);
+            }
 
         }
         finalizeSending();

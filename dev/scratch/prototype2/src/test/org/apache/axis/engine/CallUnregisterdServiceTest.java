@@ -19,6 +19,8 @@ package org.apache.axis.engine;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.client.Call;
@@ -31,6 +33,7 @@ import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
+import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -87,10 +90,11 @@ public class CallUnregisterdServiceTest extends AbstractTestCase{
             OMElement value =  fac.createOMElement("myValue",omNs) ;
             value.setValue("Isaac Assimov, the foundation Sega");
             method.addChild(value);
-            
+
             Call call = new Call();
             URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/EchoBadXMLService");
             OMElement omele = call.syncCall(method,url);
+
             assertNotNull(omele);
         }catch(AxisFault e){
             tearDown();

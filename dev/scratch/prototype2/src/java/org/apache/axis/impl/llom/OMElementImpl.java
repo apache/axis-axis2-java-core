@@ -33,7 +33,9 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     private OMNode firstChild;
     private OMXMLParserWrapper builder;
     private OMAttributeImpl firstAttribute;
-    private ArrayList namespaces;
+    private ArrayList namespaces = new ArrayList(5);
+    // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
+    // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
     private ArrayList attributes;
 
     public OMElementImpl(OMElement parent) {
@@ -119,16 +121,15 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
-
-        if (namespaces == null) {
-            namespaces = new ArrayList(5);
-            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
-            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
-
-        }
         OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
         namespaces.add(ns);
         return ns;
+    }
+
+    //TODO  correct this
+    public void setValue(String value) {
+       OMText txt = OMFactory.newInstance().createText(value);
+       this.addChild(txt);
     }
 
     /**
@@ -136,12 +137,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
-        if (namespaces == null) {
-            namespaces = new ArrayList(5);
-            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
-            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
-
-        }
         namespaces.add(namespace);
         return namespace;
     }
@@ -163,7 +158,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         if (namespace != null) {
             return namespace;
         }
-
         // go up to check with ancestors
         if (parent != null)
             return parent.findInScopeNamespace(uri, prefix);
@@ -196,6 +190,10 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     }
 
     public Iterator getAllDeclaredNamespaces() {
+        if (namespaces==null){
+            return null;
+        }
+
         return namespaces.listIterator();
     }
 
@@ -327,6 +325,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      *
      */
     public XMLStreamReader getPullParser(boolean cacheOff) {
-       return new OMStAXWrapper(builder,this,cacheOff);
+        if (builder==null)
+            throw new UnsupportedOperationException("This element was not created in a mnner to be switched");
+        return new OMStAXWrapper(builder, this, cacheOff);
     }
 }
