@@ -49,7 +49,9 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
 
     public void invokeAndsend(MessageContext msgContext) throws AxisFault {
         Provider provider = msgContext.getService().getProvider();
-        MessageContext outMsgContext = provider.invoke(msgContext);
+		log.info("start invoke the web service impl");
+		MessageContext outMsgContext = provider.invoke(msgContext);
+		log.info("Invoked the Web Servivces impl");
         Sender sender = new Sender();
         sender.send(msgContext);
     }

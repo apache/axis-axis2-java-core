@@ -27,6 +27,34 @@ import javax.xml.stream.XMLStreamWriter;
 
 
 public class SimpleTypeEncodingUtils {
+	
+	public static Object[] deserializeArray(XMLStreamReader xpp,Encoder encoder)throws AxisFault{
+		ArrayList objs = new ArrayList();
+        
+		try{
+			int event = xpp.next();
+			while(true){
+				if(XMLStreamConstants.START_ELEMENT == event){
+					objs.add(encoder.deSerialize(xpp));
+				}else if(XMLStreamConstants.END_ELEMENT == event){
+					break;
+				}else if(XMLStreamConstants.END_DOCUMENT == event){
+					throw new AxisFault("premature and of file");
+				}
+				event = xpp.next();
+			}
+			Object[] vals = new Object[objs.size()];
+			for(int i = 0;i<objs.size();i++){
+				vals[i] = objs.get(i);
+			}
+			return vals;
+		} catch (XMLStreamException e) {
+			throw AxisFault.makeFault(e);
+		}
+
+	}
+	
+	
     public static String[] deserializeStringArray(XMLStreamReader xpp)throws AxisFault{
         ArrayList strings = new ArrayList();
         
@@ -35,9 +63,9 @@ public class SimpleTypeEncodingUtils {
             while(true){
                 if(XMLStreamConstants.START_ELEMENT == event){
                     strings.add(deserializeString(xpp));
-                }if(XMLStreamConstants.END_ELEMENT == event){
+                }else if(XMLStreamConstants.END_ELEMENT == event){
                     break;
-                }if(XMLStreamConstants.END_DOCUMENT == event){
+                }else if(XMLStreamConstants.END_DOCUMENT == event){
                     throw new AxisFault("premature and of file");
                 }
                 event = xpp.next();

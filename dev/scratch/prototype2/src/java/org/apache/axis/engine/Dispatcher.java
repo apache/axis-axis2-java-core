@@ -56,7 +56,8 @@ public class Dispatcher extends AbstractHandler implements Handler {
                 }
             }
             if (serviceName != null) {
-                AxisService service = msgctx.getGlobalContext().getRegistry().getService(serviceName);
+            	EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
+                AxisService service = registry.getService(serviceName);
                 if (service != null) {
                     msgctx.setService(service);
                     //let add the Handlers 

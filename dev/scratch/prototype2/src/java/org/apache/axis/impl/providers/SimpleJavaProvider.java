@@ -44,10 +44,10 @@ import org.apache.commons.logging.LogFactory;
 
 public class SimpleJavaProvider extends AbstractProvider implements Provider {
     protected Log log = LogFactory.getLog(getClass());
-    private QName name;
-    private String scope;
-    private Method method;
-    private ClassLoader classLoader;
+	protected QName name;
+	protected String scope;
+	protected Method method;
+	protected ClassLoader classLoader;
 
     public SimpleJavaProvider() {
         scope = Constants.APPLICATION_SCOPE;
@@ -100,7 +100,8 @@ public class SimpleJavaProvider extends AbstractProvider implements Provider {
         while(it.hasNext()){
             OMNode node = (OMNode)it.next();
             if(node.getType() == OMNode.ELEMENT_NODE){
-                return deserializeParameters(((OMElement)node).getPullParser(true),method);
+            	Object[] objs = deserializeParameters(((OMElement)node).getPullParser(true),method);
+                return objs;
             }
         }
         return null;

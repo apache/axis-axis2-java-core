@@ -253,15 +253,19 @@ public class DeploymentEngine implements DeploymentConstants {
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 loader1 = new URLClassLoader(urlsToLoadFrom, parent);
                 service.setClassLoader(loader1);
-                if(! currentFileItem.getClassName().equals("")){
+                
+                String readInClass = currentFileItem.getClassName();
+                
+                if(readInClass != null && !"".equals(readInClass)){
                     serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
                 }
-                service.setServiceClass(serviceclass);
-                if(! currentFileItem.getProvideName().equals("")){
+				service.setServiceClass(serviceclass);
+				
+                String readInProviderName = currentFileItem.getProvideName();
+                if(readInProviderName != null && ! "".equals(readInProviderName)){
                     Class provider =Class.forName(currentFileItem.getProvideName(), true, loader1);
                     service.setProvider((Provider)provider.newInstance());
                 }
-                service.setServiceClass(serviceclass);
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage(),e);
             } catch (Exception e) {
@@ -366,6 +370,15 @@ public class DeploymentEngine implements DeploymentConstants {
                     case SERVICE:
                         {
                             try {
+//                            	String serviceName = currentFileItem.getName();
+//                            	int endIndex = serviceName.lastIndexOf('.');
+//                            	int startIndex =  serviceName.lastIndexOf('/');
+//                            	if(startIndex == -1){
+//									startIndex =  serviceName.lastIndexOf('\\');
+//                            	}
+                            	
+	//							AxisService service = new AxisService(new QName(serviceName.substring(startIndex +1,endIndex -1)));
+                            	
                                 AxisService service = new AxisService();
                                 unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                                 addnewService(service);

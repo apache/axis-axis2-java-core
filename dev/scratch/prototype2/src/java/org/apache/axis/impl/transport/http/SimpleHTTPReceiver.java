@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -509,6 +510,28 @@ public class SimpleHTTPReceiver extends AbstractTransportReceiver implements Run
      */
     public AxisEngine getEngine() {
         return engine;
+    }
+    
+    public static void main(String[] args) throws Exception{
+		if(args.length != 2){
+			System.out.println("SimpeHttpReciver repositoryLocation port");
+		}
+		SimpleHTTPReceiver reciver = new SimpleHTTPReceiver(args[0]);
+		
+		ServerSocket serverSoc = null;
+		serverSoc = new ServerSocket(Integer.parseInt(args[1]));
+		reciver.setServerSocket(serverSoc);
+		Thread thread = new Thread(reciver);
+		thread.setDaemon(true);
+
+		try {
+			thread.start();
+			System.in.read();
+		} finally {
+			reciver.stop();
+				
+		}
+
     }
 
 }
