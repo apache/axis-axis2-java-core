@@ -21,20 +21,22 @@
 	
 	
 	
-	
 	<path id="classpath.library">
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>            
-        </fileset>
-    </path>
-	
-	<path id="classpath.classes">
-		<pathelement location="${classes.dir}"/>
-	</path>
-	
-	<path id="classpath.runtimelibraries">
-		<pathelement path="classpath.classes"/>
-	</path>
+	        <fileset dir="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/lib">
+	            <include name="**/*.jar"/>            
+	        </fileset>
+	    </path>
+		
+		<path id="classpath.client">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar"/>            
+			</fileset>
+		</path>
+		
+		<path id="classpath.runtimelibraries">
+			<path refid="classpath.library" />
+			<path refid="classpath.client" />
+		</path>
 	
 
 	
@@ -43,6 +45,7 @@
 		<delete dir="${classes.dir}" />
 		<delete dir="${services.dir}" failonerror="false"/>
 		<delete dir="${build.dir}" />
+		<delete dir="${lib.dir}"/>
 	</target>
 
 	<target name="validateTomcatHome">
@@ -60,6 +63,7 @@
 
 	<target name="createDir">
 		<mkdir dir="${build.dir}" />
+		<mkdir dir="${lib.dir}"/>
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${build.dir}/${jardrop.dir}"/>
 	</target>
@@ -91,7 +95,7 @@
 	
 	<target name="echoString" depends="compile">
 		<java classname="samples.userguide.sample1.client.EchoString">
-			<classpath refid="classpath.library"/>
+			<classpath refid="classpath.runtimelibraries"/>
 			<arg value="8080"/>
 			<arg value="Hi Axis2 this is to test the EchoString(to change the string look in the build file)"/>
 		</java>
@@ -99,7 +103,7 @@
 	
 	<target name="echoInt" depends="compile">
 			<java classname="samples.userguide.sample1.client.EchoInt">
-				<classpath refid="classpath.library"/>
+				<classpath refid="classpath.runtimelibraries"/>
 				<arg value="8080"/>
 				<arg value="329"/>
 			</java>
