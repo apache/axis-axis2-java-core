@@ -29,9 +29,8 @@ import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Nov 19, 2004
- * Time: 4:35:04 PM
- * 
+ *         Date: Nov 19, 2004
+ *         Time: 4:35:04 PM
  */
 public class OMNavigatorTest extends AbstractTestCase {
 
@@ -69,6 +68,7 @@ public class OMNavigatorTest extends AbstractTestCase {
         //now the OM is fully created test the navigation
         OMNavigator navigator = new OMNavigator(envelope);
         OMNode node = null;
+
 
         while (navigator.isNavigable()) {
             node = navigator.next();

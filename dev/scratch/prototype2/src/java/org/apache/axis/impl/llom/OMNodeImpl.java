@@ -70,7 +70,7 @@ public class OMNodeImpl implements OMNode {
      * @throws org.apache.axis.om.OMException
      */
     public OMNode getNextSibling() throws OMException {
-        if (nextSibling == null && !parent.isComplete())
+        if (nextSibling == null && parent!=null && !parent.isComplete())
             parent.buildNext();
         return nextSibling;
     }

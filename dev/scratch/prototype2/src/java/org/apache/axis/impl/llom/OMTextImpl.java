@@ -68,7 +68,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
      * @throws org.apache.axis.om.OMException
      */
     public short getType() throws OMException {
-        return OMNode.TEXT_NODE;    //TODO implement this
+        return OMNode.TEXT_NODE;
     }
 
 
