@@ -24,6 +24,9 @@ import junit.framework.TestCase;
 
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
 import org.apache.axis.impl.llom.wrapper.OMXPPWrapper;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -56,6 +59,37 @@ public class OMTestUtils {
             }    
         }
     
-    } 
+    }
+    
+    public static void compare(Element ele,OMElement omele) throws Exception{
+        if(ele == null && omele == null){
+            return;
+        }else if(ele != null && omele != null){
+            System.out.println("@@@ ele = " +ele +" = " + "omele = "+ omele);
+            
+            System.out.println(ele.getLocalName() +" = " + omele.getLocalName());
+            System.out.println(ele.getNamespaceURI()+" = " + omele.getNamespace().getValue());
+            TestCase.assertTrue(ele.getLocalName().equals(omele.getLocalName()));
+            TestCase.assertTrue(ele.getNamespaceURI().equals(omele.getNamespace().getValue()));
+            
+            Iterator it = omele.getChildren();
+            
+            NodeList list = ele.getChildNodes();
+            for(int i = 0;i<list.getLength();i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    TestCase.assertTrue(it.hasNext());
+                    OMNode tempOmNode = (OMNode)it.next();
+                    while(tempOmNode.getType() != OMNode.ELEMENT_NODE){
+                        TestCase.assertTrue(it.hasNext());
+                        tempOmNode = (OMNode)it.next();
+                    }
+                    compare((Element)node,(OMElement)tempOmNode);
+                }
+            }
+        }else{
+               throw new Exception("One is null");
+        }
+    }
 
 }
