@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.impl.transport.http;
+package org.apache.axis.impl.transport.tcp;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -38,8 +38,11 @@ public class TCPTrasnportSender extends AbstractHandler implements TransportSend
     public void invoke(MessageContext msgContext) throws AxisFault {
         OutputStream out = (OutputStream)msgContext.getProperty(MessageContext.TRANSPORT_DATA);
         OMEnvelope envelope = msgContext.getEnvelope();
-        SimpleOMSerializer serializer = new SimpleOMSerializer();
-        serializer.serialize(envelope,this.out);
+        if(envelope != null){
+            SimpleOMSerializer serializer = new SimpleOMSerializer();
+            serializer.serialize(envelope,this.out);
+            
+        }
     }
 
     public void revoke(MessageContext msgContext) {

@@ -33,52 +33,47 @@ import java.net.Socket;
 
 
 
-public class SimpleAxisWorker implements Runnable {
+public abstract class SimpleHTTPHandler implements Runnable {
     protected static Log log =
-            LogFactory.getLog(SimpleAxisWorker.class.getName());
-
-    private AxisEngine engine;
-    private SimpleAxisServer server;
-    private Socket socket;
-    private String serviceFromURI;
-
+            LogFactory.getLog(SimpleHTTPHandler.class.getName());
 
     // Axis specific constants
-    private static String transportName = "SimpleHTTP";
+    protected static String transportName = "SimpleHTTP";
+    protected AxisEngine engine;
 
     // HTTP status codes
-    private static byte OK[] = ("200 OK").getBytes();
-    private static byte NOCONTENT[] = ("202 OK\n\n").getBytes();
-    private static byte UNAUTH[] = ("401 Unauthorized").getBytes();
-    private static byte SENDER[] = "400".getBytes();
-    private static byte ISE[] = ("500 Internal server error").getBytes();
+    protected static byte OK[] = ("200 OK").getBytes();
+    protected static byte NOCONTENT[] = ("202 OK\n\n").getBytes();
+    protected static byte UNAUTH[] = ("401 Unauthorized").getBytes();
+    protected static byte SENDER[] = "400".getBytes();
+    protected static byte ISE[] = ("500 Internal server error").getBytes();
 
     // HTTP prefix
-    private static byte HTTP[] = "HTTP/1.0 ".getBytes();
+    protected static byte HTTP[] = "HTTP/1.0 ".getBytes();
 
     // Standard MIME headers for XML payload
-    private static byte XML_MIME_STUFF[] =
+    protected static byte XML_MIME_STUFF[] =
             ("\r\nContent-Type: text/xml; charset=utf-8\r\n" +
             "Content-Length: ").getBytes();
 
     // Standard MIME headers for HTML payload
-    private static byte HTML_MIME_STUFF[] =
+    protected static byte HTML_MIME_STUFF[] =
             ("\r\nContent-Type: text/html; charset=utf-8\r\n" +
             "Content-Length: ").getBytes();
 
     // Mime/Content separator
-    private static byte SEPARATOR[] = "\r\n\r\n".getBytes();
+    protected static byte SEPARATOR[] = "\r\n\r\n".getBytes();
 
     // Tiddly little response
-//    private static final String responseStr =
+//    protected static final String responseStr =
 //            "<html><head><title>SimpleAxisServer</title></head>" +
 //            "<body><h1>SimpleAxisServer</h1>" +
 //            Messages.getEnvelope("reachedServer00") +
 //            "</html>";
-//    private static byte cannedHTMLResponse[] = responseStr.getBytes();
+//    protected static byte cannedHTMLResponse[] = responseStr.getBytes();
 
     // ASCII character mapping to lower case
-    private static final byte[] toLower = new byte[256];
+    protected static final byte[] toLower = new byte[256];
 
     static {
         for (int i = 0; i < 256; i++) {
@@ -91,57 +86,55 @@ public class SimpleAxisWorker implements Runnable {
     }
 
     // buffer for IO
-    private static final int BUFSIZ = 4096;
+    protected static final int BUFSIZ = 4096;
 
     // mime header for content length
-    private static final byte lenHeader[] = "content-length: ".getBytes();
-    private static final int lenLen = lenHeader.length;
+    protected static final byte lenHeader[] = "content-length: ".getBytes();
+    protected static final int lenLen = lenHeader.length;
 
     // mime header for content type
-    private static final byte typeHeader[] = (HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase() + ": ").getBytes();
-    private static final int typeLen = typeHeader.length;
+    protected static final byte typeHeader[] = (HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase() + ": ").getBytes();
+    protected static final int typeLen = typeHeader.length;
 
     // mime header for content location
-    private static final byte locationHeader[] = (HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase() + ": ").getBytes();
-    private static final int locationLen = locationHeader.length;
+    protected static final byte locationHeader[] = (HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase() + ": ").getBytes();
+    protected static final int locationLen = locationHeader.length;
 
     // mime header for soap action
-    private static final byte actionHeader[] = "soapaction: ".getBytes();
-    private static final int actionLen = actionHeader.length;
+    protected static final byte actionHeader[] = "soapaction: ".getBytes();
+    protected static final int actionLen = actionHeader.length;
 
     // mime header for cookie
-    private static final byte cookieHeader[] = "cookie: ".getBytes();
-    private static final int cookieLen = cookieHeader.length;
+    protected static final byte cookieHeader[] = "cookie: ".getBytes();
+    protected static final int cookieLen = cookieHeader.length;
 
     // mime header for cookie2
-    private static final byte cookie2Header[] = "cookie2: ".getBytes();
-    private static final int cookie2Len = cookie2Header.length;
+    protected static final byte cookie2Header[] = "cookie2: ".getBytes();
+    protected static final int cookie2Len = cookie2Header.length;
 
     // HTTP header for authentication
-    private static final byte authHeader[] = "authorization: ".getBytes();
-    private static final int authLen = authHeader.length;
+    protected static final byte authHeader[] = "authorization: ".getBytes();
+    protected static final int authLen = authHeader.length;
 
     // mime header for GET
-    private static final byte getHeader[] = "GET".getBytes();
+    protected static final byte getHeader[] = "GET".getBytes();
 
     // mime header for POST
-    private static final byte postHeader[] = "POST".getBytes();
+    protected static final byte postHeader[] = "POST".getBytes();
 
     // header ender
-    private static final byte headerEnder[] = ": ".getBytes();
+    protected static final byte headerEnder[] = ": ".getBytes();
 
     // "Basic" auth string
-    private static final byte basicAuth[] = "basic ".getBytes();
+    protected static final byte basicAuth[] = "basic ".getBytes();
 
-    public SimpleAxisWorker(SimpleAxisServer server, Socket socket,AxisEngine engine) {
-        this.server = server;
-        this.socket = socket;
-        this.engine = engine;
-    }
 
     /**
      * Run method
-     */ 
+     */
+    
+    public abstract MessageContext execute()throws AxisFault;
+    
     public void run() {
         try {
             execute();
@@ -155,166 +148,6 @@ public class SimpleAxisWorker implements Runnable {
     /**
      * The main workhorse method.
      */
-    public void execute () throws AxisFault {
-        byte buf[] = new byte[BUFSIZ];
-        // create an Axis server
-
-        MessageContext msgContext = new MessageContext(engine.getRegistry());
-        msgContext.setServerSide(true);
-
-        // Reusuable, buffered, content length controlled, InputStream
-        NonBlockingBufferedInputStream is =
-                new NonBlockingBufferedInputStream();
-
-        // buffers for the headers we care about
-        StringBuffer soapAction = new StringBuffer();
-        StringBuffer httpRequest = new StringBuffer();
-        StringBuffer fileName = new StringBuffer();
-        StringBuffer cookie = new StringBuffer();
-        StringBuffer cookie2 = new StringBuffer();
-        StringBuffer authInfo = new StringBuffer();
-        StringBuffer contentType = new StringBuffer();
-        StringBuffer contentLocation = new StringBuffer();
-
-
-        try {
-            // assume the best
-            byte[] status = OK;
-
-            // assume we're not getting WSDL
-            boolean doWsdl = false;
-
-            // cookie for this session, if any
-            String cooky = null;
-
-            String methodName = null;
-
-            try {
-                authInfo.delete(0, authInfo.length());
-
-                // read headers
-                is.setInputStream(socket.getInputStream());
-                // parse all headers into hashtable
-//                MimeHeaders requestHeaders = new MimeHeaders();
-                int contentLength = parseHeaders(is, buf, contentType,
-                        contentLocation, soapAction,
-                        httpRequest, fileName,
-                        cookie, cookie2, authInfo);
-//                        cookie, cookie2, authInfo, requestHeaders);
-                is.setContentLength(contentLength);
-
-                int paramIdx = fileName.toString().indexOf('?');
-                if (paramIdx != -1) {
-                    // Got params
-                    String params = fileName.substring(paramIdx + 1);
-                    fileName.setLength(paramIdx);
-
-
-                    if ("wsdl".equalsIgnoreCase(params))
-                        doWsdl = true;
-
-                    if (params.startsWith("method=")) {
-                        methodName = params.substring(7);
-                    }
-                }
-
-
-
-                String filePart = fileName.toString();
-                if (filePart.startsWith("axis/services/")) {
-                    String servicePart = filePart.substring(14);
-                    int separator = servicePart.indexOf('/');
-                    if (separator > -1) {
-                        msgContext.setProperty("objectID",
-                                       servicePart.substring(separator + 1));
-                        servicePart = servicePart.substring(0, separator);
-                    }
-                   this.serviceFromURI = servicePart;
-                }
-
-                if (authInfo.length() > 0) {
-                    // Process authentication info
-                    //authInfo = new StringBuffer("dXNlcjE6cGFzczE=");
-                    byte[] decoded = Base64.decode(authInfo.toString());
-                    StringBuffer userBuf = new StringBuffer();
-                    StringBuffer pwBuf = new StringBuffer();
-                    StringBuffer authBuf = userBuf;
-                    for (int i = 0; i < decoded.length; i++) {
-                        if ((char) (decoded[i] & 0x7f) == ':') {
-                            authBuf = pwBuf;
-                            continue;
-                        }
-                        authBuf.append((char) (decoded[i] & 0x7f));
-                    }
-
-
-                    msgContext.setProperty(MessageContext.USER_NAME,userBuf.toString());
-                    msgContext.setProperty(MessageContext.PASSWARD,pwBuf.toString());
-                }
-                if (httpRequest.toString().equals("GET")) {
-                		throw new UnsupportedOperationException("GET not supported"); 
-                } else {
-
-                    // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
-                    // for now, do not complain if no SOAPAction at all
-                    String soapActionString = soapAction.toString();
-                    if (soapActionString != null) {
-                        msgContext.setProperty(MessageContext.SOAP_ACTION,soapActionString);
-                    }
-                    
-                    Service service = ServiceLocator.locateService(serviceFromURI,soapActionString,msgContext);
-                    msgContext.setService(service);
-                    // Send it on its way...
-                    OutputStream out = socket.getOutputStream();
-                    out.write(HTTP);
-                    out.write(status);
-                    log.info("status written");
-                    
-                    
-                    
-                    //We do not have any Addressing Headers to put
-                    //let us put the information about incoming transport
-                    msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                        TransportSenderLocator.TRANSPORT_TCP);
-                    msgContext.setProperty(MessageContext.TRANSPORT_DATA,out);
-
-                    XmlPullParserFactory pf = XmlPullParserFactory.newInstance();
-                    pf.setNamespaceAware(true);
-                    XmlPullParser  parser = pf.newPullParser();
-                    parser.setInput(new InputStreamReader(is));
-                    
-                    OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser); 
-                    msgContext.setEnvelope(parserWrapper.getOMEnvelope());
-                    EngineRegistry reg = engine.getRegistry();
-                    // invoke the Axis engine
-                    engine.recive(msgContext);
-                    log.info("revice done");
-                    out.flush();
-                }
-
-            } catch (Exception e) {
-            	e.printStackTrace();
-            }
-
-
-//            if (resposeMessage != null) {
-//
-//                //out.write(XML_MIME_STUFF);
-//                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " +resposeMessage.getContentType()).getBytes());
-//
-//            }
-
-            // out.write(response);
-            
-        } catch (Exception e) {
-            log.info(e);
-        } finally {
-            try {
-                if (socket != null) socket.close();
-            } catch (Exception e) {
-            }
-        }
-    }
 
     protected void invokeMethodFromGet(String methodName, String args) throws Exception {
 
@@ -333,7 +166,7 @@ public class SimpleAxisWorker implements Runnable {
      * @param headers HTTP headers to transfer to MIME headers
      * @return Content-Length
      */
-    private int parseHeaders(NonBlockingBufferedInputStream is,
+    protected int parseHeaders(NonBlockingBufferedInputStream is,
                              byte buf[],
                              StringBuffer contentType,
                              StringBuffer contentLocation,
@@ -490,7 +323,7 @@ public class SimpleAxisWorker implements Runnable {
      * @param out       OutputStream to be written to
      * @param value     Integer value to be written.
      */
-    private void putInt(byte buf[], OutputStream out, int value)
+    protected void putInt(byte buf[], OutputStream out, int value)
             throws java.io.IOException {
         int len = 0;
         int offset = buf.length;
@@ -526,7 +359,7 @@ public class SimpleAxisWorker implements Runnable {
      * @param off       starting offset into the byte array
      * @param len       maximum number of bytes to read
      */
-    private int readLine(NonBlockingBufferedInputStream is, byte[] b, int off, int len)
+    protected int readLine(NonBlockingBufferedInputStream is, byte[] b, int off, int len)
             throws java.io.IOException {
         int count = 0, c;
 
