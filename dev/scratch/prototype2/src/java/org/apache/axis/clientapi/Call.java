@@ -108,6 +108,9 @@ public class Call {
             throw AxisFault.makeFault(e);
         } finally {
             try {
+                //TODO This should be the Receiver.close();
+                //Receiver is taken using the
+                //TransportReciver reciver = TransportReciverLocator.locate(requestMessageContext);
                 out.close();
             } catch (IOException e1) {
                 throw new AxisFault();
@@ -143,6 +146,8 @@ public class Call {
                 Constants.TRANSPORT_HTTP);
             TransportReciver reciver = TransportReciverLocator.locate(response);
             reciver.invoke(response);
+            //Check whether we got a soap fault  , we should check this only if the transport is bi directioanl
+            //then throw an exception
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
@@ -177,6 +182,8 @@ public class Call {
             reciver.invoke(response);
             SOAPEnvelope resenvelope = response.getEnvelope();
 
+            //TODO if the resenvelope is a SOAPFault then throw an exception
+
             return resenvelope;
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
@@ -200,16 +207,13 @@ public class Call {
                 new MessageContext(registry, null, null);
             msgctx.setEnvelope(envelope);
 
-            msgctx.setProperty(
-                MessageContext.TRANSPORT_TYPE,
-            Constants.TRANSPORT_HTTP);
+            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,Constants.TRANSPORT_HTTP);
             msgctx.setTo(targetEPR);
 
             // only the transport blocked , client dose not hang
             if (blocked) {
                 //TODO This shoudld be taken from a pool of inovkers.
-                Invoker invoker =
-                    new Invoker(msgctx, engine, registry, callback);
+                Invoker invoker = new Invoker(msgctx, engine, registry, callback);
                 Thread th = new Thread(invoker);
                 th.start();
             } else {
