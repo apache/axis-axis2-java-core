@@ -33,7 +33,7 @@ import java.io.OutputStream;
 public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
 
     public final void invoke(MessageContext msgContext) throws AxisFault {
-        OutputStream out = null;
+		OutputStream out = null;
         if (msgContext.isProcessingFault()) {
             //Means we are processing fault
             if (msgContext.getFaultTo() != null) {

@@ -1,19 +1,28 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
-import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
-import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
-import org.apache.axis.om.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Stack;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Stack;
+
+import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
+import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
+import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
+import org.apache.axis.impl.utils.CollectionPool;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 
 /**
@@ -33,21 +42,36 @@ import java.util.Stack;
  * <p/>
  */
 public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConstants {
-
-    private OMNode firstChild;
+	private OMNode firstChild;
     protected OMXMLParserWrapper builder;
-    private ArrayList namespaces;
-    private ArrayList attributes;
+    private HashMap namespaces;
+    private HashMap attributes;
     private Stack namespaceStack;
 
     public OMElementImpl(OMElement parent) {
         super(parent);
         done = true;
+        this.namespaces = CollectionPool.createHashMap(5);
+        this.attributes = CollectionPool.createHashMap(5);
     }
+
+	public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
+		super(localName, null, parent);
+		this.namespaces = CollectionPool.createHashMap(5);
+		this.attributes = CollectionPool.createHashMap(5);
+
+		if (ns != null) {
+			setNamespace(handleNamespace(ns));
+		}
+		this.builder = builder;
+	}
 
 
     public OMElementImpl(String localName, OMNamespace ns) {
         super(localName, null, null);
+		this.namespaces = CollectionPool.createHashMap(5);
+		this.attributes = CollectionPool.createHashMap(5);
+
         if (ns != null) {
             setNamespace(handleNamespace(ns));
         }
@@ -65,13 +89,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
     }
 
 
-    public OMElementImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super(localName, null, parent);
-        if (ns != null) {
-            setNamespace(handleNamespace(ns));
-        }
-        this.builder = builder;
-    }
 
     /**
      * This will add child to the element. One can decide whether he append the child or he adds to the
@@ -149,15 +166,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @return
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
-
-        if (namespaces == null) {
-            namespaces = new ArrayList(5);
-            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
-            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
-
-        }
         OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
-        namespaces.add(ns);
+        namespaces.put(prefix,ns);
         return ns;
     }
 
@@ -172,13 +182,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @return
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
-        if (namespaces == null) {
-            namespaces = new ArrayList(5);
-            // the default size of the ArrayList is 10. But I think this is too much as on average number of namespaces is
-            // much more than 10. So I selected 5. Hope this is ok as an initial value. -- Eran Chinthaka 13/12/2004
-
-        }
-        namespaces.add(namespace);
+        namespaces.put(namespace.getPrefix(),namespace);
         return namespace;
     }
 
@@ -214,54 +218,22 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @throws OMException
      */
     public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException {
-
-        if (namespaces == null) {
-            return null;
-        }
-        // check in the current element
-        ListIterator namespaceListIterator = namespaces.listIterator();
         if (prefix == null) {
+			Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
                 if (omNamespace.getName().equals(uri)) {
                     return omNamespace;
                 }
             }
+            return null;
         } else {
-            while (namespaceListIterator.hasNext()) {
-                OMNamespace omNamespace = (OMNamespace) namespaceListIterator.next();
-                if (omNamespace.equals(uri, prefix)) {
-                    return omNamespace;
-                }
-            }
-
+            return (OMNamespace)namespaces.get(prefix);
         }
-        return null;
-
     }
 
     public Iterator getAllDeclaredNamespaces() {
-        if (namespaces == null) {
-
-            // no namespace declared in this element.
-            // return a null iterator
-            // have to look in to this later
-            return new Iterator() {
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-
-                public boolean hasNext() {
-                    return false;
-                }
-
-                public Object next() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
-
-        return namespaces.listIterator();
+        return namespaces.values().iterator();
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -274,21 +246,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @throws org.apache.axis.om.OMException
      */
     public OMAttribute getAttributeWithQName(QName qname) throws OMException {
-
-        if (attributes == null) {
-            return null;
-        }
-
-        ListIterator attrIter = attributes.listIterator();
-        OMAttribute omAttribute = null;
-        while (attrIter.hasNext()) {
-            omAttribute = (OMAttribute) attrIter.next();
-            if (omAttribute.getQName().equals(qname)) {
-                return omAttribute;
-            }
-        }
-
-        return null;
+        return  (OMAttribute)attributes.get(qname);
     }
 
     /**
@@ -297,10 +255,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @return
      */
     public Iterator getAttributes() {
-        if (attributes == null) {
-            attributes = new ArrayList(1);
-        }
-        return attributes.listIterator();
+        return attributes.values().iterator();
     }
 
     /**
@@ -310,18 +265,13 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      * @param attr
      */
     public OMAttribute insertAttribute(OMAttribute attr) {
-        if (attributes == null) {
-            attributes = new ArrayList(5);
-        }
-        attributes.add(attr);
+        attributes.put(attr.getQName(),attr);
 
         return attr;
     }
 
     public void removeAttribute(OMAttribute attr) {
-        if (attributes.indexOf(attr) != -1) {
-            attributes.remove(attr);
-        }
+	    attributes.remove(attr.getQName());
     }
 
     public OMAttribute insertAttribute(String attributeName, String value, OMNamespace ns) {
@@ -511,9 +461,9 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         }
         //add the elements attributes
         if (attributes != null) {
-            int attCount = attributes.size();
-            for (int i = 0; i < attCount; i++) {
-                serializeAttribute((OMAttribute) attributes.get(i), writer);
+        	Iterator attributesList = attributes.values().iterator();
+            while(attributesList.hasNext()) {
+                serializeAttribute((OMAttribute) attributesList.next(), writer);
             }
         }
         //add the namespaces
@@ -577,5 +527,11 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
 
         return nsWritten;
     }
+
+	protected void finalize() throws Throwable {
+		CollectionPool.returnHashMap(attributes);
+		CollectionPool.returnHashMap(namespaces);		
+		super.finalize();
+	}
 
 }
