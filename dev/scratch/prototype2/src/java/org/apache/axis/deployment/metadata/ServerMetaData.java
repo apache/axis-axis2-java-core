@@ -70,6 +70,10 @@ public class ServerMetaData {
             return null;
     }
 
+    public int getParameterCount() {
+        return parameterCount;
+    }
+
     public void addHandlers(HandlerMetaData handler) {
         handlers.add(handler);
         handlerCount++;

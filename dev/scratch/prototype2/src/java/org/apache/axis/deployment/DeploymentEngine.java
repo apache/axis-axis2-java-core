@@ -149,8 +149,15 @@ public class DeploymentEngine implements DeploymentConstants {
             if(getModule(moduleName) == null ){
                 throw new AxisFault(server.getName() + " Refer to invalid module " + moduleName + " has not bean deployed yet !");
             } else
-                 global.addModule(moduleName);
+                global.addModule(moduleName);
         }
+        int paraCount = server.getParameterCount();
+
+        for(int i = 0 ; i < paraCount ; i++ ){
+            Parameter parameter = server.getParameter(i);
+            global.addParameter(parameter);
+        }
+        
         PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
         phaseResolver.buildGlobalChains(global);
 
