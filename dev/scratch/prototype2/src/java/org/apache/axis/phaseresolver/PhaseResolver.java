@@ -29,9 +29,6 @@ import java.util.Vector;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Deepal Jayasinghe
- *         Dec 10, 2004
- *         5:27:11 PM
  */
 public class PhaseResolver {
 

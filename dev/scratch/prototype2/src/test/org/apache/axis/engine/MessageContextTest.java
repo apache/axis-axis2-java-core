@@ -21,9 +21,6 @@ import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.impl.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMFactory;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class MessageContextTest extends AbstractTestCase{
     public MessageContextTest(String testName) {
         super(testName);

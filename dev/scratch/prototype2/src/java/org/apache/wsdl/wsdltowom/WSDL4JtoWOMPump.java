@@ -23,10 +23,6 @@ import org.apache.wsdl.wom.WSDLBinding;
 import org.apache.wsdl.wom.WSDLDefinitions;
 import org.apache.wsdl.wom.WSDLInterface;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDL4JtoWOMPump {
     
     public void pump(WSDLDefinitions wsdlDefinitiios, Definition wsdl4jDefinition){

@@ -19,11 +19,6 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLService extends Component{
     public HashMap getEndpoints();
 

@@ -20,11 +20,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLBinding extends ExtensibleComponent{
    
 

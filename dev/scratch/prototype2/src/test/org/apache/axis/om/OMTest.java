@@ -27,7 +27,6 @@ import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.
- * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class OMTest extends AbstractTestCase{
     private SOAPEnvelope envelope;

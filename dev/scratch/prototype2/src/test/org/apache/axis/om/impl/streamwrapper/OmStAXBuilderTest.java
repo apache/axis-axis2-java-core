@@ -29,10 +29,6 @@ import org.apache.axis.om.OMXMLParserWrapper;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Axis team
- * Date: Nov 18, 2004
- * Time: 3:54:54 PM
- * 
  */
 public class OmStAXBuilderTest extends AbstractTestCase{
 

@@ -34,10 +34,6 @@ import org.apache.wsdl.wom.impl.WSDLBindingImpl;
 import org.apache.wsdl.wom.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.wom.impl.WSDLOperationImpl;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDLPump {
 
     private WSDLDefinitions womDefinition;

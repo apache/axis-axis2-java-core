@@ -23,9 +23,6 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.context.SimpleSessionContext;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class MiscTest extends AbstractTestCase {
 
     /**

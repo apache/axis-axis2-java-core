@@ -30,10 +30,6 @@ import org.apache.wsdl.wom.util.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
     
     public WSDLDefinitions build(InputStream in)throws WSDLException{

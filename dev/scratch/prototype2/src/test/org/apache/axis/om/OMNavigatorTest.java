@@ -27,10 +27,6 @@ import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- *         Date: Nov 19, 2004
- *         Time: 4:35:04 PM
  */
 public class OMNavigatorTest extends AbstractTestCase {
 

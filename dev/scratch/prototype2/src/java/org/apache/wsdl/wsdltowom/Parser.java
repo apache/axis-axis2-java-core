@@ -15,10 +15,6 @@
  */
 package org.apache.wsdl.wsdltowom;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class Parser {
 
 }

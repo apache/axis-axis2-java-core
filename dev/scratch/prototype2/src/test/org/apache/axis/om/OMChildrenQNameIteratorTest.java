@@ -14,11 +14,6 @@ package org.apache.axis.om;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- * Date: Dec 8, 2004
- * Time: 4:21:18 PM
- * 
  */
 
 import java.io.FileReader;

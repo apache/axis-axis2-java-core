@@ -37,9 +37,6 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class CallUnregisterdServiceTest extends AbstractTestCase{
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("","EchoXMLService");

@@ -22,11 +22,6 @@ import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Axis team
- * Date: Oct 11, 2004
- * Time: 12:34:15 PM
- * 
  */
 public class IteratorTester extends AbstractTestCase{
 

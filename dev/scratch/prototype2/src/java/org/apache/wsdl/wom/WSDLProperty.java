@@ -15,11 +15,6 @@
  */
 package org.apache.wsdl.wom;
 
-
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLProperty extends Component{
     public Object getConstraint();
 

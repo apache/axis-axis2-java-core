@@ -15,10 +15,6 @@
  */
 package org.apache.wsdl.wom;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface WSDLConstants {
 
   public static final String WSDL2_0_NAMESPACE = "http://www.w3.org/2004/03/wsdl";

@@ -16,9 +16,6 @@ import org.apache.axis.om.SOAPEnvelope;
  * limitations under the License.
  */
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class Echo2 {
     public SOAPEnvelope echo(SOAPEnvelope in){
         return in;

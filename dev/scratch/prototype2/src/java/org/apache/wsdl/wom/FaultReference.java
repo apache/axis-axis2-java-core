@@ -15,10 +15,6 @@
  */
 package org.apache.wsdl.wom;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public interface FaultReference extends Component{
     /**
      * Returns the direction of the Fault according the MEP

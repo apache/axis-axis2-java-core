@@ -18,9 +18,6 @@ import org.apache.commons.logging.LogFactory;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class EchoService {
     private Log log = LogFactory.getLog(getClass());
     public void echoVoid(){

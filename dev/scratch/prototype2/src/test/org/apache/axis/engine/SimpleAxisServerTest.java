@@ -31,9 +31,6 @@ import org.apache.axis.impl.description.SimpleAxisServiceImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class SimpleAxisServerTest extends AbstractTestCase{
     private QName serviceName = new QName("","EchoXMLService");
     private QName operationName = new QName("http://localhost/my","echoOMElement");

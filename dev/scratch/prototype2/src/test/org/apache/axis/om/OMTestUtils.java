@@ -31,9 +31,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class OMTestUtils {
 
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {

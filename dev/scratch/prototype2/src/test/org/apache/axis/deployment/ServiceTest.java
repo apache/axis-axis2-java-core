@@ -22,10 +22,6 @@ import javax.xml.stream.XMLStreamException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author Deepal Jayasinghe
- *         Nov 19, 2004
- *         4:47:32 PM
- *
  */
 public class ServiceTest extends TestCase {
    EngineRegistry er = null;

@@ -26,10 +26,6 @@ import org.apache.wsdl.wom.util.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-/**
- * @author chathura@opensource.lk
- *
- */
 public class WOMBuilderFactory {
 
     private static final int WSDL11 = 1;
