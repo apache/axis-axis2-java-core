@@ -27,17 +27,12 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
-//    private Stack namespacePrefixStack = new Stack();
-//    private Stack namespaceCountStack = new Stack();
-
-//    public Stack getNamespacePrefixStack() {
-//        return namespacePrefixStack;
-//    }
-//
-//    public void setNamespacePrefixStack(Stack namespacePrefixStack) {
-//        if (namespacePrefixStack != null)
-//            this.namespacePrefixStack = namespacePrefixStack;
-//    }
+   /* The behavior of the serializer is such that it returns when it encounters the
+    starting element for the second time. The depth variable tracks the depth of the
+    serilizer and tells it when to return.
+    Note that it is assumed that this serilization starts on an Element
+   */
+    private int depth = 0;
 
     public void serialize(Object obj, XMLStreamWriter writer) throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
@@ -52,8 +47,10 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     protected void serializeNode(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
         while (reader.hasNext()) {
             int event = reader.next();
+
             if (event == START_ELEMENT) {
                 serializeElement(reader, writer);
+                depth ++;
             } else if (event == ATTRIBUTE) {
                 serializeAttributes(reader, writer);
             } else if (event == CHARACTERS) {
@@ -64,6 +61,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
                 serializeCData(reader, writer);
             } else if (event == END_ELEMENT) {
                 serializeEndElement(writer);
+                depth--;
             } else if (event == END_DOCUMENT) {
                 try {
                     serializeEndElement(writer);
@@ -71,6 +69,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
                     //this is eaten
                 }
             }
+            if (depth==0) break;
         }
     }
 

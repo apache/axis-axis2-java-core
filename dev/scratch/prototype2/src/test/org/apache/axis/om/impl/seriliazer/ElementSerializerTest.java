@@ -43,9 +43,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         tempFile = File.createTempFile("temp","xml");
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile));
-//        writer = XMLOutputFactory.newInstance().
-//                createXMLStreamWriter(System.out);
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),reader);
+         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),reader);
     }
 
     public void testElementSerilization() throws Exception{

@@ -109,7 +109,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         //Note -  navigator is written in such a way that it first
         //returns the starting node at the first call to it
         currentNode = navigator.next();
-        nextNode = navigator.next();
+        updateNextNode();
         switchingAllowed = cacheOff;
     }
     /**
@@ -629,7 +629,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         if (navigable) {
             currentEvent = generateEvents(currentNode);
             updateCompleteStatus();
-            updateNextNode();
+            updateLastNode();
         } else {
             currentEvent = builder.next();
             updateCompleteStatus();
@@ -649,10 +649,18 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * At the same time the parser and builder are set up for the upcoming event
      * generation
      */
-    private void updateNextNode() throws XMLStreamException {
+    private void updateLastNode() throws XMLStreamException {
         lastNode = currentNode;
         currentNode = nextNode;
 
+        try {
+            updateNextNode();
+        } catch (Exception e) {
+            throw new XMLStreamException(e);
+        }
+    }
+
+    private void updateNextNode() {
         if (navigator.isNavigable()) {
             nextNode = navigator.next();
         } else {
@@ -672,7 +680,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 try {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (ClassCastException e) {
-                    throw new XMLStreamException("incompatible parser found!", e);
+                    throw new UnsupportedOperationException("incompatible parser found!");
                 }
 
                 switched = true;

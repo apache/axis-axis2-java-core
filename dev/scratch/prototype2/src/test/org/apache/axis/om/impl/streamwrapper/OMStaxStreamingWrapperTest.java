@@ -48,18 +48,18 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     }
 
 
-//    public void testWrapperFullOM() throws Exception {
-//        assertNotNull(envelope);
-//        //this serializing will cause the OM to fully build!
-//        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
-//        envelope.serialize(writer,true);
-//        parser = envelope.getPullParser(false);
-//        while (parser.hasNext()) {
-//            int event = parser.next();
-//            assertTrue(event > 0);
-//        }
-//
-//    }
+    public void testWrapperFullOM() throws Exception {
+        assertNotNull(envelope);
+        //this serializing will cause the OM to fully build!
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
+        envelope.serialize(writer,true);
+        parser = envelope.getPullParser(false);
+        while (parser.hasNext()) {
+            int event = parser.next();
+            assertTrue(event > 0);
+        }
+
+    }
 
     public void testWrapperHalfOM() throws Exception {
         assertNotNull(envelope);
@@ -70,14 +70,14 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         }
     }
 
-//    public void testWrapperHalfOMWithCacheOff() throws Exception {
-//        assertNotNull(envelope);
-//        parser = envelope.getPullParser(true);
-//        while (parser.hasNext()) {
-//            int event = parser.next();
-//            assertTrue(event > 0);
-//        }
-//    }
+    public void testWrapperHalfOMWithCacheOff() throws Exception {
+        assertNotNull(envelope);
+        parser = envelope.getPullParser(true);
+        while (parser.hasNext()) {
+            int event = parser.next();
+            assertTrue(event > 0);
+        }
+    }
 //
 //    public void testWrapperElementEventGenerationWithHalfOMWithCacheOff() throws XMLStreamException {
 //        assertNotNull(envelope);

@@ -139,10 +139,10 @@
     
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
-	<exclude>**/*Util*.java</exclude>
-        <exclude>**/OMStaxStreamingWrapperTest.java</exclude>
+	    <exclude>**/*Util*.java</exclude>
+        <!--exclude>**/OMStaxStreamingWrapperTest.java</exclude>
         <exclude>**/OMSerailizerTest.java</exclude>
-        <exclude>**/ElementSerializerTest.java</exclude>
+        <exclude>**/ElementSerializerTest.java</exclude-->
       </excludes>
       <includes>
         <include>**/*Test.java</include>
