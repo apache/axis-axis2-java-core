@@ -1,0 +1,24 @@
+diff/currentTimeMillis
+
+impl						N			M			T			S			diff
+-------------------------------------------------------------------------------------
+LLElement(test1)			200			100			10000					1
+
+ALElement(test2)												1			11		traverse/Object get(int index)
+																5			11
+																100			11
+																
+																1			35		traverse/Iterator iterator()
+																5			35
+																100			35											
+-------------------------------------------------------------------------------------
+LLElement(test1)			200			10000		100						6
+
+ALElement(test2)												1			21		traverse/Object get(int index)
+																5			26
+																100			49
+																		
+																1			45		traverse/Iterator iterator()
+																5			50
+																100			72										
+-------------------------------------------------------------------------------------
