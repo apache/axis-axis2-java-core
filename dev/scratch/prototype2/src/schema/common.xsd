@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.apache.org/axis/wsdd/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
-	<element name="parameter">
-		<complexType>
-			<attribute name="name" type="xsd:NCName" use="required"/>
-			<attribute name="locked" type="xsd:boolean" use="optional" default="false"/>
-			<attribute name="value" type="xsd:string" use="optional"/>
-		</complexType>
-	</element>
-		<element name="handler">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-			<attribute name="name" type="xsd:NCName" use="required"/>
-			<attribute name="class" type="xsd:string" use="required"/>
-		</complexType>
-	</element>
-	<element name="inflow">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name="outflow">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name="faultflow">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
+    <element name="parameter">
+        <complexType>
+            <attribute name="name" type="xsd:NCName" use="required"/>
+            <attribute name="locked" type="xsd:boolean" use="optional" default="false"/>
+            <attribute name="value" type="xsd:string" use="optional"/>
+        </complexType>
+    </element>
+    <element name="handler">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <attribute name="name" type="xsd:NCName" use="required"/>
+            <attribute name="class" type="xsd:string" use="required"/>
+        </complexType>
+    </element>
+    <element name="inflow">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="outflow">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="faultflow">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
 </schema>

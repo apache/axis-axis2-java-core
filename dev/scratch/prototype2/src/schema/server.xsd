@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:java="http://ws.apache.org/axis2/deployment/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
-	<include schemaLocation="module.xsd"/>
-	<element name="service">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
-				<element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
-				<element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
-				<element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
-				<element ref="wsdd:phaseOrder" minOccurs="0" maxOccurs="1"/>
-				<element ref="wsdd:module" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name="phaseOrder">
-		<complexType>
-			<sequence>
-				<element ref="wsdd:phase" minOccurs="0" maxOccurs="unbounded"/>
-			</sequence>
-		</complexType>
-	</element>
-	<element name="phase">
-		<complexType>
-			<attribute name="name" type="xsd:anyURI" use="required"/>
-		</complexType>
-	</element>
+    <include schemaLocation="module.xsd"/>
+    <element name="service">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:inflow" minOccurs="0" maxOccurs="1"/>
+                <element ref="wsdd:outflow" minOccurs="0" maxOccurs="1"/>
+                <element ref="wsdd:faultflow" minOccurs="0" maxOccurs="1"/>
+                <element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+                <element ref="wsdd:phaseOrder" minOccurs="0" maxOccurs="1"/>
+                <element ref="wsdd:module" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="phaseOrder">
+        <complexType>
+            <sequence>
+                <element ref="wsdd:phase" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="phase">
+        <complexType>
+            <attribute name="name" type="xsd:anyURI" use="required"/>
+        </complexType>
+    </element>
 </schema>
