@@ -20,8 +20,6 @@
 package org.apache.axis.clientapi;
 
 import junit.framework.TestCase;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.OMFactory;
 
 
 public class AsyncResultTest extends TestCase {

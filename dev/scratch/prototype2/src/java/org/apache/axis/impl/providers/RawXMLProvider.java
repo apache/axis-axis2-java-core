@@ -16,6 +16,11 @@
 
 package org.apache.axis.impl.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisService;
@@ -25,14 +30,10 @@ import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMUtils;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 
 /**
  * This is a Simple java Provider.
@@ -115,14 +116,11 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                     break;
                 }
             }
+            
+            OMElement methodElement = OMUtils.getFirstChildElement(msgContext.getEnvelope().getBody());
+            OMElement parmeter = OMUtils.getFirstChildElement(methodElement);
 
-            Iterator it = msgContext.getEnvelope().getBody().getChildren();
-
-            Object[] parms = null;
-            if (it.hasNext()) {
-                parms = new Object[]{it.next()};
-                ;
-            }
+            Object[] parms = new Object[]{parmeter};
             //invoke the WebService 
             OMElement result = (OMElement) method.invoke(obj, parms);
             MessageContext msgContext1 = new MessageContext(msgContext.getGlobalContext().getRegistry());
