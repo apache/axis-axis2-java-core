@@ -120,7 +120,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             do {
                 while (parser.next() != XMLStreamConstants.END_ELEMENT) ;
                 //	TODO:
-            } while (!parser.getName().equals(elementImpl.getLocalName()));
+            } while (!parser.getName().equals(elementImpl.getQName()));
             lastNode = (OMNodeImpl) elementImpl.getPreviousSibling();
             if (lastNode != null)
                 lastNode.setNextSibling(null);
