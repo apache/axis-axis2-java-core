@@ -13,12 +13,12 @@
  *  limitations under the License.
  */
 
-package java.org.apache.axis.om;
+package org.apache.axis.om;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 
-import javax.xml.soap.SOAPFault;
+import org.apache.axis.om.SOAPFault;
 
 
 /**

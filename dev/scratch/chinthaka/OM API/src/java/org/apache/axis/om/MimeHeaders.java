@@ -13,9 +13,9 @@
  *  limitations under the License.
  */
 
-package java.org.apache.axis.om;
+package org.apache.axis.om;
 
-import javax.xml.soap.MimeHeader;
+import org.apache.axis.om.MimeHeader;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -40,7 +40,7 @@ public class MimeHeaders {
 
             label0:
             while (iterator.hasNext()) {
-                javax.xml.soap.MimeHeader mimeheader = (MimeHeader) iterator.next();
+                org.apache.axis.om.MimeHeader mimeheader = (MimeHeader) iterator.next();
 
                 if (names == null) {
                     return match

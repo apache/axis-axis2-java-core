@@ -1,7 +1,7 @@
 package org.apache.axis.om;
 
-import java.org.apache.axis.om.SOAPEnvelope;
-import java.org.apache.axis.om.MimeHeaders;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.MimeHeaders;
 
 
 /**

@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package java.org.apache.axis.om;
+package org.apache.axis.om;
 
 /**
  * An object that stores a MIME header name and its value. One

@@ -13,9 +13,9 @@
  *  limitations under the License.
  */
 
-package java.org.apache.axis.om;
+package org.apache.axis.om;
 
-import javax.xml.soap.SOAPElement;
+
 
 /**
  *     <P>An object representing the contents in the SOAP header part
@@ -26,7 +26,7 @@ import javax.xml.soap.SOAPElement;
  *   <P>A <CODE>SOAPHeaderElement</CODE> object can have other
  *   <CODE>OMElement</CODE> objects as its children.</P>
  */
-public interface SOAPHeaderElement extends SOAPElement {
+public interface SOAPHeaderElement{
 
     /**
      * Sets the actor associated with this <CODE>
