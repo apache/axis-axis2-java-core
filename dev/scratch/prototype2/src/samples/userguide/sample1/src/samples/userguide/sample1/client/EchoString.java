@@ -19,7 +19,6 @@ import java.net.URL;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.engine.EngineUtils;
 
 /**
  * @author chathura@opensource.lk
@@ -29,9 +28,9 @@ public class EchoString {
 
 	public static void main(String[] args) throws Exception{
 		InteropTest_Stub stub =new InteropTest_Stub();
-		URL url = new URL("http","127.0.0.1",EngineUtils.TESTING_PORT,"/axis/services/sample1");
+		URL url = new URL("http","127.0.0.1", new Integer(args[0]).intValue(),"/axis2/services/sample1");
 		stub.setEndPointReference(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-		System.out.println(stub.echoString("Hi Chinthaka"));
+		System.out.println(stub.echoString(args[1]));
 		
 		
 	}

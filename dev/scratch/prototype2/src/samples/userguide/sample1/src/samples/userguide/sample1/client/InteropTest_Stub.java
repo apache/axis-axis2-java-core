@@ -104,6 +104,9 @@ public class InteropTest_Stub {
 		Iterator childrenIter = body.getChildren();
 		while(childrenIter.hasNext()){
 			OMNode child = (OMNode) childrenIter.next();
+			if(child instanceof OMElement && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
+				throw new AxisFault("Fault in server side");
+			}
 			if(child instanceof OMElement && "echoStringResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				response = (OMElement)child;				
 			}
@@ -130,6 +133,9 @@ public class InteropTest_Stub {
 		Iterator childrenIter = body.getChildren();
 		while(childrenIter.hasNext()){
 			OMNode child = (OMNode) childrenIter.next();
+			if(child instanceof OMElement && "Fault".equalsIgnoreCase(((OMElement)child).getLocalName())){
+				throw new AxisFault("Fault in server side");
+			}
 			if(child instanceof OMElement && "echoIntResponse".equalsIgnoreCase(((OMElement)child).getLocalName())){
 				response = (OMElement)child;				
 			}
