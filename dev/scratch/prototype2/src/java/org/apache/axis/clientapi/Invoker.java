@@ -18,7 +18,7 @@ import org.apache.axis.transport.TransportReciver;
 import org.apache.axis.transport.TransportReciverLocator;
 import org.apache.axis.transport.TransportSenderLocator;
 
-public class Invoker extends AbstractCall implements Runnable {
+public class Invoker implements Runnable {
 
     private AxisEngine engine;
     private EngineRegistry registry;

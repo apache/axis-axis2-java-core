@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  *         Dec 16, 2004
  *         12:28:00 PM
  */
-public class Call extends AbstractCall {
+public class Call  {
     private EngineRegistry registry;
     protected Log log = LogFactory.getLog(getClass());
     private EndpointReference targetEPR;

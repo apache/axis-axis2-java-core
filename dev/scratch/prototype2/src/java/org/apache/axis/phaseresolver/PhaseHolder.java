@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 public class PhaseHolder implements DeploymentConstants {
 
     private Log log = LogFactory.getLog(getClass());
-    private Vector phaseholder = new Vector();
+    private ArrayList phaseholder = new ArrayList();
 
     /**
      * Referance to ServerMetaData inorder to get information about phases.
@@ -55,7 +55,7 @@ public class PhaseHolder implements DeploymentConstants {
 
     private boolean isPhaseExist(String phaseName) {
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return true;
             }
@@ -98,7 +98,7 @@ public class PhaseHolder implements DeploymentConstants {
 
     private PhaseMetaData getPhase(String phaseName) {
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+            PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return phase;
             }
@@ -111,12 +111,12 @@ public class PhaseHolder implements DeploymentConstants {
         //todo complet this using phaseordeer
         PhaseMetaData[] phase = new PhaseMetaData[phaseholder.size()];
         for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetaData tempphase = (PhaseMetaData) phaseholder.elementAt(i);
+            PhaseMetaData tempphase = (PhaseMetaData) phaseholder.get(i);
             phase[i] = tempphase;
         }
         phase = getOrderPhases(phase);
         // remove all items inorder to rearrange them
-        phaseholder.removeAllElements();
+        phaseholder.clear();
 
         for (int i = 0; i < phase.length; i++) {
             PhaseMetaData phaseMetaData = phase[i];
@@ -164,7 +164,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 1 : {
                     ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -178,7 +178,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 2 : {
                     ArrayList outChain =new ArrayList();// service.getExecutableOutChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -192,7 +192,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 3 : {
                     ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -220,7 +220,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 1 : {
                     ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -246,7 +246,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 2 : {
                     ArrayList outChain =new ArrayList();// service.getExecutableOutChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -272,7 +272,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 3 : {
                     ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -311,7 +311,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 1 : {
                     ArrayList inChain =  new ArrayList();//       service.getExecutableInChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -325,7 +325,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 2 : {
                     ArrayList outChain =new ArrayList();// service.getExecutableOutChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {
@@ -339,7 +339,7 @@ public class PhaseHolder implements DeploymentConstants {
                 case 3 : {
                     ArrayList faultChain = new ArrayList();//service.getExecutableFaultChain();
                     for (int i = 0; i < phaseholder.size(); i++) {
-                        PhaseMetaData phase = (PhaseMetaData) phaseholder.elementAt(i);
+                        PhaseMetaData phase = (PhaseMetaData) phaseholder.get(i);
                         Phase axisPhase = new Phase(phase.getName());
                         handlers = phase.getOrderedHandlers();
                         for (int j = 0; j < handlers.length; j++) {

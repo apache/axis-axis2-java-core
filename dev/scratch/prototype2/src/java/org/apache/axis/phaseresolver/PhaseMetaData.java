@@ -1,6 +1,8 @@
 package org.apache.axis.phaseresolver;
 
-import java.util.Vector;
+
+
+import java.util.ArrayList;
 
 import org.apache.axis.description.HandlerMetaData;
 
@@ -46,12 +48,12 @@ public class PhaseMetaData {
     /**
      * to store and order the handlers
      */
-    private Vector orderHanders = new Vector();
+    private ArrayList orderHanders = new ArrayList();
 
     /**
      * to store HandlerMetaData other than phaseFirst and phseLast
      */
-    private Vector phaseHandlers = new Vector();
+    private ArrayList phaseHandlers = new ArrayList();
 
     /**
      * this is want if the phaseFirst and phaseLst same hanlder
@@ -61,7 +63,7 @@ public class PhaseMetaData {
 
     public PhaseMetaData(String name) {
         this.name = name;
-        this.phaseHandlers.removeAllElements();
+        this.phaseHandlers.clear();
         this.phasefirstset = false;
         this.phaselastset = false;
         this.isonehanlder = false;
@@ -170,7 +172,7 @@ public class PhaseMetaData {
         handler = new HandlerMetaData[size];
 
         for (int i = 0; i < phaseHandlers.size(); i++) {
-            handler[i] = (HandlerMetaData) phaseHandlers.elementAt(i);
+            handler[i] = (HandlerMetaData) phaseHandlers.get(i);
         }
         return handler;
     }
@@ -180,7 +182,7 @@ public class PhaseMetaData {
         validatebefore();
         validateafter();
         arrangeHanders();
-        phaseHandlers.removeAllElements();
+        phaseHandlers.clear();
         phaseHandlers = orderHanders;
     }
 
@@ -195,7 +197,7 @@ public class PhaseMetaData {
         if (getPhaseFirst() != null) {
             String phasFirstname = getPhaseFirst().getName().getLocalPart();
             for (int i = 0; i < phaseHandlers.size(); i++) {
-                HandlerMetaData handler = (HandlerMetaData) phaseHandlers.elementAt(i);
+                HandlerMetaData handler = (HandlerMetaData) phaseHandlers.get(i);
                 if (handler.getRules().getBefore().equals(phasFirstname)) {
                     throw new PhaseException("Try to plase a Hander " + handler.getName() + " before phaseFirst " + phasFirstname);
                 }
@@ -215,7 +217,7 @@ public class PhaseMetaData {
         if (getPhaseLast() != null) {
             String phaseLastName = getPhaseLast().getName().getLocalPart();
             for (int i = 0; i < phaseHandlers.size(); i++) {
-                HandlerMetaData handler = (HandlerMetaData) phaseHandlers.elementAt(i);
+                HandlerMetaData handler = (HandlerMetaData) phaseHandlers.get(i);
                 if (handler.getName().equals(phaseLastName)) {
                     throw new PhaseException("Try to plase a Hander " + handler.getName() + " after phaseLast " + phaseLastName);
                 }
@@ -231,7 +233,7 @@ public class PhaseMetaData {
         HandlerMetaData handler = null;
         while (phaseHandlers.size() > 0) {
             if (status) {
-                handler = (HandlerMetaData) phaseHandlers.firstElement();
+                handler = (HandlerMetaData) phaseHandlers.get(0);
             } else
                 handler = (HandlerMetaData) phaseHandlers.get(count);
 
@@ -244,7 +246,7 @@ public class PhaseMetaData {
                 case ANYWHERE:
                     {
                         orderHanders.add(handler);
-                        phaseHandlers.removeElement(handler);
+                        phaseHandlers.remove(handler);
                         count = 0;
                         status = true;
                         break;
@@ -253,7 +255,7 @@ public class PhaseMetaData {
                     {
                         status = insertBefore(handler);
                         if (status) {
-                            phaseHandlers.removeElement(handler);
+                            phaseHandlers.remove(handler);
                             count = 0;
                         }
                         break;
@@ -262,7 +264,7 @@ public class PhaseMetaData {
                     {
                         status = insertAfter(handler);
                         if (status) {
-                            phaseHandlers.removeElement(handler);
+                            phaseHandlers.remove(handler);
                             count = 0;
                         }
                         break;
@@ -271,7 +273,7 @@ public class PhaseMetaData {
                     {
                         status = insertBeforeandAfter(handler);
                         if (status) {
-                            phaseHandlers.removeElement(handler);
+                            phaseHandlers.remove(handler);
                             count = 0;
                         }
                         break;
@@ -304,7 +306,7 @@ public class PhaseMetaData {
             }
         }
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.elementAt(i);
+            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.get(i);
             if (temphandler.getName().equals(beforename)) {
                 orderHanders.add(i, handler);
                 return true;
@@ -322,7 +324,7 @@ public class PhaseMetaData {
             }
         }
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.elementAt(i);
+            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.get(i);
             if (temphandler.getName().equals(afterName)) {
                 if (i == orderHanders.size() - 1) {
                     orderHanders.add(handler);
@@ -360,7 +362,7 @@ public class PhaseMetaData {
         }
 
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.elementAt(i);
+            HandlerMetaData temphandler = (HandlerMetaData) orderHanders.get(i);
             if (handler.getRules().getAfter().equals(temphandler.getName())) {
                 after = i;
             } else if (handler.getRules().getBefore().equals(temphandler.getName())) {

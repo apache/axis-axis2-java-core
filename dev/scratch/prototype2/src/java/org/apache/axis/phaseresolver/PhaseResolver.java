@@ -68,7 +68,7 @@ public class PhaseResolver {
      */
     private  void buildExcutionChains(int type) throws AxisFault, PhaseException {
         int flowtype =  type;
-        Vector allHandlers = new Vector();
+        ArrayList allHandlers = new ArrayList();
         // int count = server.getModuleCount();
         //  QName moduleName;
         AxisModule module;
@@ -165,7 +165,7 @@ public class PhaseResolver {
         phaseHolder = new PhaseHolder(engineRegistry,axisService);
 
         for (int i = 0; i < allHandlers.size(); i++) {
-            HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.elementAt(i);
+            HandlerMetaData handlerMetaData = (HandlerMetaData) allHandlers.get(i);
             phaseHolder.addHandler(handlerMetaData);
         }
         phaseHolder.getOrderdHandlers(type);
