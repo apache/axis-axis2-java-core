@@ -204,7 +204,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
             //todo this needs to be fixed!!!!!
             // throw new OMException("All elements must be namespace qualified!");
 
-                element.insertAttribute(omFactory.createOMAttribute(atts.getLocalName(i), ns, atts.getValue(i), element));
+                element.insertAttribute(omFactory.createOMAttribute(atts.getLocalName(i), ns, atts.getValue(i)));
         }
 
         element.setComplete(false);

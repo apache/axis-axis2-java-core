@@ -23,10 +23,6 @@ import org.apache.axis.om.*;
  * Time: 2:21:13 PM
  */
 public class OMLinkedListImplFactory extends OMFactory {
-    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent) {
-        return new OMAttributeImpl(localName, ns, value, parent);
-    }
-
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
         return new OMAttributeImpl(localName, ns, value);
     }

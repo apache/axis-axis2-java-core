@@ -35,6 +35,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     private OMXMLParserWrapper builder;
     private OMAttributeImpl firstAttribute;
     private ArrayList namespaces;
+    private ArrayList attributes;
 
     public OMElementImpl(OMElement parent) {
         super(parent);
@@ -159,8 +160,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
     public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException {
 
         // check in the current element
-        OMNamespace namespace = findDeclaredNamespace(uri,prefix);
-        if(namespace != null){
+        OMNamespace namespace = findDeclaredNamespace(uri, prefix);
+        if (namespace != null) {
             return namespace;
         }
 
@@ -172,6 +173,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
 
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element
+     *
      * @param uri
      * @param prefix
      * @return
@@ -179,7 +181,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      */
     public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException {
 
-        if(namespaces == null){
+        if (namespaces == null) {
             return null;
         }
         // check in the current element
@@ -194,8 +196,8 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         return null;
     }
 
-    public ArrayList getAllDeclaredNamespaces(){
-        return namespaces;
+    public Iterator getAllDeclaredNamespaces() {
+        return namespaces.listIterator();
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -207,17 +209,22 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      * @throws org.apache.axis.om.OMException
      */
-    public Iterator getAttributeWithQName(QName qname) throws OMException {
-        return new OMChildrenQNameIterator((OMNodeImpl) getFirstAttribute(), qname);
-    }
+    public OMAttribute getAttributeWithQName(QName qname) throws OMException {
 
-    /**
-     * This will returns the first attribute of the element or null, if none is present
-     *
-     * @return
-     */
-    private OMAttribute getFirstAttribute() {
-        return firstAttribute;
+        if (attributes == null) {
+            return null;
+        }
+
+        ListIterator attrIter = attributes.listIterator();
+        OMAttribute omAttribute = null;
+        while (attrIter.hasNext()) {
+            omAttribute = (OMAttribute) attrIter.next();
+            if (omAttribute.getQName().equals(qname)) {
+                return omAttribute;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -226,7 +233,10 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @return
      */
     public Iterator getAttributes() {
-        return new OMChildrenIterator(getFirstAttribute());
+        if (attributes == null) {
+            attributes = new ArrayList(1);
+        }
+        return attributes.listIterator();
     }
 
     /**
@@ -236,18 +246,16 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * @param attr
      */
     public void insertAttribute(OMAttribute attr) {
-
-        OMAttributeImpl attrImpl = (OMAttributeImpl) attr;
-        attrImpl.setPreviousSibling(null);
-        attrImpl.setNextSibling(firstAttribute);
-        if (firstAttribute != null)
-            firstAttribute.setPreviousSibling(attrImpl);
-        attrImpl.setParent(this);
-        firstAttribute = attrImpl;
+        if (attributes == null) {
+            attributes = new ArrayList(5);
+        }
+        attributes.add(attr);
     }
 
     public void removeAttribute(OMAttribute attr) {
-        attr.detach();
+        if (attributes.indexOf(attr) != -1) {
+            attributes.remove(attr);
+        }
     }
 
     public void setBuilder(OMXMLParserWrapper wrapper) {
@@ -288,11 +296,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         else
             builder.discard(this);
     }
-
-    public void setFirstAttribute(OMAttributeImpl firstAttribute) {
-        this.firstAttribute = firstAttribute;
-    }
-
 
     public boolean isComplete() {
         return done;

@@ -406,7 +406,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         QName returnQName = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                returnQName = getQName(getAttribute((OMElement) lastNode, i));
+                returnQName = getAttribute((OMElement) lastNode, i).getQName();
             } else {
                 returnQName = parser.getAttributeName(i);
             }

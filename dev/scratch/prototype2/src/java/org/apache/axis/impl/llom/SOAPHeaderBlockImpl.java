@@ -59,11 +59,11 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
      * @param attrValue
      */
     private void setAttribute(String attributeName, String attrValue) {
-        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
-        if (attrIter.hasNext()) {
-            ((OMAttribute) attrIter.next()).setValue(attrValue);
+        OMAttribute omAttribute = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
+        if (omAttribute != null) {
+            omAttribute.setValue(attrValue);
         } else {
-            OMAttribute attribute = new OMAttributeImpl(attributeName, new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue, this);
+            OMAttribute attribute = new OMAttributeImpl(attributeName, new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue);
             this.insertAttribute(attribute);
         }
     }
@@ -81,11 +81,9 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
     }
 
     private String getAttribute(String attrName) {
-        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
-        if (attrIter.hasNext()) {
-            return ((OMAttribute) attrIter.next()).getValue();
-        }
-        return null;
+
+        OMAttribute omAttribute = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
+        return (omAttribute != null) ? omAttribute.getValue() : null;
     }
 
     /**

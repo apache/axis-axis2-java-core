@@ -46,8 +46,16 @@ public class OMNamespaceImpl implements OMNamespace {
         return prefix;
     }
 
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
     public String getName() {
         return uri;
+    }
+
+    public void setName(String name) {
+        this.uri = name;
     }
 
 

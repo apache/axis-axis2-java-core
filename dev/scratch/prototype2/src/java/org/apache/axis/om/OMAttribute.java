@@ -1,5 +1,7 @@
 package org.apache.axis.om;
 
+import javax.xml.namespace.QName;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -22,7 +24,21 @@ package org.apache.axis.om;
  * One must implement relevant constructors for the class implementing this interface
  * all the things like namespace, parent, value, etc., that should come in this are defined in base classes
  */
-public interface OMAttribute extends OMNamedNode {
+public interface OMAttribute{
+
+   public String getLocalName();
+
+    public void setLocalName(String localName);
+
+    public String getValue();
+
+    public void setValue(String value);
+
+    public void setOMNamespace(OMNamespace omNamespace);
+
+    public OMNamespace getNamespace();
+
+    public QName getQName();
 
 
 }

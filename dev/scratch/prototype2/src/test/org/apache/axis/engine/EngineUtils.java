@@ -39,7 +39,7 @@ import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class EngineUtils {
-    public static final int TESTING_PORT = 7778;
+    public static final int TESTING_PORT = 7777;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     private static int index = 0; 
     

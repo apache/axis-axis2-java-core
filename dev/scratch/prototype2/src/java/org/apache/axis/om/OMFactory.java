@@ -28,15 +28,6 @@ public abstract class OMFactory {
      * @param localName
      * @param ns
      * @param value
-     * @param parent
-     * @return
-     */
-    public abstract OMAttribute createOMAttribute(String localName, OMNamespace ns, String value, OMElement parent);
-
-    /**
-     * @param localName
-     * @param ns
-     * @param value
      * @return
      */
     public abstract OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);

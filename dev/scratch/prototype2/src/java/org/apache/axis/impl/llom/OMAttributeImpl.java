@@ -5,6 +5,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 
+import javax.xml.namespace.QName;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,18 +28,19 @@ import java.util.regex.Pattern;
  * Date: Oct 6, 2004
  * Time: 11:43:23 AM
  */
-public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
+public class OMAttributeImpl implements OMAttribute {
+
+    private String localName;
+    private String value;
+    private OMNamespace namespace;
+
     private static String QUOTE_ENTITY = "&quot;";
     private static Matcher matcher = Pattern.compile("\"").matcher(null);
 
-    public OMAttributeImpl(String localName, OMNamespace ns, String value, OMElement parent) {
-        super(localName, ns, parent);
-        setValue(value);
-    }
-
     public OMAttributeImpl(String localName, OMNamespace ns, String value) {
-        super(localName, ns, null);
+        setLocalName(localName);
         setValue(value);
+        setOMNamespace(ns);
     }
 
     synchronized static String replaceQuoteWithEntity(String value) {
@@ -46,21 +48,36 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
         return matcher.replaceAll(QUOTE_ENTITY);
     }
 
-    public void detach() throws OMException {
+    public QName getQName(){
 
-        if (parent == null)
-            throw new OMException();
-        if (getPreviousSibling() == null)
-            parent.setFirstAttribute((OMAttributeImpl) nextSibling);
-        else
-            previousSibling.setNextSibling(nextSibling);
-        if (nextSibling != null)
-            nextSibling.setPreviousSibling(previousSibling);
+
+        String namespaceName = namespace != null ? namespace.getName() : null;
+        return new QName(namespaceName, localName);
     }
 
-    //overidden to force even null namepaces
-    public OMNamespace getNamespace() throws OMException {
-        return ns;
+    // -------- Getters and Setters
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setOMNamespace(OMNamespace omNamespace){
+        this.namespace = omNamespace;
+    }
+
+    public OMNamespace getNamespace(){
+        return namespace;
     }
 
 }

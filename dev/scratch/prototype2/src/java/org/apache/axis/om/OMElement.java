@@ -96,7 +96,7 @@ public interface OMElement extends OMNamedNode {
      * @return
      * @throws OMException
      */
-    public ArrayList getAllDeclaredNamespaces();
+    public Iterator getAllDeclaredNamespaces();
 
     /**
      * This will help to search for an attribute with a given QName within this Element
@@ -105,7 +105,7 @@ public interface OMElement extends OMNamedNode {
      * @return
      * @throws OMException
      */
-    public Iterator getAttributeWithQName(QName qname) throws OMException;
+    public OMAttribute getAttributeWithQName(QName qname) throws OMException;
 
     /**
      * This will return a List of OMAttributes
