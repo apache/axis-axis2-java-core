@@ -19,8 +19,7 @@ package org.apache.axis.om;
  * This will help to create OM API object. This will ease the switching from one OM impl to another.
  */
 public abstract class OMFactory {
-	public abstract void free(OMNode node);
-    /**
+	/**
      * @param localName
      * @param ns
      * @return

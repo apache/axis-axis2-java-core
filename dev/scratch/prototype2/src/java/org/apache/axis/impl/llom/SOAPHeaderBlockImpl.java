@@ -32,11 +32,11 @@ public class SOAPHeaderBlockImpl extends OMElementImpl implements SOAPHeaderBloc
      * @param ns
      */
     public SOAPHeaderBlockImpl(String localName, OMNamespace ns) {
-        super.init(localName, ns);
+        super(localName, ns);
     }
 
     public SOAPHeaderBlockImpl(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        super.init(localName, ns, parent, builder);
+        super(localName, ns, parent, builder);
     }
 
     /**

@@ -74,7 +74,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                // envelope.serialize(outputWriter,false);
 			   envelope.serialize(outputWriter,false);
                 outputWriter.flush();
-                envelope.free();
+
                // org.TimeRecorder.AFTER_SERIALIZE = System.currentTimeMillis();
             } catch (Exception e) {
                 throw new AxisFault("Stream error",e);

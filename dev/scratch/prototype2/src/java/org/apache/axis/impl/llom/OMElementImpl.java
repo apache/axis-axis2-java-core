@@ -50,38 +50,12 @@ public class OMElementImpl
 	private HashMap attributes = null;
 	private Log log = LogFactory.getLog(getClass());
 
-	public OMElementImpl() {
-	}
-
-	public void free() {
-		if(attributes != null){
-			this.attributes.clear();
-			CollectionPool.returnHashMap(attributes);
-			attributes = null;
-		}
-		if(namespaces !=null){
-			this.namespaces.clear();
-			CollectionPool.returnHashMap(namespaces);
-			namespaces = null;
-		}
-
-		if (firstChild != null) {
-			firstChild.free();
-		}
-
-		OMFactory.newInstance().free(this);
-		if (nextSibling != null) {
-			nextSibling.free();
-		}
-
-	}
-
-	public void init(
+	public OMElementImpl(
 		String localName,
 		OMNamespace ns,
 		OMElement parent,
 		OMXMLParserWrapper builder) {
-		super.init(localName, null, parent);
+		super(localName, null, parent);
 		if (ns != null) {
 			setNamespace(handleNamespace(ns));
 		}
@@ -90,8 +64,17 @@ public class OMElementImpl
 		firstChild = null;
 	}
 
-	public void init(String localName, OMNamespace ns) {
-		super.init(localName, null, null);
+    /**
+     * @param localName
+     * @param ns
+     * @param parent
+     */
+    public OMElementImpl(OMElement parent) {
+        super(parent);
+    }
+
+    public OMElementImpl(String localName, OMNamespace ns) {
+		super(localName, null, null);
 		this.done = true;
 		if (ns != null) {
 			setNamespace(handleNamespace(ns));

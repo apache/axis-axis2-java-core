@@ -31,18 +31,18 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
      * @param builder
      */
     public SOAPEnvelopeImpl(OMXMLParserWrapper builder) {
-        super.init(SOAPENVELOPE_LOCAL_NAME, null, null, builder);
+        super(SOAPENVELOPE_LOCAL_NAME, null, null, builder);
     }
 
     public SOAPEnvelopeImpl(OMNamespace ns, OMXMLParserWrapper builder) {
-        super.init(SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
+        super(SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
     }
 
     /**
      * @param ns
      */
     public SOAPEnvelopeImpl(OMNamespace ns) {
-        super.init(SOAPENVELOPE_LOCAL_NAME, ns);
+        super(SOAPENVELOPE_LOCAL_NAME, ns);
     }
 
         /**

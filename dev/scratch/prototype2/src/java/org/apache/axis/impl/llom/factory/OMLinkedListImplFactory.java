@@ -44,55 +44,14 @@ public class OMLinkedListImplFactory extends OMFactory {
 	private Stack elements = new Stack();
 	private Stack textNodes = new Stack();
 
-	private OMElementImpl findElement(){
-		OMElementImpl element = null;
-		if(elements.isEmpty()){
-			element = new OMElementImpl();
-		}else{
-			element = (OMElementImpl)elements.pop();
-		}
-		return element;
-	}
-
-	private OMTextImpl findText(){
-		OMTextImpl text = null;
-		if(elements.isEmpty()){
-			text = new OMTextImpl();
-		}else{
-			text = (OMTextImpl)textNodes.pop();
-		}
-		return text;
-	}
 	
-	public void free(OMNode node){
-		int type = node.getType();
-		switch(type){
-			case OMNode.ELEMENT_NODE:
-				if(elements.size() < MAX_TO_POOL){
-					elements.push(node);				
-				}
-			break;
-			case OMNode.TEXT_NODE:
-			if(textNodes.size() < MAX_TO_POOL){
-				textNodes.push(node);
-			}
-			break;
-			default:
-			//NOOP;
-			
-		}
-	}
-
-
     public OMElement createOMElement(String localName, OMNamespace ns) {
-		OMElementImpl element = findElement();
-		element.init(localName, ns);
+		OMElementImpl element = new OMElementImpl(localName, ns);
 		return element;
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-    	OMElementImpl element = findElement();
-        element.init(localName, ns, parent, builder);
+    	OMElementImpl element = new OMElementImpl(localName, ns, parent, builder);
         return element;
     }
 
@@ -113,14 +72,12 @@ public class OMLinkedListImplFactory extends OMFactory {
 //    }
 
     public OMText createText(OMElement parent, String text) {
-		OMTextImpl textNode = findText();
-		textNode.init(parent, text);
+		OMTextImpl textNode = new OMTextImpl(parent, text);
 		return textNode;
     }
 
     public OMText createText(String s) {
-		OMTextImpl textNode = findText();
-		textNode.init(s);
+		OMTextImpl textNode = new OMTextImpl(s);;
 		return textNode;
     }
 

@@ -27,11 +27,13 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
 
     protected OMNamespace ns;
     protected String localName;
+    
+    public OMNamedNodeImpl(OMElement parent){
+        super(parent);
+    } 
 
-	public OMNamedNodeImpl(){}
-	
-    public void init(String localName, OMNamespace ns, OMElement parent) {
-        super.init(parent);
+	public OMNamedNodeImpl(String localName, OMNamespace ns, OMElement parent) {
+        super(parent);
         this.localName = localName;
         this.ns = ns;
     }

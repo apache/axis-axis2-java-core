@@ -29,16 +29,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     protected short textType = TEXT_NODE;
     
-	public OMTextImpl(){}
-    
-
-    public void init(OMElement parent, String text) {
-        super.init(parent);
+	public OMTextImpl(OMElement parent, String text) {
+        super(parent);
         setValue(text);
         done = true;
     }
 
-    public void init(String s) {
+    public OMTextImpl(String s) {
         setValue(s);
     }
 

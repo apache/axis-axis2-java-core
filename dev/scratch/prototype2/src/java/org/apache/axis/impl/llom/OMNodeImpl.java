@@ -31,19 +31,14 @@ public class OMNodeImpl implements OMNode {
     protected String value;
     protected boolean done = false;
     protected short nodeType;
-
-    public OMNodeImpl() {
-    }
-
-
+    public OMNodeImpl(){}
     /**
      * For a node to exist there must be a parent
      *
      * @param parent
      */
 
-
-    public void init(OMElement parent) {
+    public OMNodeImpl(OMElement parent) {
         if (parent != null && parent.getType() == OMNode.ELEMENT_NODE){
             this.parent = (OMElementImpl) parent;
         }
@@ -203,14 +198,4 @@ public class OMNodeImpl implements OMNode {
     public void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
        //Do nothing. Relevant children will put relevant things here
     }
-
-	public void free(){
-		OMFactory.newInstance().free(this);
-		if(nextSibling != null){
-			nextSibling.free();
-		}
-		
-	}
-
-
 }
