@@ -42,7 +42,7 @@ public class ServiceTest extends TestCase {
         EngineRegistry er = deploymentEngine.start();
         //  DeploymentEngine deploymentEngine = new DeploymentEngine(inputStream, file.getName());
         */
-        String filename = "D:/Axis 2.0/projects/Deployement/test-data";
+        String filename = "src/test-resources/deployment";
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         try {
             EngineRegistry er = null;
