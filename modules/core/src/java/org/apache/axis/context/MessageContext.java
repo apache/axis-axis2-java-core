@@ -54,10 +54,6 @@ public class MessageContext {
      */
     public static final String PASSWORD = "PASSWD";
 
-    /**
-     * Field TRANSPORT_TYPE
-     */
-    public static final String TRANSPORT_TYPE = "TRANSPORT_TYPE";
 
     /**
      * Field SOAP_ACTION
@@ -103,9 +99,9 @@ public class MessageContext {
     MessageInformationHeadersCollection messageInformationHeaders;
 
 
-    private ExecutionChain chain;
+    private final ExecutionChain chain;
 
-    private AxisTransport transport;
+    private final AxisTransport transport;
 
     /**
      * Field properties
@@ -171,6 +167,10 @@ public class MessageContext {
      * Field soapOperationElement
      */
     private OMElement soapOperationElement;
+    
+    
+    private boolean paused = false;
+    
 
     /**
      * @param er            registry
@@ -178,8 +178,10 @@ public class MessageContext {
      * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
-    public MessageContext(
-            EngineRegistry er, Map initialProperties, SessionContext sessionContext)
+    public MessageContext(EngineRegistry er, 
+            Map initialProperties, 
+            SessionContext sessionContext,
+            AxisTransport transport)
             throws AxisFault {
         this.globalContext = new GlobalContext(er);
         if (sessionContext == null) {
@@ -193,6 +195,7 @@ public class MessageContext {
         properties = initialProperties;
         chain = new ExecutionChain();
         messageInformationHeaders = new MessageInformationHeadersCollection();
+        this.transport = transport;
     }
 
     /**
@@ -446,26 +449,19 @@ public class MessageContext {
         return this.chain;
     }
 
-    /**
-     * @param chain
-     */
-    public void setExecutionChain(ExecutionChain chain) {
-        this.chain = chain;
-    }
-
-    /**
+     /**
      * @return
      */
     public AxisTransport getTransport() {
         return transport;
     }
 
-    /**
-     * @param transport
-     */
-    public void setTransport(AxisTransport transport) {
-        this.transport = transport;
-    }
+//    /**
+//     * @param transport
+//     */
+//    public void setTransport(AxisTransport transport) {
+//        this.transport = transport;
+//    }
 
     /**
      * @return
@@ -521,5 +517,18 @@ public class MessageContext {
 
     public void setMessageInformationHeaders(MessageInformationHeadersCollection messageInformationHeaders) {
         this.messageInformationHeaders = messageInformationHeaders;
+    }
+    /**
+     * @return
+     */
+    public boolean isPaused() {
+        return paused;
+    }
+
+    /**
+     * @param b
+     */
+    public void setPaused(boolean b) {
+        paused = b;
     }
 }

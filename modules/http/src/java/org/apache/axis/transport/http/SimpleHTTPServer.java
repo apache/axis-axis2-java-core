@@ -23,11 +23,11 @@ import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -131,7 +131,7 @@ public class SimpleHTTPServer implements Runnable {
                         Reader in =
                         new InputStreamReader(socket.getInputStream());
                         MessageContext msgContext =
-                        new MessageContext(this.engineReg, null, null);
+                        new MessageContext(this.engineReg, null, null,Utils.createHTTPTransport(engineReg));
                         msgContext.setServerSide(true);
                         out.write(HTTPConstants.HTTP);
                         out.write(HTTPConstants.OK);
@@ -140,8 +140,6 @@ public class SimpleHTTPServer implements Runnable {
 
                         // We do not have any Addressing Headers to put
                         // let us put the information about incoming transport
-                        msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                                Constants.TRANSPORT_HTTP);
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
                                 out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER,

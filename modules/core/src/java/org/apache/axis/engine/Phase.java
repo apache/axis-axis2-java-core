@@ -67,6 +67,8 @@ public class Phase extends AbstractHandler implements Handler {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
+    
+    private int indexOfHandlerToExecute = 0;
 
     /**
      * Constructor Phase
@@ -111,15 +113,20 @@ public class Phase extends AbstractHandler implements Handler {
     public void invoke(MessageContext msgctx) throws AxisFault {
         Stack executionStack = new Stack();
         try {
-            for (int i = 0; i < handlers.size(); i++) {
-                Handler handler = (Handler) handlers.get(i);
-                if (handler != null) {
-                    log.info("Invoke the Handler " + handler.getName()
-                                    + "with in the Phase " + phaseName);
-                    handler.invoke(msgctx);
-                    //This line should be after the invoke as if the invocation failed this handlers is takn care of and 
-                    //no need to revoke agien
-                    executionStack.push(handler);
+            while (indexOfHandlerToExecute < handlers.size() ) {
+                if(msgctx.isPaused()){
+                    break;
+                }else{
+                    Handler handler = (Handler) handlers.get(indexOfHandlerToExecute);
+                    if (handler != null) {
+                        log.info("Invoke the Handler " + handler.getName()
+                                        + "with in the Phase " + phaseName);
+                        handler.invoke(msgctx);
+                        //This line should be after the invoke as if the invocation failed this handlers is takn care of and 
+                        //no need to revoke agien
+                        executionStack.push(handler);
+                        indexOfHandlerToExecute++;
+                    }
                 }
             }
         } catch (Exception e) {

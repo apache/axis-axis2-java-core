@@ -23,7 +23,6 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.handlers.OpNameFinder;
 import org.apache.wsdl.WSDLService;
 
 /**
@@ -69,12 +68,6 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     // let add the Handlers
                     ExecutionChain chain = msgctx.getExecutionChain();
                     chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
-
-                    // add invoke Phase
-                    Phase invokePhase = new Phase(Phase.SERVICE_INVOCATION);
-                    invokePhase.addHandler(new OpNameFinder());
-                    invokePhase.addHandler(ReceiverLocator.locateReceiver(msgctx));
-                    chain.addPhase(invokePhase);
                 } else {
                     throw new AxisFault("Service " + serviceName + " is not found");
                 }

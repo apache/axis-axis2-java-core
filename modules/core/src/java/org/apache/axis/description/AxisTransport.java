@@ -16,6 +16,8 @@
 package org.apache.axis.description;
 
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -44,6 +46,11 @@ public class AxisTransport
      * Field name
      */
     protected QName name;
+    
+    
+    protected TransportSender sender;
+    
+    protected TransportReceiver reciever;
 
     /**
      * Constructor AxisTransport
@@ -149,4 +156,32 @@ public class AxisTransport
     public void setOutFlow(Flow outFlow) {
         flowInclude.setOutFlow(outFlow);
     }
+    /**
+     * @return
+     */
+    public TransportReceiver getReciever() {
+        return reciever;
+    }
+
+    /**
+     * @return
+     */
+    public TransportSender getSender() {
+        return sender;
+    }
+
+    /**
+     * @param receiver
+     */
+    public void setReciever(TransportReceiver receiver) {
+        reciever = receiver;
+    }
+
+    /**
+     * @param sender
+     */
+    public void setSender(TransportSender sender) {
+        this.sender = sender;
+    }
+
 }

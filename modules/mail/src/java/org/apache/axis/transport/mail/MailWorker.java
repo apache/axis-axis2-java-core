@@ -37,7 +37,7 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.Constants;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.smtp.SMTPClient;
@@ -90,7 +90,7 @@ public class MailWorker implements Runnable {
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            msgContext = new MessageContext(this.reg, null, null);
+            msgContext = new MessageContext(this.reg, null, null, Utils.createHTTPTransport(this.reg));
             msgContext.setServerSide(true);
         } catch (AxisFault af) {
             log.error("Error occured while creating the message context", af);
@@ -145,9 +145,6 @@ public class MailWorker implements Runnable {
 
                 msgContext.setEnvelope((SOAPEnvelope) builder
                         .getDocumentElement());
-
-                msgContext.setProperty(MessageContext.TRANSPORT_TYPE,
-                        Constants.TRANSPORT_MAIL);
 
                 //A writer is created and sent to the engine so that the engine
                 // can write straight to the writer

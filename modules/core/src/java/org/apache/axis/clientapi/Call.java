@@ -15,6 +15,9 @@
 */
 package org.apache.axis.clientapi;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -26,12 +29,9 @@ import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportReceiverLocator;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Class Call
@@ -103,12 +103,11 @@ public class Call {
      */
     public void setTransportType(String transport) throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                || Constants.TRANSPORT_MAIL.equals(transport)
-                || Constants.TRANSPORT_TCP.equals(transport))) {
+            || Constants.TRANSPORT_MAIL.equals(transport)
+            || Constants.TRANSPORT_TCP.equals(transport))) {
             this.transport = transport;
         } else {
-            throw new AxisFault("Selected transport dose not suppot ( "
-                    + transport + " )");
+            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
         }
     }
 
@@ -120,17 +119,15 @@ public class Call {
      * @param useSeparateListener
      * @throws AxisFault
      */
-    public void setListenerTransport(
-            String Listenertransport, boolean useSeparateListener)
-            throws AxisFault {
+    public void setListenerTransport(String Listenertransport, boolean useSeparateListener)
+        throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
-                || Constants.TRANSPORT_MAIL.equals(transport)
-                || Constants.TRANSPORT_TCP.equals(transport))) {
+            || Constants.TRANSPORT_MAIL.equals(transport)
+            || Constants.TRANSPORT_TCP.equals(transport))) {
             this.Listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
         } else {
-            throw new AxisFault("Selected transport dose not suppot ( "
-                    + transport + " )");
+            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
         }
     }
 
@@ -154,14 +151,13 @@ public class Call {
         Writer out = null;
         try {
             final AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null);
+            MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
             msgctx.setEnvelope(envelope);
             msgctx.setTo(targetEPR);
-            msgctx.setProperty(MessageContext.TRANSPORT_TYPE,
-                    Constants.TRANSPORT_HTTP);
+
             msgctx.setTo(targetEPR);
-            if(action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            if (action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
             }
             engine.send(msgctx);
         } catch (IOException e) {
@@ -187,18 +183,17 @@ public class Call {
      */
     public void send(SOAPEnvelope envelope) throws AxisFault {
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
-            throw new AxisFault(
-                    "This invocation support only for bi-directional transport");
+            throw new AxisFault("This invocation support only for bi-directional transport");
         } else {
             MessageContext request = null;
             try {
                 final AxisEngine engine = new AxisEngine();
-                request = new MessageContext(registry, null, null);
+                request = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
                 request.setEnvelope(envelope);
-                request.setProperty(MessageContext.TRANSPORT_TYPE, transport);
+
                 request.setTo(targetEPR);
-                if(action != null) {
-                    request.setProperty(MessageContext.SOAP_ACTION,action);
+                if (action != null) {
+                    request.setProperty(MessageContext.SOAP_ACTION, action);
                 }
                 engine.send(request);
 
@@ -214,22 +209,18 @@ public class Call {
                 * request.getSessionContext());
                 */
                 request.setServerSide(false);
-                request.setProperty(MessageContext.TRANSPORT_TYPE, transport);
-                TransportReceiver receiver =
-                        TransportReceiverLocator.locate(request);
+                TransportReceiver receiver = request.getTransport().getReciever();
                 receiver.invoke(request);
-                if (request.getProperty(MessageContext.TRANSPORT_SUCCEED)
-                        != null) {
+                if (request.getProperty(MessageContext.TRANSPORT_SUCCEED) != null) {
                     throw new AxisFault("Sent failed");
                 } else if (request.getEnvelope().getBody().hasFault()) {
                     throw new AxisFault(
-                            request.getEnvelope().getBody().getFault().getFaultString());
+                        request.getEnvelope().getBody().getFault().getFaultString());
                 }
             } catch (IOException e) {
                 throw AxisFault.makeFault(e);
             } finally {
-                Writer writer = (Writer) request.getProperty(
-                        MessageContext.TRANSPORT_WRITER);
+                Writer writer = (Writer) request.getProperty(MessageContext.TRANSPORT_WRITER);
                 if (writer != null) {
                     try {
                         writer.close();
@@ -250,26 +241,23 @@ public class Call {
      */
     public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault {
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
-            throw new AxisFault(
-                    "This invocation support only for bi-directional transport");
+            throw new AxisFault("This invocation support only for bi-directional transport");
         }
         try {
             AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null);
+            MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
             msgctx.setEnvelope(envelope);
-            msgctx.setProperty(MessageContext.TRANSPORT_TYPE, transport);
+
             msgctx.setTo(targetEPR);
-            if(action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            if (action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
             }
             engine.send(msgctx);
-            MessageContext response = new MessageContext(registry,
-                    msgctx.getProperties(),
-                    msgctx.getSessionContext());
+            MessageContext response =
+                new MessageContext(registry, msgctx.getProperties(), msgctx.getSessionContext(),msgctx.getTransport());
             response.setServerSide(false);
-            response.setProperty(MessageContext.TRANSPORT_TYPE, transport);
-            TransportReceiver receiver =
-                    TransportReceiverLocator.locate(response);
+
+            TransportReceiver receiver = response.getTransport().getReciever();
             receiver.invoke(response);
             SOAPEnvelope resenvelope = response.getEnvelope();
 
@@ -287,33 +275,28 @@ public class Call {
      * @param callback
      * @throws AxisFault
      */
-    public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback)
-            throws AxisFault {
+    public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback) throws AxisFault {
         try {
             AxisEngine engine = new AxisEngine();
-            final MessageContext msgctx = new MessageContext(registry, null,
-                    null);
+            final MessageContext msgctx = new MessageContext(registry, null, null,Utils.createHTTPTransport(registry));
             msgctx.setEnvelope(envelope);
-            msgctx.setProperty(MessageContext.TRANSPORT_TYPE, transport);
+
             msgctx.setTo(targetEPR);
-            if(action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION,action);
+            if (action != null) {
+                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
             }
             if (useSeparateListener) {
                 if (Constants.TRANSPORT_MAIL.equals(transport)) {
-                    throw new AxisFault(
-                            "This invocation support only for bi-directional transport");
+                    throw new AxisFault("This invocation support only for bi-directional transport");
                 }
-                Invoker invoker = new Invoker(msgctx, engine, registry,
-                        callback);
+                Invoker invoker = new Invoker(msgctx, engine, registry, callback);
                 Thread th = new Thread(invoker);
                 th.start();
             } else {
 
                 // TODO
                 // start the Listener at the client side
-                throw new UnsupportedOperationException(
-                        "Unblocking transports are not supported yet");
+                throw new UnsupportedOperationException("Unblocking transports are not supported yet");
             }
         } catch (OMException e) {
             throw AxisFault.makeFault(e);

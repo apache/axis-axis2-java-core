@@ -16,47 +16,118 @@
  
 package org.apache.axis.engine;
 
-import junit.framework.TestCase;
-import org.apache.axis.context.MessageContext;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.TestCase;
+
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransport;
+import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.providers.AbstractProvider;
+import org.apache.axis.transport.TransportSender;
+import org.apache.wsdl.WSDLService;
+
 public class EngineTest extends TestCase {
-    private QName serviceName = new QName("", "EchoService");
-    private QName operationName = new QName("", "echoVoid");
-    private QName transportName = new QName("", "NullTransport");
-    private EngineRegistry engineRegistry;
-    private MessageContext mc;
+   private MessageContext mc;
+   private ArrayList executedHandlers = new ArrayList();
+   private EngineRegistry engineRegistry;
+   private QName serviceName = new QName("NullService");
 
-    public EngineTest() {
-    }
+   public EngineTest() {
+   }
 
-    public EngineTest(String arg0) {
-        super(arg0);
-    }
-//    protected void setUp() throws Exception {
-//        engineRegistry = EngineUtils.createMockRegistry(serviceName,operationName,transportName);
-//        mc = new MessageContext(engineRegistry,null);
-//        AxisService service = engineRegistry.getService(serviceName);
-//        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO,"127.0.0.1:8080/axis/services/EchoService"));
-//        mc.setOperation(service.getOperation(operationName));
-//        
-//        OutputStream out = System.out;
-//        mc.setProperty(MessageContext.TRANSPORT_TYPE,
-//                                TransportSenderLocator.TRANSPORT_HTTP);
-//        mc.setProperty(MessageContext.TRANSPORT_WRITER,out);
-//        out.flush();
-//    }
+   public EngineTest(String arg0) {
+       super(arg0);
+   }
+   protected void setUp() throws Exception {
+       engineRegistry = new EngineRegistryImpl(new AxisGlobal());
 
-    public void testSend() throws Exception {
-//        AxisEngine engine = new AxisEngine(engineRegistry);
-//        engine.send(mc);
-    }
-//    public void testReceive()throws Exception{
-//        AxisEngine engine = new AxisEngine(engineRegistry);
-//        engine.receive(mc);
-//    }
-//    protected void tearDown() throws Exception {
-//    }
+       AxisTransport transport = new AxisTransport(new QName("null"));
+       transport.setSender(new NullTransportSender());
+       mc = new MessageContext(engineRegistry, null, null, transport);
+       mc.setServerSide(true);
+       OMFactory omFac = OMFactory.newInstance();
+       mc.setEnvelope(omFac.getDefaultEnvelope());
+       AxisService service = new AxisService(serviceName);
+       service.setProvider(new NullProvider());
+       engineRegistry.addService(service);
+       service.setStyle(WSDLService.STYLE_DOC);
+       mc.setTo(
+           new EndpointReference(
+               AddressingConstants.WSA_TO,
+               "http://127.0.0.1:8080/axis/services/NullService"));
+
+   }
+
+   public void testSend() throws Exception {
+       AxisEngine engine = new AxisEngine();
+       engine.receive(mc);
+   }
+
+   public class TempHandler extends AbstractHandler {
+       private Integer index;
+       private boolean pause = false;
+       public TempHandler(int index, boolean pause) {
+           this.index = new Integer(index);
+           this.pause = pause;
+       }
+       public TempHandler(int index) {
+           this.index = new Integer(index);
+       }
+
+       public void invoke(MessageContext msgContext) throws AxisFault {
+           executedHandlers.add(index);
+           if (pause) {
+               msgContext.setPaused(true);
+           }
+       }
+
+   }
+
+   public class NullProvider extends AbstractProvider {
+       public MessageContext invoke(MessageContext msgCtx) throws AxisFault {
+           MessageContext newCtx =
+               new MessageContext(
+                   msgCtx.getGlobalContext().getRegistry(),
+                   msgCtx.getProperties(),
+                   msgCtx.getSessionContext(),msgCtx.getTransport());
+           newCtx.setEnvelope(msgCtx.getEnvelope());
+           return newCtx;
+       }
+
+   }
+
+   public class NullTransportSender implements TransportSender {
+       public void cleanup() throws AxisFault {
+       }
+
+       public QName getName() {
+           return null;
+       }
+
+       public Parameter getParameter(String name) {
+           return null;
+       }
+
+       public void init(HandlerMetadata handlerdesc) {
+       }
+
+       public void invoke(MessageContext msgContext) throws AxisFault {
+       }
+
+       public void revoke(MessageContext msgContext) {
+       }
+
+   }
+
 
 }

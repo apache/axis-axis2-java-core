@@ -21,10 +21,11 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
+import org.apache.axis.handlers.OpNameFinder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.transport.TransportSenderLocator;
+import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -83,7 +84,6 @@ public class AxisEngine {
             log.info("starting the out flow");
 
             // let us always start with a fresh EC
-            context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
 
             // Receiving is always a matter of running the transport handlers first
@@ -99,13 +99,21 @@ public class AxisEngine {
             chain.addPhases(global.getPhases(EngineRegistry.INFLOW));
 
             // create a Dispatch Phase and add it to the Execution Chain
-            Dispatcher dispatcher = new Dispatcher();
-            Phase dispatchPhase = new Phase("DispatchPhase");
-            dispatchPhase.addHandler(dispatcher);
-            chain.addPhase(dispatchPhase);
+            if(context.isServerSide()){
+                Dispatcher dispatcher = new Dispatcher();
+                Phase dispatchPhase = new Phase("DispatchPhase");
+                dispatchPhase.addHandler(dispatcher);
+                chain.addPhase(dispatchPhase);
 
-            // Start rolling the Service Handlers will,be added by the Dispatcher
-            chain.invoke(context);
+                // Start rolling the Service Handlers will,be added by the Dispatcher
+                chain.invoke(context);
+            
+                // add invoke Phase
+                Handler opNameFinder = new OpNameFinder();
+                opNameFinder.invoke(context);
+                Receiver reciver = ReceiverLocator.locateReceiver(context);
+                reciver.invoke(context);
+            }
             log.info("ending the out flow");
         } catch (Throwable e) {
             handleFault(context, e);
@@ -129,17 +137,20 @@ public class AxisEngine {
             context.setProcessingFault(true);
 
             // create a SOAP envelope with the Fault
-            MessageContext faultContext = new MessageContext(context.getGlobalContext().getRegistry(),context.getProperties(),context.getSessionContext());
+            MessageContext faultContext = new MessageContext(context.getGlobalContext().getRegistry(),
+                context.getProperties(),context.getSessionContext(),context.getTransport());
+            faultContext.setProcessingFault(true);
+            faultContext.setServerSide(true);
             SOAPEnvelope envelope =
                     OMFactory.newInstance().getDefaultEnvelope();
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();
             body.addFault(new AxisFault(e.getMessage(), e));
-            context.setEnvelope(envelope);
+            faultContext.setEnvelope(envelope);
 
             // send the error
-            executeOutFlow(context, EngineRegistry.FAULTFLOW);
+            executeOutFlow(faultContext, EngineRegistry.FAULTFLOW);
         } else if (!serverSide) {
 
             // if at the client side throw the exception
@@ -163,7 +174,6 @@ public class AxisEngine {
     private void executeOutFlow(MessageContext context, int flow)
             throws AxisFault {
         try {
-            context.setExecutionChain(new ExecutionChain());
             ExecutionChain chain = context.getExecutionChain();
             AxisService service = context.getService();
             if (service != null) {
@@ -185,15 +195,14 @@ public class AxisEngine {
 
             // Receiving is always a matter of running the transport handlers first
             AxisTransport transport = context.getTransport();
-            if (transport != null) {
-                chain.addPhases(transport.getPhases(flow));
-            }
-            Phase sendPhase = new Phase(Phase.SENDING_PHASE);
-            sendPhase.addHandler(TransportSenderLocator.locate(context));
-            chain.addPhase(sendPhase);
-
+            chain.addPhases(transport.getPhases(flow));
+            
             // startet rolling
             chain.invoke(context);
+            
+            TransportSender sender = transport.getSender();
+            sender.invoke(context);
+            
         } catch (AxisFault error) {
             error.printStackTrace();
             handleFault(context, error);

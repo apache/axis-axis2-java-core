@@ -46,6 +46,8 @@ public class ExecutionChain {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
+    
+    private int indexOfPhaseToExecuted = 0;
 
     /**
      * Constructor ExecutionChain
@@ -98,14 +100,23 @@ public class ExecutionChain {
     public void invoke(MessageContext msgctx) throws AxisFault {
         Stack executionStack = new Stack();
         try {
-            for (int i = 0; i < executionList.size(); i++) {
-                Phase phase = (Phase) executionList.get(i);
-                if (phase != null) {
-                    log.info("Invoke the Phase " + phase.getPhaseName());
-                    phase.invoke(msgctx);
-                    //This line should be after the invoke as if the invocation failed this phases is takn care of and 
-                    //no need to revoke agien
-                    executionStack.push(phase);
+            while (indexOfPhaseToExecuted < executionList.size()) {
+                if(msgctx.isPaused()){
+                    if(indexOfPhaseToExecuted > 0){
+                        //need to run the last Phase agien so it can finish the handler
+                        indexOfPhaseToExecuted--;
+                    }
+                    break;
+                }else{
+                    Phase phase = (Phase) executionList.get(indexOfPhaseToExecuted);
+                    if (phase != null) {
+                        log.info("Invoke the Phase " + phase.getPhaseName());
+                        phase.invoke(msgctx);
+                        //This line should be after the invoke as if the invocation failed this phases is takn care of and 
+                        //no need to revoke agien
+                        executionStack.push(phase);
+                        indexOfPhaseToExecuted++;
+                    }
                 }
             }
         } catch (Exception e) {

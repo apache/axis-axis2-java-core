@@ -19,7 +19,6 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportReceiverLocator;
 
 /**
  * Class Invoker
@@ -74,11 +73,11 @@ public class Invoker implements Runnable {
                     callback);
             MessageContext resMsgContext =
             new MessageContext(registry, reqMsgContext.getProperties(),
-                    reqMsgContext.getSessionContext());
+                    reqMsgContext.getSessionContext(),reqMsgContext.getTransport());
             resMsgContext.setServerSide(false);
 
-            TransportReceiver receiver =
-                    TransportReceiverLocator.locate(resMsgContext);
+            TransportReceiver receiver = reqMsgContext.getTransport().getReciever();
+
             receiver.invoke(resMsgContext);
             AsyncResult result = new AsyncResult();
             result.setResult(resMsgContext.getEnvelope());
