@@ -121,12 +121,48 @@ public class Service {
         return (Parameter)parameters.get(index);
     }
 
-
-
     public void prinData(){
         XStream xstream = new XStream();
         String xml = xstream.toXML(this);
         System.out.println("Serialization out put \n"  + xml );
+
+        Handler [] handler = getHandlers();
+        for(int i =0 ; i< handler.length; i++){
+            System.out.println("Hander No "  + (i +1));
+            handler[i].printMe();
+        }
+
     }
 
+    /***
+     * This method is use to get all the handlers which are needed to
+     * run the service , but Handlers which are belong to Global and Transport
+     * not included here if it is requird it can be done
+     *
+     */
+    public Handler [] getHandlers(){
+        int noofhandlers = operation.getHandlerCount() + outFlow.getHandlercount()+ inFlow.getHandlercount() +
+                faultFlow.getHandlercount();
+        Handler [] handler = new Handler[noofhandlers];
+        int count = 0;
+
+        for(int i = 0 ; i < operation.getHandlerCount(); i++){
+            handler[count]= operation.getHandlers()[i];
+            count ++;
+        }
+        for(int i =0 ; i< inFlow.getHandlercount();i++){
+            handler[count] = inFlow.getHandler(i);
+            count ++;
+        }
+        for(int i =0 ; i< outFlow.getHandlercount();i++){
+            handler[count] = outFlow.getHandler(i);
+            count ++;
+        }
+        for(int i =0 ; i< faultFlow.getHandlercount();i++){
+            handler[count] = faultFlow.getHandler(i);
+            count ++;
+        }
+
+        return handler;
+    }
 }

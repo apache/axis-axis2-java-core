@@ -39,9 +39,6 @@ public class PhaseRuletest {
         //    h1.setPhaseLast(false);
         handlerChain.addHandler(h1);
 
-
-
-
         Handler h3 = new Handler();
         h3.setName("C");
         h3.setRef("ddd");
@@ -64,7 +61,7 @@ public class PhaseRuletest {
         h5.setRef("yyy");
         h5.setClassName("yyy.java");
         h5.setPhase("P3");
-        h5.setBefore("D");
+    //    h5.setBefore("D");
         h5.setPhaseLast(true);
         handlerChain.addHandler(h5);
 
@@ -111,7 +108,7 @@ public class PhaseRuletest {
         h11.setAfter("N");
         handlerChain.addHandler(h11);
 
-         Handler h9 = new Handler();
+        Handler h9 = new Handler();
         h9.setName("K");
         h9.setRef("lll");
         h9.setClassName("lll.java");
@@ -124,8 +121,9 @@ public class PhaseRuletest {
         h2.setRef("xyz");
         h2.setClassName("xyz.java");
         h2.setPhase("P1");
-        //h2.setAfter("A");
-        h2.setBefore("A");
+       // h2.setAfter("A");
+       // h2.setBefore("A");
+        h2.setPhaseLast(true);
         handlerChain.addHandler(h2);
 
         Handler [] handlers = handlerChain.getOrderdHandlers();

@@ -2,6 +2,8 @@ package org.apache.axis.deployment.util;
 
 import org.apache.axis.deployment.module.Module;
 
+import java.util.Vector;
+
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
@@ -108,5 +110,28 @@ public class Operation {
 
     public void setFaultFlow(FaultFlow faultFlow) {
         this.faultFlow = faultFlow;
+    }
+
+    public int getHandlerCount() {
+        return inFlow.getHandlercount() + outFlow.getHandlercount() + faultFlow.getHandlercount();
+    }
+
+    public Handler [] getHandlers(){
+        int noofhandrs = inFlow.getHandlercount() + outFlow.getHandlercount() + faultFlow.getHandlercount();
+        Handler [] temphandler = new Handler[noofhandrs];
+        int count =0 ;
+        for(int i =0 ; i< inFlow.getHandlercount();i++){
+            temphandler[count] = inFlow.getHandler(i);
+            count ++;
+        }
+        for(int i =0 ; i< outFlow.getHandlercount();i++){
+            temphandler[count] = outFlow.getHandler(i);
+            count ++;
+        }
+        for(int i =0 ; i< faultFlow.getHandlercount();i++){
+            temphandler[count] = faultFlow.getHandler(i);
+            count ++;
+        }
+        return temphandler;
     }
 }

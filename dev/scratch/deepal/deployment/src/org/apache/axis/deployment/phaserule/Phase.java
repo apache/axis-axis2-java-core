@@ -78,6 +78,9 @@ public class Phase {
         if(phasefirstset){
             throw new PhaseException("PhaseFirst alredy has been set, cannot have two phaseFirst Hander for same phase " + this.name);
         } else {
+            if(getBefoerAfter(phaseFirst)!= ANYWHERE) {
+              throw new PhaseException("Hander with PhaseFirst can not have any before or after proprty error in " + phaseFirst.getName());
+            } else
             this.phaseFirst = phaseFirst;
             phasefirstset = true;
         }
@@ -91,6 +94,9 @@ public class Phase {
         if(phaselastset){
             throw new PhaseException("PhaseLast alredy has been set, cannot have two PhaseLast Hander for same phase " + this.name );
         } else {
+            if(getBefoerAfter(phaseLast)!= ANYWHERE) {
+              throw new PhaseException("Hander with PhaseLast property can not have any before or after proprty error in " + phaseLast.getName());
+            } else
             this.phaseLast = phaseLast;
             phaselastset = true;
         }

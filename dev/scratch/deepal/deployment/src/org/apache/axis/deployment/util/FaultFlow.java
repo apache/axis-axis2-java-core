@@ -39,10 +39,14 @@ public class FaultFlow {
         handlercount++;
     }
 
+    public int getHandlercount() {
+        return handlercount;
+    }
     public Handler getHandler(int index){
         if(index <= handlercount ){
             return (Handler)handlers.get(index);
         } else
             return null;
     }
+
 }
