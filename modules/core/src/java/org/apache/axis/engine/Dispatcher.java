@@ -15,8 +15,6 @@
  */
 package org.apache.axis.engine;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
@@ -24,6 +22,8 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher
@@ -78,8 +78,10 @@ public class Dispatcher extends AbstractHandler implements Handler {
 
             if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
                 String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
-                soapAction = soapAction.replace('"',' ').trim();
-                
+                if (soapAction != null) {
+                    soapAction = soapAction.replace('"', ' ').trim();
+                }
+
                 if (soapAction != null && soapAction.trim().length() > 0) {
                     QName operationName = new QName(soapAction);
                     AxisOperation op = service.getOperation(operationName);

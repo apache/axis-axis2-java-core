@@ -206,4 +206,6 @@ public interface OMElement extends OMNamedNode {
      * @return
      */
     public String getText();
+
+
 }

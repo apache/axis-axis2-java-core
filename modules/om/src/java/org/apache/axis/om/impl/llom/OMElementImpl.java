@@ -15,15 +15,7 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
@@ -398,7 +390,21 @@ public class OMElementImpl extends OMNamedNodeImpl
      */
     public Iterator getAttributes() {
         if (attributes == null) {
-            return null;
+            return new Iterator(){
+
+                public void remove() {
+                    throw new UnsupportedOperationException();
+
+                }
+
+                public boolean hasNext() {
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                public Object next() {
+                    throw new UnsupportedOperationException();
+                }
+            };
         }
         return attributes.values().iterator();
     }
@@ -563,10 +569,8 @@ public class OMElementImpl extends OMNamedNodeImpl
         String childText = "";
         OMNode child = this.getFirstChild();
         while(child != null){
-            String value = child.getValue();
-            System.out.println("value.length() = " + value.length());
-            if(child.getType() == OMNode.TEXT_NODE && value != null && !"".equals(value.trim())){
-               childText += value.trim();
+            if(child.getType() == OMNode.TEXT_NODE && child.getValue() != null && !"".equals(child.getValue().trim())){
+               childText += child.getValue().trim();
             }
             child = child.getNextSibling();
         }
@@ -834,6 +838,10 @@ public class OMElementImpl extends OMNamedNodeImpl
             }
         }
         return null;
+    }
+
+    public QName getQName() {
+        return super.getQName();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
 }

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.om;
 
+import javax.xml.namespace.QName;
+
 /**
  * Interface OMNamedNode
  */
@@ -54,4 +56,6 @@ public interface OMNamedNode extends OMNode {
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace);
+
+    public QName getQName();
 }
