@@ -28,27 +28,13 @@ import org.apache.axis.registry.EngineRegistry;
  *
  */
 public class ServiceTest extends TestCase {
-
     public void testparseService1() throws PhaseException ,DeploymentException, AxisFault{
-        //String filename = "src/test-resources/deployment";
         String filename = "./target/test-resources" ;
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
-        try {
-            EngineRegistry er = null;
-            try {
-                er = deploymentEngine.start();
-            } catch (AxisFault axisFault) {
-                axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            } catch (PhaseException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            } catch (DeploymentException e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            }
-            if(er != null){
-                System.out.println("Number of service" + er.getServiceCount());
-            }
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        EngineRegistry er = null;
+        er = deploymentEngine.start();
+        if(er != null){
+            System.out.println("Number of service" + er.getServiceCount());
         }
     }
 }
