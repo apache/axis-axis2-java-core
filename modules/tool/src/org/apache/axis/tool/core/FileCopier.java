@@ -2,6 +2,10 @@ package org.apache.axis.tool.core;
 
 import java.io.File;
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Copy;
+import org.apache.tools.ant.types.FileSet;
+
 import sun.rmi.transport.Target;
 
 /*

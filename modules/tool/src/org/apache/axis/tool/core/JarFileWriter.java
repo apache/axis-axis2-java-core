@@ -3,6 +3,9 @@ package org.apache.axis.tool.core;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Jar;
+
 import sun.rmi.transport.Target;
 
 /*

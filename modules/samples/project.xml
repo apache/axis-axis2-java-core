@@ -103,7 +103,7 @@
 
      <resources>
          <resource>
-             <directory>${basedir}/src/test-resources</directory>
+             <directory>${basedir}/test-resources</directory>
           </resource>
           <resource>
         	<directory>conf</directory>
