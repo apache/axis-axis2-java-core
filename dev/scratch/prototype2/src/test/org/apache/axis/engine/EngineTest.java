@@ -16,16 +16,14 @@
 
 package org.apache.axis.engine;
 
-import java.io.OutputStream;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.description.AxisService;
+
+import javax.xml.namespace.QName;
+import java.io.OutputStream;
 
 public class EngineTest extends TestCase{
     private QName serviceName = new QName("","EchoService");

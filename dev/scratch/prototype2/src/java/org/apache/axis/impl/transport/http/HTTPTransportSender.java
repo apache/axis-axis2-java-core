@@ -16,12 +16,12 @@
 
 package org.apache.axis.impl.transport.http;
 
-import java.io.OutputStream;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
+
+import java.io.OutputStream;
 
 public class HTTPTransportSender extends AbstractTransportSender {
     protected OutputStream out;

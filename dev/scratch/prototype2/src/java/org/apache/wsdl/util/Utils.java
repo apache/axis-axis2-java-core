@@ -15,19 +15,18 @@
  */
 package org.apache.wsdl.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
+import org.apache.wsdl.WSDLTypes;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Message;
 import javax.wsdl.Part;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.wsdl.WSDLTypes;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

@@ -15,11 +15,11 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.HashMap;
-
 import org.apache.wsdl.Component;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
+
+import java.util.HashMap;
 
 
 

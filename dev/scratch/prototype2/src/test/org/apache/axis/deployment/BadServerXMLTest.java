@@ -3,7 +3,6 @@ package org.apache.axis.deployment;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisGlobal;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;

@@ -15,9 +15,9 @@
  */
 package org.apache.axis.encoding;
 
+import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OutObject;
-import org.apache.axis.om.OMConstants;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 

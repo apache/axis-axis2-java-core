@@ -17,7 +17,6 @@
 package org.apache.axis.om;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.*;

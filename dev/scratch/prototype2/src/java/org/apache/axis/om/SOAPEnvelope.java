@@ -26,27 +26,6 @@ package org.apache.axis.om;
 public interface SOAPEnvelope extends OMElement {
 
     /**
-     * Creates a new <CODE>Name</CODE> object initialized with the
-     * given local name, namespace prefix, and namespace URI.
-     * <p/>
-     * <P>This factory method creates <CODE>Name</CODE> objects
-     * for use in the SOAP/XML envelope.
-     *
-     * @param localName a <CODE>String</CODE> giving
-     *                  the local name
-     * @param prefix    a <CODE>String</CODE> giving
-     *                  the prefix of the namespace
-     * @param uri       a <CODE>String</CODE> giving the
-     *                  URI of the namespace
-     * @return a <CODE>OMNamespace</CODE> object initialized with the given
-     *         local name, namespace prefix, and namespace URI
-     * @throws OMException if there is a SOAP error
-     */
-    public abstract OMNamespace createNamespace(String localName, String prefix, String uri)
-            throws OMException;
-
-
-    /**
      * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
      * SOAPEnvelope</CODE> object.
      * <p/>

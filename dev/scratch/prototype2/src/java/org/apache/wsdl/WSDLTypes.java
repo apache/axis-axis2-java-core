@@ -15,9 +15,8 @@
  */
 package org.apache.wsdl;
 
-import java.util.HashMap;
-
 import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 
 /**

@@ -44,6 +44,14 @@ public interface OMElement extends OMNamedNode {
     public Iterator getChildrenWithName(QName elementQName) throws OMException;
 
     /**
+     * This will return the first matched child, return null if none found
+     * @param elementQName
+     * @return
+     * @throws OMException
+     */
+    public OMNode getChildWithName(QName elementQName) throws OMException;
+
+    /**
      * This returns a collection of this element.
      * Children can be of types OMElement, OMText.
      */
@@ -65,7 +73,7 @@ public interface OMElement extends OMNamedNode {
     public OMNamespace declareNamespace(OMNamespace namespace);
 
     /**
-     * This will find a namespace with the given uri and prefix, in the scope of the docuemnt.
+     * This will find a namespace with the given uri and prefix, in the scope of the hierarchy.
      * This will start to find from the current element and goes up in the hiararchy until this finds one.
      * If none is found, return null
      *

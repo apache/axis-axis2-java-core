@@ -15,11 +15,11 @@
  */
 package org.apache.wsdl.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLOperation;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk

@@ -15,13 +15,6 @@
  */
 package org.apache.axis.clientapi;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -29,6 +22,12 @@ import org.apache.axis.impl.llom.builder.StAXBuilder;
 import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public abstract class AbstractCall {

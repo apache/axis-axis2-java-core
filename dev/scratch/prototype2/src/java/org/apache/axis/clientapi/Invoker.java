@@ -11,12 +11,12 @@ package org.apache.axis.clientapi;
  * governing permissions and limitations under the License.
  */
 
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
 
 public class Invoker extends AbstractCall implements Runnable {
 

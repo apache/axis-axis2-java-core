@@ -15,10 +15,9 @@
  */
 package org.apache.wsdl;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 
 /**

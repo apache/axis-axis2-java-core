@@ -15,13 +15,13 @@
  */
 package org.apache.axis.wsdl.wsdltowom;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.PortType;
-
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLInterface;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.PortType;
 
 /**
  * @author chathura@opensource.lk

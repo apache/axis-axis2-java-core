@@ -7,9 +7,9 @@ import org.apache.axis.om.builder.dummy.DummyOutObject;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Iterator;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

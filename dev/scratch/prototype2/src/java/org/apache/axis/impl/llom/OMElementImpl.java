@@ -1,16 +1,15 @@
 package org.apache.axis.impl.llom;
 
+import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.impl.llom.serialize.StreamingOMSerializer;
-
 import org.apache.axis.impl.llom.util.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -95,6 +94,16 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
         return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(), elementQName);
+    }
+
+    public OMNode getChildWithName(QName elementQName) throws OMException {
+        OMChildrenQNameIterator omChildrenQNameIterator = new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(), elementQName);
+        OMNode omNode = null;
+        if(omChildrenQNameIterator.hasNext()){
+            omNode = (OMNode) omChildrenQNameIterator.next();
+        }
+
+        return omNode;
     }
 
     private void addChild(OMNodeImpl child) {

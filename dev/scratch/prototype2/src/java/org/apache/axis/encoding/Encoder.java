@@ -16,10 +16,10 @@
  
 package org.apache.axis.encoding;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OutObject;
+
+import javax.xml.stream.XMLStreamReader;
 
 
 public interface Encoder extends OutObject{

@@ -15,8 +15,6 @@
 */
 package org.apache.axis.deployment;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.Flow;
@@ -24,6 +22,8 @@ import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.Provider;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.providers.RawXMLProvider;
+
+import javax.xml.namespace.QName;
 
 
 public class BuildERWithDeploymentTest extends AbstractTestCase{

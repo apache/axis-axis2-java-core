@@ -15,8 +15,6 @@
  */
 package org.apache.axis.engine;
 
-import java.net.URL;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -26,6 +24,8 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
+
+import java.net.URL;
 
 
 public class EngineAndDeploymentTest extends AbstractTestCase{

@@ -21,9 +21,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.impl.handlers.OpNameFinder;
-/**
- * this find the service to invoke 
- */
+
 import javax.xml.namespace.QName;
 
 public class Dispatcher extends AbstractHandler implements Handler {

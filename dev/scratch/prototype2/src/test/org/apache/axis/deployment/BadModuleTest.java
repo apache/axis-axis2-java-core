@@ -3,9 +3,9 @@ package org.apache.axis.deployment;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisGlobal;
 
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -1,6 +1,5 @@
 package org.apache.axis.om;
 
-import org.apache.axis.engine.AxisFault;
 import org.xml.sax.ContentHandler;
 
 /**

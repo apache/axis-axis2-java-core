@@ -5,9 +5,8 @@ import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.*;
 import java.io.FileReader;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**

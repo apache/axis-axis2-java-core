@@ -16,10 +16,10 @@
 
 package org.apache.axis.impl.transport.tcp;
 
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
-import org.apache.axis.addressing.EndpointReference;
 
 import java.io.OutputStream;
 

@@ -18,8 +18,8 @@ package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.impl.description.AxisService;
 

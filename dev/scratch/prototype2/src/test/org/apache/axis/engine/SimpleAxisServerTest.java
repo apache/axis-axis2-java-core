@@ -16,8 +16,6 @@
 package org.apache.axis.engine;
 
 //todo
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
@@ -25,6 +23,8 @@ import org.apache.axis.impl.description.AxisService;
 import org.apache.axis.impl.description.SimpleAxisOperationImpl;
 import org.apache.axis.impl.providers.RawXMLProvider;
 import org.apache.axis.impl.transport.http.SimpleHTTPReceiver;
+
+import javax.xml.namespace.QName;
 
 public class SimpleAxisServerTest extends AbstractTestCase{
     private QName serviceName = new QName("","EchoXMLService");

@@ -1,7 +1,6 @@
 package org.apache.axis.addressing;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

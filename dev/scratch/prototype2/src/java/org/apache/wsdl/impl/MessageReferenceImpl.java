@@ -15,9 +15,9 @@
  */
 package org.apache.wsdl.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.MessageReference;
+
+import javax.xml.namespace.QName;
 
 
 /**

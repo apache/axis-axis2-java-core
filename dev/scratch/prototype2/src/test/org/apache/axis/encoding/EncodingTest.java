@@ -22,12 +22,11 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 
-import java.lang.reflect.Method;
-
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.lang.reflect.Method;
 
 
 public class EncodingTest extends AbstractTestCase {

@@ -15,10 +15,14 @@
  */
 package org.apache.axis.impl.transport.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.*;
+import org.apache.axis.impl.llom.builder.StAXBuilder;
+import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPEnvelope;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -30,19 +34,9 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
-import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.engine.TransportSenderLocator;
-import org.apache.axis.impl.llom.builder.StAXBuilder;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 
 

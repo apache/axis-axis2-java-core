@@ -16,9 +16,9 @@
  
 package org.apache.axis;
 
-import java.io.File;
-
 import junit.framework.TestCase;
+
+import java.io.File;
 
 /**
  * Abstract base class for test cases.

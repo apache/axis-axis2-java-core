@@ -16,12 +16,12 @@
 
 package org.apache.axis.transport;
 
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.TransportSender;
 import org.apache.axis.impl.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.addressing.EndpointReference;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

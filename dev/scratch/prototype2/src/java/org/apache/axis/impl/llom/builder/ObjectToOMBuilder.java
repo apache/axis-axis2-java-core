@@ -6,7 +6,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import java.util.Stack;
 import java.util.Vector;
 
 /**

@@ -41,28 +41,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl implements SOAPEnvelope, OMC
         super(SOAPENVELOPE_LOCAL_NAME, ns);
     }
 
-    /**
-     * Creates a new <CODE>Name</CODE> object initialized with the
-     * given local name, namespace prefix, and namespace URI.
-     * <p/>
-     * <P>This factory method creates <CODE>Name</CODE> objects
-     * for use in the SOAP/XML document.
-     *
-     * @param localName a <CODE>String</CODE> giving
-     *                  the local name
-     * @param prefix    a <CODE>String</CODE> giving
-     *                  the prefix of the namespace
-     * @param uri       a <CODE>String</CODE> giving the
-     *                  URI of the namespace
-     * @return a <CODE>OMNamespace</CODE> object initialized with the given
-     *         local name, namespace prefix, and namespace URI
-     * @throws org.apache.axis.om.OMException if there is a SOAP error
-     */
-    public OMNamespace createNamespace(String localName, String prefix, String uri) throws OMException {
-        return this.createNamespace(localName, prefix, uri);
-    }
-
-    /**
+        /**
      * Returns the <CODE>SOAPHeader</CODE> object for this <CODE>
      * SOAPEnvelope</CODE> object.
      * <p/>

@@ -15,12 +15,11 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.ExtensionElement;
 import org.apache.wsdl.WSDLTypes;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk

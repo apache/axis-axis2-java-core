@@ -15,10 +15,10 @@
  */
 package org.apache.wsdl.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLEndpoint;
+
+import javax.xml.namespace.QName;
 
 
 

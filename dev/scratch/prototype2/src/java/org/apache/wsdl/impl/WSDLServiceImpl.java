@@ -15,13 +15,12 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 
 /**

@@ -30,8 +30,6 @@ import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
-import sun.text.CompactShortArray;
-
 
 public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase implements OMConstants {
 
