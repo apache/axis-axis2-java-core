@@ -54,10 +54,6 @@ public class Call extends AbstractCall {
         this.targetEPR = EPR;
 
     }
-    
-    public EndpointReference getTO(){
-    	return this.targetEPR;
-    }
 
     /**
      * todo
@@ -139,14 +135,16 @@ public class Call extends AbstractCall {
 
     public SOAPEnvelope  sendReceive(SOAPEnvelope envelope) throws AxisFault {
         try{
-            URL url =new URL(targetEPR.getAddress());
-            URLConnection urlConnect = url.openConnection();
-            urlConnect.setDoOutput(true);
 
             AxisEngine engine = new AxisEngine(registry);
             MessageContext msgctx = new MessageContext(registry);
             msgctx.setEnvelope(envelope);
 
+            // TODO : Below par is transport specific, for the time being its HTTP. It should be modified
+            // so that correct transport sender should be created here
+            URL url =new URL(targetEPR.getAddress());
+            URLConnection urlConnect = url.openConnection();
+            urlConnect.setDoOutput(true);
             OutputStream out = urlConnect.getOutputStream();
             
             msgctx.setProperty(MessageContext.TRANSPORT_DATA, out);
