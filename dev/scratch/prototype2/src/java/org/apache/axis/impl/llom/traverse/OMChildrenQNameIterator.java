@@ -23,39 +23,25 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * <p/>
- * User: Eran Chinthaka - Lanka Software Foundation
+ * @author Eran Chinthaka - Lanka Software Foundation
+ * @author Ajith Ranabahu
  * Date: Oct 13, 2004
  * Time: 11:25:29 AM
  */
-public class OMChildrenQNameIterator implements Iterator {
+public class OMChildrenQNameIterator extends OMChildrenIterator{
 
-    private OMNode omNode;
+
     private QName givenQName;
 
-    private boolean picked = false;
+    private boolean needToMoveForward = true;
+    private boolean isMatchingNodeFound = false;
 
-    public OMChildrenQNameIterator(OMNodeImpl firstChild, QName qName) {
-        this.omNode = firstChild;
-        this.givenQName = qName;
+    public OMChildrenQNameIterator(OMNode currentChild, QName givenQName) {
+        super(currentChild);
+        this.givenQName = givenQName;
     }
 
-    /**
-     * Removes from the underlying collection the last element returned by the
-     * iterator (optional operation).  This method can be called only once per
-     * call to <tt>next</tt>.  The behavior of an iterator is unspecified if
-     * the underlying collection is modified while the iteration is in
-     * progress in any way other than by calling this method.
-     *
-     * @throws UnsupportedOperationException if the <tt>remove</tt>
-     *                                       operation is not supported by this Iterator.
-     * @throws IllegalStateException         if the <tt>next</tt> method has not
-     *                                       yet been called, or the <tt>remove</tt> method has already
-     *                                       been called after the last call to the <tt>next</tt>
-     *                                       method.
-     */
-    public void remove() {
-        throw new UnsupportedOperationException(); //TODO implement this
-    }
+
 
     /**
      * Returns <tt>true</tt> if the iteration has more elements. (In other
@@ -65,21 +51,17 @@ public class OMChildrenQNameIterator implements Iterator {
      * @return <tt>true</tt> if the iterator has more elements.
      */
     public boolean hasNext() {
-
-        boolean needToMoveForward = true;
-        boolean isMatchingNodeFound = false;
-
         while (needToMoveForward) {
-            if (omNode != null) {
-
+            if (currentChild != null) {
                 // check the current node for the criteria
-                if ((omNode instanceof OMNamedNodeImpl) && (isQNamesMatch(((OMNamedNodeImpl) omNode).getQName(), this.givenQName))) {
+                if ((currentChild instanceof OMNamedNodeImpl) &&
+                        (isQNamesMatch(((OMNamedNodeImpl) currentChild).getQName(), this.givenQName))) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {
                     // get the next named node
-                    omNode = omNode.getNextSibling();
-                    isMatchingNodeFound = needToMoveForward = !(omNode == null);
+                    currentChild = currentChild.getNextSibling();
+                    isMatchingNodeFound = needToMoveForward = !(currentChild == null);
                 }
             } else {
                 needToMoveForward = false;
@@ -96,12 +78,18 @@ public class OMChildrenQNameIterator implements Iterator {
      *          iteration has no more elements.
      */
     public Object next() {
-        OMNode tempNode = omNode;
-        omNode = omNode.getNextSibling();
-        return tempNode;
+        //reset the flags
+        needToMoveForward=true;
+        isMatchingNodeFound=false;
+        nextCalled=true;
+        removeCalled=false;
+
+        lastChild = currentChild;
+        currentChild = currentChild.getNextSibling();
+        return lastChild;
     }
 
-     /**
+    /**
      *    Here I can not use the overriden equals method of QName, as one might want to get
      * some element just by giving the localname, even though a matching element has a namespace uri as well.
      * This will not be supported in the equals method of the QName
@@ -111,14 +99,18 @@ public class OMChildrenQNameIterator implements Iterator {
      */
     private boolean isQNamesMatch(QName elementQName, QName qNameToBeMatched){
 
-         // if no QName was given, that means one needs all
-         if(qNameToBeMatched == null){
-             return true;
-         }
+        // if no QName was given, that means one needs all
+        if(qNameToBeMatched == null){
+            return true;
+        }
 
         // if the given localname is null, whatever value this.qname has, its a match
-        boolean localNameMatch = qNameToBeMatched.getLocalPart() == null || qNameToBeMatched.getLocalPart() == "" || (elementQName != null && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
-        boolean namespaceURIMatch = qNameToBeMatched.getNamespaceURI() == null || qNameToBeMatched.getNamespaceURI() == "" ||  (elementQName != null && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
+        boolean localNameMatch = qNameToBeMatched.getLocalPart() == null ||
+                qNameToBeMatched.getLocalPart() == "" ||
+                (elementQName != null && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
+        boolean namespaceURIMatch = qNameToBeMatched.getNamespaceURI() == null ||
+                qNameToBeMatched.getNamespaceURI() == "" ||
+                (elementQName != null && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
 
         return localNameMatch && namespaceURIMatch;
 

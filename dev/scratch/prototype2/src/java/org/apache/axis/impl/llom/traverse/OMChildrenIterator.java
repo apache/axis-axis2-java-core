@@ -27,10 +27,12 @@ import java.util.Iterator;
  */
 public class OMChildrenIterator implements Iterator {
 
-    private OMNode currentChild;
-    private OMNode lastChild;
-    private boolean nextCalled=false;
-    private boolean removeCalled=false;
+    protected OMNode currentChild;
+    protected OMNode lastChild;
+    protected boolean nextCalled=false;
+    protected boolean removeCalled=false;
+
+    
 
     public OMChildrenIterator(OMNode currentChild) {
         this.currentChild = currentChild;
