@@ -73,4 +73,7 @@ public interface DeploymentConstants {
     String JAVAST = "http://ws.apache.org/axis2/deployment/java";
     String JAVAIMPL = "implementation";
 
+    String TRANSPORTSTAG = "transports";
+    String TRANSPORTTAG ="transport";
+
 }

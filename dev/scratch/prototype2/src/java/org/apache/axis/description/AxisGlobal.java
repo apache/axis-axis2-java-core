@@ -40,6 +40,7 @@ public class AxisGlobal implements ParameterInclude,PhasesInclude {
     protected ParameterInclude paramInclude;
     protected PhasesInclude phasesInclude;
     protected Vector modules;
+    protected ArrayList transportList;
 
     //TODO provide a way to store name (name attribute value server.xml)
     public AxisGlobal(){
@@ -47,7 +48,15 @@ public class AxisGlobal implements ParameterInclude,PhasesInclude {
         phasesInclude = new PhasesIncludeImpl();
         modules = new Vector();
     }
-    
+
+    public ArrayList getTransportList() {
+        return transportList;
+    }
+
+    public void setTransportList(ArrayList transportList) {
+        this.transportList = transportList;
+    }
+
     public void addModule(QName moduleref) {
        modules.add(moduleref);
     }

@@ -1,4 +1,8 @@
 <server name ="AxisJava2.0" >
+     <transports>
+        <transport name ="HTTP"/>
+        <transport name ="SMTP"/>
+    </transports>
    <phaseOrder>
         <phase name="global"/>
         <phase name="transport"/>

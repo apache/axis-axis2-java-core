@@ -2,6 +2,10 @@
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
     <module ref="module1"> </module>
+    <transports>
+        <transport name ="HTTP"/>
+        <transport name ="SMTP"/>
+    </transports>
   <!--
     <module ref="uri">
         <parameter name="para3" locked="xsd:true">10</parameter>

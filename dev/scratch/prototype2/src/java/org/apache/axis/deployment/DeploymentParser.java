@@ -127,8 +127,11 @@ public class DeploymentParser implements DeploymentConstants {
                     if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
+                    } else if (TRANSPORTSTAG.equals(ST)) {
+                        ArrayList trnsportList = processTransport();
+                        serverMetaData.setTransportList(trnsportList);
                     } else if (TYPEMAPPINGST.equals(ST)) {
-                       throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
+                        throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
@@ -141,9 +144,9 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
-                      ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
+                        ((EngineRegistryImpl)dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
                     } else if(SERVERST.equals(ST)){
-                         //TODO process attributes
+                        //TODO process attributes
                     }  else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
                     }
@@ -154,6 +157,43 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (DeploymentException e) {
             throw new DeploymentException(e);
         }
+    }
+
+
+    public ArrayList processTransport() throws DeploymentException {
+        boolean END_TRANSPORTS = false;
+        ArrayList transportList = new ArrayList();
+        String text = ""; // to store the paramater elemnt
+        try {
+            while (!END_TRANSPORTS) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                    END_TRANSPORTS = true;
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
+                    if (TRANSPORTTAG.equals(tagnae)) {
+                        String attname = pullparser.getAttributeLocalName(0);
+                        String attvalue = pullparser.getAttributeValue(0);
+                        if (ATTNAME.equals(attname)) {
+                            transportList.add(attvalue);
+                        }
+                    }
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (TRANSPORTSTAG.equals(endtagname)) {
+                        END_TRANSPORTS = true;
+                        break;
+                    }
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                    text = text + pullparser.getText();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("parser Exception", e);
+        } catch (Exception e) {
+            throw new DeploymentException("Unknown process Exception", e);
+        }
+        return transportList;
     }
 
     /**
@@ -169,9 +209,9 @@ public class DeploymentParser implements DeploymentConstants {
                     //TODO load the java clss for this
                     //TODO  somtimes Provider should be change
                     dpengine.getCurrentFileItem().setProvideName(attvalue);
-                  //  Provider provider = new SimpleJavaProvider();
-                   // provider. .setName(new QName(getValue(attvalue)));
-                   // axisService.setProvider(provider);
+                    //  Provider provider = new SimpleJavaProvider();
+                    // provider. .setName(new QName(getValue(attvalue)));
+                    // axisService.setProvider(provider);
                 } else if (STYLENAME.equals(attname)) {
                     // axisService.setStyle();
                     //TODO setStyle should be handle latter
