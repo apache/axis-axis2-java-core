@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.engine;
-
+package org.apache.axis;
 
 public class Constants {
     public static final int SOAP_STYLE_RPC_ENCODED = 1000;
@@ -29,6 +28,9 @@ public class Constants {
     public static final String PHASE_TRANSPORT = "transport";
     public static final String PHASE_GLOBAL = "global";
 
+    public static final String SESSION_CONTEXT_PROPERTY = "SessionContext";
+
+    public static final String TRANSPORT_TCP = "tcp";
+    public static final String TRANSPORT_HTTP = "http";
 
 }
-
