@@ -19,6 +19,7 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.CommonExecutor;
+import org.apache.axis.Handler;
 import org.apache.axis.registry.FlowInclude;
 import org.apache.axis.registry.ModuleInclude;
 import org.apache.axis.registry.NamedEngineElement;
@@ -32,6 +33,9 @@ public interface Service extends FlowInclude,NamedEngineElement,
     TypeMappingInclude,CommonExecutor,ModuleInclude{
     public Operation getOperation(QName index);
     public void addOperation(Operation op);
-    
+    public Handler getProvider();
+    public Handler getSender();
+    public void setProvider(Handler handler);    
     public ClassLoader getClassLoader();
+    public void setClassLoader(ClassLoader cl);    
 }

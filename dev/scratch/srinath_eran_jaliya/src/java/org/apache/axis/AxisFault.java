@@ -16,6 +16,8 @@
 
 package org.apache.axis;
 
+import java.lang.reflect.InvocationTargetException;
+
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -57,5 +59,32 @@ public class AxisFault extends java.rmi.RemoteException {
         super(arg0, arg1);
         // TODO Auto-generated constructor stub
     }
+    
+    /**
+    * Make an AxisFault based on a passed Exception.  If the Exception is
+    * already an AxisFault, simply use that.  Otherwise, wrap it in an
+    * AxisFault.  If the Exception is an InvocationTargetException (which
+    * already wraps another Exception), get the wrapped Exception out from
+    * there and use that instead of the passed one.
+    *
+    * @param e the <code>Exception</code> to build a fault for
+    * @return  an <code>AxisFault</code> representing <code>e</code>
+    */
+   public static AxisFault makeFault(Exception e)
+   {
+       if (e instanceof InvocationTargetException) {
+           Throwable t = ((InvocationTargetException)e).getTargetException();
+           if (t instanceof Exception) {
+               e = (Exception)t;
+           }
+       }
+
+       if (e instanceof AxisFault) {
+           return (AxisFault)e;
+       }
+
+       return new AxisFault(e.getMessage(),e);
+   }
+
 
 }

@@ -39,7 +39,7 @@ public class AxisEngine {
         log.info("Axis Engine Started");        
         this.registry = registry;
     }
-    
+
     public void send(MessageContext mc)throws AxisFault{
         Stack executionStack = new Stack();
         QName currentTansportName = null;
@@ -90,7 +90,7 @@ public class AxisEngine {
         log.info("end the send()");
     }
     
-    public  void recive(MessageContext mc)throws AxisFault{
+    public void recive(MessageContext mc)throws AxisFault{
         Stack executionStack = new Stack();
         QName currentTansportName = null;
         QName currentServiceName = null;
@@ -123,6 +123,7 @@ public class AxisEngine {
             service.recive(mc);
             executionStack.push(service);
         }catch(AxisFault e){
+            e.printStackTrace();
             while(!executionStack.isEmpty()){
                 CommonExecutor commonExecutor = (CommonExecutor)executionStack.pop();
                 commonExecutor.rollback(mc);

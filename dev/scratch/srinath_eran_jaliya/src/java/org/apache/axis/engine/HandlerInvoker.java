@@ -69,9 +69,9 @@ public class HandlerInvoker {
     public void revoke(MessageContext msgcontext)throws AxisFault{
         int length = handlers.size();
         if(currentHandlerIndex == 0){
-            currentHandlerIndex = length;
+            currentHandlerIndex = length -1;
         }
-        for(;currentHandlerIndex > 0 ;currentHandlerIndex--){
+        for(;currentHandlerIndex >= 0 ;currentHandlerIndex--){
             Handler handler = (Handler)handlers.get(currentHandlerIndex);
             handler.revoke(msgcontext); 
         }

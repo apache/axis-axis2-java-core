@@ -17,13 +17,10 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.CommonExecutor;
-import org.apache.axis.Handler;
 import org.apache.axis.registry.FlowInclude;
 import org.apache.axis.registry.NamedEngineElement;
 /**
  * Runtime representation of the WSDL Operation
  */
 public interface Operation extends FlowInclude,NamedEngineElement,CommonExecutor{
-    public Handler getProvider();
-    public void setProvider(Handler handler);
 }

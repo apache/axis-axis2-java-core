@@ -17,6 +17,11 @@
 package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
+
+import org.apache.axis.context.GlobalContext;
+import org.apache.axis.context.SessionContext;
+import org.apache.axis.context.SimpleSessionContext;
+import org.apache.axis.registry.EngineRegistry;
 /**
  *  The palce where all the service specific states are kept. 
  *  All the Global states kept in the <code>EngineRegistry</code> and all the 
@@ -24,10 +29,19 @@ import javax.xml.namespace.QName;
  *  artifacts does not keep states foward from the execution.  
  */
 public class MessageContext {
+    public MessageContext(EngineRegistry er){
+        globalContext = new GlobalContext(er);
+        sessionContext = new SimpleSessionContext();
+    }
+    
+    
     private boolean processingFault = false;
     private QName currentTansport = null; 
     private QName currentService = null;
     private QName currentOperation = null;
+    
+    private SessionContext sessionContext;
+    private GlobalContext globalContext;
     
     
     public boolean isProcessingFault(){
@@ -78,6 +92,34 @@ public class MessageContext {
      */
     public QName getCurrentService() {
         return currentService;
+    }
+
+    /**
+     * @return
+     */
+    public GlobalContext getGlobalContext() {
+        return globalContext;
+    }
+
+    /**
+     * @return
+     */
+    public SessionContext getSessionContext() {
+        return sessionContext;
+    }
+
+    /**
+     * @param context
+     */
+    public void setGlobalContext(GlobalContext context) {
+        globalContext = context;
+    }
+
+    /**
+     * @param context
+     */
+    public void setSessionContext(SessionContext context) {
+        sessionContext = context;
     }
 
 }

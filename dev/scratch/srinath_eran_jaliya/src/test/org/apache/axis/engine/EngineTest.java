@@ -21,16 +21,18 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis.engine.registry.MockFlow;
-import org.apache.axis.engine.registry.SpeakingProvider;
+import org.apache.axis.providers.SimpleJavaProvider;
+import org.apache.axis.registry.ConcreateParameter;
 import org.apache.axis.registry.EngineRegistry;
 import org.apache.axis.registry.Module;
+import org.apache.axis.registry.Parameter;
 import org.apache.axis.registry.SimpleEngineRegistry;
 
 /**
  * @author hemapani@opensource.lk
  */
 public class EngineTest extends TestCase{
-    private QName serviceName = new QName("","EchoVoidService");
+    private QName serviceName = new QName("","EchoService");
     private QName operationName = new QName("","echoVoid");
     private QName transportName = new QName("","NullTransport");
     private EngineRegistry engineRegistry;
@@ -60,19 +62,25 @@ public class EngineTest extends TestCase{
         service.setInFlow(new MockFlow("service inflow",4));
         service.setOutFlow(new MockFlow("service outflow",5));
         service.setFaultFlow(new MockFlow("service faultflow",1));
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        
+        Parameter classParam = new ConcreateParameter("className",EchoService.class.getName());
+        service.addParameter(classParam);
+         
+        service.setProvider(new SimpleJavaProvider());
         
         Module m1 = new SimpleModule(new QName("","A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow",4));
         m1.setFaultFlow(new MockFlow("service module faultflow",1));
         service.addModule(m1);
         
-        Operation operation = new SimpleOperation(operationName);
+        Operation operation = new SimpleOperation(operationName,service);
         operation.setInFlow(new MockFlow("inflow",4));
-        operation.setProvider(new SpeakingProvider());
+        
         service.addOperation(operation);
         engineRegistry.addService(service);
         
-        mc = new MessageContext();
+        mc = new MessageContext(engineRegistry);
         mc.setCurrentTansport(transportName);
         mc.setCurrentService(serviceName);
         mc.setCurrentOperation(operationName);

@@ -16,22 +16,17 @@
 
 package org.apache.axis.engine.registry;
 
-import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.engine.MessageContext;
-import org.apache.axis.registry.AbstractEngineElement;
+import org.apache.axis.providers.AbstractProvider;
 
-public class SpeakingProvider extends AbstractEngineElement implements Handler {
+public class SpeakingProvider extends AbstractProvider implements Handler {
     private String message;
-    private QName name;
-    
     public SpeakingProvider(){}
 
-    public QName getName() {
-        return name;
-    }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         System.out.println("I am Speaking Provider Running :)");
@@ -40,9 +35,26 @@ public class SpeakingProvider extends AbstractEngineElement implements Handler {
     public void revoke(MessageContext msgContext) {
         System.out.println("I am Speaking Provider revoking :)");
     }
+    /* (non-Javadoc)
+     * @see org.apache.axis.engine.AbstractProvider#deserializeParameters(org.apache.axis.engine.MessageContext, java.lang.reflect.Method)
+     */
+    public Object[] deserializeParameters(
+        MessageContext msgContext,
+        Method method)
+        throws AxisFault {
+        return null;
+    }
 
-    public void setName(QName name) {
-        this.name = name;
+    public Object getTheImplementationObject(MessageContext msgContext)
+        throws AxisFault {
+        return null;
+    }
+
+    protected Object makeNewServiceObject(
+        MessageContext msgContext)
+        throws AxisFault {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

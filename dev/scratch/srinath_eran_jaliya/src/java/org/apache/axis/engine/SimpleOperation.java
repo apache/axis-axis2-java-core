@@ -26,34 +26,35 @@ import org.apache.commons.logging.LogFactory;
 public class SimpleOperation extends ConcreateCommonExecuter implements Operation{
     private Log log = LogFactory.getLog(getClass());   
     private QName name;
-    private Handler provider;
+    private Service service;
     
-    
-    public SimpleOperation(QName name){
+    /**
+     * Each Operatrion must have a associated Service. The  service need to be specified 
+     * at the initialization of the Operation.  
+     * @param name
+     * @param service
+     */
+    public SimpleOperation(QName name,Service service){
         this.name = name;
+        this.service = service;
     }
     public void recive(MessageContext mc) throws AxisFault {
         super.recive(mc);
-        Handler provider = getProvider();
+        Handler provider = service.getProvider();
         if(provider != null){
             log.info("invoking the Provider");
             provider.invoke(mc);            
+        }else{
+            throw new AxisFault("provider is null");
         }
     }
 
     public void send(MessageContext mc) throws AxisFault {
         super.send(mc);
+        Handler provider = service.getProvider();
+        //TODO invoke the sender here
     }
     public QName getName() {
         return name;
     }
-
-    public Handler getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Handler handler) {
-        provider = handler;
-    }
-
 }
