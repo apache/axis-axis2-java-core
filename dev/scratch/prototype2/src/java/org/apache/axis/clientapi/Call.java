@@ -54,6 +54,10 @@ public class Call extends AbstractCall {
         this.targetEPR = EPR;
 
     }
+    
+    public EndpointReference getTO(){
+    	return this.targetEPR;
+    }
 
     /**
      * todo
