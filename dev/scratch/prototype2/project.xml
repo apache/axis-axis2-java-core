@@ -71,6 +71,11 @@
       <email>ajith@apache.org</email>
       <organization>LSF</organization>
     </developer>
+    <name>Deepal Jayasinghe</name>
+      <id>deepal</id>
+      <email>deepal@apache.org</email>
+      <organization>LSF</organization>
+    </developer>
 	<!--- I Add few please correct the information, add others and remove this comment Srinath -->
   </developers>
 
