@@ -51,28 +51,32 @@ public class TextTable extends NodeTable {
 
         return key;
     }
-
     /**
-     *
+     *  ID
+     * PARENT
+     * NEXTSIBLING
+     * TYPE
+     * VALUE
+     * NEXT_SIBLING_TYPE
      * @param key
      * @return
      */
-    public String[][] getText(int key){
-        if (key > this.getSize()){
+    public String[] getRow(int key) {
+        if (!isKeyPresent(key)){
             throw new OMStorageException();
         }
 
-        String[][] values = new String[2][COLUMN_COUNT];
-        //add the lables and values
-        values[0][0] = OMConstants.ID_KEY ;values[1][0] = Integer.toString(keyColumn.getValue(key));
-        values[0][1] = OMConstants.PARENT_ID_KEY ;values[1][1] = Integer.toString(parentColumn.getValue(key));
-        values[0][2] = OMConstants.VALUE_KEY ;values[1][2] = valueColumn.getValue(key);
-        values[0][3] = OMConstants.TYPE_KEY ;values[1][3] = Integer.toString(typeColumn.getValue(key));
-        values[0][4] = OMConstants.NEXT_SIBLING_KEY ;values[1][4] = Integer.toString(nextSiblingColumn.getValue(key));
-        values[0][5] = OMConstants.NEXT_SIBLING_TYPE_KEY ;values[1][5] = Integer.toString(nextsiblingTypeColumn.getValue(key));
+        String[] values = new String[COLUMN_COUNT];
+        values[OMConstants.ID_INDEX] = Integer.toString(keyColumn.getValue(key));
+        values[OMConstants.PARENT_INDEX] = Integer.toString(parentColumn.getValue(key));
+        values[OMConstants.NEXT_SIBLING_INDEX] = Integer.toString(nextSiblingColumn.getValue(key));
+        values[OMConstants.TEXT_TYPE_INDEX] =Integer.toString(typeColumn.getValue(key));
+        values[OMConstants.VALUE_INDEX] =(valueColumn.getValue(key));
+        values[OMConstants.TEXT_NEXTSIBLING_TYPE_INDEX] =Integer.toString(nextsiblingTypeColumn.getValue(key));
 
         return values;
     }
+
 
     /**
      *

@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.mxp1.MXParserFactory;
+import org.apache.axis.om.util.TimeTester;
 
 import java.io.FileReader;
 import java.util.Iterator;
@@ -33,13 +34,14 @@ public class OMModelTest extends TestCase{
 
     private StreamingOMBuilder builder = null;
     private OMModel model=null;
+    private TimeTester timeTester = new TimeTester();
 
     protected void setUp() throws Exception {
         super.setUp();
         XmlPullParserFactory xmlPullParserFactory = MXParserFactory.newInstance();
         xmlPullParserFactory.setNamespaceAware(true);
         XmlPullParser parser = xmlPullParserFactory.newPullParser();
-        parser.setInput(new FileReader("test-resources/soapmessage1.xml"));
+        parser.setInput(new FileReader("test-resources/soap2.xml"));
         builder = new StreamingOMBuilder(parser);
         model = builder.getTableModel();
     }
@@ -55,10 +57,28 @@ public class OMModelTest extends TestCase{
 
     }
 
+    public void testChildren1(){
+        OMDocument doc = model.getDocument();
+        timeTester.enter();
+        OMElement elt = doc.getDocumentElement();
+        timeTester.exit();
+
+        Iterator iter = elt.getChildren();
+        while (iter.hasNext()){
+            timeTester.enter();
+            System.out.println("iter.next() = " + iter.next());
+            timeTester.exit();
+        }
+
+
+        //=========================
+        //dump the content of the table
+        dumpModel("After testing");
+    }
     /**
      * test the presence of children
      */
-    public void testChildren(){
+    public void testChildren2(){
         OMDocument doc = model.getDocument();
         OMElement elt = doc.getDocumentElement();
         Iterator iter = elt.getChildren();
@@ -113,7 +133,7 @@ public class OMModelTest extends TestCase{
      * Test removal of attributes
      * Case 1 - the attribute is not the first attribute
      */
-     public void testRemoveAttribute1(){
+    public void testRemoveAttribute1(){
         OMDocument doc = model.getDocument();
         OMElement elt = doc.getDocumentElement();
 

@@ -1,4 +1,6 @@
-package org.apache.axis.om.storage.table;
+package org.apache.axis.om.util;
+
+import java.util.Stack;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -16,15 +18,24 @@ package org.apache.axis.om.storage.table;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Sep 27, 2004
- * Time: 5:08:35 PM
- *
- * A minimum guideline for the tables
+ * Date: Oct 8, 2004
+ * Time: 8:55:10 AM
+ * 
  */
-public interface Table {
+public class TimeTester {
 
-    int getSize();
+    Stack stack = new Stack();
 
-    String[] getRow(int key);
+    public void enter(){
+        stack.push(new Long(System.currentTimeMillis()));
+    }
+
+    public void exit(){
+        long currenttime = System.currentTimeMillis();
+        long prevtime = ((Long)stack.pop()).longValue();
+
+        System.out.println("Time taken = " + (currenttime - prevtime));
+
+    }
 
 }

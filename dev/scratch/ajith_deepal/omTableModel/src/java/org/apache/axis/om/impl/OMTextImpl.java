@@ -27,7 +27,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText{
     public OMTextImpl() {
     }
 
-    public OMTextImpl(OMModel model,int key,String[][] values) {
+    public OMTextImpl(OMModel model,int key,String[] values) {
          init(model,key,values);
     }
 
@@ -36,18 +36,29 @@ public class OMTextImpl extends OMNodeImpl implements OMText{
     }
 
     public String getValue() {
-        return findValueByIdentifier(OMConstants.VALUE_KEY);
+        return values[OMConstants.VALUE_INDEX];
     }
 
      public void update() {
-       this.values =(String[][]) model.update(key,OMConstants.TEXT);
+       this.values =(String[]) model.update(key,OMConstants.TEXT);
     }
 
     public void setTextType(short type) {
     }
 
     public short getTextType() {
-         return Short.parseShort(findValueByIdentifier(OMConstants.TYPE_KEY));
+         return Short.parseShort(values[OMConstants.TEXT_TYPE_INDEX]);
     }
 
+    public int getType() {
+        return getTextType();
+    }
+
+     public int getNextSiblingKey() {
+        return Integer.parseInt(values[OMConstants.NEXT_SIBLING_INDEX]);
+    }
+
+    public int getNextSiblingType() {
+        return Integer.parseInt(values[OMConstants.TEXT_NEXTSIBLING_TYPE_INDEX]);
+    }
 }

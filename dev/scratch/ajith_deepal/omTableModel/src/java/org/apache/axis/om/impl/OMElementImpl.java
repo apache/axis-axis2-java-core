@@ -31,24 +31,39 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
     public OMElementImpl() {
     }
 
-    public OMElementImpl(OMModel model,int key,String[][] values) {
+    /**
+     * Not operational yet
+     * @param model
+     */
+    public OMElementImpl(OMModel model) {
+        this.model = model;
+
+        //create an Element in the model
+       // this.key = model.addElement();
+
+
+
+    }
+
+    public OMElementImpl(OMModel model,int key,String[] values) {
         init(model,key,values);
+
     }
 
     public OMNode getFirstChild() {
 
-        int firstChildKey = Integer.parseInt(findValueByIdentifier(OMConstants.FIRST_CHILD_KEY));
+        int firstChildKey = Integer.parseInt(values[OMConstants.FIRST_CHILD_INDEX]);
         while (firstChildKey==OMConstants.DEFAULT_INT_VALUE && !isComplete()){
             model.proceed();
             //update to syncronize the values
             update();
-            firstChildKey = Integer.parseInt(findValueByIdentifier(OMConstants.FIRST_CHILD_KEY));
+            firstChildKey = Integer.parseInt(values[OMConstants.FIRST_CHILD_INDEX]);
         }
 
-        if (isComplete())
+        if (isComplete() && firstChildKey==OMConstants.DEFAULT_INT_VALUE)
             return null;
 
-        int firstChildType = Integer.parseInt(findValueByIdentifier(OMConstants.FIRST_CHILD_TYPE_KEY));
+        int firstChildType = Integer.parseInt(values[OMConstants.FIRST_CHILD_TYPE_INDEX]);
         if (firstChildType==OMConstants.ELEMENT){
             return model.getElement(firstChildKey);
         }else if (firstChildType==OMConstants.TEXT){
@@ -59,7 +74,7 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
 
 
     public String getLocalName() {
-        return findValueByIdentifier(OMConstants.LOCAL_NAME_KEY);
+        return values[OMConstants.LOCAL_NAME_INDEX];
     }
 
     public Iterator getChildren() {
@@ -67,12 +82,12 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
     }
 
     public boolean isComplete() {
-        return findValueByIdentifier(OMConstants.DONE_KEY).equals("1")?true:false;
+        return values[OMConstants.ELEMENT_DONE_INDEX].equals("1")?true:false;
     }
 
 
     public void update() {
-        this.values =(String[][]) model.update(key,OMConstants.ELEMENT);
+        this.values =(String[]) model.update(key,OMConstants.ELEMENT);
     }
 
     public OMElement getParent() throws OMException {
@@ -86,22 +101,26 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
     }
 
     public int getParentKey(){
-        return Integer.parseInt(findValueByIdentifier(OMConstants.PARENT_ID_KEY));
+        return Integer.parseInt(values[OMConstants.PARENT_INDEX]);
     }
 
     public void addChild(OMNode omNode) {
     }
 
-    public void addChild(OMNode omNode, int index) throws OMException {
-    }
 
     public OMNamespace createNamespace(String uri, String prefix) {
-        return null;
+        //create a new namespace in the model
+        int nameSpaceKey = model.addNamespace(uri,prefix,this.key);
+        if (nameSpaceKey!=OMConstants.DEFAULT_INT_VALUE)
+            return model.getNamespace(nameSpaceKey);
+        else
+            return null;
     }
 
 
     public OMNamespace resolveNamespace(String uri, String prefix) throws OMException {
-        int nameSpaceKey = model.resolveNamespace(Integer.parseInt(findValueByIdentifier(OMConstants.ID_KEY)),
+
+        int nameSpaceKey = model.resolveNamespace(Integer.parseInt(values[OMConstants.ID_INDEX]),
                 uri,
                 prefix);
         if (nameSpaceKey!=OMConstants.DEFAULT_INT_VALUE)
@@ -116,7 +135,7 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
      * @return
      */
     public int getFirstAttributeKey(){
-        return  Integer.parseInt(findValueByIdentifier(OMConstants.FIRST_ATTRIBUTE_KEY));
+        return  Integer.parseInt(values[OMConstants.FIRST_ATTRIBUTE_INDEX]);
     }
     /**
      *
@@ -159,11 +178,13 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
 
 
     public void setLocalName(String localName) {
+        model.updateElement(this.key,localName,OMConstants.DEFAULT_INT_VALUE,OMConstants.UPDATE_ELEMENT_LOCALNAME);
+        update();
     }
 
     public OMNamespace getNamespace() throws OMException {
         //get the namespace key
-        int nskey = Integer.parseInt(findValueByIdentifier(OMConstants.NAME_SPACE_KEY));
+        int nskey = Integer.parseInt(values[OMConstants.NAMESPACE_INDEX]);
         if (nskey!=OMConstants.DEFAULT_INT_VALUE){
             return model.getNamespace(nskey);
         }else{
@@ -172,5 +193,17 @@ public class OMElementImpl extends OMNodeImpl implements OMElement {
     }
 
     public void setNamespace(OMNamespace namespace) {
+    }
+
+    public int getNextSiblingKey() {
+        return Integer.parseInt(values[OMConstants.NEXT_SIBLING_INDEX]);
+    }
+
+    public int getNextSiblingType() {
+        return Integer.parseInt(values[OMConstants.ELEMENT_NEXTSIBLING_TYPE_INDEX]);
+    }
+
+    public int getType() {
+        return OMNode.ELEMENT_NODE;
     }
 }

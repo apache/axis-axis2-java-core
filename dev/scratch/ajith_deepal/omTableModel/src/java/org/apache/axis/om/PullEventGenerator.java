@@ -22,10 +22,11 @@ import org.xmlpull.v1.XmlPullParser;
  * Date: Sep 30, 2004
  * Time: 9:41:22 PM
  *
- * Generates the pull events fpr the mode
+ * Generates the pull events from the model
  * Still preliminary
  */
-public class PullEventGenerator {
+//todo make this implement the Stax APi and make it a compelte pull parser like thing
+public class PullEventGenerator  {
 
     private OMModel model;
     private int currentCount = 0;

@@ -30,7 +30,7 @@ public class OMDocumentImpl extends OMNodeImpl implements OMDocument{
     public OMDocumentImpl() {
     }
 
-    public OMDocumentImpl(OMModel model,int key,String[][] values) {
+    public OMDocumentImpl(OMModel model,int key,String[] values) {
         init(model,key,values);
     }
 
@@ -58,4 +58,19 @@ public class OMDocumentImpl extends OMNodeImpl implements OMDocument{
         return super.isComplete();
     }
 
+    /**
+     *
+     * @return
+     */
+    public int getNextSiblingKey() {
+        return 0;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getNextSiblingType() {
+        return 0;
+    }
 }

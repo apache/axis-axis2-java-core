@@ -82,31 +82,41 @@ public class ElementTable extends NodeTable{
         return parentColumn.getValue(key);
     }
 
+
     /**
-     *
+     * ID
+     * PARENT
+     * NEXT_SIBLING
+     * NAME_SPACE
+     * DONE
+     * LOCALNAME
+     * NEXT_SIBLING_TYPE
+     * FIRST_CHILD
+     * FIRST_CHILD_TYPE
+     * FIRST_ATTRIBUTE
      * @param key
-     * @return  the set of values in a particular row
+     * @return
      */
-    public String[][] getElement(int key){
+    public String[] getRow(int key) {
         if (!isKeyPresent(key)){
             throw new OMStorageException();
         }
 
-        String[][] values = new String[2][COLUMN_COUNT];
-        //add the lables and values
-        values[0][0] = OMConstants.ID_KEY ;values[1][0] = Integer.toString(keyColumn.getValue(key));
-        values[0][1] = OMConstants.PARENT_ID_KEY ;values[1][1] = Integer.toString(parentColumn.getValue(key));
-        values[0][2] = OMConstants.NEXT_SIBLING_KEY ;values[1][2] = Integer.toString(nextSiblingColumn.getValue(key));
-        values[0][3] = OMConstants.NEXT_SIBLING_TYPE_KEY ;values[1][3] = Integer.toString(nextsiblingTypeColumn.getValue(key));
-        values[0][4] = OMConstants.NAME_SPACE_KEY ;values[1][4] = Integer.toString(nameSpaceColumn.getValue(key));
-        values[0][5] = OMConstants.DONE_KEY ;values[1][5] = doneColumn.getValue(key)?"1":"0";
-        values[0][6] = OMConstants.LOCAL_NAME_KEY ;values[1][6] = localNameColumn.getValue(key);
-        values[0][7] = OMConstants.FIRST_CHILD_KEY ;values[1][7] =Integer.toString(firstChildColumn.getValue(key));
-        values[0][8] = OMConstants.FIRST_CHILD_TYPE_KEY ;values[1][8] =Integer.toString(firstChildTypeColumn.getValue(key));
-        values[0][9] = OMConstants.FIRST_ATTRIBUTE_KEY ;values[1][9] =Integer.toString(firstAttributeColumn.getValue(key));
+        String[] values = new String[COLUMN_COUNT];
+        values[OMConstants.ID_INDEX] = Integer.toString(keyColumn.getValue(key));
+        values[OMConstants.PARENT_INDEX] = Integer.toString(parentColumn.getValue(key));
+        values[OMConstants.NEXT_SIBLING_INDEX] = Integer.toString(nextSiblingColumn.getValue(key));
+        values[OMConstants.NAMESPACE_INDEX] = Integer.toString(nameSpaceColumn.getValue(key));
+        values[OMConstants.ELEMENT_DONE_INDEX] = doneColumn.getValue(key)?"1":"0";
+        values[OMConstants.LOCAL_NAME_INDEX] = localNameColumn.getValue(key);
+        values[OMConstants.ELEMENT_NEXTSIBLING_TYPE_INDEX] = Integer.toString(nextsiblingTypeColumn.getValue(key));
+        values[OMConstants.FIRST_CHILD_INDEX] = Integer.toString(firstChildColumn.getValue(key));
+        values[OMConstants.FIRST_CHILD_TYPE_INDEX] = Integer.toString(firstChildTypeColumn.getValue(key));
+        values[OMConstants.FIRST_ATTRIBUTE_INDEX] = Integer.toString(firstAttributeColumn.getValue(key));
 
         return values;
     }
+
 
     /**
      * updates the next sibling
@@ -158,6 +168,15 @@ public class ElementTable extends NodeTable{
     public void updateFirstAttribute(int key,int firstChildKey){
         firstAttributeColumn.setValue(key,firstChildKey);
 
+    }
+
+    /**
+     *
+     * @param key
+     * @param localName
+     */
+    public void updateLocalName(int key,String localName){
+        localNameColumn.setValue(key, localName);
     }
 
     /**

@@ -232,7 +232,7 @@ public class OMModelImpl implements OMModel {
      */
     public OMElement getElement(int key) {
         OMElementImpl element = (OMElementImpl)OMElementPool.getInstance().getPooledObject();
-        element.init(this,key,this.elementTable.getElement(key));
+        element.init(this,key,this.elementTable.getRow(key));
         return element;
     }
 
@@ -243,7 +243,7 @@ public class OMModelImpl implements OMModel {
      */
     public OMAttribute getAttribute(int key) {
         OMAttributeImpl attrib = (OMAttributeImpl)OMAttributePool.getInstance().getPooledObject();
-        attrib.init(this,key,this.attribTable.getAttribute(key));
+        attrib.init(this,key,this.attribTable.getRow(key));
         return attrib;
     }
 
@@ -254,7 +254,7 @@ public class OMModelImpl implements OMModel {
      */
     public OMText getText(int key) {
         OMTextImpl text = (OMTextImpl)OMTextPool.getInstance().getPooledObject();
-        text.init(this,key,textTable.getText(key));
+        text.init(this,key,textTable.getRow(key));
         return text;
     }
 
@@ -265,7 +265,7 @@ public class OMModelImpl implements OMModel {
      */
     public OMNamespace getNamespace(int key) {
         OMNameSpaceImpl nameSpace = (OMNameSpaceImpl)OMNameSpacePool.getInstance().getPooledObject();
-        nameSpace.init(this,key,nameSpaceTable.getNamespace(key));
+        nameSpace.init(this,key,nameSpaceTable.getRow(key));
         return nameSpace;
     }
 
@@ -297,7 +297,7 @@ public class OMModelImpl implements OMModel {
      * @return
      */
     public Object getEvent(int key) {
-        return eventTable.getEvent(key);
+        return eventTable.getRow(key);
 
 
     }
@@ -307,7 +307,10 @@ public class OMModelImpl implements OMModel {
      * @return
      */
     public int proceed() {
-        return this.builder.proceed();
+        if (!this.isComplete())
+            return this.builder.proceed();
+        else
+            return XmlPullParser.END_DOCUMENT ;
     }
 
 
@@ -330,15 +333,15 @@ public class OMModelImpl implements OMModel {
      */
     public Object update(int key, int type) {
         if (type==OMConstants.ELEMENT){
-            return elementTable.getElement(key);
+            return elementTable.getRow(key);
         }else  if (type==OMConstants.ATTRIBUTE){
-            return attribTable.getAttribute(key);
+            return attribTable.getRow(key);
         }else if (type==OMConstants.TEXT){
-            return textTable.getText(key);
+            return textTable.getRow(key);
         }else if (type==OMConstants.CDATA){
-            return textTable.getText(key);
+            return textTable.getRow(key);
         }else if (type==OMConstants.COMMENT){
-            return textTable.getText(key);
+            return textTable.getRow(key);
         }
         return null;
     }

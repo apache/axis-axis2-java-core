@@ -53,10 +53,11 @@ public class NodeIteratorImpl implements Iterator{
             lastNode =(OMNodeImpl)parentElement.getFirstChild();
             return lastNode;
         }else{
-            while ( !hasNext() && lastNode.getNextSiblingKey()==OMConstants.DEFAULT_INT_VALUE){
+            while (!parentElement.isComplete() && lastNode.getNextSiblingKey()==OMConstants.DEFAULT_INT_VALUE){
                 model.proceed();
+                parentElement.update();
                 lastNode.update();
-            }
+            };
 
             if (lastNode.getNextSiblingKey()!=OMConstants.DEFAULT_INT_VALUE){
                 //create the last node by the relevant type
@@ -70,8 +71,6 @@ public class NodeIteratorImpl implements Iterator{
                 }
 
                 return lastNode;
-            }else if (hasNext()){
-                return null;
             }
         }
 
@@ -84,7 +83,12 @@ public class NodeIteratorImpl implements Iterator{
      * any more children.
      */
     public boolean hasNext() {
-        return parentElement.isComplete() || model.isComplete() ;
+        if (!parentElement.isComplete())
+            return true;
+        else if (lastNode!=null)
+            return (lastNode.getNextSiblingKey()!=OMConstants.DEFAULT_INT_VALUE);
+        else
+            return parentElement.getFirstChild()!=null;
     }
 
     public void remove() {

@@ -21,7 +21,7 @@ package org.apache.axis.om.storage.column;
  * 
  */
 public abstract class AbstractColumn implements Column {
-    protected int chunkSize = 10; //default
+    protected int chunkSize = 150; //default
     protected int length = 0;
 
     /**

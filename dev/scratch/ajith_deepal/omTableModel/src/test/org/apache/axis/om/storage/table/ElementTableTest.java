@@ -41,51 +41,29 @@ public class ElementTableTest extends TestCase {
 
     public void testGetElement(){
 
-        String[][] values = table.getElement(myKey);
+        String[] values = table.getRow(myKey);
 
-        String[] keyArray = values[0];
-        String[] valueArray = values[1];
-        for (int j = 0; j < valueArray.length; j++) {
-            String key = keyArray[j];
-            String value = valueArray[j];
+        assertEquals(values[OMConstants.VALUE_INDEX], "0");
+        assertEquals(values[OMConstants.LOCAL_NAME_INDEX], LOCAL_NAME);
+        assertEquals(values[OMConstants.PARENT_INDEX], PARENT_KEY+"");
 
-            if (key.equals(OMConstants.VALUE_KEY)){
-                assertEquals(value, "0");
-            }else if (key.equals(OMConstants.LOCAL_NAME_KEY)){
-                assertEquals(value, LOCAL_NAME);
-            }else if (key.equals(OMConstants.PARENT_ID_KEY)){
-                assertEquals(value, "5");
-            }
-        }
+
+
+
     }
 
     public void testUpdateDone(){
         table.updateDone(myKey);
 
-         String[][] values = table.getElement(myKey);
-
-        String[] keyArray = values[0];
-        String[] valueArray = values[1];
-        boolean found=false;
-        for (int j = 0; j < valueArray.length; j++) {
-            String key = keyArray[j];
-            String value = valueArray[j];
-
-            if (key.equals(OMConstants.DONE_KEY)){
-                assertEquals(value, "1");
-                found=true;
-                break;
-            }
-        }
-
-        assertTrue(found);
+        String[] values = table.getRow(myKey);
+        assertEquals(values[OMConstants.ELEMENT_DONE_INDEX],"1");
 
     }
 
     public void testSize(){
         assertEquals(table.getSize(),1);
         myKey=table.addElement(LOCAL_NAME,PARENT_KEY);
-         assertEquals(table.getSize(),2);
+        assertEquals(table.getSize(),2);
     }
 
 

@@ -53,24 +53,27 @@ public class NameSpaceTable extends AbstractTable {
     }
 
     /**
-     * Get the namespace details
+     * ID
+     * PARENT
+     * URI
+     * PREFIX
      * @param key
      * @return
      */
-    public String[][] getNamespace(int key){
-        if (key > this.getSize()){
+    public String[] getRow(int key) {
+        if (!isKeyPresent(key)){
             throw new OMStorageException();
         }
 
-        String[][] values = new String[2][COLUMN_COUNT];
-        //add the lables and values
-        values[0][0] = OMConstants.ID_KEY ;values[1][0] = Integer.toString(keyColumn.getValue(key));
-        values[0][1] = OMConstants.PARENT_ID_KEY ;values[1][1] = Integer.toString(parentColumn.getValue(key));
-        values[0][2] = OMConstants.NAMESPACE_URI_KEY ;values[1][2] = nameSpaceURIColumn.getValue(key);
-        values[0][3] = OMConstants.NAMESPACE_PREFIX_KEY ;values[1][3] = nameSpacePrefixColumn.getValue(key);
+        String[] values = new String[COLUMN_COUNT];
+        values[OMConstants.ID_INDEX] = Integer.toString(keyColumn.getValue(key));
+        values[OMConstants.PARENT_INDEX] = Integer.toString(parentColumn.getValue(key));
+        values[OMConstants.NAMESPACE_URI_INDEX] = nameSpaceURIColumn.getValue(key);
+        values[OMConstants.NAMESPACE_PREFIX_INDEX] = nameSpacePrefixColumn.getValue(key);
 
         return values;
     }
+
 
     /**
      * find a namepace

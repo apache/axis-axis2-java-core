@@ -44,21 +44,22 @@ public class EventTable extends AbstractTable {
 
         return  key;
     }
-
     /**
-     *
+     * ID
+     * TYPE
+     * REFERENCE
+     * @param key
      * @return
      */
-    public String[][] getEvent(int key){
+    public String[] getRow(int key) {
         if (!isKeyPresent(key)){
             throw new OMStorageException();
         }
 
-        String[][] values = new String[2][COLUMN_COUNT];
-        //add the lables and values
-        values[0][0] = OMConstants.ID_KEY ;values[1][0] = Integer.toString(keyColumn.getValue(key));
-        values[0][1] = OMConstants.TYPE_KEY ;values[1][1] = Integer.toString(typeColumn.getValue(key));
-        values[0][2] = OMConstants.REFERENCE_KEY ;values[1][2] = Integer.toString(referenceKeyColumn.getValue(key));
+        String[] values = new String[COLUMN_COUNT];
+        values[OMConstants.ID_INDEX] = Integer.toString(keyColumn.getValue(key));
+        values[OMConstants.EVENT_TYPE_INDEX] = Integer.toString(typeColumn.getValue(key));
+        values[OMConstants.EVENT_REFERENCE_INDEX] = Integer.toString(referenceKeyColumn.getValue(key));
 
         return values;
     }

@@ -2,6 +2,7 @@ package org.apache.axis.om.impl;
 
 import org.apache.axis.om.OMModel;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
 import org.apache.axis.om.util.OMConstants;
 
 /**
@@ -27,20 +28,20 @@ public class OMNameSpaceImpl extends OMNodeImpl implements OMNamespace{
     public OMNameSpaceImpl() {
     }
 
-    public OMNameSpaceImpl(OMModel model,int key,String[][] values) {
+    public OMNameSpaceImpl(OMModel model,int key,String[] values) {
         init(model,key,values);
     }
 
     public String getURI() {
-        return findValueByIdentifier(OMConstants.NAMESPACE_URI_KEY);
+        return values[OMConstants.NAMESPACE_URI_INDEX];
     }
 
     public String getPrefix() {
-        return findValueByIdentifier(OMConstants.NAMESPACE_PREFIX_KEY);
+        return values[OMConstants.NAMESPACE_PREFIX_INDEX];
     }
 
-     public void update() {
-       this.values =(String[][]) model.update(key,OMConstants.NAMESPACE);
+    public void update() {
+        this.values =(String[]) model.update(key,OMConstants.NAMESPACE);
     }
 
     public boolean equals(OMNamespace ns) {
@@ -53,5 +54,9 @@ public class OMNameSpaceImpl extends OMNodeImpl implements OMNamespace{
 
     public boolean isDefaultNs() {
         return false;
+    }
+
+    public int getType() {
+        return OMConstants.DEFAULT_INT_VALUE;
     }
 }

@@ -1,9 +1,6 @@
 package org.apache.axis.om.impl;
 
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMModel;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMException;
+import org.apache.axis.om.*;
 import org.apache.axis.om.util.OMConstants;
 
 /**
@@ -36,7 +33,7 @@ public class OMAttributeImpl extends OMNodeImpl implements OMAttribute{
      * @param key
      * @param values
      */
-    public OMAttributeImpl(OMModel model,int key,String[][] values) {
+    public OMAttributeImpl(OMModel model,int key,String[] values) {
         init(model,key,values);
     }
 
@@ -48,15 +45,15 @@ public class OMAttributeImpl extends OMNodeImpl implements OMAttribute{
      * @return
      */
     public String getValue() {
-        return findValueByIdentifier(OMConstants.VALUE_KEY);
+        return values[OMConstants.VALUE_INDEX];
     }
 
     public void update() {
-        this.values =(String[][]) model.update(key,OMConstants.ELEMENT);
+        this.values =(String[]) model.update(key,OMConstants.ELEMENT);
     }
 
     public String getLocalName() {
-        return findValueByIdentifier(OMConstants.LOCAL_NAME_KEY);
+        return values[OMConstants.LOCAL_NAME_INDEX];
     }
 
     public void setLocalName(String localName) {
@@ -65,7 +62,7 @@ public class OMAttributeImpl extends OMNodeImpl implements OMAttribute{
 
     public OMNamespace getNamespace() throws OMException {
         //get the namespace key
-        int nskey = Integer.parseInt(findValueByIdentifier(OMConstants.NAME_SPACE_KEY));
+        int nskey = Integer.parseInt(values[OMConstants.NAMESPACE_INDEX]);
         if (nskey!=OMConstants.DEFAULT_INT_VALUE){
             return model.getNamespace(nskey);
         }else{
@@ -85,6 +82,18 @@ public class OMAttributeImpl extends OMNodeImpl implements OMAttribute{
      * @return
      */
     public int getParentKey(){
-        return Integer.parseInt(findValueByIdentifier(OMConstants.PARENT_ID_KEY));
+        return Integer.parseInt(values[OMConstants.PARENT_INDEX]);
+    }
+
+    public int getNextSiblingKey() {
+        return Integer.parseInt(values[OMConstants.NEXT_SIBLING_INDEX]);
+    }
+
+    public int getNextSiblingType() {
+        return OMNode.ATTRIBUTE_NODE;
+    }
+
+    public int getType() {
+        return OMNode.ATTRIBUTE_NODE;
     }
 }

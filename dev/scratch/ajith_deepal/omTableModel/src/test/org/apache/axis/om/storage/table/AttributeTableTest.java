@@ -42,21 +42,13 @@ public class AttributeTableTest extends TestCase{
 
     public void testGetAttribute(){
 
-        String[][] values = table.getAttribute(myKey);
+        String[] values = table.getRow(myKey);
 
-        String[] keyArray = values[0];
-        String[] valueArray = values[1];
-        for (int j = 0; j < valueArray.length; j++) {
-            String key = keyArray[j];
-            String value = valueArray[j];
+        assertEquals(values[OMConstants.VALUE_INDEX], VALUE);
+        assertEquals(values[OMConstants.LOCAL_NAME_INDEX], LOCAL_NAME);
+        assertEquals(values[OMConstants.PARENT_INDEX], PARENT_KEY+"");
 
-            if (key.equals(OMConstants.VALUE_KEY)){
-                assertEquals(value, VALUE);
-            }else if (key.equals(OMConstants.LOCAL_NAME_KEY)){
-                assertEquals(value, LOCAL_NAME);
-            }else if (key.equals(OMConstants.PARENT_ID_KEY)){
-                assertEquals(value, PARENT_KEY+"");
-            }
-        }
+
+
     }
 }

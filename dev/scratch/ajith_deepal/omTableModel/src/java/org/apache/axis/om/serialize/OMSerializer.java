@@ -1,4 +1,6 @@
-package org.apache.axis.om.storage.table;
+package org.apache.axis.om.serialize;
+
+import org.apache.axis.om.OMNode;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -16,15 +18,18 @@ package org.apache.axis.om.storage.table;
  * limitations under the License.
  *
  * @author Axis team
- * Date: Sep 27, 2004
- * Time: 5:08:35 PM
- *
- * A minimum guideline for the tables
+ * Date: Oct 15, 2004
+ * Time: 2:51:18 PM
+ * 
  */
-public interface Table {
+public class OMSerializer {
 
-    int getSize();
+    public String serialize(OMNode node){
+        return null;
+    }
 
-    String[] getRow(int key);
+    private String serialzeDocment(){
+        return null;
+    }
 
 }

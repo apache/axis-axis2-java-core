@@ -29,50 +29,35 @@ import org.apache.axis.om.util.OMConstants;
 public abstract class OMNodeImpl implements OMNode,PooledObject{
 
     protected OMModel model ;
-    protected String[][] values;
+    protected String[] values;
     protected int key;
+    //The boolean that specifies whether the object can
+    //be "constructed"
+    protected boolean creatable=true;
 
-    protected String findValueByIdentifier(String identifier){
-        String[] keyArray = values[0];
-        String[] valueArray = values[1];
-
-        for (int i = 0; i < keyArray.length; i++) {
-            if (keyArray[i].equals(identifier))
-                return valueArray[i];
-        }
-
-        return OMConstants.DEFAULT_STRING_VALUE;
-    }
-
-
-
-
-    public void init(OMModel model,int key,String[][] values) {
+    public void init(OMModel model,int key,String[] values) {
         this.model = model;
         this.key = key;
         this.values = values;
+         //once the init method is called this object becomes uncreatable
+        creatable=false;
+
     }
 
     public void reset() {
         this.model = null;
         this.key = OMConstants.DEFAULT_INT_VALUE;
         this.values = null;
+        //reset the flag
+        creatable = true;
     }
 
-    public int getNextSiblingKey(){
-        return Integer.parseInt(findValueByIdentifier(OMConstants.NEXT_SIBLING_KEY));
-    }
 
-    public int getNextSiblingType(){
-        return Integer.parseInt(findValueByIdentifier(OMConstants.NEXT_SIBLING_TYPE_KEY));
-    }
+    public abstract int getType() ;
 
-    public int getType() {
-        return Integer.parseInt(findValueByIdentifier(OMConstants.TYPE_KEY));
-    }
 
     public Object getId() {
-        return findValueByIdentifier(OMConstants.ID_KEY);
+        return values[OMConstants.ID_INDEX];
     }
 
     public abstract void update();
@@ -116,7 +101,13 @@ public abstract class OMNodeImpl implements OMNode,PooledObject{
     public void insertSiblingBefore(OMNode sibling) throws OMException {
     }
 
-    //
+     public int getNextSiblingKey() {
+        return OMConstants.DEFAULT_INT_VALUE;
+    }
+
+    public int getNextSiblingType() {
+        return OMConstants.DEFAULT_INT_VALUE;
+    }
 
 
 
