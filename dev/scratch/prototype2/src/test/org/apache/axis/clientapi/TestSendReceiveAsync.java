@@ -100,7 +100,6 @@ public class TestSendReceiveAsync extends AbstractTestCase {
         call.setListenerTransport("http", true);
 
         Callback callback = new Callback() {
-            private boolean complete;
             public void onComplete(AsyncResult result) {
 
                 try {
@@ -117,14 +116,6 @@ public class TestSendReceiveAsync extends AbstractTestCase {
 
             public void reportError(Exception e) {
                 e.printStackTrace();
-            }
-
-            public boolean isComplete() {
-                return complete;
-            }
-
-            public void setComplete(boolean complete) {
-                this.complete = complete;
             }
         };
         call.sendReceiveAsync(envelope, callback);

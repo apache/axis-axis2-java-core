@@ -63,6 +63,7 @@ public class Invoker implements Runnable {
             callback =
                     correlator.getCorrelationInfo(resMsgContext.getMessageID());
             callback.setComplete(true);
+            callback.setResult(result);
             callback.onComplete(result);
 
         } catch (Exception e) {

@@ -19,9 +19,23 @@ package org.apache.axis.clientapi;
  *         Dec 16, 2004
  *         2:29:34 PM
  */
-public interface Callback {
-    void onComplete(AsyncResult result);
-    void reportError(Exception e);
-    boolean isComplete();
-    void setComplete(boolean complete);
+public abstract class Callback {
+    private boolean complete = false;
+    private AsyncResult result;
+    public abstract void onComplete(AsyncResult result);
+    public abstract void reportError(Exception e);
+    public boolean isComplete(){
+        return complete;
+    }
+    public void setComplete(boolean complete){
+        this.complete = complete;
+    }
+
+    public AsyncResult getResult() {
+        return result;
+    }
+
+    public void setResult(AsyncResult result) {
+        this.result = result;
+    }
 }

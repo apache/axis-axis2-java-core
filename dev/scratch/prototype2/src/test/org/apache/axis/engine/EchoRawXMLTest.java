@@ -130,14 +130,6 @@ public class EchoRawXMLTest extends AbstractTestCase {
                 e.printStackTrace();
                 finish = true;
             }
-
-            public boolean isComplete() {
-                return false;
-            }
-
-            public void setComplete(boolean complete) {
-                
-            }
         };
 
         call.sendReceiveAsync(reqEnv, callback);
