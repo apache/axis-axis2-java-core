@@ -54,7 +54,7 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
      * @see #getActor() getActor()
      */
     public void setActor(String actorURI) {
-        setAttribute(OMConstants.attrActor, actorURI);
+        setAttribute(OMConstants.ATTR_ACTOR, actorURI);
     }
 
     /**
@@ -63,11 +63,11 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
      * @param attrValue
      */
     private void setAttribute(String attributeName, String attrValue) {
-        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.soapEnvelopeNamespaceURI, attributeName));
+        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
         if (attrIter.hasNext()) {
             ((OMAttribute) attrIter.next()).setValue(attrValue);
         } else {
-            OMAttribute attribute = new OMAttributeImpl(attributeName, new OMNamespaceImpl(OMConstants.soapEnvelopeNamespaceURI, OMConstants.soapEnvelopeNamespacePrefix), attrValue, this);
+            OMAttribute attribute = new OMAttributeImpl(attributeName, new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue, this);
             this.insertAttribute(attribute);
         }
     }
@@ -81,11 +81,11 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
      * @see #setActor(String) setActor(java.lang.String)
      */
     public String getActor() {
-        return getAttribute(OMConstants.attrActor);
+        return getAttribute(OMConstants.ATTR_ACTOR);
     }
 
     private String getAttribute(String attrName) {
-        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.soapEnvelopeNamespaceURI, attrName));
+        Iterator attrIter = this.getAttributeWithQName(new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
         if (attrIter.hasNext()) {
             return ((OMAttribute) attrIter.next()).getValue();
         }
@@ -110,7 +110,7 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public void setMustUnderstand(boolean mustUnderstand) {
-        setAttribute(OMConstants.attrMustUnderstand, mustUnderstand ? "true" : "false");
+        setAttribute(OMConstants.ATTR_MUSTUNDERSTAND, mustUnderstand ? "true" : "false");
     }
 
     /**
@@ -123,7 +123,7 @@ public class OMHeaderBlockImpl extends OMElementImpl implements OMHeaderBlock {
      */
     public boolean getMustUnderstand() {
         String mustUnderstand = "";
-        if( (mustUnderstand = getAttribute(OMConstants.attrMustUnderstand)) != null){
+        if( (mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND)) != null){
             return mustUnderstand.equalsIgnoreCase("true");
         }
         return false;

@@ -83,7 +83,7 @@ public class OMEnvelopeImpl extends OMElementImpl implements OMEnvelope {
      *                                        obtaining the <CODE>OMHeader</CODE> object
      */
     public OMHeader getHeader() throws OMException {
-        Iterator headerIterator = this.getChildrenWithName(new QName(OMConstants.headerNamespaceURI, OMConstants.headerLocalName));
+        Iterator headerIterator = this.getChildrenWithName(new QName(OMConstants.HEADER_NAMESPACEURI, OMConstants.HEADER_LOCAL_NAME));
         OMHeader omHeader = null;
         if (headerIterator.hasNext()) {
             omHeader = (OMHeader) headerIterator.next();
@@ -107,7 +107,7 @@ public class OMEnvelopeImpl extends OMElementImpl implements OMEnvelope {
      *                                        obtaining the <CODE>OMBody</CODE> object
      */
     public OMBody getBody() throws OMException {
-        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.bodyNamespaceURI, OMConstants.bodyLocalName));
+        Iterator bodyIterator = this.getChildrenWithName(new QName(OMConstants.BODY_NAMESPACE_URI, OMConstants.BODY_LOCAL_NAME));
         OMBody omBody = null;
         if (bodyIterator.hasNext()) {
             omBody = (OMBody) bodyIterator.next();

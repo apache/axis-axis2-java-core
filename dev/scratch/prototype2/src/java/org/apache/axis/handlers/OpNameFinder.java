@@ -19,6 +19,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Constants;
 import org.apache.axis.engine.Service;
 import org.apache.axis.engine.context.MessageContext;
+import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMEnvelope;
 import org.apache.axis.om.OMNamespace;
@@ -37,7 +38,7 @@ public class OpNameFinder extends AbstractHandler{
             OMEnvelope envelope = msgContext.getEnvelope();
             OMNode node = null;
             OMElement element = envelope.getBody();
-            if(Constants.ELEM_BODY.equals(element.getLocalName())){
+            if(OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())){
                 Iterator bodychilderen = element.getChildren();
                 while(bodychilderen.hasNext()){
                     node = (OMNode)bodychilderen.next();

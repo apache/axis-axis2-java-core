@@ -21,20 +21,20 @@ package org.apache.axis.om;
  */
 public class OMConstants {
 
-    public static final String soapEnvelopeNamespaceURI = "http://schemas.xmlsoap.org/soap/envelope/";
-    public static final String soapEnvelopeNamespacePrefix = "soapenv";
+    public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
+    public static final String SOAPENVELOPE_NAMESPACE_PREFIX = "soapenv";
 
     // Header constants
-    public static final String headerNamespaceURI = soapEnvelopeNamespaceURI;
-    public static final String headerLocalName = "Header";
-    public static final String headerNamespacePrefix = soapEnvelopeNamespacePrefix;
+    public static final String HEADER_NAMESPACEURI = SOAP_ENVELOPE_NAMESPACE_URI;
+    public static final String HEADER_LOCAL_NAME = "Header";
+    public static final String HEADER_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
 
     // Body Constants
-    public static final String bodyNamespaceURI = soapEnvelopeNamespaceURI;
-    public static final String bodyLocalName = "Body";
-    public static final String bodyNamespacePrefix = soapEnvelopeNamespacePrefix;
+    public static final String BODY_NAMESPACE_URI = SOAP_ENVELOPE_NAMESPACE_URI;
+    public static final String BODY_LOCAL_NAME = "Body";
+    public static final String BODY_NAMESPACE_PREFIX = SOAPENVELOPE_NAMESPACE_PREFIX;
 
     // Attribute names of a SOAP Envelope
-    public static final String attrActor = "actor";
-    public static final String attrMustUnderstand = "mustUnderstand";
+    public static final String ATTR_ACTOR = "actor";
+    public static final String ATTR_MUSTUNDERSTAND = "mustUnderstand";
 }
