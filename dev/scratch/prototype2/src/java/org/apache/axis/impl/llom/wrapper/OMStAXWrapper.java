@@ -68,6 +68,11 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
     //holder for the current node. Needs this to generate events from the current node
     private OMNode currentNode = null;
 
+    //needs this to refer to the last known node
+    private OMNode lastNode = null;
+
+    private boolean switched = false;
+
     public void setAllowSwitching(boolean b) {
         this.switchingAllowed = b;
     }
@@ -100,7 +105,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnStr = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT) {
             if (navigable) {
-                OMNamespace ns = ((OMElement) currentNode).getNamespace();
+                OMNamespace ns = ((OMElement) lastNode).getNamespace();
                 returnStr = ns == null ? null : ns.getPrefix();
             } else {
                 returnStr = parser.getPrefix();
@@ -116,7 +121,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnStr = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT || currentEvent == NAMESPACE) {
             if (navigable) {
-                OMNamespace ns = ((OMElement) currentNode).getNamespace();
+                OMNamespace ns = ((OMElement) lastNode).getNamespace();
                 returnStr = ns == null ? null : ns.getValue();
             } else {
                 returnStr = parser.getNamespaceURI();
@@ -144,8 +149,9 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnStr = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT || currentEvent == ENTITY_REFERENCE) {
             if (navigable) {
-                returnStr = ((OMElement) currentNode).getLocalName();
+                returnStr = ((OMElement) lastNode).getLocalName();
             } else {
+                //System.out.println(parser.getEventType());
                 returnStr = parser.getLocalName();
             }
         }
@@ -157,7 +163,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         QName returnName = null;
         if (currentEvent == START_ELEMENT || currentEvent == END_ELEMENT) {
             if (navigable) {
-                returnName = getQName((OMNamedNode) currentNode);
+                returnName = getQName((OMNamedNode) lastNode);
             } else {
                 returnName = parser.getName();
             }
@@ -178,7 +184,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         int returnLength = 0;
         if (hasText()) {
             if (navigable) {
-                OMText textNode = (OMText) currentNode;
+                OMText textNode = (OMText) lastNode;
                 returnLength = textNode.getValue().length();
             } else {
                 returnLength = parser.getTextLength();
@@ -221,7 +227,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         char[] returnArray = null;
         if (hasText()) {
             if (navigable) {
-                OMText textNode = (OMText) currentNode;
+                OMText textNode = (OMText) lastNode;
                 String str = textNode.getValue();
                 returnArray = str.toCharArray();
             } else {
@@ -239,7 +245,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnString = null;
         if (hasText()) {
             if (navigable) {
-                OMText textNode = (OMText) currentNode;
+                OMText textNode = (OMText) lastNode;
                 returnString = textNode.getValue();
             } else {
                 returnString = parser.getText();
@@ -307,7 +313,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                OMAttribute attrib = getAttribute((OMElement) currentNode, i);
+                OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null) {
                     returnString = attrib.getValue();
                 }
@@ -338,7 +344,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                OMAttribute attrib = getAttribute((OMElement) currentNode, i);
+                OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null) {
                     OMNamespace nameSpace = attrib.getNamespace();
                     if (nameSpace != null) {
@@ -358,7 +364,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                OMAttribute attrib = getAttribute((OMElement) currentNode, i);
+                OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null)
                     returnString = attrib.getLocalName();
 
@@ -375,7 +381,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                OMAttribute attrib = getAttribute((OMElement) currentNode, i);
+                OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null) {
                     OMNamespace nameSpace = attrib.getNamespace();
                     if (nameSpace != null) {
@@ -400,7 +406,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         QName returnQName = null;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                returnQName = getQName(getAttribute((OMElement) currentNode, i));
+                returnQName = getQName(getAttribute((OMElement) lastNode, i));
             } else {
                 returnQName = parser.getAttributeName(i);
             }
@@ -418,7 +424,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         int returnCount = 0;
         if (isStartElement() || currentEvent == ATTRIBUTE) {
             if (navigable) {
-                OMElement elt = (OMElement) currentNode;
+                OMElement elt = (OMElement) lastNode;
                 returnCount = getCount(elt.getAttributes());
             } else {
                 returnCount = parser.getAttributeCount();
@@ -472,7 +478,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         if (navigable) {
             b = (currentEvent == START_ELEMENT);
         } else {
-            b = parser.isEndElement();
+            b = parser.isStartElement();
         }
         return b;
     }
@@ -541,6 +547,11 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
             throw new OMStreamingException("Parser completed!");
         }
 
+        if (switched) {
+            //set navigable to false.Now the subsequent requests will be directed to
+            //the parser
+            navigable = false;
+        }
         if (navigable) {
             currentEvent = generateEvents(currentNode);
             updateCompleteStatus();
@@ -565,7 +576,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
      * generation
      */
     private void updateNextNode() throws OMStreamingException {
-
+        lastNode = currentNode;
         currentNode = nextNode;
 
         if (navigator.isNavigable()) {
@@ -589,9 +600,8 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 } catch (ClassCastException e) {
                     throw new OMStreamingException("incompatible parser found!", e);
                 }
-                //set navigable to false.Now the subsequent requests will be directed to
-                //the parser
-                navigable = false;
+
+                switched = true;
 
 
             }
@@ -732,7 +742,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         if (ns != null) {
             String prefix = ns.getPrefix();
             String uri = ns.getValue();
-            if (parser.equals(""))
+            if (prefix == null || prefix.equals(""))
                 returnName = new QName(uri, localPart);
             else
                 returnName = new QName(uri, localPart, prefix);

@@ -8,10 +8,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.impl.llom.serialize.SimpleOMSerializer;
+import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -36,7 +37,7 @@ import org.apache.axis.om.SOAPEnvelope;
 public class OmStAXBuilderTest extends AbstractTestCase{
 
     private OMFactory factory =null;
-    private StAXSOAPModelBuilder builder;
+    private OMXMLParserWrapper builder;
     private SimpleOMSerializer serilizer;
     private File tempFile;
 
@@ -48,7 +49,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
         factory = OMFactory.newInstance();
         XMLStreamReader reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
-        builder = new StAXSOAPModelBuilder(factory,reader);
+        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory,reader);
         serilizer = new SimpleOMSerializer();
 
         tempFile = File.createTempFile("temp", "xml");
@@ -56,7 +57,7 @@ public class OmStAXBuilderTest extends AbstractTestCase{
 
     public void testStaxBuilder()throws Exception{
 
-        SOAPEnvelope envelope = builder.getOMEnvelope();
+        SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
         assertNotNull(envelope);
         serilizer.serialize(envelope,new FileOutputStream(tempFile));
 
