@@ -2,6 +2,8 @@ package org.apache.axis.om.impl;
 
 import org.apache.axis.om.*;
 import org.apache.axis.om.impl.util.OMChildrenIterator;
+import org.apache.axis.om.impl.util.OMChildrenQNameIterator;
+import org.apache.xml.utils.QName;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -56,6 +58,19 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         addChild((OMNodeImpl) child);
     }
 
+    /**
+     * This will search for children with a given QName and will return an iterator to traverse through
+     * the OMNodes.
+     * This QName can contain any combination of prefix, localname and URI
+     *
+     * @param elementQName
+     * @return
+     * @throws org.apache.axis.om.OMException
+     */
+    public Iterator getChildrenWithName(QName elementQName) throws OMException {
+        return new OMChildrenQNameIterator(getFirstChild(), elementQName);
+    }
+
     private void addChild(OMNodeImpl child) {
         if (firstChild == null && !done)
             builder.next();
@@ -84,7 +99,7 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
      * Children can be of types OMElement, OMText.
      */
     public Iterator getChildren() {
-        return new OMChildrenIterator(firstChild);
+        return new OMChildrenIterator(getFirstChild());
     }
 
     /**
@@ -121,6 +136,17 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
         if (parent != null)
             return parent.resolveNamespace(uri, prefix);
         return null;
+    }
+
+    /**
+     * This will help to search for an attribute with a given QName within this Element
+     *
+     * @param qname
+     * @return
+     * @throws org.apache.axis.om.OMException
+     */
+    public Iterator getAttributeWithQName(QName qname) throws OMException {
+        return new OMChildrenQNameIterator((OMNodeImpl) getFirstAttribute(), qname);
     }
 
     /**
@@ -232,5 +258,28 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement {
 
     public boolean isComplete() {
         return done;
+    }
+
+    /**
+     * This will return the literal value of the node.
+     * OMText --> the text
+     * OMElement --> name of the element as a QName in String format
+     * OMAttribute --> the value of the attribue
+     *
+     * @return
+     * @throws org.apache.axis.om.OMException
+     */
+    public String getValue() throws OMException {
+        return localName;
+    }
+
+    /**
+     * This is to get the type of node, as this is the super class of all the nodes
+     *
+     * @return
+     * @throws org.apache.axis.om.OMException
+     */
+    public short getType() throws OMException {
+        return OMNode.ELEMENT_NODE;    
     }
 }

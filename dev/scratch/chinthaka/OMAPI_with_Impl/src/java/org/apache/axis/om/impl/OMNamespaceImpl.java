@@ -61,7 +61,7 @@ public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
     }
 
     public String getPrefix() {
-        return prefix;  //TODO implement this
+        return prefix;  
     }
 
     public OMNode getNextSibling() throws OMException {

@@ -1,0 +1,57 @@
+<project name="Common build file" default="compile" basedir=".">
+    <description>This will help to compile and jar the OM API files</description>
+    <target name="init" description="Initialize environment">
+        <property name="path.dist" value="dist"/>
+        <property name="path.classes" value="classes"/>
+        <property name="path.libs" value="lib"/>
+        <property name="path.docs" value="docs"/>
+        <property name="path.src" value="src/java"/>
+
+        <mkdir dir="${path.dist}"/>
+        <mkdir dir="${path.classes}"/>
+        <mkdir dir="${path.docs}"/>
+
+        <path id="source.dirs">
+            <pathelement location="${path.src}"/>
+        </path>
+
+
+        <path id="classpath.libraries" description="3rd party libs">
+            <fileset dir="${path.libs}">
+                <include name="**/*.jar"/>
+                <!-- <pathelement path="${java.class.path}"/> -->
+            </fileset>
+        </path>
+        <property name="javadoc.packages" value="org.apache.axis.om, org.apache.axis.impl, org.apache.axis.impl.util"/>
+    </target>
+    <target name="compile" depends="init" description="Compile source">
+        <javac destdir="${path.classes}" srcdir="${path.src}">
+            <classpath refid="classpath.libraries"/>
+        </javac>
+    </target>
+    <target name="createOMAPIJar" description="This will create OM API jar only" depends="compile">
+        <jar jarfile="${path.dist}/omapi-1.0.jar" basedir="${path.classes}">
+            <exclude name="**/impl/**"/>
+            <exclude name="**/test/**"/>
+        </jar>
+    </target>
+
+    <target name="create-Impl-Jar" description="This will create OM API jar only" depends="compile">
+        <jar jarfile="${path.dist}/omImpl-LinkedListModel-1.0.jar" basedir="${path.classes}">
+            <exclude name="**/test/**"/>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <deltree dir="${path.classes}"/>
+    </target>
+
+    <target name="java doc">
+        <javadoc destdir="${path.docs}"
+            packagenames="*." sourcepathref="source.dirs" classpath="classpath.libraries"  >
+
+        </javadoc>
+    </target>
+
+
+</project>

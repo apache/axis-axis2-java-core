@@ -22,12 +22,14 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.apache.axis.om.impl.*;
+import org.apache.xml.utils.QName;
 
 
 /**
@@ -165,6 +167,17 @@ public class Tester extends TestCase {
 			System.out.println("---");
 			root.print(System.out);
 		}
+
+    public void testChildrenRetrievalWithQName() throws Exception {
+		OMElementImpl root= getOMBuilder().getDocument().getRootElement();
+		root.getFirstChild().detach();
+
+        Iterator iter = ((OMElementImpl) root.getFirstChild()).getChildrenWithName(new QName("http://schemas.xmlsoap.org/ws/2004/03/addressing","wsa","To"));
+           while(iter.hasNext()){
+               OMNamedNodeImpl omNamedNode = (OMNamedNodeImpl) iter.next();
+               System.out.println("omNamedNode = " + omNamedNode.getLocalName());
+           }
+    }
 
 	private void navigate(OMNode node) throws Exception {
 		OMNavigator navigator= new OMNavigator(node);

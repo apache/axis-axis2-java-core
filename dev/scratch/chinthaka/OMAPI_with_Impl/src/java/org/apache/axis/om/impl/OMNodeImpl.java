@@ -71,8 +71,6 @@ public class OMNodeImpl implements OMNode, Printable {
      * @throws org.apache.axis.om.OMException
      */
     public OMNode getNextSibling() throws OMException {
-        System.out.println("***********parent = " + parent);
-        System.out.println("++++++++++++nextSibling = " + nextSibling);
         if (nextSibling == null && !parent.isComplete())
             parent.buildNext();
         return nextSibling;
@@ -177,6 +175,20 @@ public class OMNodeImpl implements OMNode, Printable {
                 previousSibling.setNextSibling(siblingImpl);
             previousSibling = siblingImpl;
         }
+    }
+
+    /**
+     * This is to get the type of node, as this is the super class of all the nodes
+     *
+     * @return
+     * @throws org.apache.axis.om.OMException
+     */
+    public short getType() throws OMException {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setType(short nodeType) throws OMException {
+        throw new UnsupportedOperationException(); 
     }
 
     public OMNode getPreviousSibling() {

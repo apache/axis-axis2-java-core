@@ -72,4 +72,6 @@ public class OMAttributeImpl extends OMNamedNodeImpl implements OMAttribute {
         if (nextSibling != null)
             nextSibling.setPreviousSibling(previousSibling);
     }
+
+    
 }

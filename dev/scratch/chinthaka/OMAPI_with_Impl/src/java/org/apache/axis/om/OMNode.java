@@ -78,7 +78,7 @@ public interface OMNode {
     /**
      * This will return the literal value of the node.
      * OMText --> the text
-     * OMElement --> name of the element as a QName in String format
+     * OMElement --> local name of the element in String format
      * OMAttribute --> the value of the attribue
      *
      * @return
@@ -121,4 +121,12 @@ public interface OMNode {
      * @throws OMException
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException;
+
+    /** This is to get the type of node, as this is the super class of all the nodes
+     *
+     * @return
+     * @throws OMException
+     */
+    public short getType() throws OMException;
+    public void setType(short nodeType) throws OMException;
 }

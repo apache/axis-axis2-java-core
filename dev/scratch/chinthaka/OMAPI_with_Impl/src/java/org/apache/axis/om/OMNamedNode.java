@@ -25,15 +25,9 @@ package org.apache.axis.om;
  */
 public interface OMNamedNode extends OMNode {
 
-    String getLocalName();
+    public String getLocalName();
+    public void setLocalName(String localName);
 
-    void setLocalName(String localName);
-
-
-    OMNamespace getNamespace() throws OMException;
-
-    /**
-     * @param namespace
-     */
-    void setNamespace(OMNamespace namespace);
+    public OMNamespace getNamespace() throws OMException;
+    public void setNamespace(OMNamespace namespace);
 }

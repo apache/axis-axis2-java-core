@@ -4,6 +4,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
+import org.apache.xml.utils.QName;
 
 import java.io.PrintStream;
 
@@ -67,5 +68,10 @@ public class OMNamedNodeImpl extends OMNodeImpl implements OMNamedNode {
             ps.print(':');
         }
         ps.print(localName);
+    }
+
+    public QName getQName(){
+        QName qName = new QName(ns.getValue(), ns.getPrefix(), localName);
+        return qName;
     }
 }

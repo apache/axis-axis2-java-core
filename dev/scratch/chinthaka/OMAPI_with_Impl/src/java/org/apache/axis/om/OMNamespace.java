@@ -20,13 +20,9 @@ package org.apache.axis.om;
  * Time: 1:24:00 PM
  */
 public interface OMNamespace extends OMNode {
-    //Constructors are not allowed in interfaces!!!!
-    //public OMNamespace(String uri, String prefix);
 
     public boolean equals(OMNamespace ns);
-
     public boolean equals(String uri, String prefix);
-
 
     public boolean isDefaultNs();
 

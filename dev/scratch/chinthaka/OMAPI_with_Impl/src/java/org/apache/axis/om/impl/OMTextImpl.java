@@ -52,7 +52,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     }
 
     public short getTextType() {
-        return textType;  //TODO implement this
+        return textType;  
     }
 
     public OMNode getFirstChild() throws OMException {
@@ -66,4 +66,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText {
     public void print(PrintStream s) throws OMException {
         s.print(value);
     }
+
+    
 }
