@@ -35,7 +35,7 @@ public class CompareOMWithDOMTest extends AbstractTestCase{
         super(testName);
     }
     
-    public void testSecuritySample2() throws OMException, Exception{
+    public void testAllMessagesInSOAP() throws OMException, Exception{
         File dir = new File(testResourceDir,"soap");
         File[] files = dir.listFiles();
         if(files != null){
