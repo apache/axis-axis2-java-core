@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.testUtils;
 
 import org.apache.axis.engine.AxisFault;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -27,19 +29,16 @@ import java.util.ArrayList;
 
 public class SimpleTypeEncodingUtils {
 
-     public static byte[] deserializeByteArray(XMLStreamReader xpp)
-             throws AxisFault {
+    public static byte[] deserializeByteArray(XMLStreamReader xpp) throws AxisFault {
         String val = deserializeString(xpp);
         if (val == null) {
             throw new AxisFault("Null recieved!!");
         }
         return val.getBytes();
 
-
     }
 
-    public static String[] deserializeStringArray(XMLStreamReader xpp)
-            throws AxisFault {
+    public static String[] deserializeStringArray(XMLStreamReader xpp) throws AxisFault {
         ArrayList strings = new ArrayList();
 
         try {
@@ -65,8 +64,7 @@ public class SimpleTypeEncodingUtils {
 
     }
 
-    public static String deserializeStringWithWiteSpaces(XMLStreamReader xpp)
-            throws AxisFault {
+    public static String deserializeStringWithWiteSpaces(XMLStreamReader xpp) throws AxisFault {
         StringBuffer value = new StringBuffer();
         try {
             int event = xpp.getEventType();
@@ -90,8 +88,7 @@ public class SimpleTypeEncodingUtils {
         }
     }
 
-    public static String deserializeString(XMLStreamReader xpp)
-            throws AxisFault {
+    public static String deserializeString(XMLStreamReader xpp) throws AxisFault {
         String value = null;
         try {
             int event = xpp.getEventType();
@@ -100,8 +97,7 @@ public class SimpleTypeEncodingUtils {
             }
             event = xpp.next();
             while (XMLStreamConstants.END_ELEMENT != event) {
-                if (XMLStreamConstants.CHARACTERS == event
-                        && !xpp.isWhiteSpace()) {
+                if (XMLStreamConstants.CHARACTERS == event && !xpp.isWhiteSpace()) {
                     value = xpp.getText();
                 }
                 event = xpp.next();
@@ -128,8 +124,15 @@ public class SimpleTypeEncodingUtils {
         return Double.parseDouble(val);
     }
 
-    public static int[] deserializeIntArray(XMLStreamReader xpp)
-            throws AxisFault {
+    public static float deserializeFloat(XMLStreamReader xpp) throws AxisFault {
+        String val = deserializeString(xpp);
+        if (val == null) {
+            throw new AxisFault("Number format exception value is null");
+        }
+        return Float.parseFloat(val);
+    }
+
+    public static int[] deserializeIntArray(XMLStreamReader xpp) throws AxisFault {
         ArrayList ints = new ArrayList();
 
         try {
@@ -161,8 +164,7 @@ public class SimpleTypeEncodingUtils {
 
     }
 
-    public static double[] deserializeDoubleArray(XMLStreamReader xpp)
-            throws AxisFault {
+    public static double[] deserializeDoubleArray(XMLStreamReader xpp) throws AxisFault {
         ArrayList doubles = new ArrayList();
 
         try {
@@ -194,13 +196,10 @@ public class SimpleTypeEncodingUtils {
 
     }
 
-    public static void serialize(XMLStreamWriter out,
-                                 QName elementName,
-                                 String value)
-            throws AxisFault {
+    public static void serialize(XMLStreamWriter out, QName elementName, String value)
+        throws AxisFault {
         try {
-            out.writeStartElement(elementName.getNamespaceURI(),
-                    elementName.getLocalPart());
+            out.writeStartElement(elementName.getNamespaceURI(), elementName.getLocalPart());
             out.writeCharacters(value);
             out.writeEndElement();
         } catch (XMLStreamException e) {
@@ -209,4 +208,20 @@ public class SimpleTypeEncodingUtils {
 
     }
 
+    public static void writeElement(
+        ContentHandler contentHandler,
+        String localName,
+        String uri,
+        String prefixed,
+        String value)
+        throws SAXException {
+        contentHandler.startElement(uri, localName, prefixed, null);
+
+        char[] str = ((value == null) ? new char[] {
+        }
+        : value.toCharArray());
+        contentHandler.characters(str, 0, str.length);
+        contentHandler.endElement(uri, localName, prefixed);
+
+    }
 }
