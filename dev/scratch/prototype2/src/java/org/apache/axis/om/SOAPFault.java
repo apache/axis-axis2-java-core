@@ -15,6 +15,7 @@
 
 package org.apache.axis.om;
 
+import javax.xml.namespace.QName;
 import java.util.Locale;
 
 
@@ -27,9 +28,9 @@ import java.util.Locale;
  * in processing, such as the inability to communicate with an
  * upstream server.
  * <P>
- * The <CODE>OMFault</CODE> interface provides methods for
+ * The <CODE>SOAPFault</CODE> interface provides methods for
  * retrieving the information contained in a <CODE>
- * OMFault</CODE> object and for setting the fault code, the
+ * SOAPFault</CODE> object and for setting the fault code, the
  * fault actor, and a string describing the fault. B fault code is
  * one of the codes defined in the SOAP 1.1 specification that
  * describe the fault. An actor is an intermediate recipient to
@@ -38,16 +39,16 @@ import java.util.Locale;
  * only to the default actor, which is the final intended
  * recipient.
  */
-public interface OMFault extends OMElement {
+public interface SOAPFault extends OMElement {
 
     /**
-     * Sets this <CODE>OMFault</CODE> object with the given
+     * Sets this <CODE>SOAPFault</CODE> object with the given
      * fault code.
      * <p/>
      * <P>Fault codes, which given information about the fault,
      * are defined in the SOAP 1.1 specification.</P>
      *
-     * @param faultCode a <CODE>String</CODE> giving
+     * @param faultCode a <CODE>QName</CODE> giving
      *                  the fault code to be set; must be one of the fault codes
      *                  defined in the SOAP 1.1 specification
      * @throws OMException if there was an error in
@@ -55,19 +56,19 @@ public interface OMFault extends OMElement {
      *                     tree.
      * @see #getFaultCode() getFaultCode()
      */
-    public abstract void setFaultCode(String faultCode) throws OMException;
+    public abstract void setFaultCode(QName faultCode) throws OMException;
 
     /**
-     * Gets the fault code for this <CODE>OMFault</CODE>
+     * Gets the fault code for this <CODE>SOAPFault</CODE>
      * object.
      *
      * @return a <CODE>String</CODE> with the fault code
-     * @see #setFaultCode(String) setFaultCode(java.lang.String)
+     * @see #setFaultCode(QName) setFaultCode(QName)
      */
-    public abstract String getFaultCode();
+    public abstract QName getFaultCode();
 
     /**
-     * Sets this <CODE>OMFault</CODE> object with the given
+     * Sets this <CODE>SOAPFault</CODE> object with the given
      * fault actor.
      * <p/>
      * <P>The fault actor is the recipient in the message path who
@@ -75,7 +76,7 @@ public interface OMFault extends OMElement {
      *
      * @param faultActor a <CODE>String</CODE>
      *                   identifying the actor that caused this <CODE>
-     *                   OMFault</CODE> object
+     *                   SOAPFault</CODE> object
      * @throws OMException if there was an error in
      *                     adding the <CODE>faultActor</CODE> to the underlying XML
      *                     tree.
@@ -84,17 +85,17 @@ public interface OMFault extends OMElement {
     public abstract void setFaultActor(String faultActor) throws OMException;
 
     /**
-     * Gets the fault actor for this <CODE>OMFault</CODE>
+     * Gets the fault actor for this <CODE>SOAPFault</CODE>
      * object.
      *
      * @return a <CODE>String</CODE> giving the actor in the message
-     *         path that caused this <CODE>OMFault</CODE> object
+     *         path that caused this <CODE>SOAPFault</CODE> object
      * @see #setFaultActor(String) setFaultActor(java.lang.String)
      */
     public abstract String getFaultActor();
 
     /**
-     * Sets the fault string for this <CODE>OMFault</CODE>
+     * Sets the fault string for this <CODE>SOAPFault</CODE>
      * object to the given string.
      *
      * @param faultString a <CODE>String</CODE>
@@ -108,7 +109,7 @@ public interface OMFault extends OMElement {
             throws OMException;
 
     /**
-     * Gets the fault string for this <CODE>OMFault</CODE>
+     * Gets the fault string for this <CODE>SOAPFault</CODE>
      * object.
      *
      * @return a <CODE>String</CODE> giving an explanation of the
@@ -117,7 +118,7 @@ public interface OMFault extends OMElement {
     public abstract String getFaultString();
 
     /**
-     * Sets the fault string for this <code>OMFault</code> object to the given
+     * Sets the fault string for this <code>SOAPFault</code> object to the given
      * string and localized to the given locale.
      *
      * @param faultString a <code>String</code> giving an explanation of
@@ -129,13 +130,5 @@ public interface OMFault extends OMElement {
      */
     public abstract void setFaultString(String faultString, Locale locale) throws OMException;
 
-    /**
-     * Returns the optional detail element for this <code>OMFault</code>
-     * object.
-     *
-     * @return a <code>Locale</code> object indicating the native language of
-     *         the fault string or <code>null</code> if no locale was
-     *         specified
-     */
-    public abstract Locale getFaultStringLocale();
+   
 }
