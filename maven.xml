@@ -16,7 +16,7 @@
  * limitations under the License.
  */
  -->
-<project default="multiproject:install">
+<project default="multiproject:install" xmlns:m="jelly:maven">
 		 <goal name="clean">
 			    <delete dir="target"/>
 			    <delete dir="modules/core/target"/>
@@ -111,5 +111,20 @@
     <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>
   </preGoal>
+  
+  <goal
+    name="multiproject-javadoc"
+    description="Generate the javadoc the entire project">
+
+    <!-- Generate the javadoc for each of the components. -->
+
+    
+      <m:reactor basedir="${basedir}/modules"
+               includes="*/project.xml"
+               goals="javadoc"
+               banner="Building"
+               ignoreFailures="false"/>
+
+  </goal>
 
 </project>
