@@ -30,7 +30,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.description.MockFlow;
 import org.apache.axis.description.SimpleAxisOperationImpl;
-import org.apache.axis.testUtils.SimpleJavaProvider;
+import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
 
@@ -106,7 +106,7 @@ public class EngineUtils {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
 
-        service.setProvider(new SimpleJavaProvider());
+        service.setProvider(new RawXMLProvider());
 
         AxisModule m1 = new AxisModule(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));

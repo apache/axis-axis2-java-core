@@ -61,8 +61,10 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            engineRegistry = EngineRegistryFactory.createEngineRegistry(repoDir);
-        } catch (AxisFault e) {
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
+               EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
+               this.engineRegistry = erfac.createEngineRegistry(repoDir);
+        } catch (Exception e) {
             throw new ServletException(e);
         }
     }

@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.engine.AxisFault;
+
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -86,7 +86,7 @@ public class OMTestUtils {
                     Attr attr = (Attr) node;
                     TestCase.assertEquals(attr.getValue(), omattribute.getValue());
                 } else {
-                    throw new AxisFault("return type is not a Attribute");
+                    throw new OMException("return type is not a Attribute");
                 }
 
             }

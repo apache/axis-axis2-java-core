@@ -15,24 +15,8 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.phaseresolver.PhaseException;
-
-import javax.xml.stream.XMLStreamException;
 
 
-public class EngineRegistryFactory {
-    public static EngineRegistry createEngineRegistry(String file) throws AxisFault {
-        try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(file);
-            return deploymentEngine.start();
-        } catch (PhaseException e) {
-            throw AxisFault.makeFault(e);
-        } catch (DeploymentException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
+public interface EngineRegistryFactory {
+    public  EngineRegistry createEngineRegistry(String file) throws AxisFault;
 }

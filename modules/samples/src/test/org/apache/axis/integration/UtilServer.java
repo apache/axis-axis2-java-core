@@ -16,16 +16,15 @@
 
 package org.apache.axis.integration;
 
+import java.net.ServerSocket;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.engine.EngineUtils;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.net.ServerSocket;
 
 public class UtilServer {
     private static int count = 0;
@@ -42,10 +41,12 @@ public class UtilServer {
         reciver.getEngineReg().removeService(service);
     }
 
-    public static synchronized void start() throws IOException {
+    public static synchronized void start() throws Exception {
         if (count == 0) {
-            EngineRegistry er =
-                    EngineRegistryFactory.createEngineRegistry("target/test-resources/samples/");
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
+            EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
+            EngineRegistry er = 
+                erfac.createEngineRegistry("target/test-resources/samples/");
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
@@ -55,14 +56,14 @@ public class UtilServer {
             reciver = new SimpleHTTPServer(er);
 
             ServerSocket serverSoc = null;
-            serverSoc = new ServerSocket(EngineUtils.TESTING_PORT);
+            serverSoc = new ServerSocket(Constants.TESTING_PORT);
             reciver.setServerSocket(serverSoc);
             Thread thread = new Thread(reciver);
             thread.setDaemon(true);
 
             try {
                 thread.start();
-                System.out.print("Server started on port " + EngineUtils.TESTING_PORT + ".....");
+                System.out.print("Server started on port " + Constants.TESTING_PORT + ".....");
             } finally {
 
             }

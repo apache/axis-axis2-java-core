@@ -1,6 +1,6 @@
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.deployment.DeploymentConstants;
+
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransport;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 /**
  * This class hold all the phases found in the service.xml and server.xml
  */
-public class PhaseHolder implements DeploymentConstants {
+public class PhaseHolder {
 
     private Log log = LogFactory.getLog(getClass());
     private ArrayList phaseholder = new ArrayList();

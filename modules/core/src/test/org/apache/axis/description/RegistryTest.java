@@ -15,6 +15,8 @@
  */
 package org.apache.axis.description;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -23,9 +25,6 @@ import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.providers.RawXMLProvider;
-import org.apache.axis.testUtils.SimpleJavaProvider;
-
-import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase {
     private EngineRegistry reg;
@@ -107,7 +106,7 @@ public class RegistryTest extends AbstractTestCase {
         xmlprovider.setName(name);
         assertEquals(xmlprovider.getName(), name);
 
-        SimpleJavaProvider provider = new SimpleJavaProvider();
+        RawXMLProvider provider = new RawXMLProvider();
         provider.setName(name);
         assertEquals(provider.getName(), name);
 

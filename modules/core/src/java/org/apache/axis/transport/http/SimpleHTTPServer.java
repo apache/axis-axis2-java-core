@@ -59,14 +59,15 @@ public class SimpleHTTPServer implements Runnable {
     }
 
     public SimpleHTTPServer(String dir) throws AxisFault {
-        EngineRegistry er = EngineRegistryFactory.createEngineRegistry(dir);
         try {
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
+            EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
+            this.engineReg = erfac.createEngineRegistry(dir);
+
             Thread.sleep(2000);
-        } catch (InterruptedException e1) {
+        } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);
         }
-        this.engineReg = er;
-
     }
 
     /**

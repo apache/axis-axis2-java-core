@@ -16,24 +16,33 @@
 
 package org.apache.axis.integration;
 
-import junit.framework.TestCase;
-
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.engine.EngineUtils;
-import org.apache.axis.om.*;
-import org.apache.axis.testUtils.*;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.testUtils.ArrayTypeEncoder;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.ObjectToOMBuilder;
+import org.apache.axis.testUtils.SimpleTypeEncoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 
 public class EchoTest extends TestCase {
@@ -77,7 +86,7 @@ public class EchoTest extends TestCase {
         EndpointReference targetEPR =
                 new EndpointReference(AddressingConstants.WSA_TO,
                         "http://127.0.0.1:"
-                + (EngineUtils.TESTING_PORT)
+                + (org.apache.axis.integration.Constants.TESTING_PORT)
                 + "/axis/services/echo");
         Call call = new Call();
         call.setTo(targetEPR);

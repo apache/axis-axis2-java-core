@@ -21,7 +21,7 @@ package org.apache.axis.om;
 
 import java.io.File;
 
-import org.apache.axis.engine.AxisFault;
+
 
 
 public class BadInputTest extends OMTestCase {
@@ -42,8 +42,6 @@ public class BadInputTest extends OMTestCase {
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
             return;
-        } catch (AxisFault e) {
-            return;
         }
 
     }
@@ -57,10 +55,7 @@ public class BadInputTest extends OMTestCase {
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
             return;
-        } catch (AxisFault e) {
-            return;
         }
-
     }
 
     //done
@@ -103,9 +98,7 @@ public class BadInputTest extends OMTestCase {
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
             return;
-        } catch (AxisFault e) {
-            return;
-        }
+        } 
 
     }
 
@@ -118,9 +111,7 @@ public class BadInputTest extends OMTestCase {
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
             return;
-        } catch (AxisFault e) {
-            return;
-        }
+        } 
 
     }
 
@@ -132,8 +123,6 @@ public class BadInputTest extends OMTestCase {
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
         } catch (OMException e) {
-            return;
-        } catch (AxisFault e) {
             return;
         }
 
