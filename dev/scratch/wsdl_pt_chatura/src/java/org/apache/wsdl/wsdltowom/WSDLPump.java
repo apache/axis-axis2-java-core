@@ -16,17 +16,23 @@
 package org.apache.wsdl.wsdltowom;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Operation;
 import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
 
 import org.apache.wsdl.wom.WSDLBinding;
+import org.apache.wsdl.wom.WSDLConstants;
 import org.apache.wsdl.wom.WSDLDefinitions;
 import org.apache.wsdl.wom.WSDLInterface;
+import org.apache.wsdl.wom.WSDLOperation;
 import org.apache.wsdl.wom.impl.WSDLBindingImpl;
 import org.apache.wsdl.wom.impl.WSDLInterfaceImpl;
+import org.apache.wsdl.wom.impl.WSDLOperationImpl;
 
 /**
  * @author chathura@opensource.lk
@@ -90,7 +96,8 @@ public class WSDLPump {
     }
     
     
-    
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////   Top level Components Copying ////////////////////
     
     
     private void populateBindings(WSDLBinding wsdlBinding, Binding wsdl4JBinding){
@@ -98,10 +105,37 @@ public class WSDLPump {
         throw new UnsupportedOperationException("Fill the impl");
     }
     
+    /**
+     * Simply Copy information.
+     * @param wsdlInterface
+     * @param wsdl4jPortType
+     */
+    //FIXME Evaluate a way of injecting features and priperties with a general formatted input
     private void populateInterfaces(WSDLInterface wsdlInterface, PortType wsdl4jPortType){
+        
+        //Copy the Attrebute information items
+        wsdlInterface.setName(wsdl4jPortType.getQName());
+        
+        Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations().iterator();
+        while(wsdl4JOperationsIterator.hasNext()){
+            WSDLOperation wsdloperation = new WSDLOperationImpl();
+            this.populateOperations(wsdloperation, (Operation)wsdl4JOperationsIterator.next());
+            
+        }
         
         throw new UnsupportedOperationException("Fill the impl");
     }
     
+    
+    
+    /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////   Internal Component Copying ///////////////////
+    
+    public void populateOperations(WSDLOperation wsdlOperation, Operation wsdl4jOperation){
+        //Copy Attrebutes
+        wsdlOperation.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE,wsdl4jOperation.getName()));
+        
+//        wsdl4jOperation.getFault("d").
+    }
     
 }

@@ -16,7 +16,6 @@
 package org.apache.wsdl.wom.impl;
 
 import java.net.URI;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -28,7 +27,7 @@ import org.apache.wsdl.wom.WSDLInterface;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLBindingImpl extends ComponentImpl implements WSDLBinding  {
+public class WSDLBindingImpl extends ExtensibleComponentImpl implements WSDLBinding  {
 
 	private QName name;
 	
@@ -40,24 +39,10 @@ public class WSDLBindingImpl extends ComponentImpl implements WSDLBinding  {
 	
 	private List operations;
 	
-	private List features = new LinkedList();
-	
-	private List properties = new LinkedList();	
 	
 	
 	 
-	public List getFeatures() {
-		return features;
-	}
-	public void setFeatures(List features) {
-		this.features = features;
-	}
-	public List getProperties() {
-		return properties;
-	}
-	public void setProperties(List properties) {
-		this.properties = properties;
-	}	
+	
 	
 	public WSDLInterface getBoundInterface() {
 		return boundInterface;

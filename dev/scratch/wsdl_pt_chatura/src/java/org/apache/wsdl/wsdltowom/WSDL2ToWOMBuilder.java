@@ -17,7 +17,6 @@ package org.apache.wsdl.wsdltowom;
 
 import java.io.InputStream;
 
-import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 
 import org.apache.wsdl.wom.WSDLDefinitions;

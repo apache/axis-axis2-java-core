@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.wsdl;
+package org.apache.wsdl.wom;
 
 /**
  * @author chathura@opensource.lk
- *	The checked exception for the WSDL procession
  *
  */
-public class WSDLException extends Exception {
+public interface Style {
 
-    
-    public WSDLException(String message){
-        super(message);
-    }
-    
-    public WSDLException(Throwable e){
-        super(e);
-    }
-    
-    public WSDLException(String message, Throwable e){
-        super(message, e);
-    }
 }

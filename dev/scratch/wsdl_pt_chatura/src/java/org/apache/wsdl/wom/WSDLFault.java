@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLFault {
+public interface WSDLFault extends Component{
 	public Element getElement();
 
 	public void setElement(Element element);

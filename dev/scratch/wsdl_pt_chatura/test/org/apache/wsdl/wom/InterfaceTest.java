@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.wsdl.wom;
+package org.apache.wsdl.wom;
 
 import java.net.URI;
 import java.util.Iterator;
@@ -45,9 +45,9 @@ public class InterfaceTest extends TestCase {
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"inteface"+j));
 	        for(int i=0; i<operationCounter; i++){
 	            op = new WSDLOperationImpl();
-	        	op.setName("op"+i+"of inteface"+j);
+	        	op.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"op"+i+"of inteface"+j));
 	        	System.out.println(op.getName());
-	        	intfc.setOperation("op"+i+"of inteface"+j, op);
+	        	intfc.setOperation(op);
 	        }
 	        if(j>0){
 	            intfc.addSuperInterface(array[j-1].getName(), array[j-1]);
@@ -55,8 +55,8 @@ public class InterfaceTest extends TestCase {
 	        array[j] = intfc;
         }
         System.out.println(array[0].getAllOperations().size());
-        assertEquals(((WSDLOperation)array[0].getAllOperations().get("op0of inteface0")).getName(),"op0of inteface0" );
-        assertEquals(((WSDLOperation)array[0].getAllOperations().get("op1of inteface0")).getName(),"op1of inteface0" );
+        assertEquals(((WSDLOperation)array[0].getAllOperations().get(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"op0of inteface0"))).getName().getLocalPart(),"op0of inteface0" );
+        
 
         System.out.println(array[1].getAllOperations().size());
         System.out.println(array[1].getAllOperations().keySet());
@@ -64,15 +64,14 @@ public class InterfaceTest extends TestCase {
         while(iter.hasNext()){
             System.out.println(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(iter.next())).getName());
         }
-        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get("op0of inteface0")).getName(),"op0of inteface0" );
-        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get("op1of inteface0")).getName(),"op1of inteface0" );
-        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get("op0of inteface1")).getName(),"op0of inteface1" );
-        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get("op1of inteface1")).getName(),"op1of inteface1" );
+        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"op0of inteface0"))).getName().getLocalPart(),"op0of inteface0" );
+        assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"op3of inteface2"))).getName().getLocalPart(),"op3of inteface2" );
+        assertEquals((array[interfaceCounter-1].getAllOperations()).size(),interfaceCounter*operationCounter);
         
         for(int j=0; j<interfaceCounter; j++){
             for(int i=0; i<operationCounter; i++){
                 System.out.println("op"+j+"of inteface"+i);
-                assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get("op"+j+"of inteface"+i)).getName(),"op"+j+"of inteface"+i );
+                assertEquals(((WSDLOperation)array[interfaceCounter-1].getAllOperations().get(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"op"+j+"of inteface"+i))).getName().getLocalPart(),"op"+j+"of inteface"+i );
             }
         }
 
@@ -93,9 +92,9 @@ public class InterfaceTest extends TestCase {
             intfc = new WSDLInterfaceImpl();
             for(int j=0; j< operationCounter; j++){
                 op = new WSDLOperationImpl();
-                op.setName("operation"+j);
+                op.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,"operation"+j));
                 op.setTargetnemespace(new URI(WSDLConstants.WSDL2_0_NAMESPACE));
-                intfc.setOperation(op.getName(), op);
+                intfc.setOperation(op);
             }
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "Interface"+i));
             array[i] = intfc;
@@ -106,7 +105,7 @@ public class InterfaceTest extends TestCase {
             inheritedInterface.addSuperInterface(array[i].getName(), array[i]);
         }
         
-        System.out.println(inheritedInterface.getAllOperations().size());
+        assertEquals(inheritedInterface.getAllOperations().size(), operationCounter);
         
     }
 }

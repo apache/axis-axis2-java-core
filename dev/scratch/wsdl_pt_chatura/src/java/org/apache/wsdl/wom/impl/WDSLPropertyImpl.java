@@ -15,18 +15,16 @@
  */
 package org.apache.wsdl.wom.impl;
 
-import java.net.URI;
-
-import org.apache.wsdl.wom.WDSLProperty;
+import org.apache.wsdl.wom.WSDLProperty;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty  {
+public class WDSLPropertyImpl extends ComponentImpl implements WSDLProperty  {
 
 	
-	private URI name;
+	private String uri;
 	
 	//TODO replace with the  data binding object structure
 	private Object constraint;
@@ -41,11 +39,11 @@ public class WDSLPropertyImpl extends ComponentImpl implements WDSLProperty  {
 	public void setConstraint(Object constraint) {
 		this.constraint = constraint;
 	}
-	public URI getName() {
-		return name;
+	public String getName() {
+		return uri;
 	}
-	public void setName(URI name) {
-		this.name = name;
+	public void setName(String uri) {
+		this.uri = uri;
 	}
 	public Object getValue() {
 		return value;

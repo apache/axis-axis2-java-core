@@ -13,24 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.wsdl.wom;
-
-import test.wsdl.wombuilder.WSDL1BuilderTest;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+package org.apache.axis.description;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class AllTests {
+public class AxisModule {
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Test for test.wsdl.wom");
-        //$JUnit-BEGIN$
-        suite.addTestSuite(InterfaceTest.class);
-        suite.addTestSuite(WSDL1BuilderTest.class);
-        //$JUnit-END$
-        return suite;
-    }
 }

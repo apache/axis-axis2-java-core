@@ -15,31 +15,28 @@
  */
 package org.apache.wsdl.wom.impl;
 
-import java.net.URI;
 import java.util.HashMap;
 
-import org.apache.wsdl.wom.WSDLConstants;
+import javax.xml.namespace.QName;
+
 import org.apache.wsdl.wom.WSDLEndpoint;
 import org.apache.wsdl.wom.WSDLInterface;
 import org.apache.wsdl.wom.WSDLService;
+
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WSDLServiceImpl extends ComponentImpl implements  WSDLService {
+public class WSDLServiceImpl extends ComponentImpl implements WSDLService   {
 
     /**
-     * The NCName that identifies the Service.
+     * The QName that identifies the Service. This namespace of the QName
+     * should be the target namespace defined in the Definitions component.
      */
-    private String name;
+    private QName name;
     
-    /**
-     * Namespace of the target namespace of the Definition Component's targetNamespace 
-     * attrebute information item.
-     */
-    private URI namespaceURI;
-    
+      
     /**
      * The Interface that this Service is an instance of.
      */
@@ -70,23 +67,28 @@ public class WSDLServiceImpl extends ComponentImpl implements  WSDLService {
 	 * @param nCName NCName of the Service
 	 * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
 	 */
-	public WSDLService getService(String nCName){
+	public WSDLService getEndpoint(String nCName){
 	    WSDLService temp = (WSDLService)this.endpoints.get(nCName);
 	    if(null == temp) throw new WSDLProcessingException("Service not found for NCName "+nCName);
 	    return temp;
 	}
-    public String getName() {
+    public QName getName() {
         return name;
     }
-    public void setName(String name) {
+    public void setName(QName name) {
         this.name = name;
     }
-    public URI getNamespaceURI() {
-        return namespaceURI;
+    /**
+     * If the Name of the <code>WSDLService</code> is not set a 
+     * <code>WSDLProcessingException</code> will be thrown.
+     * @return Target Namespace as a <code>String</code>
+     */
+    public String getNamespace() {
+        if(null == this.name) throw new WSDLProcessingException("Target Namespace not set and the Service Name is null");
+        
+        return this.name.getNamespaceURI();       
     }
-    public void setNamespaceURI(URI namespaceURI) {
-        this.namespaceURI = namespaceURI;
-    }
+    
     public WSDLInterface getServiceInterface() {
         return serviceInterface;
     }

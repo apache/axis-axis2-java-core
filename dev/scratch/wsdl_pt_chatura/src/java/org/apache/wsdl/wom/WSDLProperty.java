@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wsdl.wom.impl;
+package org.apache.wsdl.wom;
 
-import org.apache.wsdl.wom.WSDLFeature;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class WSDLFeatureImpl extends ComponentImpl implements WSDLFeature {
+public interface WSDLProperty extends Component{
+    public Object getConstraint();
 
-	
-	private String name;
-	
-	private boolean required;
-	
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public boolean isRequired() {
-		return required;
-	}
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
+    public void setConstraint(Object constraint);
+
+    public String getName();
+
+    public void setName(String uri);
+
+    public Object getValue();
+
+    public void setValue(Object value);
 }

@@ -18,19 +18,15 @@ package org.apache.wsdl.wom;
 import java.net.URI;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLOperation {
-    public List getFeatures();
-
-    public void setFeatures(List features);
-
-    public List getProperties();
-
-    public void setProperties(List properties);
+public interface WSDLOperation  extends ExtensibleComponent{
+    
 
     public List getInfaults();
 
@@ -44,9 +40,9 @@ public interface WSDLOperation {
 
     public void setMessageExchangePattern(int messageExchangePattern);
 
-    public String getName();
+    public QName getName();
 
-    public void setName(String name);
+    public void setName(QName name);
 
     public List getOutfaults();
 

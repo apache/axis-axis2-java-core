@@ -25,14 +25,8 @@ import javax.xml.namespace.QName;
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLBinding {
-    public List getFeatures();
-
-    public void setFeatures(List features);
-
-    public List getProperties();
-
-    public void setProperties(List properties);
+public interface WSDLBinding extends ExtensibleComponent{
+   
 
     public WSDLInterface getBoundInterface();
 

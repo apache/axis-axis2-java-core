@@ -23,7 +23,7 @@ import org.apache.wsdl.wom.WSDLBinding;
 import org.apache.wsdl.wom.WSDLDefinitions;
 import org.apache.wsdl.wom.WSDLInterface;
 import org.apache.wsdl.wom.WSDLService;
-import org.apache.xmlbeans.XmlObject;
+
 
 
 
@@ -31,7 +31,7 @@ import org.apache.xmlbeans.XmlObject;
  * @author chathura@opensource.lk
  *
  */
-public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions  {
+public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinitions    {
 
 	/**
 	 * The name token of WSDL 1.1 Definition.
@@ -49,7 +49,7 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	
 	//TODO The object structure of some external xml data binding is going to be pluged here eventually.  
 	
-	private XmlObject[] types;
+	private Object[] types;
 	
 	/**
 	 * This List will be a list of <code>WSDLInterface</code> objects.
@@ -110,17 +110,12 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	}
 	
 	/**
-	 * Retrives the <code>WSDLBinding</code> by its QName. Will throw an exception 
-	 * if the Binding is not found in the  <code>WSDLBinding</code>s map it will throw an
-	 * WSDLProcessingException.
-	 * @param qName THe QName of the Binding.
+	 * Retrives the <code>WSDLBinding</code> by its QName. Wil return null
+	 * if <code>WSDLBinding</code> is not found.
+	 * @param qName The QName of the Binding.
 	 */
 	public WSDLBinding getBinding(QName qName){
-	    WSDLBinding temp = (WSDLBinding)this.bindings.get(qName);
-	    
-	    if(null == temp) throw new WSDLProcessingException("Binding not found for QName "+qName);
-	    
-	    return temp;
+	     return (WSDLBinding)this.bindings.get(qName);	    
 	}
 
 		
@@ -141,18 +136,14 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 		
 	
 	/**
-	 * The Interface Component will be returned if it exsists, otherwise will throw an 
-	 * WSDLException.
+	 * The Interface Component will be returned if it exsists, 
+	 * otherwise null will be returned.
 	 * @param qName qName of the Interface.
-	 * @return The Interface Component with the relavent QName w
+	 * @return The Interface Component with the relavent QName 
 	 */
 	public WSDLInterface getInterface(QName qName){
-	    
-	    WSDLInterface temp =this.getInterface(qName);
-	    
-	    if(null == temp) throw new WSDLProcessingException("Interface/PortType not found with QName " +qName);
-	    
-	    return temp;
+	    	    
+	    return (WSDLInterface)this.wsdlInterfaces.get(qName);
 	}
 
 	
@@ -164,31 +155,30 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
     }
     
     /**
-	 * The Service will be retrived despite its namespace being either of
-	 * that specified in the WSDLConstants class(WSDL_NAMESPACES) otherwise the checkValidityOfNamespaceWRTWSDLContext() 
-	 * method will throw an exception.
-	 * @param qName THe Namespace of the QName should be either of the WSDL_NAMESPACES
-	 * mentioned in the WSDLConstants interface.
-	 * @return The Service with the relavent QName which have a namespace
-	 * that qualifies that of the versions in the WSDLConstants interface.
+	 * Will return the <code>WSDLService </code> if found otherwise return null.
+	 * @param qName <code>QName</code> of the Service
+	 * @return The Service with the relavent QName 
 	 */
 	public WSDLService getService(QName qName){
-	    checkValidityOfNamespaceWRTWSDLContext(qName);
-	    return this.getService(qName.getLocalPart());
+	    return (WSDLService)this.services.get(qName);
+	    
 	}
+	
+	
 	/**
-	 * Service will be retrived by its NCName and the Namespace of the QName
-	 * is assumed to be in line with that of the WSDL_NAMESPACES in the WSDLConstants
-	 * interface, Thus no namespace checking will be done.
-	 * @param nCName NCName of the Service
-	 * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
+	 * Will add the <code>WSDLService</code> to the Map.
+	 * If object is null it will not be added.
+	 * If the <code>WSDLService</code> name is null a <code>WSDLProcessingException</code>
+	 * will be thrown.(its required)
+	 * @param service
 	 */
-	public WSDLService getService(String nCName){
-	    WSDLService temp = (WSDLService)this.services.get(nCName);
-	    if(null == temp) throw new WSDLProcessingException("Service not found for NCName "+nCName);
-	    return temp;
-	}
-    
+    public void addService(WSDLService service){
+        if(null == service) return;
+        
+        if(null == service.getName()) throw new WSDLProcessingException("The WSDLService name cannot be null (Required)");
+        
+        this.services.put(service.getName(), service);
+    }
     
 	public String getTargetNameSpace() {
 		return targetNameSpace;
@@ -203,10 +193,10 @@ public class WSDLDefinitionsImpl extends ComponentImpl implements WSDLDefinition
 	public void setWsdlInterfaces(HashMap wsdlInterfaces) {
 		this.wsdlInterfaces = wsdlInterfaces;
 	}
-    public XmlObject[] getTypes() {
+    public Object[] getTypes() {
         return types;
     }
-    public void setTypes(XmlObject[] types) {
+    public void setTypes(Object[] types) {
         this.types = types;
     }
     /**

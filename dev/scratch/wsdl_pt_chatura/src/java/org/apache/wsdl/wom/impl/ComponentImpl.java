@@ -17,8 +17,6 @@ package org.apache.wsdl.wom.impl;
 
 import java.util.HashMap;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.wom.Component;
 import org.apache.wsdl.wom.WSDLConstants;
 
@@ -64,12 +62,5 @@ public class ComponentImpl implements  WSDLConstants, Component{
     public Object getComponentProperty(Object key){
         return this.componentProperties.get(key);
     }
-    
-    protected void checkValidityOfNamespaceWRTWSDLContext(QName qName){
-        for(int i=0; i< WSDL_NAMESPACES.length; i++){
-            if(qName.getNamespaceURI() == WSDL_NAMESPACES[i]) 
-               return;
-        }
-        throw new WSDLProcessingException("The Namespace of the QName is not a valid WSDL namespace");
-    }
+       
 }

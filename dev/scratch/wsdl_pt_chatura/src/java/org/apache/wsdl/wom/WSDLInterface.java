@@ -15,7 +15,6 @@
  */
 package org.apache.wsdl.wom;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,16 +25,8 @@ import javax.xml.namespace.QName;
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLInterface {
-    public List getFeatures();
-
-    public void setFeatures(List features);
-
-    public List getProperties();
-
-    public void setProperties(List properties);
-
-    public HashMap getDefinedOperations(WSDLInterface wsdlInterface);
+public interface WSDLInterface extends ExtensibleComponent{
+    
 
     public HashMap getDefinedOperations();
 
@@ -60,8 +51,9 @@ public interface WSDLInterface {
      */
     public HashMap getOperations();
 
-    public WSDLOperation getOperation(QName qName);
-
+    /**
+     * Retruns the <code>WSDLOperation</code>
+     */
     public WSDLOperation getOperation(String nCName);
 
     /**
@@ -72,9 +64,11 @@ public interface WSDLInterface {
     public WSDLInterface getSuperInterface(QName qName);
 
     /**
-     * @return
+     * The Targetnamespace is that of the namespace URI of the QName of 
+     * this component. 
+     * @return URI as a String if the name is set otherwise will return null.
      */
-    public URI getTargetnamespace();
+    public String getTargetnamespace();
 
     /**
      * @param list
@@ -82,7 +76,7 @@ public interface WSDLInterface {
     public void setFaults(List list);
 
     /**
-     * @param string
+     * @param qName
      */
     public void setName(QName qName);
 
@@ -92,21 +86,13 @@ public interface WSDLInterface {
     public void setOperations(HashMap list);
 
     /**
-     * The Operation will be added to the interfce's operations.
-     * Though the Qname is required the actual storage will be from the 
-     * NCName of the operation, but the namespace URI of the QName 
-     * should match that of the Namespaces defined in the WSDLConstants interface. 
-     * @param qName
-     * @param operation
-     */
-    public void setOperation(QName qName, WSDLOperation operation);
-
-    /**
-     * The operation is added by its ncname.
+     * The operation is added by its ncname. If operation is null
+     * it will not be added. If the Operation name is null a 
+     * <code>WSDLProcessingException</code> will be thrown.
      * @param nCName
      * @param operation
      */
-    public void setOperation(String nCName, WSDLOperation operation);
+    public void setOperation(WSDLOperation operation);
 
     /**
      * @param list
@@ -122,7 +108,10 @@ public interface WSDLInterface {
     public void addSuperInterface(QName qName, WSDLInterface interfaceComponent);
 
     /**
-     * @param uri
+     * Will return the StyleDefault if exist , otherwise will return null
+     * @return
      */
-    public void setTargetnamespace(URI uri);
+    public String getStyleDefault();
+
+    public void setStyleDefault(String styleDefault);
 }

@@ -15,15 +15,16 @@
  */
 package org.apache.wsdl.wom;
 
-import java.net.URI;
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
 
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLService {
+public interface WSDLService extends Component{
     public HashMap getEndpoints();
 
     public void setEndpoints(HashMap endpoints);
@@ -38,15 +39,18 @@ public interface WSDLService {
      * @param nCName NCName of the Service
      * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
      */
-    public WSDLService getService(String nCName);
+    public WSDLService getEndpoint(String nCName);
 
-    public String getName();
+    public QName getName();
 
-    public void setName(String name);
+    public void setName(QName name);
 
-    public URI getNamespaceURI();
-
-    public void setNamespaceURI(URI namespaceURI);
+    /**
+     * If the Name of the <code>WSDLService</code> is not set a 
+     * <code>WSDLProcessingException</code> will be thrown.
+     * @return Target Namespace as a <code>String</code>
+     */
+    public String getNamespace();
 
     public WSDLInterface getServiceInterface();
 

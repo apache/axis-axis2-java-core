@@ -15,22 +15,23 @@
  */
 package org.apache.wsdl.wom;
 
-import java.net.URI;
+import org.apache.wsdl.wombuilder.WSDL1BuilderTest;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WDSLProperty {
-    public Object getConstraint();
+public class AllTests {
 
-    public void setConstraint(Object constraint);
-
-    public URI getName();
-
-    public void setName(URI name);
-
-    public Object getValue();
-
-    public void setValue(Object value);
+    public static Test suite() {
+        TestSuite suite = new TestSuite("Test for test.wsdl.wom");
+        //$JUnit-BEGIN$
+        suite.addTestSuite(InterfaceTest.class);
+        suite.addTestSuite(WSDL1BuilderTest.class);
+        //$JUnit-END$
+        return suite;
+    }
 }

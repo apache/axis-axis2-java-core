@@ -20,7 +20,7 @@ package org.apache.wsdl.wom;
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLEndpoint {
+public interface WSDLEndpoint extends Component{
     public WSDLBinding getBinding();
 
     public void setBinding(WSDLBinding binding);

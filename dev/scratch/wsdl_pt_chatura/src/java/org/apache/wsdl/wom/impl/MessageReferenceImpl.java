@@ -22,7 +22,7 @@ import org.apache.wsdl.wom.MessageReference;
  * @author Chathura Herath
  *
  */
-public class MessageReferenceImpl  extends ComponentImpl implements MessageReference  {
+public class MessageReferenceImpl  extends ExtensibleComponentImpl implements MessageReference  {
 
 			
 	//Referes to the MEP the Message relates to.

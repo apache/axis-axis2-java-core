@@ -15,16 +15,15 @@
  */
 package org.apache.wsdl.wom;
 
-import java.net.URI;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLFeature {
-	public URI getName();
+public interface WSDLFeature extends Component{
+	public String getName();
 
-	public void setName(URI name);
+	public void setName(String name);
 
 	public boolean isRequired();
 

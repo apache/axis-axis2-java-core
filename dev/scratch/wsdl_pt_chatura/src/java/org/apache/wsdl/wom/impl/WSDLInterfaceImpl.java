@@ -15,16 +15,16 @@
  */
 package org.apache.wsdl.wom.impl;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 
 import org.apache.wsdl.wom.WSDLInterface;
 import org.apache.wsdl.wom.WSDLOperation;
-
-import javax.xml.namespace.QName;
 
 
 
@@ -34,12 +34,11 @@ import javax.xml.namespace.QName;
  * @author Chathura Herath
  *  
  */
-public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
+public class WSDLInterfaceImpl extends ExtensibleComponentImpl implements WSDLInterface  {
 	
 	
 	private QName name;
 
-	private URI targetnamespace;
 
 	private HashMap superInterfaces = new HashMap();
 
@@ -47,29 +46,14 @@ public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 
 	private HashMap operations = new HashMap();
 	
-	private List features = new LinkedList();
-	
-	private List properties = new LinkedList();
 	
 	
-	public List getFeatures() {
-		return features;
-	}
-	public void setFeatures(List features) {
-		this.features = features;
-	}
-	public List getProperties() {
-		return properties;
-	}
-	public void setProperties(List properties) {
-		this.properties = properties;
-	}
-	public HashMap getDefinedOperations(WSDLInterface wsdlInterface){
-		Object temp = this.superInterfaces.get(wsdlInterface.getName());
-		if(null == temp ) throw new WSDLProcessingException(wsdlInterface.getName()+" is not a valid super interface of the "+this.getName()+". Interface cannot be located.");
-		return ((WSDLInterface)temp).getDefinedOperations();
-	}
+	private String styleDefault;
 	
+	
+	
+	
+		
 	
 	public HashMap getDefinedOperations(){
 		
@@ -150,11 +134,9 @@ public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 		return operations;
 	}
 	
-	public WSDLOperation getOperation(QName qName){
-	    this.checkValidityOfNamespaceWRTWSDLContext(qName);
-	    return this.getOperation(qName.getLocalPart());
-	}
-	
+	/**
+	 * Retruns the <code>WSDLOperation</code>
+	 */
 	public WSDLOperation getOperation(String nCName){
 	    Object temp = this.operations.get(nCName);
 	    if(null == temp) throw new WSDLProcessingException("No Operation found with the QName with ncname/ ncname with "+nCName);
@@ -173,10 +155,14 @@ public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 	}
 
 	/**
-	 * @return
+	 * The Targetnamespace is that of the namespace URI of the QName of 
+	 * this component. 
+	 * @return URI as a String if the name is set otherwise will return null.
 	 */
-	public URI getTargetnamespace() {
-		return targetnamespace;
+	public String getTargetnamespace() {
+		if(null == this.name) return null;
+		
+		return this.name.getNamespaceURI();
 	}
 
 	/**
@@ -199,26 +185,20 @@ public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 	public void setOperations(HashMap list) {
 		operations = list;
 	}
-	/**
-	 * The Operation will be added to the interfce's operations.
-	 * Though the Qname is required the actual storage will be from the 
-	 * NCName of the operation, but the namespace URI of the QName 
-	 * should match that of the Namespaces defined in the WSDLConstants interface. 
-	 * @param qName
-	 * @param operation
-	 */
-	public void setOperation(QName qName, WSDLOperation operation){
-	    this.checkValidityOfNamespaceWRTWSDLContext(qName);
-	    this.setOperation(qName.getLocalPart(), operation);
-	}
+
 	
 	/**
-	 * The operation is added by its ncname.
+	 * The operation is added by its ncname. If operation is null
+	 * it will not be added. If the Operation name is null a 
+	 * <code>WSDLProcessingException</code> will be thrown.
 	 * @param nCName
 	 * @param operation
 	 */
-	public void setOperation(String nCName, WSDLOperation operation){
-	    this.operations.put(nCName, operation);
+	public void setOperation(WSDLOperation operation){
+	    if(null == operation) return ;
+	    
+	    if(null == operation.getName()) throw new WSDLProcessingException("The Operation name cannot be null (required)");
+	    this.operations.put(operation.getName(), operation);
 	}
 
 	/**
@@ -239,10 +219,14 @@ public class WSDLInterfaceImpl extends ComponentImpl implements  WSDLInterface {
 	}
 
 	/**
-	 * @param uri
+	 * Will return the StyleDefault if exist , otherwise will return null
+	 * @return
 	 */
-	public void setTargetnamespace(URI uri) {
-		targetnamespace = uri;
-	}
-
+    public String getStyleDefault() {
+        return styleDefault;
+    }
+    
+    public void setStyleDefault(String styleDefault) {
+        this.styleDefault = styleDefault;
+    }
 }

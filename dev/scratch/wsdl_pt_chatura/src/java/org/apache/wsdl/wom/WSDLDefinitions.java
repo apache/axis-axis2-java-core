@@ -19,13 +19,12 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.xmlbeans.XmlObject;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface WSDLDefinitions {
+public interface WSDLDefinitions extends Component{
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding. 
@@ -47,10 +46,9 @@ public interface WSDLDefinitions {
     public void addBinding(WSDLBinding binding);
 
     /**
-     * Retrives the <code>WSDLBinding</code> by its QName. Will throw an exception 
-     * if the Binding is not found in the  <code>WSDLBinding</code>s map it will throw an
-     * WSDLProcessingException.
-     * @param qName THe QName of the Binding.
+     * Retrives the <code>WSDLBinding</code> by its QName. Wil return null
+     * if <code>WSDLBinding</code> is not found.
+     * @param qName The QName of the Binding.
      */
     public WSDLBinding getBinding(QName qName);
 
@@ -63,10 +61,10 @@ public interface WSDLDefinitions {
     public void addInterface(WSDLInterface interfaceComponent);
 
     /**
-     * The Interface Component will be returned if it exsists, otherwise will throw an 
-     * WSDLException.
+     * The Interface Component will be returned if it exsists, 
+     * otherwise null will be returned.
      * @param qName qName of the Interface.
-     * @return The Interface Component with the relavent QName w
+     * @return The Interface Component with the relavent QName 
      */
     public WSDLInterface getInterface(QName qName);
 
@@ -75,24 +73,20 @@ public interface WSDLDefinitions {
     public void setServices(HashMap services);
 
     /**
-     * The Service will be retrived despite its namespace being either of
-     * that specified in the WSDLConstants class(WSDL_NAMESPACES) otherwise the checkValidityOfNamespaceWRTWSDLContext() 
-     * method will throw an exception.
-     * @param qName THe Namespace of the QName should be either of the WSDL_NAMESPACES
-     * mentioned in the WSDLConstants interface.
-     * @return The Service with the relavent QName which have a namespace
-     * that qualifies that of the versions in the WSDLConstants interface.
+     * Will return the <code>WSDLService </code> if found otherwise return null.
+     * @param qName <code>QName</code> of the Service
+     * @return The Service with the relavent QName 
      */
     public WSDLService getService(QName qName);
 
     /**
-     * Service will be retrived by its NCName and the Namespace of the QName
-     * is assumed to be in line with that of the WSDL_NAMESPACES in the WSDLConstants
-     * interface, Thus no namespace checking will be done.
-     * @param nCName NCName of the Service
-     * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found. 
+     * Will add the <code>WSDLService</code> to the Map.
+     * If object is null it will not be added.
+     * If the <code>WSDLService</code> name is null a <code>WSDLProcessingException</code>
+     * will be thrown.(its required)
+     * @param service
      */
-    public WSDLService getService(String nCName);
+    public void addService(WSDLService service);
 
     public String getTargetNameSpace();
 
@@ -102,9 +96,9 @@ public interface WSDLDefinitions {
 
     public void setWsdlInterfaces(HashMap wsdlInterfaces);
 
-    public XmlObject[] getTypes();
+    public Object[] getTypes();
 
-    public void setTypes(XmlObject[] types);
+    public void setTypes(Object[] types);
 
     /**
      * Gets the name attrebute of the WSDL 1.1 Definitions Element 

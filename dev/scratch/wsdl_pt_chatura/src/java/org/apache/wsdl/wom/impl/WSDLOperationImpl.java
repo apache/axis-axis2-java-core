@@ -19,6 +19,8 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.apache.wsdl.wom.MessageReference;
 import org.apache.wsdl.wom.WSDLOperation;
 
@@ -26,9 +28,9 @@ import org.apache.wsdl.wom.WSDLOperation;
  * @author Chathura Herath
  *
  */
-public class WSDLOperationImpl extends ComponentImpl implements WSDLOperation  {
+public class WSDLOperationImpl extends ExtensibleComponentImpl implements WSDLOperation  {
 
-	private String name;
+	private QName name;
 	private URI targetnemespace;
 	private int messageExchangePattern;
 	private MessageReference inputMessage;
@@ -40,24 +42,11 @@ public class WSDLOperationImpl extends ComponentImpl implements WSDLOperation  {
 	
 	private boolean safety = false;
 	
-	private List features = new LinkedList();
 	
-	private List properties = new LinkedList();	
 	
 	
 	 
-	public List getFeatures() {
-		return features;
-	}
-	public void setFeatures(List features) {
-		this.features = features;
-	}
-	public List getProperties() {
-		return properties;
-	}
-	public void setProperties(List properties) {
-		this.properties = properties;
-	}
+	
 	public List getInfaults() {
 		return infaults;
 	}
@@ -76,10 +65,10 @@ public class WSDLOperationImpl extends ComponentImpl implements WSDLOperation  {
 	public void setMessageExchangePattern(int messageExchangePattern) {
 		this.messageExchangePattern = messageExchangePattern;
 	}
-	public String getName() {
+	public QName getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public void setName(QName name) {
 		this.name = name;
 	}
 	public List getOutfaults() {
