@@ -1,6 +1,5 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.impl.llom.OMNavigator;
 import org.apache.axis.impl.llom.exception.OMStreamingException;
 import org.apache.axis.om.*;
 
@@ -291,7 +290,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
             if (navigable) {
-                //Nothing to do here! How to get the namespacace references
+                OMNamespace ns = (OMNamespace)getItemFromIterator(((OMElement)lastNode).getAllDeclaredNamespaces(),i);
+                returnString = ns==null?null:ns.getName();
             } else {
                 returnString = parser.getNamespaceURI(i);
             }
@@ -306,7 +306,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         String returnString = null;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
             if (navigable) {
-                //Nothing to do here! How to get the namespacace references
+                OMNamespace ns = (OMNamespace)getItemFromIterator(((OMElement)lastNode).getAllDeclaredNamespaces(),i);
+                returnString = ns==null?null:ns.getPrefix();
             } else {
                 returnString = parser.getNamespacePrefix(i);
             }
@@ -321,7 +322,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         int returnCount = 0;
         if (isStartElement() || isEndElement() || currentEvent == NAMESPACE) {
             if (navigable) {
-                //Nothing to do here! How to get the namespacace references
+               returnCount = getCount(((OMElement)lastNode).getAllDeclaredNamespaces());
             } else {
                 returnCount = parser.getNamespaceCount();
             }
