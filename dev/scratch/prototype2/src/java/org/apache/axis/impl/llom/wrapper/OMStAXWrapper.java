@@ -547,10 +547,10 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
             throw new OMStreamingException("Parser completed!");
         }
 
-        if (switched) {
-            //set navigable to false.Now the subsequent requests will be directed to
-            //the parser
-            navigable = false;
+        if (switched){
+             //set navigable to false.Now the subsequent requests will be directed to
+                //the parser
+                navigable = false;
         }
         if (navigable) {
             currentEvent = generateEvents(currentNode);
@@ -602,6 +602,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
                 }
 
                 switched = true;
+
 
 
             }
@@ -742,7 +743,7 @@ public class OMStAXWrapper implements StreamingWrapper, XMLStreamConstants {
         if (ns != null) {
             String prefix = ns.getPrefix();
             String uri = ns.getValue();
-            if (prefix == null || prefix.equals(""))
+            if (prefix==null || prefix.equals(""))
                 returnName = new QName(uri, localPart);
             else
                 returnName = new QName(uri, localPart, prefix);

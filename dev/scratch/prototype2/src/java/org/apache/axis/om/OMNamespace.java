@@ -19,7 +19,7 @@ package org.apache.axis.om;
  * Date: Oct 4, 2004
  * Time: 1:24:00 PM
  */
-public interface OMNamespace extends OMNode {
+public interface OMNamespace extends OMNode{
 
     public boolean equals(OMNamespace ns);
 
@@ -28,4 +28,6 @@ public interface OMNamespace extends OMNode {
     public boolean isDefaultNs();
 
     public String getPrefix();
+
+    public String getValue();
 }

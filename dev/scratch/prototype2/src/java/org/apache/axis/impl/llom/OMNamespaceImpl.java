@@ -25,6 +25,7 @@ import org.apache.axis.om.OMNode;
  */
 public class OMNamespaceImpl extends OMNodeImpl implements OMNamespace {
     private String prefix;
+    //private String value;
 
     /**
      * @param uri

@@ -136,6 +136,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         assertFalse(wrapper.isStartElement());
         assertFalse(wrapper.isEndElement());
         assertFalse(wrapper.isWhiteSpace());
+        assertFalse(wrapper.hasName());
         assertTrue(wrapper.isCharacters());
 
         assertNotNull(wrapper.getText());
@@ -144,6 +145,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
 
     private void checkStartElement(StreamingWrapper wrapper) {
         assertTrue(wrapper.isStartElement());
+        assertTrue(wrapper.hasName());
         assertFalse(wrapper.isEndElement());
         assertFalse(wrapper.isCharacters());
         assertFalse(wrapper.isWhiteSpace());
@@ -151,11 +153,18 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
         //at the start element event these need to be supplied
         assertNotNull(wrapper.getLocalName());
         assertNotNull(wrapper.getName());
+        assertNotNull(wrapper.getNamespaceURI());
+        //prefix may be null
+        wrapper.getPrefix();
+
         //todo add the other checks here
         int attribCount = wrapper.getAttributeCount();
         for (int i = 0; i < attribCount; i++) {
             assertNotNull(wrapper.getAttributeLocalName(i));
             assertNotNull(wrapper.getAttributeValue(i));
+            assertNotNull(wrapper.getAttributeName(i));
+            wrapper.getAttributePrefix(i);
+            wrapper.getAttributeNamespace(i);
             //todo add the other checks here
         }
 
