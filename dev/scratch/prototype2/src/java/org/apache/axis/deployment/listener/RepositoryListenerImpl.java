@@ -43,9 +43,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsinfoList = new WSInfoList(deploy_engine);
-        // wsinfoList.init();
         init();
-        //  this.init();
     }
 
     public void checkModules() {
@@ -70,7 +68,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsinfoList.init();
         checkModules();
-        checkServices();
+      //  checkServices();
         update();
     }
 

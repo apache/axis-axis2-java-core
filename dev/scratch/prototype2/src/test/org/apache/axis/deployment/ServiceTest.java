@@ -34,6 +34,23 @@ public class ServiceTest extends TestCase {
         DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
         EngineRegistry er = null;
         er = deploymentEngine.start();
-        
+
     }
+   /*
+    public static void main(String args []){
+       String filename = "./target/test-resources" ;
+        DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
+        EngineRegistry er = null;
+        try {
+            er = deploymentEngine.start();
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (PhaseException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (DeploymentException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (XMLStreamException e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        }
+    }  */
 }
