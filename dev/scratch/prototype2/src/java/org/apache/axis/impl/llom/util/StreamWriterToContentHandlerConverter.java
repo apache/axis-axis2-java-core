@@ -74,7 +74,6 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
         try {
             writer.writeEndElement();
-            writer.flush();
         } catch (XMLStreamException e) {
             throw new SAXException(e);
         }

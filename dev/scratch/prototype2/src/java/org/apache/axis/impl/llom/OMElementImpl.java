@@ -528,7 +528,6 @@ public class OMElementImpl extends OMNamedNodeImpl implements OMElement, OMConst
         }
 
         writer.writeEndElement();
-        writer.flush();
     }
 
     private void serializeNormal(XMLStreamWriter writer, boolean cache) throws XMLStreamException {

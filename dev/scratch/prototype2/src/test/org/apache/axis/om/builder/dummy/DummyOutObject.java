@@ -1,14 +1,15 @@
 package org.apache.axis.om.builder.dummy;
 
+import java.io.FileReader;
+import java.io.IOException;
+
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.axis.om.OutObject;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import javax.xml.parsers.SAXParserFactory;
-import java.io.FileReader;
-import java.io.IOException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -50,16 +51,8 @@ public class DummyOutObject implements OutObject {
 
     }
 
-    public void setContentHandler(ContentHandler contentHandler) {
-        parser.setContentHandler(contentHandler);
 
-    }
-
-    public ContentHandler getContentHandler() {
-        return parser.getContentHandler();
-    }
-
-    public void startBuilding() {
+    public void startBuilding(ContentHandler contentHandler) {
         try {
             parser.parse(new InputSource(new FileReader(fileName)));
         } catch (IOException e) {

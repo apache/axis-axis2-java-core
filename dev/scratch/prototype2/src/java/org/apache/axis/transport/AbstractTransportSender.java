@@ -53,14 +53,21 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         startSending();
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope != null) {
+			XMLStreamWriter outputWriter = null;
             try {
-                XMLStreamWriter outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter,true);
             } catch (XMLStreamException e) {
                 throw new AxisFault("Stream error",e);
+            }finally{
+            	try {
+					outputWriter.flush();
+				} catch (XMLStreamException e1) {
+					throw new AxisFault("Error flushing the stream",e1);
+				}
             }
-
         }
+		
         finalizeSending();
     }
 

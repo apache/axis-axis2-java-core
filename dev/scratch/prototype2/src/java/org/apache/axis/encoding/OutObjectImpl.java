@@ -23,20 +23,20 @@ import org.xml.sax.SAXException;
 
 
 public class OutObjectImpl implements OutObject{
-    private ContentHandler cHandler;
+//    private ContentHandler cHandler;
     private Object obj = null;
     public OutObjectImpl(Object obj){
        this.obj = obj;
     }
-    public ContentHandler getContentHandler() {
-        return cHandler;
-    }
+//    public ContentHandler getContentHandler() {
+//        return cHandler;
+//    }
+//
+//    public void setContentHandler() {
+//        this.cHandler = contentHandler;
+//    }
 
-    public void setContentHandler(ContentHandler contentHandler) {
-        this.cHandler = contentHandler;
-    }
-
-    public void startBuilding() throws OMException {
+    public void startBuilding(ContentHandler cHandler) throws OMException {
         try {
             if(obj instanceof String){
                 char[] str = ((String)obj).toCharArray();

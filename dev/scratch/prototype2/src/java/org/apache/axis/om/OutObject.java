@@ -26,22 +26,22 @@ import org.xml.sax.ContentHandler;
  * So this interface has to be implemented by the Object which AXIOM recieves for OUT path.
  */
 public interface OutObject {
-    /**
-     * This method will help to register a ContentHandler with the Object
-     *
-     * @param contentHandler
-     */
-    public void setContentHandler(ContentHandler contentHandler);
-
-    /**
-     * @return
-     */
-
-    public ContentHandler getContentHandler();
+//    /**
+//     * This method will help to register a ContentHandler with the Object
+//     *
+//     * @param contentHandler
+//     */
+//    public void setContentHandler(ContentHandler contentHandler);
+//
+//    /**
+//     * @return
+//     */
+//
+////    public ContentHandler getContentHandler();
 
     /**
      * When this method is being called the Object should start throwing SAX events through the
      * ContentHandler registered earlier.
      */
-    public void startBuilding()throws OMException ;
+    public void startBuilding(ContentHandler contentHandler)throws OMException ;
 }

@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
 
 
 public class OutObjectArrayImpl implements OutObject{
-    private ContentHandler cHandler;
     private Object[] obj = null;
     private Encoder arrayTypeEncoder;
     
@@ -31,21 +30,14 @@ public class OutObjectArrayImpl implements OutObject{
        this.obj = obj;
        this.arrayTypeEncoder = arrayTypeEncoder;
     }
-    public ContentHandler getContentHandler() {
-        return cHandler;
-    }
-
-    public void setContentHandler(ContentHandler contentHandler) {
-        this.cHandler = contentHandler;
-		arrayTypeEncoder.setContentHandler(contentHandler);
-    }
-
-    public void startBuilding() throws OMException {
+ 
+ 
+    public void startBuilding(ContentHandler cHandler) throws OMException {
         try {
         	for(int i = 0;i<obj.length;i++){
 				cHandler.startElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"",null);
 				arrayTypeEncoder.setObject(obj[i]);
-				arrayTypeEncoder.startBuilding();
+				arrayTypeEncoder.startBuilding(cHandler);
 				cHandler.endElement(OMConstants.ARRAY_ITEM_NSURI,OMConstants.ARRAY_ITEM_LOCALNAME,"");
         	}
         } catch (SAXException e) {
