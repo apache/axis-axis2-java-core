@@ -70,6 +70,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private String folderName;
 
+    private String serverconfigName;
+
     /**
      * This to keep a referance to serverMetaData object
      */
@@ -87,6 +89,11 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public DeploymentEngine(String RepositaryName) {
         this.folderName = RepositaryName;
+    }
+
+    public DeploymentEngine(String RepositaryName , String configFileName) {
+        this.folderName = RepositaryName;
+        this.serverconfigName = configFileName;
     }
 
 
@@ -109,7 +116,12 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws PhaseException
      */
     public EngineRegistry start() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
-        String fileName = "src/test-resources/deployment/server.xml";
+        String fileName;
+        if(serverconfigName != null) {
+            fileName = serverconfigName;
+        } else
+            fileName = "src/test-resources/deployment/server.xml";
+        
         File tempfile = new File(fileName);
         try {
             InputStream in = new FileInputStream(tempfile);

@@ -8,6 +8,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetaData;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseHolder;
 
@@ -156,6 +157,18 @@ public class PhaseResolver {
             phaseHolder.addHandler(handlerMetaData);
         }
         phaseHolder.getOrderdHandlers(type);
+
+    }
+
+    public void craeteChain4Flow(Flow flow , ExecutionChain chain) throws AxisFault, PhaseException{
+        phaseHolder = new PhaseHolder(server,null);
+        for(int j= 0 ; j < flow.getHandlerCount() ; j++ ){
+            HandlerMetaData metadata = flow.getHandler(j);
+            if (metadata.getRules().getPhaseName().equals("")){
+                metadata.getRules().setPhaseName("service");
+            }
+            phaseHolder.addHandler(metadata);
+        }
 
     }
 
