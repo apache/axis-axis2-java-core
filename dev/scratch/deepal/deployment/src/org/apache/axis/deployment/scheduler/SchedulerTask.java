@@ -1,6 +1,7 @@
-package org.apache.axis.deployement.Scheduler;
+package org.apache.axis.deployment.scheduler;
 
-import org.apache.axis.deployement.FileLoader.FilesLoader;
+import org.apache.axis.deployment.deployEvents.WSListener;
+import org.apache.axis.deployment.deployEvents.WSListenerImpl;
 
 import java.util.TimerTask;
 
@@ -27,8 +28,7 @@ import java.util.TimerTask;
 public class SchedulerTask implements Runnable {
     final Object lock = new Object();
 
-    private String filename = "D:/Axis 2.0/projects/Deployement/test-data/" ;
-    private  FilesLoader filesLoader = new FilesLoader(filename);
+     private WSListener wsListener;
 
     int state = VIRGIN;
     static final int VIRGIN = 0;
@@ -42,6 +42,9 @@ public class SchedulerTask implements Runnable {
      */
 
     public SchedulerTask() {
+          String filename = "D:/Axis 2.0/projects/Deployement/test-data" ;
+  //  private  FilesLoader filesLoader = new FilesLoader(filename);
+     wsListener= new WSListenerImpl(filename);
     }
 
     /**
@@ -53,7 +56,8 @@ public class SchedulerTask implements Runnable {
     }
 
     private void soundAlarm() {
-        filesLoader.searchFolder();
+          ((WSListenerImpl)wsListener).startListent();
+        //filesLoader.searchFolder();
     }
 
     /**

@@ -1,8 +1,8 @@
-package org.apache.axis.deployement.test;
+package org.apache.axis.deployment.test;
 
-import org.apache.axis.deployement.Scheduler.Scheduler;
-import org.apache.axis.deployement.Scheduler.SchedulerTask;
-import org.apache.axis.deployement.Scheduler.DeploymentIterator;
+import org.apache.axis.deployment.scheduler.Scheduler;
+import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.deployment.scheduler.DeploymentIterator;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,24 +27,25 @@ import java.util.Date;
  *         9:43:39 AM
  *
  */
-public class HotDeployementTest {
+public class HotDeploymentTest {
     private final Scheduler scheduler = new Scheduler();
     private final SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS");
     private final int hourOfDay, minute, second;
 
-    public HotDeployementTest(int hourOfDay, int minute, int second) {
-        this.hourOfDay = hourOfDay;
-        this.minute = minute;
-        this.second = second;
+    public HotDeploymentTest() {
+        Date date = new Date();
+        this.hourOfDay = date.getHours();
+        this.minute = date.getMinutes();
+        this.second = date.getSeconds();
     }
 
     public void start() {
-        scheduler.schedule(new SchedulerTask(),new DeploymentIterator(hourOfDay, minute, second));
+       scheduler.schedule(new SchedulerTask(),new DeploymentIterator(hourOfDay, minute, second));
     }
 
     public static void main(String[] args) {
-        HotDeployementTest alarmClock = new HotDeployementTest(10, 0, 0);
+        HotDeploymentTest alarmClock = new HotDeploymentTest();
         alarmClock.start();
     }
 }
