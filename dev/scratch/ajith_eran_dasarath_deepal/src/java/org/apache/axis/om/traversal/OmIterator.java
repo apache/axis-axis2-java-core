@@ -1,12 +1,12 @@
 package org.apache.axis.om.traversal;
 
 import org.apache.axis.om.OMTableModel;
-import org.apache.axis.om.StreamingOmBuilder;
+import org.apache.axis.om.StreamingOMBuilder;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *  * Copyright 2001-2004 The Apache Software Foundation.
+ * * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ import org.w3c.dom.NodeList;
  * limitations under the License.
  *
  * @author Ajith Ranabahu
- * Date: Sep 19, 2004
- * Time: 3:29:34 PM
- *
- * Serving a list in an iterative manner is REALLY DIFFICULT!!!!!!!!!
+ *         Date: Sep 19, 2004
+ *         Time: 3:29:34 PM
+ *         <p/>
+ *         Serving a list in an iterative manner is REALLY DIFFICULT!!!!!!!!!
  */
 public abstract class OmIterator implements NodeList {
 
     protected OMTableModel model;
-    protected StreamingOmBuilder builder;
+    protected StreamingOMBuilder builder;
 
-    public OmIterator(OMTableModel model, StreamingOmBuilder builder) {
+    public OmIterator(OMTableModel model, StreamingOMBuilder builder) {
         this.model = model;
         this.builder = builder;
     }

@@ -1,15 +1,10 @@
 package org.apache.axis.om.storage;
 
-import org.apache.axis.om.OMBuilderException;
+import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMTableModel;
-import org.apache.axis.om.StreamingOmBuilder;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.apache.axis.om.StreamingOMBuilder;
+import org.apache.axis.om.traversal.ElementNodeList;
+import org.w3c.dom.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,20 +27,19 @@ import org.w3c.dom.NodeList;
  */
 public class ElementRow extends NodeRow implements Element {
 
-    private String URI;
-    private String Prefix;
+    private String URI = null;
+    private String elementPrefix;
     private String localName;
+    private Object firstChild;
 
-    private Object nextSibling;
-    private StreamingOmBuilder builder;
-    private Document parentDocument;
 
-    public ElementRow(StreamingOmBuilder builder,Document parentDocument) {
+    private StreamingOMBuilder builder;
+
+    public ElementRow(StreamingOMBuilder builder, Document parentDocument) {
         this.builder = builder;
-        this.parentDocument = parentDocument ;
+        this.parentDocument = parentDocument;
     }
 
-    private boolean done;
 
     public String getURI() {
         return URI;
@@ -55,12 +49,36 @@ public class ElementRow extends NodeRow implements Element {
         this.URI = URI;
     }
 
-    public String getPrefix() {
-        return Prefix;
+    public String getElementPrefix() {
+        return elementPrefix;
     }
 
+    /**
+     * Since setPrefix method is not exposed through DOM API, its exposed through this method
+     * @param prefix
+     */
+    public void setElementPrefix(String prefix) {
+        elementPrefix = prefix;
+    }
+
+    public String getPrefix() {
+        return getElementPrefix();
+    }
+
+    /**
+     * This method is currently unsuported due to the foloowing reason.
+     * If one comes and changes the prefix of the element, the URI of the element must also be changed.
+     * But this is not simple, as if someone does this at a later time, the namespace stack may not be available.
+     * Then the getNamespaceURI() may return some erroneous value
+     *
+     * This method is not exposed through the DOM API
+     * Eran Chinthaka on 22-09-2004
+     * @param prefix
+     * @exception UnsupportedOperationException
+     */
     public void setPrefix(String prefix) {
-        Prefix = prefix;
+        throw new UnsupportedOperationException("this method may lead to wrong outcome for the namespace uri of the element");
+        //elementPrefix = prefix;
     }
 
     public String getLocalName() {
@@ -75,28 +93,14 @@ public class ElementRow extends NodeRow implements Element {
 
 
 
-    public void setNextSibling(Object nextSibling) {
-        this.nextSibling = nextSibling;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
-
     /*   Interface methods  */
     public String getNodeName() {
-        return localName;
+        return OMConstants.NODE_ELEMENT;
     }
 
     public String getNodeValue()
             throws DOMException {
-        return null;
-        //todo implement this
+        return Element.ELEMENT_NODE + "";
     }
 
     public void setNodeValue(String nodeValue)
@@ -110,35 +114,29 @@ public class ElementRow extends NodeRow implements Element {
     }
 
     public Node getParentNode() {
-        return (Node)this.parent;
+        return (Node) this.parent;
     }
 
     public NodeList getChildNodes() {
-        //implement this
-        return null;
+        NodeList nodeList = new ElementNodeList(this);
+        return nodeList;
     }
 
-    public Node getFirstChild() {
-        OMTableModel omTableModel = (OMTableModel)this.parentDocument;
-        Object[] children = omTableModel.getElementsByParent(this);
+    /**
+     * This will return null if there is no child
+     *
+     * @return
+     */ public Node getFirstChild() {
 
-        while(children != null && !this.done){  //todo is this logic right?????
-
-            try {
-                builder.proceed();
-            } catch (OMBuilderException e) {
-                break; //just get out of here if the proceeding failed
-            }
-            //see whether there are children already for this element
-            children = omTableModel.getElementsByParent(this);
+        while( (firstChild == null) && (!done)){
+            ((OMTableModel) parentDocument).proceedTheParser();
         }
 
-        if ((children==null) ||children.length==0){
-            return null;
-        }else{
-            return (Node)children[0];
-        }
+        return (Node) firstChild;
+    }
 
+    public void setFirstChild(Object firstChild) {
+        this.firstChild = firstChild;
     }
 
     public Node getLastChild() {
@@ -147,11 +145,6 @@ public class ElementRow extends NodeRow implements Element {
 
     public Node getPreviousSibling() {
         return null;
-    }
-
-    public Node getNextSibling() {
-        return null;
-        //return ((OMTableModel)this.parentDocument).;
     }
 
     public NamedNodeMap getAttributes() {
@@ -204,7 +197,7 @@ public class ElementRow extends NodeRow implements Element {
     }
 
     public String getNamespaceURI() {
-        return null;
+        return URI;
     }
 
     public boolean hasAttributes() {

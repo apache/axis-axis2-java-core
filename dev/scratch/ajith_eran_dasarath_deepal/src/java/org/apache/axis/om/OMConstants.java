@@ -27,4 +27,7 @@ public class OMConstants {
     public static final int TYPE_COMMENT = 3;
     public static final int TYPE_CDATA = 4;
 
+    public static final String NODE_ELEMENT = "Element";
+    
+
 }

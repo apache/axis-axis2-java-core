@@ -1,12 +1,6 @@
 package org.apache.axis.om.storage;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -27,7 +21,7 @@ import org.w3c.dom.NodeList;
  *         Date: Sep 16, 2004
  *         Time: 6:18:52 PM
  */
-public class AttributeRow extends NodeRow implements Attr{
+public class AttributeRow extends NodeRow implements Attr {
 
     private String URI;
     private String Prefix;
@@ -63,9 +57,8 @@ public class AttributeRow extends NodeRow implements Attr{
     }
 
 
-
     public Node getNextSibling() {
-        return (Node)this.nextSibling;
+        return (Node) this.nextSibling;
     }
 
     public void setNextSibling(Object nextSibling) {

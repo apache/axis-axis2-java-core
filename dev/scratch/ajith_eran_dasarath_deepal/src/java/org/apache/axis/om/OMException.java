@@ -1,10 +1,7 @@
-package org.apache.axis.om.traversal;
-
-import org.apache.axis.om.OMTableModel;
-import org.apache.axis.om.StreamingOMBuilder;
+package org.apache.axis.om;
 
 /**
- * * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +16,24 @@ import org.apache.axis.om.StreamingOMBuilder;
  * limitations under the License.
  *
  * @author Ajith Ranabahu
- *         Date: Sep 19, 2004
- *         Time: 4:51:45 PM
- *         <p/>
- *         This class is the node iterator for the specific case of
- *         elements children
+ *         Date: Sep 16, 2004
+ *         Time: 10:29:37 PM
  */
-public class NodeIterator extends OmIterator {
+public class OMException extends Exception {
 
-    public NodeIterator(OMTableModel model, StreamingOMBuilder builder) {
-        super(model, builder);
+
+    public OMException() {
     }
 
+    public OMException(String message) {
+        super(message);
+    }
 
+    public OMException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public OMException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -18,7 +18,6 @@ package org.apache.axis.om.util;
  * @author Ajith Ranabahu
  *         Date: Sep 16, 2004
  *         Time: 6:53:19 PM
- * @deprecated
  */
 public class Sequence {
     private int sequenceValue = 0;

@@ -3,7 +3,7 @@ package org.apache.axis.om.storage;
 import java.util.ArrayList;
 
 /**
- *  * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,30 @@ import java.util.ArrayList;
  * limitations under the License.
  *
  * @author Ajith Ranabahu
- * Date: Sep 19, 2004
- * Time: 4:00:48 PM
- *
- * The difference between a simple table and the node table is the specific
- * search mechanism with the parent
+ *         Date: Sep 19, 2004
+ *         Time: 4:00:48 PM
+ *         <p/>
+ *         The difference between a simple table and the node table is the specific
+ *         search mechanism with the parent
  */
 public class NodeTable extends Table {
 
     /**
-     *
      * @param parentKey
      * @return
      */
-    public Object[] getRowsbyParent(Object parentKey){
+    public Object[] getRowsByParent(Object parentKey) {
 
         ArrayList list = new ArrayList();
 
         for (int i = 0; i < rowList.size(); i++) {
             NodeRow nodeRow = (NodeRow) rowList.get(i);
-            if (parentKey==null){
-                if (nodeRow.getParent()==parentKey){
+            if (parentKey == null) {
+                if (nodeRow.getParent() == parentKey) {
                     list.add(nodeRow);
                 }
-            } else{
-                if (nodeRow.getParent().equals(parentKey)){
+            } else {
+                if (parentKey.equals(nodeRow.getParent())) {
                     list.add(nodeRow);
                 }
             }
@@ -52,9 +51,6 @@ public class NodeTable extends Table {
         return rowObjects;
 
     }
-
-
-
 
 
 }

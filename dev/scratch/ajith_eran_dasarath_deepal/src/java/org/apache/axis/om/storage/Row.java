@@ -19,7 +19,7 @@ package org.apache.axis.om.storage;
  *         Date: Sep 16, 2004
  *         Time: 6:17:59 PM
  */
-public abstract class Row  {
+public abstract class Row {
 
     // TODO sizeof(object) > sizeof(int) ???
     /* this key is of type Object, simply because we wanted to make this a unique one.

@@ -1,14 +1,6 @@
 package org.apache.axis.om.storage;
 
-import org.apache.axis.om.OMConstants;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,7 +21,7 @@ import org.w3c.dom.Text;
  *         Date: Sep 16, 2004
  *         Time: 6:29:38 PM
  */
-public class TextRow extends NodeRow implements Text,Comment,CDATASection {
+public class TextRow extends NodeRow implements Text, Comment, CDATASection {
 
     private String value;
 
@@ -37,7 +29,7 @@ public class TextRow extends NodeRow implements Text,Comment,CDATASection {
      * the same class with a type attribute to say the type of the class
      *
      */
-    private int type = OMConstants.TYPE_TEXT; //default is type text
+    private short type = Node.TEXT_NODE; //default is type text
 
     public String getValue() {
         return value;
@@ -48,15 +40,15 @@ public class TextRow extends NodeRow implements Text,Comment,CDATASection {
     }
 
 
-    public int getType() {
+    public short getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(short type) {
         this.type = type;
     }
 
-   /*  interface methods */
+    /*  interface methods */
 
     public String getNodeName() {
         return null;
@@ -72,7 +64,7 @@ public class TextRow extends NodeRow implements Text,Comment,CDATASection {
     }
 
     public short getNodeType() {
-        return 0;
+        return type;
     }
 
     public Node getParentNode() {
@@ -92,10 +84,6 @@ public class TextRow extends NodeRow implements Text,Comment,CDATASection {
     }
 
     public Node getPreviousSibling() {
-        return null;
-    }
-
-    public Node getNextSibling() {
         return null;
     }
 

@@ -1,27 +1,7 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.storage.AttributeRow;
-import org.apache.axis.om.storage.ElementRow;
-import org.apache.axis.om.storage.GlobalRow;
-import org.apache.axis.om.storage.NodeTable;
-import org.apache.axis.om.storage.Row;
-import org.apache.axis.om.storage.Table;
-import org.apache.axis.om.storage.TextRow;
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
+import org.apache.axis.om.storage.*;
+import org.w3c.dom.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -41,12 +21,17 @@ import org.w3c.dom.Text;
  * @author Ajith Ranabahu
  *         Date: Sep 16, 2004
  *         Time: 6:44:16 PM
- *
- * Note that since the OMTableModel is an abstraction of the XML document, it
- * implements the DOM document interface .
- * At leaset it should, in my opinion!
+ *         <p/>
+ *         Note that since the OMTableModel is an abstraction of the XML document, it
+ *         implements the DOM document interface .
+ *         At leaset it should, in my opinion!
+ *         <p/>
+ *         OMTableModel will store the infoset of the XML being read. This table model itself has separate tables for
+ *         different types of xml information items such as Elements, Attributes, etc.,  Each and every of these tables are implementing
+ *         the corresponding DOM interfaces, as this table model will be exposing DOM API for the outside
+ *         world.
  */
-public class OMTableModel implements Document{
+public class OMTableModel implements Document {
 
 //    private Sequence globalSequence = new Sequence();
 //    private Sequence elementSequence = new Sequence();
@@ -60,37 +45,40 @@ public class OMTableModel implements Document{
     // a flag that indicates whether the model is
     // completed or not
     private boolean completed = false;
-    private StreamingOmBuilder builder;
+    private StreamingOMBuilder builder;
 
-    public OMTableModel(StreamingOmBuilder builder) {
+    public OMTableModel(StreamingOMBuilder builder) {
         this.builder = builder;
     }
 
     /**
      * Get elements by parent
+     *
      * @param parent
      * @return
      */
-    public Object[] getElementsByParent(Object parent){
-        return elementTable.getRowsbyParent(parent);
+    public Object[] getElementsByParent(Object parent) {
+        return elementTable.getRowsByParent(parent);
     }
 
     /**
      * get the attributes by parent
+     *
      * @param parent
      * @return
      */
-    public Object[] getAttribtByParent(Object parent){
-        return attributeTable.getRowsbyParent(parent);
+    public Object[] getAttribtByParent(Object parent) {
+        return attributeTable.getRowsByParent(parent);
     }
 
     /**
      * Get the text nodes (text,comments and Cdata)
+     *
      * @param parent
      * @return
      */
-    public Object[] getTextByParent(Object parent){
-        return textTable.getRowsbyParent(parent);
+    public Object[] getTextByParent(Object parent) {
+        return textTable.getRowsByParent(parent);
     }
 
     /**
@@ -99,15 +87,15 @@ public class OMTableModel implements Document{
      * @param prefix
      * @param parent
      */
-    public Object addElement(String URI, String localName, String prefix, Object parent,StreamingOmBuilder builder) {
+    public Object addElement(String URI, String localName, String prefix, Object parent, StreamingOMBuilder builder) {
 
-        ElementRow eltRow = new ElementRow(builder,this);
+        ElementRow eltRow = new ElementRow(builder, this);
         eltRow.setKey(eltRow);//set the object itself as the key
         eltRow.setURI(URI);
         eltRow.setDone(false);
         eltRow.setParent(parent);
         eltRow.setLocalName(localName);
-        eltRow.setPrefix(prefix);
+        eltRow.setElementPrefix(prefix);
         eltRow.setNextSibling(null);
 
         elementTable.addRow(eltRow);
@@ -116,6 +104,15 @@ public class OMTableModel implements Document{
         addToGlobalTable(OMConstants.TYPE_ELEMENT, eltRow);
 
         return eltRow;
+
+    }
+
+    /**
+     *
+     */
+    public void updateElementSibling(Object me, Object nextSibling) {
+        ElementRow row = (ElementRow) elementTable.getRowByKey(me);
+        row.setNextSibling(nextSibling);
 
     }
 
@@ -140,13 +137,11 @@ public class OMTableModel implements Document{
     /**
      * @param value
      * @param parent
-     *
      */
     public Object addText(String value, Object parent) {
 
-        return addCharacterData(value,OMConstants.TYPE_TEXT,parent);
+        return addCharacterData(value, Node.TEXT_NODE, parent);
     }
-
 
 
     /**
@@ -155,9 +150,8 @@ public class OMTableModel implements Document{
      * @param URI
      * @param value
      * @param parent
-     *
      */
-    public Object addAttribute(String localName, String prefix, String URI, String value,  Object parent) {
+    public Object addAttribute(String localName, String prefix, String URI, String value, Object parent) {
 
         AttributeRow attRow = new AttributeRow();
 
@@ -174,12 +168,13 @@ public class OMTableModel implements Document{
         return attRow;
     }
 
-    public void updateAttributeSibling(Object myKey,Object siblingKey){
+    public void updateAttributeSibling(Object myKey, Object siblingKey) {
 
-        AttributeRow attrRow = (AttributeRow)attributeTable.getRowByKey(myKey);
+        AttributeRow attrRow = (AttributeRow) attributeTable.getRowByKey(myKey);
         attrRow.setNextSibling(siblingKey);
 
     }
+
     /**
      * @param type
      * @param referenceKey
@@ -209,15 +204,15 @@ public class OMTableModel implements Document{
         return elementTable.getRowByIndex(index);
     }
 
-    public Object addCData(String value,Object parent){
-        return addCharacterData(value,OMConstants.TYPE_CDATA,parent);
+    public Object addCData(String value, Object parent) {
+        return addCharacterData(value, Node.CDATA_SECTION_NODE, parent);
     }
 
-    public Object addComment(String value,Object parent){
-        return addCharacterData(value,OMConstants.TYPE_COMMENT,parent);
+    public Object addComment(String value, Object parent) {
+        return addCharacterData(value, Node.COMMENT_NODE, parent);
     }
 
-    private Object addCharacterData(String value,int type,Object parentKey){
+    private Object addCharacterData(String value, short type, Object parentKey) {
         TextRow textRow = new TextRow();
 
         textRow.setKey(textRow);
@@ -231,11 +226,12 @@ public class OMTableModel implements Document{
         return textRow;
     }
 
-    private Object getRoot(){
-        Object[] rootChildren = elementTable.getRowsbyParent(null);
+    private Object getRoot() {
+        Object[] rootChildren = elementTable.getRowsByParent(null);
 
-        return (rootChildren==null || rootChildren.length==0)?null:rootChildren[0];
+        return (rootChildren == null || rootChildren.length == 0) ? null : rootChildren[0];
     }
+
     /**
      * Debug method
      */
@@ -263,15 +259,15 @@ public class OMTableModel implements Document{
 
     public Element getDocumentElement() {
         //return the first element
-        while(getRoot()==null){
+        while (getRoot() == null) {
             try {
                 builder.proceed();
-            } catch (OMBuilderException e) {
+            } catch (OMException e) {
                 e.printStackTrace();
                 break;
             }
         }
-       return (Element)getRoot();
+        return (Element) getRoot();
 
     }
 
@@ -457,5 +453,14 @@ public class OMTableModel implements Document{
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public void proceedTheParser(){
+        try {
+            builder.proceed();
+        } catch (OMException e) {
+            //TODO this has to be handled well
+            throw new RuntimeException(e);
+        }
     }
 }
