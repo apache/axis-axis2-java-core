@@ -50,7 +50,7 @@ public class StAXOMBuilderTest extends AbstractTestCase {
     }
 
     public void testGetRootElement() throws Exception {
-        rootElement = stAXOMBuilder.getRootElement();
+        rootElement = stAXOMBuilder.getDocumentElement();
 
         System.out.println("Checking nullity of Root Element");
         assertTrue("Root element can not be null", rootElement != null);

@@ -42,7 +42,7 @@ public class CompareOMWithDOMTest extends AbstractTestCase{
             for(int i = 0;i<files.length;i++){
                 if(files[i].isFile() && files[i].getName().endsWith(".xml")){
                     SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            files[i]).getRootElement();
+                            files[i]).getDocumentElement();
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setNamespaceAware(true);
                     DocumentBuilder builder = dbf.newDocumentBuilder();

@@ -180,7 +180,7 @@ public class ServerHttpHandler extends SimpleHTTPHandler{
                 parser.setInput(new InputStreamReader(is));
                 
                 OMXMLParserWrapper parserWrapper = new OMXPPWrapper(parser);
-                msgContext.setEnvelope((SOAPEnvelope) parserWrapper.getRootElement());
+                msgContext.setEnvelope((SOAPEnvelope) parserWrapper.getDocumentElement());
                 EngineRegistry reg = engine.getRegistry();
                 // invoke the Axis engine
 //                    engine.recive(msgContext);

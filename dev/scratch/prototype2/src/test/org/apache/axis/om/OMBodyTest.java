@@ -43,7 +43,7 @@ public class OMBodyTest extends OMTestCase {
     }
 
     /*
-     * Class under test for OMFault addFault()
+     * Class under test for SOAPFault addFault()
      */
     public void testAddFault() {
         //TODO Implement addFault().
@@ -66,7 +66,7 @@ public class OMBodyTest extends OMTestCase {
     }
 
     /*
-     * Class under test for void addFault(OMFault)
+     * Class under test for void addFault(SOAPFault)
      */
     public void testAddFaultSOAPFault() {
         //TODO Implement addFault().

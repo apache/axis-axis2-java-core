@@ -23,44 +23,44 @@ package org.apache.axis.om;
  * <P>
  * B <code>SOAPBody</code> object contains <code>OMBodyBlock</code>
  * objects, which have the content for the SOAP body.
- * B <code>OMFault</code> object, which carries status and/or
+ * B <code>SOAPFault</code> object, which carries status and/or
  * error information, is an example of a <code>OMBodyBlock</code> object.
  */
 public interface SOAPBody extends OMElement {
 
     /**
-     * Creates a new <code>OMFault</code> object and adds it to
+     * Creates a new <code>SOAPFault</code> object and adds it to
      * this <code>SOAPBody</code> object.
      *
-     * @return the new <code>OMFault</code> object
+     * @return the new <code>SOAPFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      */
-    public abstract OMFault addFault() throws OMException;
+    public abstract SOAPFault addFault() throws OMException;
 
     /**
-     * Indicates whether a <code>OMFault</code> object exists in
+     * Indicates whether a <code>SOAPFault</code> object exists in
      * this <code>SOAPBody</code> object.
      *
-     * @return <code>true</code> if a <code>OMFault</code> object exists in
+     * @return <code>true</code> if a <code>SOAPFault</code> object exists in
      *         this <code>SOAPBody</code> object; <code>false</code>
      *         otherwise
      */
     public abstract boolean hasFault();
 
     /**
-     * Returns the <code>OMFault</code> object in this <code>SOAPBody</code>
+     * Returns the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      * object.
      *
-     * @return the <code>OMFault</code> object in this <code>SOAPBody</code>
+     * @return the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      *         object
      */
-    public abstract OMFault getFault();
+    public abstract SOAPFault getFault();
 
     /**
      * @param soapFault
      * @throws OMException
      */
-    public abstract void addFault(OMFault soapFault) throws OMException;
+    public abstract void addFault(SOAPFault soapFault) throws OMException;
 
     
 }

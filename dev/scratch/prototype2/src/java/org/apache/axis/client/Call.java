@@ -181,7 +181,7 @@ public class Call {
             XMLStreamReader reader =  XMLInputFactory.newInstance().createXMLStreamReader(isr);
 
             StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(),reader);
-            msgContext.setEnvelope((SOAPEnvelope)builder.getRootElement());
+            msgContext.setEnvelope((SOAPEnvelope)builder.getDocumentElement());
               
             EngineRegistry reg = engine.getRegistry();
         } catch (XMLStreamException e) {

@@ -46,7 +46,7 @@ public class OMEnvelopeTest extends OMTestCase {
     }
 
     private SOAPEnvelope getSecondEnvelope() throws Exception {
-        return (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/sample1.xml")).getRootElement();
+        return (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/sample1.xml")).getDocumentElement();
     }
 
     public void testGetHeader2() throws Exception {

@@ -167,7 +167,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder{
         }
     }
 
-    public OMElement getRootElement() {
+    public OMElement getDocumentElement() {
         return getOMEnvelope();
     }
 

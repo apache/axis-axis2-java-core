@@ -63,5 +63,5 @@ public interface OMXMLParserWrapper {
      *
      * @return
      */
-    public OMElement getRootElement();
+    public OMElement getDocumentElement();
 }

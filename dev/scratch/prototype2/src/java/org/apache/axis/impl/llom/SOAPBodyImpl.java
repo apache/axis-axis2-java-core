@@ -3,7 +3,7 @@ package org.apache.axis.impl.llom;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFault;
+import org.apache.axis.om.SOAPFault;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
@@ -46,21 +46,21 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
     }
 
     /**
-     * Creates a new <code>OMFault</code> object and adds it to
+     * Creates a new <code>SOAPFault</code> object and adds it to
      * this <code>SOAPBody</code> object.
      *
-     * @return the new <code>OMFault</code> object
+     * @return the new <code>SOAPFault</code> object
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      */
-    public OMFault addFault() throws OMException {
+    public SOAPFault addFault() throws OMException {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
     /**
-     * Indicates whether a <code>OMFault</code> object exists in
+     * Indicates whether a <code>SOAPFault</code> object exists in
      * this <code>SOAPBody</code> object.
      *
-     * @return <code>true</code> if a <code>OMFault</code> object exists in
+     * @return <code>true</code> if a <code>SOAPFault</code> object exists in
      *         this <code>SOAPBody</code> object; <code>false</code>
      *         otherwise
      */
@@ -69,22 +69,22 @@ public class SOAPBodyImpl extends OMElementImpl implements SOAPBody {
     }
 
     /**
-     * Returns the <code>OMFault</code> object in this <code>SOAPBody</code>
+     * Returns the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      * object.
      *
-     * @return the <code>OMFault</code> object in this <code>SOAPBody</code>
+     * @return the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      *         object
      */
-    public OMFault getFault() {
+    public SOAPFault getFault() {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
 
     /**
-     * @param omFault
+     * @param soapFault
      * @throws org.apache.axis.om.OMException
      */
-    public void addFault(OMFault omFault) throws OMException {
+    public void addFault(SOAPFault soapFault) throws OMException {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 

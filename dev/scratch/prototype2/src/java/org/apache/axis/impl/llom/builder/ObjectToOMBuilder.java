@@ -110,7 +110,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 
-    public OMElement getRootElement() {
+    public OMElement getDocumentElement() {
         throw new UnsupportedOperationException(); //TODO implement this
     }
 

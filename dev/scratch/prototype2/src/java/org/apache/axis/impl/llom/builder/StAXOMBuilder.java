@@ -132,7 +132,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper{
         }
     }
 
-    public OMElement getRootElement() {
+    public OMElement getDocumentElement() {
         return document.getRootElement();
     }
 }

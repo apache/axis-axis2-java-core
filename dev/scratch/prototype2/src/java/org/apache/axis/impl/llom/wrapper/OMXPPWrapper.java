@@ -276,7 +276,7 @@ public class OMXPPWrapper implements OMXMLParserWrapper {
         return done;
     }
 
-    public OMElement getRootElement() {
+    public OMElement getDocumentElement() {
         return getOMEnvelope();
     }
 
