@@ -1,9 +1,9 @@
 <service 
 	provider="org.apache.axis.providers.RawXMLProvider" 
 	style="msg">
-	<java:implementation class="Echo"/>
+	<java:implementation class="Echo1"/>
     <inflow>
-        <handler name="h1" class="Handler1"/>
+        <handler name="h1" class="Handler2"/>
      </inflow>
     <operation name="echo"/>
 </service>
