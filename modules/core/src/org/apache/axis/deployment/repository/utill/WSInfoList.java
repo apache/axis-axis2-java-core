@@ -76,7 +76,7 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        if (deplorer.isHotupdate()) {
+                        if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
@@ -98,7 +98,7 @@ public class WSInfoList implements DeploymentConstants {
                         HDFileItem hdFileItem = new HDFileItem(file, MODULE);
                         deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
                     } else {
-                        if (deplorer.isHotupdate()) {
+                        if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
@@ -207,8 +207,8 @@ public class WSInfoList implements DeploymentConstants {
      */
     public void update() {
         checkForUndeploye();
-        if (deplorer.isHotupdate()) {
-            deplorer.doUnDeploye();
+        if (deplorer.isHotUpdate()) {
+            deplorer.unDeploy();
         }
         deplorer.doDeploy();
 

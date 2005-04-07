@@ -127,4 +127,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             nextSibling.serialize(writer, cache);
         }
     }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        this.serialize(writer, false);
+    }
 }

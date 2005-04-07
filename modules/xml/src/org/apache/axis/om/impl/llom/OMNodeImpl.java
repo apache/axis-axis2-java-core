@@ -289,6 +289,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @param cache
      * @throws XMLStreamException
      */
-    public abstract void serialize(XMLStreamWriter writer, boolean cache)
-            throws XMLStreamException ;
+
+
+
 }

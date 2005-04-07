@@ -17,7 +17,6 @@ package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamedNode;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
@@ -272,7 +271,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if ((currentEvent == START_ELEMENT)
                     || (currentEvent == END_ELEMENT)) {
-                returnName = getQName((OMNamedNode) lastNode);
+                returnName = getQName((OMElement) lastNode);
             }
         }
         return returnName;
@@ -1129,13 +1128,13 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
      * Helper method
      *
-     * @param namedNode
+     * @param element
      * @return
      */
-    private QName getQName(OMNamedNode namedNode) {
+    private QName getQName(OMElement element) {
         QName returnName;
-        OMNamespace ns = namedNode.getNamespace();
-        String localPart = namedNode.getLocalName();
+        OMNamespace ns = element.getNamespace();
+        String localPart = element.getLocalName();
         if (ns != null) {
             String prefix = ns.getPrefix();
             String uri = ns.getName();

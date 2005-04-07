@@ -177,4 +177,8 @@ public interface OMNode {
      */
     public void serialize(XMLStreamWriter writer, boolean cache)
             throws XMLStreamException;
+
+    public void serialize(XMLStreamWriter writer)
+            throws XMLStreamException;
+
 }

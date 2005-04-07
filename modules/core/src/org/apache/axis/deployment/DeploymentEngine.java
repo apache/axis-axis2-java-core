@@ -43,8 +43,8 @@ public class DeploymentEngine implements DeploymentConstants {
     private static Scheduler scheduler;
 
 
-    private boolean hotdeployment = true;   //to do hot deployment or not
-    private boolean hotupdate = true;  // to do hot update or not
+    private boolean hotDeployment = true;   //to do hot deployment or not
+    private boolean hotUpdate = true;  // to do hot update or not
 
 
     /**
@@ -69,7 +69,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private String folderName;
 
-    private String serverconfigName;
+    private String serverConfigName;
 
     /**
      * This to keep a referance to serverMetaData object
@@ -139,12 +139,12 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        this.serverconfigName = RepositaryName + '/' + serverXMLFile;
+        this.serverConfigName = RepositaryName + '/' + serverXMLFile;
     }
 
 //    public DeploymentEngine(String RepositaryName , String configFileName) {
 //        this.folderName = RepositaryName;
-//        this.serverconfigName = configFileName;
+//        this.serverConfigName = configFileName;
 //    }
 
     public HDFileItem getCurrentFileItem() {
@@ -169,10 +169,10 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public EngineRegistry start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
-        if (serverconfigName == null) {
+        if (serverConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
-        File tempfile = new File(serverconfigName);
+        File tempfile = new File(serverConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
             engineRegistry = createEngineRegistry();
@@ -182,7 +182,7 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new AxisFault("Exception at deployment", e);
         }
         setDeploymentFeatures();
-        if (hotdeployment) {
+        if (hotDeployment) {
             startSearch(this);
         } else {
             new RepositoryListenerImpl(folderName, this);
@@ -197,7 +197,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * To set hotdeployment and hot update
+     * To set hotDeployment and hot update
      */
     private void setDeploymentFeatures() {
         String value;
@@ -206,12 +206,12 @@ public class DeploymentEngine implements DeploymentConstants {
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
-                hotdeployment = false;
+                hotDeployment = false;
         }
         if (parahotupdate != null) {
             value = (String) parahotupdate.getValue();
             if ("false".equals(value))
-                hotupdate = false;
+                hotUpdate = false;
 
         }
     }
@@ -260,7 +260,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         currentFileItem.setClassLoader();
-        serviceMetaData = getRunnerbleService(serviceMetaData);
+        serviceMetaData = getRunnableService(serviceMetaData);
         engineRegistry.addService(serviceMetaData);
         Parameter para = serviceMetaData.getParameter("OUTSERVICE");
         if (para != null) {
@@ -289,7 +289,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws AxisFault
      * @throws PhaseException
      */
-    private AxisService getRunnerbleService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+    private AxisService getRunnableService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         loadServiceClass(serviceMetaData);
         Flow inflow = serviceMetaData.getInFlow();
         if (inflow != null) {
@@ -458,7 +458,7 @@ public class DeploymentEngine implements DeploymentConstants {
         wsToDeploy.clear();
     }
 
-    public void doUnDeploye() {
+    public void unDeploy() {
         //todo complete this
         String serviceName = "";
         try {
@@ -480,8 +480,8 @@ public class DeploymentEngine implements DeploymentConstants {
         wsToUnDeploy.clear();
     }
 
-    public boolean isHotupdate() {
-        return hotupdate;
+    public boolean isHotUpdate() {
+        return hotUpdate;
     }
 
     /**
@@ -510,7 +510,7 @@ public class DeploymentEngine implements DeploymentConstants {
             service = new AxisService();
             DeploymentParser schme = new DeploymentParser(serviceStream, this, "");
             schme.parseServiceXML(service);
-            service = getRunnerbleService(service);
+            service = getRunnableService(service);
         } catch (XMLStreamException e) {
             throw  new DeploymentException(e.getMessage());
         } catch (PhaseException e) {

@@ -33,8 +33,15 @@ import java.util.Iterator;
 /**
  * Class OMElementImpl
  */
-public class OMElementImpl extends OMNamedNodeImpl
+public class OMElementImpl extends OMNodeImpl
         implements OMElement, OMConstants {
+
+    protected OMNamespace ns;
+
+    /**
+     * Field localName
+     */
+    protected String localName;
     /**
      * Field firstChild
      */
@@ -75,7 +82,8 @@ public class OMElementImpl extends OMNamedNodeImpl
      */
     public OMElementImpl(String localName, OMNamespace ns, OMElement parent,
                          OMXMLParserWrapper builder) {
-        super(localName, null, parent);
+        super(parent);
+        this.localName = localName;
         if (ns != null) {
             setNamespace(handleNamespace(ns));
         }
@@ -99,7 +107,8 @@ public class OMElementImpl extends OMNamedNodeImpl
      * @param ns
      */
     public OMElementImpl(String localName, OMNamespace ns) {
-        super(localName, null, null);
+        super(null);
+        this.localName = localName;
         this.done = true;
         if (ns != null) {
             setNamespace(handleNamespace(ns));
@@ -114,7 +123,8 @@ public class OMElementImpl extends OMNamedNodeImpl
      * @throws OMException
      */
     public OMElementImpl(QName qname, OMElement parent) throws OMException {
-        super(qname.getLocalPart(), null, parent);
+        super(parent);
+        this.localName = qname.getLocalPart();
         this.done = true;
         handleNamespace(qname, parent);
     }
@@ -665,6 +675,19 @@ public class OMElementImpl extends OMNamedNodeImpl
     }
 
     /**
+     * This was requested during the second Axis2 summit. When one call this method, this will
+     * serialise without building the object structure in the memory. Misuse of this method will cause loss of data.
+     * So its adviced to use populateYourSelf() method, before this, if you want to preserve data in the stream.
+     * @param writer
+     * @throws XMLStreamException
+     */
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        this.serialize(writer, false);
+    }
+
+
+
+    /**
      * Method serializeStartpart
      *
      * @param writer
@@ -840,8 +863,84 @@ public class OMElementImpl extends OMNamedNodeImpl
         return null;
     }
 
+
+    /**
+     * Method getLocalName
+     *
+     * @return
+     */
+    public String getLocalName() {
+        return localName;
+    }
+
+    /**
+     * Method setLocalName
+     *
+     * @param localName
+     */
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
+
+    /**
+     * Method getNamespace
+     *
+     * @return
+     * @throws OMException
+     */
+    public OMNamespace getNamespace() throws OMException {
+        if ((ns == null) && (parent != null)) {
+            ns = parent.getNamespace();
+        }
+        if (ns == null) {
+            throw new OMException("all elements in a soap message must be namespace qualified");
+        }
+        return ns;
+    }
+
+    /**
+     * Method getNamespaceName
+     *
+     * @return
+     */
+    public String getNamespaceName() {
+        if (ns != null) {
+            return ns.getName();
+        }
+        return null;
+    }
+
+    /**
+     * @param namespace
+     */
+    public void setNamespace(OMNamespace namespace) {
+        this.ns = namespace;
+    }
+
+    /**
+     * Method getQName
+     *
+     * @return
+     */
     public QName getQName() {
-        return super.getQName();    //To change body of overridden methods use File | Settings | File Templates.
+        QName qName = null;
+
+        if (ns != null) {
+            qName = new QName(ns.getName(), localName, ns.getPrefix());
+        }else{
+            qName = new QName(localName);
+        }
+        return qName;
+    }
+
+    /**
+     * This will completely parse this node and build the object structure in the memory
+     * @throws OMException
+     */
+    public void populateYourSelf() throws OMException {
+        while(!done){
+            builder.next();
+        }
     }
 
 }

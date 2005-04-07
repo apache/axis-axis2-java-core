@@ -22,7 +22,7 @@ import java.util.Iterator;
 /**
  * Interface OMElement
  */
-public interface OMElement extends OMNamedNode {
+public interface OMElement extends OMNode {
     /**
      * This will add child to the element. One must preserve the order of children, in this operation
      * Tip : appending the new child is prefered
@@ -207,5 +207,48 @@ public interface OMElement extends OMNamedNode {
      */
     public String getText();
 
+    /**
+     * Method getLocalName
+     *
+     * @return
+     */
+    public String getLocalName();
 
+    /**
+     * Method setLocalName
+     *
+     * @param localName
+     */
+    public void setLocalName(String localName);
+
+    /**
+     * Method getNamespace
+     *
+     * @return
+     * @throws OMException
+     */
+    public OMNamespace getNamespace() throws OMException;
+
+    /**
+     * Method getNamespaceName
+     *
+     * @return
+     */
+    public String getNamespaceName();
+
+    /**
+     * Method setNamespace
+     *
+     * @param namespace
+     */
+    public void setNamespace(OMNamespace namespace);
+
+    public QName getQName();
+
+
+    /**
+     * This will completely parse this node and build the object structure in the memory
+     * @throws OMException
+     */
+    public void populateYourSelf() throws OMException ;
 }
