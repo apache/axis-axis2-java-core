@@ -1,6 +1,6 @@
-package org.apache.axis.wsdl.builder;
+package org.apache.axis.description;
 
-import org.apache.axis.description.AxisService;
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingMessageReference;
