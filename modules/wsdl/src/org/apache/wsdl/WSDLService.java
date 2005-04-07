@@ -52,7 +52,7 @@ public interface WSDLService extends Component {
      * @param qName qName of the Service
      * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found.
      */
-    public WSDLService getEndpoint(QName qName);
+    public WSDLEndpoint getEndpoint(QName qName);
 
     /**
      * Method getName

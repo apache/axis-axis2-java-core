@@ -16,13 +16,16 @@
 package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
+
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
  */
-public interface WSDLDescription extends Component {
+public interface WSDLDescription extends Component, WSDLComponentFactory {
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
      * of the Binding.

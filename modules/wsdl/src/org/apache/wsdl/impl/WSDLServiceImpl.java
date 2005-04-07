@@ -75,10 +75,10 @@ public class WSDLServiceImpl extends ComponentImpl implements WSDLService {
      * @param qName qname of the Service
      * @return WSDLService Object or will throw an WSDLProcessingException in the case of object not found.
      */
-    public WSDLService getEndpoint(QName qName) {
-        WSDLService temp = (WSDLService) this.endpoints.get(qName);
+    public WSDLEndpoint getEndpoint(QName qName) {
+    	WSDLEndpoint temp = (WSDLEndpoint) this.endpoints.get(qName);
         if (null == temp) {
-            throw new WSDLProcessingException("Service not found for NCName "
+            throw new WSDLProcessingException("Endpoint not found for qname "
                             + qName);
         }
         return temp;

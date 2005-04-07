@@ -15,9 +15,18 @@
  */
 package org.apache.wsdl.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLFault;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLImport;
@@ -27,10 +36,6 @@ import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
@@ -466,4 +471,20 @@ public class WSDLDescriptionImpl extends ComponentImpl
     public WSDLProperty createProperty() {
         return new WSDLPropertyImpl();
     }
+    
+    public MessageReference createMessageReference(){
+		return new MessageReferenceImpl();
+	}
+	
+	public WSDLBindingMessageReference createWSDLBindingMessageReference(){
+		return new WSDLBindingMessageReferenceImpl();
+	}
+	
+	public WSDLBindingOperation createWSDLBindingOperation(){
+		return new WSDLBindingOperationImpl();
+	}
+	
+	public WSDLExtensibilityElement createWSDLExtensibilityElement(){
+		return new WSDLExtensibilityElementImpl();
+	}
 }
