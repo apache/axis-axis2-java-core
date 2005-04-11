@@ -291,7 +291,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws PhaseException
      */
     private AxisService getRunnableService(AxisService serviceMetaData) throws AxisFault, PhaseException {
-        loadServiceClass(serviceMetaData);
+        loadMessageReceiver(serviceMetaData);
         Flow inflow = serviceMetaData.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -313,21 +313,15 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void loadServiceClass(AxisService service) throws AxisFault {
-        Class serviceclass = null;
+    private void loadMessageReceiver(AxisService service) throws AxisFault {
+        Class messageReceiver = null;
         ClassLoader loader1 = currentFileItem.getClassLoader();
         try {
             service.setClassLoader(loader1);
-            String readInClass = currentFileItem.getClassName();
+            String readInClass = currentFileItem.getMessgeReceiver();
             if (readInClass != null && !"".equals(readInClass)) {
-                serviceclass = Class.forName(currentFileItem.getClassName(), true, loader1);
-            }
-            service.setServiceClass(serviceclass);
-            String readInProviderName = currentFileItem.getProvideName();
-            if (readInProviderName != null && !"".equals(readInProviderName)) {
-                Class provider = Class.forName(currentFileItem.getProvideName(), true, loader1);
-
-                service.setMessageReceiver((Provider) provider.newInstance());
+                messageReceiver = Class.forName(readInClass, true, loader1);
+                service.setMessageReceiver((MessageReceiver)messageReceiver.newInstance());
             }
         } catch (Exception e) {
             throw new AxisFault(e.getMessage(), e);
@@ -510,7 +504,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentFileItem = new HDFileItem(SERVICE, servieName);
             currentFileItem.setClassLoader(classLoder);
             service = new AxisService();
-            DeploymentParser schme = new DeploymentParser(serviceStream, this, "");
+            DeploymentParser schme = new DeploymentParser(serviceStream, this);
             schme.parseServiceXML(service);
             service = getRunnableService(service);
         } catch (XMLStreamException e) {

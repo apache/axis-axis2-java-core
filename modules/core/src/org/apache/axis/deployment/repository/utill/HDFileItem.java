@@ -32,8 +32,7 @@ public class HDFileItem {
     private ClassLoader classLoader;
     private File file = null;
     private int type;
-    private String className;
-    private String provideName;
+    private String messgeReceiver;
     private String name;
 
     public HDFileItem(int type, String name) {
@@ -41,20 +40,12 @@ public class HDFileItem {
         this.name = name;
     }
 
-    public String getClassName() {
-        return className;
+    public String getMessgeReceiver() {
+        return messgeReceiver;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getProvideName() {
-        return provideName;
-    }
-
-    public void setProvideName(String provideName) {
-        this.provideName = provideName;
+    public void setMessgeReceiver(String messgeReceiver) {
+        this.messgeReceiver = messgeReceiver;
     }
 
     public HDFileItem(File file, int type) {

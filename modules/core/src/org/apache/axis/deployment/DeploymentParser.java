@@ -16,30 +16,20 @@
 
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -56,11 +46,6 @@ public class DeploymentParser implements DeploymentConstants {
     private static final String MODULEXMLST = "module";
     // service.xml strating tag
     private static final String SERVICEXMLST = "service";
-    //to get the input stream
-    private InputStream inputStream;
-    // Referance to XMLPullPasrser
-
-    // private XmlPullParser pullparser;
 
     private XMLStreamReader pullparser;
 
@@ -68,25 +53,14 @@ public class DeploymentParser implements DeploymentConstants {
      * referebce to the deployment engine
      */
     private DeploymentEngine dpengine;
-    private String archiveName;
 
     /**
      * constructor to parce service.xml
      *
      * @param inputStream
      * @param engine
-     * @param fileName
      */
-    public DeploymentParser(InputStream inputStream, DeploymentEngine engine, String fileName) throws XMLStreamException {
-        this.inputStream = inputStream;
-        this.dpengine = engine;
-        this.archiveName = fileName;
-        pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-    }
-
-
     public DeploymentParser(InputStream inputStream, DeploymentEngine engine) throws XMLStreamException {
-        this.inputStream = inputStream;
         this.dpengine = engine;
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
     }
@@ -95,12 +69,10 @@ public class DeploymentParser implements DeploymentConstants {
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
         //   ServiceMetaData service = null;
-
         try {
             while (!END_DOCUMENT) {
                 int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
-                    // document end tag met , break the loop
                     END_DOCUMENT = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
@@ -108,8 +80,7 @@ public class DeploymentParser implements DeploymentConstants {
                         procesServiceXML(axisService);
                         axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
                     }
-                    //processStartElement();
-                    break;//todo this has to be chenfed only for testng
+                    break;
                 }
             }
         } catch (XMLStreamException e) {
@@ -154,29 +125,29 @@ public class DeploymentParser implements DeploymentConstants {
                             }
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
-                       int attribCount = pullparser.getAttributeCount();
+                        int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
                                     if(INFLOWST.equals(attvalue)){
-                                        dpengine.getEngineconfig().setInPhases(processPhaseOrder());
+                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
                                     }   else if (OUTFLOWST.equals(attvalue)){
-                                         dpengine.getEngineconfig().setOutPhases(processPhaseOrder());
-                                    }  else if (FAILTFLOWST.equals(attvalue)){
-                                          dpengine.getEngineconfig().setFaultPhases(processPhaseOrder());
-                                    }  else {
-                                         throw new DeploymentException("un defined flow type  "  + ST);
+                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
+                                    }  else if (IN_FAILTFLOW.equals(attvalue)){
+                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
+                                    }else if (OUT_FAILTFLOW.equals(attvalue)){
+                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
+                                    }
+                                    else {
+                                        throw new DeploymentException("un defined flow type  "  + ST);
                                     }
                                 }
                             }
                         } else {
                             throw new DeploymentException("Flow type is a required attribute in "  + ST);
                         }
-                        //((EngineRegistryImpl) dpengine.getEngineconfig()).setPhases(processPhaseOrder());
-                    } else if (SERVERST.equals(ST)) {
-                        //TODO process attributes
                     } else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
                     }
@@ -193,30 +164,29 @@ public class DeploymentParser implements DeploymentConstants {
         AxisTransportIn transportin = null;
         String attname = pullparser.getAttributeLocalName(0);
         String attvalue = pullparser.getAttributeValue(0);
-        
+
         int attribCount = pullparser.getAttributeCount();
-                for (int i = 0; i < attribCount; i++) {
-                    attname = pullparser.getAttributeLocalName(i);
-                    attvalue = pullparser.getAttributeValue(i);
-                    if (ATTNAME.equals(attname)) {
-                        transportin = new AxisTransportIn(new QName(attvalue));
-                    } else if (transportin != null && CLASSNAME.equals(attname)) {
-                        Class reciever = null;
-                        try {
-                            reciever = Class.forName(attvalue, true, Thread.currentThread().getContextClassLoader());
-                            TransportReceiver trnsrecievr = (TransportReceiver) reciever.newInstance();
-                            transportin.setReciver(trnsrecievr);
-                        } catch (ClassNotFoundException e) {
-                            throw  new DeploymentException(e.getMessage());
-                        } catch (IllegalAccessException e) {
-                            throw  new DeploymentException(e.getMessage());
-                        } catch (InstantiationException e) {
-                            throw  new DeploymentException(e.getMessage());
-                        }
-                    }
-                }    
+        for (int i = 0; i < attribCount; i++) {
+            attname = pullparser.getAttributeLocalName(i);
+            attvalue = pullparser.getAttributeValue(i);
+            if (ATTNAME.equals(attname)) {
+                transportin = new AxisTransportIn(new QName(attvalue));
+            } else if (transportin != null && CLASSNAME.equals(attname)) {
+                Class reciever = null;
+                try {
+                    reciever = Class.forName(attvalue, true, Thread.currentThread().getContextClassLoader());
+                    TransportReceiver trnsrecievr = (TransportReceiver) reciever.newInstance();
+                    transportin.setReciver(trnsrecievr);
+                } catch (ClassNotFoundException e) {
+                    throw  new DeploymentException(e.getMessage());
+                } catch (IllegalAccessException e) {
+                    throw  new DeploymentException(e.getMessage());
+                } catch (InstantiationException e) {
+                    throw  new DeploymentException(e.getMessage());
+                }
+            }
+        }
         boolean END_TRANSPORTS = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_TRANSPORTS) {
                 int eventType = pullparser.next();
@@ -232,7 +202,7 @@ public class DeploymentParser implements DeploymentConstants {
                         transportin.setInFlow(inFlow);
                     } else if (transportin != null && OUTFLOWST.equals(tagnae)) {
                         throw new DeploymentException("OUTFlow dose not support in AxisTransportIN " + tagnae);
-                    } else if (transportin != null && FAILTFLOWST.equals(tagnae)) {
+                    } else if (transportin != null && IN_FAILTFLOW.equals(tagnae)) {
                         Flow faultFlow = processFaultFlow();
                         transportin.setFaultFlow(faultFlow);
                     } else {
@@ -244,8 +214,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_TRANSPORTS = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -282,7 +250,6 @@ public class DeploymentParser implements DeploymentConstants {
             }
         }
         boolean END_TRANSPORTS = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_TRANSPORTS) {
                 int eventType = pullparser.next();
@@ -298,7 +265,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (transportout != null && OUTFLOWST.equals(tagnae)) {
                         Flow outFlow = processOutFlow();
                         transportout.setOutFlow(outFlow);
-                    } else if (transportout != null && FAILTFLOWST.equals(tagnae)) {
+                    } else if (transportout != null && IN_FAILTFLOW.equals(tagnae)) {
                         Flow faultFlow = processFaultFlow();
                         transportout.setFaultFlow(faultFlow);
                     } else {
@@ -310,8 +277,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_TRANSPORTS = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -327,11 +292,15 @@ public class DeploymentParser implements DeploymentConstants {
      */
     private void procesServiceXML(AxisService axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
+        boolean foundMR = false;
         if (attribCount >= 1) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-              if (STYLENAME.equals(attname)) {
+                if(MESSAGERECEIVER.equals(attname)) {
+                    dpengine.getCurrentFileItem().setMessgeReceiver(attvalue);
+                    foundMR = true;
+                } else if (STYLENAME.equals(attname)) {
                     axisService.setStyle(attvalue);
                 } else if (CONTEXTPATHNAME.equals(attname)) {
                     axisService.setContextPath(getValue(attvalue));
@@ -341,6 +310,9 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } else
             throw new DeploymentException("Bad arguments" + axisService.getName());
+        if(! foundMR ) {
+            throw new DeploymentException("Message Receiver dose not specify " + axisService.getName());
+        }
 
         //*********************************************************************************************//
         // This is to process remainng part of the document
@@ -357,23 +329,10 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-
                     if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
-                    } else if (JAVAIMPL.equals(ST)) {
-                        if (JAVAST.equals(pullparser.getNamespaceURI())) {
-                            attribCount = pullparser.getAttributeCount();
-                            if (attribCount > 0) {
-                                for (int i = 0; i < attribCount; i++) {
-                                    String attvalue = pullparser.getAttributeValue(i);
-                                    dpengine.getCurrentFileItem().setClassName(attvalue);
-                                }
-                            }
-                        } else {
-                            throw new UnsupportedOperationException("Illegal namespace");
-                        }
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException();
                         // todo this should implemnt latter
@@ -391,7 +350,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (OUTFLOWST.equals(ST)) {
                         Flow outFlow = processOutFlow();
                         axisService.setOutFlow(outFlow);
-                    } else if (FAILTFLOWST.equals(ST)) {
+                    } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
                         axisService.setFaultFlow(faultFlow);
                     } else if (MODULEST.equals(ST)) {
@@ -514,8 +473,6 @@ public class DeploymentParser implements DeploymentConstants {
         }
 
         boolean END_HANDLER = false;
-        String element = ""; // to store the paramater elemnt
-        //todo this should change to support xsdany
         try {
             while (!END_HANDLER) {
                 int eventType = pullparser.next();
@@ -566,8 +523,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_HANDLER = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    element += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -591,7 +546,6 @@ public class DeploymentParser implements DeploymentConstants {
         //todo complete this method
         // and modify to return a type mapping object
         boolean END_TYPEMAPPING = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_TYPEMAPPING) {
                 int eventType = pullparser.next();
@@ -605,8 +559,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_TYPEMAPPING = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -643,8 +595,6 @@ public class DeploymentParser implements DeploymentConstants {
         }
 
         boolean END_OPERATION = false;
-        String text = ""; // to store the paramater elemnt
-//todo this should change to support xsdany
         try {
             while (!END_OPERATION) {
                 int eventType = pullparser.next();
@@ -656,7 +606,7 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (MODULEXMLST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
-                    } else if (FAILTFLOWST.equals(ST)) {
+                    } else if (IN_FAILTFLOW.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (INFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
@@ -670,8 +620,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_OPERATION = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -692,7 +640,6 @@ public class DeploymentParser implements DeploymentConstants {
         //todo complete this method
         // and modify to return a type mapping object
         boolean END_BEANMAPPING = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_BEANMAPPING) {
                 int eventType = pullparser.next();
@@ -706,8 +653,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_BEANMAPPING = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -745,7 +690,6 @@ public class DeploymentParser implements DeploymentConstants {
             }
         }
         boolean END_MODULE = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_MODULE) {
                 int eventType = pullparser.next();
@@ -758,7 +702,7 @@ public class DeploymentParser implements DeploymentConstants {
                     if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         module.addParameter(parameter);
-                    } else if (FAILTFLOWST.equals(ST)) {
+                    } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
                         module.setFaultFlow(faultFlow);
                     } else if (INFLOWST.equals(ST)) {
@@ -778,8 +722,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_MODULE = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -793,7 +735,6 @@ public class DeploymentParser implements DeploymentConstants {
     public Flow processInFlow() throws DeploymentException {
         Flow inFlow = new FlowImpl();
         boolean END_INFLOW = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_INFLOW) {
                 pullparser.next();
@@ -816,8 +757,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_INFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -832,7 +771,6 @@ public class DeploymentParser implements DeploymentConstants {
     public Flow processOutFlow() throws DeploymentException {
         Flow outFlow = new FlowImpl();
         boolean END_OUTFLOW = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_OUTFLOW) {
                 int eventType = pullparser.next();
@@ -854,8 +792,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_OUTFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -871,7 +807,6 @@ public class DeploymentParser implements DeploymentConstants {
     public Flow processFaultFlow() throws DeploymentException {
         Flow faultFlow = new FlowImpl();
         boolean END_FAULTFLOW = false;
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_FAULTFLOW) {
                 int eventType = pullparser.next();
@@ -889,12 +824,10 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (FAILTFLOWST.equals(endtagname)) {
+                    if (IN_FAILTFLOW.equals(endtagname)) {
                         END_FAULTFLOW = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {
@@ -909,7 +842,6 @@ public class DeploymentParser implements DeploymentConstants {
     public ArrayList processPhaseOrder() throws DeploymentException {
         boolean END_PHASEORDER = false;
         ArrayList pahseList = new ArrayList();
-        String text = ""; // to store the paramater elemnt
         try {
             while (!END_PHASEORDER) {
                 int eventType = pullparser.next();
@@ -932,8 +864,6 @@ public class DeploymentParser implements DeploymentConstants {
                         END_PHASEORDER = true;
                         break;
                     }
-                } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                    text += pullparser.getText();
                 }
             }
         } catch (XMLStreamException e) {

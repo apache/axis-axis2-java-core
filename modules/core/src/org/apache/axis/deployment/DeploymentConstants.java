@@ -35,7 +35,8 @@ public interface DeploymentConstants {
     String OPRATIONST = "operation";// operation start tag
     String INFLOWST = "inflow";// inflow start tag
     String OUTFLOWST = "outflow";// outflowr start tag
-    String FAILTFLOWST = "faultflow";// faultflow start tag
+    String IN_FAILTFLOW = "INfaultflow";// faultflow start tag
+    String OUT_FAILTFLOW = "Outfaultflow";// faultflow start tag
 
     // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
     String MODULE_PATH = "/modules/";
@@ -78,6 +79,8 @@ public interface DeploymentConstants {
     String TRANSPORTTAG = "transport";
     String TRANSPORTSENDER = "transportSender";
     String TRANSPORTRECEIVER = "transportReceiver";
+
+    String MESSAGERECEIVER = "messageReceiver";
 
 
     String HOTDEPLOYMENT = "hotdeployment";

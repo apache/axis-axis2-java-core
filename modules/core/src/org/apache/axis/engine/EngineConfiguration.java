@@ -103,17 +103,13 @@ public interface EngineConfiguration {
      * @throws AxisFault
      */
     public HashMap getTransports() throws AxisFault;
-    /**
-     * To store the order of the phases
-     * @param inPhases
-     */
+
+
     public ArrayList getInPhases();
     public ArrayList getOutPhases();
     public ArrayList getInFaultPhases() ;
     public ArrayList getOutFaultPhases();
     
-  
-
     /**
      * Method getServices
      *
@@ -128,6 +124,7 @@ public interface EngineConfiguration {
     public  void addTransportIn(AxisTransportIn transport) throws AxisFault;
     public AxisTransportOut getTransportOut(QName name) throws AxisFault ;
     public  void addTransportOut(AxisTransportOut transport) throws AxisFault ;
+
     public HashMap getTransportsIn();
     public HashMap getTransportsOut();
 

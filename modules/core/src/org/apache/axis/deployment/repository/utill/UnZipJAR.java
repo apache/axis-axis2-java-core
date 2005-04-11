@@ -48,7 +48,7 @@ public class UnZipJAR implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
                     foundServiceXML = true;
-                    DeploymentParser schme = new DeploymentParser(zin, engine, filename);
+                    DeploymentParser schme = new DeploymentParser(zin, engine);
                     schme.parseServiceXML(service);
                     break;
                 }
@@ -73,7 +73,7 @@ public class UnZipJAR implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(MODULEXML)) {
                     foundmoduleXML = true;
-                    DeploymentParser schme = new DeploymentParser(zin, engine, filename);
+                    DeploymentParser schme = new DeploymentParser(zin, engine);
                     schme.procesModuleXML(module);
                     break;
                 }

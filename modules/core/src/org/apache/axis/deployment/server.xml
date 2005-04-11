@@ -20,7 +20,13 @@
         <phase name="Logging"/>
         <phase name="service"/>
     </phaseOrder>
-    <phaseOrder type="faultflow">
+    <phaseOrder type="INfaultflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="Outfaultflow">
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>
