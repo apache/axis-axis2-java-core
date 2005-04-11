@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,7 +74,7 @@ public class ExecutionChain {
     public void addPhases(ArrayList phases) {
         if ((phases != null) && !phases.isEmpty()) {
             for (int i = 0; i < phases.size(); i++) {
-                addPhase((Phase) phases.get(i));
+                addPhase((SimplePhase) phases.get(i));
             }
         }
     }
@@ -87,7 +85,7 @@ public class ExecutionChain {
      * @param name
      * @return
      */
-    public Phase getPhase(QName name) {
+    public Phase getPhase(String name) {
         return (Phase) phases.get(name);
     }
 
@@ -108,7 +106,7 @@ public class ExecutionChain {
                     }
                     break;
                 }else{
-                    Phase phase = (Phase) executionList.get(indexOfPhaseToExecuted);
+                    SimplePhase phase = (SimplePhase) executionList.get(indexOfPhaseToExecuted);
                     if (phase != null) {
                         log.info("Invoke the Phase " + phase.getPhaseName());
                         phase.invoke(msgctx);
@@ -122,7 +120,7 @@ public class ExecutionChain {
         } catch (Exception e) {
             log.info("Execution Chain failed with the " + e.getMessage());
             while (!executionStack.isEmpty()) {
-                Phase phase = (Phase) executionStack.pop();
+                SimplePhase phase = (SimplePhase) executionStack.pop();
                 phase.revoke(msgctx);
                 log.info("revoke the Phase " + phase.getPhaseName());
             }

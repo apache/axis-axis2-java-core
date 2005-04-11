@@ -44,7 +44,7 @@ public class MessageWithServerTest extends TestCase {
     private QName operationName = new QName("http://ws.apache.org/axis2", "echoVoid");
     private QName transportName = new QName("", "NullTransport");
 
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
@@ -64,7 +64,7 @@ public class MessageWithServerTest extends TestCase {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
 
-        service.setProvider(new SimpleJavaProvider());
+        service.setMessageReceiver(new SimpleJavaProvider());
 
         AxisModule m1 = new AxisModule(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));

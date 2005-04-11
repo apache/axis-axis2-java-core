@@ -18,7 +18,7 @@ package org.apache.axis.integration;
 
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
@@ -47,7 +47,7 @@ public class UtilServer {
         if (count == 0) {
             Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
-            EngineRegistry er = 
+            EngineConfiguration er = 
                 erfac.createEngineRegistry("target/test-resources/samples/");
             try {
                 Thread.sleep(2000);

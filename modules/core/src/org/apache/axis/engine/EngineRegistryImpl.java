@@ -30,7 +30,7 @@ import org.apache.axis.description.AxisTransportOut;
 /**
  * Class EngineRegistryImpl
  */
-public class EngineRegistryImpl implements EngineRegistry {
+public class EngineRegistryImpl implements EngineConfiguration {
     /**
      * To store Erroness services
      */
@@ -65,8 +65,8 @@ public class EngineRegistryImpl implements EngineRegistry {
      */
     private ArrayList inPhases;
     private ArrayList outPhases;
-    private ArrayList faultPhases;
-
+    private ArrayList inFaultPhases;
+    private ArrayList outFaultPhases;
     /**
      * Constructor EngineRegistryImpl
      *
@@ -76,7 +76,8 @@ public class EngineRegistryImpl implements EngineRegistry {
         this.global = global;
         inPhases = new ArrayList();
         outPhases = new ArrayList();
-        faultPhases = new ArrayList();
+        inFaultPhases = new ArrayList();
+        outFaultPhases = new ArrayList();
         errornesServices = new Hashtable();
     }
 
@@ -213,10 +214,7 @@ public class EngineRegistryImpl implements EngineRegistry {
         this.outPhases = outPhases;
     }
 
-    public void setFaultPhases(ArrayList faultPhases) {
-        this.faultPhases = faultPhases;
-    }
-
+   
     public ArrayList getInPhases() {
         return inPhases;
     }
@@ -225,8 +223,34 @@ public class EngineRegistryImpl implements EngineRegistry {
         return outPhases;
     }
 
-    public ArrayList getFaultPhases() {
-        return faultPhases;
+ 
+ 
+    /**
+     * @return
+     */
+    public ArrayList getInFaultPhases() {
+        return inFaultPhases;
     }
-  
+
+    /**
+     * @return
+     */
+    public ArrayList getOutFaultPhases() {
+        return outFaultPhases;
+    }
+
+    /**
+     * @param list
+     */
+    public void setInFaultPhases(ArrayList list) {
+        inFaultPhases = list;
+    }
+
+    /**
+     * @param list
+     */
+    public void setOutFaultPhases(ArrayList list) {
+        outFaultPhases = list;
+    }
+
 }

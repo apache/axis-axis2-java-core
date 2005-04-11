@@ -16,26 +16,10 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.receivers.InOutSyncReceiver;
 
 /**
- * Class ReceiverLocator
+ * Interface Receiver
  */
-public class ReceiverLocator {
-    /**
-     * Method locateReceiver
-     *
-     * @param msgCtx
-     * @return
-     * @throws AxisFault
-     */
-    public static Receiver locateReceiver(MessageContext msgCtx)
-            throws AxisFault {
-
-        // TODO
-        // File wsdlFile = msgCtx.getService().getParameter("wsdlFile");
-        // parse the WSDL find the patterns
-        // create a receiver
-        return new InOutSyncReceiver();
-    }
+public interface MessageReceiver{
+    public void recieve(MessageContext messgeCtx)throws AxisFault;
 }

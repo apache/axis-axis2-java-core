@@ -23,12 +23,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
@@ -41,6 +38,7 @@ import org.apache.wsdl.WSDLService;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext {
+
     /**
      * Field messageStyle
      */
@@ -55,7 +53,6 @@ public class MessageContext {
      * Field PASSWORD
      */
     public static final String PASSWORD = "PASSWD";
-
 
     /**
      * Field SOAP_ACTION
@@ -82,14 +79,10 @@ public class MessageContext {
      */
     public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
 
-
-
     /**
      * Field processingFault
      */
     private boolean processingFault = false;
-
-
 
     /**
      * Addressing Information for Axis 2
@@ -100,22 +93,22 @@ public class MessageContext {
 
     MessageInformationHeadersCollection messageInformationHeaders;
 
+    private EngineContext engineContext;
 
     private final ExecutionChain chain;
 
+    private ServiceContext serviceContext;
+
+    private OperationContext operationContext;
+
     private AxisTransportIn transportIn;
-    
+
     private AxisTransportOut transportOut;
-    
+
     /**
      * Field properties
      */
     private final Map properties;
-
-    /**
-     * Field globalContext
-     */
-    private final GlobalContext globalContext;
 
     /**
      * Field sessionContext
@@ -125,7 +118,6 @@ public class MessageContext {
     /**
      * Field service
      */
-    private AxisService service;
 
     /**
      * Field envelope
@@ -153,11 +145,6 @@ public class MessageContext {
     private String messageID;
 
     /**
-     * Field operation
-     */
-    private AxisOperation operation;
-
-    /**
      * Field newThreadRequired
      */
     private boolean newThreadRequired = false;
@@ -171,25 +158,21 @@ public class MessageContext {
      * Field soapOperationElement
      */
     private OMElement soapOperationElement;
-    
-    
+
     private boolean paused = false;
-    
-    
-    
+
     public MessageContext(MessageContext oldMessageContext) throws AxisFault {
-        this(	oldMessageContext.getGlobalContext().getRegistry(), 
-                oldMessageContext.getProperties(), 
-                oldMessageContext.getSessionContext(), 
-                oldMessageContext.getTransportIn(), 
-                oldMessageContext.getTransportOut());
+        this(
+            oldMessageContext.getEngineContext(),
+            oldMessageContext.getProperties(),
+            oldMessageContext.getSessionContext(),
+            oldMessageContext.getTransportIn(),
+            oldMessageContext.getTransportOut());
         this.messageInformationHeaders = oldMessageContext.getMessageInformationHeaders();
         this.serverSide = oldMessageContext.isServerSide();
-        this.service = oldMessageContext.getService();
-        
+        this.serviceContext = oldMessageContext.getServiceContext();
+
     }
-    
-    
 
     /**
      * @param er            registry
@@ -197,12 +180,14 @@ public class MessageContext {
      * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
-    public MessageContext(EngineRegistry er, 
-            Map initialProperties, 
-            SessionContext sessionContext,
-            AxisTransportIn transportIn,AxisTransportOut transportOut)
-            throws AxisFault {
-        this.globalContext = new GlobalContext(er);
+    public MessageContext(
+        EngineContext engineContext,
+        Map initialProperties,
+        SessionContext sessionContext,
+        AxisTransportIn transportIn,
+        AxisTransportOut transportOut)
+        throws AxisFault {
+        this.engineContext = engineContext;
         if (sessionContext == null) {
             this.sessionContext = new SimpleSessionContext();
         } else {
@@ -216,7 +201,7 @@ public class MessageContext {
         messageInformationHeaders = new MessageInformationHeadersCollection();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
-        
+
     }
 
     /**
@@ -231,13 +216,6 @@ public class MessageContext {
      */
     public EndpointReference getFrom() {
         return messageInformationHeaders.getFrom();
-    }
-
-    /**
-     * @return
-     */
-    public GlobalContext getGlobalContext() {
-        return globalContext;
     }
 
     /**
@@ -406,27 +384,6 @@ public class MessageContext {
     /**
      * @return
      */
-    public AxisService getService() {
-        return service;
-    }
-
-    /**
-     * @return
-     */
-    public AxisOperation getOperation() {
-        return operation;
-    }
-
-    /**
-     * @param operation
-     */
-    public void setOperation(AxisOperation operation) {
-        this.operation = operation;
-    }
-
-    /**
-     * @return
-     */
     public boolean isNewThreadRequired() {
         return newThreadRequired;
     }
@@ -436,13 +393,6 @@ public class MessageContext {
      */
     public void setNewThreadRequired(boolean b) {
         newThreadRequired = b;
-    }
-
-    /**
-     * @param service
-     */
-    public void setService(AxisService service) {
-        this.service = service;
     }
 
     /**
@@ -469,8 +419,6 @@ public class MessageContext {
     public ExecutionChain getExecutionChain() {
         return this.chain;
     }
-
-
 
     /**
      * @return
@@ -507,16 +455,16 @@ public class MessageContext {
         return properties;
     }
 
-    public void setWSAAction(String actionURI){
+    public void setWSAAction(String actionURI) {
         messageInformationHeaders.setAction(actionURI);
     }
-    public String getWSAAction(){
+    public String getWSAAction() {
         return messageInformationHeaders.getAction();
     }
-    public void setWSAMessageId(String messageID){
+    public void setWSAMessageId(String messageID) {
         messageInformationHeaders.setMessageId(messageID);
     }
-    public String getWSAMessageId(){
+    public String getWSAMessageId() {
         return messageInformationHeaders.getMessageId();
     }
 
@@ -566,6 +514,52 @@ public class MessageContext {
      */
     public void setTransportOut(AxisTransportOut out) {
         transportOut = out;
+    }
+
+    /**
+     * @return
+     */
+    public EngineContext getEngineContext() {
+        return engineContext;
+    }
+
+    /**
+     * @param context
+     */
+    public void setEngineContext(EngineContext context) {
+        engineContext = context;
+    }
+
+    public String getAction() {
+        return messageInformationHeaders.getAction();
+    }
+
+    /**
+     * @return
+     */
+    public OperationContext getOperationContext() {
+        return operationContext;
+    }
+
+    /**
+     * @return
+     */
+    public ServiceContext getServiceContext() {
+        return serviceContext;
+    }
+
+    /**
+     * @param context
+     */
+    public void setOperationContext(OperationContext context) {
+        operationContext = context;
+    }
+
+    /**
+     * @param context
+     */
+    public void setServiceContext(ServiceContext context) {
+        serviceContext = context;
     }
 
 }

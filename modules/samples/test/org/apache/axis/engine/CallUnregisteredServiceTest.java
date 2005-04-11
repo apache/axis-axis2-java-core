@@ -42,7 +42,7 @@ public class CallUnregisteredServiceTest extends TestCase{
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;

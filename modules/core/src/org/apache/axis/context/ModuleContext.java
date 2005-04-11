@@ -1,5 +1,7 @@
 package org.apache.axis.context;
 
+import org.apache.axis.description.AxisModule;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +19,17 @@ package org.apache.axis.context;
  *
  * 
  */
-public class ModuleContext extends AxisContext{
-    private String moduleId;
-
-    public String getModuleId() {
-        return moduleId;
+public class ModuleContext extends AbstractContext{
+    private AxisModule moduleConfig;
+    
+    public ModuleContext(AxisModule module){
+        this.moduleConfig = module;
     }
-
-    public void setModuleId(String moduleId) {
-        this.moduleId = moduleId;
+    /**
+     * @return
+     */
+    public AxisModule getModuleConfig() {
+        return moduleConfig;
     }
 
 }

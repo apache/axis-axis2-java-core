@@ -15,12 +15,34 @@
  */
 package org.apache.axis.engine;
 
+import java.io.File;
+import java.io.InputStream;
+
+import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 
 /**
  * Class Sender
  */
-public class Sender {
+public class MessageSender {
+    private EngineContext engineContext;
+    private MessageInformationHeadersCollection messageInfoHeaders;
+    
+    
+    
+    public MessageSender(EngineContext engineContext){
+        this.engineContext = engineContext;
+    }
+    
+    public MessageSender(InputStream in){
+        //TODO create the Engine Context
+    }
+    
+    public MessageSender(File confFile){
+        //TODO create the Engine Context
+    }
+    
     /**
      * Method send
      *

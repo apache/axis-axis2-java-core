@@ -22,9 +22,9 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Phase;
+import org.apache.axis.engine.SimplePhase;
 
 public class Utils {
 
@@ -40,7 +40,7 @@ public class Utils {
         int flowtype)
         throws AxisFault {
         ArrayList faultchain = new ArrayList();
-        Phase p = new Phase(Constants.PHASE_SERVICE);
+        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
         faultchain.add(p);
         addHandlers(flow, p);
         service.setPhases(faultchain, flowtype);
@@ -50,19 +50,19 @@ public class Utils {
             service,
             Constants.PHASE_SERVICE,
             service.getInFlow(),
-            EngineRegistry.INFLOW);
+            EngineConfiguration.INFLOW);
         addPhasesToServiceFromFlow(
             service,
             Constants.PHASE_SERVICE,
             service.getOutFlow(),
-            EngineRegistry.OUTFLOW);
+            EngineConfiguration.OUTFLOW);
         addPhasesToServiceFromFlow(
             service,
             Constants.PHASE_SERVICE,
             service.getFaultFlow(),
-            EngineRegistry.FAULTFLOW);
+            EngineConfiguration.FAULTFLOW);
     }
-    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
+    public static void addHandlers(Flow flow, SimplePhase phase) throws AxisFault {
         if (flow != null) {
             int handlerCount = flow.getHandlerCount();
             for (int i = 0; i < handlerCount; i++) {

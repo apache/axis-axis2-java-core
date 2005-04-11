@@ -21,14 +21,14 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.providers.RawXMLProvider;
 
 public class RegistryTest extends AbstractTestCase {
-    private EngineRegistry reg;
+    private EngineConfiguration reg;
 
     public RegistryTest(String testName) {
         super(testName);

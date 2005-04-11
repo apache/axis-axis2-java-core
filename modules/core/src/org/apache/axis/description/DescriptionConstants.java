@@ -59,7 +59,7 @@ public interface DescriptionConstants {
     /**
      * Field PROVIDER_KEY
      */
-    public static final String PROVIDER_KEY = "PROVIDER_KEY";
+    public static final String MESSAGE_RECIVER_KEY = "PROVIDER_KEY";
 
     /**
      * Field STYLE_KEY

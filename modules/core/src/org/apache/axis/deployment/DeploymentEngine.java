@@ -61,7 +61,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
 
     /**
      * this constaructor for the testing
@@ -99,7 +99,7 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @param engineRegistry
      */
-    public DeploymentEngine(EngineRegistry engineRegistry) {
+    public DeploymentEngine(EngineConfiguration engineRegistry) {
         this.engineRegistry = engineRegistry;
     }
 
@@ -157,7 +157,7 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      */
-    public EngineRegistry getEngineRegistry() {
+    public EngineConfiguration getEngineRegistry() {
         return engineRegistry;
     }
 
@@ -167,7 +167,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws AxisFault
      */
-    public EngineRegistry start() throws AxisFault, DeploymentException, XMLStreamException {
+    public EngineConfiguration start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
         if (serverConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
@@ -248,8 +248,8 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineRegistry createEngineRegistry() throws AxisFault {
-        EngineRegistry newEngineRegisty;
+    private EngineConfiguration createEngineRegistry() throws AxisFault {
+        EngineConfiguration newEngineRegisty;
 
         server = new AxisGlobal();
         newEngineRegisty = new EngineRegistryImpl(server);
@@ -325,7 +325,7 @@ public class DeploymentEngine implements DeploymentConstants {
             String readInProviderName = currentFileItem.getProvideName();
             if (readInProviderName != null && !"".equals(readInProviderName)) {
                 Class provider = Class.forName(currentFileItem.getProvideName(), true, loader1);
-                service.setProvider((Provider) provider.newInstance());
+                service.setMessageReceiver((Provider) provider.newInstance());
             }
         } catch (Exception e) {
             throw new AxisFault(e.getMessage(), e);

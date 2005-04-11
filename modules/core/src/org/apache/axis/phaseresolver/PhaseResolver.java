@@ -17,7 +17,7 @@ package org.apache.axis.phaseresolver;
 
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -29,7 +29,7 @@ public class PhaseResolver {
     /**
      * Field engineRegistry
      */
-    private final EngineRegistry engineRegistry;
+    private final EngineConfiguration engineRegistry;
 
     /**
      * Field axisService
@@ -46,7 +46,7 @@ public class PhaseResolver {
      *
      * @param engineRegistry
      */
-    public PhaseResolver(EngineRegistry engineRegistry) {
+    public PhaseResolver(EngineConfiguration engineRegistry) {
         this.engineRegistry = engineRegistry;
     }
 
@@ -56,7 +56,7 @@ public class PhaseResolver {
      * @param engineRegistry
      * @param axisService
      */
-    public PhaseResolver(EngineRegistry engineRegistry,
+    public PhaseResolver(EngineConfiguration engineRegistry,
                          AxisService axisService) {
         this.engineRegistry = engineRegistry;
         this.axisService = axisService;

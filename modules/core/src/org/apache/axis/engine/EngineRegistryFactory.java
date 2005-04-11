@@ -26,5 +26,5 @@ public interface EngineRegistryFactory {
      * @return
      * @throws AxisFault
      */
-    public EngineRegistry createEngineRegistry(String file) throws AxisFault;
+    public EngineConfiguration createEngineRegistry(String file) throws AxisFault;
 }

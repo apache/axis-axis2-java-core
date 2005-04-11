@@ -21,11 +21,11 @@ import javax.xml.stream.XMLStreamException;
 import junit.framework.TestCase;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.phaseresolver.PhaseException;
 
 public class DeploymentotalTest extends TestCase {
-    EngineRegistry er;
+    EngineConfiguration er;
 
     public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
         String filename = "./target/test-resources/deployment";

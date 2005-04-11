@@ -28,7 +28,7 @@ import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryImpl;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
@@ -44,7 +44,7 @@ public class Call {
     /**
      * Field registry
      */
-    private EngineRegistry registry;
+    private EngineConfiguration registry;
 
     /**
      * Field log

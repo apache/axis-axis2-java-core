@@ -80,7 +80,7 @@ public class TestSendReceiveAsync extends TestCase {
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
-        service.setProvider(new RawXMLProvider());
+        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
 
         service.addOperation(operation);

@@ -29,7 +29,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +52,7 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Field engineReg
      */
-    protected EngineRegistry engineReg;
+    protected EngineConfiguration engineReg;
 
     /**
      * Field serverSocket
@@ -75,7 +75,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @param reg
      */
-    public SimpleHTTPServer(EngineRegistry reg) {
+    public SimpleHTTPServer(EngineConfiguration reg) {
         this.engineReg = reg;
     }
 
@@ -243,7 +243,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @return
      */
-    public EngineRegistry getEngineReg() {
+    public EngineConfiguration getEngineReg() {
         return engineReg;
     }
 

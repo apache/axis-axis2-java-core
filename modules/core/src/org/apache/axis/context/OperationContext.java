@@ -18,27 +18,21 @@ package org.apache.axis.context;
  * 
  */
 
-import org.apache.axis.context.AxisContext;
+import org.apache.axis.description.AxisOperation;
 
 import java.util.Map;
 import java.util.HashMap;
 
-public class OperationContext extends AxisContext{
+import javax.xml.namespace.QName;
+
+public class OperationContext extends AbstractContext{
     private Map mepContextMap;
-    private String opId;
+    private AxisOperation operationConfig;
 
-   
-    public String getOpId() {
-        return opId;
-    }
-
-    public void setOpId(String opId) {
-        this.opId = opId;
-    }
-
-    public OperationContext() {
+     public OperationContext(AxisOperation operationConfig) {
         super();
         this.mepContextMap = new HashMap();
+        this.operationConfig = operationConfig;
     }
 
     public void addMepContext(MEPContext ctxt){
@@ -53,4 +47,22 @@ public class OperationContext extends AxisContext{
         mepContextMap.remove(ctxt.getMepId());
         return ctxt;
     }
+    /**
+     * @return
+     */
+    public AxisOperation getOperationConfig() {
+        return operationConfig;
+    }
+
+    /**
+     * @param operation
+     */
+    public void setOperationConfig(AxisOperation operation) {
+        operationConfig = operation;
+    }
+    
+    public QName getName(){
+        return operationConfig.getName();
+    }
+
 }

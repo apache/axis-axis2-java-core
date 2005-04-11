@@ -20,12 +20,12 @@ import java.util.HashMap;
  *
  * 
  */
-public abstract class AxisContext implements Serializable{
+public abstract class AbstractContext implements Serializable{
     
     protected transient HashMap nonPersistentMap;
     protected HashMap persistentMap;
 
-    protected AxisContext() {
+    protected AbstractContext() {
         this.persistentMap = new HashMap();
         this.nonPersistentMap = new HashMap();
     }

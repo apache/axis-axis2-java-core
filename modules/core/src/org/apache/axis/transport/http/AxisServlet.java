@@ -41,7 +41,7 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
@@ -55,7 +55,7 @@ public class AxisServlet extends HttpServlet {
     /**
      * Field engineRegistry
      */
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
 
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME

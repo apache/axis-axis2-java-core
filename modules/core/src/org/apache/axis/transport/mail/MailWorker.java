@@ -34,7 +34,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -54,7 +54,7 @@ public class MailWorker implements Runnable {
 
     private SMTPClient client = null;
 
-    private EngineRegistry reg = null;
+    private EngineConfiguration reg = null;
 
     // Current message
     private MimeMessage mimeMessage;
@@ -76,7 +76,7 @@ public class MailWorker implements Runnable {
      * @param mimeMessage
      */
     public MailWorker(SimpleMailListner server, MimeMessage mimeMessage,
-            EngineRegistry reg) {
+            EngineConfiguration reg) {
         this.server = server;
         this.mimeMessage = mimeMessage;
         this.reg = reg;

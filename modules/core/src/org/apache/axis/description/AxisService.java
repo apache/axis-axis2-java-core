@@ -15,35 +15,34 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Provider;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.impl.WSDLServiceImpl;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.MessageReceiver;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.impl.WSDLServiceImpl;
 
 /**
  * Class AxisService
  */
 public class AxisService extends WSDLServiceImpl
-        implements WSDLService, ParameterInclude, FlowInclude, PhasesInclude,
+        implements WSDLService, ParameterInclude, FlowInclude,
         DescriptionConstants {
     /**
      * TODO this should be in the WSDLInterface, yet we want it to have in the the
      * Services, so we put this here for M1 until we foud better way to do that
      */
     protected final HashMap operationsMap = new HashMap();
-
+    
     /**
      * Constructor AxisService
      */
     public AxisService() {
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-        this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
     }
 
     /**
@@ -193,9 +192,9 @@ public class AxisService extends WSDLServiceImpl
      *
      * @param provider
      */
-    public void setProvider(Provider provider) {
-        if (provider != null) {
-            this.setComponentProperty(PROVIDER_KEY, provider);
+    public void setMessageReceiver(MessageReceiver receiver) {
+        if (receiver != null) {
+            this.setComponentProperty(MESSAGE_RECIVER_KEY, receiver);
         }
     }
 
@@ -209,8 +208,8 @@ public class AxisService extends WSDLServiceImpl
      *
      * @return
      */
-    public Provider getProvider() {
-        return (Provider) this.getComponentProperty(PROVIDER_KEY);
+    public MessageReceiver getMessageReceiver() {
+        return (MessageReceiver) this.getComponentProperty(MESSAGE_RECIVER_KEY);
     }
 
     /*
@@ -248,39 +247,7 @@ public class AxisService extends WSDLServiceImpl
      * @see org.apache.axis.description.PhasesInclude#getPhases(java.util.ArrayList, int)
      */
 
-    /**
-     * Method setPhases
-     *
-     * @param phases
-     * @param flow
-     * @throws AxisFault
-     */
-    public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        if (phases == null) {
-            return;
-        }
-        PhasesIncludeImpl phaseInclude =
-                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
-        phaseInclude.setPhases(phases, flow);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apache.axis.description.PhasesInclude#getPhases(int)
-     */
-
-    /**
-     * Method getPhases
-     *
-     * @param flow
-     * @return
-     * @throws AxisFault
-     */
-    public ArrayList getPhases(int flow) throws AxisFault {
-        PhasesIncludeImpl phaseInclude =
-                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
-        return (ArrayList) phaseInclude.getPhases(flow);
-    }
+  
 
     /*
      * (non-Javadoc)
@@ -438,4 +405,6 @@ public class AxisService extends WSDLServiceImpl
     public HashMap getOperations() {
         return operationsMap;
     }
+    
+  
 }

@@ -17,6 +17,8 @@ package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.modules.Module;
+
 /**
  * <p>This holds the information about a Module. </p>
  * <ol>
@@ -27,6 +29,8 @@ import javax.xml.namespace.QName;
  * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
 public class AxisModule implements FlowInclude, ParameterInclude {
+    
+    private Module module;
     /**
      * Field name
      */
@@ -127,4 +131,18 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     public void setName(QName name) {
         this.name = name;
     }
+    /**
+     * @return
+     */
+    public Module getModule() {
+        return module;
+    }
+
+    /**
+     * @param module
+     */
+    public void setModule(Module module) {
+        this.module = module;
+    }
+
 }

@@ -18,16 +18,58 @@ package org.apache.axis.context;
  *  Runtime state of the engine
  */
 
-import org.apache.axis.context.AxisContext;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-public class EngineContext extends AxisContext{
+import javax.xml.namespace.QName;
 
-    //private EngineConfiguration engineConfig;
+import org.apache.axis.description.PhasesInclude;
+import org.apache.axis.description.PhasesIncludeImpl;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineConfiguration;
+
+public class EngineContext extends AbstractContext implements PhasesInclude{
+
+    private EngineConfiguration engineConfig;
     private Map serviceContextMap;
     private Map sessionContextMap;
     private Map moduleContextMap;
+    
+    
+    private PhasesInclude phaseInclude; 
+    
+    public EngineContext(EngineConfiguration registry){
+        this.engineConfig = registry;
+        serviceContextMap = new HashMap();
+        moduleContextMap = new HashMap();
+        sessionContextMap = new HashMap();
+        phaseInclude = new PhasesIncludeImpl();
+      
+    }
+    
+    /**
+     * The method is used to do the intialization of the EngineContext, right now we know that
+     * module.init(..) is called here
+     * @throws AxisFault
+     */
+    
+    
+    public void init() throws AxisFault{
+    
+    }
+    
+    
+    public void addService(ServiceContext service){
+        serviceContextMap.put(service.getServiceConfig().getName(),service);
+    }
+    
+    public ServiceContext getService(QName serviceName){
+        return (ServiceContext)serviceContextMap.get(serviceName);
+    
+    }
+    
+    
 
     
 
@@ -35,5 +77,38 @@ public class EngineContext extends AxisContext{
 
 
 
+
+    /**
+     * @return
+     */
+    public EngineConfiguration getEngineConfig() {
+        return engineConfig;
+    }
+
+    /**
+     * @param configuration
+     */
+    public void setEngineConfig(EngineConfiguration configuration) {
+        engineConfig = configuration;
+    }
+
+  
+    /**
+     * @param flow
+     * @return
+     * @throws AxisFault
+     */
+    public ArrayList getPhases(int flow) throws AxisFault {
+        return phaseInclude.getPhases(flow);
+    }
+
+    /**
+     * @param phases
+     * @param flow
+     * @throws AxisFault
+     */
+    public void setPhases(ArrayList phases, int flow) throws AxisFault {
+        phaseInclude.setPhases(phases, flow);
+    }
 
 }

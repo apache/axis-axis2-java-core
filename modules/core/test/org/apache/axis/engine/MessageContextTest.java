@@ -27,7 +27,7 @@ public class MessageContextTest extends AbstractTestCase {
     }
 
     public void testMesssageContext() throws AxisFault {
-        EngineRegistry er = new EngineRegistryImpl(new AxisGlobal());
+        EngineConfiguration er = new EngineRegistryImpl(new AxisGlobal());
         MessageContext msgctx = new MessageContext(er, null,null,null,null);
 
         msgctx.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());

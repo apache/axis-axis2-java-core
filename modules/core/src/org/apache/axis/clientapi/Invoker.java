@@ -17,7 +17,7 @@ package org.apache.axis.clientapi;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.transport.TransportReceiver;
 
 /**
@@ -32,7 +32,7 @@ public class Invoker implements Runnable {
     /**
      * Field registry
      */
-    private EngineRegistry registry;
+    private EngineConfiguration registry;
 
     /**
      * Field reqMsgContext
@@ -53,7 +53,7 @@ public class Invoker implements Runnable {
      * @param callback
      */
     public Invoker(MessageContext msgContext, AxisEngine engine,
-                   EngineRegistry reg, Callback callback) {
+                   EngineConfiguration reg, Callback callback) {
         this.engine = engine;
         this.reqMsgContext = msgContext;
         this.callback = callback;

@@ -15,12 +15,11 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.AxisFault;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 /**
  * <p>This holds the information shown in the global scope. The information are all
@@ -34,16 +33,11 @@ import java.util.List;
  * <p>Note: handlers in the server.xml file are not suported for M1, only way to put a
  * global handler is via a modules</p>
  */
-public class AxisGlobal implements ParameterInclude, PhasesInclude {
+public class AxisGlobal implements ParameterInclude {
     /**
      * Field paramInclude
      */
     protected final ParameterInclude paramInclude;
-
-    /**
-     * Field phasesInclude
-     */
-    protected final PhasesInclude phasesInclude;
 
     /**
      * Field modules
@@ -57,7 +51,6 @@ public class AxisGlobal implements ParameterInclude, PhasesInclude {
      */
     public AxisGlobal() {
         paramInclude = new ParameterIncludeImpl();
-        phasesInclude = new PhasesIncludeImpl();
         modules = new ArrayList();
     }
 
@@ -98,21 +91,5 @@ public class AxisGlobal implements ParameterInclude, PhasesInclude {
         paramInclude.addParameter(param);
     }
 
-    /**
-     * @param flow
-     * @return
-     * @throws AxisFault
-     */
-    public ArrayList getPhases(int flow) throws AxisFault {
-        return phasesInclude.getPhases(flow);
-    }
-
-    /**
-     * @param phases
-     * @param flow
-     * @throws AxisFault
-     */
-    public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        phasesInclude.setPhases(phases, flow);
-    }
+ 
 }

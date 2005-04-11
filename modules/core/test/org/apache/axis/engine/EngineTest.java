@@ -40,7 +40,7 @@ import org.apache.wsdl.WSDLService;
 public class EngineTest extends TestCase {
    private MessageContext mc;
    private ArrayList executedHandlers = new ArrayList();
-   private EngineRegistry engineRegistry;
+   private EngineConfiguration engineRegistry;
    private QName serviceName = new QName("NullService");
 
    public EngineTest() {
@@ -63,7 +63,7 @@ public class EngineTest extends TestCase {
        OMFactory omFac = OMFactory.newInstance();
        mc.setEnvelope(omFac.getDefaultEnvelope());
        AxisService service = new AxisService(serviceName);
-       service.setProvider(new NullProvider());
+       service.setMessageReceiver(new NullProvider());
        engineRegistry.addService(service);
        service.setStyle(WSDLService.STYLE_DOC);
        mc.setTo(

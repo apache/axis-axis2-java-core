@@ -16,7 +16,7 @@
 package org.apache.axis.description;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 
 import java.util.ArrayList;
 
@@ -47,11 +47,11 @@ public class PhasesIncludeImpl implements PhasesInclude {
      * @throws AxisFault
      */
     public ArrayList getPhases(int flow) throws AxisFault {
-        if (flow == EngineRegistry.INFLOW) {
+        if (flow == EngineConfiguration.INFLOW) {
             return inflow;
-        } else if (flow == EngineRegistry.OUTFLOW) {
+        } else if (flow == EngineConfiguration.OUTFLOW) {
             return outflow;
-        } else if (flow == EngineRegistry.FAULTFLOW) {
+        } else if (flow == EngineConfiguration.FAULTFLOW) {
             return faultflow;
         } else {
             throw new AxisFault("Unknown type flow ");
@@ -66,11 +66,11 @@ public class PhasesIncludeImpl implements PhasesInclude {
          * @throws AxisFault
          */
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        if (flow == EngineRegistry.INFLOW) {
+        if (flow == EngineConfiguration.INFLOW) {
             inflow = phases;
-        } else if (flow == EngineRegistry.OUTFLOW) {
+        } else if (flow == EngineConfiguration.OUTFLOW) {
             outflow = phases;
-        } else if (flow == EngineRegistry.FAULTFLOW) {
+        } else if (flow == EngineConfiguration.FAULTFLOW) {
             faultflow = phases;
         } else {
             throw new AxisFault("Unknown type flow ");

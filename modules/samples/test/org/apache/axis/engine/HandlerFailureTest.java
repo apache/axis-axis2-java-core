@@ -82,7 +82,7 @@ public class HandlerFailureTest extends TestCase {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className", Echo.class.getName());
         service.addParameter(classParam);
-        service.setProvider(new RawXMLProvider());
+        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
 
         service.addOperation(operation);
@@ -123,7 +123,7 @@ public class HandlerFailureTest extends TestCase {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         Parameter classParam = new ParameterImpl("className", Echo.class.getName());
         service.addParameter(classParam);
-        service.setProvider(new RawXMLProvider());
+        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
 
         service.addOperation(operation);

@@ -29,7 +29,7 @@ import org.apache.axis.description.*;
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
  */
-public interface EngineRegistry {
+public interface EngineConfiguration {
     /**
      * Field INFLOW
      */
@@ -107,13 +107,12 @@ public interface EngineRegistry {
      * To store the order of the phases
      * @param inPhases
      */
-    public void setInPhases(ArrayList inPhases);
-    public void setOutPhases(ArrayList outPhases);
-    public void setFaultPhases(ArrayList faultPhases);
-
     public ArrayList getInPhases();
     public ArrayList getOutPhases();
-    public ArrayList getFaultPhases();
+    public ArrayList getInFaultPhases() ;
+    public ArrayList getOutFaultPhases();
+    
+  
 
     /**
      * Method getServices

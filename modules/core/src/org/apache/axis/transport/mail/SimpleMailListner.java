@@ -18,7 +18,7 @@ package org.apache.axis.transport.mail;
 
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.pop3.POP3Client;
@@ -64,7 +64,7 @@ public class SimpleMailListner implements Runnable {
 
     private String password;
 
-    private static EngineRegistry er = null;
+    private static EngineConfiguration er = null;
 
     public SimpleMailListner(String host, int port, String userid, String password,
             String dir) {
@@ -108,7 +108,7 @@ public class SimpleMailListner implements Runnable {
 
     //This is needed to create the AxisEngine. Have to find out how to get this
     // wrking in the class -- CT 07-Feb-2005.
-    private static EngineRegistry reg = null;
+    private static EngineConfiguration reg = null;
 
     protected static synchronized AxisEngine getAxisEngine() {
         if (myAxisEngine == null) {

@@ -17,28 +17,32 @@ package org.apache.axis.engine;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.wsdl.WSDLService;
 
+
+
 import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher
  */
-public class Dispatcher extends AbstractHandler implements Handler {
+public class RequestURIBasedDispatcher extends AbstractHandler implements Handler {
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "Disapatcher");
+    public static final QName NAME = new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
     private AxisService service;
 
     /**
      * Constructor Dispatcher
      */
-    public Dispatcher() {
+    public RequestURIBasedDispatcher() {
         init(new HandlerMetadata(NAME));
     }
 
@@ -59,15 +63,13 @@ public class Dispatcher extends AbstractHandler implements Handler {
             String serviceStr = null;
             if (index > 0) {
                 serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-                EngineRegistry registry = msgctx.getGlobalContext().getRegistry();
+                EngineConfiguration registry = msgctx.getEngineContext().getEngineConfig();
                 QName serviceName = new QName(serviceStr);
                 service = registry.getService(serviceName);
+                ServiceContext serviceContext = new ServiceContext(service);
                 if (service != null) {
-                    msgctx.setService(service);
+                    msgctx.setServiceContext(serviceContext);
                     msgctx.setMessageStyle(service.getStyle());
-                    // let add the Handlers
-                    ExecutionChain chain = msgctx.getExecutionChain();
-                    chain.addPhases(service.getPhases(EngineRegistry.INFLOW));
                 } else {
                     throw new AxisFault("Service " + serviceName + " is not found");
                 }
@@ -86,7 +88,8 @@ public class Dispatcher extends AbstractHandler implements Handler {
                     QName operationName = new QName(soapAction);
                     AxisOperation op = service.getOperation(operationName);
                     if (op != null) {
-                        msgctx.setOperation(op);
+                        OperationContext opContext = new OperationContext(op);
+                        msgctx.setOperationContext(opContext);
                     }
                 }
             }

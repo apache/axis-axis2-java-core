@@ -19,8 +19,8 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.engine.Receiver;
-import org.apache.axis.engine.Sender;
+import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.engine.MessageSender;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 /**
  * This is takes care of the IN-OUT Async MEP in the server side
  */
-public class InOutSyncReceiver extends AbstractHandler implements Receiver {
+public class InOutSyncReceiver extends AbstractHandler implements MessageReceiver {
     /**
      * Field log
      */
@@ -87,7 +87,7 @@ public class InOutSyncReceiver extends AbstractHandler implements Receiver {
         MessageContext outMsgContext = provider.invoke(msgContext);
 
         log.info("Invoked the Web Servivces impl");
-        Sender sender = new Sender();
+        MessageSender sender = new MessageSender();
         sender.send(outMsgContext);
     }
 }

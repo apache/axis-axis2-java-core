@@ -17,14 +17,14 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistry;
+import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 
 import javax.xml.stream.XMLStreamException;
 
 
 public class EngineRegistryFactoryImpl implements EngineRegistryFactory {
-    public EngineRegistry createEngineRegistry(String file) throws AxisFault {
+    public EngineConfiguration createEngineRegistry(String file) throws AxisFault {
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();

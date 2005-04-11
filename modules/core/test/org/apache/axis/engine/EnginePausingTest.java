@@ -40,7 +40,7 @@ import org.apache.wsdl.WSDLService;
 public class EnginePausingTest extends TestCase {
     private MessageContext mc;
     private ArrayList executedHandlers = new ArrayList();
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
     private QName serviceName = new QName("NullService");
 
     public EnginePausingTest() {
@@ -65,10 +65,10 @@ public class EnginePausingTest extends TestCase {
         OMFactory omFac = OMFactory.newInstance();
         mc.setEnvelope(omFac.getDefaultEnvelope());
         AxisService service = new AxisService(serviceName);
-        service.setProvider(new NullProvider());
+        service.setMessageReceiver(new NullProvider());
         ArrayList phases = new ArrayList();
 
-        Phase phase = new Phase("1");
+        SimplePhase phase = new SimplePhase("1");
         phase.addHandler(new TempHandler(1));
         phase.addHandler(new TempHandler(2));
         phase.addHandler(new TempHandler(3));
@@ -80,7 +80,7 @@ public class EnginePausingTest extends TestCase {
         phase.addHandler(new TempHandler(9));
         phases.add(phase);
 
-        phase = new Phase("2");
+        phase = new SimplePhase("2");
         phase.addHandler(new TempHandler(10));
         phase.addHandler(new TempHandler(11));
         phase.addHandler(new TempHandler(12));
@@ -92,7 +92,7 @@ public class EnginePausingTest extends TestCase {
         phase.addHandler(new TempHandler(18));
         phases.add(phase);
 
-        Phase phase1 = new Phase("3");
+        SimplePhase phase1 = new SimplePhase("3");
         phase1.addHandler(new TempHandler(19));
         phase1.addHandler(new TempHandler(20));
         phase1.addHandler(new TempHandler(21));
@@ -103,7 +103,7 @@ public class EnginePausingTest extends TestCase {
         phase1.addHandler(new TempHandler(26));
         phase1.addHandler(new TempHandler(27));
         phases.add(phase1);
-        service.setPhases(phases, EngineRegistry.INFLOW);
+        service.setPhases(phases, EngineConfiguration.INFLOW);
         engineRegistry.addService(service);
         service.setStyle(WSDLService.STYLE_DOC);
         mc.setTo(

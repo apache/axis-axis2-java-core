@@ -49,7 +49,7 @@ public class EchoRawXMLTest extends TestCase {
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
-    private EngineRegistry engineRegistry;
+    private EngineConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
@@ -69,7 +69,7 @@ public class EchoRawXMLTest extends TestCase {
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.setServiceClass(Echo.class);
-        service.setProvider(new RawXMLProvider());
+        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
 
         service.addOperation(operation);
