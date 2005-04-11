@@ -64,9 +64,9 @@ public class Call {
     // only used in SendReciveAync , to get the response
 
     /**
-     * Field Listenertransport
+     * Field listenertransport
      */
-    private String Listenertransport;
+    private String listenertransport;
 
     // the type of transport that the request should be send throgh
 
@@ -112,7 +112,7 @@ public class Call {
             throw new AxisFault(e.getMessage(),e);
         }
 
-        Listenertransport = null;
+        listenertransport = null;
         transport = Constants.TRANSPORT_HTTP;
     }
 
@@ -154,7 +154,7 @@ public class Call {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
             || Constants.TRANSPORT_MAIL.equals(transport)
             || Constants.TRANSPORT_TCP.equals(transport))) {
-            this.Listenertransport = Listenertransport;
+            this.listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
         } else {
             throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");

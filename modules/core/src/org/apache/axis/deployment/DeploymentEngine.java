@@ -27,6 +27,7 @@ import org.apache.axis.description.*;
 import org.apache.axis.engine.*;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
+import org.apache.axis.context.EngineContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,6 +40,7 @@ import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
+
     private Log log = LogFactory.getLog(getClass());
     private static Scheduler scheduler;
 
@@ -61,7 +63,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private EngineConfiguration engineRegistry;
+    private EngineConfiguration engineconfig;
 
     /**
      * this constaructor for the testing
@@ -97,10 +99,10 @@ public class DeploymentEngine implements DeploymentConstants {
      * this constructor is used to deploy a web service programatically, by using classLoader
      * and InputStream
      *
-     * @param engineRegistry
+     * @param engineconfig
      */
-    public DeploymentEngine(EngineConfiguration engineRegistry) {
-        this.engineRegistry = engineRegistry;
+    public DeploymentEngine(EngineConfiguration engineconfig) {
+        this.engineconfig = engineconfig;
     }
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
@@ -157,8 +159,8 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      */
-    public EngineConfiguration getEngineRegistry() {
-        return engineRegistry;
+    public EngineConfiguration getEngineconfig() {
+        return engineconfig;
     }
 
     /**
@@ -167,7 +169,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws AxisFault
      */
-    public EngineConfiguration start() throws AxisFault, DeploymentException, XMLStreamException {
+    public EngineContext start() throws AxisFault, DeploymentException, XMLStreamException {
         //String fileName;
         if (serverConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
@@ -175,7 +177,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File tempfile = new File(serverConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
-            engineRegistry = createEngineRegistry();
+            engineconfig = createEngineRegistry();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.procesServerXML(server);
         } catch (FileNotFoundException e) {
@@ -192,8 +194,7 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (PhaseException e) {
             log.info("Module validation failed" + e.getMessage());
         }
-
-        return engineRegistry;
+        return new EngineContext(engineconfig);
     }
 
     /**
@@ -228,14 +229,14 @@ public class DeploymentEngine implements DeploymentConstants {
                 throw new AxisFault(server + " Refer to invalid module " + qName + " has not bean deployed yet !");
             }
         }
-        PhaseResolver phaseResolver = new PhaseResolver(engineRegistry);
+        PhaseResolver phaseResolver = new PhaseResolver(engineconfig);
         phaseResolver.buildGlobalChains(server);
         phaseResolver.buildTranspotsChains();
 
     }
 
     public AxisModule getModule(QName moduleName) throws AxisFault {
-        AxisModule metaData = engineRegistry.getModule(moduleName);
+        AxisModule metaData = engineconfig.getModule(moduleName);
         return metaData;
     }
 
@@ -261,7 +262,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         currentFileItem.setClassLoader();
         serviceMetaData = getRunnableService(serviceMetaData);
-        engineRegistry.addService(serviceMetaData);
+        engineconfig.addService(serviceMetaData);
         Parameter para = serviceMetaData.getParameter("OUTSERVICE");
         if (para != null) {
             String value = (String) para.getValue();
@@ -305,7 +306,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (faultFlow != null) {
             addFlowHandlers(faultFlow);
         }
-        PhaseResolver reolve = new PhaseResolver(engineRegistry, serviceMetaData);
+        PhaseResolver reolve = new PhaseResolver(engineconfig, serviceMetaData);
         reolve.buildchains();
         serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
         return serviceMetaData;
@@ -325,6 +326,7 @@ public class DeploymentEngine implements DeploymentConstants {
             String readInProviderName = currentFileItem.getProvideName();
             if (readInProviderName != null && !"".equals(readInProviderName)) {
                 Class provider = Class.forName(currentFileItem.getProvideName(), true, loader1);
+
                 service.setMessageReceiver((Provider) provider.newInstance());
             }
         } catch (Exception e) {
@@ -382,7 +384,7 @@ public class DeploymentEngine implements DeploymentConstants {
         Flow faultFlow = moduelmetada.getFaultFlow();
         addFlowHandlers(faultFlow);
 
-        engineRegistry.addMdoule(moduelmetada);
+        engineconfig.addMdoule(moduelmetada);
     }
 
 
@@ -430,7 +432,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             serviceStatus = "Error:\n" + e.getMessage();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
-                                engineRegistry.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
+                                engineconfig.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
                             }
                             currentFileItem = null;
                         }
@@ -467,10 +469,10 @@ public class DeploymentEngine implements DeploymentConstants {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
-                        engineRegistry.removeService(new QName(serviceName));
+                        engineconfig.removeService(new QName(serviceName));
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
-                    engineRegistry.getFaulytServices().remove(serviceName);
+                    engineconfig.getFaulytServices().remove(serviceName);
                 }
 
             }

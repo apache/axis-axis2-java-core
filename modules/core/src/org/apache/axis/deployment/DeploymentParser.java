@@ -136,10 +136,10 @@ public class DeploymentParser implements DeploymentConstants {
                         serverMetaData.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
                         AxisTransportOut transportout = proccessTrasnsportOUT();
-                        dpengine.getEngineRegistry().addTransportOut(transportout);
+                        dpengine.getEngineconfig().addTransportOut(transportout);
                     } else if (TRANSPORTRECEIVER.equals(ST)) {
                         AxisTransportIn transportin = proccessTrasnsportIN();
-                        dpengine.getEngineRegistry().addTransportIn(transportin);
+                        dpengine.getEngineconfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MODULEST.equals(ST)) {
@@ -161,11 +161,11 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
                                     if(INFLOWST.equals(attvalue)){
-                                        dpengine.getEngineRegistry().setInPhases(processPhaseOrder());
+                                        dpengine.getEngineconfig().setInPhases(processPhaseOrder());
                                     }   else if (OUTFLOWST.equals(attvalue)){
-                                         dpengine.getEngineRegistry().setOutPhases(processPhaseOrder());
+                                         dpengine.getEngineconfig().setOutPhases(processPhaseOrder());
                                     }  else if (FAILTFLOWST.equals(attvalue)){
-                                          dpengine.getEngineRegistry().setFaultPhases(processPhaseOrder());
+                                          dpengine.getEngineconfig().setFaultPhases(processPhaseOrder());
                                     }  else {
                                          throw new DeploymentException("un defined flow type  "  + ST);
                                     }
@@ -174,7 +174,7 @@ public class DeploymentParser implements DeploymentConstants {
                         } else {
                             throw new DeploymentException("Flow type is a required attribute in "  + ST);
                         }
-                        //((EngineRegistryImpl) dpengine.getEngineRegistry()).setPhases(processPhaseOrder());
+                        //((EngineRegistryImpl) dpengine.getEngineconfig()).setPhases(processPhaseOrder());
                     } else if (SERVERST.equals(ST)) {
                         //TODO process attributes
                     } else {
@@ -327,27 +327,17 @@ public class DeploymentParser implements DeploymentConstants {
      */
     private void procesServiceXML(AxisService axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
-        boolean proviceFound = false;
         if (attribCount >= 1) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (PROVIDERNAME.equals(attname)) {
-                    if (dpengine != null && dpengine.getCurrentFileItem() != null) {
-                        dpengine.getCurrentFileItem().setProvideName(attvalue);
-                        proviceFound = true;
-                    }
-                } else if (STYLENAME.equals(attname)) {
+              if (STYLENAME.equals(attname)) {
                     axisService.setStyle(attvalue);
-                    //TODO setStyle should be handle latter
                 } else if (CONTEXTPATHNAME.equals(attname)) {
                     axisService.setContextPath(getValue(attvalue));
                 } else {
                     throw new DeploymentException("Bad arguments for the service" + axisService.getName());
                 }
-            }
-            if (!proviceFound) {
-                throw new DeploymentException("Provider class has not been specified");
             }
         } else
             throw new DeploymentException("Bad arguments" + axisService.getName());

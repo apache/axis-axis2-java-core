@@ -1,14 +1,18 @@
-<service provider="org.apache.axis.sample.echo.EchoProvider" style="rpc" contextPath="services">
-    <java:implementation class="org.apache.axis.sample.echo.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+<service messageReceiver="org.apache.axis.receivers.InOutSyncReceiver" style="rpc" contextPath="services">
+
+    <parameter name="ServiceClass" locked="xsd:false">org.apache.axis.sample.echo.EchoImpl</parameter>
+
     <inflow>
         <handler name="logging" class="org.apache.axis.sample.handlers.LoggingHandler">
             <order phase="Logging" phaseFirst="true"/>
-         </handler>
+        </handler>
     </inflow>
+
     <outflow/>
     <faultflow>
         <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler"/>
     </faultflow>
+    
     <operation name="echoString"/>
     <operation name="echoStringArray"/>
     <operation name="echoEchoStruct"/>

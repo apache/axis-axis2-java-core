@@ -187,11 +187,6 @@ public class AxisService extends WSDLServiceImpl
      * @see org.apache.axis.description.AxisService#setProvider(org.apache.axis.engine.Provider)
      */
 
-    /**
-     * Method setProvider
-     *
-     * @param provider
-     */
     public void setMessageReceiver(MessageReceiver receiver) {
         if (receiver != null) {
             this.setComponentProperty(MESSAGE_RECIVER_KEY, receiver);

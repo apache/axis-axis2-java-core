@@ -40,31 +40,24 @@ public class Call {
         //find the deployment mechanism , create
         //a EngineContext .. if the conf file not found
         //deafult one is used
-        properties = new HashMap();
-        this.engineContext = new EngineContext();
         init();
     }
 
     public Call(InputStream in) throws AxisFault {
-        properties = new HashMap();
-        this.engineContext = new EngineContext();
         init();
     }
 
     public Call(File inFile) throws AxisFault {
         try {
             InputStream in =new FileInputStream(inFile);
-            properties = new HashMap();
-            this.engineContext = new EngineContext();
             init();
         } catch (FileNotFoundException e) {
             throw new AxisFault("FileNotFound " + e.getMessage());
         }
     }
 
-    public Call(EngineContext engineContext){
-        this.properties =new HashMap();
-        this.engineContext = engineContext;
+    public Call(EngineContext engineContext) throws AxisFault {
+        init();
     }
 
     public SOAPEnvelope sendReciveAsync(SOAPEnvelope env,Callback callback) throws AxisFault {
@@ -157,9 +150,10 @@ public class Call {
      */
     private void init() throws AxisFault{
         try{
+            properties = new HashMap();
+            this.engineContext = new EngineContext();
             AxisService serive = new AxisService();
             serive.setName(new QName(ClientService.SERVIC_NAME));
-            ClientService sc = new ClientService();
             Class serviceclass = Class.forName("org.apache.axis.client.ClientService");
             serive.setServiceClass(serviceclass);
         }catch(ClassNotFoundException e){
