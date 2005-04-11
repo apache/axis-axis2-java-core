@@ -252,7 +252,7 @@ public class DeploymentEngine implements DeploymentConstants {
         EngineConfiguration newEngineRegisty;
 
         server = new AxisGlobal();
-        newEngineRegisty = new EngineRegistryImpl(server);
+        newEngineRegisty = new EngineConfigurationImpl(server);
 
         return newEngineRegisty;
     }

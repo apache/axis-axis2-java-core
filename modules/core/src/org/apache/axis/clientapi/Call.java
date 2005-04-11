@@ -29,7 +29,7 @@ import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineRegistryImpl;
+import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
@@ -85,7 +85,7 @@ public class Call {
      */
     public Call() throws AxisFault {
         // TODO look for the Client XML and create an Engine registy
-        this.registry = new EngineRegistryImpl(new AxisGlobal());
+        this.registry = new EngineConfigurationImpl(new AxisGlobal());
         
         try {
             //This is a hack, initialize the transports for the client side 

@@ -50,7 +50,7 @@ public class EngineTest extends TestCase {
        super(arg0);
    }
    protected void setUp() throws Exception {
-       engineRegistry = new EngineRegistryImpl(new AxisGlobal());
+       engineRegistry = new EngineConfigurationImpl(new AxisGlobal());
 
        AxisTransportOut transport = new AxisTransportOut(new QName("null"));
        transport.setSender(new NullTransportSender());

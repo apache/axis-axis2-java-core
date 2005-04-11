@@ -30,7 +30,7 @@ import org.apache.axis.description.AxisTransportOut;
 /**
  * Class EngineRegistryImpl
  */
-public class EngineRegistryImpl implements EngineConfiguration {
+public class EngineConfigurationImpl implements EngineConfiguration {
     /**
      * To store Erroness services
      */
@@ -72,7 +72,7 @@ public class EngineRegistryImpl implements EngineConfiguration {
      *
      * @param global
      */
-    public EngineRegistryImpl(AxisGlobal global) throws AxisFault {
+    public EngineConfigurationImpl(AxisGlobal global) throws AxisFault {
         this.global = global;
         inPhases = new ArrayList();
         outPhases = new ArrayList();

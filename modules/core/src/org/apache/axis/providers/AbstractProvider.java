@@ -16,6 +16,7 @@
 package org.apache.axis.providers;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.engine.Provider;
 
 import javax.xml.namespace.QName;
@@ -24,7 +25,7 @@ import javax.xml.namespace.QName;
  * This is the Absract provider. It is just a another handler. the
  * protected abstract methods are only for the sake of breaking down the logic
  */
-public abstract class AbstractProvider implements Provider {
+public abstract class AbstractProvider implements MessageReceiver {
     /**
      * Field name
      */

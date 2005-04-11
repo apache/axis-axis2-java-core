@@ -50,7 +50,7 @@ public class EnginePausingTest extends TestCase {
         super(arg0);
     }
     protected void setUp() throws Exception {
-        engineRegistry = new EngineRegistryImpl(new AxisGlobal());
+        engineRegistry = new EngineConfigurationImpl(new AxisGlobal());
 
         AxisTransportOut transportOut = new AxisTransportOut(new QName("null"));
         transportOut.setSender(new NullTransportSender());
