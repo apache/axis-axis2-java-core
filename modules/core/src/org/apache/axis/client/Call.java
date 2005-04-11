@@ -6,7 +6,9 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.description.AxisService;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.File;
@@ -34,17 +36,19 @@ public class Call {
 
     private EngineContext engineContext;
 
-    public Call(){
+    public Call() throws AxisFault {
         //find the deployment mechanism , create
         //a EngineContext .. if the conf file not found
         //deafult one is used
         properties = new HashMap();
         this.engineContext = new EngineContext();
+        init();
     }
 
-    public Call(InputStream in){
+    public Call(InputStream in) throws AxisFault {
         properties = new HashMap();
         this.engineContext = new EngineContext();
+        init();
     }
 
     public Call(File inFile) throws AxisFault {
@@ -52,6 +56,7 @@ public class Call {
             InputStream in =new FileInputStream(inFile);
             properties = new HashMap();
             this.engineContext = new EngineContext();
+            init();
         } catch (FileNotFoundException e) {
             throw new AxisFault("FileNotFound " + e.getMessage());
         }
@@ -139,6 +144,27 @@ public class Call {
 
     public Object getProperty(String key){
         return properties.get(key);
+    }
+
+
+    private ClientService getService(){
+        return  null;
+
+    }
+
+    /**
+     * This method is used to initilize the client side ,
+     */
+    private void init() throws AxisFault{
+        try{
+            AxisService serive = new AxisService();
+            serive.setName(new QName(ClientService.SERVIC_NAME));
+            ClientService sc = new ClientService();
+            Class serviceclass = Class.forName("org.apache.axis.client.ClientService");
+            serive.setServiceClass(serviceclass);
+        }catch(ClassNotFoundException e){
+            throw new AxisFault("ClassNotFoundException" + e.getMessage());
+        }
     }
 
 }

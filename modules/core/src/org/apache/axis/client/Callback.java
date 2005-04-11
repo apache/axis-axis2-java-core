@@ -1,5 +1,7 @@
 package org.apache.axis.client;
 
+import org.apache.axis.om.SOAPEnvelope;
+
 /**
  * Created by IntelliJ IDEA.
  * Author : Deepal Jayasinghe
@@ -15,14 +17,14 @@ public abstract class Callback {
     /**
      * Field result
      */
-    private AsyncResult result;
+    private SOAPEnvelope result;
 
     /**
      * Method onComplete
      *
      * @param result
      */
-    public abstract void onComplete(AsyncResult result);
+    public abstract void onComplete(SOAPEnvelope result);
 
     /**
      * Method reportError
@@ -54,7 +56,7 @@ public abstract class Callback {
      *
      * @return
      */
-    public AsyncResult getResult() {
+    public SOAPEnvelope getResult() {
         return result;
     }
 
@@ -63,7 +65,7 @@ public abstract class Callback {
      *
      * @param result
      */
-    public void setResult(AsyncResult result) {
+    public void setResult(SOAPEnvelope result) {
         this.result = result;
     }
 }
