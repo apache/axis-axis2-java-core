@@ -15,12 +15,23 @@
 */
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.*;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineConfiguration;
 
 /**
  * Class PhaseResolver

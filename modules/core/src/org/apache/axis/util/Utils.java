@@ -18,6 +18,7 @@ package org.apache.axis.util;
 import java.util.ArrayList;
 
 import org.apache.axis.Constants;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
@@ -34,7 +35,7 @@ public class Utils {
         flow.addHandler(hmd);
     }
     public static void addPhasesToServiceFromFlow(
-        AxisService service,
+        ServiceContext serviceContext,
         String phaseName,
         Flow flow,
         int flowtype)
@@ -43,21 +44,22 @@ public class Utils {
         SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
         faultchain.add(p);
         addHandlers(flow, p);
-        service.setPhases(faultchain, flowtype);
+        serviceContext.setPhases(faultchain, flowtype);
     }
-    public static void createExecutionChains(AxisService service) throws AxisFault {
+    public static void createExecutionChains(ServiceContext  serviceContext) throws AxisFault {
+        AxisService service = serviceContext.getServiceConfig();
         addPhasesToServiceFromFlow(
-            service,
+            serviceContext,
             Constants.PHASE_SERVICE,
             service.getInFlow(),
             EngineConfiguration.INFLOW);
         addPhasesToServiceFromFlow(
-            service,
+            serviceContext,
             Constants.PHASE_SERVICE,
             service.getOutFlow(),
             EngineConfiguration.OUTFLOW);
         addPhasesToServiceFromFlow(
-            service,
+            serviceContext,
             Constants.PHASE_SERVICE,
             service.getFaultFlow(),
             EngineConfiguration.FAULTFLOW);

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
@@ -24,10 +26,6 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.wsdl.WSDLService;
-
-
-
-import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher

@@ -19,13 +19,13 @@ package org.apache.axis.description;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Provider;
-import org.apache.axis.providers.AbstractProvider;
+import org.apache.axis.receivers.AbstractInOutReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 
-public class SpeakingProvider extends AbstractProvider implements Provider {
+public class SpeakingProvider extends AbstractInOutReceiver implements Provider {
     private Log log = LogFactory.getLog(getClass());
     private String message;
 

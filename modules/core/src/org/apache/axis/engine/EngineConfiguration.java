@@ -21,7 +21,11 @@ import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.description.*;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
 
 /**
  * The palce where all the Global states of Axis is kept.

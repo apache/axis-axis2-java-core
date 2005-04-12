@@ -33,7 +33,7 @@ import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.providers.AbstractProvider;
+import org.apache.axis.receivers.AbstractInOutReceiver;
 import org.apache.axis.transport.TransportSender;
 import org.apache.wsdl.WSDLService;
 
@@ -98,7 +98,7 @@ public class EngineTest extends TestCase {
 
    }
 
-   public class NullProvider extends AbstractProvider {
+   public class NullProvider extends AbstractInOutReceiver {
        public MessageContext invoke(MessageContext msgCtx) throws AxisFault {
            MessageContext newCtx =
                new MessageContext(

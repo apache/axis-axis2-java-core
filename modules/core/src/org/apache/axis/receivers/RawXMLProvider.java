@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.providers;
+package org.apache.axis.receivers;
+
+import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
@@ -21,7 +25,8 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Provider;
+import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -30,13 +35,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
 
-import javax.xml.namespace.QName;
-import java.lang.reflect.Method;
-
 /**
  * This is a Simple java Provider.
  */
-public class RawXMLProvider extends AbstractProvider implements Provider {
+public class RawXMLProvider extends AbstractInOutReceiver implements MessageReceiver {
     /**
      * Field log
      */
@@ -71,10 +73,9 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
      * @return
      * @throws AxisFault
      */
-    protected Object makeNewServiceObject(MessageContext msgContext)
-            throws AxisFault {
+    protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
-            AxisService service = msgContext.getService();
+            AxisService service = msgContext.getServiceContext().getServiceConfig();
             classLoader = service.getClassLoader();
             Class implClass = service.getServiceClass();
             return implClass.newInstance();
@@ -90,9 +91,8 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
      * @return
      * @throws AxisFault
      */
-    public Object getTheImplementationObject(MessageContext msgContext)
-            throws AxisFault {
-        AxisService service = msgContext.getService();
+    public Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
+        AxisService service = msgContext.getServiceContext().getServiceConfig();
         QName serviceName = service.getName();
         if (Constants.APPLICATION_SCOPE.equals(scope)) {
             return makeNewServiceObject(msgContext);
@@ -117,14 +117,7 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
         }
     }
 
-    /**
-     * Method invoke
-     *
-     * @param msgContext
-     * @return
-     * @throws AxisFault
-     */
-    public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+    public void recieve(MessageContext msgContext) throws AxisFault {
         try {
 
             // get the implementation class for the Web Service
@@ -132,9 +125,9 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
 
             // find the WebService method
             Class ImplClass = obj.getClass();
-            
-            AxisOperation op = msgContext.getOperation();
-            if(op == null){
+
+            AxisOperation op = msgContext.getOperationContext().getOperationConfig();
+            if (op == null) {
                 throw new AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
             }
             String methodName = op.getName().getLocalPart();
@@ -146,63 +139,52 @@ public class RawXMLProvider extends AbstractProvider implements Provider {
                 }
             }
             Class[] parameters = method.getParameterTypes();
-            if ((parameters != null) && (parameters.length == 1)
-                    && OMElement.class.getName().equals(
-                            parameters[0].getName())) {
-                OMElement methodElement =
-                        msgContext.getEnvelope().getBody().getFirstElement();
-                        
-                OMElement parmeter = null;        
+            if ((parameters != null)
+                && (parameters.length == 1)
+                && OMElement.class.getName().equals(parameters[0].getName())) {
+                OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
+
+                OMElement parmeter = null;
                 SOAPEnvelope envelope = null;
                 MessageContext msgContext1 = new MessageContext(msgContext);
-                        
-                if(WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())){
+
+                if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
                     parmeter = methodElement;
-                    Object[] parms = new Object[]{parmeter};
+                    Object[] parms = new Object[] { parmeter };
 
                     // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj,
-                            parms);
-                    envelope =
-                            OMFactory.newInstance().getDefaultEnvelope();
+                    OMElement result = (OMElement) method.invoke(obj, parms);
+                    envelope = OMFactory.newInstance().getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
-                
-                }else if(WSDLService.STYLE_RPC.equals(msgContext.getMessageStyle())){
+
+                } else if (WSDLService.STYLE_RPC.equals(msgContext.getMessageStyle())) {
                     parmeter = methodElement.getFirstElement();
-                    Object[] parms = new Object[]{parmeter};
+                    Object[] parms = new Object[] { parmeter };
 
                     // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj,
-                            parms);
-                    OMFactory fac = OMFactory.newInstance();       
-                    envelope =
-                            OMFactory.newInstance().getDefaultEnvelope();
+                    OMElement result = (OMElement) method.invoke(obj, parms);
+                    OMFactory fac = OMFactory.newInstance();
+                    envelope = OMFactory.newInstance().getDefaultEnvelope();
 
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                     OMElement responseMethodName =
-                             fac.createOMElement(methodName + "Response", ns);
+                    OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
                     responseMethodName.addChild(result);
-                    envelope.getBody().addChild(responseMethodName);                            
-                }else{
+                    envelope.getBody().addChild(responseMethodName);
+                } else {
                     throw new AxisFault("Unknown style ");
                 }
                 msgContext1.setEnvelope(envelope);
-                return msgContext1;
+                MessageSender sender = new MessageSender(msgContext.getEngineContext());
+                sender.send(msgContext1);
             } else {
                 throw new AxisFault(
-                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                                + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                    "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
+
     }
 
-    /**
-     * Method revoke
-     *
-     * @param msgContext
-     */
-    public void revoke(MessageContext msgContext) {
-    }
 }

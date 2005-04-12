@@ -18,10 +18,8 @@ package org.apache.axis.context;
  * 
  */
 
-import org.apache.axis.context.AbstractContext;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MEPContext  extends AbstractContext{
     private Map messageContextMap;

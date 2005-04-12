@@ -15,9 +15,10 @@
  */
 package org.apache.axis.addressing;
 
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class AnyContentType

@@ -15,13 +15,13 @@
  */
 package org.apache.axis.handlers;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class AbstractHandler

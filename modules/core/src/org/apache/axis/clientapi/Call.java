@@ -1,300 +1,179 @@
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
 package org.apache.axis.clientapi;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStream;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.miheaders.RelatesTo;
+import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
- * Class Call
+ * Created by IntelliJ IDEA.
+ * Author : Deepal Jayasinghe
+ * Date: Apr 9, 2005
+ * Time: 8:00:08 PM
  */
 public class Call {
-    /**
-     * Field registry
-     */
-    private EngineConfiguration registry;
 
-    /**
-     * Field log
-     */
-    protected Log log = LogFactory.getLog(getClass());
+    private MessageInformationHeadersCollection messageInfoHeaders;
 
-    /**
-     * Field targetEPR
-     */
-    private EndpointReference targetEPR;
+    private HashMap properties;
 
-    /**
-     * Field useSeparateListener
-     */
-    private boolean useSeparateListener;
-
-    // only used in SendReciveAync , to get the response
-
-    /**
-     * Field listenertransport
-     */
-    private String listenertransport;
-
-    // the type of transport that the request should be send throgh
-
-    /**
-     * Field transport
-     */
     private String transport;
 
-    /**
-     * Field action
-     */
-    private String action;
+    private EngineContext engineContext;
 
-    /**
-     * Constructor Call
-     */
+    private String Listenertransport;
+
+    private boolean useSeparateListener;
+
+    private CallbackReceiver callbackReceiver;
+    
+    
     public Call() throws AxisFault {
-        // TODO look for the Client XML and create an Engine registy
-        this.registry = new EngineConfigurationImpl(new AxisGlobal());
         
+   
+   
+   
+
         try {
+            //find the deployment mechanism , create
+            //a EngineContext .. if the conf file not found
+            //deafult one is used
+            properties = new HashMap();
+
+            EngineConfiguration registry = new EngineConfigurationImpl(new AxisGlobal());
+
             //This is a hack, initialize the transports for the client side 
-            AxisTransportOut httpTransportOut = new AxisTransportOut(new QName(Constants.TRANSPORT_HTTP));
+            AxisTransportOut httpTransportOut =
+                new AxisTransportOut(new QName(Constants.TRANSPORT_HTTP));
             Class className = Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
             httpTransportOut.setSender((TransportSender) className.newInstance());
             registry.addTransportOut(httpTransportOut);
-            
-            AxisTransportIn axisTr = new AxisTransportIn(new QName(Constants.TRANSPORT_HTTP)); 
+
+            AxisTransportIn axisTr = new AxisTransportIn(new QName(Constants.TRANSPORT_HTTP));
             className = Class.forName("org.apache.axis.transport.http.HTTPTransportReceiver");
             axisTr.setReciver((TransportReceiver) className.newInstance());
             registry.addTransportIn(axisTr);
-            
-            AxisTransportOut mailTransportOut = new AxisTransportOut(new QName(Constants.TRANSPORT_MAIL));
+
+            AxisTransportOut mailTransportOut =
+                new AxisTransportOut(new QName(Constants.TRANSPORT_MAIL));
             className = Class.forName("org.apache.axis.transport.mail.MailTransportSender");
             mailTransportOut.setSender((TransportSender) className.newInstance());
             registry.addTransportIn(new AxisTransportIn(new QName(Constants.TRANSPORT_MAIL)));
             registry.addTransportOut(mailTransportOut);
-        }  catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage(),e);
+
+            this.engineContext = new EngineContext(registry);
+            init();
+        } catch (AxisFault e) {
+            throw new AxisFault(e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage(), e);
         } catch (InstantiationException e) {
-            throw new AxisFault(e.getMessage(),e);
+            throw new AxisFault(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            throw new AxisFault(e.getMessage(),e);
-        }
-
-        listenertransport = null;
-        transport = Constants.TRANSPORT_HTTP;
-    }
-
-    /**
-     * Method setTo
-     *
-     * @param EPR
-     */
-    public void setTo(EndpointReference EPR) {
-        this.targetEPR = EPR;
-    }
-
-    /**
-     * Method setTransportType
-     *
-     * @param transport
-     * @throws AxisFault
-     */
-    public void setTransportType(String transport) throws AxisFault {
-        if ((Constants.TRANSPORT_HTTP.equals(transport)
-            || Constants.TRANSPORT_MAIL.equals(transport)
-            || Constants.TRANSPORT_TCP.equals(transport))) {
-            this.transport = transport;
-        } else {
-            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
+            throw new AxisFault(e.getMessage(), e);
         }
     }
 
-    /**
-     * todo
-     * inoder to have asyn support for tansport , it shoud call this method
-     *
-     * @param Listenertransport
-     * @param useSeparateListener
-     * @throws AxisFault
-     */
-    public void setListenerTransport(String Listenertransport, boolean useSeparateListener)
-        throws AxisFault {
-        if ((Constants.TRANSPORT_HTTP.equals(transport)
-            || Constants.TRANSPORT_MAIL.equals(transport)
-            || Constants.TRANSPORT_TCP.equals(transport))) {
-            this.listenertransport = Listenertransport;
-            this.useSeparateListener = useSeparateListener;
-        } else {
-            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
-        }
+    public Call(InputStream in) throws AxisFault {
+        properties = new HashMap();
+        //this.engineContext = new EngineContext();
+        init();
+        throw new UnsupportedOperationException("TODO fix this");
     }
 
-    /**
-     * todo
-     *
-     * @param action
-     */
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    /**
-     * Fire and forget MEP
-     * todo
-     *
-     * @param envelope
-     * @throws AxisFault
-     */
-    public void sendAsync(SOAPEnvelope envelope) throws AxisFault {
-        Writer out = null;
+    public Call(File inFile) throws AxisFault {
         try {
+            InputStream in = new FileInputStream(inFile);
+
+            properties = new HashMap();
+            //this.engineContext = new EngineContext();
+            init();
+            throw new UnsupportedOperationException("TODO fix this");
+        } catch (FileNotFoundException e) {
+            throw new AxisFault("FileNotFound " + e.getMessage());
+        }
+    }
+
+
+    public Call(EngineContext engineContext) {
+        this.properties = new HashMap();
+        this.engineContext = engineContext;
+    }
+
+    public void sendReciveAsync(SOAPEnvelope env, Callback callback) throws AxisFault {
+        EngineConfiguration registry = engineContext.getEngineConfig();
+        if (Constants.TRANSPORT_MAIL.equals(transport)) {
+            throw new AxisFault("This invocation support only for bi-directional transport");
+        }
+        try {
+            MessageSender sender = new MessageSender(engineContext);
+
             AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
             AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
-            
-            final AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null,transportIn,transportOut);
-            msgctx.setTransportOut(transportOut);
-            msgctx.setEnvelope(envelope);
-            msgctx.setTo(targetEPR);
 
-            msgctx.setTo(targetEPR);
-            if (action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
-            }
-            engine.send(msgctx);
+            MessageContext msgctx =
+                new MessageContext(engineContext, null, null, transportIn, transportOut);
+            msgctx.setEnvelope(env);
+            msgctx.setMessageInformationHeaders(messageInfoHeaders);
+
+            sender.send(msgctx);
+            
+            callbackReceiver.addCallback(msgctx.getMessageID(),callback);
+        } catch (OMException e) {
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
-        } finally {
-            try {
-
-                // TODO This should be the Receiver.close();
-                // Receiver is taken using the
-                // TransportReceiver reciver = TransportReceiverLocator.locate(requestMessageContext);
-                out.close();
-            } catch (IOException e1) {
-                throw new AxisFault();
-            }
         }
     }
 
-    /**
-     * Method send
-     *
-     * @param envelope
-     * @throws AxisFault
-     */
-    public void send(SOAPEnvelope envelope) throws AxisFault {
-        if (Constants.TRANSPORT_MAIL.equals(transport)) {
-            throw new AxisFault("This invocation support only for bi-directional transport");
-        } else {
-            MessageContext request = null;
-            try {
-                AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
-                AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
-
-                final AxisEngine engine = new AxisEngine();
-                request = new MessageContext(registry, null, null,transportIn,transportOut);
-                request.setEnvelope(envelope);
-                request.setTransportOut(transportOut);
-                request.setTo(targetEPR);
-                if (action != null) {
-                    request.setProperty(MessageContext.SOAP_ACTION, action);
-                }
-                engine.send(request);
-
-                // todo dose the 202 response  come throgh the same connection
-                // This is purely HTTP specific.
-                // Handle the HTTP 202 respose
-
-                /*
-                * MessageContext response =
-                * new MessageContext(
-                * registry,
-                * request.getProperties(),
-                * request.getSessionContext());
-                */
-                request.setServerSide(false);
-                TransportReceiver receiver = request.getTransportIn().getReciever();
-                receiver.invoke(request);
-                if (request.getProperty(MessageContext.TRANSPORT_SUCCEED) != null) {
-                    throw new AxisFault("Sent failed");
-                } else if (request.getEnvelope().getBody().hasFault()) {
-                    throw new AxisFault(
-                        request.getEnvelope().getBody().getFault().getFaultString());
-                }
-            } catch (IOException e) {
-                throw AxisFault.makeFault(e);
-            } finally {
-                Writer writer = (Writer) request.getProperty(MessageContext.TRANSPORT_WRITER);
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        throw new AxisFault(e.getMessage());
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Method sendReceive
-     *
-     * @param envelope
-     * @return
-     * @throws AxisFault
-     */
-    public SOAPEnvelope sendReceive(SOAPEnvelope envelope) throws AxisFault {
+    public SOAPEnvelope sendReciveSync(SOAPEnvelope env) throws AxisFault {
+        EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }
         try {
+            MessageSender sender = new MessageSender(engineContext);
+
             AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
             AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
-            AxisEngine engine = new AxisEngine();
-            MessageContext msgctx = new MessageContext(registry, null, null,transportIn,transportOut);
-            msgctx.setEnvelope(envelope);
-            
-            msgctx.setTo(targetEPR);
-            if (action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
-            }
-            engine.send(msgctx);
+            MessageContext msgctx =
+                new MessageContext(engineContext, null, null, transportIn, transportOut);
+            msgctx.setEnvelope(env);
+            msgctx.setMessageInformationHeaders(messageInfoHeaders);
+
+            sender.send(msgctx);
+
             MessageContext response =
-                new MessageContext(registry, msgctx.getProperties(), msgctx.getSessionContext(),msgctx.getTransportIn(),transportOut);
+                new MessageContext(
+                    engineContext,
+                    msgctx.getProperties(),
+                    msgctx.getSessionContext(),
+                    msgctx.getTransportIn(),
+                    transportOut);
             response.setServerSide(false);
 
             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -310,50 +189,160 @@ public class Call {
         }
     }
 
-    /**
-     * @param envelope
-     * @param callback
-     * @throws AxisFault
-     */
-    public void sendReceiveAsync(SOAPEnvelope envelope, final Callback callback) throws AxisFault {
-        try {
-            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
-            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
-            
-            AxisEngine engine = new AxisEngine();
-            final MessageContext msgctx = new MessageContext(registry, null, null, transportIn,transportOut);
-            msgctx.setEnvelope(envelope);
-            msgctx.setTransportOut(transportOut);
-            msgctx.setTo(targetEPR);
-            if (action != null) {
-                msgctx.setProperty(MessageContext.SOAP_ACTION, action);
-            }
-            if (useSeparateListener) {
-                if (Constants.TRANSPORT_MAIL.equals(transport)) {
-                    throw new AxisFault("This invocation support only for bi-directional transport");
-                }
-                Invoker invoker = new Invoker(msgctx, engine, registry, callback);
-                Thread th = new Thread(invoker);
-                th.start();
-            } else {
+    public String getTransport() {
+        return transport;
+    }
 
-                // TODO
-                // start the Listener at the client side
-                throw new UnsupportedOperationException("Unblocking transports are not supported yet");
-            }
-        } catch (OMException e) {
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+    public void setTransport(String transport) throws AxisFault {
+        if ((Constants.TRANSPORT_HTTP.equals(transport)
+            || Constants.TRANSPORT_MAIL.equals(transport)
+            || Constants.TRANSPORT_TCP.equals(transport))) {
+            this.transport = transport;
+        } else {
+            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
         }
     }
 
+    public void addProperty(String key, Object value) {
+        properties.put(key, value);
+    }
+
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    private CallbackReceiver getService() {
+        return null;
+
+    }
+
     /**
-     * Method getTO
-     *
+     * This method is used to initilize the client side ,
+     */
+    private void init() throws AxisFault {
+        AxisService callbackService = new AxisService();
+        callbackService.setName(new QName(CallbackReceiver.SERVIC_NAME));
+        callbackReceiver = new CallbackReceiver();
+        callbackService.setMessageReceiver(callbackReceiver);
+    }
+
+    /**
      * @return
      */
-    public Object getTO() {
-        return this.targetEPR;
+    public String getAction() {
+        return messageInfoHeaders.getAction();
     }
+
+    /**
+     * @return
+     */
+    public EndpointReference getFaultTo() {
+        return messageInfoHeaders.getFaultTo();
+    }
+
+    /**
+     * @return
+     */
+    public EndpointReference getFrom() {
+        return messageInfoHeaders.getFrom();
+    }
+
+    /**
+     * @return
+     */
+    public String getMessageId() {
+        return messageInfoHeaders.getMessageId();
+    }
+
+    /**
+     * @return
+     */
+    public RelatesTo getRelatesTo() {
+        return messageInfoHeaders.getRelatesTo();
+    }
+
+    /**
+     * @return
+     */
+    public EndpointReference getReplyTo() {
+        return messageInfoHeaders.getReplyTo();
+    }
+
+    /**
+     * @return
+     */
+    public EndpointReference getTo() {
+        return messageInfoHeaders.getTo();
+    }
+
+    /**
+     * @param action
+     */
+    public void setAction(String action) {
+        messageInfoHeaders.setAction(action);
+    }
+
+    /**
+     * @param faultTo
+     */
+    public void setFaultTo(EndpointReference faultTo) {
+        messageInfoHeaders.setFaultTo(faultTo);
+    }
+
+    /**
+     * @param from
+     */
+    public void setFrom(EndpointReference from) {
+        messageInfoHeaders.setFrom(from);
+    }
+
+    /**
+     * @param messageId
+     */
+    public void setMessageId(String messageId) {
+        messageInfoHeaders.setMessageId(messageId);
+    }
+
+    /**
+     * @param relatesTo
+     */
+
+    public void setRelatesTo(RelatesTo relatesTo) {
+        messageInfoHeaders.setRelatesTo(relatesTo);
+    }
+
+    /**
+     * @param replyTo
+     */
+    public void setReplyTo(EndpointReference replyTo) {
+        messageInfoHeaders.setReplyTo(replyTo);
+    }
+
+    /**
+     * @param to
+     */
+    public void setTo(EndpointReference to) {
+        messageInfoHeaders.setTo(to);
+    }
+
+    /**
+     * todo
+     * inoder to have asyn support for tansport , it shoud call this method
+     *
+     * @param Listenertransport
+     * @param useSeparateListener
+     * @throws AxisFault
+     */
+    public void setListenerTransport(String Listenertransport, boolean useSeparateListener)
+        throws AxisFault {
+        if ((Constants.TRANSPORT_HTTP.equals(transport)
+            || Constants.TRANSPORT_MAIL.equals(transport)
+            || Constants.TRANSPORT_TCP.equals(transport))) {
+            this.Listenertransport = Listenertransport;
+            this.useSeparateListener = useSeparateListener;
+        } else {
+            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
+        }
+    }
+
 }

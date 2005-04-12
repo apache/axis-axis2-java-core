@@ -28,7 +28,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.providers.AbstractProvider;
+import org.apache.axis.receivers.AbstractInOutReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +41,7 @@ import java.lang.reflect.Method;
  * This is a Simple java Provider.
  */
 
-public class SimpleJavaProvider extends AbstractProvider implements Provider {
+public class SimpleJavaProvider extends AbstractInOutReceiver implements Provider {
     protected Log log = LogFactory.getLog(getClass());
     protected String scope;
     protected Method method;

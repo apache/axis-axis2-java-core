@@ -16,11 +16,11 @@
 
 package org.apache.axis.deployment;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
-
-import javax.xml.stream.XMLStreamException;
 
 
 public class EngineRegistryFactoryImpl implements EngineRegistryFactory {

@@ -1,5 +1,9 @@
 package org.apache.axis.handlers.addressing;
 
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -7,12 +11,13 @@ import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -19,7 +19,6 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.handlers.OpNameFinder;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -149,8 +148,6 @@ public class AxisEngine {
 
             if (context.isServerSide()) {
                 // add invoke Phase
-                Handler opNameFinder = new OpNameFinder();
-                opNameFinder.invoke(context);
                 MessageReceiver reciver =
                     context.getServiceContext().getServiceConfig().getMessageReceiver();
                 reciver.recieve(context);

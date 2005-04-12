@@ -15,6 +15,8 @@
 */
 package org.apache.axis.phaseresolver;
 
+import java.util.ArrayList;
+
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
@@ -25,8 +27,6 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.SimplePhase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
 
 /**
  * This class hold all the phases found in the service.xml and server.xml

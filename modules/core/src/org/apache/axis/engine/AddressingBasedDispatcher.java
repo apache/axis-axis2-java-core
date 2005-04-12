@@ -33,7 +33,8 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
+    public static final QName NAME =
+        new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
     private AxisService service;
 
     /**
@@ -65,13 +66,17 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             } else {
                 throw new AxisFault("Both the URI and SOAP_ACTION are Null");
             }
+            if (msgctx.getOperationContext() == null) {
+                String action = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+                QName operationName = new QName(action);
+                AxisOperation op = service.getOperation(operationName);
+                if (op != null) {
+                    OperationContext opContext = new OperationContext(op);
+                    msgctx.setOperationContext(opContext);
+                }else{
+                    throw new AxisFault("Operation not found");
+                }
 
-            String action = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
-            QName operationName = new QName(action);
-            AxisOperation op = service.getOperation(operationName);
-            if (op != null) {
-                OperationContext opContext = new OperationContext(op);
-                msgctx.setOperationContext(opContext);
             }
         } else {
             // TODO client side service Dispatch ,, What this really mean?

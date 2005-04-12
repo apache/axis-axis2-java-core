@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.providers;
-
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.engine.Provider;
+package org.apache.axis.receivers;
 
 import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.MessageReceiver;
 
 /**
  * This is the Absract provider. It is just a another handler. the
  * protected abstract methods are only for the sake of breaking down the logic
  */
-public abstract class AbstractProvider implements MessageReceiver {
+public abstract class AbstractInOutReceiver implements MessageReceiver {
     /**
      * Field name
      */
@@ -47,13 +45,5 @@ public abstract class AbstractProvider implements MessageReceiver {
      */
     public void setName(QName name) {
         this.name = name;
-    }
-
-    /**
-     * Method revoke
-     *
-     * @param msgContext
-     */
-    public void revoke(MessageContext msgContext) {
     }
 }

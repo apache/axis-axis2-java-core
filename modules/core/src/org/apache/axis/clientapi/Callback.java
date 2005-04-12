@@ -1,25 +1,15 @@
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.axis.clientapi;
 
+import org.apache.axis.om.SOAPEnvelope;
+
 /**
- * Class Callback
+ * Created by IntelliJ IDEA.
+ * Author : Deepal Jayasinghe
+ * Date: Apr 9, 2005
+ * Time: 8:03:41 PM
  */
 public abstract class Callback {
-    /**
+     /**
      * Field complete
      */
     private boolean complete = false;
@@ -27,14 +17,14 @@ public abstract class Callback {
     /**
      * Field result
      */
-    private AsyncResult result;
+    private SOAPEnvelope result;
 
     /**
      * Method onComplete
      *
      * @param result
      */
-    public abstract void onComplete(AsyncResult result);
+    public abstract void onComplete(SOAPEnvelope result);
 
     /**
      * Method reportError
@@ -66,7 +56,7 @@ public abstract class Callback {
      *
      * @return
      */
-    public AsyncResult getResult() {
+    public SOAPEnvelope getResult() {
         return result;
     }
 
@@ -75,7 +65,7 @@ public abstract class Callback {
      *
      * @param result
      */
-    public void setResult(AsyncResult result) {
+    public void setResult(SOAPEnvelope result) {
         this.result = result;
     }
 }

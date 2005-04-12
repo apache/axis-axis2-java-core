@@ -16,6 +16,14 @@
 
 package org.apache.axis.transport.mail;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.Reader;
+import java.util.Properties;
+
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineConfiguration;
@@ -23,14 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.pop3.POP3Client;
 import org.apache.commons.net.pop3.POP3MessageInfo;
-
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.Reader;
-import java.util.Properties;
 
 /**
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
