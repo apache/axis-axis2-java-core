@@ -109,7 +109,7 @@ public class SimplePhase  implements Phase {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-        Stack executionStack = new Stack();
+       // Stack executionStack = new Stack();
         try {
             while (indexOfHandlerToExecute < handlers.size() ) {
                 if(msgctx.isPaused()){
@@ -122,7 +122,7 @@ public class SimplePhase  implements Phase {
                         handler.invoke(msgctx);
                         //This line should be after the invoke as if the invocation failed this handlers is takn care of and 
                         //no need to revoke agien
-                        executionStack.push(handler);
+               //         executionStack.push(handler);
                         indexOfHandlerToExecute++;
                     }
                 }
@@ -130,31 +130,31 @@ public class SimplePhase  implements Phase {
         } catch (Exception e) {
             log.info("Phase " + phaseName + " failed with the "
                             + e.getMessage());
-            while (!executionStack.isEmpty()) {
-                Handler handler = (Handler) executionStack.pop();
-                log.info("revoke the Handler " + handler.getName()
-                                + " with in the Phase " + phaseName);
-                handler.revoke(msgctx);
-            }
+//            while (!executionStack.isEmpty()) {
+//                Handler handler = (Handler) executionStack.pop();
+//                log.info("revoke the Handler " + handler.getName()
+//                                + " with in the Phase " + phaseName);
+//                handler.revoke(msgctx);
+//            }
             throw AxisFault.makeFault(e);
         }
     }
 
-    /**
-     * Method revoke
-     *
-     * @param msgctx
-     */
-    public void revoke(MessageContext msgctx) {
-        for (int i = handlers.size() - 1; i > -1; i--) {
-            Handler handler = (Handler) handlers.get(i);
-            log.info("revoke the Handler " + handler.getName()
-                            + " with in the Phase " + phaseName);
-            if (handler != null) {
-                handler.revoke(msgctx);
-            }
-        }
-    }
+//    /**
+//     * Method revoke
+//     *
+//     * @param msgctx
+//     */
+//    public void revoke(MessageContext msgctx) {
+//        for (int i = handlers.size() - 1; i > -1; i--) {
+//            Handler handler = (Handler) handlers.get(i);
+//            log.info("revoke the Handler " + handler.getName()
+//                            + " with in the Phase " + phaseName);
+//            if (handler != null) {
+//                handler.revoke(msgctx);
+//            }
+//        }
+//    }
 
     /**
      * @return Returns the name.

@@ -31,10 +31,10 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -54,7 +54,7 @@ public class MailWorker implements Runnable {
 
     private SMTPClient client = null;
 
-    private EngineConfiguration reg = null;
+    private EngineContext reg = null;
 
     // Current message
     private MimeMessage mimeMessage;
@@ -76,7 +76,7 @@ public class MailWorker implements Runnable {
      * @param mimeMessage
      */
     public MailWorker(SimpleMailListner server, MimeMessage mimeMessage,
-            EngineConfiguration reg) {
+            EngineContext reg) {
         this.server = server;
         this.mimeMessage = mimeMessage;
         this.reg = reg;
@@ -92,8 +92,8 @@ public class MailWorker implements Runnable {
         // create and initialize a message context
         try {
             msgContext = new MessageContext(this.reg, null, null, 
-                reg.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                reg.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+                reg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                reg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
         } catch (AxisFault af) {
             log.error("Error occured while creating the message context", af);
@@ -112,7 +112,7 @@ public class MailWorker implements Runnable {
         // prepare request (do as much as possible while waiting for the
         // next connection).
         try {
-            msgContext.setService(null);
+            msgContext.setServiceContext(null);
         } catch (Exception e) {
         }
         //msgContext.setResponseMessage(null);

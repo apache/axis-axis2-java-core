@@ -36,12 +36,12 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
@@ -55,7 +55,8 @@ public class AxisServlet extends HttpServlet {
     /**
      * Field engineRegistry
      */
-    private EngineConfiguration engineRegistry;
+    
+    private EngineContext engineContext;
 
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
@@ -93,7 +94,7 @@ public class AxisServlet extends HttpServlet {
                     "org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac =
                     (EngineRegistryFactory) erClass.newInstance();
-            this.engineRegistry = erfac.createEngineRegistry(repoDir);
+            engineContext = erfac.createEngineRegistry(repoDir);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -148,11 +149,11 @@ public class AxisServlet extends HttpServlet {
                 req.getSession().setAttribute(
                         Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }
-            MessageContext msgContext = new MessageContext(engineRegistry,
+            MessageContext msgContext = new MessageContext(engineContext,
                     null,
                     (SessionContext) sessionContext,
-                    engineRegistry.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                    engineRegistry.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+                    engineContext.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                    engineContext.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
@@ -193,9 +194,9 @@ public class AxisServlet extends HttpServlet {
      */
     private void listServices(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        HashMap services = engineRegistry.getServices();
+        HashMap services = engineContext.getEngineConfig().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP, engineRegistry.getFaulytServices());
+        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP, engineContext.getEngineConfig().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -212,7 +213,7 @@ public class AxisServlet extends HttpServlet {
             throws IOException {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
                 filePart.length());
-        HashMap services = engineRegistry.getServices();
+        HashMap services = engineContext.getEngineConfig().getServices();
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {

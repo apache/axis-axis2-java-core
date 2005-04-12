@@ -49,14 +49,7 @@ public interface Handler extends Serializable {
      */
     public void invoke(MessageContext msgContext) throws AxisFault;
 
-    /**
-     * Called when a subsequent handler throws a fault.
-     *
-     * @param msgContext the <code>MessageContext</code> to process the fault
-     *                   to
-     */
-    public void revoke(MessageContext msgContext);
-
+  
     /**
      * Method getName
      *

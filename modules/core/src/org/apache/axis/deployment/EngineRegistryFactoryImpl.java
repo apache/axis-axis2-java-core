@@ -18,13 +18,13 @@ package org.apache.axis.deployment;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 
 
 public class EngineRegistryFactoryImpl implements EngineRegistryFactory {
-    public EngineConfiguration createEngineRegistry(String file) throws AxisFault {
+    public EngineContext createEngineRegistry(String file) throws AxisFault {
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(file);
             return deploymentEngine.start();

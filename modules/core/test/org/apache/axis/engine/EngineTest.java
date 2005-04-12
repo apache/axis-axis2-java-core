@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
@@ -50,14 +51,15 @@ public class EngineTest extends TestCase {
        super(arg0);
    }
    protected void setUp() throws Exception {
+      
        engineRegistry = new EngineConfigurationImpl(new AxisGlobal());
-
+        EngineContext engineContext = new EngineContext(engineRegistry);
        AxisTransportOut transport = new AxisTransportOut(new QName("null"));
        transport.setSender(new NullTransportSender());
        
        AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
        
-       mc = new MessageContext(engineRegistry, null, null, transportIn,transport);
+       mc = new MessageContext(engineContext, null, null, transportIn,transport);
        mc.setTransportOut(transport);
        mc.setServerSide(true);
        OMFactory omFac = OMFactory.newInstance();
@@ -99,14 +101,13 @@ public class EngineTest extends TestCase {
    }
 
    public class NullProvider extends AbstractInOutReceiver {
-       public MessageContext invoke(MessageContext msgCtx) throws AxisFault {
+       public void recieve(MessageContext msgCtx) throws AxisFault {
            MessageContext newCtx =
                new MessageContext(
-                   msgCtx.getGlobalContext().getRegistry(),
+                   msgCtx.getEngineContext(),
                    msgCtx.getProperties(),
                    msgCtx.getSessionContext(),msgCtx.getTransportIn(),msgCtx.getTransportOut());
            newCtx.setEnvelope(msgCtx.getEnvelope());
-           return newCtx;
        }
 
    }

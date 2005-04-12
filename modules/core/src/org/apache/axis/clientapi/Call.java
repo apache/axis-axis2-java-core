@@ -123,7 +123,7 @@ public class Call {
         this.engineContext = engineContext;
     }
 
-    public void sendReciveAsync(SOAPEnvelope env, Callback callback) throws AxisFault {
+    public void sendReceiveAsync(SOAPEnvelope env, Callback callback) throws AxisFault {
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
@@ -149,7 +149,7 @@ public class Call {
         }
     }
 
-    public SOAPEnvelope sendReciveSync(SOAPEnvelope env) throws AxisFault {
+    public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");

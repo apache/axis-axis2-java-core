@@ -26,6 +26,7 @@ import java.net.Socket;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
@@ -52,7 +53,7 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Field engineReg
      */
-    protected EngineConfiguration engineReg;
+    protected EngineContext engineReg;
 
     /**
      * Field serverSocket
@@ -75,7 +76,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @param reg
      */
-    public SimpleHTTPServer(EngineConfiguration reg) {
+    public SimpleHTTPServer(EngineContext reg) {
         this.engineReg = reg;
     }
 
@@ -133,9 +134,9 @@ public class SimpleHTTPServer implements Runnable {
                         new OutputStreamWriter(socket.getOutputStream());
                         Reader in =
                         new InputStreamReader(socket.getInputStream());
-                        AxisTransportOut transportOut = engineReg.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+                        AxisTransportOut transportOut = engineReg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
-                        new MessageContext(this.engineReg, null, null,engineReg.getTransportIn(new QName(Constants.TRANSPORT_HTTP)),transportOut);
+                        new MessageContext(this.engineReg, null, null,engineReg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),transportOut);
                         msgContext.setServerSide(true);
                         
                         out.write(HTTPConstants.HTTP);
@@ -243,7 +244,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @return
      */
-    public EngineConfiguration getEngineReg() {
+    public EngineContext getEngineReg() {
         return engineReg;
     }
 

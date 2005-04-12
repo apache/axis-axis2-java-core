@@ -16,13 +16,19 @@
  
 package org.apache.axis.testUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Provider;
+import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
@@ -32,16 +38,11 @@ import org.apache.axis.receivers.AbstractInOutReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 /**
  * This is a Simple java Provider.
  */
 
-public class SimpleJavaProvider extends AbstractInOutReceiver implements Provider {
+public class SimpleJavaProvider extends AbstractInOutReceiver implements MessageReceiver {
     protected Log log = LogFactory.getLog(getClass());
     protected String scope;
     protected Method method;
@@ -55,7 +56,7 @@ public class SimpleJavaProvider extends AbstractInOutReceiver implements Provide
     protected Object makeNewServiceObject(MessageContext msgContext)
             throws AxisFault {
         try {
-            AxisService service = msgContext.getService();
+            AxisService service = msgContext.getServiceContext().getServiceConfig();
             Class implClass = service.getServiceClass();
             return implClass.newInstance();
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class SimpleJavaProvider extends AbstractInOutReceiver implements Provide
 
     public Object getTheImplementationObject(MessageContext msgContext)
             throws AxisFault {
-        AxisService service = msgContext.getService();
+        AxisService service = msgContext.getServiceContext().getServiceConfig();
         QName serviceName = service.getName();
         if (Constants.APPLICATION_SCOPE.equals(scope)) {
             return makeNewServiceObject(msgContext);
@@ -119,7 +120,7 @@ public class SimpleJavaProvider extends AbstractInOutReceiver implements Provide
         return name;
     }
 
-    public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+    public void receive(MessageContext msgContext) throws AxisFault {
         try {
             //get the implementation class for the Web Service 
             Object obj = getTheImplementationObject(msgContext);

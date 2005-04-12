@@ -15,6 +15,8 @@
  */
 package org.apache.axis.engine;
 
+import org.apache.axis.context.EngineContext;
+
 /**
  * Interface EngineRegistryFactory
  */
@@ -26,5 +28,5 @@ public interface EngineRegistryFactory {
      * @return
      * @throws AxisFault
      */
-    public EngineConfiguration createEngineRegistry(String file) throws AxisFault;
+    public EngineContext createEngineRegistry(String file) throws AxisFault;
 }

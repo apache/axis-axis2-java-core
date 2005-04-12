@@ -119,11 +119,11 @@ public class ExecutionChain {
             }
         } catch (Exception e) {
             log.info("Execution Chain failed with the " + e.getMessage());
-            while (!executionStack.isEmpty()) {
-                SimplePhase phase = (SimplePhase) executionStack.pop();
-                phase.revoke(msgctx);
-                log.info("revoke the Phase " + phase.getPhaseName());
-            }
+//            while (!executionStack.isEmpty()) {
+//                SimplePhase phase = (SimplePhase) executionStack.pop();
+//                phase.revoke(msgctx);
+//                log.info("revoke the Phase " + phase.getPhaseName());
+//            }
             throw AxisFault.makeFault(e);
         }
     }

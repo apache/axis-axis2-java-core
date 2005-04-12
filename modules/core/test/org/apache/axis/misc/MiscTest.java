@@ -16,13 +16,12 @@
  
 package org.apache.axis.misc;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.context.GlobalContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisFault;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class MiscTest extends AbstractTestCase {
 
@@ -41,15 +40,7 @@ public class MiscTest extends AbstractTestCase {
         assertEquals(sc.get(key), val);
     }
 
-    public void testGlobalContext() {
-        GlobalContext gc = new GlobalContext(null);
-        String key = "Hello";
-        Object val = new Object();
-        gc.put(key, val);
-        assertEquals(gc.get(key), val);
-        gc.setRegistry(null);
-        assertNull(null);
-    }
+
 
 
     public void testAxisFault() {

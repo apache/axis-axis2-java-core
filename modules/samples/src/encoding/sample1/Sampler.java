@@ -96,7 +96,7 @@ public class Sampler {
                 "http://127.0.0.1:8080/axis2/services/echo");
         Call call = new Call();
         call.setTo(targetEPR);
-        SOAPEnvelope responseEnv = call.sendReceive(envelope);
+        SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
 
         SOAPBody body = responseEnv.getBody();
         if (body.hasFault()) {

@@ -18,14 +18,12 @@ package org.apache.axis.description;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Provider;
+import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.receivers.AbstractInOutReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.lang.reflect.Method;
-
-public class SpeakingProvider extends AbstractInOutReceiver implements Provider {
+public class SpeakingProvider extends AbstractInOutReceiver implements MessageReceiver {
     private Log log = LogFactory.getLog(getClass());
     private String message;
 
@@ -33,33 +31,8 @@ public class SpeakingProvider extends AbstractInOutReceiver implements Provider 
     }
 
 
-    public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+    public void recieve(MessageContext msgContext) throws AxisFault {
         log.info("I am Speaking Provider Running :)");
-        return msgContext;
-    }
-
-    public void revoke(MessageContext msgContext) {
-        log.info("I am Speaking Provider revoking :)");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis.engine.AbstractProvider#deserializeParameters(org.apache.axis.engine.MessageContext, java.lang.reflect.Method)
-     */
-    public Object[] deserializeParameters(MessageContext msgContext,
-                                          Method method)
-            throws AxisFault {
-        return null;
-    }
-
-    public Object getTheImplementationObject(MessageContext msgContext)
-            throws AxisFault {
-        return null;
-    }
-
-    protected Object makeNewServiceObject(MessageContext msgContext)
-            throws AxisFault {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

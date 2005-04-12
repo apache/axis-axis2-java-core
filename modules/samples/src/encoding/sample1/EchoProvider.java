@@ -16,6 +16,7 @@
  
 package encoding.sample1;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
@@ -91,14 +92,14 @@ public class EchoProvider extends SimpleJavaProvider {
 		}
 	}
 
-	public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+	public void receive(MessageContext msgContext) throws AxisFault {
 		try {
 			//get the implementation class for the Web Service 
 			Object obj = getTheImplementationObject(msgContext);
 			
 			//find the WebService method  
 			Class ImplClass = obj.getClass();
-			AxisOperation op = msgContext.getOperation();
+			OperationContext op = msgContext.getOperationContext();
 			String methodName = op.getName().getLocalPart();
 			
 			

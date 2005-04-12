@@ -24,7 +24,9 @@ import junit.framework.TestCase;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
@@ -57,9 +59,9 @@ public class EnginePausingTest extends TestCase {
 
         AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
         
+        EngineContext engineContext = new EngineContext(engineRegistry);
 
-
-        mc = new MessageContext(engineRegistry, null, null, transportIn,transportOut);
+        mc = new MessageContext(engineContext, null, null, transportIn,transportOut);
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         OMFactory omFac = OMFactory.newInstance();
@@ -103,7 +105,11 @@ public class EnginePausingTest extends TestCase {
         phase1.addHandler(new TempHandler(26));
         phase1.addHandler(new TempHandler(27));
         phases.add(phase1);
-        service.setPhases(phases, EngineConfiguration.INFLOW);
+        
+        ServiceContext serviceContext = new ServiceContext(service);
+        engineContext.addService(serviceContext);
+        
+        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);
         engineRegistry.addService(service);
         service.setStyle(WSDLService.STYLE_DOC);
         mc.setTo(
@@ -151,14 +157,13 @@ public class EnginePausingTest extends TestCase {
     }
 
     public class NullProvider extends AbstractInOutReceiver {
-        public MessageContext invoke(MessageContext msgCtx) throws AxisFault {
+        public void recieve(MessageContext msgCtx) throws AxisFault {
             MessageContext newCtx =
                 new MessageContext(
-                    msgCtx.getGlobalContext().getRegistry(),
+                    msgCtx.getEngineContext(),
                     msgCtx.getProperties(),
                     msgCtx.getSessionContext(),msgCtx.getTransportIn(),msgCtx.getTransportOut());
             newCtx.setEnvelope(msgCtx.getEnvelope());
-            return newCtx;
         }
 
     }
