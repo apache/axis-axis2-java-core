@@ -20,34 +20,31 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.receivers.AbstractInOutReceiver;
-import org.apache.axis.transport.TransportSender;
 import org.apache.wsdl.WSDLService;
 
-public class EngineTest extends TestCase {
+public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
    private MessageContext mc;
    private ArrayList executedHandlers = new ArrayList();
    private EngineConfiguration engineRegistry;
-   private QName serviceName = new QName("NullService");
+   private QName serviceName = new QName("axis/services/NullService");
+   private QName opearationName =  new QName("NullOperation");
+   private AxisService service;
 
-   public EngineTest() {
+   public EngineWithoutPhaseResolvingTest() {
    }
 
-   public EngineTest(String arg0) {
+   public EngineWithoutPhaseResolvingTest(String arg0) {
        super(arg0);
    }
    protected void setUp() throws Exception {
@@ -64,76 +61,43 @@ public class EngineTest extends TestCase {
        mc.setServerSide(true);
        OMFactory omFac = OMFactory.newInstance();
        mc.setEnvelope(omFac.getDefaultEnvelope());
-       AxisService service = new AxisService(serviceName);
-       service.setMessageReceiver(new NullProvider());
+       service = new AxisService(serviceName);
+       service.setMessageReceiver(new NullMessageReceiver());
        engineRegistry.addService(service);
        service.setStyle(WSDLService.STYLE_DOC);
+       service.addOperation(new AxisOperation(opearationName));
+       
        mc.setTo(
            new EndpointReference(
                AddressingConstants.WSA_TO,
-               "http://127.0.0.1:8080/axis/services/NullService"));
+               "axis/services/NullService"));
+       mc.setWSAAction(opearationName.getLocalPart());
 
    }
 
-   public void testSend() throws Exception {
+   public void testServerSend() throws Exception {
        AxisEngine engine = new AxisEngine();
+       mc.setServerSide(true);
+       mc.setServiceContext(new ServiceContext(service));
+       engine.send(mc);
+   }
+
+   public void testClientSend() throws Exception {
+       AxisEngine engine = new AxisEngine();
+       mc.setServerSide(false);
+       mc.setServiceContext(new ServiceContext(service));
+       engine.send(mc);
+   }
+
+   public void testServerReceive() throws Exception {
+       AxisEngine engine = new AxisEngine();
+       mc.setServerSide(true);
        engine.receive(mc);
    }
 
-   public class TempHandler extends AbstractHandler {
-       private Integer index;
-       private boolean pause = false;
-       public TempHandler(int index, boolean pause) {
-           this.index = new Integer(index);
-           this.pause = pause;
-       }
-       public TempHandler(int index) {
-           this.index = new Integer(index);
-       }
-
-       public void invoke(MessageContext msgContext) throws AxisFault {
-           executedHandlers.add(index);
-           if (pause) {
-               msgContext.setPaused(true);
-           }
-       }
-
+   public void testClientReceive() throws Exception {
+       AxisEngine engine = new AxisEngine();
+       mc.setServerSide(false);
+       engine.receive(mc);
    }
-
-   public class NullProvider extends AbstractInOutReceiver {
-       public void recieve(MessageContext msgCtx) throws AxisFault {
-           MessageContext newCtx =
-               new MessageContext(
-                   msgCtx.getEngineContext(),
-                   msgCtx.getProperties(),
-                   msgCtx.getSessionContext(),msgCtx.getTransportIn(),msgCtx.getTransportOut());
-           newCtx.setEnvelope(msgCtx.getEnvelope());
-       }
-
-   }
-
-   public class NullTransportSender implements TransportSender {
-       public void cleanup() throws AxisFault {
-       }
-
-       public QName getName() {
-           return null;
-       }
-
-       public Parameter getParameter(String name) {
-           return null;
-       }
-
-       public void init(HandlerMetadata handlerdesc) {
-       }
-
-       public void invoke(MessageContext msgContext) throws AxisFault {
-       }
-
-       public void revoke(MessageContext msgContext) {
-       }
-
-   }
-
-
 }

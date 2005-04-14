@@ -64,6 +64,10 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
         serviceContextMap.put(service.getServiceConfig().getName(),service);
     }
     
+    public void removeService(QName name){
+        serviceContextMap.remove(name);
+    }
+    
     public ServiceContext getService(QName serviceName){
         return (ServiceContext)serviceContextMap.get(serviceName);
     

@@ -24,7 +24,7 @@ public abstract class Callback {
      *
      * @param result
      */
-    public abstract void onComplete(SOAPEnvelope result);
+    public abstract void onComplete(AsyncResult result);
 
     /**
      * Method reportError

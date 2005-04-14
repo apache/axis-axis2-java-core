@@ -14,24 +14,18 @@
  * limitations under the License.
  */
  
-package org.apache.axis.description;
-
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.MessageReceiver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class SpeakingProvider implements MessageReceiver {
-    private Log log = LogFactory.getLog(getClass());
-    private String message;
-
-    public SpeakingProvider() {
-    }
+package org.apache.axis.engine;
 
 
-    public void recieve(MessageContext msgContext) throws AxisFault {
-        log.info("I am Speaking Provider Running :)");
-    }
+public class EngineWithDynamicPhaseResolvingTest extends AbstractEngineTest {
+
+   public EngineWithDynamicPhaseResolvingTest() {
+   }
+
+   public EngineWithDynamicPhaseResolvingTest(String arg0) {
+       super(arg0);
+   }
+   protected void setUp() throws Exception {
+   }
 
 }

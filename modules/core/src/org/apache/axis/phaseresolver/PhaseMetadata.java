@@ -26,7 +26,8 @@ public class PhaseMetadata {
 
     public static final int IN_FLOW = 1;
     public static final int OUT_FLOW = 2;
-    public static final int FAULT_FLOW = 3;
+    public static final int FAULT_IN_FLOW = 3;
+    public static final int FAULT_OUT_FLOW = 4;
     /**
      * Field BOTH_BEFORE_AFTER
      */

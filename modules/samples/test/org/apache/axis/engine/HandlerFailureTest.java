@@ -29,8 +29,6 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMElement;
@@ -38,7 +36,6 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -68,8 +65,6 @@ public class HandlerFailureTest extends TestCase {
 
 
     public void testFailureAtServerRequestFlow() throws Exception {
-        AxisService service = new AxisService(serviceName);
-
         Flow flow = new FlowImpl();
         Utils.addHandler(flow, new SpeakingHandler());
         Utils.addHandler(flow, new SpeakingHandler());
@@ -77,20 +72,14 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, new SpeakingHandler());
         Utils.addHandler(flow, culprit);
         Utils.addHandler(flow, new SpeakingHandler());
+        
+        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName());
         service.setInFlow(flow);
-
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className", Echo.class.getName());
-        service.addParameter(classParam);
-        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
-
         service.addOperation(operation);
 
-        Utils.createExecutionChains(service);
-
         UtilServer.start();
-        UtilServer.deployService(service);
+        UtilServer.deployService(Utils.createServiceContext(service));
         try {
             callTheService();
         } finally {
@@ -100,7 +89,8 @@ public class HandlerFailureTest extends TestCase {
     }
 
     public void testFailureAtServerResponseFlow() throws Exception {
-        AxisService service = new AxisService(serviceName);
+        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName());
+ 
 
         Flow flow = new FlowImpl();
         Utils.addHandler(flow, new SpeakingHandler());
@@ -120,17 +110,11 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, new SpeakingHandler());
         service.setInFlow(flow);
 
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        Parameter classParam = new ParameterImpl("className", Echo.class.getName());
-        service.addParameter(classParam);
-        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
-
         service.addOperation(operation);
 
-        Utils.createExecutionChains(service);
         UtilServer.start();
-        UtilServer.deployService(service);
+        UtilServer.deployService(Utils.createServiceContext(service));
         try {
             callTheService();
         } finally {
@@ -161,7 +145,7 @@ public class HandlerFailureTest extends TestCase {
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
             EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
             call.setTo(targetEPR);
-            SOAPEnvelope resEnv = call.sendReceive(reqEnv);
+            SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
 
             SOAPBody sb = resEnv.getBody();

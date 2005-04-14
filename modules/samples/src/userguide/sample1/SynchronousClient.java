@@ -62,7 +62,7 @@ public class SynchronousClient {
 			requestEnvelop.serialize(writer,true);
 			writer.flush();
 			System.out.println();
-			SOAPEnvelope responceEnvelop = call.sendReceive(requestEnvelop);
+			SOAPEnvelope responceEnvelop = call.sendReceiveSync(requestEnvelop);
 			System.out.println("Responce received  ...");
 			responceEnvelop.serialize(writer,true);
 			writer.flush();

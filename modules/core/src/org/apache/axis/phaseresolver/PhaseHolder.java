@@ -54,7 +54,8 @@ public class PhaseHolder {
 
     private ArrayList inPhases;
     private ArrayList outPhases;
-    private ArrayList faultPhases;
+    private ArrayList faultInPhases;
+    private ArrayList faultOutPhases;
 
     private int flowType = -1;
 
@@ -94,7 +95,8 @@ public class PhaseHolder {
     private void fillFlowPhases() {
         inPhases = new ArrayList();
         outPhases = new ArrayList();
-        faultPhases = new ArrayList();
+        faultInPhases = new ArrayList();
+        faultOutPhases = new ArrayList();
 
         ArrayList tempPhases = registry.getInPhases();
         for (int i = 0; i < tempPhases.size(); i++) {

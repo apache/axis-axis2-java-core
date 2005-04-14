@@ -67,7 +67,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
                 throw new AxisFault("Both the URI and SOAP_ACTION are Null");
             }
             if (msgctx.getOperationContext() == null) {
-                String action = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
+                String action = (String) msgctx.getWSAAction();
                 QName operationName = new QName(action);
                 AxisOperation op = service.getOperation(operationName);
                 if (op != null) {

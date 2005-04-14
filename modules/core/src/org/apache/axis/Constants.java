@@ -47,7 +47,7 @@ public class Constants {
     /**
      * Field GLOBAL_SCOPE
      */
-    public static final String GLOBAL_SCOPE = "global";
+    public static final String MESSAGE_SCOPE = "message";
 
     /**
      * Field PHASE_SERVICE

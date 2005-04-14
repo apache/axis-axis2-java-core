@@ -64,8 +64,8 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
                 module.engage(chain);
             }
             
-        } else {
-            throw new AxisFault("Service " + serviceContext.getName() + " is not found");
+        } else if(msgContext.isServerSide()){
+            throw new AxisFault("Service Context is Null");
         }
 
     }

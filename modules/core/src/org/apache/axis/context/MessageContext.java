@@ -530,9 +530,7 @@ public class MessageContext {
         engineContext = context;
     }
 
-    public String getAction() {
-        return messageInformationHeaders.getAction();
-    }
+ 
 
     /**
      * @return

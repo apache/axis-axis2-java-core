@@ -24,7 +24,7 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.receivers.RawXMLProvider;
+import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 
 public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**
@@ -45,7 +45,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertNotNull(service);
         MessageReceiver provider = service.getMessageReceiver();
         assertNotNull(provider);
-        assertTrue(provider instanceof RawXMLProvider);
+        assertTrue(provider instanceof RawXMLINOutMessageRecevier);
         ClassLoader cl = service.getClassLoader();
         assertNotNull(cl);
         Class.forName("Echo2", true, cl);

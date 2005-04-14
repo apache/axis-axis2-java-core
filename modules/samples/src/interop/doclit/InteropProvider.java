@@ -17,6 +17,7 @@
 package interop.doclit;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
@@ -81,7 +82,7 @@ public class InteropProvider extends SimpleJavaProvider {
         }
     }
 
-    public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+    public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
         try {
             if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
                 SOAPBody body = msgContext.getEnvelope().getBody();
@@ -114,11 +115,11 @@ public class InteropProvider extends SimpleJavaProvider {
                 }
 
 
-                AxisService service = msgContext.getService();
+                AxisService service = msgContext.getServiceContext().getServiceConfig();
                 if (operationName != null) {
                     AxisOperation op = service.getOperation(operationName);
                     if (op != null) {
-                        msgContext.setOperation(op);
+                        msgContext.setOperationContext(new OperationContext(op));
                     } else {
                         throw new AxisFault("Operation not found " + operationName);
                     }
@@ -132,7 +133,7 @@ public class InteropProvider extends SimpleJavaProvider {
 
                 //find the WebService method
                 Class ImplClass = obj.getClass();
-                AxisOperation op = msgContext.getOperation();
+                OperationContext op = msgContext.getOperationContext();
                 methodName = op.getName().getLocalPart();
 
                 Method[] methods = ImplClass.getMethods();

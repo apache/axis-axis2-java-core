@@ -25,7 +25,6 @@ import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.receivers.RawXMLProvider;
 
 public class RegistryTest extends AbstractTestCase {
     private EngineConfiguration reg;
@@ -101,17 +100,7 @@ public class RegistryTest extends AbstractTestCase {
         assertSame(flow3, flowInclude.getOutFlow());
     }
 
-    public void testProviders() {
-        RawXMLProvider xmlprovider = new RawXMLProvider();
-        QName name = new QName("Hi", "testing");
-        xmlprovider.setName(name);
-        assertEquals(xmlprovider.getName(), name);
-
-        RawXMLProvider provider = new RawXMLProvider();
-        provider.setName(name);
-        assertEquals(provider.getName(), name);
-
-    }
+ 
 
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {

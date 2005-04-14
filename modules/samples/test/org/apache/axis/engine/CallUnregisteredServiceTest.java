@@ -79,7 +79,7 @@ public class CallUnregisteredServiceTest extends TestCase{
             Call call = new Call();
             EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService1");
             call.setTo(targetEPR);
-            SOAPEnvelope resEnv = call.sendReceive(reqEnv);
+            SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {

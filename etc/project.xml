@@ -155,6 +155,17 @@
     <sourceDirectory>src</sourceDirectory>
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
+<!--
+	<sourceModifications>
+		<sourceModification>
+			<className>fakeClass</className>
+			<excludes>
+				<exclude>org/apache/axis</exclude>
+				<exclude>**/_*.java</exclude>
+			</excludes>
+		</sourceModification>
+	</sourceModifications
+-->	
     <unitTest>
     
       <excludes>

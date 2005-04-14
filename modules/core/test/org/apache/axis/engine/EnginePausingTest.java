@@ -20,8 +20,6 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
@@ -31,15 +29,10 @@ import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.receivers.AbstractInOutReceiver;
-import org.apache.axis.transport.TransportSender;
 import org.apache.wsdl.WSDLService;
 
-public class EnginePausingTest extends TestCase {
+public class EnginePausingTest extends AbstractEngineTest {
     private MessageContext mc;
     private ArrayList executedHandlers = new ArrayList();
     private EngineConfiguration engineRegistry;
@@ -67,7 +60,7 @@ public class EnginePausingTest extends TestCase {
         OMFactory omFac = OMFactory.newInstance();
         mc.setEnvelope(omFac.getDefaultEnvelope());
         AxisService service = new AxisService(serviceName);
-        service.setMessageReceiver(new NullProvider());
+        service.setMessageReceiver(new NullMessageReceiver());
         ArrayList phases = new ArrayList();
 
         SimplePhase phase = new SimplePhase("1");
@@ -135,60 +128,4 @@ public class EnginePausingTest extends TestCase {
         }
 
     }
-
-    public class TempHandler extends AbstractHandler {
-        private Integer index;
-        private boolean pause = false;
-        public TempHandler(int index, boolean pause) {
-            this.index = new Integer(index);
-            this.pause = pause;
-        }
-        public TempHandler(int index) {
-            this.index = new Integer(index);
-        }
-
-        public void invoke(MessageContext msgContext) throws AxisFault {
-            executedHandlers.add(index);
-            if (pause) {
-                msgContext.setPaused(true);
-            }
-        }
-
-    }
-
-    public class NullProvider extends AbstractInOutReceiver {
-        public void recieve(MessageContext msgCtx) throws AxisFault {
-            MessageContext newCtx =
-                new MessageContext(
-                    msgCtx.getEngineContext(),
-                    msgCtx.getProperties(),
-                    msgCtx.getSessionContext(),msgCtx.getTransportIn(),msgCtx.getTransportOut());
-            newCtx.setEnvelope(msgCtx.getEnvelope());
-        }
-
-    }
-
-    public class NullTransportSender implements TransportSender {
-        public void cleanup() throws AxisFault {
-        }
-
-        public QName getName() {
-            return null;
-        }
-
-        public Parameter getParameter(String name) {
-            return null;
-        }
-
-        public void init(HandlerMetadata handlerdesc) {
-        }
-
-        public void invoke(MessageContext msgContext) throws AxisFault {
-        }
-
-        public void revoke(MessageContext msgContext) {
-        }
-
-    }
-
 }

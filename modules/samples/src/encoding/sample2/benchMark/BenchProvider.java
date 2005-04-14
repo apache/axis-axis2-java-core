@@ -16,8 +16,13 @@
  
 package encoding.sample2.benchMark;
 
+import java.lang.reflect.Method;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisOperation;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
@@ -29,10 +34,6 @@ import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
@@ -97,14 +98,14 @@ public class BenchProvider extends SimpleJavaProvider {
 		}
 	}
 
-	public MessageContext invoke(MessageContext msgContext) throws AxisFault {
+    public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
 		try {
 			//get the implementation class for the Web Service
 			Object obj = getTheImplementationObject(msgContext);
 
 			//find the WebService method
 			Class ImplClass = obj.getClass();
-			AxisOperation op = msgContext.getOperation();
+            OperationContext op = msgContext.getOperationContext();
 			String methodName = op.getName().getLocalPart();
 
 

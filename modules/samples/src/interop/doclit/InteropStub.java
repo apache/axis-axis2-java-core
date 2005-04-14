@@ -195,7 +195,7 @@ public class InteropStub {
         if (SOAPAction!=null){
             call.setAction(SOAPAction);
         }
-        return call.sendReceive(env);
+        return call.sendReceiveSync(env);
 
     }
 

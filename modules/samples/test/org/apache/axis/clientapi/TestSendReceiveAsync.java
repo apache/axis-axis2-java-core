@@ -30,11 +30,9 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
-import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.providers.RawXMLProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -51,9 +49,11 @@ public class TestSendReceiveAsync extends TestCase {
 
     private QName serviceName = new QName("", "EchoXMLService");
 
-    private QName operationName = new QName("http://localhost/my", "echoOMElement");
+    private QName operationName =
+        new QName("http://localhost/my", "echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName =
+        new QName("http://localhost/my", "NullTransport");
 
     private MessageContext mc;
 
@@ -64,7 +64,7 @@ public class TestSendReceiveAsync extends TestCase {
     private boolean finish = false;
 
     private AxisService service;
-    
+
     private ClassLoader cl;
 
     /**
@@ -76,18 +76,16 @@ public class TestSendReceiveAsync extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        service =
+            Utils.createSimpleService(
+                serviceName,
+                org.apache.axis.engine.Echo.class.getName());
 
-        AxisService service = new AxisService(serviceName);
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.setServiceClass(Echo.class);
-        service.setMessageReceiver(new RawXMLProvider());
         AxisOperation operation = new AxisOperation(operationName);
-
         service.addOperation(operation);
 
-        Utils.createExecutionChains(service);
         UtilServer.start();
-        UtilServer.deployService(service);
+        UtilServer.deployService(Utils.createServiceContext(service));
     }
 
     protected void tearDown() throws Exception {
@@ -105,7 +103,9 @@ public class TestSendReceiveAsync extends TestCase {
         EndpointReference targetEPR =
             new EndpointReference(
                 AddressingConstants.WSA_TO,
-                "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService");
+                "http://127.0.0.1:"
+                    + UtilServer.TESTING_PORT
+                    + "/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
         call.setListenerTransport("http", true);
@@ -115,7 +115,8 @@ public class TestSendReceiveAsync extends TestCase {
 
                 try {
                     result.getResponseEnvelope().serialize(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),
+                        XMLOutputFactory.newInstance().createXMLStreamWriter(
+                            System.out),
                         true);
                 } catch (XMLStreamException e) {
                     reportError(e);
@@ -138,7 +139,9 @@ public class TestSendReceiveAsync extends TestCase {
         SOAPEnvelope envelope =
             new StAXSOAPModelBuilder(
                 XMLInputFactory.newInstance().createXMLStreamReader(
-                    new InputStreamReader(cl.getResourceAsStream("clientapi/SimpleSOAPEnvelope.xml"))))
+                    new InputStreamReader(
+                        cl.getResourceAsStream(
+                            "clientapi/SimpleSOAPEnvelope.xml"))))
                 .getSOAPEnvelope();
 
         /*   File file = new File("./target/test-classes/clientapi/SimpleSOAPEnvelope.xml");

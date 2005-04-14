@@ -16,14 +16,15 @@
  
 package org.apache.axis.integration;
 
-import org.apache.axis.description.AxisService;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineRegistryFactory;
-import org.apache.axis.transport.http.SimpleHTTPServer;
+import java.net.ServerSocket;
 
 import javax.xml.namespace.QName;
-import java.net.ServerSocket;
+
+import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class UtilServer {
     private static int count = 0;
@@ -33,21 +34,22 @@ public class UtilServer {
 
 
 
-    public static synchronized void deployService(AxisService service)
+    public static synchronized void deployService(ServiceContext service)
             throws AxisFault {
         reciver.getEngineReg().addService(service);
+        reciver.getEngineReg().getEngineConfig().addService(service.getServiceConfig());
     }
 
     public static synchronized void unDeployService(QName service)
             throws AxisFault {
-        reciver.getEngineReg().removeService(service);
+        reciver.getEngineReg().getEngineConfig().removeService(service);
     }
 
     public static synchronized void start() throws Exception {
         if (count == 0) {
             Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
-            EngineConfiguration er = 
+            EngineContext er = 
                 erfac.createEngineRegistry("target/test-resources/samples/");
             try {
                 Thread.sleep(2000);

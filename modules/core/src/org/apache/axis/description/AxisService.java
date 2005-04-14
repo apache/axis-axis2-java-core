@@ -370,27 +370,27 @@ public class AxisService extends WSDLServiceImpl
         }
     }
 
-    /**
-     * Method setServiceClass
-     *
-     * @param serviceclass
-     */
-    public void setServiceClass(Class serviceclass) {
-        if (serviceclass != null) {
-            this.setComponentProperty(DescriptionConstants.SERVICE_CLASS,
-                    serviceclass);
-        }
-    }
-
-    /**
-     * Method getServiceClass
-     *
-     * @return
-     */
-    public Class getServiceClass() {
-        return (Class) this.getComponentProperty(
-                DescriptionConstants.SERVICE_CLASS);
-    }
+//    /**
+//     * Method setServiceClass
+//     *
+//     * @param serviceclass
+//     */
+//    public void setServiceClass(Class serviceclass) {
+//        if (serviceclass != null) {
+//            this.setComponentProperty(DescriptionConstants.SERVICE_CLASS,
+//                    serviceclass);
+//        }
+//    }
+//
+//    /**
+//     * Method getServiceClass
+//     *
+//     * @return
+//     */
+//    public Class getServiceClass() {
+//        return (Class) this.getComponentProperty(
+//                DescriptionConstants.SERVICE_CLASS);
+//    }
 
     /**
      * Method getOperations

@@ -89,7 +89,7 @@ public class EchoTest extends TestCase {
         Call call = new Call();
         call.setTo(targetEPR);
         call.setListenerTransport(Constants.TRANSPORT_HTTP,true);
-        SOAPEnvelope responseEnv = call.sendReceive(envelope);
+        SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
 
         SOAPBody body = responseEnv.getBody();
         if (body.hasFault()) {

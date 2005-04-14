@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.engine;
 
 //todo
@@ -33,15 +33,16 @@ import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.transport.http.SimpleHTTPServer;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MessageWithServerTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoService");
-    private QName operationName = new QName("http://ws.apache.org/axis2", "echoVoid");
+    private QName operationName =
+        new QName("http://ws.apache.org/axis2", "echoVoid");
     private QName transportName = new QName("", "NullTransport");
 
     private EngineConfiguration engineRegistry;
@@ -57,14 +58,12 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        AxisService service = new AxisService(serviceName);
+        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName());
+        
+        
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
         service.setFaultFlow(new MockFlow("service faultflow", 1));
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.setServiceClass(Echo.class);
-
-        service.setMessageReceiver(new SimpleJavaProvider());
 
         AxisModule m1 = new AxisModule(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
@@ -74,14 +73,13 @@ public class MessageWithServerTest extends TestCase {
         AxisOperation operation = new AxisOperation(operationName);
         service.addOperation(operation);
 
-        UtilServer.deployService(service);
+        UtilServer.deployService(Utils.createServiceContext(service));
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
     }
-
 
     public void testEchoStringServer() throws Exception {
         InputStream in = cl.getResourceAsStream("soap/soapmessage.txt");
@@ -93,7 +91,6 @@ public class MessageWithServerTest extends TestCase {
         while ((index = in.read(buf)) > 0) {
             out.write(buf, 0, index);
         }
-
 
         InputStream respose = socket.getInputStream();
         Reader rReader = new InputStreamReader(respose);

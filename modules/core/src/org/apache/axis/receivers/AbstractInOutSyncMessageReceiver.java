@@ -15,35 +15,20 @@
  */
 package org.apache.axis.receivers;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.MessageSender;
 
 /**
- * This is the Absract provider. It is just a another handler. the
+ * This is the Absract IN-OUT MEP MessageReciver. The
  * protected abstract methods are only for the sake of breaking down the logic
  */
-public abstract class AbstractInOutReceiver implements MessageReceiver {
-    /**
-     * Field name
-     */
-    protected QName name;
+public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageReceiver {
+    public abstract MessageContext invokeBusinessLogic(MessageContext inMessage)throws AxisFault;
 
-    /**
-     * Method getName
-     *
-     * @return
-     */
-    public QName getName() {
-        return name;
-    }
-
-    /**
-     * Method setName
-     *
-     * @param name
-     */
-    public void setName(QName name) {
-        this.name = name;
+    public final void recieve(MessageContext messgeCtx) throws AxisFault {
+        MessageContext resultContext = invokeBusinessLogic(messgeCtx);
+        MessageSender sender = new MessageSender(messgeCtx.getEngineContext());
+        sender.send(resultContext);
     }
 }

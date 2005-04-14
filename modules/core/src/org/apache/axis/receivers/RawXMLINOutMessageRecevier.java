@@ -17,16 +17,11 @@ package org.apache.axis.receivers;
 
 import java.lang.reflect.Method;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -38,7 +33,7 @@ import org.apache.wsdl.WSDLService;
 /**
  * This is a Simple java Provider.
  */
-public class RawXMLProvider extends AbstractInOutReceiver implements MessageReceiver {
+public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver implements MessageReceiver {
     /**
      * Field log
      */
@@ -62,62 +57,15 @@ public class RawXMLProvider extends AbstractInOutReceiver implements MessageRece
     /**
      * Constructor RawXMLProvider
      */
-    public RawXMLProvider() {
+    public RawXMLINOutMessageRecevier() {
         scope = Constants.APPLICATION_SCOPE;
     }
 
-    /**
-     * Method makeNewServiceObject
-     *
-     * @param msgContext
-     * @return
-     * @throws AxisFault
-     */
-    protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
-        try {
-            AxisService service = msgContext.getServiceContext().getServiceConfig();
-            classLoader = service.getClassLoader();
-            Class implClass = service.getServiceClass();
-            return implClass.newInstance();
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
 
-    /**
-     * Method getTheImplementationObject
-     *
-     * @param msgContext
-     * @return
-     * @throws AxisFault
-     */
-    public Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-        AxisService service = msgContext.getServiceContext().getServiceConfig();
-        QName serviceName = service.getName();
-        if (Constants.APPLICATION_SCOPE.equals(scope)) {
-            return makeNewServiceObject(msgContext);
-        } else if (Constants.SESSION_SCOPE.equals(scope)) {
-            SessionContext sessionContext = msgContext.getSessionContext();
-            Object obj = sessionContext.get(serviceName);
-            if (obj == null) {
-                obj = makeNewServiceObject(msgContext);
-                sessionContext.put(serviceName, obj);
-            }
-            return obj;
-        } else if (Constants.GLOBAL_SCOPE.equals(scope)) {
-            SessionContext globalContext = msgContext.getSessionContext();
-            Object obj = globalContext.get(serviceName);
-            if (obj == null) {
-                obj = makeNewServiceObject(msgContext);
-                globalContext.put(serviceName, obj);
-            }
-            return obj;
-        } else {
-            throw new AxisFault("unknown scope " + scope);
-        }
-    }
 
-    public void recieve(MessageContext msgContext) throws AxisFault {
+ 
+
+    public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
         try {
 
             // get the implementation class for the Web Service
@@ -174,8 +122,7 @@ public class RawXMLProvider extends AbstractInOutReceiver implements MessageRece
                     throw new AxisFault("Unknown style ");
                 }
                 msgContext1.setEnvelope(envelope);
-                MessageSender sender = new MessageSender(msgContext.getEngineContext());
-                sender.send(msgContext1);
+                return msgContext1;
             } else {
                 throw new AxisFault(
                     "Raw Xml provider supports only the methods bearing the signature public OMElement "
@@ -186,5 +133,4 @@ public class RawXMLProvider extends AbstractInOutReceiver implements MessageRece
         }
 
     }
-
 }

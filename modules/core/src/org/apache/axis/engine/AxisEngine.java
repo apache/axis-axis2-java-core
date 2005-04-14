@@ -61,6 +61,13 @@ public class AxisEngine {
         try {
             ExecutionChain chain = context.getExecutionChain();
             ServiceContext serviceContext = context.getServiceContext();
+            
+            /*
+             * There is a two cases, at the server side(response) / client side
+             * but in the server side there must be a Service object object set, as before the 
+             * out flow is started the user knows the services that will be invoked. 
+             */
+            
             if (serviceContext != null) {
 
                 // what are we suppose to do in the client side
@@ -68,7 +75,7 @@ public class AxisEngine {
                 chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
             } else {
                 if (context.isServerSide() && !context.isProcessingFault()) {
-                    throw new AxisFault("in Server Side there must be service object");
+                    throw new AxisFault("At the Send there must be a Service Object set at the Server Side");
                 }
             }
 
@@ -168,7 +175,7 @@ public class AxisEngine {
      * @param e
      * @throws AxisFault
      */
-    private void handleFault(MessageContext context, Throwable e) throws AxisFault {
+    public void handleFault(MessageContext context, Throwable e) throws AxisFault {
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
