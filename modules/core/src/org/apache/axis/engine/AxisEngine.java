@@ -199,7 +199,7 @@ public class AxisEngine {
             faultContext.setEnvelope(envelope);
             
             ExecutionChain chain = faultContext.getExecutionChain();
-            chain.addPhases(context.getServiceContext().getPhases(EngineConfiguration.FAULTFLOW));
+            chain.addPhases(context.getServiceContext().getPhases(EngineConfiguration.FAULT_IN_FLOW));
             chain.invoke(faultContext);
             // send the error
             TransportSender sender = context.getTransportOut().getSender();

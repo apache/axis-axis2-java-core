@@ -69,8 +69,8 @@ public class Utils {
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
-            service.getFaultFlow(),
-            EngineConfiguration.FAULTFLOW);
+            service.getFaultInFlow(),
+            EngineConfiguration.FAULT_IN_FLOW);
     }
 
     public static AxisService createSimpleService(

@@ -363,7 +363,7 @@ public class DeploymentParser implements DeploymentConstants {
                         axisService.setOutFlow(outFlow);
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
-                        axisService.setFaultFlow(faultFlow);
+                        axisService.setFaultInFlow(faultFlow);
                     } else if (MODULEST.equals(ST)) {
                         attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
@@ -715,7 +715,7 @@ public class DeploymentParser implements DeploymentConstants {
                         module.addParameter(parameter);
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processFaultFlow();
-                        module.setFaultFlow(faultFlow);
+                        module.setFaultInFlow(faultFlow);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
                         module.setInFlow(inFlow);

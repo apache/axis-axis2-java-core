@@ -32,6 +32,8 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.ServiceContext;
 
 /**
  * Class PhaseResolver
@@ -46,6 +48,8 @@ public class PhaseResolver {
      * Field axisService
      */
     private AxisService axisService;
+
+    private ServiceContext serviceContext;
 
     /**
      * Field phaseHolder
@@ -68,9 +72,10 @@ public class PhaseResolver {
      * @param axisService
      */
     public PhaseResolver(EngineConfiguration engineRegistry,
-                         AxisService axisService) {
+                         AxisService axisService,ServiceContext serviceContext) {
         this.engineRegistry = engineRegistry;
         this.axisService = axisService;
+        this.serviceContext = serviceContext;
     }
 
     /**
@@ -121,7 +126,7 @@ public class PhaseResolver {
         * break;
         * }
         * case 3 : {
-        * flow = module.getFaultFlow();
+        * flow = module.getFaultInFlow();
         * break;
         * }
         * }
@@ -158,9 +163,14 @@ public class PhaseResolver {
                         flow = module.getOutFlow();
                         break;
                     }
-                case PhaseMetadata.FAULT_FLOW:
+                case PhaseMetadata.FAULT_IN_FLOW:
                     {
-                        flow = module.getFaultFlow();
+                        flow = module.getFaultInFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_OUT_FLOW:
+                    {
+                        flow = module.getFaultOutFlow();
                         break;
                     }
             }
@@ -187,9 +197,14 @@ public class PhaseResolver {
                     flow = axisService.getOutFlow();
                     break;
                 }
-            case PhaseMetadata.FAULT_FLOW:
+            case PhaseMetadata.FAULT_IN_FLOW:
                 {
-                    flow = axisService.getFaultFlow();
+                    flow = axisService.getFaultInFlow();
+                    break;
+                }
+            case PhaseMetadata.FAULT_OUT_FLOW:
+                {
+                    flow = axisService.getFaultOutFlow();
                     break;
                 }
         }
@@ -204,7 +219,7 @@ public class PhaseResolver {
                 allHandlers.add(metadata);
             }
         }
-        phaseHolder = new PhaseHolder(engineRegistry, axisService);
+        phaseHolder = new PhaseHolder(engineRegistry, axisService,serviceContext);
         phaseHolder.setFlowType(flowtype);
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetadata handlerMetaData =
@@ -243,7 +258,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder = new PhaseHolder(engineRegistry);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
@@ -251,7 +266,7 @@ public class PhaseResolver {
                         flow = transport.getInFlow();
                         break;
                     }
-                case PhaseMetadata.FAULT_FLOW:
+                case PhaseMetadata.FAULT_IN_FLOW:
                     {
                         flow = transport.getFaultFlow();
                         break;
@@ -283,7 +298,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder = new PhaseHolder(engineRegistry);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.OUT_FLOW:
@@ -291,7 +306,7 @@ public class PhaseResolver {
                         flow = transport.getOutFlow();
                         break;
                     }
-                case PhaseMetadata.FAULT_FLOW:
+                case PhaseMetadata.FAULT_OUT_FLOW:
                     {
                         flow = transport.getFaultFlow();
                         break;
@@ -315,19 +330,20 @@ public class PhaseResolver {
     /**
      * Method buildGlobalChains
      *
-     * @param global
+     * @param engineContext
      * @throws AxisFault
      * @throws PhaseException
      */
-    public void buildGlobalChains(AxisGlobal global)
+    public void buildGlobalChains(EngineContext engineContext)
             throws AxisFault, PhaseException {
+        AxisGlobal global =engineContext.getEngineConfig().getGlobal();
         List modules = (List) global.getModules();
         int count = modules.size();
         QName moduleName;
         AxisModule module;
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry, null);
+            phaseHolder = new PhaseHolder(engineRegistry);
             phaseHolder.setFlowType(type);
             for (int intA = 0; intA < count; intA++) {
                 moduleName = (QName) modules.get(intA);
@@ -343,9 +359,14 @@ public class PhaseResolver {
                             flow = module.getOutFlow();
                             break;
                         }
-                    case PhaseMetadata.FAULT_FLOW:
+                    case PhaseMetadata.FAULT_IN_FLOW:
                         {
-                            flow = module.getFaultFlow();
+                            flow = module.getFaultInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            flow = module.getFaultOutFlow();
                             break;
                         }
                 }
@@ -361,7 +382,7 @@ public class PhaseResolver {
                     }
                 }
             }
-            phaseHolder.buildGlobalChain(global, type);
+            phaseHolder.buildGlobalChain(engineContext, type);
         }
     }
 }

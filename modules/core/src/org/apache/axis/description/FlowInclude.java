@@ -49,16 +49,25 @@ public interface FlowInclude {
     public void setOutFlow(Flow outFlow);
 
     /**
-     * Method getFaultFlow
+     * Method getFaultInFlow
      *
      * @return
      */
-    public Flow getFaultFlow();
+    public Flow getFaultInFlow();
 
     /**
-     * Method setFaultFlow
+     * Method setFaultInFlow
      *
      * @param faultFlow
      */
-    public void setFaultFlow(Flow faultFlow);
+    public void setFaultInFlow(Flow faultFlow);
+
+    public Flow getFaultOutFlow();
+
+    /**
+     * Method setFaultInFlow
+     *
+     * @param faultFlow
+     */
+    public void setFaultOutFlow(Flow faultFlow);
 }

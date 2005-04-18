@@ -93,10 +93,10 @@ public class RegistryTest extends AbstractTestCase {
         Flow flow3 = new FlowImpl();
 
         flowInclude.setInFlow(flow1);
-        flowInclude.setFaultFlow(flow2);
+        flowInclude.setFaultInFlow(flow2);
         flowInclude.setOutFlow(flow3);
         assertSame(flow1, flowInclude.getInFlow());
-        assertSame(flow2, flowInclude.getFaultFlow());
+        assertSame(flow2, flowInclude.getFaultInFlow());
         assertSame(flow3, flowInclude.getOutFlow());
     }
 

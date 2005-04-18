@@ -84,7 +84,8 @@ public interface DescriptionConstants {
     /**
      * Field FAULTFLOW_KEY
      */
-    public static final String FAULTFLOW_KEY = "FAULTFLOW_KEY";
+    public static final String IN_FAULTFLOW_KEY = "IN_FAULTFLOW_KEY";
+    public static final String OUT_FAULTFLOW_KEY = "OUT_FAULTFLOW_KEY";
 
     /**
      * Field PHASES_KEY

@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
@@ -93,6 +94,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     // private static ServerMetaData server = new ServerMetaData();
     private AxisGlobal server;
+
+    private EngineContext engineContext;
 
 
     private HDFileItem currentFileItem;
@@ -245,7 +248,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
         PhaseResolver phaseResolver = new PhaseResolver(engineconfig);
-        phaseResolver.buildGlobalChains(server);
+        phaseResolver.buildGlobalChains(engineContext);
         phaseResolver.buildTranspotsChains();
 
     }
@@ -269,6 +272,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         server = new AxisGlobal();
         newEngineRegisty = new EngineConfigurationImpl(server);
+        engineContext = new EngineContext(newEngineRegisty);
 
         return newEngineRegisty;
     }
@@ -276,9 +280,10 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         currentFileItem.setClassLoader();
-        serviceMetaData = getRunnableService(serviceMetaData);
+        ServiceContext serviceContext = getRunnableService(serviceMetaData);
+        engineContext.addService(serviceContext);
         engineconfig.addService(serviceMetaData);
-        Parameter para = serviceMetaData.getParameter("OUTSERVICE");
+        /*Parameter para = serviceMetaData.getParameter("OUTSERVICE");
         if (para != null) {
             String value = (String) para.getValue();
             if ("true".equals(value)) {
@@ -293,7 +298,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
             }
-        }
+        }*/
     }
 
     /**
@@ -305,7 +310,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws AxisFault
      * @throws PhaseException
      */
-    private AxisService getRunnableService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+    private ServiceContext getRunnableService(AxisService serviceMetaData) throws AxisFault, PhaseException {
         loadMessageReceiver(serviceMetaData);
         Flow inflow = serviceMetaData.getInFlow();
         if (inflow != null) {
@@ -317,14 +322,15 @@ public class DeploymentEngine implements DeploymentConstants {
             addFlowHandlers(outFlow);
         }
 
-        Flow faultFlow = serviceMetaData.getFaultFlow();
+        Flow faultFlow = serviceMetaData.getFaultInFlow();
         if (faultFlow != null) {
             addFlowHandlers(faultFlow);
         }
-        PhaseResolver reolve = new PhaseResolver(engineconfig, serviceMetaData);
+        ServiceContext serviceContext = new ServiceContext(serviceMetaData);
+        PhaseResolver reolve = new PhaseResolver(engineconfig, serviceMetaData,serviceContext);
         reolve.buildchains();
         serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
-        return serviceMetaData;
+        return serviceContext;
     }
 
 
@@ -390,7 +396,7 @@ public class DeploymentEngine implements DeploymentConstants {
         Flow outFlow = moduelmetada.getOutFlow();
         addFlowHandlers(outFlow);
 
-        Flow faultFlow = moduelmetada.getFaultFlow();
+        Flow faultFlow = moduelmetada.getFaultInFlow();
         addFlowHandlers(faultFlow);
 
         engineconfig.addMdoule(moduelmetada);
@@ -513,7 +519,7 @@ public class DeploymentEngine implements DeploymentConstants {
         return fileName;
     }
 
-    public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
+   /* public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
         AxisService service = null;
         try {
             currentFileItem = new HDFileItem(SERVICE, servieName);
@@ -531,6 +537,6 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         return service;
     }
-
+*/
 
 }

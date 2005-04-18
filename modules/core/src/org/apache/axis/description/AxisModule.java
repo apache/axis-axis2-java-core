@@ -64,8 +64,12 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     /**
      * @return
      */
-    public Flow getFaultFlow() {
-        return flowInclude.getFaultFlow();
+    public Flow getFaultInFlow() {
+        return flowInclude.getFaultInFlow();
+    }
+
+    public Flow getFaultOutFlow() {
+        return flowInclude.getFaultOutFlow();
     }
 
     /**
@@ -85,8 +89,15 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     /**
      * @param faultFlow
      */
-    public void setFaultFlow(Flow faultFlow) {
-        flowInclude.setFaultFlow(faultFlow);
+    public void setFaultInFlow(Flow faultFlow) {
+        flowInclude.setFaultInFlow(faultFlow);
+    }
+
+     /**
+     * @param faultFlow
+     */
+    public void setFaultOutFlow(Flow faultFlow) {
+        flowInclude.setFaultOutFlow(faultFlow);
     }
 
     /**

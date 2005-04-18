@@ -32,15 +32,17 @@ public class FlowIncludeImpl implements FlowInclude {
     /**
      * Field fault
      */
-    private Flow fault;
+    private Flow In_fault;
+
+    private Flow Out_fault;
 
     /**
-     * Method getFaultFlow
+     * Method getFaultInFlow
      *
      * @return
      */
-    public Flow getFaultFlow() {
-        return fault;
+    public Flow getFaultInFlow() {
+        return In_fault;
     }
 
     /**
@@ -62,12 +64,20 @@ public class FlowIncludeImpl implements FlowInclude {
     }
 
     /**
-     * Method setFaultFlow
+     * Method setFaultInFlow
      *
      * @param flow
      */
-    public void setFaultFlow(Flow flow) {
-        this.fault = flow;
+    public void setFaultInFlow(Flow flow) {
+        this.In_fault = flow;
+    }
+
+    public Flow getFaultOutFlow() {
+        return this.Out_fault;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setFaultOutFlow(Flow faultFlow) {
+        this.Out_fault = faultFlow;
     }
 
     /**

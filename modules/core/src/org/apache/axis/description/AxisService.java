@@ -342,33 +342,45 @@ public class AxisService extends WSDLServiceImpl
 
     /*
      * (non-Javadoc)
-     * @see org.apache.axis.description.FlowInclude#getFaultFlow()
+     * @see org.apache.axis.description.FlowInclude#getFaultInFlow()
      */
 
     /**
-     * Method getFaultFlow
+     * Method getFaultInFlow
      *
      * @return
      */
-    public Flow getFaultFlow() {
-        return (Flow) this.getComponentProperty(FAULTFLOW_KEY);
+    public Flow getFaultInFlow() {
+        return (Flow) this.getComponentProperty(IN_FAULTFLOW_KEY);
     }
 
     /*
      * (non-Javadoc)
-     * @see org.apache.axis.description.FlowInclude#setFaultFlow(org.apache.axis.description.Flow)
+     * @see org.apache.axis.description.FlowInclude#setFaultInFlow(org.apache.axis.description.Flow)
      */
 
     /**
-     * Method setFaultFlow
+     * Method setFaultInFlow
      *
      * @param faultFlow
      */
-    public void setFaultFlow(Flow faultFlow) {
+    public void setFaultInFlow(Flow faultFlow) {
         if (faultFlow != null) {
-            this.setComponentProperty(FAULTFLOW_KEY, faultFlow);
+            this.setComponentProperty(IN_FAULTFLOW_KEY, faultFlow);
         }
     }
+
+    public Flow getFaultOutFlow() {
+       return (Flow) this.getComponentProperty(OUT_FAULTFLOW_KEY); 
+    }
+
+    public void setFaultOutFlow(Flow faultFlow) {
+         if (faultFlow != null) {
+            this.setComponentProperty(OUT_FAULTFLOW_KEY, faultFlow);
+        }
+    }
+
+
 
 //    /**
 //     * Method setServiceClass

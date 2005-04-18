@@ -63,11 +63,11 @@ public class MessageWithServerTest extends TestCase {
         
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
-        service.setFaultFlow(new MockFlow("service faultflow", 1));
+        service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         AxisModule m1 = new AxisModule(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
-        m1.setFaultFlow(new MockFlow("service module faultflow", 1));
+        m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         service.addModule(m1.getName());
 
         AxisOperation operation = new AxisOperation(operationName);

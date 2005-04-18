@@ -45,9 +45,11 @@ public interface EngineConfiguration {
     public static final int OUTFLOW = 10004;
 
     /**
-     * Field FAULTFLOW
+     * Field FAULT_IN_FLOW
      */
-    public static final int FAULTFLOW = 10005;
+    public static final int FAULT_IN_FLOW = 10005;
+
+    public static final int FAULT_OUT_FLOW = 10006;
 
     /**
      * Method getGlobal

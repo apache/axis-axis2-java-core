@@ -51,7 +51,7 @@ public class PhasesIncludeImpl implements PhasesInclude {
             return inflow;
         } else if (flow == EngineConfiguration.OUTFLOW) {
             return outflow;
-        } else if (flow == EngineConfiguration.FAULTFLOW) {
+        } else if (flow == EngineConfiguration.FAULT_IN_FLOW) {
             return faultflow;
         } else {
             throw new AxisFault("Unknown type flow ");
@@ -70,7 +70,7 @@ public class PhasesIncludeImpl implements PhasesInclude {
             inflow = phases;
         } else if (flow == EngineConfiguration.OUTFLOW) {
             outflow = phases;
-        } else if (flow == EngineConfiguration.FAULTFLOW) {
+        } else if (flow == EngineConfiguration.FAULT_IN_FLOW) {
             faultflow = phases;
         } else {
             throw new AxisFault("Unknown type flow ");
