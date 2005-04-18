@@ -285,19 +285,19 @@ public class DeploymentEngine implements DeploymentConstants {
         engineconfig.addService(serviceMetaData);
         /*Parameter para = serviceMetaData.getParameter("OUTSERVICE");
         if (para != null) {
-            String value = (String) para.getValue();
-            if ("true".equals(value)) {
-                Class temp = serviceMetaData.getServiceClass();
-                try {
-                    Thread servie = (Thread) temp.newInstance();
-                    servie.start();
-                } catch (InstantiationException e) {
-                    throw new AxisFault(e.getMessage());
-                } catch (IllegalAccessException e) {
-                    throw new AxisFault(e.getMessage());
-                }
+        String value = (String) para.getValue();
+        if ("true".equals(value)) {
+        Class temp = serviceMetaData.getServiceClass();
+        try {
+        Thread servie = (Thread) temp.newInstance();
+        servie.start();
+        } catch (InstantiationException e) {
+        throw new AxisFault(e.getMessage());
+        } catch (IllegalAccessException e) {
+        throw new AxisFault(e.getMessage());
+        }
 
-            }
+        }
         }*/
     }
 
@@ -519,24 +519,57 @@ public class DeploymentEngine implements DeploymentConstants {
         return fileName;
     }
 
-   /* public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
-        AxisService service = null;
-        try {
-            currentFileItem = new HDFileItem(SERVICE, servieName);
-            currentFileItem.setClassLoader(classLoder);
-            service = new AxisService();
-            DeploymentParser schme = new DeploymentParser(serviceStream, this);
-            schme.parseServiceXML(service);
-            service = getRunnableService(service);
-        } catch (XMLStreamException e) {
-            throw  new DeploymentException(e.getMessage());
-        } catch (PhaseException e) {
-            throw  new DeploymentException(e.getMessage());
-        } catch (AxisFault axisFault) {
-            throw  new DeploymentException(axisFault.getMessage());
-        }
-        return service;
+    /* public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
+    AxisService service = null;
+    try {
+    currentFileItem = new HDFileItem(SERVICE, servieName);
+    currentFileItem.setClassLoader(classLoder);
+    service = new AxisService();
+    DeploymentParser schme = new DeploymentParser(serviceStream, this);
+    schme.parseServiceXML(service);
+    service = getRunnableService(service);
+    } catch (XMLStreamException e) {
+    throw  new DeploymentException(e.getMessage());
+    } catch (PhaseException e) {
+    throw  new DeploymentException(e.getMessage());
+    } catch (AxisFault axisFault) {
+    throw  new DeploymentException(axisFault.getMessage());
+    }
+    return service;
     }
 */
+
+    /**
+     * This method is used to fill a axisservice object using service.xml , first it should create
+     * an axisservice object using WSDL and then fill that using given servic.xml and load all the requed
+     * class and build the chains , finally add the  servicecontext to EngineContext and axisservice into
+     * EngineConfiguration
+     * @param axisService
+     * @param serviceInputStream
+     * @param classLoader
+     * @return
+     * @throws DeploymentException
+     */
+    public ServiceContext buildService(AxisService axisService , InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
+        ServiceContext serviceContext;
+        try {
+            DeploymentParser schme = new DeploymentParser(serviceInputStream, this);
+            schme.parseServiceXML(axisService);
+            axisService.setClassLoader(classLoader);
+            serviceContext = getRunnableService(axisService);
+            engineContext.addService(serviceContext);
+            engineconfig.addService(axisService);
+
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("XMLStreamException" + e.getMessage());
+        } catch (DeploymentException e) {
+            throw new DeploymentException(e.getMessage()) ;
+        } catch (PhaseException e) {
+            throw new DeploymentException(e.getMessage());
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault.getMessage());
+        }
+        return  serviceContext;
+    }
 
 }
