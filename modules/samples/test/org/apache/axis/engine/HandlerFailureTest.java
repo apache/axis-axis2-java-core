@@ -38,6 +38,7 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
+import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -144,6 +145,7 @@ public class HandlerFailureTest extends TestCase {
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
             EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
+            call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 

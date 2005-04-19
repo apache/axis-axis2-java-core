@@ -85,6 +85,7 @@ public class Call {
             registry.addTransportOut(mailTransportOut);
 
             this.engineContext = new EngineContext(registry);
+            messageInfoHeaders = new MessageInformationHeadersCollection();
             init();
         } catch (AxisFault e) {
             throw new AxisFault(e.getMessage(), e);

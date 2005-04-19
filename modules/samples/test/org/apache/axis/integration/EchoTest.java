@@ -88,6 +88,7 @@ public class EchoTest extends TestCase {
                 + "/axis/services/echo");
         Call call = new Call();
         call.setTo(targetEPR);
+        call.setTransport(Constants.TRANSPORT_HTTP);
         call.setListenerTransport(Constants.TRANSPORT_HTTP,true);
         SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
 
