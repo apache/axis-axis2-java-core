@@ -31,12 +31,12 @@ import org.apache.axis.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis.transport.TransportSender;
 
 public class AbstractEngineTest extends TestCase {
-    private MessageContext mc;
-    private ArrayList executedHandlers = new ArrayList();
-    private EngineConfiguration engineRegistry;
-    private QName serviceName = new QName("axis/services/NullService");
-    private QName opearationName = new QName("NullOperation");
-    private AxisService service;
+    protected MessageContext mc;
+    protected ArrayList executedHandlers = new ArrayList();
+    protected EngineConfiguration engineRegistry;
+    protected QName serviceName = new QName("axis/services/NullService");
+    protected QName opearationName = new QName("NullOperation");
+    protected AxisService service;
 
     public AbstractEngineTest() {
     }
@@ -45,25 +45,25 @@ public class AbstractEngineTest extends TestCase {
         super(arg0);
     }
 
-    public class TempHandler extends AbstractHandler {
-        private Integer index;
-        private boolean pause = false;
-        public TempHandler(int index, boolean pause) {
-            this.index = new Integer(index);
-            this.pause = pause;
-        }
-        public TempHandler(int index) {
-            this.index = new Integer(index);
-        }
-
-        public void invoke(MessageContext msgContext) throws AxisFault {
-            executedHandlers.add(index);
-            if (pause) {
-                msgContext.setPaused(true);
-            }
-        }
-
-    }
+//    public class TempHandler extends AbstractHandler {
+//        private Integer index;
+//        private boolean pause = false;
+//        public TempHandler(int index, boolean pause) {
+//            this.index = new Integer(index);
+//            this.pause = pause;
+//        }
+//        public TempHandler(int index) {
+//            this.index = new Integer(index);
+//        }
+//
+//        public void invoke(MessageContext msgContext) throws AxisFault {
+//            executedHandlers.add(index);
+//            if (pause) {
+//                msgContext.setPaused(true);
+//            }
+//        }
+//
+//    }
 
     public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
 

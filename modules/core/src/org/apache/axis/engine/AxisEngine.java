@@ -162,6 +162,7 @@ public class AxisEngine {
 
             log.info("ending the out flow");
         } catch (Throwable e) {
+            e.printStackTrace();
             handleFault(context, e);
         }
     }
@@ -199,7 +200,12 @@ public class AxisEngine {
             faultContext.setEnvelope(envelope);
             
             ExecutionChain chain = faultContext.getExecutionChain();
-            chain.addPhases(context.getServiceContext().getPhases(EngineConfiguration.FAULT_IN_FLOW));
+            
+            ServiceContext serviceContext = context.getServiceContext();
+            if(serviceContext != null){
+                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
+            }
+            
             chain.invoke(faultContext);
             // send the error
             TransportSender sender = context.getTransportOut().getSender();

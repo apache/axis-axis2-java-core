@@ -100,6 +100,8 @@ public class MessageContext {
     private ServiceContext serviceContext;
 
     private OperationContext operationContext;
+    
+    private MEPContext mepContext;
 
     private AxisTransportIn transportIn;
 
@@ -558,6 +560,20 @@ public class MessageContext {
      */
     public void setServiceContext(ServiceContext context) {
         serviceContext = context;
+    }
+
+    /**
+     * @return
+     */
+    public MEPContext getMepContext() {
+        return mepContext;
+    }
+
+    /**
+     * @param context
+     */
+    public void setMepContext(MEPContext context) {
+        mepContext = context;
     }
 
 }

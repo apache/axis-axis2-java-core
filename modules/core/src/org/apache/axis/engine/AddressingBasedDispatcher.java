@@ -18,6 +18,7 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
@@ -55,8 +56,13 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             EndpointReference toEPR = msgctx.getTo();
             QName serviceName = new QName(toEPR.getAddress());
             service = msgctx.getEngineContext().getEngineConfig().getService(serviceName);
-            ServiceContext serviceContext = new ServiceContext(service);
+            
             if (service != null) {
+                EngineContext engineContext = msgctx.getEngineContext();
+                ServiceContext serviceContext = engineContext.getService(service.getName());
+                if(serviceContext == null){
+                    serviceContext = new ServiceContext(service);
+                }
                 msgctx.setServiceContext(serviceContext);
                 msgctx.setMessageStyle(service.getStyle());
                 // let add the Handlers

@@ -25,7 +25,4 @@ public class EngineWithDynamicPhaseResolvingTest extends AbstractEngineTest {
    public EngineWithDynamicPhaseResolvingTest(String arg0) {
        super(arg0);
    }
-   protected void setUp() throws Exception {
-   }
-
 }

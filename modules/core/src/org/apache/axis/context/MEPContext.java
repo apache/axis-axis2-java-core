@@ -1,5 +1,7 @@
 package org.apache.axis.context;
 
+import java.util.List;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,46 +20,19 @@ package org.apache.axis.context;
  * 
  */
 
-import java.util.HashMap;
-import java.util.Map;
+public interface MEPContext {
+    public String getMepId();
+    public void setMepId(String mepId);
 
-public class MEPContext  extends AbstractContext{
-    private Map messageContextMap;
-    private String mepId;
+    public MessageContext getInMessageContext(String messageID);
+    public List getInMessageContexts();
 
-    public String getMepId() {
-        return mepId;
-    }
-
-    public void setMepId(String mepId) {
-        this.mepId = mepId;
-    }
-
-    public MEPContext() {
-        super();
-        messageContextMap = new HashMap();
-    }
-
-    /**
-     *
-     * @param ctxt
-     */
-    public void addMessageContext(MessageContext ctxt){
-         messageContextMap.put(ctxt.getMessageID(),ctxt);
-    }
-
-    /**
-     *
-     * @param messageId
-     * @return
-     */
-    public MessageContext getMessageContext(String messageId){
-        return (MessageContext)messageContextMap.get(messageId);
-    }
-
-
-    public MessageContext removeMessageContext(MessageContext ctxt){
-        messageContextMap.remove(ctxt.getMessageID());
-        return ctxt;
-    }
+    public MessageContext getOutMessageContext(String messageID);
+    public List getOutMessageContexts();
+    
+    public void addInMessageContext(MessageContext msgctx);
+    public void addOutMessageContext(MessageContext msgctx);
+    
+    public boolean isComplete();    
 }
+

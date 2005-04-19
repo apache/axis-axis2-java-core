@@ -22,14 +22,22 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.MEPContext;
+import org.apache.axis.context.MEPContextFactory;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.DefinedParameters;
+import org.apache.axis.description.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.modules.Module;
 
 public class ServiceHandlersChainBuilder extends AbstractHandler {
+    
+     
 
     /* (non-Javadoc)
      * @see org.apache.axis.engine.Handler#invoke(org.apache.axis.context.MessageContext)
@@ -37,12 +45,33 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         ServiceContext serviceContext = msgContext.getServiceContext();
         if (serviceContext != null) {
+            
+            OperationContext opContext = msgContext.getOperationContext();
+            AxisOperation axisOp = opContext.getOperationConfig();
+            Parameter param = axisOp.getParameter(DefinedParameters.PARM_MEP);
+            
+            String mepVal = null;
+            if(param != null){
+                mepVal = (String)param.getValue();
+            }else{
+                mepVal = MEPContextFactory.IN_OUT_MEP;
+            }
+            
+            //TODO find the MEP context
+            MEPContext mepContext = null;
+            if(mepContext == null){
+                mepContext = MEPContextFactory.createMEP(mepVal,msgContext.isServerSide());
+            }
+            msgContext.setMepContext(mepContext);
+            
+            
             // let add the Handlers
             ExecutionChain chain = msgContext.getExecutionChain();
             
             EngineContext engineContext = msgContext.getEngineContext();
-            engineContext.addService(serviceContext);
-            
+            if( engineContext.getService(serviceContext.getName()) != null){
+                engineContext.addService(serviceContext);
+            }
             chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
             
             //TODO check had the modules changes after the deployment time handler 

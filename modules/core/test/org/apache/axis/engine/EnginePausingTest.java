@@ -26,17 +26,18 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMFactory;
 import org.apache.wsdl.WSDLService;
 
 public class EnginePausingTest extends AbstractEngineTest {
-    private MessageContext mc;
-    private ArrayList executedHandlers = new ArrayList();
-    private EngineConfiguration engineRegistry;
-    private QName serviceName = new QName("NullService");
+  
+    private QName serviceName = new QName("axis/services/NullService");
+    private QName operationName = new QName("DummyOp");
 
     public EnginePausingTest() {
     }
@@ -61,6 +62,9 @@ public class EnginePausingTest extends AbstractEngineTest {
         mc.setEnvelope(omFac.getDefaultEnvelope());
         AxisService service = new AxisService(serviceName);
         service.setMessageReceiver(new NullMessageReceiver());
+        
+        AxisOperation axisOp = new AxisOperation(operationName);
+        service.addOperation(axisOp);
         ArrayList phases = new ArrayList();
 
         SimplePhase phase = new SimplePhase("1");
@@ -108,11 +112,12 @@ public class EnginePausingTest extends AbstractEngineTest {
         mc.setTo(
             new EndpointReference(
                 AddressingConstants.WSA_TO,
-                "http://127.0.0.1:8080/axis/services/NullService"));
+                "axis/services/NullService"));
+        mc.setWSAAction(operationName.getLocalPart());
 
     }
 
-    public void testSend() throws Exception {
+    public void testReceive() throws Exception {
         AxisEngine engine = new AxisEngine();
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 15);
@@ -128,4 +133,24 @@ public class EnginePausingTest extends AbstractEngineTest {
         }
 
     }
+    
+    public class TempHandler extends AbstractHandler {
+         private Integer index;
+         private boolean pause = false;
+         public TempHandler(int index, boolean pause) {
+             this.index = new Integer(index);
+             this.pause = pause;
+         }
+         public TempHandler(int index) {
+             this.index = new Integer(index);
+         }
+
+         public void invoke(MessageContext msgContext) throws AxisFault {
+             executedHandlers.add(index);
+             if (pause) {
+                 msgContext.setPaused(true);
+             }
+         }
+
+     }
 }

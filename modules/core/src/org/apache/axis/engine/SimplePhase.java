@@ -16,7 +16,6 @@
 package org.apache.axis.engine;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import javax.xml.namespace.QName;
 
