@@ -28,16 +28,26 @@ import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.description.PhasesIncludeImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.storage.AxisStorage;
 
 public class EngineContext extends AbstractContext implements PhasesInclude{
 
     private EngineConfiguration engineConfig;
+    private AxisStorage storage;
+
     private Map serviceContextMap;
     private Map sessionContextMap;
     private Map moduleContextMap;
-    
-    
-    private PhasesInclude phaseInclude; 
+
+    public AxisStorage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(AxisStorage storage) {
+        this.storage = storage;
+    }
+
+    private PhasesInclude phaseInclude;
     
     public EngineContext(EngineConfiguration registry){
         this.engineConfig = registry;

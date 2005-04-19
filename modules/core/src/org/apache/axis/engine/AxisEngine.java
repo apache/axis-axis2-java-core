@@ -39,7 +39,7 @@ public class AxisEngine {
     /**
      * Constructor AxisEngine
      *
-     * @param registry
+     *
      */
     public AxisEngine() {
         log.info("Axis Engine Started");
@@ -218,5 +218,47 @@ public class AxisEngine {
             // TODO log and exit
             log.error("Error in fault flow", e);
         }
+    }
+
+    /* --------------------------------------------------------------------------------------------*/
+    /* -----------------   Methods related to storage ----------------------------------------------*/
+    /**
+     * Stores an object in the underlying storage
+     * @param context The relevant engine context
+     * @param obj the object to be stored
+     * @return the storage key
+     */
+    public Object store(EngineContext context,Object obj){
+        return context.getStorage().put(obj);
+    }
+
+    /**
+     * retrieves an object from the underlying storage
+     * @see #store(org.apache.axis.context.EngineContext, Object)
+     * @param context
+     * @param key
+     * @return
+     */
+    public Object retrieve(EngineContext context,Object key){
+        return context.getStorage().get(key);
+    }
+
+    /**
+     * removes an object from the underlying storage
+     * @param context
+     * @param key
+     * @return  the object removed
+     */
+    public Object remove(EngineContext context,Object key){
+        return context.getStorage().remove(key);
+    }
+
+    /**
+     * Clears the underlying storage
+     * @param context
+     * @return
+     */
+    public boolean clearStorage(EngineContext context){
+        return context.getStorage().clean();
     }
 }
