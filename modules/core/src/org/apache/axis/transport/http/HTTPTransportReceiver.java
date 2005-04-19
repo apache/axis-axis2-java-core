@@ -90,27 +90,30 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Reader in =
-                (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
+        Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
             Map map = parseTheHeaders(in, serverSide);
             if (serverSide) {
                 msgContext.setProperty(
-                        MessageContext.SOAP_ACTION,
-                        map.get(HTTPConstants.HEADER_SOAP_ACTION));
+                    MessageContext.SOAP_ACTION,
+                    map.get(HTTPConstants.HEADER_SOAP_ACTION));
+
+                String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
                 msgContext.setTo(
-                        new EndpointReference(
-                                AddressingConstants.WSA_TO,
-                                (String) map.get(HTTPConstants.REQUEST_URI)));
+                    new EndpointReference(
+                        AddressingConstants.WSA_TO,
+                        getServiceLookUp(requestURI)));
 
                 // TODO see is it a Service request e.g. WSDL, list ....
                 // TODO take care of the other HTTPHeaders
             } else {
-                if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(
-                        map.get(HTTPConstants.RESPONSE_CODE))) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_SUCCEED,
-                            HTTPConstants.RESPONSE_ACK_CODE_VAL);
+                if (HTTPConstants
+                    .RESPONSE_ACK_CODE_VAL
+                    .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
+                    msgContext.setProperty(
+                        MessageContext.TRANSPORT_SUCCEED,
+                        HTTPConstants.RESPONSE_ACK_CODE_VAL);
                     return;
                 }
 
@@ -118,13 +121,9 @@ public class HTTPTransportReceiver extends TransportReceiver {
             }
             AxisEngine axisEngine = new AxisEngine();
             try {
-                XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder =
-                new StAXSOAPModelBuilder(OMFactory.newInstance(),
-                        xmlreader);
-                msgContext.setEnvelope(
-                        (SOAPEnvelope) builder.getDocumentElement());
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), xmlreader);
+                msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }
@@ -157,8 +156,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * @return
      * @throws AxisFault
      */
-    public HashMap parseTheHeaders(Reader reader, boolean serverSide)
-            throws AxisFault {
+    public HashMap parseTheHeaders(Reader reader, boolean serverSide) throws AxisFault {
         HashMap map = new HashMap();
         try {
             StringBuffer str = new StringBuffer();
@@ -168,8 +166,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
             int start = 0;
             length = readLine(reader, buf);
             if (serverSide) {
-                if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S')
-                        && (buf[3] == 'T')) {
+                if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S') && (buf[3] == 'T')) {
                     index = 5;
                     value = readFirstLineArg(' ');
                     map.put(HTTPConstants.REQUEST_URI, value);
@@ -195,19 +192,19 @@ public class HTTPTransportReceiver extends TransportReceiver {
                 }
                 for (int i = 0; i < length; i++) {
                     switch (state) {
-                        case BEFORE_SEPERATOR:
+                        case BEFORE_SEPERATOR :
                             if (buf[i] == ':') {
                                 key = str.toString();
                                 str = new StringBuffer();
                                 state = AFTER_SEPERATOR;
                                 if (buf[i + 1] == ' ') {
-                                    i++;    // ignore next space
+                                    i++; // ignore next space
                                 }
                             } else {
                                 str.append(buf[i]);
                             }
                             break;
-                        case AFTER_SEPERATOR:
+                        case AFTER_SEPERATOR :
                             if (buf[i] == '\n') {
                                 value = str.toString();
                                 map.put(key, value);
@@ -229,9 +226,8 @@ public class HTTPTransportReceiver extends TransportReceiver {
                             // break;
                             // case END:
                             // break;
-                            default :
-                            throw new AxisFault("Error Occured Unknown state "
-                                            + state);
+                        default :
+                            throw new AxisFault("Error Occured Unknown state " + state);
                     }
                 }
                 state = BEFORE_SEPERATOR;
@@ -415,12 +411,24 @@ public class HTTPTransportReceiver extends TransportReceiver {
             }
         }
         if (c == -1) {
-            throw new AxisFault(
-                    "Every line should ends with the \n, unexpected End of stream");
+            throw new AxisFault("Every line should ends with the \n, unexpected End of stream");
         } else {
-            return (count > 0)
-                    ? count
-                    : -1;
+            return (count > 0) ? count : -1;
         }
+    }
+
+    private String getServiceLookUp(String requestURI) throws AxisFault {
+        final String URI_ID_STRING = "/services";
+              String filePart = requestURI;
+
+              int index = filePart.lastIndexOf(URI_ID_STRING);
+              String serviceStr = null;
+              if (index > 0) {
+                  serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
+                  return serviceStr; 
+
+              } else {
+                  throw new AxisFault("Both the URI and SOAP_ACTION are Null");
+              }
     }
 }

@@ -40,7 +40,7 @@ public class Call {
 
     private HashMap properties;
 
-    private String transport;
+    private String transport = Constants.TRANSPORT_HTTP;
 
     private EngineContext engineContext;
 
@@ -52,11 +52,6 @@ public class Call {
     
     
     public Call() throws AxisFault {
-        
-   
-   
-   
-
         try {
             //find the deployment mechanism , create
             //a EngineContext .. if the conf file not found
@@ -221,6 +216,7 @@ public class Call {
      * This method is used to initilize the client side ,
      */
     private void init() throws AxisFault {
+        messageInfoHeaders = new MessageInformationHeadersCollection();
         AxisService callbackService = new AxisService();
         callbackService.setName(new QName(CallbackReceiver.SERVIC_NAME));
         callbackReceiver = new CallbackReceiver();
@@ -336,9 +332,9 @@ public class Call {
      */
     public void setListenerTransport(String Listenertransport, boolean useSeparateListener)
         throws AxisFault {
-        if ((Constants.TRANSPORT_HTTP.equals(transport)
-            || Constants.TRANSPORT_MAIL.equals(transport)
-            || Constants.TRANSPORT_TCP.equals(transport))) {
+        if ((Constants.TRANSPORT_HTTP.equals(Listenertransport)
+            || Constants.TRANSPORT_MAIL.equals(Listenertransport)
+            || Constants.TRANSPORT_TCP.equals(Listenertransport))) {
             this.Listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
         } else {

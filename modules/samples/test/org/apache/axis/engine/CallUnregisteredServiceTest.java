@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -41,8 +42,7 @@ public class CallUnregisteredServiceTest extends TestCase{
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
-
+    
     private EngineConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
@@ -78,9 +78,10 @@ public class CallUnregisteredServiceTest extends TestCase{
             reqEnv.getBody().addChild(method);
 
             Call call = new Call();
-            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService1");
+            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService1");
             call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
+            call.setTransport(Constants.TRANSPORT_HTTP);
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
             SOAPBody sb = resEnv.getBody();

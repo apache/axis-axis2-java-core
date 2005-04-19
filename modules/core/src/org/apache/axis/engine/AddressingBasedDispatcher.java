@@ -56,11 +56,11 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             EndpointReference toEPR = msgctx.getTo();
             QName serviceName = new QName(toEPR.getAddress());
             service = msgctx.getEngineContext().getEngineConfig().getService(serviceName);
-            
+
             if (service != null) {
                 EngineContext engineContext = msgctx.getEngineContext();
                 ServiceContext serviceContext = engineContext.getService(service.getName());
-                if(serviceContext == null){
+                if (serviceContext == null) {
                     serviceContext = new ServiceContext(service);
                 }
                 msgctx.setServiceContext(serviceContext);
@@ -70,7 +70,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
                 chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
 
             } else {
-                throw new AxisFault("Both the URI and SOAP_ACTION are Null");
+                throw new AxisFault("No service found under the " + toEPR.getAddress());
             }
             if (msgctx.getOperationContext() == null) {
                 String action = (String) msgctx.getWSAAction();
@@ -79,7 +79,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
                 if (op != null) {
                     OperationContext opContext = new OperationContext(op);
                     msgctx.setOperationContext(opContext);
-                }else{
+                } else {
                     throw new AxisFault("Operation not found");
                 }
 

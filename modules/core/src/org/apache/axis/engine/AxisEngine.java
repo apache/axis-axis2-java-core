@@ -162,7 +162,6 @@ public class AxisEngine {
 
             log.info("ending the out flow");
         } catch (Throwable e) {
-            e.printStackTrace();
             handleFault(context, e);
         }
     }
@@ -198,7 +197,7 @@ public class AxisEngine {
             SOAPBody body = envelope.getBody();
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
-            
+   
             ExecutionChain chain = faultContext.getExecutionChain();
             
             ServiceContext serviceContext = context.getServiceContext();
@@ -209,7 +208,7 @@ public class AxisEngine {
             chain.invoke(faultContext);
             // send the error
             TransportSender sender = context.getTransportOut().getSender();
-            sender.invoke(context);
+            sender.invoke(faultContext);
         } else if (!serverSide) {
 
             // if at the client side throw the exception
