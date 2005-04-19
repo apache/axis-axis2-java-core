@@ -322,13 +322,20 @@ public class DeploymentEngine implements DeploymentConstants {
             addFlowHandlers(outFlow);
         }
 
-        Flow faultFlow = serviceMetaData.getFaultInFlow();
-        if (faultFlow != null) {
-            addFlowHandlers(faultFlow);
+        Flow faultInFlow = serviceMetaData.getFaultInFlow();
+        if (faultInFlow != null) {
+            addFlowHandlers(faultInFlow);
         }
+
+        Flow faultOutFlow = serviceMetaData.getFaultOutFlow();
+        if (faultOutFlow != null) {
+            addFlowHandlers(faultOutFlow);
+        }
+
+
         ServiceContext serviceContext = new ServiceContext(serviceMetaData);
-        PhaseResolver reolve = new PhaseResolver(engineconfig, serviceMetaData,serviceContext);
-        reolve.buildchains();
+        PhaseResolver reolve = new PhaseResolver(engineconfig,serviceContext);
+        serviceContext = reolve.buildchains();
         serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
         return serviceContext;
     }
@@ -439,14 +446,17 @@ public class DeploymentEngine implements DeploymentConstants {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("DeploymentException  " + de);
                             serviceStatus = "Error:\n" + de.getMessage();
+                            de.printStackTrace();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("AxisFault  " + axisFault);
                             serviceStatus = "Error:\n" + axisFault.getMessage();
+                            axisFault.printStackTrace();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("Exception  " + e);
                             serviceStatus = "Error:\n" + e.getMessage();
+                            e.printStackTrace();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
                                 engineconfig.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);

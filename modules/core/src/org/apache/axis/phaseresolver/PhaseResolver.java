@@ -40,9 +40,9 @@ import org.apache.axis.context.ServiceContext;
  */
 public class PhaseResolver {
     /**
-     * Field engineRegistry
+     * Field engineConfig
      */
-    private final EngineConfiguration engineRegistry;
+    private final EngineConfiguration engineConfig;
 
     /**
      * Field axisService
@@ -59,22 +59,22 @@ public class PhaseResolver {
     /**
      * default constructor , to obuild chains for AxisGlobal
      *
-     * @param engineRegistry
+     * @param engineConfig
      */
-    public PhaseResolver(EngineConfiguration engineRegistry) {
-        this.engineRegistry = engineRegistry;
+    public PhaseResolver(EngineConfiguration engineConfig) {
+        this.engineConfig = engineConfig;
     }
 
     /**
      * Constructor PhaseResolver
      *
-     * @param engineRegistry
-     * @param axisService
+     * @param engineConfig
+     * @param serviceContext
      */
-    public PhaseResolver(EngineConfiguration engineRegistry,
-                         AxisService axisService,ServiceContext serviceContext) {
-        this.engineRegistry = engineRegistry;
-        this.axisService = axisService;
+    public PhaseResolver(EngineConfiguration engineConfig,
+                         ServiceContext serviceContext) {
+        this.engineConfig = engineConfig;
+        this.axisService = serviceContext.getServiceConfig();
         this.serviceContext = serviceContext;
     }
 
@@ -84,10 +84,11 @@ public class PhaseResolver {
      * @throws PhaseException
      * @throws AxisFault
      */
-    public void buildchains() throws PhaseException, AxisFault {
-        for (int i = 1; i < 4; i++) {
+    public ServiceContext buildchains() throws PhaseException, AxisFault {
+        for (int i = 1; i < 5; i++) {
             buildExcutionChains(i);
         }
+        return this.serviceContext;
     }
 
     /**
@@ -115,7 +116,7 @@ public class PhaseResolver {
         * //adding server specific handlers  . global
         * for(int intA=0 ; intA < count; intA ++){
         * moduleName = server.getModule(intA);
-        * module = engineRegistry.getModule(moduleName);
+        * module = engineConfig.getModule(moduleName);
         * switch (flowtype){
         * case 1 : {
         * flow = module.getInFlow();
@@ -151,7 +152,7 @@ public class PhaseResolver {
             // Vector modules = (Vector)axisService.getModules();
             // for (int i = 0; i < modules.size(); i++) {
             // QName moduleref = (QName) modules.elementAt(i);
-            module = engineRegistry.getModule(moduleref);
+            module = engineConfig.getModule(moduleref);
             switch (flowtype) {
                 case PhaseMetadata.IN_FLOW:
                     {
@@ -219,7 +220,7 @@ public class PhaseResolver {
                 allHandlers.add(metadata);
             }
         }
-        phaseHolder = new PhaseHolder(engineRegistry, axisService,serviceContext);
+        phaseHolder = new PhaseHolder(engineConfig, axisService,serviceContext);
         phaseHolder.setFlowType(flowtype);
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetadata handlerMetaData =
@@ -235,8 +236,8 @@ public class PhaseResolver {
      * @throws PhaseException
      */
     public void buildTranspotsChains() throws PhaseException {
-        HashMap axisTransportIn = engineRegistry.getTransportsIn();
-        HashMap axisTransportOut = engineRegistry.getTransportsOut();
+        HashMap axisTransportIn = engineConfig.getTransportsIn();
+        HashMap axisTransportOut = engineConfig.getTransportsOut();
 
         Collection colintrnsport = axisTransportIn.values();
         for (Iterator iterator = colintrnsport.iterator();
@@ -258,7 +259,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry);
+            phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
@@ -298,7 +299,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry);
+            phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.OUT_FLOW:
@@ -343,11 +344,11 @@ public class PhaseResolver {
         AxisModule module;
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineRegistry);
+            phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
             for (int intA = 0; intA < count; intA++) {
                 moduleName = (QName) modules.get(intA);
-                module = engineRegistry.getModule(moduleName);
+                module = engineConfig.getModule(moduleName);
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {
