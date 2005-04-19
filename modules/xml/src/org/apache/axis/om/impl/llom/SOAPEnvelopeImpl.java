@@ -33,7 +33,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      * @param builder
      */
     public SOAPEnvelopeImpl(OMXMLParserWrapper builder) {
-        super(SOAPENVELOPE_LOCAL_NAME, null, null, builder);
+        super(SOAPConstants.SOAPENVELOPE_LOCAL_NAME, null, null, builder);
     }
 
     /**
@@ -43,14 +43,14 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      * @param builder
      */
     public SOAPEnvelopeImpl(OMNamespace ns, OMXMLParserWrapper builder) {
-        super(SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
+        super(SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
     }
 
     /**
      * @param ns
      */
     public SOAPEnvelopeImpl(OMNamespace ns) {
-        super(SOAPENVELOPE_LOCAL_NAME, ns);
+        super(SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns);
     }
 
     /**
@@ -68,7 +68,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      */
     public SOAPHeader getHeader() throws OMException {
         OMElement element = getFirstElement();
-        if (OMConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())) {
+        if (SOAPConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())) {
             return (SOAPHeader) element;
         }
         return null;
@@ -90,11 +90,11 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      */
     public SOAPBody getBody() throws OMException {
         OMElement element = getFirstElement();
-        if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+        if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
             return (SOAPBody) element;
         }else{
             element = element.getNextSiblingElement();
-            if (OMConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+            if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                 return (SOAPBody) element;
             }
         }

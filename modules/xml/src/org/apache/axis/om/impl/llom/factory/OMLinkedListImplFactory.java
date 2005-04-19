@@ -27,14 +27,8 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFault;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis.om.impl.llom.OMTextImpl;
-import org.apache.axis.om.impl.llom.SOAPBodyImpl;
-import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
-import org.apache.axis.om.impl.llom.SOAPFaultImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
+import org.apache.axis.om.impl.llom.*;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 import javax.xml.namespace.QName;
 
@@ -264,8 +258,8 @@ public class OMLinkedListImplFactory extends OMFactory {
     public SOAPEnvelope getDefaultEnvelope() {
         // Create an envelope
         OMNamespace ns =
-        new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,
-                OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
+        new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
         SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
         env.addChild(bodyImpl);

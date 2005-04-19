@@ -196,6 +196,10 @@ public class EngineConfigurationImpl implements EngineConfiguration {
         return transportsOut;
     }
 
+    public ArrayList getFaultPhases() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Method getTransports
      *

@@ -28,6 +28,8 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFault;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)
@@ -103,7 +105,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
     public void testCreateSOAPEnvelope() {
         try {
-            OMNamespace soapNamespace = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
+            OMNamespace soapNamespace = omFactory.createOMNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
             SOAPEnvelope soapEnvelopeTwo = omFactory.createSOAPEnvelope(soapNamespace);
             assertTrue("Programatically created SOAPEnvelope should have done = true ", soapEnvelopeTwo.isComplete());
             SOAPEnvelope soapEnvelope = omFactory.createSOAPEnvelope(soapNamespace, OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")));

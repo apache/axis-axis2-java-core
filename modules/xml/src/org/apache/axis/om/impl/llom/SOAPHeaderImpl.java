@@ -23,6 +23,7 @@ import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 
         // set the namespaces
         this.ns = envelope.getNamespace();
-        this.localName = OMConstants.HEADER_LOCAL_NAME;
+        this.localName = SOAPConstants.HEADER_LOCAL_NAME;
     }
 
     /**
@@ -49,7 +50,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @param builder
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(OMConstants.HEADER_LOCAL_NAME, (envelope == null)
+        super(SOAPConstants.HEADER_LOCAL_NAME, (envelope == null)
                         ? null
                         : envelope.getNamespace(), envelope,
                 builder);
@@ -132,7 +133,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         return new OMChildrenWithSpecificAttributeIterator(
                 getFirstChild(),
                 new QName(
-                        OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.ATTR_ACTOR),
+                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.ATTR_ACTOR),
                 actor, true);
     }
 
@@ -152,7 +153,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         return new OMChildrenWithSpecificAttributeIterator(
                 getFirstChild(),
                 new QName(
-                        OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.ATTR_ACTOR),
+                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.ATTR_ACTOR),
                 actor, false);
     }
 

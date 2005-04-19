@@ -31,7 +31,7 @@ public class JarFileWriter extends Jar{
         this.getProject().init();
         this.setTaskType("jar");
         this.setTaskName("jar");
-        this.setOwningTarget(new Target());
+        this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
     public void writeJarFile(File outputFolder,String outputFileName,File inputFileFolder) throws IOException,Exception {

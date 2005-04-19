@@ -21,6 +21,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 import javax.xml.namespace.QName;
 
@@ -63,7 +64,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      * @see #getActor() getActor()
      */
     public void setActor(String actorURI) {
-        setAttribute(OMConstants.ATTR_ACTOR, actorURI);
+        setAttribute(SOAPConstants.ATTR_ACTOR, actorURI);
     }
 
     /**
@@ -72,15 +73,15 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      */
     private void setAttribute(String attributeName, String attrValue) {
         OMAttribute omAttribute = this.getAttributeWithQName(
-                new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
+                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
         if (omAttribute != null) {
             omAttribute.setValue(attrValue);
         } else {
             OMAttribute attribute = new OMAttributeImpl(
                     attributeName,
                     new OMNamespaceImpl(
-                            OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,
-                            OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX), attrValue);
+                            SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX), attrValue);
             this.insertAttribute(attribute);
         }
     }
@@ -94,7 +95,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      * @see #setActor(String) setActor(java.lang.String)
      */
     public String getActor() {
-        return getAttribute(OMConstants.ATTR_ACTOR);
+        return getAttribute(SOAPConstants.ATTR_ACTOR);
     }
 
     /**
@@ -105,7 +106,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      */
     private String getAttribute(String attrName) {
         OMAttribute omAttribute = this.getAttributeWithQName(
-                new QName(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
+                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
         return (omAttribute != null)
                 ? omAttribute.getValue()
                 : null;
@@ -128,7 +129,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public void setMustUnderstand(boolean mustUnderstand) {
-        setAttribute(OMConstants.ATTR_MUSTUNDERSTAND, mustUnderstand
+        setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand
                         ? "true"
                         : "false");
     }
@@ -143,7 +144,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      */
     public boolean getMustUnderstand() {
         String mustUnderstand = "";
-        if ((mustUnderstand = getAttribute(OMConstants.ATTR_MUSTUNDERSTAND))
+        if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND))
                 != null) {
             return mustUnderstand.equalsIgnoreCase("true");
         }

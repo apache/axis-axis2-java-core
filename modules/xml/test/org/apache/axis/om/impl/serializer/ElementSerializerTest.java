@@ -79,16 +79,12 @@ public class ElementSerializerTest extends AbstractTestCase {
     }
 
     public void testElement() throws Exception {
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),
-                reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
         body.serialize(writer, true);
     }
 
     public void testCompleteElement() throws Exception {
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),
-                reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         env.serialize(writer, true);
     }

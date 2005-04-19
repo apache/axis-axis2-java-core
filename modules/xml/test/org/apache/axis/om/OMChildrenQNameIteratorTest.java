@@ -17,6 +17,7 @@ package org.apache.axis.om;
 
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.om.impl.llom.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -25,6 +26,7 @@ import java.util.Iterator;
 
 public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     private SOAPEnvelope envelope = null;
+    StAXSOAPModelBuilder stAXSOAPModelBuilder;
 
     public OMChildrenQNameIteratorTest(String testName) {
         super(testName);
@@ -33,7 +35,8 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     OMChildrenQNameIterator omChildrenQNameIterator;
 
     protected void setUp() throws Exception {
-        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getSOAPEnvelope();
+        stAXSOAPModelBuilder = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml"))));
+        envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
     }
 
     protected void tearDown() throws Exception {
@@ -41,9 +44,10 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     }
 
     private QName getBodyQname() {
-        return new QName(OMConstants.BODY_NAMESPACE_URI,
-                OMConstants.BODY_LOCAL_NAME,
-                OMConstants.BODY_NAMESPACE_PREFIX);
+
+        return new QName(stAXSOAPModelBuilder.getEnvelopeNamespace().getName(),
+                SOAPConstants.BODY_LOCAL_NAME,
+                stAXSOAPModelBuilder.getEnvelopeNamespace().getPrefix());
     }
 
     public void testIterator() {

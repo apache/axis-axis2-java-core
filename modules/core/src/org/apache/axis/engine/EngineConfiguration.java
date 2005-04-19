@@ -134,4 +134,5 @@ public interface EngineConfiguration {
     public HashMap getTransportsIn();
     public HashMap getTransportsOut();
 
+    ArrayList getFaultPhases();
 }

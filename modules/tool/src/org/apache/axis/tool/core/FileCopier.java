@@ -30,7 +30,7 @@ public class FileCopier extends Copy{
         this.getProject().init();
         this.setTaskType("copy");
         this.setTaskName("copy-files");
-        this.setOwningTarget(new Target());
+        this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
     public void copyFiles(File sourceFile,File destinationDirectory){

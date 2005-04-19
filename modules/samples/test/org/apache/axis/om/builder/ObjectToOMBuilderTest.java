@@ -22,6 +22,8 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
@@ -45,7 +47,7 @@ public class ObjectToOMBuilderTest extends TestCase {
         super.setUp();
         Encoder outObject = new DummyOutObject();
         OMFactory omFactory = OMFactory.newInstance();
-        OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
+        OMNamespace ns = omFactory.createOMNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         element = omFactory.createOMElement("Body", ns);
         new ObjectToOMBuilder(element, outObject);
         tempFile = File.createTempFile("temp", "xml");

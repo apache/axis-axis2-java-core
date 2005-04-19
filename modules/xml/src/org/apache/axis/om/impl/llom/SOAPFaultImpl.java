@@ -24,6 +24,7 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -70,9 +71,9 @@ public class SOAPFaultImpl extends OMElementImpl
      * @param e
      */
     public SOAPFaultImpl(OMElement parent, Exception e) {
-        super(SOAPFAULT_LOCAL_NAME,
-                new OMNamespaceImpl(SOAPFAULT_NAMESPACE_URI,
-                        SOAPFAULT_NAMESPACE_PREFIX));
+        super(SOAPConstants.SOAPFAULT_LOCAL_NAME,
+                new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAPConstants.SOAPFAULT_NAMESPACE_PREFIX));
         this.parent = (OMElementImpl) parent;
         this.e = e;
         StringWriter sw = new StringWriter();
@@ -89,7 +90,7 @@ public class SOAPFaultImpl extends OMElementImpl
      */
     public SOAPFaultImpl(OMNamespace ns, OMElement parent,
                          OMXMLParserWrapper builder) {
-        super(SOAPFAULT_LOCAL_NAME, ns, parent, builder);
+        super(SOAPConstants.SOAPFAULT_LOCAL_NAME, ns, parent, builder);
     }
 
     /**
@@ -103,7 +104,7 @@ public class SOAPFaultImpl extends OMElementImpl
             faultCodeElement.detach();
         }
         faultCodeElement =
-        new OMElementImpl(OMConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns);
+        new OMElementImpl(SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns);
         this.addChild(faultCodeElement);
         faultCodeElement.addChild(new OMTextImpl(faultCodeElement,
                         faultCode.getPrefix() + ':'
@@ -129,7 +130,7 @@ public class SOAPFaultImpl extends OMElementImpl
         } else {
             faultCodeElement = (OMElementImpl) this.getChildWithName(
                     new QName(
-                            this.ns.getName(), OMConstants.SOAPFAULT_CODE_LOCAL_NAME,
+                            this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
                             this.ns.getPrefix()));
             if (faultCodeElement != null) {
                 return this.getFaultCode();
@@ -149,7 +150,7 @@ public class SOAPFaultImpl extends OMElementImpl
             faultActorElement.detach();
         }
         faultActorElement =
-        new OMElementImpl(OMConstants.SOAPFAULT_ACTOR_LOCAL_NAME, this.ns);
+        new OMElementImpl(SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME, this.ns);
         this.addChild(faultActorElement);
         faultActorElement.addChild(new OMTextImpl(faultActorElement,
                         faultActor));
@@ -173,7 +174,7 @@ public class SOAPFaultImpl extends OMElementImpl
         } else {
             faultActorElement = (OMElementImpl) this.getChildWithName(
                     new QName(
-                            this.ns.getName(), OMConstants.SOAPFAULT_ACTOR_LOCAL_NAME,
+                            this.ns.getName(), SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME,
                             this.ns.getPrefix()));
             if (faultActorElement != null) {
                 return this.getFaultString();
@@ -193,7 +194,7 @@ public class SOAPFaultImpl extends OMElementImpl
             faultStringElement.detach();
         }
         faultStringElement =
-        new OMElementImpl(OMConstants.SOAPFAULT_STRING_LOCAL_NAME, this.ns);
+        new OMElementImpl(SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME, this.ns);
         this.addChild(faultStringElement);
         faultStringElement.addChild(new OMTextImpl(faultStringElement,
                         faultString));
@@ -217,7 +218,7 @@ public class SOAPFaultImpl extends OMElementImpl
         } else {
             faultStringElement = (OMElementImpl) this.getChildWithName(
                     new QName(
-                            this.ns.getName(), OMConstants.SOAPFAULT_STRING_LOCAL_NAME,
+                            this.ns.getName(), SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME,
                             this.ns.getPrefix()));
             if (faultStringElement != null) {
                 return this.getFaultString();
@@ -236,7 +237,7 @@ public class SOAPFaultImpl extends OMElementImpl
             detailElement.detach();
         }
         detailElement =
-        new OMElementImpl(OMConstants.SOAPFAULT_DETAIL_LOCAL_NAME, this.ns);
+        new OMElementImpl(SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME, this.ns);
         this.addChild(detailElement);
         detailElement.addChild(detailInformation);
     }
@@ -259,7 +260,7 @@ public class SOAPFaultImpl extends OMElementImpl
         } else {
             detailElement = (OMElementImpl) this.getChildWithName(
                     new QName(
-                            this.ns.getName(), OMConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
+                            this.ns.getName(), SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
                             this.ns.getPrefix()));
             if (detailElement != null) {
                 return detailElement;
