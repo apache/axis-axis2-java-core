@@ -1,4 +1,4 @@
-<module name="module2" class="module1.java">
+<module name="module2" class="org.apache.module.Module2Impl">
     <inflow>
         <handler name="h1" class="org.apache.axis.registry.Handler4">
             <order phase="global" />

@@ -673,6 +673,7 @@ public class DeploymentParser implements DeploymentConstants {
     public void processModule(AxisModule module) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
+        boolean foundClass = false;
 
         if (attribCount > 0) {
             for (int i = 0; i < attribCount; i++) {
@@ -686,7 +687,11 @@ public class DeploymentParser implements DeploymentConstants {
                         module.setName(new QName(attvalue));
                         ref_name = true;
                     }
-                } else if (REF.equals(attname)) {
+                }else if (CLASSNAME.equals(attname)) {
+                    foundClass = true;
+                    dpengine.getCurrentFileItem().setModuleClass(attvalue);
+                }
+                else if (REF.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {

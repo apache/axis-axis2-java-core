@@ -25,6 +25,7 @@ import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.*;
+import org.apache.axis.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -295,6 +296,20 @@ public class DeploymentEngine implements DeploymentConstants {
 
     }
 
+    private void loadModuleClass(AxisModule module) throws AxisFault {
+        Class moduleClass = null;
+        try {
+            String readInClass = currentFileItem.getModuleClass();
+            if (readInClass != null && !"".equals(readInClass)) {
+                moduleClass = Class.forName(readInClass, true,currentFileItem.getClassLoader());
+                module.setModule((Module)moduleClass.newInstance());
+            }
+        } catch (Exception e) {
+            throw new AxisFault(e.getMessage(), e);
+        }
+
+    }
+
 
     private void addFlowHandlers(Flow flow) throws AxisFault {
         int count = flow.getHandlerCount();
@@ -334,7 +349,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addNewModule(AxisModule moduelmetada) throws AxisFault {
         currentFileItem.setClassLoader();
-
         Flow inflow = moduelmetada.getInFlow();
         addFlowHandlers(inflow);
 
@@ -346,7 +360,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         Flow faultOutFlow = moduelmetada.getFaultOutFlow();
         addFlowHandlers(faultOutFlow);
-
+        loadModuleClass(moduelmetada);
         engineconfig.addMdoule(moduelmetada);
     }
 

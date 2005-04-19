@@ -33,6 +33,7 @@ public class HDFileItem {
     private File file = null;
     private int type;
     private String messgeReceiver;
+    private String moduleClass;
     private String name;
 
     public HDFileItem(int type, String name) {
@@ -82,6 +83,14 @@ public class HDFileItem {
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    public String getModuleClass() {
+        return moduleClass;
+    }
+
+    public void setModuleClass(String moduleClass) {
+        this.moduleClass = moduleClass;
     }
 
     public void setClassLoader() throws AxisFault {

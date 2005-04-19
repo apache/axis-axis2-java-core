@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,12 +17,14 @@
  */
 package org.apache.axis.modules;
 
-import org.apache.axis.context.ModuleContext;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 
 public interface Module {
-    public void init(ModuleContext moduleContext) throws AxisFault;
-    public void engage(ExecutionChain exeChain)throws AxisFault;
-    public void shutDown()throws AxisFault;
+    public void init(EngineContext moduleContext) throws AxisFault;
+
+    public void engage(ExecutionChain exeChain) throws AxisFault;
+
+    public void shutDown() throws AxisFault;
 }

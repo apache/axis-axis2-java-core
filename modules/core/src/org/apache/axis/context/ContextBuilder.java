@@ -7,6 +7,10 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.description.AxisService;
+import org.apache.axis.modules.Module;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,12 +28,29 @@ public class ContextBuilder {
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = phaseResolver.buildGlobalChains();
             phaseResolver.buildTranspotsChains();
+            initModules(engineContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage()) ;
         } catch (PhaseException e) {
             throw new DeploymentException(e.getMessage()) ;
         }
         return engineContext;
+    }
+
+
+    private void initModules(EngineContext context) throws DeploymentException {
+        try{
+            ArrayList modules = (ArrayList)context.getEngineConfig().getGlobal().getModules();
+            for (int i = 0; i < modules.size(); i++) {
+                QName name = (QName) modules.get(i);
+                Module module = context.getEngineConfig().getModule(name).getModule();
+                if(module != null ){
+                    module.init(context);
+                }
+            }
+        }catch (AxisFault e){
+            throw new DeploymentException(e.getMessage());
+        }
     }
 
     public ServiceContext refresh(AxisService service,EngineContext context) throws PhaseException {
