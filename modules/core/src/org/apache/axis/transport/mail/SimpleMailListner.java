@@ -25,6 +25,7 @@ import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.ContextBuilder;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineConfiguration;
@@ -74,8 +75,8 @@ public class SimpleMailListner implements Runnable {
         this.userid = userid;
         this.password = password;
         try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(dir);
-            er = deploymentEngine.start();
+            ContextBuilder builder = new ContextBuilder();
+            er = builder.buildEngineContext(dir);
         } catch (Exception e) {
             e.printStackTrace();
         }

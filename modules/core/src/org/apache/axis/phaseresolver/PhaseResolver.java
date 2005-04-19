@@ -107,7 +107,9 @@ public class PhaseResolver {
         int flowtype = type;
         ArrayList allHandlers = new ArrayList();
 
-        // int count = server.getModuleCount();
+       // engineConfig.getGlobal().getModules()
+
+       //  int count = server.getModuleCount();
         // QName moduleName;
         AxisModule module;
         Flow flow = null;
@@ -331,13 +333,13 @@ public class PhaseResolver {
     /**
      * Method buildGlobalChains
      *
-     * @param engineContext
      * @throws AxisFault
      * @throws PhaseException
      */
-    public void buildGlobalChains(EngineContext engineContext)
+    public EngineContext buildGlobalChains()
             throws AxisFault, PhaseException {
-        AxisGlobal global =engineContext.getEngineConfig().getGlobal();
+        EngineContext engineContext = new EngineContext(engineConfig);
+        AxisGlobal global =engineConfig.getGlobal();
         List modules = (List) global.getModules();
         int count = modules.size();
         QName moduleName;
@@ -385,5 +387,6 @@ public class PhaseResolver {
             }
             phaseHolder.buildGlobalChain(engineContext, type);
         }
+        return engineContext;
     }
 }

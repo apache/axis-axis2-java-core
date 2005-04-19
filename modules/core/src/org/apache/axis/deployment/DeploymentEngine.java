@@ -29,8 +29,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.axis.context.EngineContext;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
@@ -49,8 +47,6 @@ import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -92,11 +88,8 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * This to keep a referance to serverMetaData object
      */
-    // private static ServerMetaData server = new ServerMetaData();
-    private AxisGlobal server;
-
-    private EngineContext engineContext;
-
+    // private static ServerMetaData axisGlobal = new ServerMetaData();
+    private AxisGlobal axisGlobal;
 
     private HDFileItem currentFileItem;
 
@@ -109,7 +102,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, "server.xml");
+        this(RepositaryName, "axisGlobal.xml");
     }
 
     /**
@@ -135,7 +128,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File serverConf = new File(repository, serverXMLFile);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/axisGlobal.xml");
             if (in != null) {
                 try {
                     serverConf.createNewFile();
@@ -154,17 +147,12 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
             } else {
-                throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
+                throw new DeploymentException("can not found org/apache/axis/deployment/axisGlobal.xml");
 
             }
         }
         this.serverConfigName = RepositaryName + '/' + serverXMLFile;
     }
-
-//    public DeploymentEngine(String RepositaryName , String configFileName) {
-//        this.folderName = RepositaryName;
-//        this.serverConfigName = configFileName;
-//    }
 
     public HDFileItem getCurrentFileItem() {
         return currentFileItem;
@@ -181,46 +169,12 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This method will fill the engine registry and return it to Engine
-     *
-     * @return
-     * @throws AxisFault
-     */
-    public EngineContext start() throws AxisFault, DeploymentException, XMLStreamException {
-        //String fileName;
-        if (serverConfigName == null) {
-            throw new DeploymentException("path to Server.xml can not be NUll");
-        }
-        File tempfile = new File(serverConfigName);
-        try {
-            InputStream in = new FileInputStream(tempfile);
-            engineconfig = createEngineRegistry();
-            DeploymentParser parser = new DeploymentParser(in, this);
-            parser.procesServerXML(server);
-        } catch (FileNotFoundException e) {
-            throw new AxisFault("Exception at deployment", e);
-        }
-        setDeploymentFeatures();
-        if (hotDeployment) {
-            startSearch(this);
-        } else {
-            new RepositoryListenerImpl(folderName, this);
-        }
-        try {
-            valideServerModule();
-        } catch (PhaseException e) {
-            log.info("Module validation failed" + e.getMessage());
-        }
-        return engineContext;
-    }
-
-    /**
      * To set hotDeployment and hot update
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = server.getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = server.getParameter(HOTUPDATE);
+        Parameter parahotdeployment = axisGlobal.getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = axisGlobal.getParameter(HOTUPDATE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
@@ -234,27 +188,55 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
+    public EngineConfiguration load() throws DeploymentException {
+       if (serverConfigName == null) {
+            throw new DeploymentException("path to Server.xml can not be NUll");
+        }
+        File tempfile = new File(serverConfigName);
+        try {
+            InputStream in = new FileInputStream(tempfile);
+            engineconfig = createEngineConfig();
+            DeploymentParser parser = new DeploymentParser(in, this);
+            parser.procesServerXML(axisGlobal);
+        } catch (FileNotFoundException e) {
+            throw new DeploymentException("Exception at deployment", e);
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault.getMessage());
+        } catch (XMLStreamException e) {
+            throw new DeploymentException(e.getMessage());
+        }
+        setDeploymentFeatures();
+        if (hotDeployment) {
+            startSearch(this);
+        } else {
+            new RepositoryListenerImpl(folderName, this);
+        }
+        try {
+            validateServerModule();
+        } catch (AxisFault axisFault) {
+            log.info("Module validation failed" + axisFault.getMessage());
+            throw new DeploymentException(axisFault.getMessage());
+        }
+        return engineconfig;
+    }
+
     /**
-     * This methode used to check the modules referd by server.xml
+     * This methode used to check the modules referd by axisGlobal.xml
      * are exist , or they have deployed
      */
-    private void valideServerModule() throws AxisFault, PhaseException {
-        Iterator itr = server.getModules().iterator();
+    private void validateServerModule() throws AxisFault{
+        Iterator itr = axisGlobal.getModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
             if (getModule(qName) == null) {
-                throw new AxisFault(server + " Refer to invalid module " + qName + " has not bean deployed yet !");
+                throw new AxisFault(axisGlobal + " Refer to invalid module " + qName + " has not bean deployed yet !");
             }
         }
-        PhaseResolver phaseResolver = new PhaseResolver(engineconfig);
-        phaseResolver.buildGlobalChains(engineContext);
-        phaseResolver.buildTranspotsChains();
-
     }
 
     public AxisModule getModule(QName moduleName) throws AxisFault {
-        AxisModule metaData = engineconfig.getModule(moduleName);
-        return metaData;
+        AxisModule axisModule = engineconfig.getModule(moduleName);
+        return axisModule;
     }
 
     /**
@@ -266,78 +248,49 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineConfiguration createEngineRegistry() throws AxisFault {
-        EngineConfiguration newEngineRegisty;
-
-        server = new AxisGlobal();
-        newEngineRegisty = new EngineConfigurationImpl(server);
-        engineContext = new EngineContext(newEngineRegisty);
-
-        return newEngineRegisty;
+    private EngineConfiguration createEngineConfig() throws AxisFault {
+        axisGlobal = new AxisGlobal();
+        EngineConfiguration newEngineConfig = new EngineConfigurationImpl(axisGlobal);
+        return newEngineConfig;
     }
 
 
-    private void addnewService(AxisService serviceMetaData) throws AxisFault, PhaseException {
+    private void addnewService(AxisService serviceMetaData) throws AxisFault{
         currentFileItem.setClassLoader();
-        ServiceContext serviceContext = getRunnableService(serviceMetaData);
-        engineContext.addService(serviceContext);
+        loadServiceProperties(serviceMetaData);
         engineconfig.addService(serviceMetaData);
         System.out.println("adding new service" + serviceMetaData.getName().getLocalPart());
-        /*Parameter para = serviceMetaData.getParameter("OUTSERVICE");
-        if (para != null) {
-        String value = (String) para.getValue();
-        if ("true".equals(value)) {
-        Class temp = serviceMetaData.getServiceClass();
-        try {
-        Thread servie = (Thread) temp.newInstance();
-        servie.start();
-        } catch (InstantiationException e) {
-        throw new AxisFault(e.getMessage());
-        } catch (IllegalAccessException e) {
-        throw new AxisFault(e.getMessage());
-        }
-
-        }
-        }*/
     }
 
     /**
      * This method is used to fill the axis service , it dose loading service class and also the provider class
      * and it will also load the service handlers
      *
-     * @param serviceMetaData
-     * @return
+     * @param axisService
      * @throws AxisFault
-     * @throws PhaseException
      */
-    private ServiceContext getRunnableService(AxisService serviceMetaData) throws AxisFault, PhaseException {
-        loadMessageReceiver(serviceMetaData);
-        Flow inflow = serviceMetaData.getInFlow();
+    private void loadServiceProperties(AxisService axisService) throws AxisFault{
+        loadMessageReceiver(axisService);
+        Flow inflow = axisService.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
         }
 
-        Flow outFlow = serviceMetaData.getOutFlow();
+        Flow outFlow = axisService.getOutFlow();
         if (outFlow != null) {
             addFlowHandlers(outFlow);
         }
 
-        Flow faultInFlow = serviceMetaData.getFaultInFlow();
+        Flow faultInFlow = axisService.getFaultInFlow();
         if (faultInFlow != null) {
             addFlowHandlers(faultInFlow);
         }
 
-        Flow faultOutFlow = serviceMetaData.getFaultOutFlow();
+        Flow faultOutFlow = axisService.getFaultOutFlow();
         if (faultOutFlow != null) {
             addFlowHandlers(faultOutFlow);
         }
-
-
-        ServiceContext serviceContext = new ServiceContext(serviceMetaData);
-        PhaseResolver reolve = new PhaseResolver(engineconfig,serviceContext);
-        serviceContext = reolve.buildchains();
-        serviceMetaData.setClassLoader(currentFileItem.getClassLoader());
-        return serviceContext;
+        axisService.setClassLoader(currentFileItem.getClassLoader());
     }
 
 
@@ -536,7 +489,7 @@ public class DeploymentEngine implements DeploymentConstants {
     service = new AxisService();
     DeploymentParser schme = new DeploymentParser(serviceStream, this);
     schme.parseServiceXML(service);
-    service = getRunnableService(service);
+    service = loadServiceProperties(service);
     } catch (XMLStreamException e) {
     throw  new DeploymentException(e.getMessage());
     } catch (PhaseException e) {
@@ -559,26 +512,22 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws DeploymentException
      */
-    public ServiceContext buildService(AxisService axisService , InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
-        ServiceContext serviceContext;
+    public AxisService buildService(AxisService axisService , InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
         try {
             DeploymentParser schme = new DeploymentParser(serviceInputStream, this);
             schme.parseServiceXML(axisService);
             axisService.setClassLoader(classLoader);
-            serviceContext = getRunnableService(axisService);
-            engineContext.addService(serviceContext);
+            loadServiceProperties(axisService);
             engineconfig.addService(axisService);
 
         } catch (XMLStreamException e) {
             throw new DeploymentException("XMLStreamException" + e.getMessage());
         } catch (DeploymentException e) {
             throw new DeploymentException(e.getMessage()) ;
-        } catch (PhaseException e) {
-            throw new DeploymentException(e.getMessage());
-        } catch (AxisFault axisFault) {
+        }  catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage());
         }
-        return  serviceContext;
+        return  axisService;
     }
 
 }

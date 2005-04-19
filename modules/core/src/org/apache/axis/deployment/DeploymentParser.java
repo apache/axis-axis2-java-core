@@ -76,7 +76,7 @@ public class DeploymentParser implements DeploymentConstants {
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
     }
 
-    public void parseServiceXML(AxisService axisService) throws DeploymentException, PhaseException {
+    public void parseServiceXML(AxisService axisService) throws DeploymentException{
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
         //   ServiceMetaData service = null;

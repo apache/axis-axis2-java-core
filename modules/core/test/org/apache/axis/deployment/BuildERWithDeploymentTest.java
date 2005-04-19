@@ -19,6 +19,7 @@ package org.apache.axis.deployment;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.context.ContextBuilder;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
@@ -36,8 +37,9 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
 
     public void testDeployment() throws Exception {
         String filename = "./target/test-resources/deployment";
-        DeploymentEngine deploymentEngine = new DeploymentEngine(filename);
-        EngineConfiguration er = deploymentEngine.start().getEngineConfig();
+        ContextBuilder builder = new ContextBuilder();
+        EngineConfiguration er = builder.buildEngineContext(filename).getEngineConfig();
+
         assertNotNull(er);
         assertNotNull(er.getGlobal());
 

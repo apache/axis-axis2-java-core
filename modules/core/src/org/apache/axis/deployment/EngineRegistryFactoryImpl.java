@@ -19,6 +19,7 @@ package org.apache.axis.deployment;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.ContextBuilder;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryFactory;
 
@@ -26,11 +27,9 @@ import org.apache.axis.engine.EngineRegistryFactory;
 public class EngineRegistryFactoryImpl implements EngineRegistryFactory {
     public EngineContext createEngineRegistry(String file) throws AxisFault {
         try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(file);
-            return deploymentEngine.start();
+            ContextBuilder builder = new ContextBuilder();
+            return builder.buildEngineContext(file);
         } catch (DeploymentException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }
     }
