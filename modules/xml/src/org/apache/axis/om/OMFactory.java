@@ -177,7 +177,7 @@ public abstract class OMFactory {
      * @return
      */
     public static OMFactory newInstance() {
-        return FactoryFinder.findFactory(null);
+        return FactoryFinder.findFactory();
     }
 
     /**
