@@ -102,7 +102,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, "axisGlobal.xml");
+        this(RepositaryName, "server.xml");
     }
 
     /**
@@ -128,7 +128,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File serverConf = new File(repository, serverXMLFile);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/axisGlobal.xml");
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
             if (in != null) {
                 try {
                     serverConf.createNewFile();
@@ -147,7 +147,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
             } else {
-                throw new DeploymentException("can not found org/apache/axis/deployment/axisGlobal.xml");
+                throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
 
             }
         }
@@ -221,7 +221,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This methode used to check the modules referd by axisGlobal.xml
+     * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
     private void validateServerModule() throws AxisFault{
