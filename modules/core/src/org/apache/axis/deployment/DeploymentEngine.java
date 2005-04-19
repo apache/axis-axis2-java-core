@@ -446,17 +446,14 @@ public class DeploymentEngine implements DeploymentConstants {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("DeploymentException  " + de);
                             serviceStatus = "Error:\n" + de.getMessage();
-                            de.printStackTrace();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("AxisFault  " + axisFault);
                             serviceStatus = "Error:\n" + axisFault.getMessage();
-                            axisFault.printStackTrace();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentFileItem.getName());
                             log.info("Exception  " + e);
                             serviceStatus = "Error:\n" + e.getMessage();
-                            e.printStackTrace();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
                                 engineconfig.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
