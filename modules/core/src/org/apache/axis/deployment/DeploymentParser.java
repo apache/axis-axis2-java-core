@@ -113,7 +113,9 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if (PARAMETERST.equals(ST)) {
+                    if(SERVERST.equals(ST)){
+                        //todo complete this to fill the names
+                    }else if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
@@ -161,6 +163,12 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
+                    }
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (SERVERST.equals(endtagname)) {
+                        END_DOCUMENT = true;
+                        break;
                     }
                 }
             }
@@ -214,7 +222,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (transportin != null && OUTFLOWST.equals(tagnae)) {
                         throw new DeploymentException("OUTFlow dose not support in AxisTransportIN " + tagnae);
                     } else if (transportin != null && IN_FAILTFLOW.equals(tagnae)) {
-                        Flow faultFlow = processFaultFlow();
+                        Flow faultFlow = processInFaultFlow();
                         transportin.setFaultFlow(faultFlow);
                     } else {
                         throw new DeploymentException("Unknown element " + tagnae);
@@ -230,7 +238,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException(e.getMessage());
         }
         return transportin;
     }
@@ -276,8 +284,8 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (transportout != null && OUTFLOWST.equals(tagnae)) {
                         Flow outFlow = processOutFlow();
                         transportout.setOutFlow(outFlow);
-                    } else if (transportout != null && IN_FAILTFLOW.equals(tagnae)) {
-                        Flow faultFlow = processFaultFlow();
+                    } else if (transportout != null && OUT_FAILTFLOW.equals(tagnae)) {
+                        Flow faultFlow = processOutFaultFlow();
                         transportout.setFaultFlow(faultFlow);
                     } else {
                         throw new DeploymentException("Unknown element " + tagnae);
@@ -293,7 +301,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException( e.getMessage());
         }
         return transportout;
     }
@@ -362,8 +370,11 @@ public class DeploymentParser implements DeploymentConstants {
                         Flow outFlow = processOutFlow();
                         axisService.setOutFlow(outFlow);
                     } else if (IN_FAILTFLOW.equals(ST)) {
-                        Flow faultFlow = processFaultFlow();
+                        Flow faultFlow = processInFaultFlow();
                         axisService.setFaultInFlow(faultFlow);
+                    }else if (OUT_FAILTFLOW.equals(ST)) {
+                        Flow faultFlow = processOutFaultFlow();
+                        axisService.setFaultOutFlow(faultFlow);
                     } else if (MODULEST.equals(ST)) {
                         attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
@@ -438,7 +449,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException(e.getMessage());
         }
         // adding element to the parameter
         parameter.setValue(element);
@@ -539,7 +550,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+           throw new DeploymentException(e.getMessage());
         }
         // adding element to the parameter
         return handler;
@@ -575,7 +586,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+          throw new DeploymentException(e.getMessage());
         }
     }
 
@@ -714,8 +725,11 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         module.addParameter(parameter);
                     } else if (IN_FAILTFLOW.equals(ST)) {
-                        Flow faultFlow = processFaultFlow();
+                        Flow faultFlow = processInFaultFlow();
                         module.setFaultInFlow(faultFlow);
+                    }else if (OUT_FAILTFLOW.equals(ST)) {
+                        Flow faultFlow = processOutFaultFlow();
+                        module.setFaultOutFlow(faultFlow);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
                         module.setInFlow(inFlow);
@@ -738,7 +752,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException(e.getMessage());
         }
 
     }
@@ -773,7 +787,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException(e.getMessage());
         }
         return inFlow;
     }
@@ -808,14 +822,14 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+           throw new DeploymentException(e.getMessage());
         }
 
         return outFlow;
     }
 
 
-    public Flow processFaultFlow() throws DeploymentException {
+    public Flow processInFaultFlow() throws DeploymentException {
         Flow faultFlow = new FlowImpl();
         boolean END_FAULTFLOW = false;
         try {
@@ -844,7 +858,41 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+           throw new DeploymentException(e.getMessage());
+        }
+        return faultFlow;
+    }
+
+     public Flow processOutFaultFlow() throws DeploymentException {
+        Flow faultFlow = new FlowImpl();
+        boolean END_FAULTFLOW = false;
+        try {
+            while (!END_FAULTFLOW) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
+// document end tag met , break the loop
+// but the doc end tag wont meet here :)
+                    END_FAULTFLOW = true;
+                } else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
+                    if (HANDERST.equals(tagnae)) {
+                        HandlerMetadata handler = processHandler();
+                        faultFlow.addHandler(handler);
+                    } else {
+                        throw new DeploymentException("parser Exception : un supported element" + tagnae);
+                    }
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (OUT_FAILTFLOW.equals(endtagname)) {
+                        END_FAULTFLOW = true;
+                        break;
+                    }
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("parser Exception", e);
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
         }
         return faultFlow;
     }
@@ -880,7 +928,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException("Unknown process Exception", e);
+            throw new DeploymentException(e.getMessage());
         }
         return pahseList;
     }

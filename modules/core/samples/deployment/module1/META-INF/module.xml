@@ -12,8 +12,13 @@
         </handler>
     </outflow>
 
-    <faultflow>
+    <Outfaultflow>
         <handler name="h4" class="org.apache.axis.registry.Handler3">
         </handler>
-    </faultflow>
+    </Outfaultflow>
+
+    <INfaultflow>
+        <handler name="h5" class="org.apache.axis.registry.Handler3">
+        </handler>
+    </INfaultflow>
 </module>

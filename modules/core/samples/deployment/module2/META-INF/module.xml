@@ -12,12 +12,14 @@
         </handler>
     </outflow>
 
-    <faultflow>
+    <Outfaultflow>
         <handler name="h4" class="org.apache.axis.registry.Handler4">
         </handler>
+    </Outfaultflow>
 
+    <INfaultflow>
         <handler name="h5" class="org.apache.axis.registry.Handler4">
-            <order phase="global"/>
         </handler>
-    </faultflow>
+    </INfaultflow>
+
 </module>

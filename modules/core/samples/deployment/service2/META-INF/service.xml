@@ -1,5 +1,4 @@
-<service provider="org.apache.axis.providers.RawXMLProvider" style="rpc" contextPath="services">
-    <java:implementation class="Echo2" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
 
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
@@ -29,7 +28,7 @@
         </handler>
     </outflow>
 
-    <faultflow>
+    <INfaultflow>
         <handler name="h4" class="Handler2">
         </handler>
 
@@ -40,6 +39,18 @@
         <handler name="h6" class="Handler2">
             <order phase="service" phaseLast="false"/>
         </handler>
-    </faultflow>
+    </INfaultflow>
+    <Outfaultflow>
+        <handler name="h4" class="Handler2">
+        </handler>
+
+        <handler name="h5" class="Handler2">
+            <order phase="service"/>
+        </handler>
+
+        <handler name="h6" class="Handler2">
+            <order phase="service" phaseLast="false"/>
+        </handler>
+    </Outfaultflow>
     <operation name="opname"/>
 </service>

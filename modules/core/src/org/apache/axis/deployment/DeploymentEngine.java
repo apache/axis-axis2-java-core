@@ -110,7 +110,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
         this(RepositaryName, "server.xml");
-
     }
 
     /**
@@ -212,7 +211,7 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (PhaseException e) {
             log.info("Module validation failed" + e.getMessage());
         }
-        return new EngineContext(engineconfig);
+        return engineContext;
     }
 
     /**
@@ -283,6 +282,7 @@ public class DeploymentEngine implements DeploymentConstants {
         ServiceContext serviceContext = getRunnableService(serviceMetaData);
         engineContext.addService(serviceContext);
         engineconfig.addService(serviceMetaData);
+        System.out.println("adding new service" + serviceMetaData.getName().getLocalPart());
         /*Parameter para = serviceMetaData.getParameter("OUTSERVICE");
         if (para != null) {
         String value = (String) para.getValue();
@@ -396,8 +396,11 @@ public class DeploymentEngine implements DeploymentConstants {
         Flow outFlow = moduelmetada.getOutFlow();
         addFlowHandlers(outFlow);
 
-        Flow faultFlow = moduelmetada.getFaultInFlow();
-        addFlowHandlers(faultFlow);
+        Flow faultInFlow = moduelmetada.getFaultInFlow();
+        addFlowHandlers(faultInFlow);
+
+        Flow faultOutFlow = moduelmetada.getFaultOutFlow();
+        addFlowHandlers(faultOutFlow);
 
         engineconfig.addMdoule(moduelmetada);
     }
@@ -428,7 +431,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         try {
-
                             AxisService service = new AxisService();
                             unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);

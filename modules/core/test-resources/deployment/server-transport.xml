@@ -13,10 +13,10 @@
             <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler"/>
             <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler"/>
         </outflow>
-         <faultflow>
+         <Outfaultflow>
             <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler"/>
             <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler"/>
-        </faultflow>
+        </Outfaultflow>
     </transportSender>
 
     <phaseOrder type="inflow">
@@ -31,7 +31,13 @@
         <phase name="Logging"/>
         <phase name="service"/>
     </phaseOrder>
-    <phaseOrder type="faultflow">
+    <phaseOrder type="Outfaultflow">
+        <phase name="global"/>
+        <phase name="transport"/>
+        <phase name="Logging"/>
+        <phase name="service"/>
+    </phaseOrder>
+    <phaseOrder type="INfaultflow">
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>
