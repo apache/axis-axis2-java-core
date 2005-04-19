@@ -130,7 +130,6 @@ public interface EngineConfiguration {
     public  void addTransportIn(AxisTransportIn transport) throws AxisFault;
     public AxisTransportOut getTransportOut(QName name) throws AxisFault ;
     public  void addTransportOut(AxisTransportOut transport) throws AxisFault ;
-
     public HashMap getTransportsIn();
     public HashMap getTransportsOut();
 
