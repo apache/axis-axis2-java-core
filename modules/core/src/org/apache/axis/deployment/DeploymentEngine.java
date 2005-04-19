@@ -16,19 +16,6 @@
 
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
 import org.apache.axis.deployment.repository.utill.UnZipJAR;
@@ -36,19 +23,17 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -189,7 +174,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public EngineConfiguration load() throws DeploymentException {
-       if (serverConfigName == null) {
+        if (serverConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
         File tempfile = new File(serverConfigName);
@@ -224,7 +209,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void validateServerModule() throws AxisFault{
+    private void validateServerModule() throws AxisFault {
         Iterator itr = axisGlobal.getModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
@@ -255,7 +240,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(AxisService serviceMetaData) throws AxisFault{
+    private void addnewService(AxisService serviceMetaData) throws AxisFault {
         currentFileItem.setClassLoader();
         loadServiceProperties(serviceMetaData);
         engineconfig.addService(serviceMetaData);
@@ -269,7 +254,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param axisService
      * @throws AxisFault
      */
-    private void loadServiceProperties(AxisService axisService) throws AxisFault{
+    private void loadServiceProperties(AxisService axisService) throws AxisFault {
         loadMessageReceiver(axisService);
         Flow inflow = axisService.getInFlow();
         if (inflow != null) {
@@ -302,7 +287,7 @@ public class DeploymentEngine implements DeploymentConstants {
             String readInClass = currentFileItem.getMessgeReceiver();
             if (readInClass != null && !"".equals(readInClass)) {
                 messageReceiver = Class.forName(readInClass, true, loader1);
-                service.setMessageReceiver((MessageReceiver)messageReceiver.newInstance());
+                service.setMessageReceiver((MessageReceiver) messageReceiver.newInstance());
             }
         } catch (Exception e) {
             throw new AxisFault(e.getMessage(), e);
@@ -506,13 +491,14 @@ public class DeploymentEngine implements DeploymentConstants {
      * an axisservice object using WSDL and then fill that using given servic.xml and load all the requed
      * class and build the chains , finally add the  servicecontext to EngineContext and axisservice into
      * EngineConfiguration
+     *
      * @param axisService
      * @param serviceInputStream
      * @param classLoader
      * @return
      * @throws DeploymentException
      */
-    public AxisService buildService(AxisService axisService , InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
+    public AxisService buildService(AxisService axisService, InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
         try {
             DeploymentParser schme = new DeploymentParser(serviceInputStream, this);
             schme.parseServiceXML(axisService);
@@ -523,11 +509,11 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("XMLStreamException" + e.getMessage());
         } catch (DeploymentException e) {
-            throw new DeploymentException(e.getMessage()) ;
-        }  catch (AxisFault axisFault) {
+            throw new DeploymentException(e.getMessage());
+        } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage());
         }
-        return  axisService;
+        return axisService;
     }
 
 }

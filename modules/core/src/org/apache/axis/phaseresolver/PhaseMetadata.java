@@ -15,9 +15,9 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-
 import org.apache.axis.description.HandlerMetadata;
+
+import java.util.ArrayList;
 
 /**
  * Class PhaseMetadata
@@ -28,6 +28,8 @@ public class PhaseMetadata {
     public static final int OUT_FLOW = 2;
     public static final int FAULT_IN_FLOW = 3;
     public static final int FAULT_OUT_FLOW = 4;
+
+    public static final String PRE_DISPATCH = "pre-dispatch";
     /**
      * Field BOTH_BEFORE_AFTER
      */

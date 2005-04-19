@@ -19,7 +19,7 @@ package org.apache.axis.deployment.scheduler;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DeploymentIterator{
+public class DeploymentIterator {
 
     private Calendar calendar = Calendar.getInstance();
 

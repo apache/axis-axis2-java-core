@@ -16,10 +16,8 @@
 
 package org.apache.axis.deployment;
 
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ContextBuilder;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryFactory;
 

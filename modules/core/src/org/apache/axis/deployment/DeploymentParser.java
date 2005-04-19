@@ -16,31 +16,19 @@
 
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfigurationImpl;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -76,7 +64,7 @@ public class DeploymentParser implements DeploymentConstants {
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
     }
 
-    public void parseServiceXML(AxisService axisService) throws DeploymentException{
+    public void parseServiceXML(AxisService axisService) throws DeploymentException {
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
         //   ServiceMetaData service = null;
@@ -113,9 +101,9 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if(SERVERST.equals(ST)){
+                    if (SERVERST.equals(ST)) {
                         //todo complete this to fill the names
-                    }else if (PARAMETERST.equals(ST)) {
+                    } else if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
                         serverMetaData.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
@@ -144,22 +132,21 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
-                                    if(INFLOWST.equals(attvalue)){
-                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
-                                    }   else if (OUTFLOWST.equals(attvalue)){
-                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
-                                    }  else if (IN_FAILTFLOW.equals(attvalue)){
-                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
-                                    }else if (OUT_FAILTFLOW.equals(attvalue)){
-                                        ((EngineConfigurationImpl)dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
-                                    }
-                                    else {
-                                        throw new DeploymentException("un defined flow type  "  + ST);
+                                    if (INFLOWST.equals(attvalue)) {
+                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
+                                    } else if (OUTFLOWST.equals(attvalue)) {
+                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
+                                    } else if (IN_FAILTFLOW.equals(attvalue)) {
+                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
+                                    } else if (OUT_FAILTFLOW.equals(attvalue)) {
+                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
+                                    } else {
+                                        throw new DeploymentException("un defined flow type  " + ST);
                                     }
                                 }
                             }
                         } else {
-                            throw new DeploymentException("Flow type is a required attribute in "  + ST);
+                            throw new DeploymentException("Flow type is a required attribute in " + ST);
                         }
                     } else {
                         throw new UnsupportedOperationException(ST + " element is not allowed in the server.xml");
@@ -301,7 +288,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException( e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
         return transportout;
     }
@@ -316,7 +303,7 @@ public class DeploymentParser implements DeploymentConstants {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if(MESSAGERECEIVER.equals(attname)) {
+                if (MESSAGERECEIVER.equals(attname)) {
                     dpengine.getCurrentFileItem().setMessgeReceiver(attvalue);
                     foundMR = true;
                 } else if (STYLENAME.equals(attname)) {
@@ -329,7 +316,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } else
             throw new DeploymentException("Bad arguments" + axisService.getName());
-        if(! foundMR ) {
+        if (!foundMR) {
             throw new DeploymentException("Message Receiver dose not specify " + axisService.getName());
         }
 
@@ -372,7 +359,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processInFaultFlow();
                         axisService.setFaultInFlow(faultFlow);
-                    }else if (OUT_FAILTFLOW.equals(ST)) {
+                    } else if (OUT_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processOutFaultFlow();
                         axisService.setFaultOutFlow(faultFlow);
                     } else if (MODULEST.equals(ST)) {
@@ -477,14 +464,14 @@ public class DeploymentParser implements DeploymentConstants {
                 handler.setClassName(attvalue);
             } else if (ATTNAME.equals(attname)) {
                 if (ref_name) {
-                    throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
+                    throw new DeploymentException("Hanlder canot have both name and ref  " + attvalue);
                 } else {
                     handler.setName(new QName(attvalue));
                     ref_name = true;
                 }
             } else if (REF.equals(attname)) {
                 if (ref_name) {
-                    throw new DeploymentException("Hander canot have both name and ref  " + attvalue);
+                    throw new DeploymentException("Hanlder canot have both name and ref  " + attvalue);
                 } else {
                     ref_name = true;
                     throw new UnsupportedOperationException("This should be implmented");
@@ -550,7 +537,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-           throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
         // adding element to the parameter
         return handler;
@@ -586,7 +573,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-          throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
     }
 
@@ -727,7 +714,7 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processInFaultFlow();
                         module.setFaultInFlow(faultFlow);
-                    }else if (OUT_FAILTFLOW.equals(ST)) {
+                    } else if (OUT_FAILTFLOW.equals(ST)) {
                         Flow faultFlow = processOutFaultFlow();
                         module.setFaultOutFlow(faultFlow);
                     } else if (INFLOWST.equals(ST)) {
@@ -822,7 +809,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-           throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
 
         return outFlow;
@@ -858,12 +845,12 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-           throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e.getMessage());
         }
         return faultFlow;
     }
 
-     public Flow processOutFaultFlow() throws DeploymentException {
+    public Flow processOutFaultFlow() throws DeploymentException {
         Flow faultFlow = new FlowImpl();
         boolean END_FAULTFLOW = false;
         try {
