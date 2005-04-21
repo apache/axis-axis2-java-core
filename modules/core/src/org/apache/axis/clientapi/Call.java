@@ -15,6 +15,7 @@ import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
@@ -44,13 +45,14 @@ public class Call {
 
     private EngineContext engineContext;
 
-    private String Listenertransport;
+    private EndpointReference replyTo;
+    private String Listenertransport = Constants.TRANSPORT_HTTP;
 
-    private boolean useSeparateListener;
+    private boolean useSeparateListener = false;
+    private String callbackServiceName;
 
     private CallbackReceiver callbackReceiver;
-    
-    
+
     public Call() throws AxisFault {
         try {
             //find the deployment mechanism , create
@@ -82,8 +84,6 @@ public class Call {
             this.engineContext = new EngineContext(registry);
             messageInfoHeaders = new MessageInformationHeadersCollection();
             init();
-        } catch (AxisFault e) {
-            throw new AxisFault(e.getMessage(), e);
         } catch (ClassNotFoundException e) {
             throw new AxisFault(e.getMessage(), e);
         } catch (InstantiationException e) {
@@ -113,13 +113,12 @@ public class Call {
         }
     }
 
-
     public Call(EngineContext engineContext) {
         this.properties = new HashMap();
         this.engineContext = engineContext;
     }
 
-    public void sendReceiveAsync(SOAPEnvelope env, Callback callback) throws AxisFault {
+    public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
@@ -127,17 +126,53 @@ public class Call {
         try {
             MessageSender sender = new MessageSender(engineContext);
 
-            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
-            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
+            final AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
+            final AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
-            MessageContext msgctx =
+            final MessageContext msgctx =
                 new MessageContext(engineContext, null, null, transportIn, transportOut);
             msgctx.setEnvelope(env);
+
+            if (useSeparateListener) {
+                msgctx.getMessageInformationHeaders().setMessageId(String.valueOf(System.currentTimeMillis()));
+                callbackReceiver.addCallback(msgctx.getMessageID(), callback);
+            }
+
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 
             sender.send(msgctx);
-            
-            callbackReceiver.addCallback(msgctx.getMessageID(),callback);
+            if (useSeparateListener) {
+                
+                
+                //TODO start the server
+            } else {
+                Runnable newThread = new Runnable() {
+                    public void run() {
+                        try {
+                            MessageContext response =
+                                new MessageContext(
+                                    engineContext,
+                                    msgctx.getProperties(),
+                                    msgctx.getSessionContext(),
+                                    msgctx.getTransportIn(),
+                                    transportOut);
+                            response.setServerSide(false);
+
+                            TransportReceiver receiver = response.getTransportIn().getReciever();
+                            receiver.invoke(response);
+                            SOAPEnvelope resenvelope = response.getEnvelope();
+                            AsyncResult asyncResult = new AsyncResult();
+                            asyncResult.setResult(resenvelope);
+                            callback.onComplete(asyncResult);
+                        } catch (AxisFault e) {
+                            callback.reportError(e);
+                        }
+
+                    }
+                };
+                (new Thread(newThread)).start();
+            }
+
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
         } catch (IOException e) {
@@ -218,9 +253,19 @@ public class Call {
     private void init() throws AxisFault {
         messageInfoHeaders = new MessageInformationHeadersCollection();
         AxisService callbackService = new AxisService();
-        callbackService.setName(new QName(CallbackReceiver.SERVIC_NAME));
+        callbackServiceName = CallbackReceiver.SERVIC_NAME + System.currentTimeMillis();
+        callbackService.setName(new QName(callbackServiceName));
         callbackReceiver = new CallbackReceiver();
         callbackService.setMessageReceiver(callbackReceiver);
+
+        ListenerManager.makeSureStarted();
+
+        ListenerManager.getEngineContext().addService(new ServiceContext(callbackService));
+
+    }
+
+    public void close() {
+        ListenerManager.stopAServer();
     }
 
     /**

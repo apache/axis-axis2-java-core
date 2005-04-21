@@ -115,7 +115,7 @@ public class EchoRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
         EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis/services/EchoXMLService");
         call.setTo(targetEPR);
-        call.setListenerTransport("http", true);
+        call.setListenerTransport("http", false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {

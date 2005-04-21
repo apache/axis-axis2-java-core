@@ -30,7 +30,6 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer implements Runnable {
+public class SimpleHTTPServer implements Runnable{
     /**
      * Field log
      */
@@ -76,8 +75,9 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @param reg
      */
-    public SimpleHTTPServer(EngineContext reg) {
+    public SimpleHTTPServer(EngineContext reg,ServerSocket serverSoc) {
         this.engineReg = reg;
+        this.serverSocket = serverSoc;
     }
 
     /**
@@ -86,8 +86,9 @@ public class SimpleHTTPServer implements Runnable {
      * @param dir
      * @throws AxisFault
      */
-    public SimpleHTTPServer(String dir) throws AxisFault {
+    public SimpleHTTPServer(String dir,ServerSocket serverSoc) throws AxisFault {
         try {
+            this.serverSocket = serverSoc;
             Class erClass = Class.forName(
                     "org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac =
@@ -196,7 +197,8 @@ public class SimpleHTTPServer implements Runnable {
      * @throws Exception
      */
     public void start() throws Exception {
-        run();
+        Thread newThread = new Thread(this);
+        newThread.start();
     }
 
     /**
@@ -258,9 +260,10 @@ public class SimpleHTTPServer implements Runnable {
         if (args.length != 2) {
             System.out.println("SimpeHttpReciver repositoryLocation port");
         }
-        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0]);
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
+        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0],serverSoc);
+        
         reciver.setServerSocket(serverSoc);
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);

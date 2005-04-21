@@ -57,11 +57,11 @@ public class UtilServer {
                 throw new AxisFault("Thread interuptted", e1);
             }
 
-            reciver = new SimpleHTTPServer(er);
+            
 
             ServerSocket serverSoc = null;
             serverSoc = new ServerSocket(Constants.TESTING_PORT);
-            reciver.setServerSocket(serverSoc);
+            reciver = new SimpleHTTPServer(er,serverSoc);
             Thread thread = new Thread(reciver);
             thread.setDaemon(true);
 
