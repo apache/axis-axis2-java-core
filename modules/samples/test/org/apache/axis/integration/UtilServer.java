@@ -16,6 +16,7 @@
  
 package org.apache.axis.integration;
 
+import java.io.File;
 import java.net.ServerSocket;
 
 import javax.xml.namespace.QName;
@@ -49,8 +50,10 @@ public class UtilServer {
         if (count == 0) {
             Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
-            EngineContext er = 
-                erfac.createEngineRegistry("target/test-resources/samples/");
+            
+            File file = new File("modules/samples/target/test-resources/samples");
+            System.out.println(new File(file,"server.xml").exists());
+            EngineContext er = erfac.createEngineRegistry(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {

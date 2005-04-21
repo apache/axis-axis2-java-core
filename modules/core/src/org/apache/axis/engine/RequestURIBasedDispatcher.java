@@ -18,23 +18,24 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.wsdl.WSDLService;
 
 /**
  * Class Dispatcher
  */
-public class RequestURIBasedDispatcher extends AbstractHandler implements Handler {
+public class RequestURIBasedDispatcher
+    extends AbstractHandler
+    implements Handler {
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
+    public static final QName NAME =
+        new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
     private AxisService service;
 
     /**
@@ -60,35 +61,26 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
             int index = filePart.lastIndexOf(URI_ID_STRING);
             String serviceStr = null;
             if (index > 0) {
-                serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-                EngineConfiguration registry = msgctx.getEngineContext().getEngineConfig();
+                serviceStr =
+                    filePart.substring(index + URI_ID_STRING.length() + 1);
+
+                EngineContext engineContext = msgctx.getEngineContext();
                 QName serviceName = new QName(serviceStr);
-                service = registry.getService(serviceName);
-                ServiceContext serviceContext = new ServiceContext(service);
-                if (service != null) {
-                    msgctx.setServiceContext(serviceContext);
-                    msgctx.setMessageStyle(service.getStyle());
-                } else {
-                    throw new AxisFault("Service " + serviceName + " is not found");
-                }
-
-            } else {
-                throw new AxisFault("Both the URI and SOAP_ACTION are Null");
-            }
-
-            if (WSDLService.STYLE_DOC.equals(msgctx.getMessageStyle())) {
-                String soapAction = (String) msgctx.getProperty(MessageContext.SOAP_ACTION);
-                if (soapAction != null) {
-                    soapAction = soapAction.replace('"', ' ').trim();
-                }
-
-                if (soapAction != null && soapAction.trim().length() > 0) {
-                    QName operationName = new QName(soapAction);
-                    AxisOperation op = service.getOperation(operationName);
-                    if (op != null) {
-                        OperationContext opContext = new OperationContext(op);
-                        msgctx.setOperationContext(opContext);
+                ServiceContext serviceContext =
+                    engineContext.getService(serviceName);
+                if (serviceContext == null) {
+                    EngineConfiguration registry =
+                        msgctx.getEngineContext().getEngineConfig();
+                    service = registry.getService(serviceName);
+                    if (service != null) {
+                        serviceContext = new ServiceContext(service);
                     }
+
+                }
+                if (serviceContext != null) {
+                    msgctx.setServiceContext(serviceContext);
+                    msgctx.setMessageStyle(
+                        serviceContext.getServiceConfig().getStyle());
                 }
             }
         } else {

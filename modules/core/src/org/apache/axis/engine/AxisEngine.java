@@ -152,6 +152,7 @@ public class AxisEngine {
             if (context.isServerSide()) {
                 //This chain is the default Service diaptacher, the users may opt to overide this by 
                 //adding an Handlers to the DispatchPhase. 
+                dispatchPhase.addHandler(new RequestURIBasedDispatcher());
                 AddressingBasedDispatcher dispatcher =
                     new AddressingBasedDispatcher();
                 dispatchPhase.addHandler(dispatcher);
