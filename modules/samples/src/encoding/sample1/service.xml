@@ -1,5 +1,7 @@
-<service provider="encoding.sample1.EchoProvider" style="rpc" contextPath="services">
-    <java:implementation class="encoding.sample1.EchoImpl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+
+    <parameter name="ServiceClass" locked="xsd:false">encoding.sample1.EchoImpl</parameter>
+
     <operation name="echoString"/>
     <operation name="echoStringArray"/>
     <operation name="echoEchoStruct"/>

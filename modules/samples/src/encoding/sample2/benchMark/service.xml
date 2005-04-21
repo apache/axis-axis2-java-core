@@ -1,5 +1,7 @@
-<service provider="encoding.sample2.benchMark.BenchProvider" style="rpc" contextPath="services">
-    <java:implementation class="encoding.sample2.benchMark.Benchmark1Impl" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
+<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+
+    <parameter name="ServiceClass" locked="xsd:false">encoding.sample2.benchMark.Benchmark1Impl</parameter>
+
     <operation name="echoVoid"/>
     <operation name="echoStrings"/>
     <operation name="echoInts"/>

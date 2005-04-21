@@ -1,6 +1,7 @@
-<service provider="org.apache.axis.providers.RawXMLProvider" style="rpc" contextPath="services">
-    <java:implementation class="userguide.sample1.EchoXML" xmlns:java="http://ws.apache.org/axis2/deployment/java"/>
-    
+<service  messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+
+    <parameter name="ServiceClass" locked="xsd:false">userguide.sample1.EchoXML</parameter>
+
  <inflow>
         <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
         <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
