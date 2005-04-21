@@ -45,7 +45,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class HandlerFailureTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("", "http://127.0.0.1:5556/axis/services/EchoXMLService");
+    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
+    private QName serviceName = new QName("", targetEPR.getAddress());
     private QName operationName = new QName("echoOMElement");
 
 
@@ -144,7 +145,7 @@ public class HandlerFailureTest extends TestCase {
 
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
-            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
+            
             call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
             call.setAction(operationName.getLocalPart());
