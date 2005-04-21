@@ -15,18 +15,20 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.OMConstants;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
-
-import javax.xml.namespace.QName;
-import java.util.Iterator;
+import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
 /**
  * Class SOAPHeaderImpl
@@ -50,10 +52,11 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @param builder
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(SOAPConstants.HEADER_LOCAL_NAME, (envelope == null)
-                        ? null
-                        : envelope.getNamespace(), envelope,
-                builder);
+        super(
+            SOAPConstants.HEADER_LOCAL_NAME,
+            (envelope == null) ? null : envelope.getNamespace(),
+            envelope,
+            builder);
     }
 
     /**
@@ -70,9 +73,9 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @throws OMException
      */
     public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
-            throws OMException {
-        SOAPHeaderBlock soapHeaderBlock = new SOAPHeaderBlockImpl(localName,
-                ns);
+        throws OMException {
+        SOAPHeaderBlock soapHeaderBlock =
+            new SOAPHeaderBlockImpl(localName, ns);
         this.addChild(soapHeaderBlock);
         soapHeaderBlock.setComplete(true);
         return soapHeaderBlock;
@@ -131,10 +134,12 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      */
     public Iterator extractHeaderBlocks(String actor) {
         return new OMChildrenWithSpecificAttributeIterator(
-                getFirstChild(),
-                new QName(
-                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.ATTR_ACTOR),
-                actor, true);
+            getFirstChild(),
+            new QName(
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                SOAPConstants.ATTR_ACTOR),
+            actor,
+            true);
     }
 
     /**
@@ -151,10 +156,12 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      */
     public Iterator examineMustUnderstandHeaderBlocks(String actor) {
         return new OMChildrenWithSpecificAttributeIterator(
-                getFirstChild(),
-                new QName(
-                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.ATTR_ACTOR),
-                actor, false);
+            getFirstChild(),
+            new QName(
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                SOAPConstants.ATTR_ACTOR),
+            actor,
+            false);
     }
 
     /**
@@ -181,6 +188,24 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      *         <code>SOAPHeader</code>
      */
     public Iterator extractAllHeaderBlocks() {
-        throw new UnsupportedOperationException();    // TODO implement this
+        throw new UnsupportedOperationException(); // TODO implement this
     }
+
+    public ArrayList getHeaderBolcksWithNSURI(String nsURI) {
+        ArrayList headers = null;
+        OMElement header = this.getFirstElement();
+        if (header != null) {
+            headers = new ArrayList();
+        }
+        while (header != null) {
+            if (nsURI.equals(header.getNamespaceName())) {
+                headers.add(header);
+            }
+            header = header.getNextSiblingElement();
+
+        }
+        return headers;
+
+    }
+
 }

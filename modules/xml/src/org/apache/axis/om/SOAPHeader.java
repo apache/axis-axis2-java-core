@@ -15,6 +15,7 @@
  */
 package org.apache.axis.om;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -110,4 +111,11 @@ public interface SOAPHeader extends OMElement {
      *         <code>SOAPHeader</code>
      */
     public abstract Iterator extractAllHeaderBlocks();
+    
+    /**
+     * Return all the Headers that has the Namespace URI to given NS URI 
+     * @param nsURI
+     * @return
+     */
+    public ArrayList getHeaderBolcksWithNSURI(String nsURI);
 }

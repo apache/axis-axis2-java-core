@@ -45,8 +45,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class HandlerFailureTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("", "EchoXMLService");
-    private QName operationName = new QName("http://localhost/my", "echoOMElement");
+    private QName serviceName = new QName("", "http://127.0.0.1:5556/axis/services/EchoXMLService");
+    private QName operationName = new QName("echoOMElement");
 
 
     private MessageContext mc;
@@ -147,6 +147,7 @@ public class HandlerFailureTest extends TestCase {
             EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
             call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
+            call.setAction(operationName.getLocalPart());
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
 

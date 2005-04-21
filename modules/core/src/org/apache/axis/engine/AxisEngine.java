@@ -19,6 +19,8 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.handlers.addressing.AddressingInHandler;
+import org.apache.axis.handlers.addressing.AddressingOutHandler;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -61,18 +63,19 @@ public class AxisEngine {
         try {
             ExecutionChain chain = context.getExecutionChain();
             ServiceContext serviceContext = context.getServiceContext();
-            
+
             /*
              * There is a two cases, at the server side(response) / client side
              * but in the server side there must be a Service object object set, as before the 
              * out flow is started the user knows the services that will be invoked. 
              */
-            
+
             if (serviceContext != null) {
 
                 // what are we suppose to do in the client side
                 // how the client side handlers are deployed ??? this is a hack and no client side handlers
-                chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
+                chain.addPhases(
+                    serviceContext.getPhases(EngineConfiguration.OUTFLOW));
             } else {
                 if (context.isServerSide() && !context.isProcessingFault()) {
                     throw new AxisFault("At the Send there must be a Service Object set at the Server Side");
@@ -80,7 +83,12 @@ public class AxisEngine {
             }
 
             // Add the phases that are are at Global scope
-            chain.addPhases(context.getEngineContext().getPhases(EngineConfiguration.OUTFLOW));
+            chain.addPhases(
+                context.getEngineContext().getPhases(
+                    EngineConfiguration.OUTFLOW));
+            Phase addressingPhase = new SimplePhase("addressing");
+            addressingPhase.addHandler(new AddressingOutHandler());
+            chain.addPhase(addressingPhase);
 
             // Receiving is always a matter of running the transport handlers first
             AxisTransportIn transport = context.getTransportIn();
@@ -125,9 +133,13 @@ public class AxisEngine {
             AxisTransportIn transport = context.getTransportIn();
             if (transport != null) {
                 log.info("Using the transport" + transport.getName());
-                chain.addPhases(transport.getPhases(EngineConfiguration.INFLOW));
+                chain.addPhases(
+                    transport.getPhases(EngineConfiguration.INFLOW));
             }
-
+            
+            Phase addressingPhase = new SimplePhase("addressing");
+            addressingPhase.addHandler(new AddressingInHandler());
+            chain.addPhase(addressingPhase);
             //add the Global flow
             chain.addPhases(engContext.getPhases(EngineConfiguration.INFLOW));
 
@@ -140,13 +152,15 @@ public class AxisEngine {
             if (context.isServerSide()) {
                 //This chain is the default Service diaptacher, the users may opt to overide this by 
                 //adding an Handlers to the DispatchPhase. 
-                AddressingBasedDispatcher dispatcher = new AddressingBasedDispatcher();
+                AddressingBasedDispatcher dispatcher =
+                    new AddressingBasedDispatcher();
                 dispatchPhase.addHandler(dispatcher);
 
             }
 
             //Service handlers are added to ExecutionChain by this Handler
-            ServiceHandlersChainBuilder handlerChainBuilder = new ServiceHandlersChainBuilder();
+            ServiceHandlersChainBuilder handlerChainBuilder =
+                new ServiceHandlersChainBuilder();
             dispatchPhase.addHandler(handlerChainBuilder);
             chain.addPhase(dispatchPhase);
 
@@ -156,9 +170,12 @@ public class AxisEngine {
             if (context.isServerSide()) {
                 // add invoke Phase
                 MessageReceiver reciver =
-                    context.getServiceContext().getServiceConfig().getMessageReceiver();
+                    context
+                        .getServiceContext()
+                        .getServiceConfig()
+                        .getMessageReceiver();
                 reciver.recieve(context);
-             }
+            }
 
             log.info("ending the out flow");
         } catch (Throwable e) {
@@ -175,7 +192,8 @@ public class AxisEngine {
      * @param e
      * @throws AxisFault
      */
-    public void handleFault(MessageContext context, Throwable e) throws AxisFault {
+    public void handleFault(MessageContext context, Throwable e)
+        throws AxisFault {
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
@@ -191,20 +209,23 @@ public class AxisEngine {
                     context.getTransportOut());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
-            SOAPEnvelope envelope = OMFactory.newInstance().getDefaultEnvelope();
+            SOAPEnvelope envelope =
+                OMFactory.newInstance().getDefaultEnvelope();
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
-   
+
             ExecutionChain chain = faultContext.getExecutionChain();
-            
+
             ServiceContext serviceContext = context.getServiceContext();
-            if(serviceContext != null){
-                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
+            if (serviceContext != null) {
+                chain.addPhases(
+                    serviceContext.getPhases(
+                        EngineConfiguration.FAULT_IN_FLOW));
             }
-            
+
             chain.invoke(faultContext);
             // send the error
             TransportSender sender = context.getTransportOut().getSender();
@@ -228,7 +249,7 @@ public class AxisEngine {
      * @param obj the object to be stored
      * @return the storage key
      */
-    public Object store(EngineContext context,Object obj){
+    public Object store(EngineContext context, Object obj) {
         return context.getStorage().put(obj);
     }
 
@@ -239,7 +260,7 @@ public class AxisEngine {
      * @param key
      * @return
      */
-    public Object retrieve(EngineContext context,Object key){
+    public Object retrieve(EngineContext context, Object key) {
         return context.getStorage().get(key);
     }
 
@@ -249,7 +270,7 @@ public class AxisEngine {
      * @param key
      * @return  the object removed
      */
-    public Object remove(EngineContext context,Object key){
+    public Object remove(EngineContext context, Object key) {
         return context.getStorage().remove(key);
     }
 
@@ -258,7 +279,7 @@ public class AxisEngine {
      * @param context
      * @return
      */
-    public boolean clearStorage(EngineContext context){
+    public boolean clearStorage(EngineContext context) {
         return context.getStorage().clean();
     }
 }

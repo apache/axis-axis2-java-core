@@ -2,9 +2,11 @@ package org.apache.axis.handlers.addressing;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
@@ -52,8 +54,10 @@ public class AddressingInHandlerTest extends AbstractTestCase {
     public void testExtractAddressingInformationFromHeaders() {
         try {
             StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testFileName);
+            
+            SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             MessageInformationHeadersCollection messageInformationHeadersCollection =
-                    inHandler.extractAddressingInformationFromHeaders(((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader(), null);
+                    inHandler.extractAddressingInformationFromHeaders(header, null,header.getHeaderBolcksWithNSURI(AddressingConstants.WSA_NAMESPACE));
 
             if(messageInformationHeadersCollection == null){
                 fail("Addressing Information Headers have not been retrieved properly");
