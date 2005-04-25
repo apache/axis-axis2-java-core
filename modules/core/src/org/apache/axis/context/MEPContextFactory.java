@@ -18,18 +18,17 @@
 package org.apache.axis.context;
 
 import org.apache.axis.engine.AxisFault;
+import org.apache.wsdl.WSDLConstants;
 
-public class MEPContextFactory {
-    public static final String IN_ONLY_MEP = "in-only";
-    public static final String IN_OUT_MEP = "in-out";
+public class MEPContextFactory implements WSDLConstants{
     
     public static MEPContext createMEP(String mepURI,boolean serverSide) throws AxisFault{
-        if(IN_ONLY_MEP.equals(mepURI)){
-            return new InMEPContext(serverSide);
-        }else if(IN_OUT_MEP.equals(mepURI)){
-            return new InOutMEPContext(serverSide);
+        if(MEP_URI_IN_ONLY.equals(mepURI) || MEP_URI_IN_OUT.equals(mepURI)){
+            return new BasicMEPContext();
+        
         }else{
-            throw new AxisFault("MEP " + mepURI + "Not known");
+        	throw new AxisFault("Cannot handle the MEP "
+        			+ mepURI+" for the current invocation of Operation ");
         }
     }
     

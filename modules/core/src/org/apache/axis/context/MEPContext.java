@@ -2,6 +2,8 @@ package org.apache.axis.context;
 
 import java.util.List;
 
+import org.apache.axis.engine.AxisFault;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,15 +26,22 @@ public interface MEPContext {
     public String getMepId();
     public void setMepId(String mepId);
 
-    public MessageContext getInMessageContext(String messageID);
-    public List getInMessageContexts();
-
-    public MessageContext getOutMessageContext(String messageID);
-    public List getOutMessageContexts();
+  
+//    public MessageContext getInMessageContext(String messageID);
+//    public List getInMessageContexts();
+//
+//    public MessageContext getOutMessageContext(String messageID);
+//    public List getOutMessageContexts();
     
-    public void addInMessageContext(MessageContext msgctx);
-    public void addOutMessageContext(MessageContext msgctx);
+//    public void addInMessageContext(MessageContext msgctx);
+//    public void addOutMessageContext(MessageContext msgctx);
     
-    public boolean isComplete();    
+//    public boolean isComplete();    
+    
+    public MessageContext getMessageContext(String msgID) throws AxisFault;
+    
+    public void addMessageContext(MessageContext msgContext) throws AxisFault;
+    
+    public List getAllMessageContexts();
 }
 

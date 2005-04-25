@@ -101,4 +101,9 @@ public interface DescriptionConstants {
      * Field SERVICE_CLASS_NAME
      */
     public static final String SERVICE_CLASS_NAME = "SERVICE_CLASS_NAME";
+    
+    /**
+     * Key that will keep the <code>MEPContext</code>s in the <code>AxisOperation</code>
+     */
+    public static final String MEP_MAP = "MEP_MAP";
 }

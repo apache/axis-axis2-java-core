@@ -94,6 +94,7 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
+		<exclude>**/*EchoTest.java</exclude>
 		<!-- <exclude>**/*TransportDeploymentTest.java</exclude>  -->
 		<!-- <exclude>**/*BuildERWithDeploymentTest.java</exclude>  -->
       </excludes>

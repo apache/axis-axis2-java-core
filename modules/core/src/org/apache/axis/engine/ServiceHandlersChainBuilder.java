@@ -54,7 +54,7 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
             if(param != null){
                 mepVal = (String)param.getValue();
             }else{
-                mepVal = MEPContextFactory.IN_OUT_MEP;
+                mepVal = MEPContextFactory.MEP_URI_IN_OUT;
             }
             
             //TODO find the MEP context
