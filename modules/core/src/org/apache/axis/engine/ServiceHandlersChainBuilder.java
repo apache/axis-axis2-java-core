@@ -25,7 +25,6 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MEPContext;
 import org.apache.axis.context.MEPContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
@@ -46,8 +45,7 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
         ServiceContext serviceContext = msgContext.getServiceContext();
         if (serviceContext != null) {
             
-            OperationContext opContext = msgContext.getOperationContext();
-            AxisOperation axisOp = opContext.getOperationConfig();
+            AxisOperation axisOp = msgContext.getoperationConfig();
             Parameter param = axisOp.getParameter(DefinedParameters.PARM_MEP);
             
             String mepVal = null;

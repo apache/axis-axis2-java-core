@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.description.PhasesIncludeImpl;
@@ -42,17 +43,16 @@ public class ServiceContext  extends AbstractContext implements PhasesInclude{
         phaseInclude = new PhasesIncludeImpl();
     }
 
-    public void addOperationContext(OperationContext ctxt){
+    public void addOperation(AxisOperation ctxt){
         this.operationContextMap.put(ctxt.getName(),ctxt);
     }
 
-    public OperationContext getOperationContext(String opId){
-        return (OperationContext)operationContextMap.get(opId);
+    public AxisOperation getOperationContext(String opId){
+        return (AxisOperation)operationContextMap.get(opId);
     }
 
-    public OperationContext removeOperationContext(OperationContext ctxt){
+    public void removeOperationContext(AxisOperation ctxt){
         operationContextMap.remove(ctxt.getName());
-        return ctxt;
     }
 
 

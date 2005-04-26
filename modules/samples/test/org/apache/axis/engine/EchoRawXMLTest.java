@@ -144,5 +144,49 @@ public class EchoRawXMLTest extends TestCase {
 
         log.info("send the reqest");
     }
+    
+ 
+
+//    public void testEchoXMLCompleteASync() throws Exception {
+//            OMFactory fac = OMFactory.newInstance();
+//
+//            SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+//            OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+//            OMElement method = fac.createOMElement("echoOMElement", omNs);
+//            OMElement value = fac.createOMElement("myValue", omNs);
+//            value.setValue("Isaac Assimov, the foundation Sega");
+//            method.addChild(value);
+//            reqEnv.getBody().addChild(method);
+//
+//            org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+//
+//            call.setTo(targetEPR);
+//            call.setListenerTransport("http", true);
+//
+//            Callback callback = new Callback() {
+//                public void onComplete(AsyncResult result) {
+//                    try {
+//                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+//                                .createXMLStreamWriter(System.out), true);
+//                    } catch (XMLStreamException e) {
+//                        reportError(e);
+//                    } finally {
+//                        finish = true;
+//                    }
+//                }
+//
+//                public void reportError(Exception e) {
+//                    e.printStackTrace();
+//                    finish = true;
+//                }
+//            };
+//
+//            call.sendReceiveAsync(reqEnv, callback);
+//            while (!finish) {
+//                Thread.sleep(1000);
+//            }
+//
+//            log.info("send the reqest");
+//        }
 
 }

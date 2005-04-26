@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -72,13 +71,12 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             } else {
                 throw new AxisFault("No service found under the " + toEPR.getAddress());
             }
-            if (msgctx.getOperationContext() == null) {
+            if (msgctx.getoperationConfig() == null) {
                 String action = (String) msgctx.getWSAAction();
                 QName operationName = new QName(action);
                 AxisOperation op = service.getOperation(operationName);
                 if (op != null) {
-                    OperationContext opContext = new OperationContext(op);
-                    msgctx.setOperationContext(opContext);
+                    msgctx.setOperationConfig(op);
                 } else {
                     throw new AxisFault("Operation not found");
                 }

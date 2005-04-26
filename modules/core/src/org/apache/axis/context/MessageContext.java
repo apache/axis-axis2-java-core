@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
@@ -96,7 +97,7 @@ public class MessageContext {
 
     private ServiceContext serviceContext;
 
-    private OperationContext operationContext;
+    private AxisOperation operationConfig;
     
     private MEPContext mepContext;
 
@@ -157,7 +158,10 @@ public class MessageContext {
             oldMessageContext.getSessionContext(),
             oldMessageContext.getTransportIn(),
             oldMessageContext.getTransportOut());
-        this.messageInformationHeaders = oldMessageContext.getMessageInformationHeaders();
+            
+        this.messageInformationHeaders = new MessageInformationHeadersCollection();    
+            
+       oldMessageContext.getMessageInformationHeaders();
         this.serverSide = oldMessageContext.isServerSide();
         this.serviceContext = oldMessageContext.getServiceContext();
 
@@ -496,8 +500,8 @@ public class MessageContext {
     /**
      * @return
      */
-    public OperationContext getOperationContext() {
-        return operationContext;
+    public AxisOperation getoperationConfig() {
+        return operationConfig;
     }
 
     /**
@@ -510,8 +514,8 @@ public class MessageContext {
     /**
      * @param context
      */
-    public void setOperationContext(OperationContext context) {
-        operationContext = context;
+    public void setOperationConfig(AxisOperation context) {
+        operationConfig = context;
     }
 
     /**

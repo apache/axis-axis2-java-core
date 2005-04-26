@@ -16,8 +16,14 @@
 
 package interop.doclit;
 
+import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
@@ -32,12 +38,6 @@ import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
@@ -119,7 +119,7 @@ public class InteropProvider extends SimpleJavaProvider {
                 if (operationName != null) {
                     AxisOperation op = service.getOperation(operationName);
                     if (op != null) {
-                        msgContext.setOperationContext(new OperationContext(op));
+                        msgContext.setOperationConfig(op);
                     } else {
                         throw new AxisFault("Operation not found " + operationName);
                     }
@@ -133,7 +133,7 @@ public class InteropProvider extends SimpleJavaProvider {
 
                 //find the WebService method
                 Class ImplClass = obj.getClass();
-                OperationContext op = msgContext.getOperationContext();
+                AxisOperation op = msgContext.getoperationConfig();
                 methodName = op.getName().getLocalPart();
 
                 Method[] methods = ImplClass.getMethods();

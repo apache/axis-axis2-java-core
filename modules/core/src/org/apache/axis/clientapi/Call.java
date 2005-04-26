@@ -141,11 +141,11 @@ public class Call {
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 
             sender.send(msgctx);
-            if (useSeparateListener) {
+           
                 
                 
                 //TODO start the server
-            } else {
+            if (!useSeparateListener) {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {

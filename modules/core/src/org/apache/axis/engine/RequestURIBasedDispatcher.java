@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -84,7 +83,7 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
                         if (operatoinName != null) {
                             AxisOperation axisOp =
                                 serviceContext.getServiceConfig().getOperation(operatoinName);
-                            msgctx.setOperationContext(new OperationContext(axisOp));
+                            msgctx.setOperationConfig(axisOp);
                         }
                     }
 

@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
@@ -99,7 +99,7 @@ public class EchoProvider extends SimpleJavaProvider {
 			
 			//find the WebService method  
 			Class ImplClass = obj.getClass();
-			OperationContext op = msgContext.getOperationContext();
+            AxisOperation op = msgContext.getoperationConfig();
 			String methodName = op.getName().getLocalPart();
 			
 			

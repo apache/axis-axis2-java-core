@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.om.OMConstants;
@@ -87,7 +87,7 @@ public class SimpleJavaProvider extends AbstractInOutSyncMessageReceiver impleme
 
                 //find the WebService method  
                 Class ImplClass = obj.getClass();
-                OperationContext op = msgContext.getOperationContext();
+                AxisOperation op = msgContext.getoperationConfig();
                 String methodName = op.getName().getLocalPart();
                 Method[] methods = ImplClass.getMethods();
                 for (int i = 0; i < methods.length; i++) {
