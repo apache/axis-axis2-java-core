@@ -90,7 +90,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void procesServerXML(AxisGlobal serverMetaData) throws DeploymentException {
+    public void processGlobalConfig(AxisGlobal axisGlobal) throws DeploymentException {
         try {
             boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
@@ -105,7 +105,7 @@ public class DeploymentParser implements DeploymentConstants {
                         //todo complete this to fill the names
                     } else if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
-                        serverMetaData.addParameter(parameter);
+                        axisGlobal.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
                         AxisTransportOut transportout = proccessTrasnsportOUT();
                         dpengine.getEngineconfig().addTransportOut(transportout);
@@ -121,7 +121,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (REF.equals(attname)) {
-                                    serverMetaData.addModule(new QName(attvalue));
+                                    axisGlobal.addModule(new QName(attvalue));
                                 }
                             }
                         }

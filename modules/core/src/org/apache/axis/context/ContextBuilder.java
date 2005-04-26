@@ -37,6 +37,25 @@ public class ContextBuilder {
         return engineContext;
     }
 
+    public EngineContext buildClientEngineContext(String axis2home) throws DeploymentException {
+            EngineContext engineContext = null;
+            try {
+                DeploymentEngine deploymentEngine = new DeploymentEngine(axis2home);
+                EngineConfiguration configuration = deploymentEngine.loadClient();
+                PhaseResolver phaseResolver = new PhaseResolver(configuration);
+                engineContext = phaseResolver.buildGlobalChains();
+                phaseResolver.buildTranspotsChains();
+                initModules(engineContext);
+            } catch (AxisFault axisFault) {
+                throw new DeploymentException(axisFault.getMessage()) ;
+            } catch (PhaseException e) {
+                throw new DeploymentException(e.getMessage()) ;
+            }
+            return engineContext;
+        }
+
+
+
 
     private void initModules(EngineContext context) throws DeploymentException {
         try{

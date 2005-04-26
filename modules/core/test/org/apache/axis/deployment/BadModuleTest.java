@@ -36,7 +36,7 @@ public class BadModuleTest extends AbstractTestCase {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/Badmodule.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
             AxisGlobal glabl = new AxisGlobal();
-            parser.procesServerXML(glabl);
+            parser.processGlobalConfig(glabl);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
             return;

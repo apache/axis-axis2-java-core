@@ -69,7 +69,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private String folderName;
 
-    private String serverConfigName;
+    private String engineConfigName;
 
     /**
      * This to keep a referance to serverMetaData object
@@ -137,7 +137,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        this.serverConfigName = RepositaryName + '/' + serverXMLFile;
+        this.engineConfigName = RepositaryName + '/' + serverXMLFile;
     }
 
     public HDFileItem getCurrentFileItem() {
@@ -175,15 +175,15 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public EngineConfiguration load() throws DeploymentException {
-        if (serverConfigName == null) {
+        if (engineConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
-        File tempfile = new File(serverConfigName);
+        File tempfile = new File(engineConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
             engineconfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.procesServerXML(axisGlobal);
+            parser.processGlobalConfig(axisGlobal);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (AxisFault axisFault) {
@@ -197,6 +197,36 @@ public class DeploymentEngine implements DeploymentConstants {
         } else {
             new RepositoryListenerImpl(folderName, this);
         }
+        try {
+            validateServerModule();
+        } catch (AxisFault axisFault) {
+            log.info("Module validation failed" + axisFault.getMessage());
+            throw new DeploymentException(axisFault.getMessage());
+        }
+        return engineconfig;
+    }
+
+
+    public EngineConfiguration loadClient() throws DeploymentException {
+        if (engineConfigName == null) {
+            throw new DeploymentException("path to Client.xml can not be NUll");
+        }
+        File tempfile = new File(engineConfigName);
+        try {
+            InputStream in = new FileInputStream(tempfile);
+            engineconfig = createEngineConfig();
+            DeploymentParser parser = new DeploymentParser(in, this);
+            parser.processGlobalConfig(axisGlobal);
+        } catch (FileNotFoundException e) {
+            throw new DeploymentException("Exception at deployment", e);
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault.getMessage());
+        } catch (XMLStreamException e) {
+            throw new DeploymentException(e.getMessage());
+        }
+        hotDeployment = false;
+        hotUpdate = false;
+        new RepositoryListenerImpl(folderName, this);
         try {
             validateServerModule();
         } catch (AxisFault axisFault) {
