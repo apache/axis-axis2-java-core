@@ -79,13 +79,9 @@ public class EchoTest extends TestCase {
 
     }
 
-    private XMLStreamReader invokeTheService(SOAPEnvelope envelope)
+    private XMLStreamReader invokeTheService(SOAPEnvelope envelope,EndpointReference targetEPR)
             throws Exception {
-        EndpointReference targetEPR =
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "http://127.0.0.1:"
-                + (org.apache.axis.integration.Constants.TESTING_PORT)
-                + "/axis/services/echo");
+       
         Call call = new Call();
         call.setTo(targetEPR);
         call.setTransport(Constants.TRANSPORT_HTTP);
@@ -115,13 +111,18 @@ public class EchoTest extends TestCase {
 
     public void testEchoString() throws Exception {
         String message = "Hello testing";
-
+        EndpointReference targetEPR =
+                       new EndpointReference(AddressingConstants.WSA_TO,
+                               "http://127.0.0.1:"
+                       + (org.apache.axis.integration.Constants.TESTING_PORT)
+                       + "/axis/services/echo/echoString");
+                       
         OMElement returnelement = fac.createOMElement("param1", ns);
         returnelement.setBuilder(new ObjectToOMBuilder(returnelement,
                 new SimpleTypeEncoder(message)));
         returnelement.declareNamespace(arrayNs);
         SOAPEnvelope envelope = createRawMessage("echoString", returnelement);
-        XMLStreamReader xpp = invokeTheService(envelope);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
         String value = SimpleTypeEncodingUtils.deserializeString(xpp);
         assertEquals(value, message);
     }
@@ -134,6 +135,13 @@ public class EchoTest extends TestCase {
                     "Hello testing3",
                     "Hello testing4",
                     "Hello testing5"};
+                    
+        EndpointReference targetEPR =
+                               new EndpointReference(AddressingConstants.WSA_TO,
+                                       "http://127.0.0.1:"
+                               + (org.apache.axis.integration.Constants.TESTING_PORT)
+                               + "/axis/services/echo/echoStringArray");
+                    
         OMElement returnelement = fac.createOMElement("param1", ns);
 
         ObjectToOMBuilder builder =
@@ -144,7 +152,7 @@ public class EchoTest extends TestCase {
         returnelement.declareNamespace(arrayNs);
         SOAPEnvelope envelope = createRawMessage("echoStringArray", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
         String[] values = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
         for (int i = 0; i < values.length; i++) {
             assertEquals(values[i], messages[i]);
@@ -152,6 +160,12 @@ public class EchoTest extends TestCase {
     }
 
     public void testEchoStruct() throws Exception {
+        EndpointReference targetEPR =
+                                      new EndpointReference(AddressingConstants.WSA_TO,
+                                              "http://127.0.0.1:"
+                                      + (org.apache.axis.integration.Constants.TESTING_PORT)
+                                      + "/axis/services/echo/echoEchoStruct");
+                    
         String[] messages =
                 new String[]{
                     "Hello testing1",
@@ -224,7 +238,7 @@ public class EchoTest extends TestCase {
         SOAPEnvelope envelope =
                 createRawMessage("echoEchoStruct", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
 
         Method deserializeMethod =
                 encoderClass.getMethod("deSerialize",
@@ -234,6 +248,12 @@ public class EchoTest extends TestCase {
     }
 
     public void testEchoStructArray() throws Exception {
+        EndpointReference targetEPR =
+                                             new EndpointReference(AddressingConstants.WSA_TO,
+                                                     "http://127.0.0.1:"
+                                             + (org.apache.axis.integration.Constants.TESTING_PORT)
+                                             + "/axis/services/echo/echoEchoStructArray");
+        
         Object[] objs = new Object[10];
         Class clasname =
                 Class.forName("encoding.sample1.EchoStruct", true, cl);
@@ -303,7 +323,7 @@ public class EchoTest extends TestCase {
         SOAPEnvelope envelope =
                 createRawMessage("echoEchoStructArray", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
 
         Encoder enc = new ArrayTypeEncoder(objs, (Encoder) obj1);
 

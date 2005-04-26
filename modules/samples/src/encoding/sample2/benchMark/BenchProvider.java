@@ -48,7 +48,7 @@ public class BenchProvider extends SimpleJavaProvider {
       Method method)
       throws AxisFault {
       XMLStreamReader xpp =
-          msgContext.getSoapOperationElement().getPullParser(true);
+            msgContext.getEnvelope().getBody().getFirstElement().getPullParser(true);
 		Class[] parms = method.getParameterTypes();
 		Object[] objs = new Object[parms.length];
 

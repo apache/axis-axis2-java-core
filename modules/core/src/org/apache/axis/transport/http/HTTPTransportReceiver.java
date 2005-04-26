@@ -103,7 +103,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
                 msgContext.setTo(
                     new EndpointReference(
                         AddressingConstants.WSA_TO,
-                        getServiceLookUp(requestURI)));
+                        requestURI));
 
                 // TODO see is it a Service request e.g. WSDL, list ....
                 // TODO take care of the other HTTPHeaders
@@ -417,18 +417,18 @@ public class HTTPTransportReceiver extends TransportReceiver {
         }
     }
 
-    private String getServiceLookUp(String requestURI) throws AxisFault {
-        final String URI_ID_STRING = "/services";
-              String filePart = requestURI;
-
-              int index = filePart.lastIndexOf(URI_ID_STRING);
-              String serviceStr = null;
-              if (index > 0) {
-                  serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-                  return serviceStr; 
-
-              } else {
-                  throw new AxisFault("Both the URI and SOAP_ACTION are Null");
-              }
-    }
+//    private String getServiceLookUp(String requestURI) throws AxisFault {
+//        final String URI_ID_STRING = "/services";
+//              String filePart = requestURI;
+//
+//              int index = filePart.lastIndexOf(URI_ID_STRING);
+//              String serviceStr = null;
+//              if (index > 0) {
+//                  serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
+//                  return serviceStr; 
+//
+//              } else {
+//                  throw new AxisFault("Both the URI and SOAP_ACTION are Null");
+//              }
+//    }
 }

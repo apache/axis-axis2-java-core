@@ -51,7 +51,7 @@ public class UtilServer {
             Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
             EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
             
-            File file = new File("modules/samples/target/test-resources/samples");
+            File file = new File("target/test-resources/samples");
             System.out.println(new File(file,"server.xml").exists());
             EngineContext er = erfac.createEngineRegistry(file.getAbsolutePath());
             try {

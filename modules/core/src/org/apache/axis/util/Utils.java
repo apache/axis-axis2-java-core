@@ -81,7 +81,7 @@ public class Utils {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(
             new ParameterImpl(
-                AbstractMessageReceiver.IMPL_INFO,
+                AbstractMessageReceiver.SERVICE_CLASS,
             className));
         service.setMessageReceiver(messageReceiver);
         return service;

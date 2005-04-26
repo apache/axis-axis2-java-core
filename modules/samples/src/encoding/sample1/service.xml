@@ -1,4 +1,4 @@
-<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+<service messageReceiver="encoding.sample1.EchoProvider" style="rpc" contextPath="services">
 
     <parameter name="ServiceClass" locked="xsd:false">encoding.sample1.EchoImpl</parameter>
 

@@ -27,7 +27,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver{
-    public static final String IMPL_INFO = "impl";
+    public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SCOPE = "scope";
     
     /**
@@ -41,12 +41,12 @@ public abstract class AbstractMessageReceiver implements MessageReceiver{
         try {
             AxisService service = msgContext.getServiceContext().getServiceConfig();
             ClassLoader classLoader = service.getClassLoader();
-            Parameter implInfoParam = service.getParameter(IMPL_INFO);
+            Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if(implInfoParam != null){
                 Class implClass = Class.forName((String)implInfoParam.getValue(),true,classLoader);
                 return implClass.newInstance();            
             }else{
-                throw new AxisFault("IMPL_INFO parameter is not specified");
+                throw new AxisFault("SERVICE_CLASS parameter is not specified");
             }
 
         } catch (Exception e) {

@@ -18,8 +18,6 @@ package org.apache.axis.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
@@ -27,7 +25,6 @@ import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.wsdl.WSDLService;
 
@@ -150,16 +147,6 @@ public class MessageContext {
      * Field newThreadRequired
      */
     private boolean newThreadRequired = false;
-
-    /**
-     * Field xpp
-     */
-    private XMLStreamReader xpp;
-
-    /**
-     * Field soapOperationElement
-     */
-    private OMElement soapOperationElement;
 
     private boolean paused = false;
 
@@ -422,35 +409,7 @@ public class MessageContext {
         return this.chain;
     }
 
-    /**
-     * @return
-     */
-    public XMLStreamReader getXpp() {
-        return xpp;
-    }
-
-    /**
-     * @param reader
-     */
-    public void setXpp(XMLStreamReader reader) {
-        xpp = reader;
-    }
-
-    /**
-     * @return
-     */
-    public OMElement getSoapOperationElement() {
-        return soapOperationElement;
-    }
-
-    /**
-     * @param element
-     */
-    public void setSoapOperationElement(OMElement element) {
-        soapOperationElement = element;
-    }
-
-    /**
+     /**
      * @return
      */
     public Map getProperties() {
