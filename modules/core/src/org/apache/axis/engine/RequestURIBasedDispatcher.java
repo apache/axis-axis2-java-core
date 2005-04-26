@@ -80,15 +80,20 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
                     service = registry.getService(serviceName);
                     if (service != null) {
                         serviceContext = new ServiceContext(service);
-                        if (operatoinName != null) {
-                            AxisOperation axisOp =
-                                serviceContext.getServiceConfig().getOperation(operatoinName);
-                            msgctx.setOperationConfig(axisOp);
-                        }
                     }
-
                 }
                 if (serviceContext != null) {
+                    if (operatoinName != null) {
+                        AxisOperation axisOp =
+                            serviceContext.getServiceConfig().getOperation(operatoinName);
+                        if(axisOp != null){
+                            msgctx.setOperationConfig(axisOp);
+                        }else{
+                            throw new AxisFault("Service named "+ serviceName + " Do not have a operation called "+ operatoinName);
+                        }
+                            
+                    }
+
                     msgctx.setServiceContext(serviceContext);
                     msgctx.setMessageStyle(serviceContext.getServiceConfig().getStyle());
 

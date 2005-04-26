@@ -46,6 +46,10 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
         if (serviceContext != null) {
             
             AxisOperation axisOp = msgContext.getoperationConfig();
+            
+            if(axisOp == null){
+                throw new AxisFault("Operation Not found");
+            }
 
             Parameter param = axisOp.getParameter(DefinedParameters.PARM_MEP);
             

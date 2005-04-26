@@ -47,6 +47,8 @@ public class HandlerFailureTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private static final String SERVICE_NAME = "EchoXMLService";
     private static final String OPERATION_NAME = "echoOMElement";
+    
+    
     private static final String ADDRESS = "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
             "/axis/services/" + SERVICE_NAME + "/" +OPERATION_NAME;
 //    private static final String ADDRESS = "http://127.0.0.1:8080/axis/services/" + SERVICE_NAME;
@@ -166,7 +168,6 @@ public class HandlerFailureTest extends TestCase {
             }
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
-            System.out.println("e.getMessage() = " + e.getMessage());
             assertTrue((e.getMessage().indexOf(UtilServer.FAILURE_MESSAGE)) > 0);
             return;
         }

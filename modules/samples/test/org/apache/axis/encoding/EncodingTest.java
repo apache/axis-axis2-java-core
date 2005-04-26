@@ -47,7 +47,7 @@ public class EncodingTest extends TestCase {
         OMElement omel = omfac.createOMElement("value", omNs);
         omel.addChild(omfac.createText("1234"));
 
-        deserialize(method, omel.getXMLStreamReaderWithoutCaching());
+        deserialize(method, omel.getXMLStreamReader());
     }
 
 
@@ -58,7 +58,7 @@ public class EncodingTest extends TestCase {
         OMElement omel = omfac.createOMElement("value", omNs);
         omel.addChild(omfac.createText("1234"));
 
-        deserialize(method, omel.getXMLStreamReaderWithoutCaching());
+        deserialize(method, omel.getXMLStreamReader());
     }
 
 
@@ -74,7 +74,7 @@ public class EncodingTest extends TestCase {
             omel.addChild(temp);
         }
 
-        deserialize(method, omel.getXMLStreamReaderWithoutCaching());
+        deserialize(method, omel.getXMLStreamReader());
     }
 
     public void testDeserializingStringArrayVal() throws SecurityException, NoSuchMethodException, AxisFault, XMLStreamException, FactoryConfigurationError {
@@ -89,7 +89,7 @@ public class EncodingTest extends TestCase {
         }
 
         omel.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-        XMLStreamReader xpp = omel.getXMLStreamReaderWithoutCaching();
+        XMLStreamReader xpp = omel.getXMLStreamReader();
         String[] strs = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
         for (int i = 0; i < strs.length; i++) {
             System.out.println(strs[i]);

@@ -160,8 +160,11 @@ public class MessageContext {
             oldMessageContext.getTransportOut());
             
         this.messageInformationHeaders = new MessageInformationHeadersCollection();    
-            
-       oldMessageContext.getMessageInformationHeaders();
+        MessageInformationHeadersCollection oldMessageInfoHeaders = oldMessageContext.getMessageInformationHeaders();
+        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo()) ;  
+        messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
+        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
+       
         this.serverSide = oldMessageContext.isServerSide();
         this.serviceContext = oldMessageContext.getServiceContext();
 

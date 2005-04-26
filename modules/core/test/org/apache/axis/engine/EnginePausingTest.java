@@ -36,7 +36,7 @@ import org.apache.wsdl.WSDLService;
 
 public class EnginePausingTest extends AbstractEngineTest {
   
-    private QName serviceName = new QName("axis/services/NullService");
+    private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
 
     public EnginePausingTest() {
@@ -112,7 +112,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         mc.setTo(
             new EndpointReference(
                 AddressingConstants.WSA_TO,
-                "axis/services/NullService"));
+                "axis/services/NullService/DummyOp"));
         mc.setWSAAction(operationName.getLocalPart());
 
     }

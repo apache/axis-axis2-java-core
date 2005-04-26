@@ -101,7 +101,7 @@ public class AxisEngine {
             sender.invoke(context);
 
         } catch (AxisFault error) {
-            error.printStackTrace();
+            //error.printStackTrace();
             handleFault(context, error);
         }
 
@@ -181,6 +181,7 @@ public class AxisEngine {
             log.info("ending the out flow");
         } catch (Throwable e) {
             handleFault(context, e);
+            
         }
     }
 

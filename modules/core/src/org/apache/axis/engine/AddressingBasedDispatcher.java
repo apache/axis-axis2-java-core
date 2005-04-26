@@ -34,8 +34,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
-    private AxisService service;
+        new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
 
     /**
      * Constructor Dispatcher
@@ -54,7 +53,8 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
         if (msgctx.getServiceContext() == null) {
             EndpointReference toEPR = msgctx.getTo();
             QName serviceName = new QName(toEPR.getAddress());
-            service = msgctx.getEngineContext().getEngineConfig().getService(serviceName);
+            AxisService service =
+                msgctx.getEngineContext().getEngineConfig().getService(serviceName);
 
             if (service != null) {
                 EngineContext engineContext = msgctx.getEngineContext();
@@ -71,16 +71,24 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             } else {
                 throw new AxisFault("No service found under the " + toEPR.getAddress());
             }
-            
-        } else if (msgctx.getoperationConfig() == null) {
+
+        }
+
+        if (msgctx.getoperationConfig() == null) {
+            AxisService service = msgctx.getServiceContext().getServiceConfig();
             String action = (String) msgctx.getWSAAction();
-            QName operationName = new QName(action);
-            AxisOperation op = service.getOperation(operationName);
-            if (op != null) {
-                 msgctx.setOperationConfig(op);
+            if (action != null) {
+                QName operationName = new QName(action);
+                AxisOperation op = service.getOperation(operationName);
+                if (op != null) {
+                    msgctx.setOperationConfig(op);
+                } else {
+                    throw new AxisFault("Operation not found");
+                }
             } else {
-                throw new AxisFault("Operation not found");
+                throw new AxisFault("Operation not found, WSA Action is Null");
             }
+
         }
 
     }
