@@ -81,7 +81,7 @@ public class XMLComparator {
             OMNode omNode = (OMNode) elementOneChildren.next();
             if(omNode instanceof OMElement){
                 OMElement elementOneChild = (OMElement) omNode;
-                OMNode elementTwoChild = elementTwo.getChildWithName(elementOneChild.getQName());
+                OMNode elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());
                 if(elementTwoChild == null){
                     throw new XMLComparisonException(" There is no " + elementOneChild.getLocalName() + " element under " + elementTwo.getLocalName());
                 }
@@ -95,7 +95,7 @@ public class XMLComparator {
         Iterator attributes = elementOne.getAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
-            OMAttribute attr = elementTwo.getAttributeWithQName(omAttribute.getQName());
+            OMAttribute attr = elementTwo.getFirstAttribute(omAttribute.getQName());
             if(attr == null){
                 throw new XMLComparisonException("Attributes are not the same in two elements. Attribute "+ omAttribute.getLocalName() + " != ");
             }

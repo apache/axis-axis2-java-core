@@ -51,7 +51,7 @@ public class OmStAXBuilderTest extends AbstractTestCase {
         assertNotNull(envelope);
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
         //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        envelope.serialize(writer, true);
+        envelope.serializeWithCache(writer);
 
 
     }

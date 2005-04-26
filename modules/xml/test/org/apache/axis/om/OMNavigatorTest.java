@@ -52,7 +52,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     public void testnavigatorFullyBuilt() throws Exception {
         assertNotNull(envelope);
         //dump the out put to a  temporary file
-        envelope.serialize(writer, true);
+        envelope.serializeWithCache(writer);
 
         //now the OM is fully created test the navigation
         OMNavigator navigator = new OMNavigator(envelope);

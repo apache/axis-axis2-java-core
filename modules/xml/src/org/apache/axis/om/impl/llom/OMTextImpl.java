@@ -28,9 +28,8 @@ import javax.xml.stream.XMLStreamWriter;
  * Class OMTextImpl
  */
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
-    /**
-     * Field textType
-     */
+
+    protected String value;
     protected short textType = TEXT_NODE;
 
     /**
@@ -41,7 +40,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      */
     public OMTextImpl(OMElement parent, String text) {
         super(parent);
-        setValue(text);
+        this.value = text;
         done = true;
     }
 
@@ -51,69 +50,25 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param s
      */
     public OMTextImpl(String s) {
-        setValue(s);
+        this.value = s;
     }
 
-    /**
-     * We use the OMText class to hold comments, text, characterData, CData, etc.,
-     * The codes are found in OMNode class
-     *
-     * @param type
-     */
-    public void setTextType(short type) {
-        if ((type == TEXT_NODE) || (type == COMMENT_NODE)
-                || (type == CDATA_SECTION_NODE)) {
-            this.textType = type;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Attempt to set wrong type");
-        }
-    }
 
-    /**
-     * Method getTextType
-     *
-     * @return
-     */
-    public short getTextType() {
-        return textType;
-    }
-
-    /**
-     * Method getFirstChild
-     *
-     * @return
-     * @throws OMException
-     */
-    public OMNode getFirstChild() throws OMException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Method setFirstChild
-     *
-     * @param node
-     * @throws OMException
-     */
-    public void setFirstChild(OMNode node) throws OMException {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * @return
      * @throws org.apache.axis.om.OMException
      * @throws OMException
      */
-    public short getType() throws OMException {
+    public int getType() throws OMException {
         return textType;
     }
 
     /**
      * @param writer
-     * @param cache
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer, boolean cache)
+    public void serializeWithCache(XMLStreamWriter writer)
             throws XMLStreamException {
         if (textType == TEXT_NODE) {
             writer.writeCharacters(this.value);
@@ -124,11 +79,35 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         }
         OMNode nextSibling = this.getNextSibling();
         if (nextSibling != null) {
-            nextSibling.serialize(writer, cache);
+            nextSibling.serializeWithCache(writer);
         }
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        this.serialize(writer, false);
+        this.serializeWithCache(writer);
+    }
+
+    /**
+     * Slightly different implementation of the discard method 
+     * @throws OMException
+     */
+    public void discard() throws OMException {
+          if (done){
+              this.detach();
+          }else{
+              builder.discard(this.parent);
+          }
+    }
+
+    /**
+     * Returns the value
+     * @return
+     */
+    public String getText() {
+        return this.value;
+    }
+
+    public boolean isOptimized() {
+        return false;  //Todo
     }
 }

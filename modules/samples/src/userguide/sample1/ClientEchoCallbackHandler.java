@@ -32,7 +32,7 @@ public class ClientEchoCallbackHandler extends Callback {
 		
 		try {
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-			result.getResponseEnvelope().serialize(writer,true);
+			result.getResponseEnvelope().serializeWithCache(writer);
 			writer.flush();
 		} catch (XMLStreamException e) {
 			System.out.println("Error occured after responce is received");

@@ -83,13 +83,7 @@ public class EchoRawXMLTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
         OMFactory fac = OMFactory.newInstance();
 
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setValue("Isaac Assimov, the foundation Sega");
-        method.addChild(value);
-        reqEnv.getBody().addChild(method);
+        SOAPEnvelope reqEnv = createEnvelope(fac);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
         
@@ -98,21 +92,26 @@ public class EchoRawXMLTest extends TestCase {
         call.setAction(operationName.getLocalPart());
         SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
-        resEnv.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out), true);
+        resEnv.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
         OMNode omNode = resEnv.getBody().getFirstChild();
         assertNotNull(omNode);
+    }
+
+    private SOAPEnvelope createEnvelope(OMFactory fac) {
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.addChild(fac.createText(value,"Isaac Assimov, the foundation Sega"));
+        method.addChild(value);
+        reqEnv.getBody().addChild(method);
+        return reqEnv;
     }
 
     public void testEchoXMLASync() throws Exception {
         OMFactory fac = OMFactory.newInstance();
 
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setValue("Isaac Assimov, the foundation Sega");
-        method.addChild(value);
-        reqEnv.getBody().addChild(method);
+        SOAPEnvelope reqEnv = createEnvelope(fac);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
@@ -122,8 +121,8 @@ public class EchoRawXMLTest extends TestCase {
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out), true);
+                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {

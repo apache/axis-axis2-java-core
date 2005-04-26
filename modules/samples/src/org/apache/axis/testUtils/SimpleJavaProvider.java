@@ -54,7 +54,8 @@ public class SimpleJavaProvider extends AbstractInOutSyncMessageReceiver impleme
     public Object[] deserializeParameters(MessageContext msgContext,
                                           Method method)
             throws AxisFault {
-        XMLStreamReader xpp = msgContext.getEnvelope().getBody().getFirstElement().getPullParser(true);
+        XMLStreamReader xpp =
+                msgContext.getEnvelope().getBody().getFirstElement().getXMLStreamReader();
         Class[] parms = method.getParameterTypes();
         Object[] objs = new Object[parms.length];
 

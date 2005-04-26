@@ -16,7 +16,6 @@
 package org.apache.axis.om.factory;
 
 import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
@@ -82,7 +81,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
         String text = "sampleText";
         OMText omText = omFactory.createText(omElement, text);
         assertTrue("Programatically created OMText should have done = true ", omText.isComplete());
-        assertTrue("Programatically created OMText should have correct text value ", text.equals(omText.getValue()));
+        assertTrue("Programatically created OMText should have correct text value ", text.equals(omText.getText()));
 
     }
 

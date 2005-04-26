@@ -60,7 +60,7 @@ public class AsynchronousClient {
 			
 			System.out.println("Sending the Async message ....");
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-			requestEnvelop.serialize(writer,true);
+			requestEnvelop.serializeWithCache(writer);
 			writer.flush();
 			System.out.println();
 			

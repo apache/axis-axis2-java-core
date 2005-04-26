@@ -59,12 +59,12 @@ public class SynchronousClient {
 			
 			System.out.println("Sending request...");
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-			requestEnvelop.serialize(writer,true);
+			requestEnvelop.serializeWithCache(writer);
 			writer.flush();
 			System.out.println();
 			SOAPEnvelope responceEnvelop = call.sendReceiveSync(requestEnvelop);
 			System.out.println("Responce received  ...");
-			responceEnvelop.serialize(writer,true);
+			responceEnvelop.serializeWithCache(writer);
 			writer.flush();
 			
 		} catch (AxisFault e1) {

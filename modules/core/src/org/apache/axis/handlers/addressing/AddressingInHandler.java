@@ -97,7 +97,7 @@ public class AddressingInHandler extends AbstractHandler {
                 messageInformationHeadersCollection.setAction(soapHeaderBlock.getText());
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
-                OMAttribute relationshipType = soapHeaderBlock.getAttributeWithQName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
+                OMAttribute relationshipType = soapHeaderBlock.getFirstAttribute(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
                 RelatesTo relatesTo = new RelatesTo(address, relationshipType == null ? "wsa:Reply" : relationshipType.getValue());
                 messageInformationHeadersCollection.setRelatesTo(relatesTo);
             }
@@ -108,7 +108,7 @@ public class AddressingInHandler extends AbstractHandler {
 
 
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr) {
-        OMElement address = (OMElement) headerBlock.getChildWithName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
+        OMElement address = (OMElement) headerBlock.getFirstChildWithName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
         if (address != null) {
             epr.setAddress(address.getText());
         }

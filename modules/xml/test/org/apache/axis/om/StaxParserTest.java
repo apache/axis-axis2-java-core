@@ -46,11 +46,11 @@ public class StaxParserTest extends AbstractTestCase {
 
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(),
                 XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
-        parser2 = builder.getDocumentElement().getPullParser(false);
+        parser2 = builder.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(),
                 XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
-        parser3 = builder2.getDocumentElement().getPullParser(true);
+        parser3 = builder2.getDocumentElement().getXMLStreamReader();
 
     }
 

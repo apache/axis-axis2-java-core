@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.om;
 
 import javax.xml.namespace.QName;
@@ -52,7 +52,7 @@ public interface OMElement extends OMNode {
      * @return
      * @throws OMException
      */
-    public OMNode getChildWithName(QName elementQName) throws OMException;
+    public OMNode getFirstChildWithName(QName elementQName) throws OMException;
 
     /**
      * This returns a collection of this element.
@@ -87,27 +87,16 @@ public interface OMElement extends OMNode {
      * @return
      * @throws OMException
      */
-    public OMNamespace findInScopeNamespace(String uri, String prefix)
+    public OMNamespace findNamespace(String uri, String prefix)
             throws OMException;
 
     /**
-     * This will ckeck for the namespace <B>only</B> in the current Element
-     *
-     * @param uri
-     * @param prefix
-     * @return
-     * @throws OMException
-     */
-    public OMNamespace findDeclaredNamespace(String uri, String prefix)
-            throws OMException;
-
-    /**
-     * This will provide a list of namespace defined within this Element <B>only</B>
      *
      * @return
      * @throws OMException
      */
-    public Iterator getAllDeclaredNamespaces();
+    public Iterator getAllDeclaredNamespaces()  throws OMException;
+
 
     /**
      * This will help to search for an attribute with a given QName within this Element
@@ -116,7 +105,7 @@ public interface OMElement extends OMNode {
      * @return
      * @throws OMException
      */
-    public OMAttribute getAttributeWithQName(QName qname) throws OMException;
+    public OMAttribute getFirstAttribute(QName qname) throws OMException;
 
     /**
      * This will return a List of OMAttributes
@@ -132,7 +121,7 @@ public interface OMElement extends OMNode {
      * @param attr
      * @return
      */
-    public OMAttribute insertAttribute(OMAttribute attr);
+    public OMAttribute addAttribute(OMAttribute attr);
 
     /**
      * @param attributeName
@@ -141,8 +130,8 @@ public interface OMElement extends OMNode {
      *                      must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
      * @return
      */
-    public OMAttribute insertAttribute(String attributeName, String value,
-                                       OMNamespace ns);
+    public OMAttribute addAttribute(String attributeName, String value,
+                                    OMNamespace ns);
 
     /**
      * Method removeAttribute
@@ -178,29 +167,38 @@ public interface OMElement extends OMNode {
      * @return
      */
     public OMNode getFirstChild();
-    
+
     /**
      * Convenience extension of the getFirstChild
      * @return
      */
-    
+
     public OMElement getFirstElement();
 
-    /**
-      * Convenience extension of the getNextSibling
-      * @return
-      */
-    public OMElement getNextSiblingElement() throws OMException;
+
 
     /**
      * Returns the pull parser that will generate the pull
-     * events relevant to THIS element
+     * events relevant to THIS element. Caching is on
      *
-     * @param cacheOff
      * @return
      */
-    public XMLStreamReader getPullParser(boolean cacheOff);
+    public XMLStreamReader getXMLStreamReader();
 
+    /**
+     * Returns the pull parser that will generate the pull
+     * events relevant to THIS element.caching is off
+     *
+     *
+     * @return
+     */
+    public XMLStreamReader getXMLStreamReaderWithoutCaching();
+
+    /**
+     * 
+     * @param text
+     */
+    public void setText(String text);
     /**
      * This will return the non-empty text children as a String
      * @return
@@ -222,33 +220,22 @@ public interface OMElement extends OMNode {
     public void setLocalName(String localName);
 
     /**
-     * Method getNamespace
-     *
-     * @return
+     * @return the OMNamespace object associated with this element
      * @throws OMException
      */
     public OMNamespace getNamespace() throws OMException;
 
     /**
-     * Method getNamespaceName
-     *
-     * @return
-     */
-    public String getNamespaceName();
-
-    /**
-     * Method setNamespace
-     *
+     * sets the Namespace
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace);
 
+    /**
+     * Get the Qname of this node
+     * @return
+     */
     public QName getQName();
 
 
-    /**
-     * This will completely parse this node and build the object structure in the memory
-     * @throws OMException
-     */
-    public void populateYourSelf() throws OMException ;
 }

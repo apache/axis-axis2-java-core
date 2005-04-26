@@ -52,7 +52,7 @@ public class SOAPFaultTest extends AbstractTestCase {
     }
 
     private void print() throws XMLStreamException {
-        soapEnvelope.serialize(writer, true);
+        soapEnvelope.serializeWithCache(writer);
         writer.flush();
     }
 }

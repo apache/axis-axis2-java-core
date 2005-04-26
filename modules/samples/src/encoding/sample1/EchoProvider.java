@@ -41,8 +41,8 @@ public class EchoProvider extends SimpleJavaProvider {
       MessageContext msgContext,
       Method method)
       throws AxisFault {
-      XMLStreamReader xpp = msgContext.getEnvelope().getBody().getFirstElement().getPullParser(true);
-
+      XMLStreamReader xpp =
+          msgContext.getEnvelope().getBody().getFirstElement().getXMLStreamReader();
 		Class[] parms = method.getParameterTypes();
 		Object[] objs = new Object[parms.length];
 		

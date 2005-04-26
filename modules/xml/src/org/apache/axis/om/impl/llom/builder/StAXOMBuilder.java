@@ -183,7 +183,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
 
         // set the own namespace
         OMNamespace namespace =
-                node.findInScopeNamespace(parser.getNamespaceURI(),
+                node.findNamespace(parser.getNamespaceURI(),
                 parser.getPrefix());
         node.setNamespace(namespace);
     }

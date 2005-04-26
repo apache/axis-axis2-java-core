@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.om.impl.llom;
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.OMNode;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
@@ -53,10 +54,10 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
         super(
-            SOAPConstants.HEADER_LOCAL_NAME,
-            (envelope == null) ? null : envelope.getNamespace(),
-            envelope,
-            builder);
+                SOAPConstants.HEADER_LOCAL_NAME,
+                (envelope == null) ? null : envelope.getNamespace(),
+                envelope,
+                builder);
     }
 
     /**
@@ -73,9 +74,9 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @throws OMException
      */
     public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
-        throws OMException {
+            throws OMException {
         SOAPHeaderBlock soapHeaderBlock =
-            new SOAPHeaderBlockImpl(localName, ns);
+                new SOAPHeaderBlockImpl(localName, ns);
         this.addChild(soapHeaderBlock);
         soapHeaderBlock.setComplete(true);
         return soapHeaderBlock;
@@ -134,12 +135,12 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      */
     public Iterator extractHeaderBlocks(String actor) {
         return new OMChildrenWithSpecificAttributeIterator(
-            getFirstChild(),
-            new QName(
-                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAPConstants.ATTR_ACTOR),
-            actor,
-            true);
+                getFirstChild(),
+                new QName(
+                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAPConstants.ATTR_ACTOR),
+                actor,
+                true);
     }
 
     /**
@@ -156,12 +157,12 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      */
     public Iterator examineMustUnderstandHeaderBlocks(String actor) {
         return new OMChildrenWithSpecificAttributeIterator(
-            getFirstChild(),
-            new QName(
-                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAPConstants.ATTR_ACTOR),
-            actor,
-            false);
+                getFirstChild(),
+                new QName(
+                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAPConstants.ATTR_ACTOR),
+                actor,
+                false);
     }
 
     /**
@@ -193,15 +194,20 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 
     public ArrayList getHeaderBolcksWithNSURI(String nsURI) {
         ArrayList headers = null;
+        OMNode node = null;
         OMElement header = this.getFirstElement();
+
         if (header != null) {
             headers = new ArrayList();
         }
-        while (header != null) {
-            if (nsURI.equals(header.getNamespaceName())) {
-                headers.add(header);
+        while (node != null) {
+            if (node.getType()==OMNode.ELEMENT_NODE){
+                header = (OMElement)node;
+                if (nsURI.equals(header.getNamespace().getName())) {
+                    headers.add(header);
+                }
             }
-            header = header.getNextSiblingElement();
+            node = node.getNextSibling();
 
         }
         return headers;

@@ -86,7 +86,7 @@ public class InteropProvider extends SimpleJavaProvider {
         try {
             if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
                 SOAPBody body = msgContext.getEnvelope().getBody();
-                XMLStreamReader xpp = body.getPullParser(true);
+                XMLStreamReader xpp = body.getXMLStreamReader();
 
                 int event = xpp.next();
                 while (XMLStreamConstants.START_ELEMENT != event

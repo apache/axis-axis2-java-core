@@ -366,7 +366,7 @@
             if(body.hasFault()){
                 throw body.getFault().getException();
             }
-            XMLStreamReader xpp = body.getPullParser(true);
+            XMLStreamReader xpp = body.getXMLStreamReader(true);
 
             int event = xpp.next();
             while (event != XMLStreamConstants.START_ELEMENT) {

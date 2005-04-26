@@ -170,10 +170,10 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      *
      * @param builder
      * @param startNode
-     * @param cacheOff
+     * @param cache
      */
     OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,
-                  boolean cacheOff) {
+                  boolean cache) {
 
         // create a navigator
         this.navigator = new OMNavigator(startNode);
@@ -185,7 +185,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         // returns the starting node at the first call to it
         currentNode = navigator.next();
         updateNextNode();
-        switchingAllowed = cacheOff;
+        switchingAllowed = !cache;
     }
 
     /**
@@ -297,7 +297,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             returnLength = parser.getTextLength();
         } else {
             OMText textNode = (OMText) lastNode;
-            returnLength = textNode.getValue().length();
+            returnLength = textNode.getText().length();
         }
         return returnLength;
     }
@@ -353,7 +353,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (hasText()) {
                 OMText textNode = (OMText) lastNode;
-                String str = textNode.getValue();
+                String str = textNode.getText();
                 returnArray = str.toCharArray();
             }
         }
@@ -371,7 +371,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (hasText()) {
                 OMText textNode = (OMText) lastNode;
-                returnString = textNode.getValue();
+                returnString = textNode.getText();
             }
         }
         return returnString;
@@ -1012,7 +1012,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             case OMNode.ELEMENT_NODE:
                 OMElement element = (OMElement) node;
                 log.info("Generating events from element {"
-                                + element.getNamespaceName() + '}'
+                                + element.getNamespace().getName() + '}'
                                 + element.getLocalName() + " Generated OM tree");
                 returnEvent = generateElementEvents(element);
                 break;

@@ -107,13 +107,13 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getChildWithName(new QName(INTEROP_NS_URI,"echoStructReturn"));
+            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStructReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }
 
 
-            XMLStreamReader pullParser = elt.getPullParser(false);
+            XMLStreamReader pullParser = elt.getXMLStreamReaderWithoutCaching();
             pullParser.next();
             SOAPStruct soapStructure = (SOAPStruct)new SOAPStructEncoder().deSerialize(pullParser);
 
@@ -147,12 +147,12 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getChildWithName(new QName(INTEROP_NS_URI,"echoStringArrayReturn"));
+            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringArrayReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }
 
-            return SimpleTypeEncodingUtils.deserializeStringArray(elt.getPullParser(false));
+            return SimpleTypeEncodingUtils.deserializeStringArray(elt.getXMLStreamReaderWithoutCaching());
 
 
 
@@ -176,12 +176,12 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getChildWithName(new QName(INTEROP_NS_URI,"echoStringReturn"));
+            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }
 
-            return elt.getFirstChild().getValue();
+            return elt.getText();
 
 
     }

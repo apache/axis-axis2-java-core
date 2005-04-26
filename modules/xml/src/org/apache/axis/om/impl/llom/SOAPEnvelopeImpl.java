@@ -23,6 +23,7 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.OMNode;
 
 /**
  * Class SOAPEnvelopeImpl
@@ -93,7 +94,12 @@ public class SOAPEnvelopeImpl extends OMElementImpl
         if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
             return (SOAPBody) element;
         }else{
-            element = element.getNextSiblingElement();
+            OMNode node = element.getNextSibling();
+            while(node.getType()!=OMNode.ELEMENT_NODE){
+               node = node.getNextSibling();
+            }
+            element =(OMElement)node;
+            
             if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                 return (SOAPBody) element;
             }
@@ -106,7 +112,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      *
      * @throws OMException
      */
-    public void detach() throws OMException {
+    public OMNode detach() throws OMException {
         throw new OMException("Root Element can not be detached");
     }
 }

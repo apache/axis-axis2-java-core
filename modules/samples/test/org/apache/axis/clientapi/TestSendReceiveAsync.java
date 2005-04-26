@@ -114,10 +114,9 @@ public class TestSendReceiveAsync extends TestCase {
             public void onComplete(AsyncResult result) {
 
                 try {
-                    result.getResponseEnvelope().serialize(
+                    result.getResponseEnvelope().serializeWithCache(
                         XMLOutputFactory.newInstance().createXMLStreamWriter(
-                            System.out),
-                        true);
+                            System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
 

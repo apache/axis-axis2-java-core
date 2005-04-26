@@ -41,7 +41,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     private int depth = 0;
 
     /**
-     * Method serialize
+     * Method serializeWithCache
      *
      * @param obj
      * @param writer

@@ -122,13 +122,13 @@ public class SOAPFaultImpl extends OMElementImpl
             while (childrenIter.hasNext()) {
                 Object o = childrenIter.next();
                 if ((o instanceof OMText)
-                        && !((OMText) o).getValue().trim().equals("")) {
-                    String[] strings = ((OMText) o).getValue().split(":");
+                        && !((OMText) o).getText().trim().equals("")) {
+                    String[] strings = ((OMText) o).getText().split(":");
                     return new QName("", strings[1], strings[0]);
                 }
             }
         } else {
-            faultCodeElement = (OMElementImpl) this.getChildWithName(
+            faultCodeElement = (OMElementImpl) this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -167,12 +167,12 @@ public class SOAPFaultImpl extends OMElementImpl
             while (childrenIter.hasNext()) {
                 Object o = childrenIter.next();
                 if ((o instanceof OMText)
-                        && !"".equals(((OMText) o).getValue())) {
-                    return ((OMText) o).getValue();
+                        && !"".equals(((OMText) o).getText())) {
+                    return ((OMText) o).getText();
                 }
             }
         } else {
-            faultActorElement = (OMElementImpl) this.getChildWithName(
+            faultActorElement = (OMElementImpl) this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -211,12 +211,12 @@ public class SOAPFaultImpl extends OMElementImpl
             while (childrenIter.hasNext()) {
                 Object o = childrenIter.next();
                 if ((o instanceof OMText)
-                        && !"".equals(((OMText) o).getValue())) {
-                    return ((OMText) o).getValue();
+                        && !"".equals(((OMText) o).getText())) {
+                    return ((OMText) o).getText();
                 }
             }
         } else {
-            faultStringElement = (OMElementImpl) this.getChildWithName(
+            faultStringElement = (OMElementImpl) this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -253,12 +253,12 @@ public class SOAPFaultImpl extends OMElementImpl
             while (childrenIter.hasNext()) {
                 Object o = childrenIter.next();
                 if (!((o instanceof OMText)
-                                 && "".equals(((OMText) o).getValue()))) {
+                                 && "".equals(((OMText) o).getText()))) {
                     return (OMNode) o;
                 }
             }
         } else {
-            detailElement = (OMElementImpl) this.getChildWithName(
+            detailElement = (OMElementImpl) this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -284,8 +284,7 @@ public class SOAPFaultImpl extends OMElementImpl
                     XMLStreamWriter writer =
                             XMLOutputFactory.newInstance().createXMLStreamWriter(
                             sw);
-                    ((OMElement) detailsInformationNode).serialize(writer,
-                            true);
+                    ((OMElement) detailsInformationNode).serializeWithCache(writer);
                     writer.flush();
                     return new Exception(sw.toString());
                 } catch (XMLStreamException e1) {
@@ -293,7 +292,7 @@ public class SOAPFaultImpl extends OMElementImpl
                 }
             } else if (detailsInformationNode instanceof OMText) {
                 return new Exception(
-                        ((OMText) detailsInformationNode).getValue());
+                        ((OMText) detailsInformationNode).getText());
             }
         } else {
             return e;

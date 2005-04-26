@@ -98,11 +98,11 @@ public class SAXOMBuilder extends DefaultHandler {
 		else
 			nextElem.setLocalName(localName);
 		nextElem
-				.setNamespace(nextElem.findInScopeNamespace(namespaceURI, null));
+				.setNamespace(nextElem.findNamespace(namespaceURI, null));
 		int j = atts.getLength();
 		for (int i = 0; i < j; i++)
-			nextElem.insertAttribute(atts.getLocalName(i), atts.getValue(i),
-					nextElem.findInScopeNamespace(atts.getURI(i), null));
+			nextElem.addAttribute(atts.getLocalName(i), atts.getValue(i),
+					nextElem.findNamespace(atts.getURI(i), null));
 		lastNode = nextElem;
 		nextElem = null;
 	}

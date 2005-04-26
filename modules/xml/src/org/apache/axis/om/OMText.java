@@ -20,17 +20,20 @@ package org.apache.axis.om;
  */
 public interface OMText extends OMNode {
     /**
-     * We use the OMText class to hold comments, text, characterData, CData, etc.,
-     * The codes are found in OMNode class
-     *
-     * @param type
-     */
-    public void setTextType(short type);
-
-    /**
-     * Method getTextType
-     *
+     * Returns the text value of this node
      * @return
      */
-    public short getTextType();
+    String getText();
+
+    /*
+     * Re think about this
+     */
+    //DataHandler getDataHandler();
+
+    /**
+     *
+     * @return boolean flag saying whether the node contains
+     * an optimized text or not
+     */
+    boolean isOptimized();
 }

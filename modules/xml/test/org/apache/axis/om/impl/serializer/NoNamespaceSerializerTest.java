@@ -83,7 +83,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
 //    public void testSerilizationWithCacheOff() throws Exception {
 //        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-//        env.serialize(writer, false);
+//        env.serializeWithCache(writer, false);
 //        writer.flush();
 //
 //
@@ -91,19 +91,19 @@ public class NoNamespaceSerializerTest extends TestCase {
 //
 //    public void testSerilizationWithCacheOn() throws Exception {
 //        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-//        env.serialize(writer, true);
+//        env.serializeWithCache(writer, true);
 //        writer.flush();
 //    }
 
 
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
-        env.serialize(writer, true);
+        env.serializeWithCache(writer);
         OMElement balanceElement = env.getBody().getFirstElement();
-        assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespaceName(), "http://localhost:8081/axis/services/BankPort/");
+        assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
 
         OMElement accountNo = balanceElement.getFirstElement();
-        assertEquals("Deafualt namespace of children has not been set properly", accountNo.getNamespaceName(), "http://localhost:8081/axis/services/BankPort/");
+        assertEquals("Deafualt namespace of children has not been set properly", accountNo.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
 
     }
 
@@ -117,21 +117,21 @@ public class NoNamespaceSerializerTest extends TestCase {
 
         XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
         //env.getBody().addChild(builder.getDocumentElement());
-        env.serialize(xmlStreamWriter, false);
-       // env.serialize(xmlStreamWriter, true);
+        env.serializeWithCache(xmlStreamWriter);
+       // env.serializeWithCache(xmlStreamWriter, true);
 
         xmlStreamWriter.flush();
 
     }
     public void testSerilizationWithCacheOn() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serialize(writer,true);
+       env.serializeWithCache(writer);
        writer.flush();
     }
 
      public void testSerilizationWithCacheOff() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serialize(writer,false);
+       env.serializeWithCache(writer);
        writer.flush();
     }
     }

@@ -46,6 +46,7 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
         if (serviceContext != null) {
             
             AxisOperation axisOp = msgContext.getoperationConfig();
+
             Parameter param = axisOp.getParameter(DefinedParameters.PARM_MEP);
             
             String mepVal = null;

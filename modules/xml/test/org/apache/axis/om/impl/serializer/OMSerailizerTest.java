@@ -62,7 +62,7 @@ public class OMSerailizerTest extends AbstractTestCase {
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(env.getPullParser(false), writer);
+        serializer.serialize(env.getXMLStreamReaderWithoutCaching(), writer);
     }
 
     public void testElementPullStream1WithCacheOff() throws Exception {
@@ -70,7 +70,7 @@ public class OMSerailizerTest extends AbstractTestCase {
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(env.getPullParser(true), writer);
+        serializer.serialize(env.getXMLStreamReader(), writer);
     }
 
     public void testElementPullStream2() throws Exception {
@@ -79,7 +79,7 @@ public class OMSerailizerTest extends AbstractTestCase {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(body.getPullParser(false), writer);
+        serializer.serialize(body.getXMLStreamReaderWithoutCaching(), writer);
     }
 
     protected void tearDown() throws Exception {

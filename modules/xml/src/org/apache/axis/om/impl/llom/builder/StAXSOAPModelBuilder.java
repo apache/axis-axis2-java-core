@@ -78,9 +78,9 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             throw new OMException("No SOAPHeader present !!");
         }
 
-        envelopeNamespace = soapEnvelope.findDeclaredNamespace(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
+        envelopeNamespace = soapEnvelope.findNamespace(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
         if (envelopeNamespace == null) {
-            envelopeNamespace = getSOAPEnvelope().findDeclaredNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
+            envelopeNamespace = getSOAPEnvelope().findNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
         } else {
             log.info("SOAP 1.2 message received ..");
         }
@@ -151,7 +151,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         // fill in the attributes
         processAttributes(node);
-        log.info("Build the OMElelment {" + node.getNamespaceName() + '}'
+        log.info("Build the OMElelment {" + node.getNamespace().getName() + '}'
                 + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
@@ -315,12 +315,12 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         if (!"".equals(namespaceURI)) {
             if (prefix == null) {
                 // this means, this elements has a default namespace or it has inherited a default namespace from its parent
-                namespace = node.findDeclaredNamespace(namespaceURI, "");
+                namespace = node.findNamespace(namespaceURI, "");
                 if (namespace == null) {
                     namespace = node.declareNamespace(namespaceURI, "");
                 }
             } else {
-                namespace = node.findInScopeNamespace(namespaceURI, prefix);
+                namespace = node.findNamespace(namespaceURI, prefix);
             }
             node.setNamespace(namespace);
         } else {

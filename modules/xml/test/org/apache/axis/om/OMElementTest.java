@@ -40,7 +40,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
         try {
             StAXSOAPModelBuilder soapBuilder = getOMBuilder("soap/OMElementTest.xml");
             SOAPEnvelope soapEnvelope = (SOAPEnvelope) soapBuilder.getDocumentElement();
-            OMElement wsaTo = (OMElement) soapEnvelope.getHeader().getChildWithName(new QName(WSA_URI, WSA_TO));
+            OMElement wsaTo = (OMElement) soapEnvelope.getHeader().getFirstChildWithName(new QName(WSA_URI, WSA_TO));
 
             String expectedString = "http://localhost:8081/axis/services/BankPort";
             assertEquals("getText is not returning the correct value", wsaTo.getText().trim(), expectedString);

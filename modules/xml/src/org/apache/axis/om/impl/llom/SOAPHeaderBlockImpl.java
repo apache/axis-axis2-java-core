@@ -72,7 +72,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      * @param attrValue
      */
     private void setAttribute(String attributeName, String attrValue) {
-        OMAttribute omAttribute = this.getAttributeWithQName(
+        OMAttribute omAttribute = this.getFirstAttribute(
                 new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, attributeName));
         if (omAttribute != null) {
             omAttribute.setValue(attrValue);
@@ -82,7 +82,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
                     new OMNamespaceImpl(
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                             SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX), attrValue);
-            this.insertAttribute(attribute);
+            this.addAttribute(attribute);
         }
     }
 
@@ -105,7 +105,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      * @return
      */
     private String getAttribute(String attrName) {
-        OMAttribute omAttribute = this.getAttributeWithQName(
+        OMAttribute omAttribute = this.getFirstAttribute(
                 new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, attrName));
         return (omAttribute != null)
                 ? omAttribute.getValue()

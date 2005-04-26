@@ -1,23 +1,24 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -40,12 +41,11 @@ public abstract class OMNodeImpl implements OMNode {
      * Field previousSibling
      */
     protected OMNodeImpl previousSibling;
-
-    /**
-     * Field value
+       /**
+     * Field builder
      */
-    protected String value;
-
+    protected OMXMLParserWrapper builder;
+   
     /**
      * Field done
      */
@@ -54,7 +54,7 @@ public abstract class OMNodeImpl implements OMNode {
     /**
      * Field nodeType
      */
-    protected short nodeType;
+    protected int nodeType;
 
     /**
      * Constructor OMNodeImpl
@@ -96,7 +96,7 @@ public abstract class OMNodeImpl implements OMNode {
             return;
         }
 
-        if (element instanceof OMNodeImpl) {
+        if (element instanceof OMNodeImpl) {//todo fix me
             if(this.parent != null){
                 this.detach();
             }
@@ -127,28 +127,6 @@ public abstract class OMNodeImpl implements OMNode {
         this.nextSibling = (OMNodeImpl) node;
     }
 
-    /**
-     * This will return the literal value of the node.
-     * OMText --> the text
-     * OMElement --> local name of the element in String format
-     * OMAttribute --> the value of the attribue
-     *
-     * @return
-     * @throws org.apache.axis.om.OMException
-     * @throws OMException
-     */
-    public String getValue() throws OMException {
-        return value;
-    }
-
-    /**
-     * Method setValue
-     *
-     * @param value
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     /**
      * this will indicate whether parser has parsed this information item completely or not.
@@ -158,7 +136,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @return
      */
     public boolean isComplete() {
-        return true;
+        return done;
     }
 
     /**
@@ -176,7 +154,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @throws org.apache.axis.om.OMException
      * @throws OMException
      */
-    public void detach() throws OMException {
+    public OMNode detach() throws OMException {
         if (parent == null) {
             throw new OMException(
                     "Elements that doesn't have a parent can not be detached");
@@ -190,6 +168,8 @@ public abstract class OMNodeImpl implements OMNode {
         if (nextSibling != null) {
             nextSibling.setPreviousSibling(previousSibling);
         }
+
+        return this;
     }
 
     /**
@@ -250,7 +230,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @throws org.apache.axis.om.OMException
      * @throws OMException
      */
-    public short getType() throws OMException {
+    public int getType() throws OMException {
         return nodeType;
     }
 
@@ -260,7 +240,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @param nodeType
      * @throws OMException
      */
-    public void setType(short nodeType) throws OMException {
+    public void setType(int nodeType) throws OMException {
         this.nodeType = nodeType;
     }
 
@@ -282,13 +262,21 @@ public abstract class OMNodeImpl implements OMNode {
         this.previousSibling = (OMNodeImpl) previousSibling;
     }
 
-    /**
-     * Method serialize
-     *
-     * @param writer
-     * @param cache
-     * @throws XMLStreamException
+
+
+   /**
+     * This will completely parse this node and build the object structure in the memory.
+     * However a programmatically created node will have done set to true by default and will cause
+     * populateyourself not to work properly!
+     * @throws OMException
      */
+    public void build() throws OMException {
+        while(!done){
+            builder.next();
+        }
+    }
+
+
 
 
 

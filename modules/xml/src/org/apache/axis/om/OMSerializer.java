@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public interface OMSerializer {
     /**
-     * Method serialize
+     * Method serializeWithCache
      *
      * @param obj
      * @param writer

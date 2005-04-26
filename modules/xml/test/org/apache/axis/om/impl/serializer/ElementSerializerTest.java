@@ -55,38 +55,38 @@ public class ElementSerializerTest extends AbstractTestCase {
 
     public void testElementSerilization() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serialize(writer, true);
+        elt.serializeWithCache(writer);
 
     }
 
     public void testElementSerilizationCacheOff() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serialize(writer, false);
+        elt.serializeWithCache(writer);
 
     }
 
     public void testElementSerilizationChild() throws Exception {
         OMElement elt = builder.getDocumentElement();
         OMNode node = elt.getFirstChild().getNextSibling();
-        node.serialize(writer, true);
+        node.serializeWithCache(writer);
 
     }
 
     public void testElementSerilizationSOAPBodyCacheOff() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         OMNode node = env.getBody();
-        node.serialize(writer, false);
+        node.serializeWithCache(writer);
     }
 
     public void testElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
-        body.serialize(writer, true);
+        body.serializeWithCache(writer);
     }
 
     public void testCompleteElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        env.serialize(writer, true);
+        env.serializeWithCache(writer);
     }
 
     public void testDualNamespaces1() throws Exception {
@@ -102,7 +102,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt12.addChild(elt22);
         root.addChild(elt11);
         root.addChild(elt12);
-        root.serialize(writer, true);
+        root.serializeWithCache(writer);
     }
 
     public void testDualNamespaces2() throws Exception {
@@ -116,7 +116,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt2.addChild(txt1);
         elt1.addChild(elt2);
         root.addChild(elt1);
-        root.serialize(writer, true);
+        root.serializeWithCache(writer);
     }
 
     protected void tearDown() throws Exception {

@@ -72,7 +72,7 @@ public class EchoStub {
         if (body.hasFault()) {
             throw body.getFault().getException();
         }
-        XMLStreamReader xpp = body.getPullParser(true);
+        XMLStreamReader xpp = body.getXMLStreamReader();
 
         int event = xpp.next();
         while (event != XMLStreamConstants.START_ELEMENT) {

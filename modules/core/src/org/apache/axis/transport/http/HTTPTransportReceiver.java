@@ -101,9 +101,9 @@ public class HTTPTransportReceiver extends TransportReceiver {
 
                 String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
                 msgContext.setTo(
-                    new EndpointReference(
-                        AddressingConstants.WSA_TO,
+                    new EndpointReference(AddressingConstants.WSA_TO,
                         requestURI));
+                        //getServiceLookUp(requestURI)));
 
                 // TODO see is it a Service request e.g. WSDL, list ....
                 // TODO take care of the other HTTPHeaders
@@ -425,7 +425,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
 //              String serviceStr = null;
 //              if (index > 0) {
 //                  serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-//                  return serviceStr; 
+//                  return serviceStr;
 //
 //              } else {
 //                  throw new AxisFault("Both the URI and SOAP_ACTION are Null");

@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
@@ -34,7 +34,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
+            new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
     private AxisService service;
 
     /**
@@ -71,19 +71,17 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
             } else {
                 throw new AxisFault("No service found under the " + toEPR.getAddress());
             }
-            if (msgctx.getoperationConfig() == null) {
-                String action = (String) msgctx.getWSAAction();
-                QName operationName = new QName(action);
-                AxisOperation op = service.getOperation(operationName);
-                if (op != null) {
-                    msgctx.setOperationConfig(op);
-                } else {
-                    throw new AxisFault("Operation not found");
-                }
-
+            
+        } else if (msgctx.getoperationConfig() == null) {
+            String action = (String) msgctx.getWSAAction();
+            QName operationName = new QName(action);
+            AxisOperation op = service.getOperation(operationName);
+            if (op != null) {
+                 msgctx.setOperationConfig(op);
+            } else {
+                throw new AxisFault("Operation not found");
             }
-        } else {
-            // TODO client side service Dispatch ,, What this really mean?
         }
+
     }
 }

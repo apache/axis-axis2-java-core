@@ -85,7 +85,7 @@ public class AddressingOutHandler
                     soapHeader);
             if (relatesToHeader != null
                 && !"".equals(relatesTo.getRelationshipType())) {
-                relatesToHeader.insertAttribute(
+                relatesToHeader.addAttribute(
                     WSA_RELATES_TO_RELATIONSHIP_TYPE,
                     relatesTo.getRelationshipType(),
                     addressingNamespace);
@@ -123,7 +123,7 @@ public class AddressingOutHandler
                     EPR_ADDRESS,
                     addressingNamespace);
             soapHeaderBlock.addChild(addressElement);
-            addressElement.setValue(address);
+            addressElement.setText(address);
 
         }
 
@@ -142,7 +142,7 @@ public class AddressingOutHandler
                 soapHeader.addHeaderBlock(
                     EPR_SERVICE_NAME,
                     addressingNamespace);
-            soapHeaderBlock.insertAttribute(
+            soapHeaderBlock.addAttribute(
                 EPR_SERVICE_NAME_PORT_NAME,
                 serviceName.getPortName(),
                 addressingNamespace);

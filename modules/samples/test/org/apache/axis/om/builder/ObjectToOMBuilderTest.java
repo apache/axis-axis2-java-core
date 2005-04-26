@@ -64,7 +64,7 @@ public class ObjectToOMBuilderTest extends TestCase {
     }
 
     public void testSerialization() throws Exception {
-        element.serialize(writer, true);
+        element.serializeWithCache(writer);
     }
 
 

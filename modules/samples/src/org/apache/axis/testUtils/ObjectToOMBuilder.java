@@ -212,13 +212,13 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
                 attrPrefix = (attrQName.indexOf(':') >= 0) ? attrQName.substring(0, attrQName.indexOf(':')) : "";
 
                 if (attrUri.hashCode() != 0)
-                    ns = element.findInScopeNamespace(attrUri, attrPrefix);
+                    ns = element.findNamespace(attrUri, attrPrefix);
 
                 if (ns == null)
                 //todo this needs to be fixed!!!!!
                 // throw new OMException("All elements must be namespace qualified!");
 
-                    element.insertAttribute(atts.getLocalName(i), atts.getValue(i), ns);
+                    element.addAttribute(atts.getLocalName(i), atts.getValue(i), ns);
             }
         }
 

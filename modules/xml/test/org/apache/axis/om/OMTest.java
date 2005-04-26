@@ -108,15 +108,15 @@ public class OMTest extends AbstractTestCase {
 
         //        OMElement root= envelope;
         //
-        //        OMNamespace soapenv= root.findInScopeNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        //        OMNamespace wsa= root.findInScopeNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
+        //        OMNamespace soapenv= root.findNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        //        OMNamespace wsa= root.findNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
         //        if (wsa==null)
         //            wsa= root.declareNamespace("http://schemas.xmlsoap.org/ws/2004/03/addressing", "wsa");
         //
         //        //Assumption - A RelatesTo Element does not exist in the input document
         //        OMElement relatesTo= fac.createOMElement ("RelatesTo", wsa);
-        //        relatesTo.insertAttribute(fac.createOMAttribute("RelationshipType", null, "wsa:Reply", relatesTo));
-        //        relatesTo.insertAttribute(fac.createOMAttribute("mustUnderstand", soapenv, "0", relatesTo));
+        //        relatesTo.addAttribute(fac.createOMAttribute("RelationshipType", null, "wsa:Reply", relatesTo));
+        //        relatesTo.addAttribute(fac.createOMAttribute("mustUnderstand", soapenv, "0", relatesTo));
         //        relatesTo.addChild(fac.createText(relatesTo, "uuid:3821F4F0-D020-11D8-A10A-E4EE6425FCB0"));
         //        relatesTo.setComplete(true);
         //

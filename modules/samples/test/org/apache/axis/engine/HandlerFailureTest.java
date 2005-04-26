@@ -45,9 +45,16 @@ import org.apache.commons.logging.LogFactory;
 
 public class HandlerFailureTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService");
-    private QName serviceName = new QName("", targetEPR.getAddress());
-    private QName operationName = new QName("echoOMElement");
+    private static final String SERVICE_NAME = "EchoXMLService";
+    private static final String OPERATION_NAME = "echoOMElement";
+    private static final String ADDRESS = "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+            "/axis/services/" + SERVICE_NAME + "/" +OPERATION_NAME;
+//    private static final String ADDRESS = "http://127.0.0.1:8080/axis/services/" + SERVICE_NAME;
+    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, ADDRESS);
+    private QName serviceName = new QName("", SERVICE_NAME);
+    //private QName serviceName = new QName("", targetEPR.getAddress());
+
+    private QName operationName = new QName(OPERATION_NAME);
 
 
     private MessageContext mc;
@@ -139,7 +146,7 @@ public class HandlerFailureTest extends TestCase {
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
-            value.setValue("Isaac Assimov, the foundation Sega");
+            value.setText("Isaac Assimov, the foundation Sega");
             method.addChild(value);
             reqEnv.getBody().addChild(method);
 
@@ -151,7 +158,6 @@ public class HandlerFailureTest extends TestCase {
             call.setAction(operationName.getLocalPart());
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
-
             SOAPBody sb = resEnv.getBody();
 
             if (sb.hasFault()) {
@@ -160,6 +166,7 @@ public class HandlerFailureTest extends TestCase {
             }
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
+            System.out.println("e.getMessage() = " + e.getMessage());
             assertTrue((e.getMessage().indexOf(UtilServer.FAILURE_MESSAGE)) > 0);
             return;
         }

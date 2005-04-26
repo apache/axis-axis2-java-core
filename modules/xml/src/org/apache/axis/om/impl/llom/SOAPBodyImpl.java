@@ -84,7 +84,7 @@ public class SOAPBodyImpl extends OMElementImpl
             OMElement element = getFirstElement();
             if(element != null 
                 && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespaceName())){
+                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())){
                 hasSOAPFault = true;
                 return true;
             }else{
@@ -105,7 +105,7 @@ public class SOAPBodyImpl extends OMElementImpl
             OMElement element = getFirstElement();
             if(element != null 
                 && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespaceName())){
+                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())){
                 hasSOAPFault = true;
                 return (SOAPFault)element;
             }else{

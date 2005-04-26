@@ -96,7 +96,7 @@ public class InteropRequestHandler {
     private String writeStringFromEnvelope(SOAPEnvelope env) throws XMLStreamException {
         ByteArrayOutputStream output = new ByteArrayOutputStream(100);
         XMLStreamWriter writer = writerFactory.createXMLStreamWriter(output);
-        env.serialize(writer, true);
+        env.serializeWithCache(writer);
         writer.flush();
         return new String(output.toByteArray());
     }

@@ -93,9 +93,8 @@ public class TestSendReceive extends TestCase {
         Call call = new Call();
         call.setTo(targetEPR);
         SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
-        responseEnv.serialize(
-            XMLOutputFactory.newInstance().createXMLStreamWriter(System.out),
-            true);
+        responseEnv.serializeWithCache(
+            XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
 
     }
 
