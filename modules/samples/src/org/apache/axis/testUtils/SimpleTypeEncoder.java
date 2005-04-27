@@ -16,13 +16,13 @@
  
 package org.apache.axis.testUtils;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import javax.xml.stream.XMLStreamReader;
 
 
 public class SimpleTypeEncoder implements Encoder {

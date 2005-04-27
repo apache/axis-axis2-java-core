@@ -15,12 +15,13 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLOperation;
-
-import javax.xml.namespace.QName;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLOperation;
 
 /**
  * @author Chathura Herath

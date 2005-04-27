@@ -16,19 +16,30 @@
 
 package org.apache.axis.deployment;
 
-import org.apache.axis.description.*;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfigurationImpl;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-import java.util.ArrayList;
+
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.FlowImpl;
+import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ParameterImpl;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportSender;
 
 
 /**

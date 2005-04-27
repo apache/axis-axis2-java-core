@@ -1,25 +1,18 @@
 package org.apache.axis.handlers.addressing;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.ServiceName;
-import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.util.XMLComparator;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

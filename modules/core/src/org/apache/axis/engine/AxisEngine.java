@@ -216,6 +216,7 @@ public class AxisEngine {
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();
+            e.printStackTrace();
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
 

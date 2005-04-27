@@ -1,7 +1,5 @@
 package org.apache.axis.storage.impl;
 
-import junit.framework.TestCase;
-import org.apache.axis.storage.AxisStorage;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

@@ -1,12 +1,13 @@
 package interop.doclit;
 
-import interop.util.InteropTO;
 import interop.util.Constants;
+import interop.util.InteropTO;
+
+import java.io.ByteArrayOutputStream;
 
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.om.SOAPEnvelope;
 

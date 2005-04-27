@@ -1,10 +1,11 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

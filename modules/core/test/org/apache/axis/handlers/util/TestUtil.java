@@ -1,12 +1,13 @@
 package org.apache.axis.handlers.util;
 
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.OMFactory;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import java.io.FileReader;
 import java.io.File;
+import java.io.FileReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -26,6 +26,7 @@ import java.net.Socket;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
@@ -43,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer implements Runnable{
+public class SimpleHTTPServer implements Runnable {
     /**
      * Field log
      */
@@ -75,7 +76,7 @@ public class SimpleHTTPServer implements Runnable{
      *
      * @param reg
      */
-    public SimpleHTTPServer(EngineContext reg,ServerSocket serverSoc) {
+    public SimpleHTTPServer(EngineContext reg, ServerSocket serverSoc) {
         this.engineReg = reg;
         this.serverSocket = serverSoc;
     }
@@ -86,13 +87,11 @@ public class SimpleHTTPServer implements Runnable{
      * @param dir
      * @throws AxisFault
      */
-    public SimpleHTTPServer(String dir,ServerSocket serverSoc) throws AxisFault {
+    public SimpleHTTPServer(String dir, ServerSocket serverSoc) throws AxisFault {
         try {
             this.serverSocket = serverSoc;
-            Class erClass = Class.forName(
-                    "org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac =
-                    (EngineRegistryFactory) erClass.newInstance();
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
+            EngineRegistryFactory erfac = (EngineRegistryFactory) erClass.newInstance();
             this.engineReg = erfac.createEngineRegistry(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
@@ -131,29 +130,36 @@ public class SimpleHTTPServer implements Runnable{
                         if (engineReg == null) {
                             throw new AxisFault("Engine Must be null");
                         }
-                        Writer out =
-                        new OutputStreamWriter(socket.getOutputStream());
-                        Reader in =
-                        new InputStreamReader(socket.getInputStream());
-                        AxisTransportOut transportOut = engineReg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+                        Writer out = new OutputStreamWriter(socket.getOutputStream());
+                        Reader in = new InputStreamReader(socket.getInputStream());
+                        AxisTransportOut transportOut =
+                            engineReg.getEngineConfig().getTransportOut(
+                                new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
-                        new MessageContext(this.engineReg, null, null,engineReg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),transportOut);
+                            new MessageContext(
+                                this.engineReg,
+                                null,
+                                null,
+                                engineReg.getEngineConfig().getTransportIn(
+                                    new QName(Constants.TRANSPORT_HTTP)),
+                                transportOut);
                         msgContext.setServerSide(true);
-                        
-                        out.write(HTTPConstants.HTTP);
-                        out.write(HTTPConstants.OK);
-                        out.write("\n\n".toCharArray());
-                        log.info("status written");
 
                         // We do not have any Addressing Headers to put
                         // let us put the information about incoming transport
-                        msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
-                                out);
-                        msgContext.setProperty(MessageContext.TRANSPORT_READER,
-                                in);
-                        HTTPTransportReceiver reciver =
-                        new HTTPTransportReceiver();
+                        msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
+                        msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
+                        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
                         reciver.invoke(msgContext);
+
+                        if (msgContext.getReplyTo() != null
+                            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(
+                                msgContext.getReplyTo().getAddress())) {
+                            out.write(new String(HTTPConstants.NOCONTENT).toCharArray());
+                            out.close();
+                        }
+                        log.info("status written");
+
                     }
                 } catch (Throwable e) {
                     log.error(e);
@@ -262,8 +268,8 @@ public class SimpleHTTPServer implements Runnable{
         }
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
-        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0],serverSoc);
-        
+        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0], serverSoc);
+
         reciver.setServerSocket(serverSoc);
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);

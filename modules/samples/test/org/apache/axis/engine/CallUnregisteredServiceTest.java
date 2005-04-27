@@ -34,7 +34,6 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.http.SimpleHTTPServer;
-import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

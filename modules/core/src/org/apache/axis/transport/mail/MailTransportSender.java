@@ -33,39 +33,14 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    protected Writer obtainOutputStream(MessageContext msgContext)
-            throws AxisFault {
-        out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
-        if (out == null) {
-            throw new AxisFault(
-                    "Can not find the suffient information to find end point");
-        } else {
-            return out;
-        }
-
-    }
+ 
 
     protected Writer obtainOutputStream(MessageContext msgContext,
             EndpointReference epr) throws AxisFault {
-        return obtainOutputStream(msgContext);
+        throw new UnsupportedOperationException();
     }
 
-    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
-        return obtainOutputStream(msgContext);
-    }
-
-    protected Writer obtainWriter(MessageContext msgContext,
-            EndpointReference epr) throws AxisFault {
-        //TODO this is temporay work around
-        return obtainOutputStream(msgContext);
-    }
-    
-    protected void finalizeSending(MessageContext msgContext) throws AxisFault {
-    }
-
-    protected void finalizeSending(MessageContext msgContext, Writer writer) throws AxisFault {
-    }
-    
+     
     protected void startSending(MessageContext msgContext) throws AxisFault {
         try {
             Writer writer = (Writer) msgContext
@@ -93,5 +68,58 @@ public class MailTransportSender extends AbstractTransportSender {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.AbstractTransportSender#finalizeSendWithOutputStreamFromIncomingConnection(org.apache.axis.context.MessageContext, java.io.Writer)
+     */
+    public void finalizeSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer)
+        throws AxisFault {
+            throw new UnsupportedOperationException();
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.AbstractTransportSender#finalizeSendWithToAddress(org.apache.axis.context.MessageContext, org.apache.axis.addressing.EndpointReference, java.io.Writer)
+     */
+    public void finalizeSendWithToAddress(
+        MessageContext msgContext,
+        EndpointReference epr,
+        Writer writer)
+        throws AxisFault {
+            throw new UnsupportedOperationException();
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.AbstractTransportSender#openTheConnection(org.apache.axis.addressing.EndpointReference)
+     */
+    protected Writer openTheConnection(EndpointReference epr) throws AxisFault {
+        throw new UnsupportedOperationException();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.AbstractTransportSender#startSendWithOutputStreamFromIncomingConnection(org.apache.axis.context.MessageContext, java.io.Writer)
+     */
+    public void startSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer)
+        throws AxisFault {
+            throw new UnsupportedOperationException();
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.AbstractTransportSender#startSendWithToAddress(org.apache.axis.context.MessageContext, org.apache.axis.addressing.EndpointReference, java.io.Writer)
+     */
+    public void startSendWithToAddress(
+        MessageContext msgContext,
+        EndpointReference epr,
+        Writer writer)
+        throws AxisFault {
+            throw new UnsupportedOperationException();
+
+    }
+
 }
 

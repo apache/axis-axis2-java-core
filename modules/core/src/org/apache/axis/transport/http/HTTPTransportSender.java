@@ -53,55 +53,65 @@ public class HTTPTransportSender extends AbstractTransportSender {
      * @return
      * @throws AxisFault
      */
-    protected Writer obtainWriter(MessageContext msgContext)
-            throws AxisFault {
+    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
         if (!msgContext.isServerSide()) {
             //create a new byte buffer output stream
-            outputStream  = new ByteArrayOutputStream();
+            outputStream = new ByteArrayOutputStream();
             out = new OutputStreamWriter(outputStream);
         } else {
-            out = (Writer) msgContext.getProperty(
-                    MessageContext.TRANSPORT_WRITER);
+            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
         }
         if (out == null) {
-            throw new AxisFault(
-                    "can not find the suffient information to find endpoint");
+            throw new AxisFault("can not find the suffient information to find endpoint");
         } else {
             return out;
         }
     }
 
-    /**
-     * Method obtainOutputStream
-     *
-     * @param msgContext
-     * @param epr
-     * @return
-     * @throws AxisFault
-     */
-    protected Writer obtainWriter(
-            MessageContext msgContext, EndpointReference epr) throws AxisFault {
 
-        // TODO this is temporay work around
-        return obtainWriter(msgContext);
+    /**
+     * Method writeTransportHeaders
+     *
+     * @param out
+     * @param url
+     * @param msgContext
+     * @throws IOException
+     */
+    protected void writeTransportHeaders(
+        Writer out,
+        URL url,
+        MessageContext msgContext,
+        int contentLength)
+        throws IOException {
+        Object soapAction = msgContext.getProperty(MessageContext.SOAP_ACTION);
+        String soapActionString = soapAction == null ? "" : soapAction.toString();
+        StringBuffer buf = new StringBuffer();
+        buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
+        buf.append("Content-Type: text/xml; charset=utf-8\n");
+        buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
+        buf.append("Host: ").append(url.getHost()).append("\n");
+        buf.append("Cache-Control: no-cache\n");
+        buf.append("Pragma: no-cache\n");
+        buf.append("Content-Length: " + contentLength + "\n");
+        buf.append("SOAPAction: \"" + soapActionString + "\"\n\n");
+        out.write(buf.toString());
     }
 
-    /**
-     * Method finalizeSending
-     *
-     * @param msgContext
-     * @throws AxisFault
-     */
-    protected void finalizeSending(MessageContext msgContext,Writer writer)
-            throws AxisFault {
+    public void finalizeSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer) {
+    }
 
-        if (!msgContext.isServerSide()) {
+    public void finalizeSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer)
+        throws AxisFault {
             EndpointReference toURL = msgContext.getTo();
             if (toURL != null) {
                 try {
                     URL url = new URL(toURL.getAddress());
-                    SocketAddress add = new InetSocketAddress(url.getHost(),
-                            url.getPort()==-1?80:url.getPort());
+                    SocketAddress add =
+                        new InetSocketAddress(
+                            url.getHost(),
+                            url.getPort() == -1 ? 80 : url.getPort());
                     socket = new Socket();
                     socket.connect(add);
                     OutputStream outS = socket.getOutputStream();
@@ -109,15 +119,15 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
                     Writer realOut = new OutputStreamWriter(outS);
                     //write header to the out put stream
-                    writeTransportHeaders(realOut, url, msgContext,bytes.length);
+                    writeTransportHeaders(realOut, url, msgContext, bytes.length);
                     realOut.flush();
                     //write the content to the real output stream
                     outS.write(bytes);
                     outS.flush();
 
                     msgContext.setProperty(
-                            MessageContext.TRANSPORT_READER,
-                            new InputStreamReader(socket.getInputStream()));
+                        MessageContext.TRANSPORT_READER,
+                        new InputStreamReader(socket.getInputStream()));
                     msgContext.setProperty(HTTPConstants.SOCKET, socket);
 
                     socket.shutdownOutput();
@@ -130,42 +140,27 @@ public class HTTPTransportSender extends AbstractTransportSender {
             } else {
                 throw new AxisFault("to EPR must be specified");
             }
-
-        }
-
     }
 
-    /**
-     * Method startSending
-     *
-     * @param msgContext
-     * @throws AxisFault
-     */
-    protected void startSending(MessageContext msgContext,Writer out) throws AxisFault {
+    protected Writer openTheConnection(EndpointReference epr) {
+        outputStream = new ByteArrayOutputStream();
+        return new OutputStreamWriter(outputStream);
     }
 
-    /**
-     * Method writeTransportHeaders
-     *
-     * @param out
-     * @param url
-     * @param msgContext
-     * @throws IOException
-     */
-    protected void writeTransportHeaders(Writer out, URL url, MessageContext msgContext,int contentLength)
-            throws IOException {
-        Object soapAction = msgContext.getProperty(MessageContext.SOAP_ACTION);
-        String soapActionString = soapAction==null?"":soapAction.toString();
-        StringBuffer buf = new StringBuffer();
-        buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
-        buf.append("Content-Type: text/xml; charset=utf-8\n");
-        buf.append(
-                "Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
-        buf.append("Host: ").append(url.getHost()).append("\n");
-        buf.append("Cache-Control: no-cache\n");
-        buf.append("Pragma: no-cache\n");
-        buf.append("Content-Length: "+contentLength+"\n");
-        buf.append("SOAPAction: \""+soapActionString  + "\"\n\n");
-        out.write(buf.toString());
+    public void startSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer) {
+            try {
+                writer.write(new String(HTTPConstants.HTTP).toCharArray());
+                writer.write(new String(HTTPConstants.OK).toCharArray());
+                writer.write("\n\n".toCharArray());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
+
+    public void startSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer) {
+    }
+
 }

@@ -67,7 +67,7 @@ public class ListenerManager {
         }
     }
     
-    public EndpointReference replyToEPR(String serviceName){
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,"http://127.0.0.1:"+scoket.getLocalPort()+"/axis/services/"+serviceName);
+    public static EndpointReference replyToEPR(String serviceName){
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,"http://127.0.0.1:"+ (scoket.getLocalPort())+"/axis/services/"+serviceName);
     }
 }

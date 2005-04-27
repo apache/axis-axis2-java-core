@@ -657,7 +657,7 @@ public class OMElementImpl extends OMNodeImpl
                 if (nextSibling != null) {
 
                     // serilize next sibling
-                    nextSibling.serializeWithCache(writer);
+                    nextSibling.serialize(writer);
                 } else {
                     if (parent == null) {
                         return;
@@ -675,7 +675,7 @@ public class OMElementImpl extends OMNodeImpl
                 serializeStartpart(writer);
                 log.info("Serializing the Element from " + localName
                         + " the generated OM tree");
-                firstChild.serializeWithCache(writer);
+                firstChild.serialize(writer);
                 serializeEndpart(writer);
             } else {
 

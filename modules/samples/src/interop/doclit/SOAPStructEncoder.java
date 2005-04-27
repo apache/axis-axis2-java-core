@@ -15,15 +15,15 @@
  */
  
 package interop.doclit;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 import org.xml.sax.ContentHandler;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 public class SOAPStructEncoder implements Encoder {
     

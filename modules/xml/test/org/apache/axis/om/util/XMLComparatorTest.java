@@ -1,6 +1,5 @@
 package org.apache.axis.om.util;
 
-import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMTestCase;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.util.XMLComparator;

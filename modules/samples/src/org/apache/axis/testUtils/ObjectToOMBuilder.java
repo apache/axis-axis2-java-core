@@ -16,6 +16,9 @@
  
 package org.apache.axis.testUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
@@ -30,9 +33,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     private Log log = LogFactory.getLog(getClass());

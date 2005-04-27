@@ -16,16 +16,17 @@
 
 package org.apache.axis.testUtils;
 
-import org.apache.axis.engine.AxisFault;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.ArrayList;
+
+import org.apache.axis.engine.AxisFault;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 public class SimpleTypeEncodingUtils {
 

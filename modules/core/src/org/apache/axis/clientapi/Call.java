@@ -17,6 +17,7 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
@@ -52,6 +53,8 @@ public class Call {
     private String callbackServiceName;
 
     private CallbackReceiver callbackReceiver;
+    
+    private QName opName;
 
     public Call() throws AxisFault {
         try {
@@ -134,8 +137,9 @@ public class Call {
             msgctx.setEnvelope(env);
 
             if (useSeparateListener) {
-                msgctx.getMessageInformationHeaders().setMessageId(String.valueOf(System.currentTimeMillis()));
-                callbackReceiver.addCallback(msgctx.getMessageID(), callback);
+                messageInfoHeaders.setMessageId(String.valueOf(System.currentTimeMillis()));
+                callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
+                messageInfoHeaders.setReplyTo(ListenerManager.replyToEPR(callbackServiceName+"/"+opName.getLocalPart()));
             }
 
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
@@ -257,7 +261,11 @@ public class Call {
         callbackService.setName(new QName(callbackServiceName));
         callbackReceiver = new CallbackReceiver();
         callbackService.setMessageReceiver(callbackReceiver);
-
+        
+        opName = new QName("callback_op");
+        AxisOperation callbackOperation = new AxisOperation(opName);
+        callbackService.addOperation(callbackOperation);
+        
         ListenerManager.makeSureStarted();
 
         ListenerManager.getEngineContext().addService(new ServiceContext(callbackService));

@@ -200,6 +200,9 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         if (header != null) {
             headers = new ArrayList();
         }
+        
+        node = header;
+        
         while (node != null) {
             if (node.getType()==OMNode.ELEMENT_NODE){
                 header = (OMElement)node;

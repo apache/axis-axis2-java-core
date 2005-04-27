@@ -15,11 +15,12 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 public class IteratorTester extends AbstractTestCase {
     private SOAPEnvelope envelope = null;

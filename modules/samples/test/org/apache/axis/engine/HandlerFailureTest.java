@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -38,7 +39,6 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
-import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

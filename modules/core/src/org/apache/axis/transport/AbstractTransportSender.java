@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerMetadata;
@@ -32,8 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  */
-public abstract class AbstractTransportSender extends AbstractHandler
-        implements TransportSender {
+public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
     /**
      * Field log
      */
@@ -42,8 +42,7 @@ public abstract class AbstractTransportSender extends AbstractHandler
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org",
-                    "TransportSender");
+    public static final QName NAME = new QName("http://axis.ws.apache.org", "TransportSender");
 
     /**
      * Constructor AbstractTransportSender
@@ -59,87 +58,60 @@ public abstract class AbstractTransportSender extends AbstractHandler
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-            Writer out = null;
-            if (msgContext.isProcessingFault()) {
-            
-                // Means we are processing fault
-                if (msgContext.getFaultTo() != null) {
-                    log.info("Obtain the output stream to send the fault flow to "
-                                    + msgContext.getFaultTo().getAddress());
-                    out = obtainWriter(msgContext, msgContext.getFaultTo());
-                } else {
-                    log.info(
-                            "Obtain the output stream to send the fault flow to ANONYMOUS");
-                    out = obtainWriter(msgContext);
-                }
-            } else {
-                if (msgContext.getTo() != null) {
-                    log.info("Obtain the output stream to send to To flow to "
-                                    + msgContext.getTo().getAddress());
-                    out = obtainWriter(msgContext, msgContext.getTo());
-                } else if (msgContext.getReplyTo() != null) {
-                    log.info("Obtain the output stream to send to ReplyTo flow to "
-                                    + msgContext.getReplyTo().getAddress());
-                    out = obtainWriter(msgContext, msgContext.getTo());
-                } else {
-                    log.info(
-                            "Obtain the output stream to send the fault flow to ANONYMOUS");
-                    out = obtainWriter(msgContext);
-                }
-            }
-            startSending(msgContext,out);
-            SOAPEnvelope envelope = msgContext.getEnvelope();
-            if (envelope != null) {
-                XMLStreamWriter outputWriter = null;
-                try {
-                    outputWriter =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-                    envelope.serializeWithCache(outputWriter);
-                    outputWriter.flush();
-                        out.flush();
-                  } catch (Exception e) {
-                    throw new AxisFault("Stream error", e);
-                }
-            }
-            finalizeSending(msgContext,out);
-            log.info("Send the Response");
+        Writer out = null;
+        
+        EndpointReference epr = null;
+        
+        if (msgContext.isProcessingFault()) {
+            // Means we are processing fault
+            if (msgContext.getFaultTo() != null &&
+                !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getFaultTo().getAddress())) {
+                    epr = msgContext.getFaultTo();
+            } 
+        } else {
+            if (msgContext.getTo() != null && 
+                    !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
+                        epr = msgContext.getTo();
+                } 
+        }
+        
+        if(epr!= null){
+            out =  openTheConnection(epr);
+            startSendWithToAddress(msgContext,epr,out);
+            writeMessage(msgContext,out);
+            finalizeSendWithToAddress(msgContext,epr,out);
+        }else{
+            out = (Writer)msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+            if(out != null){
+                startSendWithOutputStreamFromIncomingConnection(msgContext,out);
+                writeMessage(msgContext,out);
+                finalizeSendWithOutputStreamFromIncomingConnection(msgContext,out);
+            } else{
+                throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
+            }       
+        }
     }
 
-    /**
-     * Method startSending
-     *
-     * @param msgContext
-     * @throws AxisFault
-     */
-    protected abstract void startSending(MessageContext msgContext,Writer writer) throws AxisFault;
+    public void writeMessage(MessageContext msgContext,Writer out) throws AxisFault{
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+         if (envelope != null) {
+             XMLStreamWriter outputWriter = null;
+             try {
+                 outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                 envelope.serialize(outputWriter);
+                 outputWriter.flush();
+                 out.flush();
+             } catch (Exception e) {
+                 throw new AxisFault("Stream error", e);
+             }
+         }
+    }
 
-    /**
-     * Method obtainOutputStream
-     *
-     * @param msgContext
-     * @param epr
-     * @return
-     * @throws AxisFault
-     */
-    protected abstract Writer obtainWriter(
-            MessageContext msgContext, EndpointReference epr) throws AxisFault;
+    public abstract void startSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer)throws AxisFault;
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext,EndpointReference epr, Writer writer)throws AxisFault;
 
-    /**
-     * Method obtainOutputStream
-     *
-     * @param msgContext
-     * @return
-     * @throws AxisFault
-     */
-    protected abstract Writer obtainWriter(MessageContext msgContext)
-            throws AxisFault;
+    public abstract void startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;
+    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;
 
-    /**
-         * Method finalizeSending
-         *
-         * @param msgContext
-         * @throws AxisFault
-         */
-    protected abstract void finalizeSending(MessageContext msgContext,Writer writer)
-            throws AxisFault ;
+    protected abstract Writer openTheConnection(EndpointReference epr)throws AxisFault;
 }

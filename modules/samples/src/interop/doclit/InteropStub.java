@@ -1,5 +1,8 @@
 package interop.doclit;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -11,9 +14,6 @@ import org.apache.axis.om.OMText;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

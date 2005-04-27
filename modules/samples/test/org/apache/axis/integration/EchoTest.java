@@ -16,7 +16,18 @@
  
 package org.apache.axis.integration;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
 import junit.framework.TestCase;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -32,15 +43,6 @@ import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 
 public class EchoTest extends TestCase {

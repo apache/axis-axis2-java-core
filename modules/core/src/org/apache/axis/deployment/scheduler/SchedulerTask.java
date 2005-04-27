@@ -16,11 +16,11 @@
 
 package org.apache.axis.deployment.scheduler;
 
+import java.util.TimerTask;
+
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.listener.RepositoryListener;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
-
-import java.util.TimerTask;
 
 public class SchedulerTask implements Runnable {
 

@@ -15,14 +15,15 @@
  */
 package org.apache.wsdl.util;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)

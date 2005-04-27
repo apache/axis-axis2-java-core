@@ -15,14 +15,15 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
-import org.apache.axis.om.impl.llom.SOAPConstants;
+import java.io.FileReader;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
-import java.io.FileReader;
-import java.util.Iterator;
+
+import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
 
 public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     private SOAPEnvelope envelope = null;

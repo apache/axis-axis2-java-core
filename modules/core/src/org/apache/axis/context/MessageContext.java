@@ -150,6 +150,8 @@ public class MessageContext {
     private boolean newThreadRequired = false;
 
     private boolean paused = false;
+    
+    public boolean outPutWritten = false;
 
     public MessageContext(MessageContext oldMessageContext) throws AxisFault {
         this(
@@ -164,6 +166,7 @@ public class MessageContext {
         messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo()) ;  
         messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
         messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
+        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
        
         this.serverSide = oldMessageContext.isServerSide();
         this.serviceContext = oldMessageContext.getServiceContext();
@@ -540,6 +543,20 @@ public class MessageContext {
      */
     public void setMepContext(MEPContext context) {
         mepContext = context;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isOutPutWritten() {
+        return outPutWritten;
+    }
+
+    /**
+     * @param b
+     */
+    public void setOutPutWritten(boolean b) {
+        outPutWritten = b;
     }
 
 }

@@ -1,12 +1,9 @@
 package org.apache.axis.storage.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.ObjectOutput;
-import java.util.Properties;
 import java.util.HashMap;
 
 /*

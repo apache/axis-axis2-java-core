@@ -24,9 +24,8 @@ import java.util.Properties;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ContextBuilder;
-import org.apache.axis.deployment.DeploymentEngine;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.commons.logging.Log;

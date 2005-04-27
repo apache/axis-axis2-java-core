@@ -15,12 +15,12 @@
  */
 package org.apache.wsdl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk

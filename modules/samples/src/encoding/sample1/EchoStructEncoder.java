@@ -15,17 +15,18 @@
  */
  
 package encoding.sample1;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMException;
-import org.apache.axis.testUtils.Encoder;
-import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
-import org.xml.sax.ContentHandler;
+import java.io.IOException;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.IOException;
+
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMException;
+import org.apache.axis.testUtils.Encoder;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+import org.xml.sax.ContentHandler;
 
 public class EchoStructEncoder implements Encoder {
 

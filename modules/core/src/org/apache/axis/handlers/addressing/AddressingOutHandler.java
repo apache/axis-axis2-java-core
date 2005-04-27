@@ -3,6 +3,10 @@ package org.apache.axis.handlers.addressing;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
@@ -90,7 +94,6 @@ public class AddressingOutHandler
                     relatesTo.getRelationshipType(),
                     addressingNamespace);
             }
-            soapHeader.addChild(relatesToHeader);
         }
     }
 

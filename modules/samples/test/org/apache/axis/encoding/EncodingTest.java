@@ -16,18 +16,20 @@
  
 package org.apache.axis.encoding;
 
-import junit.framework.TestCase;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+import java.lang.reflect.Method;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.Method;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 
 public class EncodingTest extends TestCase {

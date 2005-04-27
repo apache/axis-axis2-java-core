@@ -15,13 +15,14 @@
  */
 package org.apache.wsdl.impl;
 
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLInterface;
-
-import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk

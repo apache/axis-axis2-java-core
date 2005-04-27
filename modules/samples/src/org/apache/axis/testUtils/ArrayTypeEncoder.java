@@ -16,16 +16,17 @@
 
 package org.apache.axis.testUtils;
 
+import java.util.ArrayList;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.util.ArrayList;
 
 public class ArrayTypeEncoder implements Encoder {
     private Object[] obj = null;

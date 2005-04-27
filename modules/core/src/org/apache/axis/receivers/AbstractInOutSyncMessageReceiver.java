@@ -28,6 +28,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
 
     public final void recieve(MessageContext messgeCtx) throws AxisFault {
         MessageContext resultContext = invokeBusinessLogic(messgeCtx);
+
         MessageSender sender = new MessageSender(messgeCtx.getEngineContext());
         sender.send(resultContext);
     }
