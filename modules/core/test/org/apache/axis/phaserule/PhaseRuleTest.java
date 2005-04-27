@@ -1,14 +1,13 @@
 package org.apache.axis.phaserule;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.phaseresolver.PhaseHolder;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.handlers.addressing.AddressingInHandler;
+import org.apache.axis.phaseresolver.PhaseHolder;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 public class PhaseRuleTest extends AbstractTestCase {
 
     PhaseRuleTest phaserul;
-    EngineConfiguration registry ;
+    EngineConfiguration registry;
 
     public PhaseRuleTest(String testName) {
         super(testName);
@@ -39,10 +38,10 @@ public class PhaseRuleTest extends AbstractTestCase {
         inPhase.add("transport");
         inPhase.add("Logging");
         inPhase.add("service");
-        ((EngineConfigurationImpl)registry).setInPhases(inPhase);
-        ((EngineConfigurationImpl)registry).setInFaultPhases(inPhase);
-        ((EngineConfigurationImpl)registry).setOutFaultPhases(inPhase);
-        ((EngineConfigurationImpl)registry).setOutPhases(inPhase);
+        ((EngineConfigurationImpl) registry).setInPhases(inPhase);
+        ((EngineConfigurationImpl) registry).setInFaultPhases(inPhase);
+        ((EngineConfigurationImpl) registry).setOutFaultPhases(inPhase);
+        ((EngineConfigurationImpl) registry).setOutPhases(inPhase);
 
         Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler").newInstance();
         PhaseHolder ph = new PhaseHolder(registry);
@@ -74,17 +73,26 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm2.setName(new QName("H3"));
         PhaseRule rule2 = new PhaseRule();
         rule2.setPhaseName("global");
-       // rule2.setAfter("H1");
+        rule2.setAfter("H1");
         rule2.setBefore("H2");
         hm2.setRules(rule2);
         ph.addHandler(hm2);
 
+        HandlerMetadata hm3 = new HandlerMetadata();
+        hm3.setClassName("org.apache.axis.handlers.AbstractHandler");
+        hm3.setHandler(han);
+        hm3.setName(new QName("H4"));
+        PhaseRule rule3 = new PhaseRule();
+        rule3.setPhaseName("Logging");
+        hm3.setRules(rule3);
+        ph.addHandler(hm3);
 
-       ArrayList oh = ph.getOrderHandler();
-       for (int i = 0; i < oh.size(); i++) {
-           HandlerMetadata metadata = (HandlerMetadata) oh.get(i);
-           System.out.println("Name:" + metadata.getName().getLocalPart());
-       }
+
+        ArrayList oh = ph.getOrderHandler();
+        for (int i = 0; i < oh.size(); i++) {
+            HandlerMetadata metadata = (HandlerMetadata) oh.get(i);
+            System.out.println("Name:" + metadata.getName().getLocalPart());
+        }
     }
 
     //

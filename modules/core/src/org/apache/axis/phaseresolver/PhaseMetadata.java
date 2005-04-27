@@ -483,7 +483,7 @@ public class PhaseMetadata {
             HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
             if (handler.getRules().getAfter().equals(temphandler.getName().getLocalPart())) {
                 after = i;
-            } else if (handler.getRules().getBefore().equals(temphandler.getName())) {
+            } else if (handler.getRules().getBefore().equals(temphandler.getName().getLocalPart())) {
                 before = i;
             }
             if ((after >= 0) && (before >= 0)) {
