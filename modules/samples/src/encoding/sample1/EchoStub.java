@@ -43,12 +43,15 @@ public class EchoStub {
         fac = OMFactory.newInstance();
     }
     public EchoStruct[] echoEchoStructArray(EchoStruct[] in) throws Exception {
-        OMElement returnelement = fac.createOMElement("param1", ns);
+
         EchoStructEncoder encoder = new EchoStructEncoder();
         ArrayTypeEncoder arrayEncoder = new ArrayTypeEncoder(in, encoder);
 
         ObjectToOMBuilder builder =
-            new ObjectToOMBuilder(returnelement, arrayEncoder);
+            new ObjectToOMBuilder(arrayEncoder);
+        OMElement returnelement = fac.createOMElement("param1", ns, null, builder);
+
+        builder.setStartElement(returnelement);
 
         returnelement.setBuilder(builder);
         returnelement.declareNamespace(arrayNs);

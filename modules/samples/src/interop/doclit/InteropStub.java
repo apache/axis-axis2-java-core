@@ -107,7 +107,7 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStructReturn"));
+            OMElement elt = SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStructReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }
@@ -147,7 +147,7 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringArrayReturn"));
+            OMElement elt = SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringArrayReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }
@@ -176,7 +176,7 @@ public class InteropStub {
                 throw new AxisFault("SOAP Fault",SOAPBody.getFault().getException());
             }
 
-            OMElement elt = (OMElement)SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringReturn"));
+            OMElement elt = SOAPBody.getFirstChildWithName(new QName(INTEROP_NS_URI,"echoStringReturn"));
             if (elt==null){
                 throw new AxisFault("Return element not found");
             }

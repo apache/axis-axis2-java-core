@@ -97,7 +97,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         // identifySOAPVersion() method. So not checking getSOAPEnvelope() == null here
         SOAPHeader soapHeader = getSOAPEnvelope().getHeader();
 
-        if (soapHeader != null) {
+        if (soapHeader != null) {                  
             while (!soapHeader.isComplete()) {
                 next();
             }

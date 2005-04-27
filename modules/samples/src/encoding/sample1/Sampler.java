@@ -73,12 +73,14 @@ public class Sampler {
             fac.createOMNamespace("http://axis.apache.org", "s");
 
 
-        OMElement returnelement = fac.createOMElement("param1", ns);
         EchoStructEncoder encoder = new EchoStructEncoder();
         ArrayTypeEncoder arrayEncoder = new ArrayTypeEncoder(objs, encoder);
 
         ObjectToOMBuilder builder =
-            new ObjectToOMBuilder(returnelement, arrayEncoder);
+            new ObjectToOMBuilder(arrayEncoder);
+        OMElement returnelement = fac.createOMElement("param1", ns, null, builder);
+
+        builder.setStartElement(returnelement);
 
         returnelement.setBuilder(builder);
         returnelement.declareNamespace(arrayNs);

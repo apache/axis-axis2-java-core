@@ -108,7 +108,7 @@ public class AddressingInHandler extends AbstractHandler {
 
 
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr) {
-        OMElement address = (OMElement) headerBlock.getFirstChildWithName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
+        OMElement address =  headerBlock.getFirstChildWithName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
         if (address != null) {
             epr.setAddress(address.getText());
         }

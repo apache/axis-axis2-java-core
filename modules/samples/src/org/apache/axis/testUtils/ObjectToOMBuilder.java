@@ -66,12 +66,27 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
      */
 
     public ObjectToOMBuilder(OMElement startElement, Encoder outObject) {
-        startElement.setComplete(false);
+        omFactory = OMFactory.newInstance();
         this.outObject = outObject;
+
+        initStartElement(startElement);
+
+    }
+
+    private void initStartElement(OMElement startElement) {
+        startElement.setComplete(false);
         this.startElement = startElement;
         lastNode = startElement;
         startElement.setBuilder(this);
+    }
+
+    public ObjectToOMBuilder(Encoder outObject){
+        this.outObject = outObject;
         omFactory = OMFactory.newInstance();
+    }
+
+    public void setStartElement(OMElement startElement) {
+        initStartElement(startElement);
     }
 
     public int next() throws OMException {

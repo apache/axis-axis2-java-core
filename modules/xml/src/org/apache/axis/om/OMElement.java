@@ -52,7 +52,7 @@ public interface OMElement extends OMNode {
      * @return
      * @throws OMException
      */
-    public OMNode getFirstChildWithName(QName elementQName) throws OMException;
+    public OMElement getFirstChildWithName(QName elementQName) throws OMException;
 
     /**
      * This returns a collection of this element.
@@ -115,6 +115,13 @@ public interface OMElement extends OMNode {
     public Iterator getAttributes();
 
     /**
+     *
+     * @param qname
+     * @return
+     */
+    public Iterator getAttributes(QName qname);
+
+    /**
      * This will insert attribute to this element. Implementor can decide as to insert this
      * in the front or at the end of set of attributes
      *
@@ -131,7 +138,7 @@ public interface OMElement extends OMNode {
      * @return
      */
     public OMAttribute addAttribute(String attributeName, String value,
-                                    OMNamespace ns);
+                                       OMNamespace ns);
 
     /**
      * Method removeAttribute

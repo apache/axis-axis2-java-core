@@ -216,7 +216,7 @@ public class OMElementImpl extends OMNodeImpl
      * @return
      * @throws OMException
      */
-    public OMNode getFirstChildWithName(QName elementQName) throws OMException {
+    public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
                 new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
                         elementQName);
@@ -224,7 +224,9 @@ public class OMElementImpl extends OMNodeImpl
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
         }
-        return omNode;
+
+        return OMNode.ELEMENT_NODE == omNode.getType() ? (OMElement) omNode : null;
+
     }
 
     /**
@@ -239,14 +241,14 @@ public class OMElementImpl extends OMNodeImpl
 
 
         child.setParent(this);
-
+        
         child.setPreviousSibling(null);
         child.setNextSibling(firstChild);
         if (firstChild != null) {
             OMNodeImpl firstChildImpl = (OMNodeImpl) firstChild;
             firstChildImpl.setPreviousSibling(child);
         }
-        this.setFirstChild(child);
+        this.firstChild = child;
     }
 
     /**
@@ -407,6 +409,10 @@ public class OMElementImpl extends OMNodeImpl
         return attributes.values().iterator();
     }
 
+    public Iterator getAttributes(QName qname) {
+        return null;  //ToDO
+    }
+
     /**
      * This will insert attribute to this element. Implementor can decide as to insert this
      * in the front or at the end of set of attributes
@@ -442,7 +448,7 @@ public class OMElementImpl extends OMNodeImpl
      * @return
      */
     public OMAttribute addAttribute(String attributeName, String value,
-                                    OMNamespace ns) {
+                                       OMNamespace ns) {
         OMNamespace namespace = null;
         if (ns != null) {
             namespace = findNamespace(ns.getName(), ns.getPrefix());

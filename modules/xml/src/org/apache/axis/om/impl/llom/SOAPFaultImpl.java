@@ -47,22 +47,22 @@ public class SOAPFaultImpl extends OMElementImpl
     /**
      * Field faultCodeElement
      */
-    private OMElementImpl faultCodeElement;
+    private OMElement faultCodeElement;
 
     /**
      * Field faultActorElement
      */
-    private OMElementImpl faultActorElement;
+    private OMElement faultActorElement;
 
     /**
      * Field faultStringElement
      */
-    private OMElementImpl faultStringElement;
+    private OMElement faultStringElement;
 
     /**
      * Field detailElement
      */
-    private OMElementImpl detailElement;
+    private OMElement detailElement;
 
     /**
      * Constructor SOAPFaultImpl
@@ -128,7 +128,7 @@ public class SOAPFaultImpl extends OMElementImpl
                 }
             }
         } else {
-            faultCodeElement = (OMElementImpl) this.getFirstChildWithName(
+            faultCodeElement =  this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -172,7 +172,7 @@ public class SOAPFaultImpl extends OMElementImpl
                 }
             }
         } else {
-            faultActorElement = (OMElementImpl) this.getFirstChildWithName(
+            faultActorElement = this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -216,7 +216,7 @@ public class SOAPFaultImpl extends OMElementImpl
                 }
             }
         } else {
-            faultStringElement = (OMElementImpl) this.getFirstChildWithName(
+            faultStringElement =  this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME,
                             this.ns.getPrefix()));
@@ -258,7 +258,7 @@ public class SOAPFaultImpl extends OMElementImpl
                 }
             }
         } else {
-            detailElement = (OMElementImpl) this.getFirstChildWithName(
+            detailElement = this.getFirstChildWithName(
                     new QName(
                             this.ns.getName(), SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
                             this.ns.getPrefix()));

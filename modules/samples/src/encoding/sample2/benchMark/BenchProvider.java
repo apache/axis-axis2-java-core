@@ -173,11 +173,14 @@ public class BenchProvider extends SimpleJavaProvider {
 			OMElement responseMethodName =
 				fac.createOMElement(methodName + "Response", ns);
 			responseEnvelope.getBody().addChild(responseMethodName);
-			OMElement returnelement =
-				fac.createOMElement(methodName + "Return", ns);
+
+            ObjectToOMBuilder builder = new ObjectToOMBuilder(outobj);
+            OMElement returnelement =
+				fac.createOMElement(methodName + "Return", ns, null, builder);
 			responseMethodName.addChild(returnelement);
-			returnelement.setBuilder(
-				new ObjectToOMBuilder(returnelement, outobj));
+            builder.setStartElement(returnelement);
+            returnelement.setBuilder(
+                    builder);
 			returnelement.declareNamespace(
 				OMConstants.ARRAY_ITEM_NSURI,
 				"arrays");

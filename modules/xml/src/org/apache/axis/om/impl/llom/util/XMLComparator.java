@@ -83,11 +83,11 @@ public class XMLComparator {
             OMNode omNode = (OMNode) elementOneChildren.next();
             if(omNode instanceof OMElement){
                 OMElement elementOneChild = (OMElement) omNode;
-                OMNode elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());
+                OMElement elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());
                 if(elementTwoChild == null){
                     throw new XMLComparisonException(" There is no " + elementOneChild.getLocalName() + " element under " + elementTwo.getLocalName());
                 }
-                compare(elementOneChild, (OMElement) elementTwoChild);
+                compare(elementOneChild,  elementTwoChild);
             }
         }
     }
