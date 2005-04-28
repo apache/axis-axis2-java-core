@@ -164,9 +164,10 @@ public class EchoProvider extends SimpleJavaProvider {
                 "http://axis.apache.org",
                 "s");
 
-			msgContext.setEnvelope(responseEnvelope);
+            MessageContext resMessageContext = new MessageContext(msgContext);
+            resMessageContext.setEnvelope(responseEnvelope);
 
-			return msgContext;
+			return resMessageContext;
 		} catch (SecurityException e) {
 			throw AxisFault.makeFault(e);
 		} catch (IllegalArgumentException e) {

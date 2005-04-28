@@ -223,9 +223,12 @@ public class OMElementImpl extends OMNodeImpl
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
+            return (OMNode.ELEMENT_NODE == omNode.getType()) ? (OMElement) omNode : null;
+        }else{
+            return null;
         }
 
-        return OMNode.ELEMENT_NODE == omNode.getType() ? (OMElement) omNode : null;
+        
 
     }
 
