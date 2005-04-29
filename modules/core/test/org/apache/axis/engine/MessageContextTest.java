@@ -17,6 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisGlobal;
@@ -30,7 +31,7 @@ public class MessageContextTest extends AbstractTestCase {
     public void testMesssageContext() throws AxisFault {
         EngineConfiguration er = new EngineConfigurationImpl(new AxisGlobal());
         EngineContext engineContext = new EngineContext(er);
-        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null);
+        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicMEPContext(null));
 
         msgctx.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());
         assertNotNull(msgctx.getEnvelope());

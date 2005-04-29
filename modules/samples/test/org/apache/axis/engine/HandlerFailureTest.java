@@ -158,8 +158,9 @@ public class HandlerFailureTest extends TestCase {
             call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
             call.setAction(operationName.getLocalPart());
+            call.setOpName(operationName);
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
-
+            
             SOAPBody sb = resEnv.getBody();
 
             if (sb.hasFault()) {

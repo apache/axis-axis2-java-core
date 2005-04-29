@@ -46,15 +46,9 @@ public class BasicMEPContext extends AbstractContext implements MEPContext {
 
 	private AxisOperation axisOperation;
 
-	public BasicMEPContext() {
-		super();
-		messageContextList = new ArrayList();
-	}
-
 	public BasicMEPContext(AxisOperation axisOperation) {
-		this();
 		this.axisOperation = axisOperation;
-
+        messageContextList = new ArrayList();
 	}
 
 	/**

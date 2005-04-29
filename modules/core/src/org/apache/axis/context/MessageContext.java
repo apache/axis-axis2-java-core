@@ -159,7 +159,7 @@ public class MessageContext {
             oldMessageContext.getProperties(),
             oldMessageContext.getSessionContext(),
             oldMessageContext.getTransportIn(),
-            oldMessageContext.getTransportOut());
+            oldMessageContext.getTransportOut(),oldMessageContext.getMepContext());
             
         this.messageInformationHeaders = new MessageInformationHeadersCollection();    
         MessageInformationHeadersCollection oldMessageInfoHeaders = oldMessageContext.getMessageInformationHeaders();
@@ -179,6 +179,19 @@ public class MessageContext {
      * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault
      */
+    public MessageContext(
+        EngineContext engineContext,
+        Map initialProperties,
+        SessionContext sessionContext,
+        AxisTransportIn transportIn,
+        AxisTransportOut transportOut,
+        MEPContext mepContext)
+        throws AxisFault {
+        this(engineContext,initialProperties,sessionContext,transportIn,transportOut);
+        this.mepContext = mepContext ;
+
+    }
+    
     public MessageContext(
         EngineContext engineContext,
         Map initialProperties,

@@ -80,22 +80,22 @@ public class EchoRawXMLTest extends TestCase {
     }
 
 
-    public void testEchoXMLSync() throws Exception {
-        OMFactory fac = OMFactory.newInstance();
-
-        SOAPEnvelope reqEnv = createEnvelope(fac);
-
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-        
-        call.setTransport(Constants.TRANSPORT_HTTP);
-        call.setTo(targetEPR);
-        call.setAction(operationName.getLocalPart());
-        SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
-
-        resEnv.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-        OMNode omNode = resEnv.getBody().getFirstChild();
-        assertNotNull(omNode);
-    }
+//    public void testEchoXMLSync() throws Exception {
+//        OMFactory fac = OMFactory.newInstance();
+//
+//        SOAPEnvelope reqEnv = createEnvelope(fac);
+//
+//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+//        call.setOpName(operationName);
+//        call.setTransport(Constants.TRANSPORT_HTTP);
+//        call.setTo(targetEPR);
+//        call.setAction(operationName.getLocalPart());
+//        SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
+//
+//        resEnv.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+//        OMNode omNode = resEnv.getBody().getFirstChild();
+//        assertNotNull(omNode);
+//    }
 
     private SOAPEnvelope createEnvelope(OMFactory fac) {
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
@@ -108,42 +108,42 @@ public class EchoRawXMLTest extends TestCase {
         return reqEnv;
     }
 
-    public void testEchoXMLASync() throws Exception {
-        OMFactory fac = OMFactory.newInstance();
-
-        SOAPEnvelope reqEnv = createEnvelope(fac);
-
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-
-        call.setTo(targetEPR);
-        call.setListenerTransport("http", false);
-
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                try {
-                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out));
-                } catch (XMLStreamException e) {
-                    reportError(e);
-                } finally {
-                    finish = true;
-                }
-            }
-
-            public void reportError(Exception e) {
-                e.printStackTrace();
-                finish = true;
-            }
-        };
-
-        call.sendReceiveAsync(reqEnv, callback);
-        while (!finish) {
-            Thread.sleep(1000);
-        }
-
-        log.info("send the reqest");
-    }
-    
+//    public void testEchoXMLASync() throws Exception {
+//        OMFactory fac = OMFactory.newInstance();
+//
+//        SOAPEnvelope reqEnv = createEnvelope(fac);
+//
+//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+//
+//        call.setTo(targetEPR);
+//        call.setListenerTransport("http", false);
+//        call.setOpName(operationName);
+//        Callback callback = new Callback() {
+//            public void onComplete(AsyncResult result) {
+//                try {
+//                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
+//                            .createXMLStreamWriter(System.out));
+//                } catch (XMLStreamException e) {
+//                    reportError(e);
+//                } finally {
+//                    finish = true;
+//                }
+//            }
+//
+//            public void reportError(Exception e) {
+//                e.printStackTrace();
+//                finish = true;
+//            }
+//        };
+//
+//        call.sendReceiveAsync(reqEnv, callback);
+//        while (!finish) {
+//            Thread.sleep(1000);
+//        }
+//
+//        log.info("send the reqest");
+//    }
+//    
  
 
     public void testEchoXMLCompleteASync() throws Exception {
@@ -161,7 +161,7 @@ public class EchoRawXMLTest extends TestCase {
 
             call.setTo(targetEPR);
             call.setListenerTransport("http", true);
-
+            call.setOpName(operationName);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {

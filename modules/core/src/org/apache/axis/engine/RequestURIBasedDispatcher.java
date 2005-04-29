@@ -88,10 +88,8 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
                             serviceContext.getServiceConfig().getOperation(operatoinName);
                         if(axisOp != null){
                             msgctx.setOperationConfig(axisOp);
-                        }else{
-                            throw new AxisFault("Service named "+ serviceName + " Do not have a operation called "+ operatoinName);
                         }
-                            
+                        //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
                     }
 
                     msgctx.setServiceContext(serviceContext);

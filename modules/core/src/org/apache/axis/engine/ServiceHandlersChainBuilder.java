@@ -22,15 +22,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.axis.context.EngineContext;
-import org.apache.axis.context.MEPContext;
-import org.apache.axis.context.MEPContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.DefinedParameters;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.modules.Module;
 
@@ -42,32 +38,13 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
      * @see org.apache.axis.engine.Handler#invoke(org.apache.axis.context.MessageContext)
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        if(msgContext.getoperationConfig() != null){
+            AxisOperation axisOp = msgContext.getoperationConfig();
+            msgContext.setMepContext(axisOp.findMEPContext(msgContext,msgContext.isServerSide()));
+        }
+        
         ServiceContext serviceContext = msgContext.getServiceContext();
         if (serviceContext != null) {
-            
-            AxisOperation axisOp = msgContext.getoperationConfig();
-            
-            if(axisOp == null){
-                throw new AxisFault("Operation Not found");
-            }
-
-            Parameter param = axisOp.getParameter(DefinedParameters.PARM_MEP);
-            
-            String mepVal = null;
-            if(param != null){
-                mepVal = (String)param.getValue();
-            }else{
-                mepVal = MEPContextFactory.MEP_URI_IN_OUT;
-            }
-            
-            //TODO find the MEP context
-            MEPContext mepContext = null;
-            if(mepContext == null){
-                mepContext = MEPContextFactory.createMEP(mepVal,msgContext.isServerSide());
-            }
-            msgContext.setMepContext(mepContext);
-            
-            
             // let add the Handlers
             ExecutionChain chain = msgContext.getExecutionChain();
             

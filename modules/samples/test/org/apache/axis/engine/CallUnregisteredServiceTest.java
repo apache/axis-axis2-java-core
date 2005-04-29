@@ -81,6 +81,7 @@ public class CallUnregisteredServiceTest extends TestCase{
             call.setTransport(Constants.TRANSPORT_HTTP);
             call.setTo(targetEPR);
             call.setTransport(Constants.TRANSPORT_HTTP);
+            call.setOpName(operationName);
             SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
 
             SOAPBody sb = resEnv.getBody();

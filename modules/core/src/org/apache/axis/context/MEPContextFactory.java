@@ -17,14 +17,15 @@
  */
 package org.apache.axis.context;
 
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 public class MEPContextFactory implements WSDLConstants{
     
-    public static MEPContext createMEP(String mepURI,boolean serverSide) throws AxisFault{
+    public static MEPContext createMEP(String mepURI,boolean serverSide,AxisOperation axisOp) throws AxisFault{
         if(MEP_URI_IN_ONLY.equals(mepURI) || MEP_URI_IN_OUT.equals(mepURI)){
-            return new BasicMEPContext();
+            return new BasicMEPContext(axisOp);
         
         }else{
         	throw new AxisFault("Cannot handle the MEP "

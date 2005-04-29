@@ -1,5 +1,6 @@
 package org.apache.axis.description;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -20,7 +21,9 @@ public class AxisOperation extends WSDLOperationImpl implements
 	
 	
 	public AxisOperation(){
+        this.setMessageExchangePattern(MEP_URI_IN_OUT);
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
+        this.setComponentProperty(MEP_MAP, new HashMap());
 	}
 	
 	public AxisOperation(QName name){
@@ -87,7 +90,8 @@ public class AxisOperation extends WSDLOperationImpl implements
 			//Its a new incomming message so get the factory to create a new
 			// one
 			mepContext = MEPContextFactory.createMEP(this
-					.getMessageExchangePattern(), serverside);
+					.getMessageExchangePattern(), serverside,this);
+           
 
 		} else {
 			// So this message is part of an ongoing MEP
@@ -108,7 +112,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 
 	}
 
-	private void addMEPContext(MEPContext mepContext, String messageID) {
+	public void addMEPContext(MEPContext mepContext, String messageID) {
 		((Map) this.getComponentProperty(MEP_MAP)).put(messageID, mepContext);
 	}
 

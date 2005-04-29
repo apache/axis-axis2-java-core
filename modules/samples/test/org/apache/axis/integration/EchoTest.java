@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
@@ -81,10 +82,11 @@ public class EchoTest extends TestCase {
 
     }
 
-    private XMLStreamReader invokeTheService(SOAPEnvelope envelope,EndpointReference targetEPR)
+    private XMLStreamReader invokeTheService(SOAPEnvelope envelope,EndpointReference targetEPR,QName opName)
             throws Exception {
        
         Call call = new Call();
+        call.setOpName(opName);
         call.setTo(targetEPR);
         call.setTransport(Constants.TRANSPORT_HTTP);
         call.setListenerTransport(Constants.TRANSPORT_HTTP,true);
@@ -124,7 +126,7 @@ public class EchoTest extends TestCase {
                 new SimpleTypeEncoder(message)));
         returnelement.declareNamespace(arrayNs);
         SOAPEnvelope envelope = createRawMessage("echoString", returnelement);
-        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR,new QName("echoString"));
         String value = SimpleTypeEncodingUtils.deserializeString(xpp);
         assertEquals(value, message);
     }
@@ -154,7 +156,7 @@ public class EchoTest extends TestCase {
         returnelement.declareNamespace(arrayNs);
         SOAPEnvelope envelope = createRawMessage("echoStringArray", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR,new QName("echoStringArray"));
         String[] values = SimpleTypeEncodingUtils.deserializeStringArray(xpp);
         for (int i = 0; i < values.length; i++) {
             assertEquals(values[i], messages[i]);
@@ -240,7 +242,7 @@ public class EchoTest extends TestCase {
         SOAPEnvelope envelope =
                 createRawMessage("echoEchoStruct", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR,new QName("echoEchoStruct"));
 
         Method deserializeMethod =
                 encoderClass.getMethod("deSerialize",
@@ -325,7 +327,7 @@ public class EchoTest extends TestCase {
         SOAPEnvelope envelope =
                 createRawMessage("echoEchoStructArray", returnelement);
 
-        XMLStreamReader xpp = invokeTheService(envelope,targetEPR);
+        XMLStreamReader xpp = invokeTheService(envelope,targetEPR,new QName("echoEchoStructArray"));
 
         Encoder enc = new ArrayTypeEncoder(objs, (Encoder) obj1);
 

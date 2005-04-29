@@ -13,6 +13,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -53,8 +54,14 @@ public class Call {
     private String callbackServiceName;
 
     private CallbackReceiver callbackReceiver;
-    
+
     private QName opName;
+    
+    private QName replyToOpName;
+    private AxisOperation axisOperation;
+    private AxisOperation callbackOperation;
+
+
 
     public Call() throws AxisFault {
         try {
@@ -122,6 +129,10 @@ public class Call {
     }
 
     public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
+        if(opName == null){
+            throw new AxisFault("Operation Name must be specified");
+        }
+        
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
@@ -133,33 +144,35 @@ public class Call {
             final AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
             final MessageContext msgctx =
-                new MessageContext(engineContext, null, null, transportIn, transportOut);
+                new MessageContext(
+                    engineContext,
+                    null,
+                    null,
+                    transportIn,
+                    transportOut,
+                    new BasicMEPContext(new AxisOperation(opName)));
+                                
             msgctx.setEnvelope(env);
 
             if (useSeparateListener) {
                 messageInfoHeaders.setMessageId(String.valueOf(System.currentTimeMillis()));
                 callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
-                messageInfoHeaders.setReplyTo(ListenerManager.replyToEPR(callbackServiceName+"/"+opName.getLocalPart()));
+                messageInfoHeaders.setReplyTo(
+                    ListenerManager.replyToEPR(callbackServiceName + "/" + replyToOpName.getLocalPart()));
+                callbackOperation.addMEPContext(msgctx.getMepContext(),messageInfoHeaders.getMessageId());
             }
 
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 
             sender.send(msgctx);
-           
-                
-                
-                //TODO start the server
+
+            //TODO start the server
             if (!useSeparateListener) {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {
                             MessageContext response =
-                                new MessageContext(
-                                    engineContext,
-                                    msgctx.getProperties(),
-                                    msgctx.getSessionContext(),
-                                    msgctx.getTransportIn(),
-                                    transportOut);
+                                new MessageContext(msgctx);
                             response.setServerSide(false);
 
                             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -185,6 +198,10 @@ public class Call {
     }
 
     public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
+        if(opName == null){
+            throw new AxisFault("Operation Name must be specified");
+        }
+
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(transport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
@@ -196,19 +213,19 @@ public class Call {
             AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
 
             MessageContext msgctx =
-                new MessageContext(engineContext, null, null, transportIn, transportOut);
+                new MessageContext(
+                    engineContext,
+                    null,
+                    null,
+                    transportIn,
+                    transportOut,
+                    new BasicMEPContext(new AxisOperation(opName)));
             msgctx.setEnvelope(env);
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 
             sender.send(msgctx);
 
-            MessageContext response =
-                new MessageContext(
-                    engineContext,
-                    msgctx.getProperties(),
-                    msgctx.getSessionContext(),
-                    msgctx.getTransportIn(),
-                    transportOut);
+            MessageContext response = new MessageContext(msgctx);
             response.setServerSide(false);
 
             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -261,11 +278,11 @@ public class Call {
         callbackService.setName(new QName(callbackServiceName));
         callbackReceiver = new CallbackReceiver();
         callbackService.setMessageReceiver(callbackReceiver);
-        
-        opName = new QName("callback_op");
-        AxisOperation callbackOperation = new AxisOperation(opName);
+
+        replyToOpName = new QName("callback_op");
+        callbackOperation = new AxisOperation(replyToOpName);
         callbackService.addOperation(callbackOperation);
-        
+
         ListenerManager.makeSureStarted();
 
         ListenerManager.getEngineContext().addService(new ServiceContext(callbackService));
@@ -393,6 +410,20 @@ public class Call {
         } else {
             throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
         }
+    }
+
+    /**
+     * @return
+     */
+    public QName getOpName() {
+        return opName;
+    }
+
+    /**
+     * @param name
+     */
+    public void setOpName(QName name) {
+        opName = name;
     }
 
 }

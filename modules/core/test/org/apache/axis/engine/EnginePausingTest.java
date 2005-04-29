@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -55,7 +56,9 @@ public class EnginePausingTest extends AbstractEngineTest {
         
         EngineContext engineContext = new EngineContext(engineRegistry);
 
-        mc = new MessageContext(engineContext, null, null, transportIn,transportOut);
+        AxisOperation axisOp = new AxisOperation(operationName);
+
+        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,new BasicMEPContext(axisOp));
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         OMFactory omFac = OMFactory.newInstance();
@@ -63,7 +66,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         AxisService service = new AxisService(serviceName);
         service.setMessageReceiver(new NullMessageReceiver());
         
-        AxisOperation axisOp = new AxisOperation(operationName);
+
         service.addOperation(axisOp);
         ArrayList phases = new ArrayList();
 

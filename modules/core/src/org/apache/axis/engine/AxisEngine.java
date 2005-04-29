@@ -61,6 +61,11 @@ public class AxisEngine {
      */
     public void send(MessageContext context) throws AxisFault {
         try {
+            if(context.getMepContext() == null){
+                throw new AxisFault("Out flow must have a MEPContext set on the MessageContext");
+            }
+            
+            
             ExecutionChain chain = context.getExecutionChain();
             ServiceContext serviceContext = context.getServiceContext();
 
@@ -208,7 +213,7 @@ public class AxisEngine {
                     context.getProperties(),
                     context.getSessionContext(),
                     context.getTransportIn(),
-                    context.getTransportOut());
+                    context.getTransportOut(),context.getMepContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
             SOAPEnvelope envelope =

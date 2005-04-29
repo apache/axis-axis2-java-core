@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -55,8 +56,9 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
        transport.setSender(new NullTransportSender());
        
        AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
+       AxisOperation axisOp = new AxisOperation(opearationName);
        
-       mc = new MessageContext(engineContext, null, null, transportIn,transport);
+       mc = new MessageContext(engineContext, null, null, transportIn,transport,new BasicMEPContext(axisOp));
        mc.setTransportOut(transport);
        mc.setServerSide(true);
        OMFactory omFac = OMFactory.newInstance();
@@ -65,7 +67,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
        service.setMessageReceiver(new NullMessageReceiver());
        engineRegistry.addService(service);
        service.setStyle(WSDLService.STYLE_DOC);
-       service.addOperation(new AxisOperation(opearationName));
+       service.addOperation(axisOp);
        
        mc.setTo(
            new EndpointReference(
