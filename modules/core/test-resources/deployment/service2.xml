@@ -30,7 +30,7 @@
         </handler>
     </outflow>
 
-    <faultflow>
+    <INfaultflow>
         <handler name="h4" class="Hander.class">
             <order before="anyBefireURI" after="anyafterURI" phase="anyhase" phaseFirst="true" phaseLast="false"/>
             <parameter name="para8" locked="xsd:true">123</parameter>
@@ -50,7 +50,7 @@
             <parameter name="para9" locked="xsd:true">456</parameter>
             <parameter name="para10" locked="xsd:true">789</parameter>
         </handler>
-   </faultflow>
+   </INfaultflow>
 
 
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
@@ -92,7 +92,7 @@
 
             </handler>
         </outflow>
-        <faultflow>
+        <INfaultflow>
             <handler ref="anyRef" name="Handername" class="Hander.class">
                 <order before="anyBefireURI" after="anyafterURI" phase="anyhase" phaseFirst="true" phaseLast="false"/>
                 <parameter name="para8" locked="xsd:true">123</parameter>
@@ -107,7 +107,7 @@
                 <parameter name="para10" locked="xsd:true">789</parameter>
 
             </handler>
-        </faultflow>
+        </INfaultflow>
     </operation>
     <service ref="xsd:anyServiceRef"/>
 </service>

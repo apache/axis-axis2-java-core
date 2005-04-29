@@ -13,12 +13,12 @@
         
     </outflow>
 
-    <faultflow>
+    <INfaultflow>
         <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
         <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
             <order phase="Logging"/>            
         </handler>
-    </faultflow>    
+    </INfaultflow>
     
     <operation name="echo" qname="echo"/>
 </service>
