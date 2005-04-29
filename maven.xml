@@ -86,13 +86,13 @@
 
     <goal name="war" prereqs="multiproject:install,init,create-lib"> 
         <!-- jar the test classes -->
-		<ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
-		  	<ant:fileset dir="modules/core/src/html"/>
-    		<ant:fileset dir="modules/samples/src/jsp"/>
+		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
+		  	<ant:fileset dir="modules/core/html"/>
+    		<ant:fileset dir="modules/samples/jsp"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
 		  	</ant:lib>  
-			<ant:classes dir="modules/core/src/conf">
+			<ant:classes dir="modules/core/conf">
       		    	<ant:include name="*.properties"/>
 			</ant:classes>
 		</ant:war>
@@ -101,14 +101,14 @@
     <goal name="war-withsamples" prereqs="multiproject:install,init,create-lib"> 
         <!-- jar the test classes -->
         <ant:mkdir dir="target"/>
-               <ant:war destfile="target/axis2.war" webxml="modules/core/src/conf/web.xml">
-                  <ant:fileset dir="modules/core/src/html"/>
-		  		  <ant:fileset dir="modules/samples/src/jsp"/>
+               <ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
+                  <ant:fileset dir="modules/core/html"/>
+		  		  <ant:fileset dir="modules/samples/jsp"/>
                   <ant:webinf dir="modules/samples/target/test-resources/samples"/>
 			  	<ant:lib dir="target/lib">
 				    	<ant:include name="*.jar"/>
 			  	</ant:lib>  
-				<ant:classes dir="modules/core/src/conf">
+				<ant:classes dir="modules/core/conf">
 		      		    <ant:include name="*.properties"/>
 				</ant:classes>
                 </ant:war>
