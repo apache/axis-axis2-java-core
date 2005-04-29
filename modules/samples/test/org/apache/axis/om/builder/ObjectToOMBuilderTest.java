@@ -25,10 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
 import org.apache.axis.om.impl.llom.SOAPConstants;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
@@ -47,7 +44,7 @@ public class ObjectToOMBuilderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         Encoder outObject = new DummyOutObject();
-        OMFactory omFactory = OMFactory.newInstance();
+        OMFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         OMNamespace ns = omFactory.createOMNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         element = omFactory.createOMElement("Body", ns);
         new ObjectToOMBuilder(element, outObject);

@@ -17,11 +17,15 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.context.BasicMEPContext;
+
+import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.om.OMAbstractFactory;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
@@ -33,7 +37,9 @@ public class MessageContextTest extends AbstractTestCase {
         EngineContext engineContext = new EngineContext(er);
         MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicMEPContext(null));
 
-        msgctx.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());
+        SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
+
+        msgctx.setEnvelope(omFac.getDefaultEnvelope());
         assertNotNull(msgctx.getEnvelope());
 
         msgctx.setFaultTo(null);

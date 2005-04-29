@@ -45,6 +45,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineRegistryFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
@@ -169,7 +170,7 @@ public class AxisServlet extends HttpServlet {
                     new BufferedReader(
                             new InputStreamReader(req.getInputStream())));
             StAXBuilder builder =
-            new StAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+            new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             
 

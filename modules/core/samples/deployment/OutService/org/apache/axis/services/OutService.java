@@ -2,9 +2,7 @@ package org.apache.axis.services;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 
 import java.util.Date;
 
@@ -25,7 +23,7 @@ public class OutService extends Thread{
     }
 
     private void sentOutMessage() {
-        OMFactory omFactory = OMFactory.newInstance();
+        SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = omFactory.getDefaultEnvelope();
         OMNode testNode = omFactory.createText("This is auto generated messge by the server at " + new Date());
         env.getBody().addChild(testNode);

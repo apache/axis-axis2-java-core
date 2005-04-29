@@ -31,12 +31,14 @@ public abstract class OMTestCase extends AbstractTestCase {
     protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
     protected StAXSOAPModelBuilder builder;
     protected OMFactory ombuilderFactory;
+    protected SOAPFactory soapFactory;
 
     protected SOAPEnvelope soapEnvelope;
 
     public OMTestCase(String testName) {
         super(testName);
-        ombuilderFactory = OMFactory.newInstance();
+        ombuilderFactory = OMAbstractFactory.getOMFactory();
+        soapFactory = OMAbstractFactory.getSOAP11Factory();
     }
 
     protected void setUp() throws Exception {
@@ -49,13 +51,13 @@ public abstract class OMTestCase extends AbstractTestCase {
             fileName = IN_FILE_NAME;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), parser);
+        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
         return builder;
     }
 
     protected StAXSOAPModelBuilder getOMBuilder(InputStream in) throws Exception {
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
-        builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), parser);
+        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
         return builder;
     }
 

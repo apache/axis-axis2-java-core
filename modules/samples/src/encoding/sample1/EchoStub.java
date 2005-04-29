@@ -21,17 +21,12 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.testUtils.ArrayTypeEncoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 
 public class EchoStub {
-    private OMFactory fac;
+    private SOAPFactory fac;
     private OMNamespace ns =
         fac.createOMNamespace("http://apache.ws.apache.org/samples", "samples");
     private OMNamespace arrayNs =
@@ -40,7 +35,7 @@ public class EchoStub {
             OMConstants.ARRAY_ITEM_NS_PREFIX);
     OMNamespace targetNs = fac.createOMNamespace("http://axis.apache.org", "s");
     public EchoStub() {
-        fac = OMFactory.newInstance();
+        fac = OMAbstractFactory.getSOAP11Factory();
     }
     public EchoStruct[] echoEchoStructArray(EchoStruct[] in) throws Exception {
 

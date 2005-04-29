@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), parser);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
         return builder;
     }
 

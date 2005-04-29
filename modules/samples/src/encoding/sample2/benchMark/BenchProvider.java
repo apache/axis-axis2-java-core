@@ -24,11 +24,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
@@ -166,7 +162,7 @@ public class BenchProvider extends SimpleJavaProvider {
 				outobj = new SimpleTypeEncoder(result);
 			}
 
-			OMFactory fac = OMFactory.newInstance();
+			SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 			SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
 
 			OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");

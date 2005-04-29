@@ -12,6 +12,8 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
 
@@ -62,7 +64,8 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
         }
 
         epr.setReferenceParameters(anyContentType);
-        SOAPEnvelope defaultEnvelope = OMFactory.newInstance().getDefaultEnvelope();
+
+        SOAPEnvelope defaultEnvelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
 
         defaultEnvelope.getHeader().declareNamespace(WSA_NAMESPACE, "wsa");
         outHandler.addToSOAPHeader(epr, WSA_FROM, defaultEnvelope.getHeader());
@@ -107,7 +110,7 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
 //        mIHeaders.setRelatesTo(relatesTo);
 //
 //        msgCtxt.setMessageInformationHeaders(mIHeaders);
-//        msgCtxt.setEnvelope(OMFactory.newInstance().getDefaultEnvelope());
+//        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
 //        outHandler.invoke(msgCtxt);
 //
 //        XMLComparator xmlComparator = new XMLComparator();

@@ -17,11 +17,7 @@ import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -46,7 +42,7 @@ public class AddressingOutHandler
      * Eran Chinthaka (chinthaka@apache.org)
      */
     OMNamespace addressingNamespace =
-        OMFactory.newInstance().createOMNamespace(WSA_NAMESPACE, "wsa");
+        OMAbstractFactory.getSOAP11Factory().createOMNamespace(WSA_NAMESPACE, "wsa");
     public void invoke(MessageContext msgContext) throws AxisFault {
         MessageInformationHeadersCollection messageInformationHeaders =
             msgContext.getMessageInformationHeaders();
@@ -104,7 +100,7 @@ public class AddressingOutHandler
         if (!"".equals(value) && value != null) {
             SOAPHeaderBlock soapHeaderBlock =
                 soapHeader.addHeaderBlock(type, addressingNamespace);
-            soapHeaderBlock.addChild(OMFactory.newInstance().createText(value));
+            soapHeaderBlock.addChild(OMAbstractFactory.getSOAP11Factory().createText(value));
             return soapHeaderBlock;
         }
         return null;
@@ -122,7 +118,7 @@ public class AddressingOutHandler
             SOAPHeaderBlock soapHeaderBlock =
                 soapHeader.addHeaderBlock(type, addressingNamespace);
             OMElement addressElement =
-                OMFactory.newInstance().createOMElement(
+                OMAbstractFactory.getSOAP11Factory().createOMElement(
                     EPR_ADDRESS,
                     addressingNamespace);
             soapHeaderBlock.addChild(addressElement);
@@ -135,7 +131,7 @@ public class AddressingOutHandler
             SOAPHeaderBlock soapHeaderBlock =
                 soapHeader.addHeaderBlock(EPR_PORT_TYPE, addressingNamespace);
             soapHeaderBlock.addChild(
-                OMFactory.newInstance().createText(
+                OMAbstractFactory.getSOAP11Factory().createText(
                     portType.getPrefix() + ":" + portType.getLocalPart()));
         }
 
@@ -150,7 +146,7 @@ public class AddressingOutHandler
                 serviceName.getPortName(),
                 addressingNamespace);
             soapHeaderBlock.addChild(
-                OMFactory.newInstance().createText(
+                OMAbstractFactory.getSOAP11Factory().createText(
                     serviceName.getName().getPrefix()
                         + ":"
                         + serviceName.getName().getLocalPart()));
@@ -173,9 +169,9 @@ public class AddressingOutHandler
                 QName key = (QName) iterator.next();
                 String value = referenceParameters.getReferenceValue(key);
                 OMElement omElement =
-                    OMFactory.newInstance().createOMElement(key, soapHeader);
+                    OMAbstractFactory.getSOAP11Factory().createOMElement(key, soapHeader);
                 soapHeader.addChild(omElement);
-                omElement.addChild(OMFactory.newInstance().createText(value));
+                omElement.addChild(OMAbstractFactory.getSOAP11Factory().createText(value));
             }
         }
     }

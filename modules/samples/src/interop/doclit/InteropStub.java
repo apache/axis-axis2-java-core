@@ -7,12 +7,7 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 
 /*
@@ -35,7 +30,7 @@ public class InteropStub {
     private static final String INTEROP_NS_URI = "http://soapinterop.org/xsd";
     private static final String INTEROP_PREFIX = "itop";
 
-    private OMFactory factory ;
+    private SOAPFactory factory ;
     //private XMLOutputFactory outputFactory;
     private OMNamespace interopNS;
     private String endpointURL;
@@ -67,7 +62,7 @@ public class InteropStub {
 
     public InteropStub(String endpointURL) {
         this.endpointURL = endpointURL;
-        factory= OMFactory.newInstance();
+        factory= OMAbstractFactory.getSOAP11Factory();
 
         //outputFactory = XMLOutputFactory.newInstance();
         this.interopNS = this.factory.createOMNamespace(INTEROP_NS_URI,INTEROP_PREFIX);

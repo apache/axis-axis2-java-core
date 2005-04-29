@@ -19,14 +19,7 @@ package org.apache.axis.testUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -38,7 +31,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
     private Log log = LogFactory.getLog(getClass());
     private Encoder outObject;
     private OMElement startElement;
-    private OMFactory omFactory;
+    private SOAPFactory omFactory;
     private boolean buildStarted = false;
     private boolean cache = true;
     private ContentHandler externalContentHandler;
@@ -66,7 +59,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
      */
 
     public ObjectToOMBuilder(OMElement startElement, Encoder outObject) {
-        omFactory = OMFactory.newInstance();
+        omFactory = OMAbstractFactory.getSOAP11Factory();
         this.outObject = outObject;
 
         initStartElement(startElement);
@@ -82,7 +75,7 @@ public class ObjectToOMBuilder implements OMXMLParserWrapper, ContentHandler {
 
     public ObjectToOMBuilder(Encoder outObject){
         this.outObject = outObject;
-        omFactory = OMFactory.newInstance();
+        omFactory = OMAbstractFactory.getSOAP11Factory();
     }
 
     public void setStartElement(OMElement startElement) {

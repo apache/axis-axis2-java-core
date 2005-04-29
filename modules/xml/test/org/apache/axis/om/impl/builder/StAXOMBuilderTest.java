@@ -20,11 +20,7 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
@@ -42,7 +38,7 @@ public class StAXOMBuilderTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         testFile = new FileReader(getTestResourceFile("non_soap.xml"));
-        stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(OMFactory.newInstance(), XMLInputFactory.newInstance().createXMLStreamReader(testFile));
+        stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(), XMLInputFactory.newInstance().createXMLStreamReader(testFile));
     }
 
     public void testGetRootElement() throws Exception {

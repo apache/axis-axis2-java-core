@@ -38,6 +38,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     private SOAPEnvelopeImpl envelope;
     private OMNamespace envelopeNamespace;
 
+    private SOAPFactory soapFactory;
+
     /**
      * Field headerPresent
      */
@@ -65,9 +67,10 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * @param ombuilderFactory
      * @param parser
      */
-    public StAXSOAPModelBuilder(OMFactory ombuilderFactory,
+    public StAXSOAPModelBuilder(SOAPFactory ombuilderFactory,
                                 XMLStreamReader parser) {
         super(ombuilderFactory, parser);
+        this.soapFactory = ombuilderFactory;
         identifySOAPVersion();
         parseHeaders();
     }
@@ -112,7 +115,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * @param parser
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser) {
-        this(OMFactory.newInstance(), parser);
+        // TODO FIX ME
+        this(OMAbstractFactory.getSOAP11Factory(), parser);
     }
 
     /**
@@ -173,7 +177,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                         + SOAPConstants.SOAPENVELOPE_LOCAL_NAME);
             }
             envelope =
-                    (SOAPEnvelopeImpl) ombuilderFactory.createSOAPEnvelope(null,
+                    (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(null,
                             this);
             element = (OMElementImpl) envelope;
             processNamespaceData(element, true);
@@ -189,7 +193,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 }
                 headerPresent = true;
                 element =
-                        ombuilderFactory.createSOAPHeader((SOAPEnvelope) parent,
+                        soapFactory.createSOAPHeader((SOAPEnvelope) parent,
                                 this);
 
                 // envelope.setHeader((SOAPHeader)element);
@@ -200,7 +204,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 }
                 bodyPresent = true;
                 element =
-                        ombuilderFactory.createSOAPBody((SOAPEnvelope) parent,
+                        soapFactory.createSOAPBody((SOAPEnvelope) parent,
                                 this);
 
                 // envelope.setBody((SOAPBody)element);
@@ -213,19 +217,19 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 && parent.getLocalName().equalsIgnoreCase(SOAPConstants.HEADER_LOCAL_NAME)) {
 
             // this is a headerblock
-            element = ombuilderFactory.createSOAPHeaderBlock(elementName, null,
+            element = soapFactory.createSOAPHeaderBlock(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
         } else if ((elementLevel == 3) && parent.getLocalName().equalsIgnoreCase(SOAPConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(SOAPConstants.BODY_FAULT_LOCAL_NAME)) {
 
             // this is a headerblock
-            element = ombuilderFactory.createSOAPFault(null, (SOAPBody) parent,
+            element = soapFactory.createSOAPFault(null, (SOAPBody) parent,
                     this);
             processNamespaceData(element, false);
         } else {
 
             // this is neither of above. Just create an element
-            element = ombuilderFactory.createOMElement(elementName, null,
+            element = soapFactory.createOMElement(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
         }

@@ -10,10 +10,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 /*
@@ -78,8 +75,8 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(System.out);
-        builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerOne);
-        builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), readerTwo);
+        builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerOne);
+        builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerTwo);
     }
 
 
@@ -111,7 +108,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void submitPurchaseOrderTest()
             throws Exception {
-        OMFactory omFactory = OMFactory.newInstance();
+        SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = omFactory.getDefaultEnvelope();
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(omFactory,XMLInputFactory.newInstance().
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));

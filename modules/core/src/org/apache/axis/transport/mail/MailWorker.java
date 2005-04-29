@@ -16,9 +16,21 @@
 
 package org.apache.axis.transport.mail;
 
-import java.io.ByteArrayInputStream;
-import java.io.Writer;
-import java.util.Properties;
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.smtp.SMTPClient;
+import org.apache.commons.net.smtp.SMTPReply;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -27,22 +39,9 @@ import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.smtp.SMTPClient;
-import org.apache.commons.net.smtp.SMTPReply;
+import java.io.ByteArrayInputStream;
+import java.io.Writer;
+import java.util.Properties;
 
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
@@ -71,12 +70,12 @@ public class MailWorker implements Runnable {
 
     /**
      * Constructor for MailWorker
-     * 
+     *
      * @param server
      * @param mimeMessage
      */
     public MailWorker(SimpleMailListner server, MimeMessage mimeMessage,
-            EngineContext reg) {
+                      EngineContext reg) {
         this.server = server;
         this.mimeMessage = mimeMessage;
         this.reg = reg;
@@ -91,9 +90,9 @@ public class MailWorker implements Runnable {
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            msgContext = new MessageContext(this.reg, null, null, 
-                reg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                reg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+            msgContext = new MessageContext(this.reg, null, null,
+                    reg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                    reg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
         } catch (AxisFault af) {
             log.error("Error occured while creating the message context", af);
@@ -122,68 +121,64 @@ public class MailWorker implements Runnable {
 
         responseMsg = null;
 
-            try {
-                // parse all headers into hashtable
-                parseHeaders(mimeMessage, contentType, contentLocation,
-                        soapAction);
+        try {
+            // parse all headers into hashtable
+            parseHeaders(mimeMessage, contentType, contentLocation,
+                    soapAction);
 
-                String soapActionString = soapAction.toString();
-                if (soapActionString != null) {
-                    //msgContext.setUseSOAPAction(true); Not present CT
-                    // 07-Feb-2005
-                    msgContext.setProperty(MessageContext.SOAP_ACTION,
-                            soapActionString);
-                }
-
-                System.out
-                        .println("This is the data that is to be processed  \n "
-                                + mimeMessage.getContent().toString() + "\n");
-
-                ByteArrayInputStream bais = new ByteArrayInputStream(
-                        mimeMessage.getContent().toString().getBytes());
-                XMLStreamReader reader = XMLInputFactory.newInstance()
-                        .createXMLStreamReader(bais);
-                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory
-                        .newInstance(), reader);
-
-                msgContext.setEnvelope((SOAPEnvelope) builder
-                        .getDocumentElement());
-
-                //A writer is created and sent to the engine so that the engine
-                // can write straight to the writer
-                String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0])
-                        .getAddress();
-                String sendFrom = ((InternetAddress) mimeMessage
-                        .getAllRecipients()[0]).getAddress();
-                String subject = mimeMessage.getSubject();
-                msgContext.setProperty(MailConstants.FROM_ADDRESS, sendFrom);
-                msgContext.setProperty(MailConstants.TO_ADDRESS, replyTo);
-                msgContext.setProperty(MailConstants.SUBJECT, subject);
-                Writer wr = getMailWriter(server.getHost(), msgContext);
-
-                msgContext.setProperty(MessageContext.TRANSPORT_WRITER, wr);
-                msgContext.setTo(new EndpointReference(
-                        AddressingConstants.WSA_TO, replyTo));
-
-                // invoke the Axis engine
-                engine.receive(msgContext);
-
-                sendMessage(wr);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                AxisFault af;
-                if (e instanceof AxisFault) {
-                    af = (AxisFault) e;
-                    //log.debug(Messages.getMessage("serverFault00"), af);
-                    // CT 07-Feb-2005
-                    log.debug(
-                            "Error occured while trying to process the mail.",
-                            af);
-                } else {
-                    af = AxisFault.makeFault(e);
-                }
+            String soapActionString = soapAction.toString();
+            if (soapActionString != null) {
+                //msgContext.setUseSOAPAction(true); Not present CT
+                // 07-Feb-2005
+                msgContext.setProperty(MessageContext.SOAP_ACTION,
+                        soapActionString);
             }
+
+            System.out
+                    .println("This is the data that is to be processed  \n "
+                    + mimeMessage.getContent().toString() + "\n");
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(mimeMessage.getContent().toString().getBytes());
+            XMLStreamReader reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(bais);
+            StAXBuilder builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
+
+            msgContext.setEnvelope((SOAPEnvelope) builder
+                    .getDocumentElement());
+
+            //A writer is created and sent to the engine so that the engine
+            // can write straight to the writer
+            String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0])
+                    .getAddress();
+            String sendFrom = ((InternetAddress) mimeMessage
+                    .getAllRecipients()[0]).getAddress();
+            String subject = mimeMessage.getSubject();
+            msgContext.setProperty(MailConstants.FROM_ADDRESS, sendFrom);
+            msgContext.setProperty(MailConstants.TO_ADDRESS, replyTo);
+            msgContext.setProperty(MailConstants.SUBJECT, subject);
+            Writer wr = getMailWriter(server.getHost(), msgContext);
+
+            msgContext.setProperty(MessageContext.TRANSPORT_WRITER, wr);
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, replyTo));
+
+            // invoke the Axis engine
+            engine.receive(msgContext);
+
+            sendMessage(wr);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            AxisFault af;
+            if (e instanceof AxisFault) {
+                af = (AxisFault) e;
+                //log.debug(Messages.getMessage("serverFault00"), af);
+                // CT 07-Feb-2005
+                log.debug("Error occured while trying to process the mail.",
+                        af);
+            } else {
+                af = AxisFault.makeFault(e);
+            }
+        }
 
         /*
          * 
@@ -244,19 +239,15 @@ public class MailWorker implements Runnable {
     /**
      * Read all mime headers, returning the value of Content-Length and
      * SOAPAction.
-     * 
-     * @param mimeMessage
-     *            InputStream to read from
-     * @param contentType
-     *            The content type.
-     * @param contentLocation
-     *            The content location
-     * @param soapAction
-     *            StringBuffer to return the soapAction into
+     *
+     * @param mimeMessage     InputStream to read from
+     * @param contentType     The content type.
+     * @param contentLocation The content location
+     * @param soapAction      StringBuffer to return the soapAction into
      */
     private void parseHeaders(MimeMessage mimeMessage,
-            StringBuffer contentType, StringBuffer contentLocation,
-            StringBuffer soapAction) throws Exception {
+                              StringBuffer contentType, StringBuffer contentLocation,
+                              StringBuffer soapAction) throws Exception {
         contentType.append(mimeMessage.getContentType());
         contentLocation.append(mimeMessage.getContentID());
         String values[] = mimeMessage

@@ -30,6 +30,7 @@ import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportReceiver;
@@ -122,7 +123,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
             AxisEngine axisEngine = new AxisEngine();
             try {
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), xmlreader);
+                StAXBuilder builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), xmlreader);
                 msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);

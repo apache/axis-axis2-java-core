@@ -1,10 +1,7 @@
 
 package userguide.sample1;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,7 +23,7 @@ import org.apache.axis.om.SOAPEnvelope;
 public class ClientUtil {
 
 	public static SOAPEnvelope getEchoSoapEnvelop(){
-		OMFactory omFactory = OMFactory.newInstance();
+		SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
 		SOAPEnvelope envelope = omFactory.getDefaultEnvelope();
 		OMNamespace namespace = envelope.declareNamespace("http://sample1.org/sample1", "sample1");
 		

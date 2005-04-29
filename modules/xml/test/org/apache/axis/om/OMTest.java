@@ -29,7 +29,7 @@ import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
  */
 public class OMTest extends AbstractTestCase {
     private SOAPEnvelope envelope;
-    private OMFactory fac;
+    private SOAPFactory fac;
 
     /**
      * Constructor.
@@ -41,7 +41,7 @@ public class OMTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         File file = getTestResourceFile("soap/sample1.xml");
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        fac = OMFactory.newInstance();
+        fac = OMAbstractFactory.getSOAP11Factory();
         OMXMLParserWrapper builder = new StAXSOAPModelBuilder(fac, parser);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
     }

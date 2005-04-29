@@ -22,10 +22,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -102,7 +99,7 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = OMFactory.newInstance().getDefaultEnvelope();
+                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(msgContext.getMessageStyle())) {
@@ -111,8 +108,8 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    OMFactory fac = OMFactory.newInstance();
-                    envelope = OMFactory.newInstance().getDefaultEnvelope();
+                    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+                    envelope = fac.getDefaultEnvelope();
 
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
                     OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);

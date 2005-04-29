@@ -49,7 +49,7 @@ public class OMEnvelopeTest extends OMTestCase {
     }
 
     public void testDefaultEnveleope() {
-        SOAPEnvelope env = OMFactory.newInstance().getDefaultEnvelope();
+        SOAPEnvelope env = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         assertNotNull(env);
         assertNotNull("Header should not be null", env.getHeader());
         assertNotNull("Body should not be null", env.getBody());

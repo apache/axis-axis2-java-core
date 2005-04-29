@@ -40,7 +40,7 @@ public class SOAPFaultTest extends AbstractTestCase {
     public void testSOAPFault() throws Exception {
 //        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getDocumentElement();
 //        SOAPBody soapBody = soapEnvelope.getBody();
-//        SOAPFault soapFault = OMFactory.newInstance().createSOAPFault(soapBody, new Exception("Something has gone wrong som where !!"));
+//        SOAPFault soapFault = OMAbstractFactory.getSOAP11Factory().createSOAPFault(soapBody, new Exception("Something has gone wrong som where !!"));
 //        soapBody.addFault(soapFault);
 //        soapFault.setCode(null);
 //        assertEquals("faultcode returned is incorrect", soapFault.getCode().getLocalName(), "Axis");

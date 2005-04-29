@@ -19,10 +19,7 @@ package org.apache.axis.om.impl.llom.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -35,7 +32,7 @@ public class SAXOMBuilder extends DefaultHandler {
 
 	OMElement nextElem = null;
 
-	OMFactory factory = OMFactory.newInstance();
+	OMFactory factory = OMAbstractFactory.getOMFactory();
 
 	List prefixMappings = new ArrayList();
 

@@ -21,10 +21,7 @@ import java.io.FileReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 public class OMStaxStreamingWrapperTest extends AbstractTestCase {
@@ -39,7 +36,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
                         createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), xmlStreamReader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), xmlStreamReader);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
 

@@ -70,7 +70,7 @@ public class SOAPFaultImpl extends OMElementImpl
         this.e = e;
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        this.setDetailInformation(OMFactory.newInstance().createText(sw.getBuffer().toString()));
+        this.setDetailInformation(OMAbstractFactory.getSOAP11Factory().createText(sw.getBuffer().toString()));
     }
 
     /**

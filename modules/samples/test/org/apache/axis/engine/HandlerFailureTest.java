@@ -32,11 +32,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -142,8 +138,8 @@ public class HandlerFailureTest extends TestCase {
 
     private void callTheService() throws Exception {
         try {
-            OMFactory fac = OMFactory.newInstance();
-
+            SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+                            
             SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);

@@ -15,13 +15,7 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMDocument;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -51,7 +45,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocument(this);
-        omfactory = OMFactory.newInstance();
+        omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -62,7 +56,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     public StAXOMBuilder(XMLStreamReader parser) {
         super(parser);
         document = new OMDocument(this);
-        omfactory = OMFactory.newInstance();
+        omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**

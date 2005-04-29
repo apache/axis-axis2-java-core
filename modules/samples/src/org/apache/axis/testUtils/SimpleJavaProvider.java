@@ -26,11 +26,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,7 +98,7 @@ public class SimpleJavaProvider extends AbstractInOutSyncMessageReceiver impleme
                 //invoke the WebService 
                 Object result = method.invoke(obj, parms);
                 Encoder outobj = new SimpleTypeEncoder(result);
-                OMFactory fac = OMFactory.newInstance();
+                SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
                 SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
 
                 OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");

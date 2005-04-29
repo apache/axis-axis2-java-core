@@ -28,11 +28,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +62,8 @@ public class CallUnregisteredServiceTest extends TestCase{
 
     public void testEchoXMLSync() throws Exception {
         try {
-            OMFactory fac = OMFactory.newInstance();
+            SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+
 
             SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");

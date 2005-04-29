@@ -310,7 +310,7 @@
         return location;
     }
 
-    OMFactory fac = OMFactory.newInstance();
+    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
     OMNamespace ns =
         fac.createOMNamespace("http://apache.ws.apache.org/samples", "samples");
     private SOAPEnvelope createRawMessage(

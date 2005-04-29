@@ -24,6 +24,7 @@ import org.apache.axis.handlers.addressing.AddressingOutHandler;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -217,7 +218,7 @@ public class AxisEngine {
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
             SOAPEnvelope envelope =
-                OMFactory.newInstance().getDefaultEnvelope();
+                OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();

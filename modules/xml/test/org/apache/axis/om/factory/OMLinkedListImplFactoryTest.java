@@ -15,18 +15,7 @@
  */
 package org.apache.axis.om.factory;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMTestUtils;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.SOAPConstants;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
@@ -41,14 +30,14 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
         super(testName);
     }
 
-    OMFactory omFactory;
+   SOAPFactory omFactory;
     OMNamespace namespace;
     String nsUri = "http://www.apache.org/~chinthaka";
     String nsPrefix = "myhome";
 
     protected void setUp() throws Exception {
         super.setUp();
-        omFactory = OMFactory.newInstance();
+        omFactory = OMAbstractFactory.getSOAP11Factory();
         namespace = omFactory.createOMNamespace(nsUri, nsPrefix);
     }
 

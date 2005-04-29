@@ -7,6 +7,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
@@ -41,7 +42,7 @@ public class TestUtil{
             fileName = IN_FILE_NAME;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(OMFactory.newInstance(), parser);
+        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
         return builder;
     }
 

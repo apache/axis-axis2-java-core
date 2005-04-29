@@ -24,15 +24,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 public class ElementSerializerTest extends AbstractTestCase {
@@ -51,7 +43,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         tempFile = File.createTempFile("temp", "xml");
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile));
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), reader);
+        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
     }
 
     public void testElementSerilization() throws Exception {
@@ -91,7 +83,7 @@ public class ElementSerializerTest extends AbstractTestCase {
     }
 
     public void testDualNamespaces1() throws Exception {
-        OMFactory factory = OMFactory.newInstance();
+        OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace ns1 = factory.createOMNamespace("bar", "x");
         OMNamespace ns2 = factory.createOMNamespace("bar", "y");
         OMElement root = factory.createOMElement("root", ns1);
@@ -107,7 +99,7 @@ public class ElementSerializerTest extends AbstractTestCase {
     }
 
     public void testDualNamespaces2() throws Exception {
-        OMFactory factory = OMFactory.newInstance();
+        OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace ns1 = factory.createOMNamespace("bar", "x");
         OMElement root = factory.createOMElement("root", ns1);
         OMNamespace ns2 = root.declareNamespace("bar", "y");

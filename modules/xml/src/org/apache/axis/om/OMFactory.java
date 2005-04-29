@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 /**
  * Class OMFactory
  */
-public abstract class OMFactory {
+public interface OMFactory {
     /**
      * @param localName
      * @param ns
@@ -87,103 +87,10 @@ public abstract class OMFactory {
      */
     public abstract OMText createText(String s);
 
-    /**
-     * @param envelope
-     * @return
-     */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
 
-    /**
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope,
-                                            OMXMLParserWrapper builder);
-
-    /**
-     * @param ns
-     * @param builder
-     * @return
-     */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
-                                                    OMXMLParserWrapper builder);
-
-    /**
-     * @param ns
-     * @return
-     */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
-
-    /**
-     * @param envelope
-     * @return
-     */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
-
-    /**
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
-                                                OMXMLParserWrapper builder);
-
-    /**
-     * @param localName
-     * @param ns
-     * @return
-     */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                          OMNamespace ns);
-
-    /**
-     * @param localName
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                          OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
-
-    /**
-     * @param parent
-     * @param e
-     * @return
-     */
-    public abstract SOAPFault createSOAPFault(SOAPBody parent, Exception e);
-
-    /**
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public abstract SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent,
-                                              OMXMLParserWrapper builder);
 
     // make the constructor protected
 
-    /**
-     * Constructor OMFactory
-     */
-    protected OMFactory() {
-    }
 
-    /**
-     * Method newInstance
-     *
-     * @return
-     */
-    public static OMFactory newInstance() {
-        return FactoryFinder.findFactory();
-    }
-
-    /**
-     * Method getDefaultEnvelope
-     *
-     * @return
-     */
-    public abstract SOAPEnvelope getDefaultEnvelope();
+    
 }
