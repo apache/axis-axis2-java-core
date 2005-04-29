@@ -40,55 +40,55 @@ public interface SOAPHeader extends OMElement {
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
      * objects in this <CODE>SOAPHeader</CODE> object that have the
-     * the specified actor. An actor is a global attribute that
+     * the specified role. An role is a global attribute that
      * indicates the intermediate parties to whom the message should
-     * be sent. An actor receives the message and then sends it to
-     * the next actor. The default actor is the ultimate intended
-     * recipient for the message, so if no actor attribute is
+     * be sent. An role receives the message and then sends it to
+     * the next role. The default role is the ultimate intended
+     * recipient for the message, so if no role attribute is
      * included in a <CODE>SOAPHeader</CODE> object, the message is
      * sent to its ultimate destination.
      *
-     * @param actor a <CODE>String</CODE> giving the
-     *              URI of the actor for which to search
+     * @param role a <CODE>String</CODE> giving the
+     *              URI of the role for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the
-     *         specified actor
+     *         specified role
      * @see #extractHeaderBlocks(java.lang.String) extractHeaderBlocks(java.lang.String)
      */
-    public abstract Iterator examineHeaderBlocks(String actor);
+    public abstract Iterator examineHeaderBlocks(String role);
 
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
      * objects in this <CODE>SOAPHeader</CODE> object that have
-     * the the specified actor and detaches them from this <CODE>
+     * the the specified role and detaches them from this <CODE>
      * SOAPHeader</CODE> object.
-     * <P>This method allows an actor to process only the parts of
+     * <P>This method allows an role to process only the parts of
      * the <CODE>SOAPHeader</CODE> object that apply to it and to
      * remove them before passing the message on to the next
-     * actor.
+     * role.
      *
-     * @param actor a <CODE>String</CODE> giving the
-     *              URI of the actor for which to search
+     * @param role a <CODE>String</CODE> giving the
+     *              URI of the role for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the
-     *         specified actor
+     *         specified role
      * @see #examineHeaderBlocks(java.lang.String) examineHeaderBlocks(java.lang.String)
      */
-    public abstract Iterator extractHeaderBlocks(String actor);
+    public abstract Iterator extractHeaderBlocks(String role);
 
     /**
      * Returns an <code>Iterator</code> over all the
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
-     * object that have the specified actor and that have a MustUnderstand
+     * object that have the specified role and that have a MustUnderstand
      * attribute whose value is equivalent to <code>true</code>.
      *
-     * @param actor a <code>String</code> giving the URI of the actor for which
+     * @param role a <code>String</code> giving the URI of the role for which
      *              to search
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects that contain the
-     *         specified actor and are marked as MustUnderstand
+     *         specified role and are marked as MustUnderstand
      */
-    public abstract Iterator examineMustUnderstandHeaderBlocks(String actor);
+    public abstract Iterator examineMustUnderstandHeaderBlocks(String role);
 
     /**
      * Returns an <code>Iterator</code> over all the

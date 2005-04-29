@@ -61,9 +61,9 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      *                 the URI of the actor to set
      * @throws IllegalArgumentException if
      *                                  there is a problem in setting the actor.
-     * @see #getActor() getActor()
+     * @see #getRole() getRole()
      */
-    public void setActor(String actorURI) {
+    public void setRole(String actorURI) {
         setAttribute(SOAPConstants.ATTR_ACTOR, actorURI);
     }
 
@@ -92,9 +92,9 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
      *
      * @return a <CODE>String</CODE> giving the URI of the
      *         actor
-     * @see #setActor(String) setActor(java.lang.String)
+     * @see #setRole(String) setRole(java.lang.String)
      */
-    public String getActor() {
+    public String getRole() {
         return getAttribute(SOAPConstants.ATTR_ACTOR);
     }
 

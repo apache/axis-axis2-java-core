@@ -26,4 +26,42 @@ public interface SOAP12Constants extends SOAPConstants{
 
     public String SOAP_ENVELOPE_NAMESPACE_URI =
             "http://www.w3.org/2003/05/soap-envelope";
+
+    public static final String SOAP_ENVELOPE_LOCAL_NAME = "Envelope";
+
+    public static final String SOAP_HEADER_LOCAL_NAME = "Header";
+
+    public static final String SOAP_ROLE = "role";
+    public static final String SOAP_MUSTUNDERSTAND = "mustUnderstand";
+    public static final String SOAP_RELAY = "relay";
+
+    public static final String SOAP_BODY_LOCAL_NAME = "Body";
+
+    // SOAP Faults
+    public static final String SOAP_FAULT_LOCAL_NAME = "Fault";
+
+    // SOAP Fault Code
+    public static final String SOAP_FAULT_CODE_LOCAL_NAME = "Code";
+    public static final String SOAP_FAULT_SUB_CODE_LOCAL_NAME = "SubCode";
+    public static final String SOAP_FAULT_VALUE_LOCAL_NAME = "Value";
+
+    // SOAP Fault Codes
+    public static final String SOAP_FAULT_VALUE_VERSION_MISMATCH = "env:VersionMismatch";
+    public static final String SOAP_FAULT_VALUE_MUST_UNDERSTAND = "env:MustUnderstand";
+    public static final String SOAP_FAULT_VALUE_DATA_ENCODING_UKNOWN = "env:DataEncodingUnknown";
+    public static final String SOAP_FAULT_VALUE_SENDER = "env:Sender";
+    public static final String SOAP_FAULT_VALUE_RECEIVER = "env:Receiver";
+
+    // SOAP Fault Reason
+    public static final String SOAP_FAULT_REASON_LOCAL_NAME = "Reason";
+    public static final String SOAP_FAULT_TEXT_LOCAL_NAME = "Text";
+    public static final String SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME = "lang";
+    public static final String SOAP_FAULT_TEXT_LANG_ATTR_NS_URI = "http://www.w3.org/XML/1998/namespace";
+    public static final String SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX = "xml";
+
+    // SOAP Fault Node
+    public static final String SOAP_FAULT_NODE_LOCAL_NAME = "Node";
+
+    // SOAP Fault Detail
+    public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "Detail";
 }

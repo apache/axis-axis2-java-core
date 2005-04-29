@@ -15,15 +15,7 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 import javax.xml.namespace.QName;
@@ -94,12 +86,12 @@ public class SOAPFaultImpl extends OMElementImpl
     }
 
     /**
-     * Method setFaultCode
+     * Method setCode
      *
      * @param faultCode
      * @throws OMException
      */
-    public void setFaultCode(QName faultCode) throws OMException {
+    public void setCode(SOAPFaultCode faultCode) throws OMException {
         if (faultCodeElement != null) {
             faultCodeElement.detach();
         }
@@ -107,36 +99,75 @@ public class SOAPFaultImpl extends OMElementImpl
         new OMElementImpl(SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns);
         this.addChild(faultCodeElement);
         faultCodeElement.addChild(new OMTextImpl(faultCodeElement,
-                        faultCode.getPrefix() + ':'
-                                + faultCode.getLocalPart()));
+                        faultCode.getNamespace().getPrefix() + ':'
+                                + faultCode.getLocalName()));
     }
 
     /**
-     * Method getFaultCode
+     * Method getCode
      *
      * @return
      */
-    public QName getFaultCode() {
-        if (faultCodeElement != null) {
-            Iterator childrenIter = faultCodeElement.getChildren();
-            while (childrenIter.hasNext()) {
-                Object o = childrenIter.next();
-                if ((o instanceof OMText)
-                        && !((OMText) o).getText().trim().equals("")) {
-                    String[] strings = ((OMText) o).getText().split(":");
-                    return new QName("", strings[1], strings[0]);
-                }
-            }
-        } else {
-            faultCodeElement =  this.getFirstChildWithName(
-                    new QName(
-                            this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
-                            this.ns.getPrefix()));
-            if (faultCodeElement != null) {
-                return this.getFaultCode();
-            }
-        }
+    public SOAPFaultCode getCode() {
+//        if (faultCodeElement != null) {
+//            Iterator childrenIter = faultCodeElement.getChildren();
+//            while (childrenIter.hasNext()) {
+//                Object o = childrenIter.next();
+//                if ((o instanceof OMText)
+//                        && !((OMText) o).getText().trim().equals("")) {
+//                    String[] strings = ((OMText) o).getText().split(":");
+//                    return new QName("", strings[1], strings[0]);
+//                }
+//            }
+//        } else {
+//            faultCodeElement =  this.getFirstChildWithName(
+//                    new QName(
+//                            this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
+//                            this.ns.getPrefix()));
+//            if (faultCodeElement != null) {
+//                return this.getCode();
+//            }
+//        }
         return null;
+    }
+
+    public void setReason(SOAPFaultReason reason) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SOAPFaultReason getReason() {
+
+
+        SOAPFaultReason faultReason = new SOAPFaulReasonImpl(this);
+        SOAPText soapText = new SOAPTextImpl(faultReason);
+        soapText.setText(this.getFaultString());
+
+        faultReason.setSOAPText(soapText);
+        return faultReason;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setNode(SOAPFaultNode node) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SOAPFaultNode getNode() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setRole(SOAPFaultRole role) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SOAPFaultRole getRole() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setDetail(SOAPFaultDetail detail) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SOAPFaultDetail getDetail() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**

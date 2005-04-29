@@ -36,9 +36,9 @@ public class OMHeaderBlockTest extends OMTestCase {
 
     public void testSetAndGetActor() {
         String newActorURI = "http://newActor.org";
-        soapHeaderElement.setActor(newActorURI);
-        System.out.println("ActorURI = " + soapHeaderElement.getActor());
-        assertTrue("Actor was not properly set", soapHeaderElement.getActor().equalsIgnoreCase(newActorURI));
+        soapHeaderElement.setRole(newActorURI);
+        System.out.println("ActorURI = " + soapHeaderElement.getRole());
+        assertTrue("Actor was not properly set", soapHeaderElement.getRole().equalsIgnoreCase(newActorURI));
     }
 
     public void testSetAndGetMustUnderstand() {

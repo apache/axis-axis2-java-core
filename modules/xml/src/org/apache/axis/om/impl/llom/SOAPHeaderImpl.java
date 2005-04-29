@@ -15,21 +15,13 @@
 */
 package org.apache.axis.om.impl.llom;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Class SOAPHeaderImpl
@@ -53,28 +45,28 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @param builder
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(
-                SOAPConstants.HEADER_LOCAL_NAME,
+        super(SOAPConstants.HEADER_LOCAL_NAME,
                 (envelope == null) ? null : envelope.getNamespace(),
                 envelope,
                 builder);
     }
 
     /**
-     * Creates a new <CODE>SOAPHeaderBlock</CODE> object
-     * initialized with the specified name and adds it to this
-     * <CODE>SOAPHeader</CODE> object.
+     * Creates a new <CODE>SOAPHeaderBlock</CODE> object initialized with the
+     * specified name and adds it to this <CODE>SOAPHeader</CODE> object.
      *
      * @param localName
      * @param ns
-     * @return the new <CODE>SOAPHeaderBlock</CODE> object that
-     *         was inserted into this <CODE>SOAPHeader</CODE>
-     *         object
+     * @return the new <CODE>SOAPHeaderBlock</CODE> object that was inserted
+     *         into this <CODE>SOAPHeader</CODE> object
      * @throws org.apache.axis.om.OMException if a SOAP error occurs
      * @throws OMException
      */
     public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
             throws OMException {
+        if (ns == null || ns.getName() == null || "".equals(ns.getName())) {
+            throw new OMException("All the SOAP Header blocks should be namespace qualified");
+        }
         SOAPHeaderBlock soapHeaderBlock =
                 new SOAPHeaderBlockImpl(localName, ns);
         this.addChild(soapHeaderBlock);
@@ -83,93 +75,84 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
     }
 
     /**
-     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
-     * objects in this <CODE>SOAPHeader</CODE> object that have the
-     * the specified actor. An actor is a global attribute that
-     * indicates the intermediate parties to whom the message should
-     * be sent. An actor receives the message and then sends it to
-     * the next actor. The default actor is the ultimate intended
-     * recipient for the message, so if no actor attribute is
-     * included in a <CODE>SOAPHeader</CODE> object, the message is
-     * sent to its ultimate destination.
+     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
+     * <CODE>SOAPHeader</CODE> object that have the the specified actor. An
+     * actor is a global attribute that indicates the intermediate parties to
+     * whom the message should be sent. An actor receives the message and then
+     * sends it to the next actor. The default actor is the ultimate intended
+     * recipient for the message, so if no actor attribute is included in a
+     * <CODE>SOAPHeader</CODE> object, the message is sent to its ultimate
+     * destination.
      *
-     * @param paramActor      a <CODE>String</CODE> giving the
-     *                   URI of the actor for which to search
+     * @param paramRole a <CODE>String</CODE> giving the URI of the actor for
+     *                  which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
-     *         SOAPHeaderBlock</CODE> objects that contain the
-     *         specified actor
+     *         SOAPHeaderBlock</CODE> objects that contain the specified actor
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
-    public Iterator examineHeaderBlocks(String paramActor) {
+    public Iterator examineHeaderBlocks(String paramRole) {
         Iterator headerBlocksIter = this.getChildren();
+        ArrayList headersWithGivenActor = new ArrayList();
         while (headerBlocksIter.hasNext()) {
             Object o = headerBlocksIter.next();
             if (o instanceof SOAPHeaderBlock) {
                 SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
-                String actor = soapHeaderBlock.getActor();
-                if ((actor != null) && actor.equalsIgnoreCase(paramActor)) {
-
-                    // headerBlocksIter.
+                String role = soapHeaderBlock.getRole();
+                if ((role != null) && role.equalsIgnoreCase(paramRole)) {
+                    headersWithGivenActor.add(soapHeaderBlock);
                 }
             }
         }
-        return headerBlocksIter;
+        return headersWithGivenActor.iterator();
     }
 
     /**
-     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
-     * objects in this <CODE>SOAPHeader</CODE> object that have
-     * the the specified actor and detaches them from this <CODE>
-     * SOAPHeader</CODE> object.
-     * <P>This method allows an actor to process only the parts of
-     * the <CODE>SOAPHeader</CODE> object that apply to it and to
-     * remove them before passing the message on to the next
-     * actor.
+     * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
+     * <CODE>SOAPHeader</CODE> object that have the the specified actor and
+     * detaches them from this <CODE> SOAPHeader</CODE> object. <P>This method
+     * allows an actor to process only the parts of the <CODE>SOAPHeader</CODE>
+     * object that apply to it and to remove them before passing the message on
+     * to the next actor.
      *
-     * @param actor a <CODE>String</CODE> giving the
-     *              URI of the actor for which to search
+     * @param actor a <CODE>String</CODE> giving the URI of the actor for which
+     *              to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
-     *         SOAPHeaderBlock</CODE> objects that contain the
-     *         specified actor
+     *         SOAPHeaderBlock</CODE> objects that contain the specified actor
      * @see #examineHeaderBlocks(String) examineHeaderBlocks(java.lang.String)
      */
     public Iterator extractHeaderBlocks(String actor) {
-        return new OMChildrenWithSpecificAttributeIterator(
-                getFirstChild(),
-                new QName(
-                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
+                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                         SOAPConstants.ATTR_ACTOR),
                 actor,
                 true);
     }
 
     /**
-     * Returns an <code>Iterator</code> over all the
-     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
-     * object that have the specified actor and that have a MustUnderstand
-     * attribute whose value is equivalent to <code>true</code>.
+     * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>
+     * objects in this <code>SOAPHeader</code> object that have the specified
+     * actor and that have a MustUnderstand attribute whose value is equivalent
+     * to <code>true</code>.
      *
      * @param actor a <code>String</code> giving the URI of the actor for which
      *              to search
      * @return an <code>Iterator</code> object over all the
-     *         <code>SOAPHeaderBlock</code> objects that contain the
-     *         specified actor and are marked as MustUnderstand
+     *         <code>SOAPHeaderBlock</code> objects that contain the specified
+     *         actor and are marked as MustUnderstand
      */
     public Iterator examineMustUnderstandHeaderBlocks(String actor) {
-        return new OMChildrenWithSpecificAttributeIterator(
-                getFirstChild(),
-                new QName(
-                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
+                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                         SOAPConstants.ATTR_ACTOR),
                 actor,
                 false);
     }
 
     /**
-     * Returns an <code>Iterator</code> over all the
-     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
-     * object.
-     * Not that this will return elements containing the QName (http://schemas.xmlsoap.org/soap/envelope/, Header)
+     * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>
+     * objects in this <code>SOAPHeader</code> object. Not that this will return
+     * elements containing the QName (http://schemas.xmlsoap.org/soap/envelope/,
+     * Header)
      *
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects contained by this
@@ -180,9 +163,9 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
     }
 
     /**
-     * Returns an <code>Iterator</code> over all the
-     * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader </code>
-     * object and detaches them from this <code>SOAPHeader</code> object.
+     * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>
+     * objects in this <code>SOAPHeader </code> object and detaches them from
+     * this <code>SOAPHeader</code> object.
      *
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects contained by this
@@ -204,8 +187,8 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         node = header;
         
         while (node != null) {
-            if (node.getType()==OMNode.ELEMENT_NODE){
-                header = (OMElement)node;
+            if (node.getType() == OMNode.ELEMENT_NODE) {
+                header = (OMElement) node;
                 if (nsURI.equals(header.getNamespace().getName())) {
                     headers.add(header);
                 }

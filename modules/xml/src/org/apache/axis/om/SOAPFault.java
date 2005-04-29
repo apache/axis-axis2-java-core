@@ -38,92 +38,41 @@ import javax.xml.namespace.QName;
  * recipient.
  */
 public interface SOAPFault extends OMElement {
-    /**
-     * Sets this <CODE>SOAPFault</CODE> object with the given
-     * fault code.
-     * <P>Fault codes, which given information about the fault,
-     * are defined in the SOAP 1.1 specification.</P>
-     *
-     * @param faultCode a <CODE>QName</CODE> giving
-     *                  the fault code to be set; must be one of the fault codes
-     *                  defined in the SOAP 1.1 specification
-     * @throws OMException if there was an error in
-     *                     adding the <CODE>faultCode</CODE> to the underlying XML
-     *                     tree.
-     * @see #getFaultCode() getFaultCode()
-     */
-    public abstract void setFaultCode(QName faultCode) throws OMException;
 
     /**
-     * Gets the fault code for this <CODE>SOAPFault</CODE>
-     * object.
-     *
-     * @return a <CODE>String</CODE> with the fault code
-     * @see #setFaultCode(QName) setFaultCode(QName)
+     * SOAPFaultCode is a mandatory item in a Fault, in SOAP 1.2 specification
+     * @param soapFaultCode
      */
-    public abstract QName getFaultCode();
+    public void setCode(SOAPFaultCode soapFaultCode);
+    public SOAPFaultCode getCode();
 
     /**
-     * Sets this <CODE>SOAPFault</CODE> object with the given
-     * fault actor.
-     * <P>The fault actor is the recipient in the message path who
-     * caused the fault to happen.</P>
-     *
-     * @param faultActor a <CODE>String</CODE>
-     *                   identifying the actor that caused this <CODE>
-     *                   SOAPFault</CODE> object
-     * @throws OMException if there was an error in
-     *                     adding the <CODE>faultActor</CODE> to the underlying XML
-     *                     tree.
-     * @see #getFaultActor() getFaultActor()
+     * SOAPFaultReason is a mandatory item in a Fault, in SOAP 1.2 specification
+     * @param reason
      */
-    public abstract void setFaultActor(String faultActor) throws OMException;
+    public void setReason(SOAPFaultReason reason);
+    public SOAPFaultReason getReason();
 
     /**
-     * Gets the fault actor for this <CODE>SOAPFault</CODE>
-     * object.
-     *
-     * @return a <CODE>String</CODE> giving the actor in the message
-     *         path that caused this <CODE>SOAPFault</CODE> object
-     * @see #setFaultActor(String) setFaultActor(java.lang.String)
+     * SOAPFaultNode is an optional item in a Fault, in SOAP 1.2 specification
+     * @param node
      */
-    public abstract String getFaultActor();
+    public void setNode(SOAPFaultNode node);
+    public SOAPFaultNode getNode();
 
     /**
-     * Sets the fault string for this <CODE>SOAPFault</CODE>
-     * object to the given string.
-     *
-     * @param faultString a <CODE>String</CODE>
-     *                    giving an explanation of the fault
-     * @throws OMException if there was an error in
-     *                     adding the <CODE>faultString</CODE> to the underlying XML
-     *                     tree.
-     * @see #getFaultString() getFaultString()
+     * SOAPFaultRole is an optional item in a Fault, in SOAP 1.2 specification
+     * @param role
      */
-    public abstract void setFaultString(String faultString) throws OMException;
+    public void setRole(SOAPFaultRole role);
+    public SOAPFaultRole getRole();
 
     /**
-     * Gets the fault string for this <CODE>SOAPFault</CODE>
-     * object.
-     *
-     * @return a <CODE>String</CODE> giving an explanation of the
-     *         fault
-     */
-    public abstract String getFaultString();
-
-    /**
-     * This will set the given omnode under the detail element of SOAP fault
-     *
+     * SOAPFaultRole is an optional item in a Fault, in SOAP 1.2 specification
      * @param detail
      */
-    public abstract void setDetailInformation(OMNode detail);
-
-    /**
-     * Method getDetailInformation
-     *
-     * @return
-     */
-    public abstract OMNode getDetailInformation();
+    public void setDetail(SOAPFaultDetail detail);
+    public SOAPFaultDetail getDetail();
 
     /**
      * Method getException

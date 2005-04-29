@@ -30,14 +30,14 @@ public interface SOAPHeaderBlock extends OMElement {
      * default value of an actor is: <CODE>
      * OMConstants.URI_SOAP_ACTOR_NEXT</CODE>
      *
-     * @param actorURI a <CODE>String</CODE> giving
+     * @param roleURI a <CODE>String</CODE> giving
      *                 the URI of the actor to set
      * @throws java.lang.IllegalArgumentException
      *          if
      *          there is a problem in setting the actor.
-     * @see #getActor() getActor()
+     * @see #getRole() getRole()
      */
-    public abstract void setActor(String actorURI);
+    public abstract void setRole(String roleURI);
 
     /**
      * Returns the uri of the actor associated with this <CODE>
@@ -45,9 +45,9 @@ public interface SOAPHeaderBlock extends OMElement {
      *
      * @return a <CODE>String</CODE> giving the URI of the
      *         actor
-     * @see #setActor(java.lang.String) setActor(java.lang.String)
+     * @see #setRole(java.lang.String) setRole(java.lang.String)
      */
-    public abstract String getActor();
+    public abstract String getRole();
 
     /**
      * Sets the mustUnderstand attribute for this <CODE>

@@ -85,7 +85,7 @@ public class CallUnregisteredServiceTest extends TestCase{
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
-                throw new AxisFault(sb.getFault().getFaultString());
+                throw new AxisFault(sb.getFault().getReason().getSOAPText().getText());
             }
             fail("The test must fail due to wrong service Name");
 
