@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.engine.EngineContextFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class UtilServer {
@@ -48,12 +48,12 @@ public class UtilServer {
 
     public static synchronized void start() throws Exception {
         if (count == 0) {
-            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac = (EngineRegistryFactory)erClass.newInstance();
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
+            EngineContextFactory erfac = (EngineContextFactory)erClass.newInstance();
             
             File file = new File("target/test-resources/samples");
             System.out.println(new File(file,"server.xml").exists());
-            EngineContext er = erfac.createEngineRegistry(file.getAbsolutePath());
+            EngineContext er = erfac.createContextBuilder(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {

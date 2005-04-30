@@ -45,6 +45,9 @@ public class AddressingInHandler extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         logger.debug("Starting Addressing IN Handler .........");
         SOAPHeader header = msgContext.getEnvelope().getHeader();
+        if(header == null){
+            return;
+        }
         ArrayList addressingHeaders = header.getHeaderBolcksWithNSURI(AddressingConstants.WSA_NAMESPACE);
         if (addressingHeaders != null) {
             extractAddressingInformationFromHeaders(header, msgContext.getMessageInformationHeaders(),addressingHeaders);

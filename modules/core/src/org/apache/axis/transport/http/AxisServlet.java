@@ -42,7 +42,7 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.engine.EngineContextFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.OMAbstractFactory;
@@ -93,9 +93,9 @@ public class AxisServlet extends HttpServlet {
             String repoDir = context.getRealPath("/WEB-INF");
             Class erClass = Class.forName(
                     "org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac =
-                    (EngineRegistryFactory) erClass.newInstance();
-            engineContext = erfac.createEngineRegistry(repoDir);
+            EngineContextFactory erfac =
+                    (EngineContextFactory) erClass.newInstance();
+            engineContext = erfac.createContextBuilder(repoDir);
         } catch (Exception e) {
             throw new ServletException(e);
         }

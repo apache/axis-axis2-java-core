@@ -31,7 +31,7 @@ import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineRegistryFactory;
+import org.apache.axis.engine.EngineContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -90,9 +90,9 @@ public class SimpleHTTPServer implements Runnable {
     public SimpleHTTPServer(String dir, ServerSocket serverSoc) throws AxisFault {
         try {
             this.serverSocket = serverSoc;
-            Class erClass = Class.forName("org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineRegistryFactory erfac = (EngineRegistryFactory) erClass.newInstance();
-            this.engineReg = erfac.createEngineRegistry(dir);
+            Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
+            EngineContextFactory erfac = (EngineContextFactory) erClass.newInstance();
+            this.engineReg = erfac.createContextBuilder(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);

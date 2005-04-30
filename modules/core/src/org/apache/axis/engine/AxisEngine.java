@@ -97,6 +97,7 @@ public class AxisEngine {
             chain.addPhase(addressingPhase);
 
             // Receiving is always a matter of running the transport handlers first
+
             AxisTransportIn transport = context.getTransportIn();
             chain.addPhases(transport.getPhases(EngineConfiguration.OUTFLOW));
 

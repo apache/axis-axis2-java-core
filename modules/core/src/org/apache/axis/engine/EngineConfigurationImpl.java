@@ -136,6 +136,15 @@ public class EngineConfigurationImpl implements EngineConfiguration {
     }
 
     /**
+     * 
+     * @return
+     */
+    public HashMap getModules(){
+        return  modules;
+    }
+
+
+    /**
      * Method getService
      *
      * @param name
