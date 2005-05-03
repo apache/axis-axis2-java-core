@@ -61,6 +61,7 @@ public interface DeploymentConstants {
     // for operatiins
     String ATQNAME = "name";
     String ATUSE = "use";
+    String MEP = "mep";
 
     //for handlers
     String REF = "ref";

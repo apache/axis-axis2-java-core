@@ -38,6 +38,7 @@ import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
 
@@ -88,7 +89,6 @@ public class DeploymentParser implements DeploymentConstants {
                     String ST = pullparser.getLocalName();
                     if (ST.equals(SERVICEXMLST)) {
                         procesServiceXML(axisService);
-                        axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
                     }
                     break;
                 }
@@ -125,6 +125,37 @@ public class DeploymentParser implements DeploymentConstants {
                         dpengine.getEngineconfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
+                    } else if (MEP.equals(ST)){
+                        int attribCount = pullparser.getAttributeCount();
+                        if (attribCount == 2) {
+                            String attname = pullparser.getAttributeLocalName(1);
+                            String attvalue = pullparser.getAttributeValue(1);
+                            if(MEP.equals(attname)){
+                                String name = attvalue;
+                                attname = pullparser.getAttributeLocalName(2);
+                                attvalue = pullparser.getAttributeValue(2);
+                                if(CLASSNAME.equals(attname)){
+                                    try {
+                                        Class messageReceiver = null;
+                                        ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
+                                        if (attvalue != null && !"".equals(attvalue)) {
+                                            messageReceiver = Class.forName(attvalue, true, loader1);
+                                            axisGlobal.addMessageReceiver(name,(MessageReceiver)messageReceiver.newInstance());
+                                        }
+                                    } catch (ClassNotFoundException e) {
+                                        throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                    } catch (IllegalAccessException e) {
+                                        throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                    } catch (InstantiationException e) {
+                                        throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                    }
+                                }  else
+                                    throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet) " + attname);
+                            }  else
+                                throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet) " + attname);
+                        }else
+                            throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet)");
+
                     } else if (MODULEST.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount > 0) {
@@ -309,33 +340,23 @@ public class DeploymentParser implements DeploymentConstants {
      */
     private void procesServiceXML(AxisService axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
-        boolean foundMR = false;
         if (attribCount >= 1) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
-                if (MESSAGERECEIVER.equals(attname)) {
-                    dpengine.getCurrentFileItem().setMessgeReceiver(attvalue);
-                    foundMR = true;
-                } else if (STYLENAME.equals(attname)) {
-                    axisService.setStyle(attvalue);
-                } else if (CONTEXTPATHNAME.equals(attname)) {
-                    axisService.setContextPath(getValue(attvalue));
+                if (ATQNAME.equals(attname)) {
+                    if(attname == null || attname.trim() =="") {
+                        axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
+                    }  else
+                        axisService.setName(new QName(attvalue));
                 } else {
                     throw new DeploymentException("Bad arguments for the service" + axisService.getName());
                 }
             }
-        } else
-            throw new DeploymentException("Bad arguments" + axisService.getName());
-        if (!foundMR) {
-            throw new DeploymentException("Message Receiver dose not specify " + axisService.getName());
+        } else {
+            //if user dose not specify the service name then the default name will be the archive name
+            axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
         }
-
-        //*********************************************************************************************//
-        // This is to process remainng part of the document
-        /**
-         * to check whether the End tage of the document has met
-         */
         boolean END_DOCUMENT = false;
         try {
             while (!END_DOCUMENT) {
@@ -593,45 +614,57 @@ public class DeploymentParser implements DeploymentConstants {
         //  String name = pullparser.getLocalName();
         AxisOperation operation = new AxisOperation();
         int attribCount = pullparser.getAttributeCount();
-        if (attribCount < 5) {  // there should be two attributes
+        if (attribCount >0) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATTNAME.equals(attname)) {
                     operation.setName(new QName(attvalue));
-                } else if (ATQNAME.equals(attname)) {
-                    //TODO fill this after getting the reply for the mail
-                    //operation.setQname(attvalue);
-                } else if (STYLENAME.equals(attname)) {
-                    //TODO to be implementd after clarfing style
-                    //operation.setStyle(attvalue);
-                } else if (ATUSE.equals(attname)) {
-                    //TODO this is to be implemnt
-                    //  operation.setUse(attvalue);
-                }
+                }  else
+                    throw new DeploymentException("bad attribute in operation " + attname);
             }
-        } else {
-            throw new DeploymentException("bad parameter arguments");
         }
-
         boolean END_OPERATION = false;
         try {
             while (!END_OPERATION) {
                 int eventType = pullparser.next();
                 if (eventType == XMLStreamConstants.END_DOCUMENT) {
-// document end tag met , break the loop
-// but the doc end tag wont meet here :)
                     END_OPERATION = true;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName();
                     if (MODULEXMLST.equals(ST)) {
-                        throw new UnsupportedOperationException("nexted elements are not allowed for M1");
+                        attribCount = pullparser.getAttributeCount();
+                        if (attribCount > 0) {
+                            for (int i = 0; i < attribCount; i++) {
+                                String attname = pullparser.getAttributeLocalName(i);
+                                String attvalue = pullparser.getAttributeValue(i);
+                                if (REF.equals(attname)) {
+                                    if (dpengine.getModule(new QName(attvalue)) == null) {
+                                        throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
+                                    } else
+                                        operation.addModule(new QName(attvalue));
+                                }
+                            }
+                        }
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (INFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (OUTFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
+                    }else if (MESSAGERECEIVER.equals(ST)){
+                        attribCount = pullparser.getAttributeCount();
+                        if(attribCount > 0){
+                            String attname = pullparser.getAttributeLocalName(1);
+                            String attvalue = pullparser.getAttributeValue(1);
+                            if(CLASSNAME.equals(attname)){
+                                operation.setMessageReciever(attvalue);
+                            } else {
+                                throw new UnsupportedOperationException(attname +   " is not allowed in messageRecievr element");
+                            }
+                        }  else {
+                            //todo   if user dose not specify the messageReciever then the defaullt one has to be used
+                        }
                     }
 
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -644,6 +677,8 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
+        } catch (AxisFault e){
+            throw new DeploymentException("Axis fault , loading module", e);
         }
         return operation;
     }
@@ -685,7 +720,6 @@ public class DeploymentParser implements DeploymentConstants {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
         boolean foundClass = false;
-
         if (attribCount > 0) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);

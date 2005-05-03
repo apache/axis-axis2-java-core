@@ -108,7 +108,7 @@ public class PhaseResolver {
         ArrayList allHandlers = new ArrayList();
         AxisModule module;
         Flow flow = null;
-        ArrayList modules = (ArrayList)engineConfig.getGlobal().getModules();
+        ArrayList modules = (ArrayList)axisService.getModules();//   (ArrayList)engineConfig.getGlobal().getModules());
         //Global modules
         for (int i = 0; i < modules.size(); i++) {
             QName name = (QName) modules.get(i);

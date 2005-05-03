@@ -2,6 +2,8 @@ package org.apache.axis.description;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
@@ -18,18 +20,49 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
  */
 public class AxisOperation extends WSDLOperationImpl implements
 		ParameterInclude, WSDLOperation,DescriptionConstants {
-	
-	
+
+
+    private HashMap modules;
+
+    private String messageReciever;
+
 	public AxisOperation(){
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setComponentProperty(MEP_MAP, new HashMap());
+        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
+        modules = new HashMap();
 	}
 	
 	public AxisOperation(QName name){
 		this();
 		this.setName(name);
 	}
+
+
+    public void addModule(QName moduleref) {
+        if (moduleref == null) {
+            return;
+        }
+        Collection collectionModule =
+                (Collection) this.getComponentProperty(MODULEREF_KEY);
+        collectionModule.add(moduleref);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis.description.AxisService#getModules()
+     */
+
+    /**
+     * Method getModules
+     *
+     * @return
+     */
+    public Collection getModules() {
+        return (Collection) this.getComponentProperty(MODULEREF_KEY);
+    }
+
 
 	/**
      * Method addParameter
@@ -120,6 +153,14 @@ public class AxisOperation extends WSDLOperationImpl implements
 		return (MEPContext) ((Map) this.getComponentProperty(MEP_MAP)).get(messageID);
 
 	}
-    
+
+    public String getMessageReciever() {
+        return messageReciever;
+    }
+
+    public void setMessageReciever(String messageReciever) {
+        this.messageReciever = messageReciever;
+    }
+
 }
 

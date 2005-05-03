@@ -1,4 +1,4 @@
-<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+<service name="">
 
     <parameter name="ServiceClass" locked="xsd:false">org.apache.axis.sample.echo.EchoImpl</parameter>
 
@@ -16,7 +16,10 @@
         <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler"/>
     </Outfaultflow>
 
-    <operation name="echoString"/>
+    <operation name="echoString">
+        <module ref="module1"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+    </operation>
     <operation name="echoStringArray"/>
     <operation name="echoEchoStruct"/>
     <operation name="echoEchoStructArray"/>

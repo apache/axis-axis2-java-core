@@ -1,4 +1,6 @@
 <server name ="AxisJava2.0" >
+    <messageReciver map="name"  impl="abcs"/>
+
     <phaseOrder type="inflow">
         <phase name="global"/>
         <phase name="transport"/>
