@@ -91,7 +91,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
      * @return
      */
     public String getTargetNameSpace() {
-        return this.name.getLocalPart();
+        return this.name.getNamespaceURI();
     }
 
     /**

@@ -17,6 +17,7 @@ package org.apache.wsdl.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
@@ -486,5 +487,13 @@ public class WSDLDescriptionImpl extends ComponentImpl
 	
 	public WSDLExtensibilityElement createWSDLExtensibilityElement(){
 		return new WSDLExtensibilityElementImpl();
+	}
+	
+	public WSDLBinding getFirstBinding(){
+		Iterator bindingIterator = this.bindings.values().iterator();
+		while(bindingIterator.hasNext()){
+			return (WSDLBinding)bindingIterator.next();
+		}
+		throw new WSDLProcessingException("No Binding Components are available");
 	}
 }

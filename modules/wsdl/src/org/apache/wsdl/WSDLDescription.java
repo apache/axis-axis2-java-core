@@ -295,4 +295,11 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      * @return
      */
     public WSDLProperty createProperty();
+    
+    /**
+     * Will return the first binding component the collection returned by the 
+     * <code>HashMap</code>.
+     * @return
+     */
+    public WSDLBinding getFirstBinding();
 }

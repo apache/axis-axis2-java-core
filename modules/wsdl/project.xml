@@ -23,6 +23,11 @@
 	<name>wsdl</name>
 	<description>WSDL Parts of Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
 	<dependencies>
+	 <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis2-xml</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 		<!-- external JARs -->
 		<dependency>
 			<groupId>commons-logging</groupId>
