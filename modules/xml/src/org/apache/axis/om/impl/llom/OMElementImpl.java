@@ -20,6 +20,7 @@ import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConver
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis.om.impl.llom.util.EmptyIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,12 +53,12 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Field namespaces
      */
-    private HashMap namespaces = null;
+    protected HashMap namespaces = null;
 
     /**
      * Field attributes
      */
-    private HashMap attributes = null;
+    protected HashMap attributes = null;
 
     /**
      * Field log
@@ -67,7 +68,7 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Field noPrefixNamespaceCounter
      */
-    private int noPrefixNamespaceCounter = 0;
+    protected int noPrefixNamespaceCounter = 0;
 
     /**
      * Constructor OMElementImpl
@@ -241,7 +242,7 @@ public class OMElementImpl extends OMNodeImpl
 
 
         child.setParent(this);
-        
+
         child.setPreviousSibling(null);
         child.setNextSibling(firstChild);
         if (firstChild != null) {
@@ -390,26 +391,13 @@ public class OMElementImpl extends OMNodeImpl
      */
     public Iterator getAttributes() {
         if (attributes == null) {
-            return new Iterator(){
-
-                public void remove() {
-                    throw new UnsupportedOperationException();
-
-                }
-
-                public boolean hasNext() {
-                    return false;  //To change body of implemented methods use File | Settings | File Templates.
-                }
-
-                public Object next() {
-                    throw new UnsupportedOperationException();
-                }
-            };
+            return new EmptyIterator();
         }
         return attributes.values().iterator();
     }
 
     public Iterator getAttributes(QName qname) {
+        //would there be multiple attributes with the same QName
         return null;  //ToDO
     }
 
@@ -448,7 +436,7 @@ public class OMElementImpl extends OMNodeImpl
      * @return
      */
     public OMAttribute addAttribute(String attributeName, String value,
-                                       OMNamespace ns) {
+                                    OMNamespace ns) {
         OMNamespace namespace = null;
         if (ns != null) {
             namespace = findNamespace(ns.getName(), ns.getPrefix());
@@ -579,7 +567,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param text
      */
     public void setText(String text) {
-        
+
         OMNode child = this.getFirstChild();
         while(child != null){
             if(child.getType() == OMNode.TEXT_NODE){
@@ -622,9 +610,13 @@ public class OMElementImpl extends OMNodeImpl
     public void serializeWithCache(XMLStreamWriter writer)  throws XMLStreamException {
         serialize(writer,true);
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
     private void serialize(XMLStreamWriter writer,boolean cache)throws XMLStreamException {
 
-        boolean firstElement = false;
+        // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {
             builderType = this.builder.getBuilderType();
@@ -633,73 +625,50 @@ public class OMElementImpl extends OMNodeImpl
                 && (builder.getRegisteredContentHandler() == null)) {
             builder.registerExternalContentHandler(
                     new StreamWriterToContentHandlerConverter(writer));
-
-            // for now only SAX
         }
 
-        // Special case for the pull type building with cache off
-        // The getXMLStreamReader method returns the current elements itself.
+
         if (!cache) {
-            if ((firstChild == null) && (nextSibling == null) && !isComplete()
-                    && (builderType == PULL_TYPE_BUILDER)) {
-                StreamingOMSerializer streamingOMSerializer =
-                        new StreamingOMSerializer();
-                streamingOMSerializer.serialize(this.getXMLStreamReader(!cache),
-                        writer);
-                return;
-            }
-        }
-        if (!cache) {
-            if (isComplete()) {
-
-                // serializeWithCache own normally
-                serializeNormal(writer, cache);
-                if (nextSibling != null) {
-
-                    // serilize next sibling
-                    nextSibling.serialize(writer);
-                } else {
-                    if (parent == null) {
-                        return;
-                    } else if (parent.isComplete()) {
-                        return;
-                    } else {
-
-                        // do the special serialization
-                        // Only the push serializer is left now
-                        builder.setCache(cache);
-                        builder.next();
-                    }
-                }
-            } else if (firstChild != null) {
-                serializeStartpart(writer);
-                log.info("Serializing the Element from " + localName
-                        + " the generated OM tree");
+            //No caching
+            if (this.firstChild!=null){
+                OMSerializerUtil.serializeStartpart(this,writer);
                 firstChild.serialize(writer);
-                serializeEndpart(writer);
-            } else {
-
-                // do the special serilization
-                // Only the push serializer is left now
-                builder.setCache(cache);
-                serializeStartpart(writer);
-                builder.next();
-                serializeEndpart(writer);
-            }
-        } else {
-
-            // serializeWithCache own normally
-            serializeNormal(writer, cache);
-
-            // serializeWithCache the siblings if this is not the first element
-            if (!firstElement) {
-                OMNode nextSibling = this.getNextSibling();
-                if (nextSibling != null) {
-                    nextSibling.serializeWithCache(writer);
+                OMSerializerUtil.serializeEndpart(writer);
+            }else if (!this.done){
+                if (builderType==PULL_TYPE_BUILDER){
+                    OMSerializerUtil.serializeByPullStream(this,writer);
+                }else{
+                    OMSerializerUtil.serializeStartpart(this,writer);
+                    builder.setCache(cache);
+                    builder.next();
+                    OMSerializerUtil.serializeEndpart(writer);
                 }
+            }else{
+                OMSerializerUtil.serializeNormal(this,writer, cache);
+            }
+
+            //serilize siblings
+            if (this.nextSibling!=null){
+                nextSibling.serialize(writer);
+            }else if (this.parent!=null){
+                if (!this.parent.done){
+                    builder.setCache(cache);
+                    builder.next();
+                }
+            }
+        }else{
+            //Cached
+            OMSerializerUtil.serializeNormal(this,writer, cache);
+            // serialize the siblings
+            OMNode nextSibling = this.getNextSibling();
+            if (nextSibling != null) {
+                nextSibling.serializeWithCache(writer);
             }
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * This was requested during the second Axis2 summit. When one call this method, this will
@@ -715,149 +684,6 @@ public class OMElementImpl extends OMNodeImpl
 
 
 
-    /**
-     * Method serializeStartpart
-     *
-     * @param writer
-     * @throws XMLStreamException
-     */
-    private void serializeStartpart(XMLStreamWriter writer)
-            throws XMLStreamException {
-        String nameSpaceName = null;
-        String writer_prefix = null;
-        String prefix = null;
-        if (ns != null) {
-            nameSpaceName = ns.getName();
-            writer_prefix = writer.getPrefix(nameSpaceName);
-            prefix = ns.getPrefix();
-            if (nameSpaceName != null) {
-                if (writer_prefix != null) {
-                    writer.writeStartElement(nameSpaceName,
-                            this.getLocalName());
-                } else {
-                    if (prefix != null) {
-                        writer.writeStartElement(prefix, this.getLocalName(),
-                                nameSpaceName);
-                        writer.writeNamespace(prefix, nameSpaceName);
-                        writer.setPrefix(prefix, nameSpaceName);
-                    } else {
-                        writer.writeStartElement(nameSpaceName,
-                                this.getLocalName());
-                        writer.writeDefaultNamespace(nameSpaceName);
-                        writer.setDefaultNamespace(nameSpaceName);
-                    }
-                }
-            } else {
-                writer.writeStartElement(this.getLocalName());
-//                throw new OMException(
-//                        "Non namespace qualified elements are not allowed");
-            }
-        } else {
-            writer.writeStartElement(this.getLocalName());
-//            throw new OMException(
-//                    "Non namespace qualified elements are not allowed");
-        }
-
-        // add the elements attributes
-        if (attributes != null) {
-            Iterator attributesList = attributes.values().iterator();
-            while (attributesList.hasNext()) {
-                serializeAttribute((OMAttribute) attributesList.next(), writer);
-            }
-        }
-
-        // add the namespaces
-        Iterator namespaces = this.getAllDeclaredNamespaces();
-        if (namespaces != null) {
-            while (namespaces.hasNext()) {
-                serializeNamespace((OMNamespace) namespaces.next(), writer);
-            }
-        }
-    }
-
-    /**
-     * Method serializeEndpart
-     *
-     * @param writer
-     * @throws XMLStreamException
-     */
-    private void serializeEndpart(XMLStreamWriter writer)
-            throws XMLStreamException {
-        writer.writeEndElement();
-    }
-
-    /**
-     * Method serializeNormal
-     *
-     * @param writer
-     * @param cache
-     * @throws XMLStreamException
-     */
-    private void serializeNormal(XMLStreamWriter writer, boolean cache)
-            throws XMLStreamException {
-        serializeStartpart(writer);
-        OMNode firstChild = getFirstChild();//todo
-        if (firstChild != null) {
-            if (cache){
-                firstChild.serializeWithCache(writer);
-            }else{
-                firstChild.serialize(writer);
-            }
-        }
-        serializeEndpart(writer);
-    }
-
-    /**
-     * Method serializeAttribute
-     *
-     * @param attr
-     * @param writer
-     * @throws XMLStreamException
-     */
-    protected void serializeAttribute(OMAttribute attr, XMLStreamWriter writer)
-            throws XMLStreamException {
-
-        // first check whether the attribute is associated with a namespace
-        OMNamespace ns = attr.getNamespace();
-        String prefix = null;
-        String namespaceName = null;
-        if (ns != null) {
-
-            // add the prefix if it's availble
-            prefix = ns.getPrefix();
-            namespaceName = ns.getName();
-            if (prefix != null) {
-                writer.writeAttribute(prefix, namespaceName,
-                        attr.getLocalName(), attr.getValue());
-            } else {
-                writer.writeAttribute(namespaceName, attr.getLocalName(),
-                        attr.getValue());
-            }
-        } else {
-            writer.writeAttribute(attr.getLocalName(), attr.getValue());
-        }
-    }
-
-    /**
-     * Method serializeNamespace
-     *
-     * @param namespace
-     * @param writer
-     * @throws XMLStreamException
-     */
-    protected void serializeNamespace(
-            OMNamespace namespace, XMLStreamWriter writer)
-            throws XMLStreamException {
-        if (namespace != null) {
-            String uri = namespace.getName();
-            String prefix = writer.getPrefix(uri);
-            String ns_prefix = namespace.getPrefix();
-            if (prefix == null) {
-                writer.writeNamespace(ns_prefix, namespace.getName());
-                writer.setPrefix(ns_prefix, uri);
-            }
-        }
-    }
 
     /**
      * Method getNextNamespacePrefix
