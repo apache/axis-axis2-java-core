@@ -27,4 +27,6 @@ import org.apache.wsdl.WSDLDescription;
 public interface WOMBuilder {
 
     public WSDLDescription build(InputStream in) throws WSDLException;
+    
+    public WSDLDescription build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException;
 }

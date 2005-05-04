@@ -25,6 +25,7 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.wsdl.builder.WOMBuilder;
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.util.Utils;
@@ -44,6 +45,16 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         pump.pump();
 
         return wsdlDefinitions;
+    }
+    
+    public WSDLDescription build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException{
+    	WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
+
+        WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in), wsdlComponentFactory);
+        pump.pump();
+
+        return wsdlDefinitions;
+    	
     }
 
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {

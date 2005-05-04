@@ -27,9 +27,10 @@ import org.apache.wsdl.WSDLDescription;
 public class WSDL2ToWOMBuilder implements WOMBuilder {
 
     public WSDLDescription build(InputStream in) throws WSDLException {
-
-        throw new UnsupportedOperationException("Fill the imps");
-
-
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+    
+    public WSDLDescription build(InputStream in, WSDLComponentFactory wsdlComponenetFactory)throws WSDLException{
+    	throw new UnsupportedOperationException("Not Implemented");
     }
 }
