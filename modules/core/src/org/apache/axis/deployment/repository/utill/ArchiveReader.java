@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.apache.axis.deployment.repository.utill;
 
@@ -26,18 +26,45 @@ import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
+import org.apache.axis.description.AxisDescWSDLComponentFactory;
+import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
 
-public class UnZipJAR implements DeploymentConstants {
-    //final int BUFFER = 2048;
-
+public class ArchiveReader implements DeploymentConstants {
+    
+    public AxisService createService(String filename) throws DeploymentException {
+        WSDL1ToWOMBuilder builder = new WSDL1ToWOMBuilder();
+        String strArchive = filename;
+        ZipInputStream zin;
+        boolean foundwsdl = false;
+        AxisService service = null;
+        try {
+            zin = new ZipInputStream(new FileInputStream(strArchive));
+            ZipEntry entry;
+            while ((entry = zin.getNextEntry()) != null) {
+                if (entry.getName().equals(SERVICEWSDL)) {
+                    service = (AxisService) builder.build(zin,new AxisDescWSDLComponentFactory());
+                    foundwsdl = true;
+                    break;
+                }
+            }
+            zin.close();
+            if (!foundwsdl) {
+                service = new AxisService();
+            }
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+        return service;
+    }
     /**
-     * This method will unzipService the given jar or aar.
+     * This method will readServiceArchive the given jar or aar.
      * it take two arguments filename and refereance to DeployEngine
      *
      * @param filename
      * @param engine
      */
-    public void unzipService(String filename, DeploymentEngine engine, AxisService service) throws DeploymentException {
+
+    public void readServiceArchive(String filename, DeploymentEngine engine, AxisService service) throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
         String strArchive = filename;
@@ -62,7 +89,7 @@ public class UnZipJAR implements DeploymentConstants {
         }
     }
 
-    public void unzipModule(String filename, DeploymentEngine engine, AxisModule module) throws DeploymentException {
+    public void readModuleArchive(String filename, DeploymentEngine engine, AxisModule module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
         String strArchive = filename;

@@ -659,7 +659,20 @@ public class DeploymentParser implements DeploymentConstants {
                             String attname = pullparser.getAttributeLocalName(0);
                             String attvalue = pullparser.getAttributeValue(0);
                             if(CLASSNAME.equals(attname)){
-                                operation.setMessageReciever(attvalue);
+                                try {
+                                    Class messageReceiver = null;
+                                    ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
+                                    if (attvalue != null && !"".equals(attvalue)) {
+                                        messageReceiver = Class.forName(attvalue, true, loader1);
+                                        operation.setMessageReciever((MessageReceiver)messageReceiver.newInstance());
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                } catch (IllegalAccessException e) {
+                                    throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                } catch (InstantiationException e) {
+                                    throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                                }
                             } else {
                                 throw new UnsupportedOperationException(attname +   " is not allowed in messageRecievr element");
                             }

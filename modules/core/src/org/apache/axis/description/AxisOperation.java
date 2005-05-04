@@ -3,7 +3,6 @@ package org.apache.axis.description;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
@@ -11,6 +10,7 @@ import org.apache.axis.context.MEPContext;
 import org.apache.axis.context.MEPContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.MessageReceiver;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
@@ -22,15 +22,13 @@ public class AxisOperation extends WSDLOperationImpl implements
 		ParameterInclude, WSDLOperation,DescriptionConstants {
 
 
-    private HashMap modules;
 
-    private String messageReciever;
+    private MessageReceiver messageReceiver;
 
 	public AxisOperation(){
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());        
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
-        modules = new HashMap();
 	}
 	
 	public AxisOperation(QName name){
@@ -146,12 +144,12 @@ public class AxisOperation extends WSDLOperationImpl implements
 
 
 
-    public String getMessageReciever() {
-        return messageReciever;
+    public MessageReceiver getMessageReciever() {
+        return messageReceiver;
     }
 
-    public void setMessageReciever(String messageReciever) {
-        this.messageReciever = messageReciever;
+    public void setMessageReciever(MessageReceiver messageReceiver) {
+        this.messageReceiver = messageReceiver;
     }
 
 }

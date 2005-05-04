@@ -31,7 +31,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
-import org.apache.axis.deployment.repository.utill.UnZipJAR;
+import org.apache.axis.deployment.repository.utill.ArchiveReader;
 import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
@@ -430,13 +430,13 @@ public class DeploymentEngine implements DeploymentConstants {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 currentFileItem = (HDFileItem) wsToDeploy.get(i);
                 int type = currentFileItem.getType();
-                UnZipJAR unZipJAR = new UnZipJAR();
+                ArchiveReader archiveReader = new ArchiveReader();
                 String serviceStatus = "";
                 switch (type) {
                     case SERVICE:
                         try {
-                            AxisService service = new AxisService();
-                            unZipJAR.unzipService(currentFileItem.getAbsolutePath(), this, service);
+                            AxisService service = archiveReader.createService(currentFileItem.getAbsolutePath());
+                            archiveReader.readServiceArchive(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
                         } catch (DeploymentException de) {
@@ -461,7 +461,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     case MODULE:
                         try {
                             AxisModule metaData = new AxisModule();
-                            unZipJAR.unzipModule(currentFileItem.getAbsolutePath(), this, metaData);
+                            archiveReader.readModuleArchive(currentFileItem.getAbsolutePath(), this, metaData);
                             addNewModule(metaData);
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
                         } catch (DeploymentException e) {
