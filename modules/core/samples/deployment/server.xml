@@ -1,7 +1,6 @@
 <server name ="AxisJava2.0" >
-    <messageReciver map="name"  impl="abcs"/>
-
-    <phaseOrder type="inflow">
+    <messageReceiver mep="INOUT"  class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+      <phaseOrder type="inflow">
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>

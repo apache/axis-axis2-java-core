@@ -1,4 +1,4 @@
-<service messageReceiver="encoding.sample1.EchoProvider" style="rpc" contextPath="services">
+<service name="sample1">
 
     <parameter name="ServiceClass" locked="xsd:false">encoding.sample1.EchoImpl</parameter>
 

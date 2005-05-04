@@ -1,4 +1,5 @@
 <server name ="AxisJava2.0" >
+     <messageReceiver mep="INOUT"  class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
 

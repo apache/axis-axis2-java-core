@@ -42,17 +42,18 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
 
         assertNotNull(er);
         assertNotNull(er.getGlobal());
-
         AxisService service = er.getService(new QName("service2"));
         assertNotNull(service);
-        MessageReceiver provider = service.getMessageReceiver();
+        //commentd since there is no service based messgeRecivers
+        /*MessageReceiver provider = service.getMessageReceiver();
         assertNotNull(provider);
-        assertTrue(provider instanceof RawXMLINOutMessageRecevier);
+        assertTrue(provider instanceof RawXMLINOutMessageRecevier);*/
         ClassLoader cl = service.getClassLoader();
         assertNotNull(cl);
         Class.forName("Echo2", true, cl);
         assertNotNull(service.getName());
-        assertEquals(service.getStyle(),"rpc");
+       //no style for the service 
+     //   assertEquals(service.getStyle(),"rpc");
 
         Flow flow = service.getFaultInFlow();
         assertTrue(flow.getHandlerCount() > 0);

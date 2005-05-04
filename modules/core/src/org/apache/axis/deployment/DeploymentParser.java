@@ -125,15 +125,15 @@ public class DeploymentParser implements DeploymentConstants {
                         dpengine.getEngineconfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
-                    } else if (MEP.equals(ST)){
+                    } else if (MESSAGERECEIVER.equals(ST)){
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount == 2) {
-                            String attname = pullparser.getAttributeLocalName(1);
-                            String attvalue = pullparser.getAttributeValue(1);
+                            String attname = pullparser.getAttributeLocalName(0);
+                            String attvalue = pullparser.getAttributeValue(0);
                             if(MEP.equals(attname)){
                                 String name = attvalue;
-                                attname = pullparser.getAttributeLocalName(2);
-                                attvalue = pullparser.getAttributeValue(2);
+                                attname = pullparser.getAttributeLocalName(1);
+                                attvalue = pullparser.getAttributeValue(1);
                                 if(CLASSNAME.equals(attname)){
                                     try {
                                         Class messageReceiver = null;
@@ -345,12 +345,13 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATQNAME.equals(attname)) {
-                    if(attname == null || attname.trim() =="") {
+                    if(attvalue == null || attvalue.trim().equals("")) {
                         axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
-                    }  else
+                    }  else{
                         axisService.setName(new QName(attvalue));
+                    }
                 } else {
-                    throw new DeploymentException("Bad arguments for the service" + axisService.getName());
+                    throw new DeploymentException(attname + " Bad arguments for the service" + getAxisServiceName(dpengine.getCurrentFileItem().getServiceName()));
                 }
             }
         } else {
@@ -655,8 +656,8 @@ public class DeploymentParser implements DeploymentConstants {
                     }else if (MESSAGERECEIVER.equals(ST)){
                         attribCount = pullparser.getAttributeCount();
                         if(attribCount > 0){
-                            String attname = pullparser.getAttributeLocalName(1);
-                            String attvalue = pullparser.getAttributeValue(1);
+                            String attname = pullparser.getAttributeLocalName(0);
+                            String attvalue = pullparser.getAttributeValue(0);
                             if(CLASSNAME.equals(attname)){
                                 operation.setMessageReciever(attvalue);
                             } else {

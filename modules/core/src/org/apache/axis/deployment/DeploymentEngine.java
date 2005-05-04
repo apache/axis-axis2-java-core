@@ -290,7 +290,7 @@ public class DeploymentEngine implements DeploymentConstants {
         currentFileItem.setClassLoader();
         loadServiceProperties(serviceMetaData);
         engineconfig.addService(serviceMetaData);
-        System.out.println("adding new service" + serviceMetaData.getName().getLocalPart());
+        System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
     }
 
     /**

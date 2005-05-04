@@ -1,4 +1,4 @@
-<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
+<service name="doclit">
 
     <parameter name="ServiceClass" locked="xsd:false">interop.doclit.WSDLInteropTestDocLitPortType</parameter>
 

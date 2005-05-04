@@ -1,5 +1,4 @@
-<service messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
-
+<service name="">
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
