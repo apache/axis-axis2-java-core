@@ -34,6 +34,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.engine.EngineConfigurationImpl;
 
 /**
  * Class PhaseResolver
@@ -362,9 +363,10 @@ public class PhaseResolver {
         for (int type = 1; type < 4; type++) {
             phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
-            for (int intA = 0; intA < count; intA++) {
-                moduleName = (QName) modules.get(intA);
-                module = engineConfig.getModule(moduleName);
+            List globalModule = (List)((EngineConfigurationImpl)engineConfig).getModules().values();
+            int gcount =  globalModule.size();
+            for (int intA = 0; intA < gcount; intA++) {
+                module = (AxisModule) globalModule.get(intA);
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {
@@ -395,6 +397,43 @@ public class PhaseResolver {
                          * should go to the global chain , to the pre-dispatch phase
                          */
                         if(PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
+                            phaseHolder.addHandler(metadata);
+                        }  else {
+                            continue;
+                        }
+                    }
+                }
+            }
+            ///////////////////////////////////////////////////
+            for (int intA = 0; intA < count; intA++) {
+                moduleName = (QName) modules.get(intA);
+                module = engineConfig.getModule(moduleName);
+                switch (type) {
+                    case PhaseMetadata.IN_FLOW:
+                        {
+                            flow = module.getInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.OUT_FLOW:
+                        {
+                            flow = module.getOutFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_IN_FLOW:
+                        {
+                            flow = module.getFaultInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            flow = module.getFaultOutFlow();
+                            break;
+                        }
+                }
+                if (flow != null) {
+                    for (int j = 0; j < flow.getHandlerCount(); j++) {
+                        HandlerMetadata metadata = flow.getHandler(j);
+                        if(! PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
                             phaseHolder.addHandler(metadata);
                         }  else {
                             continue;

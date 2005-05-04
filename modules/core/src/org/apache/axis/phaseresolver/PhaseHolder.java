@@ -121,13 +121,17 @@ public class PhaseHolder {
             PhaseMetadata pm = new PhaseMetadata(name);
             inPhases.add(pm);
         }
+        inPhases.add(0,PhaseMetadata.PRE_DISPATCH);
         tempPhases = registry.getOutPhases();
         for (int i = 0; i < tempPhases.size(); i++) {
             String name = (String) tempPhases.get(i);
             PhaseMetadata pm = new PhaseMetadata(name);
             outPhases.add(pm);
         }
+        outPhases.add(PhaseMetadata.PRE_DISPATCH);
+
         tempPhases = registry.getInFaultPhases();
+        faultInPhases.add(0,PhaseMetadata.PRE_DISPATCH);
         for (int i = 0; i < tempPhases.size(); i++) {
             String name = (String) tempPhases.get(i);
             PhaseMetadata pm = new PhaseMetadata(name);
@@ -139,6 +143,7 @@ public class PhaseHolder {
             PhaseMetadata pm = new PhaseMetadata(name);
             faultOutPhases.add(pm);
         }
+        faultOutPhases.add(PhaseMetadata.PRE_DISPATCH);
     }
 
     /**
