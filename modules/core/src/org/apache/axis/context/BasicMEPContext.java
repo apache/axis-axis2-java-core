@@ -18,12 +18,12 @@ package org.apache.axis.context;
  * 
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author chathura@opensource.lk
@@ -32,91 +32,99 @@ import org.apache.wsdl.WSDLConstants;
 
 /**
  * This class will provide the functionality to support the two basic MEPs
- * IN_OUT IN_ONLY.
- * 
+ * IN_OUT and IN_ONLY.
+ *
  * @author chathura@opensource.lk
- *  
  */
 
 public class BasicMEPContext extends AbstractContext implements MEPContext {
 
-	private ArrayList messageContextList;
+    private ArrayList messageContextList;
 
-	private String MepId;
+    private String MepId;
 
-	private AxisOperation axisOperation;
+    private AxisOperation axisOperation;
 
-	public BasicMEPContext(AxisOperation axisOperation) {
-		this.axisOperation = axisOperation;
-        messageContextList = new ArrayList();
-	}
+    public BasicMEPContext(AxisOperation axisOperation) {
+        this.axisOperation = axisOperation;
 
+// Most frequently used MEPs are IN ONLY and IN-OUT MEP. So the number of messagecontext for those MEPs are at most 2. Setting the initial capacity of the arrayList to 2.
+        messageContextList = new ArrayList(2);
+    }
 	/**
-	 * 
+	 *
 	 * When a new message is added to the <code>MEPContext</code> the logic
 	 * should be included remove the MEPContext from the table in the
 	 * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
 	 * message the MEPContext should be removed from the AxisOperation
-	 * 
-	 * @param ctxt
+	 *
+	 * @param msgContext
 	 */
 	public void addMessageContext(MessageContext msgContext) throws AxisFault {
 		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation.getMessageExchangePattern())){
-			messageContextList.add(msgContext);				
+			messageContextList.add(msgContext);
 		} else if(WSDLConstants.MEP_URI_IN_OUT.equals(this.axisOperation.getMessageExchangePattern())){
-			messageContextList.add(msgContext);			
+			messageContextList.add(msgContext);
 		}
-		
+
 		if(this.isComplete())
 			msgContext.getEngineContext().removeMEP(this);
 
-	}
 
-	/**
-	 * 
-	 * @param messageId
-	 * @return
-	 */
-	public MessageContext getMessageContext(int index) {
-		return (MessageContext) messageContextList.get(index);
-	}
+    }
 
-	public MessageContext removeMessageContext(MessageContext ctxt) {
-		messageContextList.remove(ctxt.getMessageID());
-		return ctxt;
-	}
+    /**
+     * @param index
+     * @return
+     */
+    public MessageContext getMessageContext(int index) {
+        return (MessageContext) messageContextList.get(index);
+    }
 
-	public List getAllMessageContexts() {
-		return this.messageContextList;
-	}
+    public MessageContext removeMessageContext(MessageContext ctxt) {
+        messageContextList.remove(ctxt.getMessageID());
+        return ctxt;
+    }
 
-	public MessageContext getMessageContext(String messageID) throws AxisFault {
-		if (null != messageID) {
-			for (int i = 0; i < this.messageContextList.size(); i++) {
-				if (messageID.equals(((MessageContext) (this.messageContextList
-						.get(i))).getMessageID())) {
-					return ((MessageContext) (this.messageContextList.get(i)));
-				}
-			}
-		}
+    public List getAllMessageContexts() {
+        return this.messageContextList;
+    }
 
-		throw new AxisFault(" Message doesnot exist in the current MEP : Invalid MessageID :" + messageID);
-	}
+    public MessageContext getMessageContext(String messageID) throws AxisFault {
+        if (null != messageID) {
+            for (int i = 0; i < this.messageContextList.size(); i++) {
+                if (messageID.equals(((MessageContext) (this.messageContextList
+                        .get(i))).getMessageID())) {
+                    return ((MessageContext) (this.messageContextList.get(i)));
+                }
+            }
+        }
 
-	/**
-	 * @return Returns the mepId.
-	 */
-	public String getMepId() {
-		return MepId;
-	}
+        throw new AxisFault(" Message does not exist in the current MEP : Invalid MessageID :" + messageID);
+    }
 
-	/**
-	 * @param mepId
-	 *            The mepId to set.
-	 */
-	public void setMepId(String mepId) {
-		MepId = mepId;
-	}
+    /**
+     * @return Returns the mepId.
+     */
+    public String getMepId() {
+        return MepId;
+    }
+
+    /**
+     * @param mepId The mepId to set.
+     */
+    public void setMepId(String mepId) {
+        MepId = mepId;
+    }
+
+    /**
+     * Chathura, please implement this method to return the last in message of the MEP.
+     * I want this for addressing - Chinthaka
+     * @return
+     */
+    public MessageContext getLastInMessageContext(){
+        return null;
+    }
 	
 	public boolean isComplete(){
 		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation.getMessageExchangePattern())){
