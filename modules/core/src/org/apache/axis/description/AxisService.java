@@ -21,7 +21,6 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.engine.MessageReceiver;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
@@ -182,32 +181,7 @@ public class AxisService extends WSDLServiceImpl
         return (String) this.getComponentProperty(CONTEXTPATH_KEY);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#setProvider(org.apache.axis.engine.Provider)
-     */
-
-    public void setMessageReceiver(MessageReceiver receiver) {
-        if (receiver != null) {
-            this.setComponentProperty(MESSAGE_RECIVER_KEY, receiver);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getProvider()
-     */
-
-    /**
-     * Method getProvider
-     *
-     * @return
-     */
-    public MessageReceiver getMessageReceiver() {
-        return (MessageReceiver) this.getComponentProperty(MESSAGE_RECIVER_KEY);
-    }
-
-    /*
+     /*
      * (non-Javadoc)
      * @see org.apache.axis.description.AxisService#setStyle(javax.swing.text.Style)
      */

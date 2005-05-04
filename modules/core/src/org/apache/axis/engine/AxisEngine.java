@@ -177,10 +177,7 @@ public class AxisEngine {
             if (context.isServerSide()) {
                 // add invoke Phase
                 MessageReceiver reciver =
-                    context
-                        .getServiceContext()
-                        .getServiceConfig()
-                        .getMessageReceiver();
+                    context.getoperationConfig().getMessageReciever();
                 reciver.recieve(context);
             }
 

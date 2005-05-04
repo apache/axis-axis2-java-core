@@ -12,6 +12,7 @@ import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -49,6 +50,7 @@ public class Call {
     private AxisService callbackService;
     private CallbackReceiver callbackReceiver;
     private AxisOperation axisOperation;
+    private ListenerManager listenerManager;
 
     public Call() throws AxisFault {
         this(new EngineContext(new EngineConfigurationImpl(new AxisGlobal())));
@@ -79,7 +81,6 @@ public class Call {
             registry.addTransportOut(mailTransportOut);
 
             messageInfoHeaders = new MessageInformationHeadersCollection();
-            init();
         } catch (ClassNotFoundException e) {
             throw new AxisFault(e.getMessage(), e);
         } catch (InstantiationException e) {
@@ -93,6 +94,8 @@ public class Call {
         messageInfoHeaders = new MessageInformationHeadersCollection();
         this.properties = new HashMap();
         this.engineContext = engineContext;
+        callbackReceiver = new CallbackReceiver();
+        listenerManager = new ListenerManager(engineContext);
         if (wsdlDesc != null) {
 
         }
@@ -103,9 +106,7 @@ public class Call {
     }
 
     public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
-        if (axisOperation == null) {
-            throw new AxisFault("Operation Name must be specified");
-        }
+        initializeOperation();
 
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
@@ -121,11 +122,11 @@ public class Call {
             final MessageContext msgctx =
                 new MessageContext(
                     engineContext,
-                    null,
+                    properties,
                     null,
                     transportIn,
-                    transportOut,
-                    new BasicMEPContext(axisOperation, null));
+                    transportOut);
+                    
 
             msgctx.setEnvelope(env);
 
@@ -133,7 +134,7 @@ public class Call {
                 messageInfoHeaders.setMessageId(String.valueOf(System.currentTimeMillis()));
                 callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
                 messageInfoHeaders.setReplyTo(
-                    ListenerManager.replyToEPR(
+                listenerManager.replyToEPR(
                         callbackService.getName().getLocalPart()
                             + "/"
                             + axisOperation.getName().getLocalPart()));
@@ -175,9 +176,7 @@ public class Call {
     }
 
     public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
-        if (axisOperation == null) {
-            throw new AxisFault("Operation Name must be specified");
-        }
+        initializeOperation();
 
         EngineConfiguration registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
@@ -192,7 +191,7 @@ public class Call {
             MessageContext msgctx =
                 new MessageContext(
                     engineContext,
-                    null,
+                    properties,
                     null,
                     transportIn,
                     transportOut,
@@ -236,31 +235,8 @@ public class Call {
         return properties.get(key);
     }
 
- 
-
-    /**
-     * This method is used to initilize the client side ,
-     */
-    private void init() throws AxisFault {
-
-//        AxisService callbackService = new AxisService();
-//        callbackServiceName = CallbackReceiver.SERVIC_NAME + System.currentTimeMillis();
-//        callbackService.setName(new QName(callbackServiceName));
-//        callbackReceiver = new CallbackReceiver();
-//        callbackService.setMessageReceiver(callbackReceiver);
-//
-//        replyToOpName = new QName("callback_op");
-//        callbackOperation = new AxisOperation(replyToOpName);
-//        callbackService.addOperation(callbackOperation);
-//
-//        ListenerManager.makeSureStarted();
-//
-//        ListenerManager.getEngineContext().addService(new ServiceContext(callbackService, null));
-
-    }
-
     public void close() {
-        ListenerManager.stopAServer();
+        listenerManager.stopAServer();
     }
 
  
@@ -340,10 +316,20 @@ public class Call {
      */
     public void setOperationName(QName name) {
         axisOperation = new AxisOperation(name);
+        messageInfoHeaders.setAction(axisOperation.getName().getLocalPart());
     }
-
-    public void setEndPointURL(String URL) {
-
+    
+    private void initializeOperation() throws AxisFault{
+        if (axisOperation == null) {
+             throw new AxisFault("Operation Name must be specified");
+         } 
+         
+         if(callbackService == null){
+             callbackService = new AxisService(new QName("CallBackService"));
+         } 
+        callbackService.addOperation(axisOperation);
+        axisOperation.setMessageReciever(callbackReceiver);
+        listenerManager.makeSureStarted();
+        listenerManager.getEngineContext().addService(new ServiceContext(callbackService, null));
     }
-
 }

@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
@@ -77,14 +78,16 @@ public class Utils {
     public static AxisService createSimpleService(
         QName serviceName,
         MessageReceiver messageReceiver,
-        String className) {
+        String className, QName opName) {
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(
             new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS,
             className));
-        service.setMessageReceiver(messageReceiver);
+        AxisOperation axisOp = new AxisOperation(opName);
+        axisOp.setMessageReciever(messageReceiver);
+        service.addOperation(axisOp);
         return service;
     }
     
@@ -95,8 +98,8 @@ public class Utils {
     }
 
     public static AxisService createSimpleService(
-         QName serviceName, String className) {
-             return createSimpleService(serviceName,new RawXMLINOutMessageRecevier(),className);   
+         QName serviceName, String className,QName opName) {
+             return createSimpleService(serviceName,new RawXMLINOutMessageRecevier(),className,opName);   
      }
 
     public static void addHandlers(Flow flow, SimplePhase phase)

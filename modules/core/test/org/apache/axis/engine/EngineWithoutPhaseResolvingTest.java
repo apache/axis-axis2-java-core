@@ -73,7 +73,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
         service = new AxisService(serviceName);
-        service.setMessageReceiver(new NullMessageReceiver());
+        axisOp.setMessageReciever(new NullMessageReceiver());
         engineRegistry.addService(service);
         service.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);

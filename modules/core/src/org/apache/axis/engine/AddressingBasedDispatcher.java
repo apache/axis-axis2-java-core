@@ -82,7 +82,9 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
                 AxisOperation op = service.getOperation(operationName);
                 if (op != null) {
                     msgctx.setOperationConfig(op);
-                } 
+                } else{
+                    throw new AxisFault("No Operation named "+ operationName + " Not found" );
+                }
                 //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
             } else {
                 throw new AxisFault("Operation not found, WSA Action is Null");

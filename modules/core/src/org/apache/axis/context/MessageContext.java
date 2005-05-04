@@ -248,7 +248,7 @@ public class MessageContext {
      * @return
      */
     public String getMessageID() {
-        return messageID;
+        return messageInformationHeaders.getMessageId();
     }
 
     /**
@@ -340,7 +340,7 @@ public class MessageContext {
      * @param string
      */
     public void setMessageID(String string) {
-        messageID = string;
+        messageInformationHeaders.setMessageId(string);
     }
 
     /**

@@ -67,10 +67,9 @@ public class TestSendReceive extends TestCase {
         service =
             Utils.createSimpleService(
                 serviceName,
-                org.apache.axis.engine.Echo.class.getName());
+                org.apache.axis.engine.Echo.class.getName(),operationName);
 
-        AxisOperation operation = new AxisOperation(operationName);
-        service.addOperation(operation);
+       
 
         UtilServer.start();
         UtilServer.deployService(Utils.createServiceContext(service,null));

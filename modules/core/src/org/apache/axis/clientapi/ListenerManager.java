@@ -22,24 +22,25 @@ import java.net.ServerSocket;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
-import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class ListenerManager {
-    private static EngineContext engineContext;
-    private static boolean started = false;
-    private static int numberOfserver = 0;
-    private static SimpleHTTPServer simpleHttpServer;
-    private static ServerSocket scoket;
+    private EngineContext engineContext;
+    private boolean started = false;
+    private int numberOfserver = 0;
+    private SimpleHTTPServer simpleHttpServer;
+    private ServerSocket scoket;
 
-    public static void makeSureStarted() throws AxisFault {
+    public ListenerManager(EngineContext engineContext) {
+        this.engineContext = engineContext;
+    }
+
+    public void makeSureStarted() throws AxisFault {
         synchronized (ListenerManager.class) {
             try {
                 if (started == false) {
-                    engineContext =
-                        new EngineContext(new EngineConfigurationImpl(new AxisGlobal()));
+
                     scoket = new ServerSocket(6060);
                     simpleHttpServer = new SimpleHTTPServer(engineContext, scoket);
                     simpleHttpServer.start();
@@ -56,18 +57,27 @@ public class ListenerManager {
     /**
      * @return
      */
-    public static EngineContext getEngineContext() {
+    public EngineContext getEngineContext() {
         return engineContext;
     }
 
-    public static void stopAServer() {
+    public void stopAServer() {
         numberOfserver--;
         if (numberOfserver == 0) {
             simpleHttpServer.stop();
         }
     }
-    
-    public static EndpointReference replyToEPR(String serviceName){
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,"http://127.0.0.1:"+ (scoket.getLocalPort())+"/axis/services/"+serviceName);
+
+    public EndpointReference replyToEPR(String serviceName) {
+        return new EndpointReference(
+            AddressingConstants.WSA_REPLY_TO,
+            "http://127.0.0.1:" + (scoket.getLocalPort() + 1) + "/axis/services/" + serviceName);
     }
+    /**
+     * @param context
+     */
+    public void setEngineContext(EngineContext context) {
+        engineContext = context;
+    }
+
 }

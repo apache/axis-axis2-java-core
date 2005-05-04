@@ -32,9 +32,8 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.SOAPFactory;
 import org.apache.wsdl.WSDLService;
 
 public class EnginePausingTest extends AbstractEngineTest {
@@ -66,7 +65,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
         AxisService service = new AxisService(serviceName);
-        service.setMessageReceiver(new NullMessageReceiver());
+        axisOp.setMessageReciever(new NullMessageReceiver());
         
 
         service.addOperation(axisOp);

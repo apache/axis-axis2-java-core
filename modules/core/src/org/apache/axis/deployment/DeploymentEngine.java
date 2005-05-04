@@ -46,7 +46,6 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -301,7 +300,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws AxisFault
      */
     private void loadServiceProperties(AxisService axisService) throws AxisFault {
-        loadMessageReceiver(axisService);
         Flow inflow = axisService.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -325,21 +323,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void loadMessageReceiver(AxisService service) throws AxisFault {
-        Class messageReceiver = null;
-        ClassLoader loader1 = currentFileItem.getClassLoader();
-        try {
-            service.setClassLoader(loader1);
-            String readInClass = currentFileItem.getMessgeReceiver();
-            if (readInClass != null && !"".equals(readInClass)) {
-                messageReceiver = Class.forName(readInClass, true, loader1);
-                service.setMessageReceiver((MessageReceiver) messageReceiver.newInstance());
-            }
-        } catch (Exception e) {
-            throw new AxisFault(e.getMessage(), e);
-        }
-
-    }
+ 
 
     private void loadModuleClass(AxisModule module) throws AxisFault {
         Class moduleClass = null;

@@ -80,11 +80,9 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, culprit);
         Utils.addHandler(flow, new SpeakingHandler());
         
-        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName());
+        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
         service.setInFlow(flow);
-        AxisOperation operation = new AxisOperation(operationName);
-        service.addOperation(operation);
-
+        
         UtilServer.start();
         UtilServer.deployService(Utils.createServiceContext(service,null));
         try {
@@ -96,7 +94,7 @@ public class HandlerFailureTest extends TestCase {
     }
 
     public void testFailureAtServerResponseFlow() throws Exception {
-        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName());
+        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
  
 
         Flow flow = new FlowImpl();
