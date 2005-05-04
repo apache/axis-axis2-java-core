@@ -41,6 +41,7 @@ import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 
 
 /**
@@ -963,7 +964,11 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (ATTNAME.equals(attname)) {
-                            pahseList.add(attvalue);
+                            if(attvalue.equals(PhaseMetadata.PRE_DISPATCH)){
+                                throw new DeploymentException(attvalue + " is a reserved phase");
+                            }else {
+                                pahseList.add(attvalue);
+                            }
                         }
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
