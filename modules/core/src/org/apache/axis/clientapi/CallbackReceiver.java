@@ -32,7 +32,7 @@ public class CallbackReceiver implements MessageReceiver {
         //TODO find the related message ID and call the callback
         RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders().getRelatesTo();
 
-        String messageID = relatesTO.getAddress();
+        String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackstore.get(messageID);
         AsyncResult result = new AsyncResult();
         result.setResult(messgeCtx.getEnvelope());

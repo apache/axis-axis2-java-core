@@ -38,6 +38,9 @@ public interface AddressingConstants {
     public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE =
             "RelationshipType";
 
+    public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE =
+            "wsa:Reply";
+
     /**
      * Field WSA_TO
      */

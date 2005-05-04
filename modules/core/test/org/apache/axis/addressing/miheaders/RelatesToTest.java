@@ -37,11 +37,11 @@ public class RelatesToTest extends TestCase {
     public void testGetAddress() {
         relatesTo = new RelatesTo(address, relationshipType);
 
-        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getAddress(), address);
+        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getValue(), address);
 
         String newAddress = "www.newRelation.org";
-        relatesTo.setAddress(newAddress);
-        assertEquals("RelatesTo address has not been get/set properly", relatesTo.getAddress(), newAddress);
+        relatesTo.setValue(newAddress);
+        assertEquals("RelatesTo address has not been get/set properly", relatesTo.getValue(), newAddress);
 
     }
 
@@ -57,7 +57,7 @@ public class RelatesToTest extends TestCase {
 
     public void testSingleArgumentConstructor() {
         relatesTo = new RelatesTo(address);
-        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getAddress(), address);
+        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getValue(), address);
 
     }
 

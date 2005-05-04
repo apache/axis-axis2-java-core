@@ -88,7 +88,7 @@ public class EndpointReference {
     }
 
     /**
-     * Method getAddress
+     * Method getValue
      *
      * @return
      */
@@ -97,7 +97,7 @@ public class EndpointReference {
     }
 
     /**
-     * Method setAddress
+     * Method setValue
      *
      * @param address
      */

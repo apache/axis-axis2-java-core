@@ -127,12 +127,12 @@ public class AxisOperation extends WSDLOperationImpl implements
 
 		} else {
 			// So this message is part of an ongoing MEP
-			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getAddress());
+			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
 			
 			if (null == mepContext) {
 				throw new AxisFault(
 						"Cannot relate the message in the operation :"
-								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getAddress());
+								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getValue());
 			}
 
 		}

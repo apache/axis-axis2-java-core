@@ -20,9 +20,9 @@ package org.apache.axis.addressing.miheaders;
  */
 public class RelatesTo {
     /**
-     * Field address
+     * Field value
      */
-    private String address;
+    private String value;
 
     /**
      * Field relationshipType
@@ -35,36 +35,36 @@ public class RelatesTo {
      * @param address
      */
     public RelatesTo(String address) {
-        this.address = address;
+        this.value = address;
     }
 
     /**
      * Constructor RelatesTo
      *
-     * @param address
+     * @param value
      * @param relationshipType
      */
-    public RelatesTo(String address, String relationshipType) {
-        this.address = address;
+    public RelatesTo(String value, String relationshipType) {
+        this.value = value;
         this.relationshipType = relationshipType;
     }
 
     /**
-     * Method getAddress
+     * Method getValue
      *
      * @return
      */
-    public String getAddress() {
-        return address;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Method setAddress
+     * Method setValue
      *
-     * @param address
+     * @param value
      */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

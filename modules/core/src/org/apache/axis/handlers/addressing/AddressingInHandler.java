@@ -39,6 +39,10 @@ public class AddressingInHandler extends AbstractHandler {
     /**
      * Eran Chinthaka (chinthaka@apache.org) Date : 03-04-2005 Time : 14:42
      */
+
+    // this parameter has to be set by the module deployer.
+    private boolean isAddressingOptional = true;
+
     private Log logger = LogFactory.getLog(getClass());
 
 
@@ -48,11 +52,15 @@ public class AddressingInHandler extends AbstractHandler {
         if(header == null){
             return;
         }
+
         ArrayList addressingHeaders = header.getHeaderBolcksWithNSURI(AddressingConstants.WSA_NAMESPACE);
         if (addressingHeaders != null) {
             extractAddressingInformationFromHeaders(header, msgContext.getMessageInformationHeaders(),addressingHeaders);
         } else {
             // no addressing headers present
+            if(!isAddressingOptional){
+                throw new AxisFault("Addressing Handlers should present, but doesn't present in the incoming message !!");
+            }
             logger.debug("No Addressing Headers present in the IN message. Addressing In Handler does nothing.");
         }
     }

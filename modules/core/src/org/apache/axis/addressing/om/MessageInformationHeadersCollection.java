@@ -80,6 +80,7 @@ public class MessageInformationHeadersCollection {
      * @param soapHeader
      */
     public void toOM(SOAPHeader soapHeader) {
+        throw new UnsupportedOperationException();
     }
 
     // ------------------- Setters and Getters --------------------------------------

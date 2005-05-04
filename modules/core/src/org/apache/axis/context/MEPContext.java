@@ -44,5 +44,7 @@ public interface MEPContext {
     public void addMessageContext(MessageContext msgContext) throws AxisFault;
     
     public List getAllMessageContexts();
+
+     public MessageContext getLastInMessageContext();
 }
 
