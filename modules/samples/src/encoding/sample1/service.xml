@@ -1,4 +1,4 @@
-<service name="sample1">
+<service name="">
 
     <parameter name="ServiceClass" locked="xsd:false">encoding.sample1.EchoImpl</parameter>
 

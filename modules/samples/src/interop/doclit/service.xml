@@ -1,4 +1,4 @@
-<service name="doclit">
+<service name="">
 
     <parameter name="ServiceClass" locked="xsd:false">interop.doclit.WSDLInteropTestDocLitPortType</parameter>
 
