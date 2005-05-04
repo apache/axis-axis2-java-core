@@ -45,7 +45,8 @@ public class BasicMEPContext extends AbstractContext implements MEPContext {
 
     private AxisOperation axisOperation;
 
-    public BasicMEPContext(AxisOperation axisOperation) {
+    public BasicMEPContext(AxisOperation axisOperation,ServiceContext serviceContext) {
+        super(serviceContext);
         this.axisOperation = axisOperation;
 
 // Most frequently used MEPs are IN ONLY and IN-OUT MEP. So the number of messagecontext for those MEPs are at most 2. Setting the initial capacity of the arrayList to 2.

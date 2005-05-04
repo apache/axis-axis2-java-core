@@ -20,14 +20,16 @@ import java.util.HashMap;
  *
  * 
  */
-public abstract class AbstractContext implements Serializable{
-    
-    protected transient HashMap nonPersistentMap;
-    protected HashMap persistentMap;
+public abstract class AbstractContext implements Serializable {
 
-    protected AbstractContext() {
+    protected transient final HashMap nonPersistentMap;
+    protected final HashMap persistentMap;
+    private final AbstractContext parent;
+
+    protected AbstractContext(AbstractContext parent) {
         this.persistentMap = new HashMap();
         this.nonPersistentMap = new HashMap();
+        this.parent = parent;
     }
 
     /**
@@ -38,11 +40,11 @@ public abstract class AbstractContext implements Serializable{
      * @param value
      * @param persistent
      */
-    public void put(Object key,Object value,boolean persistent){
-        if (persistent){
-            persistentMap.put(key,value);
-        }else{
-            nonPersistentMap.put(key,value);
+    public void put(Object key, Object value, boolean persistent) {
+        if (persistent) {
+            persistentMap.put(key, value);
+        } else {
+            nonPersistentMap.put(key, value);
         }
     }
 
@@ -52,18 +54,17 @@ public abstract class AbstractContext implements Serializable{
      * @param key
      * @param value
      */
-    public void put(Object key,Object value){
-        this.put(key,value,false);
+    public void put(Object key, Object value) {
+        this.put(key, value, false);
     }
-     /**
-      * Retrieve an object. Default search is done in the non persistent
-      * group
-      * @param key
-      * @return
-      */
-    public Object get(Object key){
-       return this.get(key,false); //todo Do we need to have the default search extended to
-                                         //todo search the persistent map as well
+    /**
+     * Retrieve an object. Default search is done in the non persistent
+     * group
+     * @param key
+     * @return
+     */
+    public Object get(Object key) {
+        return this.get(key, false);
     }
 
     /**
@@ -72,12 +73,17 @@ public abstract class AbstractContext implements Serializable{
      * @param persistent
      * @return
      */
-    public Object get(Object key,boolean persistent){
-        if (persistent){
-            return persistentMap.get(key);
-        }else{
+    public Object get(Object key, boolean persistent) {
+        Object obj;
+        if (persistent) {
+            obj = persistentMap.get(key);
+
+        } else {
             return nonPersistentMap.get(key);
         }
+        if (obj == null && parent != null) {
+            obj = parent.get(key, persistent);
+        }
+        return obj;
     }
-
 }

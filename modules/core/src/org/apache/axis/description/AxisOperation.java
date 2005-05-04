@@ -122,7 +122,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 			//Its a new incomming message so get the factory to create a new
 			// one
 			mepContext = MEPContextFactory.createMEP(this
-					.getMessageExchangePattern(), serverside,this);
+					.getMessageExchangePattern(), serverside,this,msgContext.getServiceContext());
 			
 
 		} else {

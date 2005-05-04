@@ -60,7 +60,7 @@ public class EnginePausingTest extends AbstractEngineTest {
 
         AxisOperation axisOp = new AxisOperation(operationName);
 
-        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,new BasicMEPContext(axisOp));
+        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,new BasicMEPContext(axisOp,null));
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
@@ -108,7 +108,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         phase1.addHandler(new TempHandler(27));
         phases.add(phase1);
         
-        ServiceContext serviceContext = new ServiceContext(service);
+        ServiceContext serviceContext = new ServiceContext(service,engineContext);
         engineContext.addService(serviceContext);
         
         serviceContext.setPhases(phases, EngineConfiguration.INFLOW);

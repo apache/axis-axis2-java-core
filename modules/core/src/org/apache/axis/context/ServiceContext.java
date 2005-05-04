@@ -36,8 +36,8 @@ public class ServiceContext  extends AbstractContext implements PhasesInclude{
     private PhasesInclude phaseInclude;
    
 
-    public ServiceContext(AxisService serviceConfig) {
-        super();
+    public ServiceContext(AxisService serviceConfig,EngineContext engineContext) {
+        super(engineContext);
         this.serviceConfig = serviceConfig;
         this.operationContextMap = new HashMap();
         phaseInclude = new PhasesIncludeImpl();

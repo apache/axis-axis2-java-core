@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
@@ -87,8 +88,8 @@ public class Utils {
         return service;
     }
     
-    public static ServiceContext createServiceContext(AxisService service) throws AxisFault{
-        ServiceContext serviceContext = new ServiceContext(service);
+    public static ServiceContext createServiceContext(AxisService service,EngineContext engineContext) throws AxisFault{
+        ServiceContext serviceContext = new ServiceContext(service,engineContext);
         createExecutionChains(serviceContext);
         return serviceContext;
     }

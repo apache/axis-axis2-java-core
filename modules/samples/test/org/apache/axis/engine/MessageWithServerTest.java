@@ -73,7 +73,7 @@ public class MessageWithServerTest extends TestCase {
         AxisOperation operation = new AxisOperation(operationName);
         service.addOperation(operation);
 
-        UtilServer.deployService(Utils.createServiceContext(service));
+        UtilServer.deployService(Utils.createServiceContext(service,null));
     }
 
     protected void tearDown() throws Exception {

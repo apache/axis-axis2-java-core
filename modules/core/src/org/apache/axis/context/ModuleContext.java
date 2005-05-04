@@ -22,7 +22,8 @@ import org.apache.axis.description.AxisModule;
 public class ModuleContext extends AbstractContext{
     private AxisModule moduleConfig;
     
-    public ModuleContext(AxisModule module){
+    public ModuleContext(AxisModule module,EngineContext engineContext){
+        super(engineContext);
         this.moduleConfig = module;
     }
     /**

@@ -75,7 +75,7 @@ public class ContextBuilder {
 
     public ServiceContext refresh(AxisService service,EngineContext context) throws PhaseException {
         try {
-            ServiceContext serviceContext = new ServiceContext(service);
+            ServiceContext serviceContext = new ServiceContext(service,context);
             PhaseResolver reolve = new PhaseResolver(context.getEngineConfig(),serviceContext);
             context.addService(serviceContext);
             return  serviceContext = reolve.buildchains();

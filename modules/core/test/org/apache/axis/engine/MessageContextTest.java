@@ -35,7 +35,7 @@ public class MessageContextTest extends AbstractTestCase {
     public void testMesssageContext() throws AxisFault {
         EngineConfiguration er = new EngineConfigurationImpl(new AxisGlobal());
         EngineContext engineContext = new EngineContext(er);
-        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicMEPContext(null));
+        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicMEPContext(null,null));
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

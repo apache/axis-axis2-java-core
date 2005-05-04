@@ -3,10 +3,6 @@ package org.apache.axis.handlers.addressing;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
@@ -17,7 +13,11 @@ import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

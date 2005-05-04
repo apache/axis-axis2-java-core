@@ -79,7 +79,7 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
                     EngineConfiguration registry = msgctx.getEngineContext().getEngineConfig();
                     service = registry.getService(serviceName);
                     if (service != null) {
-                        serviceContext = new ServiceContext(service);
+                        serviceContext = new ServiceContext(service,engineContext);
                     }
                 }
                 if (serviceContext != null) {

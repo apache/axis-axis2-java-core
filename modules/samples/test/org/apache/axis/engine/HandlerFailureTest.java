@@ -86,7 +86,7 @@ public class HandlerFailureTest extends TestCase {
         service.addOperation(operation);
 
         UtilServer.start();
-        UtilServer.deployService(Utils.createServiceContext(service));
+        UtilServer.deployService(Utils.createServiceContext(service,null));
         try {
             callTheService();
         } finally {
@@ -121,7 +121,7 @@ public class HandlerFailureTest extends TestCase {
         service.addOperation(operation);
 
         UtilServer.start();
-        UtilServer.deployService(Utils.createServiceContext(service));
+        UtilServer.deployService(Utils.createServiceContext(service,null));
         try {
             callTheService();
         } finally {

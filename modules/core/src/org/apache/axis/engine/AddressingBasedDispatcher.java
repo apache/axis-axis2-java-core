@@ -60,7 +60,7 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
                 EngineContext engineContext = msgctx.getEngineContext();
                 ServiceContext serviceContext = engineContext.getService(service.getName());
                 if (serviceContext == null) {
-                    serviceContext = new ServiceContext(service);
+                    serviceContext = new ServiceContext(service,engineContext);
                 }
                 msgctx.setServiceContext(serviceContext);
                 msgctx.setMessageStyle(service.getStyle());

@@ -57,6 +57,7 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     private PhasesInclude phaseInclude;
     
     public EngineContext(EngineConfiguration registry){
+        super(null);
         this.engineConfig = registry;
         serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();

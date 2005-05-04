@@ -73,7 +73,7 @@ public class TestSendReceive extends TestCase {
         service.addOperation(operation);
 
         UtilServer.start();
-        UtilServer.deployService(Utils.createServiceContext(service));
+        UtilServer.deployService(Utils.createServiceContext(service,null));
     }
 
     protected void tearDown() throws Exception {
