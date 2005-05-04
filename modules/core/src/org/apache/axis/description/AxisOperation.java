@@ -1,9 +1,9 @@
 package org.apache.axis.description;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
@@ -28,8 +28,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 
 	public AxisOperation(){
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
-		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-        this.setComponentProperty(MEP_MAP, new HashMap());
+		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());        
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         modules = new HashMap();
 	}
@@ -124,35 +123,28 @@ public class AxisOperation extends WSDLOperationImpl implements
 			// one
 			mepContext = MEPContextFactory.createMEP(this
 					.getMessageExchangePattern(), serverside,this);
-           
+			
 
 		} else {
 			// So this message is part of an ongoing MEP
-			mepContext = this
-					.getSavedMEPContextFromComponentProperties(msgContext
-							.getRelatesTo().getAddress());
+			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getAddress());
+			
 			if (null == mepContext) {
 				throw new AxisFault(
 						"Cannot relate the message in the operation :"
-								+ this.getName() + " :Invalid RelatedTO value");
+								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getAddress());
 			}
 
 		}
 
-		this.addMEPContext(mepContext, msgContext.getMessageID());
+		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(), mepContext);
 		mepContext.addMessageContext(msgContext);
+		msgContext.setMepContext(mepContext);
 		return mepContext;
 
 	}
 
-	public void addMEPContext(MEPContext mepContext, String messageID) {
-		((Map) this.getComponentProperty(MEP_MAP)).put(messageID, mepContext);
-	}
 
-	private MEPContext getSavedMEPContextFromComponentProperties(String messageID) {
-		return (MEPContext) ((Map) this.getComponentProperty(MEP_MAP)).get(messageID);
-
-	}
 
     public String getMessageReciever() {
         return messageReciever;

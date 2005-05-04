@@ -20,6 +20,7 @@ package org.apache.axis.context;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -38,6 +39,12 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     private Map serviceContextMap;
     private Map sessionContextMap;
     private Map moduleContextMap;
+    
+    /**
+     * Map containing <code>MessageContext</code> to 
+     * <code>MEPContext</code> mapping.
+     */
+    private final Map mepContextMap = new HashMap();
 
     public AxisStorage getStorage() {
         return storage;
@@ -123,6 +130,25 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
      */
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
         phaseInclude.setPhases(phases, flow);
+    }
+    
+    
+    public void addMEPContext(String messageID, MEPContext mepContext){
+    	this.mepContextMap.put(messageID, mepContext);
+    }
+    
+    public MEPContext getMEPContext(String messageID){
+    	return(MEPContext)this.mepContextMap.get(messageID);
+    }
+     
+    public void removeMEP(MEPContext mepContext) throws AxisFault{
+    	if(!mepContext.isComplete())
+    		throw new AxisFault("Illegal attempt to drop the global reference of an incomplete MEPContext");
+    	Iterator iterator = mepContext.getAllMessageContexts().iterator();
+    	while(iterator.hasNext()){
+    		MessageContext msgContext = ((MessageContext)iterator.next());
+    		this.mepContextMap.remove(msgContext.getMessageID());
+    	}
     }
 
 }

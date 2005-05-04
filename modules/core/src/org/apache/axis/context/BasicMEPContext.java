@@ -54,17 +54,21 @@ public class BasicMEPContext extends AbstractContext implements MEPContext {
 	/**
 	 * 
 	 * When a new message is added to the <code>MEPContext</code> the logic
-	 * should be included remove the MEPContext from the MEPMAp of the
-	 * <code>AxisOperation</code>. Example: IN_IN_OUT At the second IN
+	 * should be included remove the MEPContext from the table in the
+	 * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
 	 * message the MEPContext should be removed from the AxisOperation
 	 * 
 	 * @param ctxt
 	 */
-	public void addMessageContext(MessageContext ctxt) {
-		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation
-				.getMessageExchangePattern()))
-			//    		this.axisOperation.removeMEPContext(this);
-			messageContextList.add(ctxt);
+	public void addMessageContext(MessageContext msgContext) throws AxisFault {
+		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation.getMessageExchangePattern())){
+			messageContextList.add(msgContext);				
+		} else if(WSDLConstants.MEP_URI_IN_OUT.equals(this.axisOperation.getMessageExchangePattern())){
+			messageContextList.add(msgContext);			
+		}
+		
+		if(this.isComplete())
+			msgContext.getEngineContext().removeMEP(this);
 
 	}
 
@@ -96,7 +100,7 @@ public class BasicMEPContext extends AbstractContext implements MEPContext {
 			}
 		}
 
-		throw new AxisFault(" Message doennot exist in the current MEP : Invalid MessageID :" + messageID);
+		throw new AxisFault(" Message doesnot exist in the current MEP : Invalid MessageID :" + messageID);
 	}
 
 	/**
@@ -112,5 +116,17 @@ public class BasicMEPContext extends AbstractContext implements MEPContext {
 	 */
 	public void setMepId(String mepId) {
 		MepId = mepId;
+	}
+	
+	public boolean isComplete(){
+		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation.getMessageExchangePattern())){
+			if(1 == this.messageContextList.size())
+				return true;
+		}else if(WSDLConstants.MEP_URI_IN_OUT.equals(this.axisOperation.getMessageExchangePattern())){
+			if(2 == this.messageContextList.size())
+				return true;
+		}
+		
+		return false;
 	}
 }

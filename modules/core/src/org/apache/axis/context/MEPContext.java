@@ -25,6 +25,7 @@ import org.apache.axis.engine.AxisFault;
 public interface MEPContext {
     public String getMepId();
     public void setMepId(String mepId);
+    public boolean isComplete();
 
   
 //    public MessageContext getInMessageContext(String messageID);

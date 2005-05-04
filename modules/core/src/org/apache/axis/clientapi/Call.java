@@ -159,7 +159,7 @@ public class Call {
                 callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
                 messageInfoHeaders.setReplyTo(
                     ListenerManager.replyToEPR(callbackServiceName + "/" + replyToOpName.getLocalPart()));
-                callbackOperation.addMEPContext(msgctx.getMepContext(),messageInfoHeaders.getMessageId());
+                callbackOperation.findMEPContext(msgctx, false);
             }
 
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
