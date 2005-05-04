@@ -177,7 +177,7 @@ public class EchoRawXMLTest extends TestCase {
 
             call.setTo(targetEPR);
             call.setListenerTransport("http", true);
-            call.setOpName(operationName);
+            call.setOperationName(operationName);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {

@@ -81,7 +81,7 @@ public class EchoTest extends TestCase {
             throws Exception {
        
         Call call = new Call();
-        call.setOpName(opName);
+        call.setOperationName(opName);
         call.setTo(targetEPR);
         call.setTransport(Constants.TRANSPORT_HTTP);
         call.setListenerTransport(Constants.TRANSPORT_HTTP,true);

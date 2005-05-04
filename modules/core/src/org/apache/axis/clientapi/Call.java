@@ -1,10 +1,6 @@
 package org.apache.axis.clientapi;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
@@ -16,7 +12,6 @@ import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
 import org.apache.axis.context.BasicMEPContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -30,6 +25,7 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
+import org.apache.wsdl.WSDLDescription;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,34 +39,25 @@ public class Call {
 
     private HashMap properties;
 
-    private String transport = Constants.TRANSPORT_HTTP;
+    private String senderTransport = Constants.TRANSPORT_HTTP;
+    private String Listenertransport = Constants.TRANSPORT_HTTP;
 
     private EngineContext engineContext;
 
-    private EndpointReference replyTo;
-    private String Listenertransport = Constants.TRANSPORT_HTTP;
-
     private boolean useSeparateListener = false;
-    private String callbackServiceName;
 
+    private AxisService callbackService;
     private CallbackReceiver callbackReceiver;
-
-    private QName opName;
-    
-    private QName replyToOpName;
     private AxisOperation axisOperation;
-    private AxisOperation callbackOperation;
-
-
 
     public Call() throws AxisFault {
+        this(new EngineContext(new EngineConfigurationImpl(new AxisGlobal())));
         try {
             //find the deployment mechanism , create
             //a EngineContext .. if the conf file not found
             //deafult one is used
             properties = new HashMap();
-
-            EngineConfiguration registry = new EngineConfigurationImpl(new AxisGlobal());
+            EngineConfiguration registry = engineContext.getEngineConfig();
 
             //This is a hack, initialize the transports for the client side 
             AxisTransportOut httpTransportOut =
@@ -91,7 +78,6 @@ public class Call {
             registry.addTransportIn(new AxisTransportIn(new QName(Constants.TRANSPORT_MAIL)));
             registry.addTransportOut(mailTransportOut);
 
-            this.engineContext = new EngineContext(registry);
             messageInfoHeaders = new MessageInformationHeadersCollection();
             init();
         } catch (ClassNotFoundException e) {
@@ -103,45 +89,34 @@ public class Call {
         }
     }
 
-    public Call(InputStream in) throws AxisFault {
-        properties = new HashMap();
-        //this.engineContext = new EngineContext();
-        init();
-        throw new UnsupportedOperationException("TODO fix this");
-    }
+    public Call(WSDLDescription wsdlDesc, EngineContext engineContext) {
+        messageInfoHeaders = new MessageInformationHeadersCollection();
+        this.properties = new HashMap();
+        this.engineContext = engineContext;
+        if (wsdlDesc != null) {
 
-    public Call(File inFile) throws AxisFault {
-        try {
-            InputStream in = new FileInputStream(inFile);
-
-            properties = new HashMap();
-            //this.engineContext = new EngineContext();
-            init();
-            throw new UnsupportedOperationException("TODO fix this");
-        } catch (FileNotFoundException e) {
-            throw new AxisFault("FileNotFound " + e.getMessage());
         }
     }
 
     public Call(EngineContext engineContext) {
-        this.properties = new HashMap();
-        this.engineContext = engineContext;
+        this(null, engineContext);
     }
 
     public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
-        if(opName == null){
+        if (axisOperation == null) {
             throw new AxisFault("Operation Name must be specified");
         }
-        
+
         EngineConfiguration registry = engineContext.getEngineConfig();
-        if (Constants.TRANSPORT_MAIL.equals(transport)) {
+        if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }
         try {
             MessageSender sender = new MessageSender(engineContext);
 
-            final AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
-            final AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
+            final AxisTransportIn transportIn = registry.getTransportIn(new QName(senderTransport));
+            final AxisTransportOut transportOut =
+                registry.getTransportOut(new QName(senderTransport));
 
             final MessageContext msgctx =
                 new MessageContext(
@@ -150,16 +125,19 @@ public class Call {
                     null,
                     transportIn,
                     transportOut,
-                    new BasicMEPContext(new AxisOperation(opName),null));
-                                
+                    new BasicMEPContext(axisOperation, null));
+
             msgctx.setEnvelope(env);
 
             if (useSeparateListener) {
                 messageInfoHeaders.setMessageId(String.valueOf(System.currentTimeMillis()));
                 callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
                 messageInfoHeaders.setReplyTo(
-                    ListenerManager.replyToEPR(callbackServiceName + "/" + replyToOpName.getLocalPart()));
-                callbackOperation.findMEPContext(msgctx, false);
+                    ListenerManager.replyToEPR(
+                        callbackService.getName().getLocalPart()
+                            + "/"
+                            + axisOperation.getName().getLocalPart()));
+                axisOperation.findMEPContext(msgctx, false);
             }
 
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
@@ -171,8 +149,7 @@ public class Call {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {
-                            MessageContext response =
-                                new MessageContext(msgctx);
+                            MessageContext response = new MessageContext(msgctx);
                             response.setServerSide(false);
 
                             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -198,19 +175,19 @@ public class Call {
     }
 
     public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
-        if(opName == null){
+        if (axisOperation == null) {
             throw new AxisFault("Operation Name must be specified");
         }
 
         EngineConfiguration registry = engineContext.getEngineConfig();
-        if (Constants.TRANSPORT_MAIL.equals(transport)) {
+        if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }
         try {
             MessageSender sender = new MessageSender(engineContext);
 
-            AxisTransportIn transportIn = registry.getTransportIn(new QName(transport));
-            AxisTransportOut transportOut = registry.getTransportOut(new QName(transport));
+            AxisTransportIn transportIn = registry.getTransportIn(new QName(senderTransport));
+            AxisTransportOut transportOut = registry.getTransportOut(new QName(senderTransport));
 
             MessageContext msgctx =
                 new MessageContext(
@@ -219,7 +196,7 @@ public class Call {
                     null,
                     transportIn,
                     transportOut,
-                    new BasicMEPContext(new AxisOperation(opName),null));
+                    new BasicMEPContext(axisOperation, null));
             msgctx.setEnvelope(env);
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 
@@ -241,15 +218,11 @@ public class Call {
         }
     }
 
-    public String getTransport() {
-        return transport;
-    }
-
     public void setTransport(String transport) throws AxisFault {
         if ((Constants.TRANSPORT_HTTP.equals(transport)
             || Constants.TRANSPORT_MAIL.equals(transport)
             || Constants.TRANSPORT_TCP.equals(transport))) {
-            this.transport = transport;
+            this.senderTransport = transport;
         } else {
             throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
         }
@@ -263,29 +236,26 @@ public class Call {
         return properties.get(key);
     }
 
-    private CallbackReceiver getService() {
-        return null;
-
-    }
+ 
 
     /**
      * This method is used to initilize the client side ,
      */
     private void init() throws AxisFault {
-        messageInfoHeaders = new MessageInformationHeadersCollection();
-        AxisService callbackService = new AxisService();
-        callbackServiceName = CallbackReceiver.SERVIC_NAME + System.currentTimeMillis();
-        callbackService.setName(new QName(callbackServiceName));
-        callbackReceiver = new CallbackReceiver();
-        callbackService.setMessageReceiver(callbackReceiver);
 
-        replyToOpName = new QName("callback_op");
-        callbackOperation = new AxisOperation(replyToOpName);
-        callbackService.addOperation(callbackOperation);
-
-        ListenerManager.makeSureStarted();
-
-        ListenerManager.getEngineContext().addService(new ServiceContext(callbackService,null));
+//        AxisService callbackService = new AxisService();
+//        callbackServiceName = CallbackReceiver.SERVIC_NAME + System.currentTimeMillis();
+//        callbackService.setName(new QName(callbackServiceName));
+//        callbackReceiver = new CallbackReceiver();
+//        callbackService.setMessageReceiver(callbackReceiver);
+//
+//        replyToOpName = new QName("callback_op");
+//        callbackOperation = new AxisOperation(replyToOpName);
+//        callbackService.addOperation(callbackOperation);
+//
+//        ListenerManager.makeSureStarted();
+//
+//        ListenerManager.getEngineContext().addService(new ServiceContext(callbackService, null));
 
     }
 
@@ -293,54 +263,7 @@ public class Call {
         ListenerManager.stopAServer();
     }
 
-    /**
-     * @return
-     */
-    public String getAction() {
-        return messageInfoHeaders.getAction();
-    }
-
-    /**
-     * @return
-     */
-    public EndpointReference getFaultTo() {
-        return messageInfoHeaders.getFaultTo();
-    }
-
-    /**
-     * @return
-     */
-    public EndpointReference getFrom() {
-        return messageInfoHeaders.getFrom();
-    }
-
-    /**
-     * @return
-     */
-    public String getMessageId() {
-        return messageInfoHeaders.getMessageId();
-    }
-
-    /**
-     * @return
-     */
-    public RelatesTo getRelatesTo() {
-        return messageInfoHeaders.getRelatesTo();
-    }
-
-    /**
-     * @return
-     */
-    public EndpointReference getReplyTo() {
-        return messageInfoHeaders.getReplyTo();
-    }
-
-    /**
-     * @return
-     */
-    public EndpointReference getTo() {
-        return messageInfoHeaders.getTo();
-    }
+ 
 
     /**
      * @param action
@@ -408,22 +331,19 @@ public class Call {
             this.Listenertransport = Listenertransport;
             this.useSeparateListener = useSeparateListener;
         } else {
-            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
+            throw new AxisFault("Selected transport dose not suppot ( " + senderTransport + " )");
         }
-    }
-
-    /**
-     * @return
-     */
-    public QName getOpName() {
-        return opName;
     }
 
     /**
      * @param name
      */
-    public void setOpName(QName name) {
-        opName = name;
+    public void setOperationName(QName name) {
+        axisOperation = new AxisOperation(name);
+    }
+
+    public void setEndPointURL(String URL) {
+
     }
 
 }
