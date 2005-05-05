@@ -86,6 +86,13 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     }
     
     public ServiceContext getService(QName serviceName){
+    	// change QName to String above
+    	// - look up service name in registry of deployed services (in myself and if not look up in my parent engineConfig
+    	// - if not found error
+    	// - if found, look for reference properties
+    	// - if have reference properties, use ref prop as key to find the servicecontext
+    	// - if no ref props create new servicecontext
+    	// - return servicecontext
         return (ServiceContext)serviceContextMap.get(serviceName);
     
     }
