@@ -16,32 +16,21 @@
 
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -126,22 +115,22 @@ public class DeploymentParser implements DeploymentConstants {
                         dpengine.getEngineconfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
-                    } else if (MESSAGERECEIVER.equals(ST)){
+                    } else if (MESSAGERECEIVER.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount == 2) {
                             String attname = pullparser.getAttributeLocalName(0);
                             String attvalue = pullparser.getAttributeValue(0);
-                            if(MEP.equals(attname)){
+                            if (MEP.equals(attname)) {
                                 String name = attvalue;
                                 attname = pullparser.getAttributeLocalName(1);
                                 attvalue = pullparser.getAttributeValue(1);
-                                if(CLASSNAME.equals(attname)){
+                                if (CLASSNAME.equals(attname)) {
                                     try {
                                         Class messageReceiver = null;
                                         ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
                                         if (attvalue != null && !"".equals(attvalue)) {
                                             messageReceiver = Class.forName(attvalue, true, loader1);
-                                            axisGlobal.addMessageReceiver(name,(MessageReceiver)messageReceiver.newInstance());
+                                            axisGlobal.addMessageReceiver(name, (MessageReceiver) messageReceiver.newInstance());
                                         }
                                     } catch (ClassNotFoundException e) {
                                         throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
@@ -150,11 +139,11 @@ public class DeploymentParser implements DeploymentConstants {
                                     } catch (InstantiationException e) {
                                         throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
                                     }
-                                }  else
+                                } else
                                     throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet) " + attname);
-                            }  else
+                            } else
                                 throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet) " + attname);
-                        }else
+                        } else
                             throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet)");
 
                     } else if (MODULEST.equals(ST)) {
@@ -346,9 +335,9 @@ public class DeploymentParser implements DeploymentConstants {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATQNAME.equals(attname)) {
-                    if(attvalue == null || attvalue.trim().equals("")) {
+                    if (attvalue == null || attvalue.trim().equals("")) {
                         axisService.setName(new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
-                    }  else{
+                    } else {
                         axisService.setName(new QName(attvalue));
                     }
                 } else {
@@ -616,13 +605,13 @@ public class DeploymentParser implements DeploymentConstants {
         //  String name = pullparser.getLocalName();
         AxisOperation operation = new AxisOperation();
         int attribCount = pullparser.getAttributeCount();
-        if (attribCount >0) {  // there should be two attributes
+        if (attribCount > 0) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATTNAME.equals(attname)) {
                     operation.setName(new QName(attvalue));
-                }  else
+                } else
                     throw new DeploymentException("bad attribute in operation " + attname);
             }
         }
@@ -654,18 +643,18 @@ public class DeploymentParser implements DeploymentConstants {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (OUTFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
-                    }else if (MESSAGERECEIVER.equals(ST)){
+                    } else if (MESSAGERECEIVER.equals(ST)) {
                         attribCount = pullparser.getAttributeCount();
-                        if(attribCount > 0){
+                        if (attribCount > 0) {
                             String attname = pullparser.getAttributeLocalName(0);
                             String attvalue = pullparser.getAttributeValue(0);
-                            if(CLASSNAME.equals(attname)){
+                            if (CLASSNAME.equals(attname)) {
                                 try {
                                     Class messageReceiver = null;
                                     ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
                                     if (attvalue != null && !"".equals(attvalue)) {
                                         messageReceiver = Class.forName(attvalue, true, loader1);
-                                        operation.setMessageReciever((MessageReceiver)messageReceiver.newInstance());
+                                        operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
@@ -675,9 +664,9 @@ public class DeploymentParser implements DeploymentConstants {
                                     throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
                                 }
                             } else {
-                                throw new UnsupportedOperationException(attname +   " is not allowed in messageRecievr element");
+                                throw new UnsupportedOperationException(attname + " is not allowed in messageRecievr element");
                             }
-                        }  else {
+                        } else {
                             //todo   if user dose not specify the messageReciever then the defaullt one has to be used
                         }
                     }
@@ -692,7 +681,7 @@ public class DeploymentParser implements DeploymentConstants {
             }
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
-        } catch (AxisFault e){
+        } catch (AxisFault e) {
             throw new DeploymentException("Axis fault , loading module", e);
         }
         return operation;
@@ -747,11 +736,10 @@ public class DeploymentParser implements DeploymentConstants {
                         module.setName(new QName(attvalue));
                         ref_name = true;
                     }
-                }else if (CLASSNAME.equals(attname)) {
+                } else if (CLASSNAME.equals(attname)) {
                     foundClass = true;
                     dpengine.getCurrentFileItem().setModuleClass(attvalue);
-                }
-                else if (REF.equals(attname)) {
+                } else if (REF.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
@@ -964,9 +952,9 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (ATTNAME.equals(attname)) {
-                            if(attvalue.equals(PhaseMetadata.PRE_DISPATCH)){
+                            if (attvalue.equals(PhaseMetadata.PRE_DISPATCH)) {
                                 throw new DeploymentException(attvalue + " is a reserved phase");
-                            }else {
+                            } else {
                                 pahseList.add(attvalue);
                             }
                         }

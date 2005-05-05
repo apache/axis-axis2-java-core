@@ -16,10 +16,6 @@
 
 package org.apache.axis.deployment.repository.utill;
 
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
@@ -29,8 +25,12 @@ import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
 
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 public class ArchiveReader implements DeploymentConstants {
-    
+
     public AxisService createService(String filename) throws DeploymentException {
         WSDL1ToWOMBuilder builder = new WSDL1ToWOMBuilder();
         String strArchive = filename;
@@ -42,7 +42,7 @@ public class ArchiveReader implements DeploymentConstants {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEWSDL)) {
-                    service = (AxisService) builder.build(zin,new AxisDescWSDLComponentFactory());
+                    service = (AxisService) builder.build(zin, new AxisDescWSDLComponentFactory());
                     foundwsdl = true;
                     break;
                 }
@@ -56,6 +56,7 @@ public class ArchiveReader implements DeploymentConstants {
         }
         return service;
     }
+
     /**
      * This method will readServiceArchive the given jar or aar.
      * it take two arguments filename and refereance to DeployEngine

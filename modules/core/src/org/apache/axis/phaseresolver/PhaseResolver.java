@@ -15,26 +15,15 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /**
  * Class PhaseResolver
@@ -86,8 +75,13 @@ public class PhaseResolver {
      * @throws AxisFault
      */
     public ServiceContext buildchains() throws PhaseException, AxisFault {
-        for (int i = 1; i < 5; i++) {
-            buildExcutionChains(i);
+        HashMap operations = axisService.getOperations();
+        Collection col = operations.values();
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            AxisOperation operation = (AxisOperation) iterator.next();
+            for (int i = 1; i < 5; i++) {
+                buildExcutionChains(i, operation);
+            }
         }
         return this.serviceContext;
     }
@@ -103,18 +97,19 @@ public class PhaseResolver {
      * @throws AxisFault
      * @throws PhaseException
      */
-    private void buildExcutionChains(int type)
+    private void buildExcutionChains(int type, AxisOperation operation)
             throws AxisFault, PhaseException {
         int flowtype = type;
         ArrayList allHandlers = new ArrayList();
         AxisModule module;
         Flow flow = null;
-        ArrayList modules = (ArrayList)axisService.getModules();//   (ArrayList)engineConfig.getGlobal().getModules());
-        //Global modules
+        ArrayList modules = (ArrayList) axisService.getModules();
+        ///////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////// GLOBAL HANDLERS ////////////////////////////////////////////////
         for (int i = 0; i < modules.size(); i++) {
             QName name = (QName) modules.get(i);
             module = engineConfig.getModule(name);
-            if(module != null){
+            if (module != null) {
                 switch (flowtype) {
                     case PhaseMetadata.IN_FLOW:
                         {
@@ -144,21 +139,22 @@ public class PhaseResolver {
                          * If the phase property of a handler is pre-dispatch then those handlers
                          * should go to the global chain , to the pre-dispatch phase
                          */
-                        if(PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
+                        if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
                             continue;
                         }
                         if (metadata.getRules().getPhaseName().equals("")) {
-                            metadata.getRules().setPhaseName("service");
+                            metadata.getRules().setPhaseName("global");
                         }
                         allHandlers.add(metadata);
                     }
                 }
             } else {
-                throw new PhaseException("Referred module is NULL " +  name.getLocalPart());
+                throw new PhaseException("Referred module is NULL " + name.getLocalPart());
             }
         }
 
-        // service module handlers
+        ///////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////// SERVICE HANDLERS ////////////////////////////////////////////////
         Collection collection = axisService.getModules();
         Iterator itr = collection.iterator();
         while (itr.hasNext()) {
@@ -194,7 +190,7 @@ public class PhaseResolver {
                      * If the phase property of a handler is pre-dispatch then those handlers
                      * should go to the global chain , to the pre-dispatch phase
                      */
-                    if(PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
+                    if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
                         continue;
                     }
                     if (metadata.getRules().getPhaseName().equals("")) {
@@ -204,40 +200,55 @@ public class PhaseResolver {
                 }
             }
         }
-        switch (flowtype) {
-            case PhaseMetadata.IN_FLOW:
-                {
-                    flow = axisService.getInFlow();
-                    break;
-                }
-            case PhaseMetadata.OUT_FLOW:
-                {
-                    flow = axisService.getOutFlow();
-                    break;
-                }
-            case PhaseMetadata.FAULT_IN_FLOW:
-                {
-                    flow = axisService.getFaultInFlow();
-                    break;
-                }
-            case PhaseMetadata.FAULT_OUT_FLOW:
-                {
-                    flow = axisService.getFaultOutFlow();
-                    break;
-                }
-        }
-        if (flow != null) {
-            for (int j = 0; j < flow.getHandlerCount(); j++) {
-                HandlerMetadata metadata = flow.getHandler(j);
+        ///////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////// OPERATION HANDLERS ////////////////////////////////////////////////
+        Collection opmodule = operation.getModules();
+        Iterator opitr = opmodule.iterator();
+        while (opitr.hasNext()) {
+            QName moduleref = (QName) opitr.next();
+            module = engineConfig.getModule(moduleref);
+            switch (flowtype) {
+                case PhaseMetadata.IN_FLOW:
+                    {
+                        flow = module.getInFlow();
+                        break;
+                    }
+                case PhaseMetadata.OUT_FLOW:
+                    {
+                        flow = module.getOutFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_IN_FLOW:
+                    {
+                        flow = module.getFaultInFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_OUT_FLOW:
+                    {
+                        flow = module.getFaultOutFlow();
+                        break;
+                    }
+            }
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerMetadata metadata = flow.getHandler(j);
 
-                // todo change this in properway
-                if (metadata.getRules().getPhaseName().equals("")) {
-                    metadata.getRules().setPhaseName("service");
+                    /**
+                     * If the phase property of a handler is pre-dispatch then those handlers
+                     * should go to the global chain , to the pre-dispatch phase
+                     */
+                    if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
+                        continue;
+                    }
+                    if (metadata.getRules().getPhaseName().equals("")) {
+                        metadata.getRules().setPhaseName("service");
+                    }
+                    allHandlers.add(metadata);
                 }
-                allHandlers.add(metadata);
             }
         }
-        phaseHolder = new PhaseHolder(engineConfig, axisService, serviceContext);
+
+        phaseHolder = new PhaseHolder(engineConfig, operation);
         phaseHolder.setFlowType(flowtype);
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerMetadata handlerMetaData =
@@ -360,10 +371,10 @@ public class PhaseResolver {
         QName moduleName;
         AxisModule module;
         Flow flow = null;
-        for (int type = 1; type < 4; type++) {
+        for (int type = 1; type < 5; type++) {
             phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
-            Collection col = ((EngineConfigurationImpl)engineConfig).getModules().values();
+            Collection col = ((EngineConfigurationImpl) engineConfig).getModules().values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 AxisModule axismodule = (AxisModule) iterator.next();
                 switch (type) {
@@ -395,9 +406,9 @@ public class PhaseResolver {
                          * If the phase property of a handler is pre-dispatch then those handlers
                          * should go to the global chain , to the pre-dispatch phase
                          */
-                        if(PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
+                        if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
                             phaseHolder.addHandler(metadata);
-                        }  else {
+                        } else {
                             continue;
                         }
                     }
@@ -432,9 +443,9 @@ public class PhaseResolver {
                 if (flow != null) {
                     for (int j = 0; j < flow.getHandlerCount(); j++) {
                         HandlerMetadata metadata = flow.getHandler(j);
-                        if(! PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())){
+                        if (!PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
                             phaseHolder.addHandler(metadata);
-                        }  else {
+                        } else {
                             continue;
                         }
                     }

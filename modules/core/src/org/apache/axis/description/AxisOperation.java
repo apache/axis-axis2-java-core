@@ -18,7 +18,7 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
  *
  */
 public class AxisOperation extends WSDLOperationImpl implements
-		ParameterInclude, WSDLOperation,DescriptionConstants {
+		ParameterInclude, WSDLOperation,DescriptionConstants ,PhasesInclude{
 
 
 
@@ -28,6 +28,7 @@ public class AxisOperation extends WSDLOperationImpl implements
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());        
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
+        this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
 	}
 	
 	public AxisOperation(QName name){
@@ -153,5 +154,31 @@ public class AxisOperation extends WSDLOperationImpl implements
         this.messageReceiver = messageReceiver;
     }
 
+   public void setPhases(ArrayList phases, int flow) throws AxisFault {
+        if (phases == null) {
+            return;
+        }
+        PhasesIncludeImpl phaseInclude =
+                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
+        phaseInclude.setPhases(phases, flow);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis.description.PhasesInclude#getPhases(int)
+     */
+
+    /**
+     * Method getPhases
+     *
+     * @param flow
+     * @return
+     * @throws AxisFault
+     */
+    public ArrayList getPhases(int flow) throws AxisFault {
+        PhasesIncludeImpl phaseInclude =
+                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
+        return (ArrayList) phaseInclude.getPhases(flow);
+    }
 }
 

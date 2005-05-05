@@ -15,9 +15,9 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-
 import org.apache.axis.description.HandlerMetadata;
+
+import java.util.ArrayList;
 
 /**
  * Class PhaseMetadata
