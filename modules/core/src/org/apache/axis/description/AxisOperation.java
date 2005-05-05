@@ -112,33 +112,35 @@ public class AxisOperation extends WSDLOperationImpl implements
 	 */
 	public OperationContext findMEPContext(MessageContext msgContext, boolean serverside)
 			throws AxisFault {
-
-		OperationContext mepContext = null;
-
-
-		if (null == msgContext.getRelatesTo()) {
-			//Its a new incomming message so get the factory to create a new
-			// one
-			mepContext = MEPContextFactory.createMEP(this
-					.getMessageExchangePattern(), serverside,this,msgContext.getServiceContext());
-			
-
-		} else {
-			// So this message is part of an ongoing MEP
-			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
-			
-			if (null == mepContext) {
-				throw new AxisFault(
-						"Cannot relate the message in the operation :"
-								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getValue());
-			}
-
-		}
-
-		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(), mepContext);
-		mepContext.addMessageContext(msgContext);
-		msgContext.setMepContext(mepContext);
-		return mepContext;
+          //TODO : Chathura Fix me
+        throw new UnsupportedOperationException();
+        
+//		OperationContext mepContext = null;
+//
+//
+//		if (null == msgContext.getRelatesTo()) {
+//			//Its a new incomming message so get the factory to create a new
+//			// one
+//			mepContext = MEPContextFactory.createMEP(this
+//					.getMessageExchangePattern(), serverside,this,msgContext.getServiceContext());
+//
+//
+//		} else {
+//			// So this message is part of an ongoing MEP
+//			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
+//
+//			if (null == mepContext) {
+//				throw new AxisFault(
+//						"Cannot relate the message in the operation :"
+//								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getValue());
+//			}
+//
+//		}
+//
+//		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(), mepContext);
+//		mepContext.addMessageContext(msgContext);
+//		msgContext.setMepContext(mepContext);
+//		return mepContext;
 
 	}
 

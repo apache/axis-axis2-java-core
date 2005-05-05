@@ -106,6 +106,8 @@ public class BasicOperationContext extends AbstractContext implements OperationC
 
     public void addMessageContext(String messageLabel, MessageContext msgContext) throws AxisFault {
         // TODO : Chathura
+        throw new UnsupportedOperationException();
+        
     }
 
     /**
@@ -128,10 +130,16 @@ public class BasicOperationContext extends AbstractContext implements OperationC
      * @return
      */
     public MessageContext getLastInMessageContext(){
-        return null;
+        throw new UnsupportedOperationException();
+
     }
-	
-	public boolean isComplete(){
+
+    public void cleanup() throws AxisFault {
+        //TODO Chathura
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isComplete(){
 		if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation.getMessageExchangePattern())){
 			if(1 == this.messageContextList.size())
 				return true;

@@ -25,4 +25,5 @@ public interface OperationContext {
     public MessageContext getMessageContext(String messageLabel) throws AxisFault;
     public void addMessageContext(String messageLabel, MessageContext msgContext) throws AxisFault;
     public MessageContext getLastInMessageContext();
+    public void cleanup() throws AxisFault;
 }

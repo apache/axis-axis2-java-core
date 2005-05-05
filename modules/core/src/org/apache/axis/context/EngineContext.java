@@ -145,13 +145,13 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     }
      
     public void removeMEP(OperationContext mepContext) throws AxisFault{
-    	if(!mepContext.isComplete())
-    		throw new AxisFault("Illegal attempt to drop the global reference of an incomplete MEPContext");
-    	Iterator iterator = mepContext.getAllMessageContexts().iterator();
-    	while(iterator.hasNext()){
-    		MessageContext msgContext = ((MessageContext)iterator.next());
-    		this.mepContextMap.remove(msgContext.getMessageID());
-    	}
+//    	if(!mepContext.isComplete())
+//    		throw new AxisFault("Illegal attempt to drop the global reference of an incomplete MEPContext");
+//    	Iterator iterator = mepContext.getAllMessageContexts().iterator();
+//    	while(iterator.hasNext()){
+//    		MessageContext msgContext = ((MessageContext)iterator.next());
+//    		this.mepContextMap.remove(msgContext.getMessageID());
+//    	}
     }
 
 }
