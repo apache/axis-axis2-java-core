@@ -7,7 +7,7 @@ import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.ServiceName;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;

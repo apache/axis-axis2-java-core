@@ -18,7 +18,7 @@ package org.apache.axis.engine;
 import java.io.File;
 import java.io.InputStream;
 
-import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.MessageContext;
