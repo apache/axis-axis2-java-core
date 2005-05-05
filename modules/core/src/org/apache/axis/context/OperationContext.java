@@ -160,4 +160,10 @@ public class OperationContext extends AbstractContext {
     public ServiceContext getServiceContext(){
         return (ServiceContext)super.parent;
     }
+	/**
+	 * @return Returns the axisOperation.
+	 */
+	public AxisOperation getAxisOperation() {
+		return axisOperation;
+	}
 }
