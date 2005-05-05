@@ -9,10 +9,14 @@
 
     <outflow/>
     <INfaultflow>
-        <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler"/>
+        <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler">
+             <order phase="service"/>
+        </handler>
     </INfaultflow>
     <Outfaultflow>
-        <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler"/>
+        <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler">
+             <order phase="service"/>
+        </handler>
     </Outfaultflow>
 
     <operation name="echoString">

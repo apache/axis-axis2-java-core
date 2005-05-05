@@ -41,6 +41,7 @@
     </INfaultflow>
     <Outfaultflow>
         <handler name="h4" class="Handler2">
+             <order phase="service"/>
         </handler>
 
         <handler name="h5" class="Handler2">

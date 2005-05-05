@@ -363,29 +363,28 @@ public class PhaseResolver {
         for (int type = 1; type < 4; type++) {
             phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
-            List globalModule = (List)((EngineConfigurationImpl)engineConfig).getModules().values();
-            int gcount =  globalModule.size();
-            for (int intA = 0; intA < gcount; intA++) {
-                module = (AxisModule) globalModule.get(intA);
+            Collection col = ((EngineConfigurationImpl)engineConfig).getModules().values();
+            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+                AxisModule axismodule = (AxisModule) iterator.next();
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {
-                            flow = module.getInFlow();
+                            flow = axismodule.getInFlow();
                             break;
                         }
                     case PhaseMetadata.OUT_FLOW:
                         {
-                            flow = module.getOutFlow();
+                            flow = axismodule.getOutFlow();
                             break;
                         }
                     case PhaseMetadata.FAULT_IN_FLOW:
                         {
-                            flow = module.getFaultInFlow();
+                            flow = axismodule.getFaultInFlow();
                             break;
                         }
                     case PhaseMetadata.FAULT_OUT_FLOW:
                         {
-                            flow = module.getFaultOutFlow();
+                            flow = axismodule.getFaultOutFlow();
                             break;
                         }
                 }
