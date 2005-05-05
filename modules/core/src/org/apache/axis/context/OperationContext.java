@@ -18,12 +18,12 @@ package org.apache.axis.context;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An OperationContext represents a running "instance" of an operation. This

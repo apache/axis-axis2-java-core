@@ -15,18 +15,20 @@
  */
 package org.apache.axis.engine;
 
+import org.apache.axis.context.ContextBuilder;
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.deployment.DeploymentException;
 
 /**
  * Interface EngineContextFactory
  */
-public interface EngineContextFactory {
-    /**
-     * Method createContextBuilder
-     *
-     * @param file
-     * @return
-     * @throws AxisFault
-     */
-    public EngineContext createContextBuilder(String file) throws AxisFault;
+public class EngineContextFactory {
+     public EngineContext createContextBuilder(String file) throws AxisFault {
+        try {
+            ContextBuilder builder = new ContextBuilder();
+            return builder.buildEngineContext(file);
+        } catch (DeploymentException e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
 }

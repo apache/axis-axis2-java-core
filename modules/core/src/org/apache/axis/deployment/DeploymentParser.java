@@ -39,9 +39,9 @@ import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
-import org.apache.axis.phaseresolver.PhaseMetadata;
 
 
 /**

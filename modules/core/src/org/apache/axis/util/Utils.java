@@ -15,8 +15,6 @@
  */
 package org.apache.axis.util;
 
-import java.util.ArrayList;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;

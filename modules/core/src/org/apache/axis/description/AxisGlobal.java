@@ -15,14 +15,14 @@
 */
 package org.apache.axis.description;
 
-import org.apache.axis.engine.MessageReceiver;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import org.apache.axis.engine.MessageReceiver;
 
 /**
  * <p>This holds the information shown in the global scope. The information are all

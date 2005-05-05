@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;

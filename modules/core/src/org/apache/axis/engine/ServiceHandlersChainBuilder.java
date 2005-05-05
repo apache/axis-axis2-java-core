@@ -18,17 +18,11 @@
  */
 package org.apache.axis.engine;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.handlers.AbstractHandler;
-import org.apache.axis.modules.Module;
 
 public class ServiceHandlersChainBuilder extends AbstractHandler {
     
