@@ -37,7 +37,7 @@ import java.util.List;
  * @author chathura@opensource.lk
  */
 
-public class BasicMEPContext extends AbstractContext implements MEPContext {
+public class BasicMEPContext extends AbstractContext implements OperationContext {
 
     private ArrayList messageContextList;
 

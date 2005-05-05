@@ -99,7 +99,7 @@ public class MessageContext {
 
     private AxisOperation operationConfig;
     
-    private MEPContext mepContext;
+    private OperationContext mepContext;
 
     private AxisTransportIn transportIn;
 
@@ -185,7 +185,7 @@ public class MessageContext {
         SessionContext sessionContext,
         AxisTransportIn transportIn,
         AxisTransportOut transportOut,
-        MEPContext mepContext)
+        OperationContext mepContext)
         throws AxisFault {
         this(engineContext,initialProperties,sessionContext,transportIn,transportOut);
         this.mepContext = mepContext ;
@@ -547,14 +547,14 @@ public class MessageContext {
     /**
      * @return
      */
-    public MEPContext getMepContext() {
+    public OperationContext getMepContext() {
         return mepContext;
     }
 
     /**
      * @param context
      */
-    public void setMepContext(MEPContext context) {
+    public void setMepContext(OperationContext context) {
         mepContext = context;
     }
 

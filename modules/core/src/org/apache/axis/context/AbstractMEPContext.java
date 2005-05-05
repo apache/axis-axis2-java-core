@@ -28,7 +28,7 @@ import java.util.Map;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public abstract class AbstractMEPContext implements MEPContext {
+public abstract class AbstractMEPContext implements OperationContext {
     protected Map inMessageContextMap;
     protected Map outMessageContextMap;
     protected boolean serverSide = true;

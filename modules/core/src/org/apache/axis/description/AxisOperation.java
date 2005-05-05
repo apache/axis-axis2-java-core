@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.MEPContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.MEPContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -110,10 +110,10 @@ public class AxisOperation extends WSDLOperationImpl implements
 	 * @param msgContext
 	 * @return
 	 */
-	public MEPContext findMEPContext(MessageContext msgContext, boolean serverside)
+	public OperationContext findMEPContext(MessageContext msgContext, boolean serverside)
 			throws AxisFault {
 
-		MEPContext mepContext = null;
+		OperationContext mepContext = null;
 
 
 		if (null == msgContext.getRelatesTo()) {
