@@ -68,6 +68,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser) {
         super(parser);
+        soapFactory = OMAbstractFactory.getSOAP11Factory();
         identifySOAPVersion();
 
         parseHeaders();
