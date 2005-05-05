@@ -27,7 +27,6 @@ import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.wsdl.WSDLService;
 
 /**
  * The palce where all the service specific states are kept.
@@ -36,27 +35,6 @@ import org.apache.wsdl.WSDLService;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext {
-
-    /**
-     * Field messageStyle
-     */
-    private String messageStyle = WSDLService.STYLE_RPC;
-
-    /**
-     * Follwing are the defined properties that are stored in the message Context
-     */
-    public static final String USER_NAME = "USER";
-
-    /**
-     * Field PASSWORD
-     */
-    public static final String PASSWORD = "PASSWD";
-
-    /**
-     * Field SOAP_ACTION
-     */
-    public static final String SOAP_ACTION = "SOAP_ACTION";
-
     /**
      * Field TRANSPORT_WRITER
      */
@@ -66,11 +44,6 @@ public class MessageContext {
      * Field TRANSPORT_READER
      */
     public static final String TRANSPORT_READER = "TRANSPORT_READER";
-
-    /**
-     * Field TRANSPORT_IN
-     */
-    public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
     /**
      * Field TRANSPORT_SUCCEED
@@ -89,7 +62,7 @@ public class MessageContext {
      * information is present in the SOAP header.
      */
 
-    MessageInformationHeadersCollection messageInformationHeaders;
+    private MessageInformationHeadersCollection messageInformationHeaders;
 
     private EngineContext engineContext;
 
@@ -98,7 +71,7 @@ public class MessageContext {
     private ServiceContext serviceContext;
 
     private AxisOperation operationConfig;
-    
+
     private OperationContext mepContext;
 
     private AxisTransportIn transportIn;
@@ -150,7 +123,7 @@ public class MessageContext {
     private boolean newThreadRequired = false;
 
     private boolean paused = false;
-    
+
     public boolean outPutWritten = false;
 
     public MessageContext(MessageContext oldMessageContext) throws AxisFault {
@@ -159,15 +132,17 @@ public class MessageContext {
             oldMessageContext.getProperties(),
             oldMessageContext.getSessionContext(),
             oldMessageContext.getTransportIn(),
-            oldMessageContext.getTransportOut(),oldMessageContext.getMepContext());
-            
-        this.messageInformationHeaders = new MessageInformationHeadersCollection();    
-        MessageInformationHeadersCollection oldMessageInfoHeaders = oldMessageContext.getMessageInformationHeaders();
-        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo()) ;  
+            oldMessageContext.getTransportOut(),
+            oldMessageContext.getMepContext());
+
+        this.messageInformationHeaders = new MessageInformationHeadersCollection();
+        MessageInformationHeadersCollection oldMessageInfoHeaders =
+            oldMessageContext.getMessageInformationHeaders();
+        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
         messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
         messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
         messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
-       
+
         this.serverSide = oldMessageContext.isServerSide();
         this.serviceContext = oldMessageContext.getServiceContext();
 
@@ -187,11 +162,11 @@ public class MessageContext {
         AxisTransportOut transportOut,
         OperationContext mepContext)
         throws AxisFault {
-        this(engineContext,initialProperties,sessionContext,transportIn,transportOut);
-        this.mepContext = mepContext ;
+        this(engineContext, initialProperties, sessionContext, transportIn, transportOut);
+        this.mepContext = mepContext;
 
     }
-    
+
     public MessageContext(
         EngineContext engineContext,
         Map initialProperties,
@@ -408,22 +383,6 @@ public class MessageContext {
     }
 
     /**
-     * @return
-     */
-    public String getMessageStyle() {
-        return messageStyle;
-    }
-
-    /**
-     * @param i
-     */
-    public void setMessageStyle(String i) {
-        if (i != null) {
-            messageStyle = i;
-        }
-    }
-
-    /**
      * Method getExecutionChain
      *
      * @return
@@ -432,9 +391,9 @@ public class MessageContext {
         return this.chain;
     }
 
-     /**
-     * @return
-     */
+    /**
+    * @return
+    */
     public Map getProperties() {
         return properties;
     }
@@ -513,8 +472,6 @@ public class MessageContext {
     public void setEngineContext(EngineContext context) {
         engineContext = context;
     }
-
- 
 
     /**
      * @return

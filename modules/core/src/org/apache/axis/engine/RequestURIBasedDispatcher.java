@@ -93,8 +93,6 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
                     }
 
                     msgctx.setServiceContext(serviceContext);
-                    msgctx.setMessageStyle(serviceContext.getServiceConfig().getStyle());
-
                 }
 
             }

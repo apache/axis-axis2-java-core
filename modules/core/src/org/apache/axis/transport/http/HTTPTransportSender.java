@@ -83,7 +83,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         MessageContext msgContext,
         int contentLength)
         throws IOException {
-        Object soapAction = msgContext.getProperty(MessageContext.SOAP_ACTION);
+        Object soapAction = msgContext.getWSAAction();
         String soapActionString = soapAction == null ? "" : soapAction.toString();
         StringBuffer buf = new StringBuffer();
         buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");

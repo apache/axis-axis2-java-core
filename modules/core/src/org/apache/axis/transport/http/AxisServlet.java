@@ -43,9 +43,7 @@ import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineContextFactory;
-import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
@@ -162,8 +160,7 @@ public class AxisServlet extends HttpServlet {
             String soapActionString =
                     req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             if (soapActionString != null) {
-                msgContext.setProperty(MessageContext.SOAP_ACTION,
-                        soapActionString);
+                msgContext.setWSAAction(soapActionString);
             }
             XMLStreamReader reader =
                     XMLInputFactory.newInstance().createXMLStreamReader(

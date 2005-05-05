@@ -92,8 +92,9 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
                 OMElement parmeter = null;
                 SOAPEnvelope envelope = null;
                 MessageContext msgContext1 = new MessageContext(msgContext);
+                String style = msgContext.getoperationConfig().getStyle();
 
-                if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
+                if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;
                     Object[] parms = new Object[] { parmeter };
 
@@ -102,7 +103,7 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
                     envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
-                } else if (WSDLService.STYLE_RPC.equals(msgContext.getMessageStyle())) {
+                } else if (WSDLService.STYLE_RPC.equals(style)) {
                     parmeter = methodElement.getFirstElement();
                     Object[] parms = new Object[] { parmeter };
 

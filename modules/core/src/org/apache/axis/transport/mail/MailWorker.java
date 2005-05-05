@@ -16,21 +16,9 @@
 
 package org.apache.axis.transport.mail;
 
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.smtp.SMTPClient;
-import org.apache.commons.net.smtp.SMTPReply;
+import java.io.ByteArrayInputStream;
+import java.io.Writer;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -39,9 +27,21 @@ import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.Writer;
-import java.util.Properties;
+
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.smtp.SMTPClient;
+import org.apache.commons.net.smtp.SMTPReply;
 
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
@@ -130,7 +130,7 @@ public class MailWorker implements Runnable {
             if (soapActionString != null) {
                 //msgContext.setUseSOAPAction(true); Not present CT
                 // 07-Feb-2005
-                msgContext.setProperty(MessageContext.SOAP_ACTION,
+                msgContext.setWSAAction(
                         soapActionString);
             }
 

@@ -28,9 +28,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportReceiver;
@@ -96,8 +94,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
             boolean serverSide = msgContext.isServerSide();
             Map map = parseTheHeaders(in, serverSide);
             if (serverSide) {
-                msgContext.setProperty(
-                    MessageContext.SOAP_ACTION,
+                msgContext.setWSAAction((String)
                     map.get(HTTPConstants.HEADER_SOAP_ACTION));
 
                 String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
