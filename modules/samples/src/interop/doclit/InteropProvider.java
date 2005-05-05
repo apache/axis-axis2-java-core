@@ -79,7 +79,7 @@ public class InteropProvider extends SimpleJavaProvider {
 
     public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
         try {
-            if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
+            if (WSDLService.STYLE_DOC.equals(msgContext.getoperationConfig().getStyle())) {
                 SOAPBody body = msgContext.getEnvelope().getBody();
                 XMLStreamReader xpp = body.getXMLStreamReader();
 
@@ -110,7 +110,7 @@ public class InteropProvider extends SimpleJavaProvider {
                 }
 
 
-                AxisService service = msgContext.getServiceContext().getServiceConfig();
+                AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
                 if (operationName != null) {
                     AxisOperation op = service.getOperation(operationName);
                     if (op != null) {

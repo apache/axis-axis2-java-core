@@ -39,7 +39,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver{
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
-            AxisService service = msgContext.getServiceContext().getServiceConfig();
+            AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if(implInfoParam != null){
@@ -62,7 +62,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver{
       * @throws AxisFault
       */
      protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-         AxisService service = msgContext.getServiceContext().getServiceConfig();
+         AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
          
          Parameter scopeParam = service.getParameter(SCOPE); 
          String scope = Constants.MESSAGE_SCOPE;  

@@ -50,46 +50,46 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-        if (msgctx.getServiceContext() == null) {
-            EndpointReference toEPR = msgctx.getTo();
-            QName serviceName = new QName(toEPR.getAddress());
-            AxisService service =
-                msgctx.getEngineContext().getEngineConfig().getService(serviceName);
-
-            if (service != null) {
-                EngineContext engineContext = msgctx.getEngineContext();
-                ServiceContext serviceContext = engineContext.getService(service.getName());
-                if (serviceContext == null) {
-                    serviceContext = new ServiceContext(service,engineContext);
-                }
-                msgctx.setServiceContext(serviceContext);
-                // let add the Handlers
-                ExecutionChain chain = msgctx.getExecutionChain();
-                chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
-
-            } else {
-                throw new AxisFault("No service found under the " + toEPR.getAddress());
-            }
-
-        }
-
-        if (msgctx.getoperationConfig() == null) {
-            AxisService service = msgctx.getServiceContext().getServiceConfig();
-            String action = (String) msgctx.getWSAAction();
-            if (action != null) {
-                QName operationName = new QName(action);
-                AxisOperation op = service.getOperation(operationName);
-                if (op != null) {
-                    msgctx.setOperationConfig(op);
-                } else{
-                    throw new AxisFault("No Operation named "+ operationName + " Not found" );
-                }
-                //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
-            } else {
-                throw new AxisFault("Operation not found, WSA Action is Null");
-            }
-
-        }
+//        if (msgctx.getServiceContext() == null) {
+//            EndpointReference toEPR = msgctx.getTo();
+//            QName serviceName = new QName(toEPR.getAddress());
+//            AxisService service =
+//                msgctx.getEngineContext().getEngineConfig().getService(serviceName);
+//
+//            if (service != null) {
+//                EngineContext engineContext = msgctx.getEngineContext();
+//                ServiceContext serviceContext = engineContext.getService(service.getName());
+//                if (serviceContext == null) {
+//                    serviceContext = new ServiceContext(service,engineContext);
+//                }
+//                msgctx.setServiceContext(serviceContext);
+//                // let add the Handlers
+//                ExecutionChain chain = msgctx.getExecutionChain();
+//                chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
+//
+//            } else {
+//                throw new AxisFault("No service found under the " + toEPR.getAddress());
+//            }
+//
+//        }
+//
+//        if (msgctx.getoperationConfig() == null) {
+//            AxisService service = msgctx.getServiceContext().getServiceConfig();
+//            String action = (String) msgctx.getWSAAction();
+//            if (action != null) {
+//                QName operationName = new QName(action);
+//                AxisOperation op = service.getOperation(operationName);
+//                if (op != null) {
+//                    msgctx.setOperationConfig(op);
+//                } else{
+//                    throw new AxisFault("No Operation named "+ operationName + " Not found" );
+//                }
+//                //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
+//            } else {
+//                throw new AxisFault("Operation not found, WSA Action is Null");
+//            }
+//
+//        }
 
     }
 }

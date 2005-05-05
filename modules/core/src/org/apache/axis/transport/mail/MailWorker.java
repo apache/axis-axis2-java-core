@@ -110,10 +110,7 @@ public class MailWorker implements Runnable {
 
         // prepare request (do as much as possible while waiting for the
         // next connection).
-        try {
-            msgContext.setServiceContext(null);
-        } catch (Exception e) {
-        }
+ 
         //msgContext.setResponseMessage(null);
         //msgContext.reset();
         // msgContext.setTransport(new AxisTransport(transportName)); There is

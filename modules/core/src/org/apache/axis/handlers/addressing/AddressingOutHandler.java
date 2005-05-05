@@ -60,7 +60,7 @@ public class AddressingOutHandler
             return;
         }
 
-        MessageContext lastInMessageContext = msgContext.getMepContext().getLastInMessageContext();
+        MessageContext lastInMessageContext = msgContext.getOperationContext().getLastInMessageContext();
 
 
         MessageInformationHeadersCollection messageInformationHeaders =

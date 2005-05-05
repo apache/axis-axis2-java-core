@@ -61,13 +61,13 @@ public class AxisEngine {
      */
     public void send(MessageContext context) throws AxisFault {
         try {
-            if(context.getMepContext() == null){
+            if(context.getOperationContext() == null){
                 throw new AxisFault("Out flow must have a MEPContext set on the MessageContext");
             }
             
             
             ExecutionChain chain = context.getExecutionChain();
-            ServiceContext serviceContext = context.getServiceContext();
+            ServiceContext serviceContext = context.getOperationContext().getServiceContext();;
 
             /*
              * There is a two cases, at the server side(response) / client side
@@ -211,7 +211,7 @@ public class AxisEngine {
                     context.getProperties(),
                     context.getSessionContext(),
                     context.getTransportIn(),
-                    context.getTransportOut(),context.getMepContext());
+                    context.getTransportOut(),context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
             SOAPEnvelope envelope =
@@ -225,7 +225,7 @@ public class AxisEngine {
 
             ExecutionChain chain = faultContext.getExecutionChain();
 
-            ServiceContext serviceContext = context.getServiceContext();
+            ServiceContext serviceContext = context.getOperationContext().getServiceContext();
             if (serviceContext != null) {
                 chain.addPhases(
                     serviceContext.getPhases(

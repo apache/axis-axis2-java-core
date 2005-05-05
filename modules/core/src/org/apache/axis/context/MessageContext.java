@@ -35,7 +35,7 @@ import org.apache.axis.om.SOAPEnvelope;
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
  */
-public class MessageContext {
+public class MessageContext extends AbstractContext {
     /**
      * Field TRANSPORT_WRITER
      */
@@ -69,11 +69,11 @@ public class MessageContext {
 
     private final ExecutionChain chain;
 
-    private ServiceContext serviceContext;
+    //    private ServiceContext serviceContext;
 
     private AxisOperation operationConfig;
 
-    private OperationContext mepContext;
+    private OperationContext operationContext;
 
     private AxisTransportIn transportIn;
 
@@ -134,7 +134,7 @@ public class MessageContext {
             oldMessageContext.getSessionContext(),
             oldMessageContext.getTransportIn(),
             oldMessageContext.getTransportOut(),
-            oldMessageContext.getMepContext());
+            oldMessageContext.getOperationContext());
 
         this.messageInformationHeaders = new MessageInformationHeadersCollection();
         MessageInformationHeadersCollection oldMessageInfoHeaders =
@@ -145,8 +145,6 @@ public class MessageContext {
         messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
 
         this.serverSide = oldMessageContext.isServerSide();
-        this.serviceContext = oldMessageContext.getServiceContext();
-
     }
 
     /**
@@ -164,7 +162,7 @@ public class MessageContext {
         OperationContext mepContext)
         throws AxisFault {
         this(engineContext, initialProperties, sessionContext, transportIn, transportOut);
-        this.mepContext = mepContext;
+        this.operationContext = mepContext;
 
     }
 
@@ -175,6 +173,7 @@ public class MessageContext {
         AxisTransportIn transportIn,
         AxisTransportOut transportOut)
         throws AxisFault {
+        super(null);
         this.engineContext = engineContext;
         if (sessionContext == null) {
             this.sessionContext = new SimpleSessionContext();
@@ -482,13 +481,6 @@ public class MessageContext {
     }
 
     /**
-     * @return
-     */
-    public ServiceContext getServiceContext() {
-        return serviceContext;
-    }
-
-    /**
      * @param context
      */
     public void setOperationConfig(AxisOperation context) {
@@ -496,24 +488,17 @@ public class MessageContext {
     }
 
     /**
-     * @param context
-     */
-    public void setServiceContext(ServiceContext context) {
-        serviceContext = context;
-    }
-
-    /**
      * @return
      */
-    public OperationContext getMepContext() {
-        return mepContext;
+    public OperationContext getOperationContext() {
+        return operationContext;
     }
 
     /**
      * @param context
      */
     public void setMepContext(OperationContext context) {
-        mepContext = context;
+        operationContext = context;
     }
 
     /**

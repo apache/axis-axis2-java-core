@@ -24,7 +24,7 @@ public abstract class AbstractContext implements Serializable {
 
     protected transient final HashMap nonPersistentMap;
     protected final HashMap persistentMap;
-    private final AbstractContext parent;
+    protected final AbstractContext parent;
 
     protected AbstractContext(AbstractContext parent) {
         this.persistentMap = new HashMap();

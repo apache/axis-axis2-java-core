@@ -43,7 +43,7 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
             msgContext.setMepContext(axisOp.findMEPContext(msgContext,msgContext.isServerSide()));
         }
         
-        ServiceContext serviceContext = msgContext.getServiceContext();
+        ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
         if (serviceContext != null) {
             // let add the Handlers
             ExecutionChain chain = msgContext.getExecutionChain();

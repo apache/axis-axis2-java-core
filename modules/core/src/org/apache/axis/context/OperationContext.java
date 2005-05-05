@@ -150,4 +150,7 @@ public class OperationContext extends AbstractContext {
 
 		return false;
 	}
+    public ServiceContext getServiceContext(){
+        return (ServiceContext)super.parent;
+    }
 }
