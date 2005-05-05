@@ -22,9 +22,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
@@ -33,6 +33,7 @@ import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
@@ -67,7 +68,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                 null,
                 transportIn,
                 transport,
-                new BasicOperationContext(axisOp, null));
+        OperationContextFactory.createMEP(WSDLConstants.MEP_URI_IN_OUT,false,axisOp, null));
         mc.setTransportOut(transport);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

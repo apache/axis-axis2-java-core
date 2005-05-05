@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.axis.engine;
 
-import org.apache.axis.AbstractTestCase;
+package org.apache.axis.engine;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.BasicOperationContext;
+import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.SOAPFactory;
+import org.apache.wsdl.WSDLConstants;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
@@ -35,7 +33,14 @@ public class MessageContextTest extends AbstractTestCase {
     public void testMesssageContext() throws AxisFault {
         EngineConfiguration er = new EngineConfigurationImpl(new AxisGlobal());
         EngineContext engineContext = new EngineContext(er);
-        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicOperationContext(null,null));
+        MessageContext msgctx =
+            new MessageContext(
+                engineContext,
+                null,
+                null,
+                null,
+                null,
+                OperationContextFactory.createMEP(WSDLConstants.MEP_URI_IN_OUT, false, null, null));
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

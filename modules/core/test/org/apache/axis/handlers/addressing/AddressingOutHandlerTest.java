@@ -7,15 +7,14 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.ServiceName;
-import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.handlers.util.TestUtil;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
+import org.apache.wsdl.WSDLConstants;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -49,7 +48,7 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
         super.setUp();
         outHandler = new AddressingOutHandler();
         testUtil = new TestUtil();
-        msgCtxt = new MessageContext(null, null, null, null,null,new BasicOperationContext(null,null));
+        msgCtxt = new MessageContext(null, null, null, null,null,OperationContextFactory.createMEP(WSDLConstants.MEP_URI_IN_OUT,false,null,null));
     }
 
     public void testAddToSOAPHeader() throws Exception {
