@@ -86,6 +86,48 @@ public class PhaseResolver {
         return this.serviceContext;
     }
 
+    private void buildModuleHandlers(ArrayList allHandlers  , AxisModule module , int flowtype) throws PhaseException {
+        Flow flow = null;
+        switch (flowtype) {
+            case PhaseMetadata.IN_FLOW:
+                {
+                    flow = module.getInFlow();
+                    break;
+                }
+            case PhaseMetadata.OUT_FLOW:
+                {
+                    flow = module.getOutFlow();
+                    break;
+                }
+            case PhaseMetadata.FAULT_IN_FLOW:
+                {
+                    flow = module.getFaultInFlow();
+                    break;
+                }
+            case PhaseMetadata.FAULT_OUT_FLOW:
+                {
+                    flow = module.getFaultOutFlow();
+                    break;
+                }
+        }
+        if (flow != null) {
+            for (int j = 0; j < flow.getHandlerCount(); j++) {
+                HandlerMetadata metadata = flow.getHandler(j);
+                /**
+                 * If the phase property of a handler is pre-dispatch then those handlers
+                 * should go to the global chain , to the pre-dispatch phase
+                 */
+                if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
+                    continue;
+                }
+                if (metadata.getRules().getPhaseName().equals("")) {
+                    throw new PhaseException("Phase dose not specified");
+                }
+                allHandlers.add(metadata);
+            }
+        }
+    }
+
     /**
      * this opeartion is used to build all the three cahins ,
      * so type varible is used to difrenciate them
@@ -110,94 +152,59 @@ public class PhaseResolver {
             QName name = (QName) modules.get(i);
             module = engineConfig.getModule(name);
             if (module != null) {
-                switch (flowtype) {
-                    case PhaseMetadata.IN_FLOW:
-                        {
-                            flow = module.getInFlow();
-                            break;
-                        }
-                    case PhaseMetadata.OUT_FLOW:
-                        {
-                            flow = module.getOutFlow();
-                            break;
-                        }
-                    case PhaseMetadata.FAULT_IN_FLOW:
-                        {
-                            flow = module.getFaultInFlow();
-                            break;
-                        }
-                    case PhaseMetadata.FAULT_OUT_FLOW:
-                        {
-                            flow = module.getFaultOutFlow();
-                            break;
-                        }
-                }
-                if (flow != null) {
-                    for (int j = 0; j < flow.getHandlerCount(); j++) {
-                        HandlerMetadata metadata = flow.getHandler(j);
-                        /**
-                         * If the phase property of a handler is pre-dispatch then those handlers
-                         * should go to the global chain , to the pre-dispatch phase
-                         */
-                        if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                            continue;
-                        }
-                        if (metadata.getRules().getPhaseName().equals("")) {
-                            metadata.getRules().setPhaseName("global");
-                        }
-                        allHandlers.add(metadata);
-                    }
-                }
+                buildModuleHandlers(allHandlers,module,flowtype);
             } else {
                 throw new PhaseException("Referred module is NULL " + name.getLocalPart());
             }
         }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////// SERVICE HANDLERS ///////////////////////////////////////////////
+
+
+        switch (flowtype) {
+            case PhaseMetadata.IN_FLOW:
+                {
+                    flow = axisService.getInFlow();
+                    break;
+                }
+            case PhaseMetadata.OUT_FLOW:
+                {
+                    flow = axisService.getOutFlow();
+                    break;
+                }
+            case PhaseMetadata.FAULT_IN_FLOW:
+                {
+                    flow = axisService.getFaultInFlow();
+                    break;
+                }
+            case PhaseMetadata.FAULT_OUT_FLOW:
+                {
+                    flow = axisService.getFaultOutFlow();
+                    break;
+                }
+        }
+        if (flow != null) {
+            for (int j = 0; j < flow.getHandlerCount(); j++) {
+                HandlerMetadata metadata = flow.getHandler(j);
+
+                // todo change this in properway
+                if (metadata.getRules().getPhaseName().equals("")) {
+                    metadata.getRules().setPhaseName("service");
+                }
+                allHandlers.add(metadata);
+            }
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////// SERVICE HANDLERS ////////////////////////////////////////////////
+        ///////////////////// SERVICE MODULE HANDLERS ////////////////////////////////////////////////
         Collection collection = axisService.getModules();
         Iterator itr = collection.iterator();
         while (itr.hasNext()) {
             QName moduleref = (QName) itr.next();
             module = engineConfig.getModule(moduleref);
-            switch (flowtype) {
-                case PhaseMetadata.IN_FLOW:
-                    {
-                        flow = module.getInFlow();
-                        break;
-                    }
-                case PhaseMetadata.OUT_FLOW:
-                    {
-                        flow = module.getOutFlow();
-                        break;
-                    }
-                case PhaseMetadata.FAULT_IN_FLOW:
-                    {
-                        flow = module.getFaultInFlow();
-                        break;
-                    }
-                case PhaseMetadata.FAULT_OUT_FLOW:
-                    {
-                        flow = module.getFaultOutFlow();
-                        break;
-                    }
-            }
-            if (flow != null) {
-                for (int j = 0; j < flow.getHandlerCount(); j++) {
-                    HandlerMetadata metadata = flow.getHandler(j);
-
-                    /**
-                     * If the phase property of a handler is pre-dispatch then those handlers
-                     * should go to the global chain , to the pre-dispatch phase
-                     */
-                    if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                        continue;
-                    }
-                    if (metadata.getRules().getPhaseName().equals("")) {
-                        metadata.getRules().setPhaseName("service");
-                    }
-                    allHandlers.add(metadata);
-                }
+            if(module != null){
+                 buildModuleHandlers(allHandlers,module,flowtype);
             }
         }
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -207,44 +214,8 @@ public class PhaseResolver {
         while (opitr.hasNext()) {
             QName moduleref = (QName) opitr.next();
             module = engineConfig.getModule(moduleref);
-            switch (flowtype) {
-                case PhaseMetadata.IN_FLOW:
-                    {
-                        flow = module.getInFlow();
-                        break;
-                    }
-                case PhaseMetadata.OUT_FLOW:
-                    {
-                        flow = module.getOutFlow();
-                        break;
-                    }
-                case PhaseMetadata.FAULT_IN_FLOW:
-                    {
-                        flow = module.getFaultInFlow();
-                        break;
-                    }
-                case PhaseMetadata.FAULT_OUT_FLOW:
-                    {
-                        flow = module.getFaultOutFlow();
-                        break;
-                    }
-            }
-            if (flow != null) {
-                for (int j = 0; j < flow.getHandlerCount(); j++) {
-                    HandlerMetadata metadata = flow.getHandler(j);
-
-                    /**
-                     * If the phase property of a handler is pre-dispatch then those handlers
-                     * should go to the global chain , to the pre-dispatch phase
-                     */
-                    if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                        continue;
-                    }
-                    if (metadata.getRules().getPhaseName().equals("")) {
-                        metadata.getRules().setPhaseName("service");
-                    }
-                    allHandlers.add(metadata);
-                }
+            if(module != null ){
+                 buildModuleHandlers(allHandlers,module,flowtype);
             }
         }
 
