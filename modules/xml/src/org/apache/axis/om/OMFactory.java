@@ -26,7 +26,7 @@ public interface OMFactory {
      * @param ns
      * @return
      */
-    public abstract OMElement createOMElement(String localName, OMNamespace ns);
+    public OMElement createOMElement(String localName, OMNamespace ns);
 
     /**
      * @param localName
@@ -35,7 +35,7 @@ public interface OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMElement createOMElement(String localName, OMNamespace ns,
+    public OMElement createOMElement(String localName, OMNamespace ns,
                                               OMElement parent,
                                               OMXMLParserWrapper builder);
 
@@ -50,7 +50,7 @@ public interface OMFactory {
      * @param namespacePrefix
      * @return
      */
-    public abstract OMElement createOMElement(String localName,
+    public OMElement createOMElement(String localName,
                                               String namespaceURI,
                                               String namespacePrefix);
 
@@ -64,7 +64,7 @@ public interface OMFactory {
      * @return
      * @throws OMException
      */
-    public abstract OMElement createOMElement(QName qname, OMElement parent)
+    public OMElement createOMElement(QName qname, OMElement parent)
             throws OMException;
 
     /**
@@ -72,20 +72,20 @@ public interface OMFactory {
      * @param prefix
      * @return
      */
-    public abstract OMNamespace createOMNamespace(String uri, String prefix);
+    public OMNamespace createOMNamespace(String uri, String prefix);
 
     /**
      * @param parent
      * @param text
      * @return
      */
-    public abstract OMText createText(OMElement parent, String text);
+    public OMText createText(OMElement parent, String text);
 
     /**
      * @param s
      * @return
      */
-    public abstract OMText createText(String s);
+    public OMText createText(String s);
 
 
 

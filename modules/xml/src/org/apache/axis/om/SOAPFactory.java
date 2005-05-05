@@ -26,14 +26,14 @@ public interface SOAPFactory extends OMFactory{
      * @param envelope
      * @return
      */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope);
 
     /**
      * @param envelope
      * @param builder
      * @return
      */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope,
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope,
                                             OMXMLParserWrapper builder);
 
     /**
@@ -41,27 +41,27 @@ public interface SOAPFactory extends OMFactory{
      * @param builder
      * @return
      */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
                                                     OMXMLParserWrapper builder);
 
     /**
      * @param ns
      * @return
      */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
 
     /**
      * @param envelope
      * @return
      */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
 
     /**
      * @param envelope
      * @param builder
      * @return
      */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
                                                 OMXMLParserWrapper builder);
 
     /**
@@ -69,7 +69,7 @@ public interface SOAPFactory extends OMFactory{
      * @param ns
      * @return
      */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
                                                           OMNamespace ns);
 
     /**
@@ -79,7 +79,7 @@ public interface SOAPFactory extends OMFactory{
      * @param builder
      * @return
      */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
                                                           OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
 
     /**
@@ -87,7 +87,7 @@ public interface SOAPFactory extends OMFactory{
      * @param e
      * @return
      */
-    public abstract SOAPFault createSOAPFault(SOAPBody parent, Exception e);
+    public SOAPFault createSOAPFault(SOAPBody parent, Exception e);
 
     /**
      * @param ns
@@ -95,7 +95,7 @@ public interface SOAPFactory extends OMFactory{
      * @param builder
      * @return
      */
-    public abstract SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent,
+    public SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent,
                                               OMXMLParserWrapper builder);
 
     /**
@@ -103,5 +103,5 @@ public interface SOAPFactory extends OMFactory{
      *
      * @return
      */
-    public abstract SOAPEnvelope getDefaultEnvelope();
+    public SOAPEnvelope getDefaultEnvelope();
 }

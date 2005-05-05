@@ -3,6 +3,7 @@ package org.apache.axis.om;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.FactoryFinder;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -85,5 +86,9 @@ public class OMAbstractFactory {
      */
     public static SOAPFactory getSOAP12Factory(ClassLoader classLoader) {
         return FactoryFinder.findSOAP12Factory(classLoader);
+    }
+
+    public static SOAPFactory getDefaultSOAPFactory() {
+        return new SOAPLinkedListImplFactory();
     }
 }
