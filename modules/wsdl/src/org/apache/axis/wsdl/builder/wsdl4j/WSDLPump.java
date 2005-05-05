@@ -293,22 +293,22 @@ public class WSDLPump {
 		// the Types.
 		//TODO
 
-		if(null != wsdl4jInputMessage.getMessage().getQName()){
-			wsdlInputMessage.setElement(wsdl4jInputMessage.getMessage().getQName());
-		}else{
-			if(wsdl4jInputMessage.getMessage().getParts().size()>1)
-				throw new WSDLProcessingException("Multipart Parsing not Supported");
-			Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts().values().iterator();
-			while(inputIterator.hasNext()){
-				Part part = ((Part)inputIterator.next());
-				QName typeName = part.getTypeName();
-				wsdlInputMessage.setElement(typeName);
+
+		if(wsdl4jInputMessage.getMessage().getParts().size()>1)
+			throw new WSDLProcessingException("Multipart Parsing not Supported");
+		Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts().values().iterator();
+		if(inputIterator.hasNext()){
+			Part part = ((Part)inputIterator.next());
+			QName element ;
+			if(null != (element= part.getTypeName())){
+				wsdlInputMessage.setElement(element);
+			}else{
+				wsdlInputMessage.setElement(part.getElementName());
 			}
 		}
+
 		
 		wsdlOperation.setInputMessage(wsdlInputMessage);
-		
-		
 		
 		
 		//Create an output message and add
@@ -316,17 +316,19 @@ public class WSDLPump {
 		MessageReference wsdlOutputMessage = this.wsdlComponenetFactory.createMessageReference();
 		wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
 		
-		if(null != wsdl4jOutputMessage.getMessage().getQName() ){
-			wsdlOutputMessage.setElement(wsdl4jOutputMessage.getMessage().getQName());
-		}else{
-			if(wsdl4jOutputMessage.getMessage().getParts().size()>1)
-				throw new WSDLProcessingException("Multipart Parsing not Supported");
-			Iterator outputIterator = wsdl4jOutputMessage.getMessage().getParts().values().iterator();
-			if(outputIterator.hasNext()){
-				QName typeName = ((Part)outputIterator.next()).getTypeName();
+		if(wsdl4jOutputMessage.getMessage().getParts().size()>1)
+			throw new WSDLProcessingException("Multipart Parsing not Supported");
+		Iterator outputIterator = wsdl4jOutputMessage.getMessage().getParts().values().iterator();
+		if(outputIterator.hasNext()){
+			Part outPart = ((Part)outputIterator.next());
+			QName typeName ;
+			if(null != (typeName = outPart.getTypeName())){
 				wsdlOutputMessage.setElement(typeName);
+			}else{
+				wsdlOutputMessage.setElement(outPart.getElementName());
 			}
 		}
+	
 		
 		wsdlOperation.setOutputMessage(wsdlOutputMessage);
 		//TODO
