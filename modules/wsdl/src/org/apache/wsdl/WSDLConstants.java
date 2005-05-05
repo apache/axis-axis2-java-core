@@ -102,4 +102,32 @@ public interface WSDLConstants {
      */
     public static final String MEP_URI_OUT_OPTIONL_IN =
             "http://www.w3.org/2004/08/wsdl/out-opt-in";
+    
+    
+    //////////////////////////////////////////////////
+    //////////////// Message Labels///////////////////
+    //////////////////////////////////////////////////
+    
+    /**
+     * IN Message Lable value for following WSDL 2.0 defined  MEPs
+     * In-Only 
+     * Robust In-Only 
+     * In-Out 
+     * In-Optional-Out 
+     * Out-In 
+     * Out-Optional-In 
+     */
+    public static final String MESSAGE_LABLE_IN = "In";
+    
+    /**
+     * OUT Message Lable value for following WSDL 2.0 defined MEPs
+     * In-Out 
+     * In-Optional-Out 
+     * Out-Only 
+     * Robust Out-Only 
+     * Out-In 
+     * Out-Optional-In 
+     * 
+     */
+    public static final String MESSAGE_LABLE_OUT = "Out";
 }
