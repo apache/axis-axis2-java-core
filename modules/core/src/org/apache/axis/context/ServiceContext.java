@@ -30,13 +30,12 @@ import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.description.PhasesIncludeImpl;
 import org.apache.axis.engine.AxisFault;
 
-public class ServiceContext  extends AbstractContext implements PhasesInclude{
+public class ServiceContext  extends AbstractContext{
     private AxisService serviceConfig;   
 
     public ServiceContext(AxisService serviceConfig,EngineContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
-        this.operationContextMap = new HashMap();
     }
 
     /**

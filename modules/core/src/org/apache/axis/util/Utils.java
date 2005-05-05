@@ -48,11 +48,13 @@ public class Utils {
         Flow flow,
         int flowtype)
         throws AxisFault {
-        ArrayList faultchain = new ArrayList();
-        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
-        faultchain.add(p);
-        addHandlers(flow, p);
-        serviceContext.setPhases(faultchain, flowtype);
+        // TODO : Fix me Deepal
+                throw new UnsupportedOperationException();
+//        ArrayList faultchain = new ArrayList();
+//        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
+//        faultchain.add(p);
+//        addHandlers(flow, p);
+//        serviceContext.setPhases(faultchain, flowtype);
     }
 
     public static void createExecutionChains(ServiceContext serviceContext)

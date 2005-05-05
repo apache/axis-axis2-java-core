@@ -79,8 +79,10 @@ public class AxisEngine {
 
                 // what are we suppose to do in the client side
                 // how the client side handlers are deployed ??? this is a hack and no client side handlers
-                chain.addPhases(
-                    serviceContext.getPhases(EngineConfiguration.OUTFLOW));
+
+//                chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
+                  // TODO : Fix me Srinath
+                throw new UnsupportedOperationException();
             } else {
                 if (context.isServerSide() && !context.isProcessingFault()) {
                     throw new AxisFault("At the Send there must be a Service Object set at the Server Side");
@@ -227,9 +229,9 @@ public class AxisEngine {
 
             ServiceContext serviceContext = context.getOperationContext().getServiceContext();
             if (serviceContext != null) {
-                chain.addPhases(
-                    serviceContext.getPhases(
-                        EngineConfiguration.FAULT_IN_FLOW));
+//                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
+                // TODO : Fix me Srinath
+                throw new UnsupportedOperationException();
             }
 
             chain.invoke(faultContext);

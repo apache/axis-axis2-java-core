@@ -49,32 +49,36 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
             ExecutionChain chain = msgContext.getExecutionChain();
             
             EngineContext engineContext = msgContext.getEngineContext();
-            if( engineContext.getService(serviceContext.getName()) != null){
-                engineContext.addService(serviceContext);
-            }
-            chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
+
+            // TODO : Fix me Srinath
+                throw new UnsupportedOperationException();
+//            if( engineContext.getService(serviceContext.getName()) != null){
+//                engineContext.addService(serviceContext);
+//            }
+//            chain.addPhases(serviceContext.getPhases(EngineConfiguration.INFLOW));
             
             //TODO check had the modules changes after the deployment time handler 
             //resolution and if that is the case recalculate the Handler Chain
 
             //let the each module chain the execution chain if so wished
-            EngineConfiguration engConfig = engineContext.getEngineConfig();
-            AxisGlobal axisGlobal = engConfig.getGlobal();
-            Collection modules = axisGlobal.getModules();
-            AxisModule axisModule = null;
-            for(Iterator it = modules.iterator();it.hasNext();axisModule = (AxisModule)it.next()){
-                Module module = axisModule.getModule();
-                module.engage(chain);
-            }
-            
-            modules = serviceContext.getServiceConfig().getModules();
-            for(Iterator it = modules.iterator();it.hasNext();axisModule = (AxisModule)it.next()){
-                Module module = axisModule.getModule();
-                module.engage(chain);
-            }
-            
-        } else if(msgContext.isServerSide()){
-            throw new AxisFault("Service Context is Null");
+
+//            EngineConfiguration engConfig = engineContext.getEngineConfig();
+//            AxisGlobal axisGlobal = engConfig.getGlobal();
+//            Collection modules = axisGlobal.getModules();
+//            AxisModule axisModule = null;
+//            for(Iterator it = modules.iterator();it.hasNext();axisModule = (AxisModule)it.next()){
+//                Module module = axisModule.getModule();
+//                module.engage(chain);
+//            }
+//
+//            modules = serviceContext.getServiceConfig().getModules();
+//            for(Iterator it = modules.iterator();it.hasNext();axisModule = (AxisModule)it.next()){
+//                Module module = axisModule.getModule();
+//                module.engage(chain);
+//            }
+//
+//        } else if(msgContext.isServerSide()){
+//            throw new AxisFault("Service Context is Null");
         }
 
     }

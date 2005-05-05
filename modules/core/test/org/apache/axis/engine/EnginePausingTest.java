@@ -110,15 +110,18 @@ public class EnginePausingTest extends AbstractEngineTest {
         
         ServiceContext serviceContext = new ServiceContext(service,engineContext);
         engineContext.addService(serviceContext);
-        
-        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);
-        engineRegistry.addService(service);
-        service.setStyle(WSDLService.STYLE_DOC);
-        mc.setTo(
-            new EndpointReference(
-                AddressingConstants.WSA_TO,
-                "axis/services/NullService/DummyOp"));
-        mc.setWSAAction(operationName.getLocalPart());
+
+        // TODO : Fix me Srinath
+                throw new UnsupportedOperationException();
+
+//        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);
+//        engineRegistry.addService(service);
+//        service.setStyle(WSDLService.STYLE_DOC);
+//        mc.setTo(
+//            new EndpointReference(
+//                AddressingConstants.WSA_TO,
+//                "axis/services/NullService/DummyOp"));
+//        mc.setWSAAction(operationName.getLocalPart());
 
     }
 
