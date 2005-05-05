@@ -27,10 +27,6 @@ import org.apache.axis.om.impl.llom.OMNodeImpl;
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
-    /**
-     * Field ombuilderFactory
-     */
-    protected OMFactory ombuilderFactory;
 
     /**
      * Field parser
@@ -76,9 +72,8 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @param parser
      */
     protected StAXBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
-        this.ombuilderFactory = ombuilderFactory;
         this.parser = parser;
-        omfactory = OMAbstractFactory.getOMFactory();
+        omfactory = ombuilderFactory;
     }
 
     /**
@@ -88,7 +83,6 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      */
     protected StAXBuilder(XMLStreamReader parser) {
         this(OMAbstractFactory.getOMFactory(), parser);
-        omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -97,7 +91,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @param ombuilderFactory
      */
     public void setOmbuilderFactory(OMFactory ombuilderFactory) {
-        this.ombuilderFactory = ombuilderFactory;
+        this.omfactory = ombuilderFactory;
     }
 
     /**

@@ -42,7 +42,7 @@ public class TestUtil{
             fileName = IN_FILE_NAME;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
+        builder = new StAXSOAPModelBuilder(parser);
         return builder;
     }
 

@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.BasicMEPContext;
+import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -59,7 +59,7 @@ public class EnginePausingTest extends AbstractEngineTest {
 
         AxisOperation axisOp = new AxisOperation(operationName);
 
-        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,new BasicMEPContext(axisOp,null));
+        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,new BasicOperationContext(axisOp,null));
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

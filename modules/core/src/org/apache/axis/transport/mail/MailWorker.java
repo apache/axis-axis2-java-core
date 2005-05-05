@@ -141,7 +141,7 @@ public class MailWorker implements Runnable {
             ByteArrayInputStream bais = new ByteArrayInputStream(mimeMessage.getContent().toString().getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance()
                     .createXMLStreamReader(bais);
-            StAXBuilder builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader);
 
             msgContext.setEnvelope((SOAPEnvelope) builder
                     .getDocumentElement());

@@ -25,7 +25,7 @@ public class MEPContextFactory implements WSDLConstants{
     
     public static OperationContext createMEP(String mepURI,boolean serverSide,AxisOperation axisOp,ServiceContext serviceContext) throws AxisFault{
         if(MEP_URI_IN_ONLY.equals(mepURI) || MEP_URI_IN_OUT.equals(mepURI)){
-            return new BasicMEPContext(axisOp,serviceContext);
+            return new BasicOperationContext(axisOp,serviceContext);
         
         }else{
         	throw new AxisFault("Cannot handle the MEP "

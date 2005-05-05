@@ -20,7 +20,7 @@ import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
  * the License.
  * <p/>
  */
-public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implements SOAPFactory {
+public abstract class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implements SOAPFactory {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
@@ -70,7 +70,7 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
         return new SOAPEnvelopeImpl(ns);
     }
 
-    /**
+       /**
      * Method createSOAPHeader
      *
      * @param envelope

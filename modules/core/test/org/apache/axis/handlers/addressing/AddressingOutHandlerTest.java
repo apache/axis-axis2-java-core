@@ -7,7 +7,7 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.ServiceName;
-import org.apache.axis.context.BasicMEPContext;
+import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.OMFactory;
@@ -49,7 +49,7 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
         super.setUp();
         outHandler = new AddressingOutHandler();
         testUtil = new TestUtil();
-        msgCtxt = new MessageContext(null, null, null, null,null,new BasicMEPContext(null,null));
+        msgCtxt = new MessageContext(null, null, null, null,null,new BasicOperationContext(null,null));
     }
 
     public void testAddToSOAPHeader() throws Exception {

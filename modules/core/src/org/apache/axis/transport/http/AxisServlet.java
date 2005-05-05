@@ -170,7 +170,7 @@ public class AxisServlet extends HttpServlet {
                     new BufferedReader(
                             new InputStreamReader(req.getInputStream())));
             StAXBuilder builder =
-            new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
+            new StAXSOAPModelBuilder(reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             
 

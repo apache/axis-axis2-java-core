@@ -21,7 +21,7 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.BasicMEPContext;
+import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPFactory;
@@ -35,7 +35,7 @@ public class MessageContextTest extends AbstractTestCase {
     public void testMesssageContext() throws AxisFault {
         EngineConfiguration er = new EngineConfigurationImpl(new AxisGlobal());
         EngineContext engineContext = new EngineContext(er);
-        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicMEPContext(null,null));
+        MessageContext msgctx = new MessageContext(engineContext, null,null,null,null,new BasicOperationContext(null,null));
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

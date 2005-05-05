@@ -64,14 +64,12 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     /**
      * Constructor StAXSOAPModelBuilder
      *
-     * @param ombuilderFactory
      * @param parser
      */
-    public StAXSOAPModelBuilder(SOAPFactory ombuilderFactory,
-                                XMLStreamReader parser) {
-        super(ombuilderFactory, parser);
-        this.soapFactory = ombuilderFactory;
+    public StAXSOAPModelBuilder(XMLStreamReader parser) {
+        super(parser);
         identifySOAPVersion();
+
         parseHeaders();
     }
 
@@ -86,13 +84,17 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             envelopeNamespace = getSOAPEnvelope().findNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
         } else {
             log.info("SOAP 1.2 message received ..");
+            soapFactory  = OMAbstractFactory.getSOAP12Factory();
         }
 
         if (envelopeNamespace == null) {
             throw new OMException("Invalid SOAP message. Doesn't have proper namespace declaration !!");
         } else {
             log.info("SOAP 1.1 message received ..");
+            soapFactory = OMAbstractFactory.getSOAP11Factory();
         }
+
+        omfactory = soapFactory;
     }
 
     private void parseHeaders() {
@@ -109,15 +111,6 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         }
     }
 
-    /**
-     * Constructor StAXSOAPModelBuilder
-     *
-     * @param parser
-     */
-    public StAXSOAPModelBuilder(XMLStreamReader parser) {
-        // TODO FIX ME
-        this(OMAbstractFactory.getSOAP11Factory(), parser);
-    }
 
     /**
      * Method getSOAPEnvelope
@@ -179,7 +172,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             envelope =
                     (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(null,
                             this);
-            element = (OMElementImpl) envelope;
+            element = envelope;
             processNamespaceData(element, true);
         } else if (elementLevel == 2) {
 

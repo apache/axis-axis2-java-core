@@ -2,6 +2,7 @@ package org.apache.axis.om.impl.llom.soap11;
 
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;
 
 /**
@@ -24,4 +25,5 @@ public class SOAP11Factory extends SOAPLinkedListImplFactory implements SOAPFact
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
+
 }

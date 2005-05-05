@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.BasicMEPContext;
+import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -67,7 +67,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                 null,
                 transportIn,
                 transport,
-                new BasicMEPContext(axisOp, null));
+                new BasicOperationContext(axisOp, null));
         mc.setTransportOut(transport);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

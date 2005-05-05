@@ -9,7 +9,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.addressing.om.MessageInformationHeadersCollection;
-import org.apache.axis.context.BasicMEPContext;
+import org.apache.axis.context.BasicOperationContext;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -195,7 +195,7 @@ public class Call {
                     null,
                     transportIn,
                     transportOut,
-                    new BasicMEPContext(axisOperation, null));
+                    new BasicOperationContext(axisOperation, null));
             msgctx.setEnvelope(env);
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 

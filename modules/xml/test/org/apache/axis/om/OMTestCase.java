@@ -51,13 +51,13 @@ public abstract class OMTestCase extends AbstractTestCase {
             fileName = IN_FILE_NAME;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
+        builder = new StAXSOAPModelBuilder(parser);
         return builder;
     }
 
     protected StAXSOAPModelBuilder getOMBuilder(InputStream in) throws Exception {
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
-        builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
+        builder = new StAXSOAPModelBuilder(parser);
         return builder;
     }
 

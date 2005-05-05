@@ -123,7 +123,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
             AxisEngine axisEngine = new AxisEngine();
             try {
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder = new StAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), xmlreader);
+                StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
                 msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);

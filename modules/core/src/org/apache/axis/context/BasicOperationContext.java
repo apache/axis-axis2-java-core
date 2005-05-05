@@ -37,7 +37,7 @@ import java.util.List;
  * @author chathura@opensource.lk
  */
 
-public class BasicMEPContext extends AbstractContext implements OperationContext {
+public class BasicOperationContext extends AbstractContext implements OperationContext {
 
     private ArrayList messageContextList;
 
@@ -45,7 +45,7 @@ public class BasicMEPContext extends AbstractContext implements OperationContext
 
     private AxisOperation axisOperation;
 
-    public BasicMEPContext(AxisOperation axisOperation,ServiceContext serviceContext) {
+    public BasicOperationContext(AxisOperation axisOperation,ServiceContext serviceContext) {
         super(serviceContext);
         this.axisOperation = axisOperation;
 
@@ -102,6 +102,10 @@ public class BasicMEPContext extends AbstractContext implements OperationContext
         }
 
         throw new AxisFault(" Message does not exist in the current MEP : Invalid MessageID :" + messageID);
+    }
+
+    public void addMessageContext(String messageLabel, MessageContext msgContext) throws AxisFault {
+        // TODO : Chathura
     }
 
     /**
