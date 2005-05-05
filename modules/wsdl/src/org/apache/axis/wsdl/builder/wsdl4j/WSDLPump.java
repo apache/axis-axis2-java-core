@@ -277,6 +277,9 @@ public class WSDLPump {
 		wsdlOperation.setName(new QName(nameSpaceOfTheOperation,
 				wsdl4jOperation.getName()));
 
+		//This code make no attempt to make use of the special xs:Token
+		//defined in the WSDL 2.0. eg like #any, #none
+	
 		//OperationType wsdl4jOperation.getStyle()
 
 		// Create the Input Message and add
@@ -290,13 +293,17 @@ public class WSDLPump {
 		// the Types.
 		//TODO
 
-		wsdlInputMessage.setMessageLabel(wsdl4jInputMessage.getName());
-		if(wsdl4jInputMessage.getMessage().getParts().size()>1)
-			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts().values().iterator();
-		if(inputIterator.hasNext()){
-			QName typeName = ((Part)inputIterator.next()).getTypeName();
-			wsdlInputMessage.setElement(typeName);
+		if(null != wsdl4jInputMessage.getMessage().getQName()){
+			wsdlInputMessage.setElement(wsdl4jInputMessage.getMessage().getQName());
+		}else{
+			if(wsdl4jInputMessage.getMessage().getParts().size()>1)
+				throw new WSDLProcessingException("Multipart Parsing not Supported");
+			Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts().values().iterator();
+			while(inputIterator.hasNext()){
+				Part part = ((Part)inputIterator.next());
+				QName typeName = part.getTypeName();
+				wsdlInputMessage.setElement(typeName);
+			}
 		}
 		
 		wsdlOperation.setInputMessage(wsdlInputMessage);
@@ -306,17 +313,19 @@ public class WSDLPump {
 		
 		//Create an output message and add
 		Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
-		MessageReference wsdlOutputMessage = this.wsdlComponenetFactory
-				.createMessageReference();
-		wsdlOutputMessage
-				.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+		MessageReference wsdlOutputMessage = this.wsdlComponenetFactory.createMessageReference();
+		wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
 		
-		if(wsdl4jOutputMessage.getMessage().getParts().size()>1)
-			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator outputIterator = wsdl4jOutputMessage.getMessage().getParts().values().iterator();
-		if(outputIterator.hasNext()){
-			QName typeName = ((Part)outputIterator.next()).getTypeName();
-			wsdlOutputMessage.setElement(typeName);
+		if(null != wsdl4jOutputMessage.getMessage().getQName() ){
+			wsdlOutputMessage.setElement(wsdl4jOutputMessage.getMessage().getQName());
+		}else{
+			if(wsdl4jOutputMessage.getMessage().getParts().size()>1)
+				throw new WSDLProcessingException("Multipart Parsing not Supported");
+			Iterator outputIterator = wsdl4jOutputMessage.getMessage().getParts().values().iterator();
+			if(outputIterator.hasNext()){
+				QName typeName = ((Part)outputIterator.next()).getTypeName();
+				wsdlOutputMessage.setElement(typeName);
+			}
 		}
 		
 		wsdlOperation.setOutputMessage(wsdlOutputMessage);
