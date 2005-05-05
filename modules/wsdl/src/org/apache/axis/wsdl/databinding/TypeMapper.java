@@ -8,8 +8,8 @@ import javax.xml.namespace.QName;
  */
 public interface TypeMapper {
 	
-	public Class getJavaTypeMapping(QName qname);
-	
+	public Class getTypeMapping(QName qname);
 	public String getParameterName(QName qname);
+    public void addTypeMapping(QName qname,Object value);
 
 }

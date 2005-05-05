@@ -22,6 +22,8 @@ public class CommandLineOption implements CommandLineOptionConstants {
 			this.type = WSDL_LOCATION_URI_OPTION;
 		} else if (("-" + OUTPUT_LOCATION_OPTION).equalsIgnoreCase(type)) {
 			this.type = OUTPUT_LOCATION_OPTION;
+		}else if (("-" + ADVANCED_CODEGEN_OPTION).equalsIgnoreCase(type)) {
+			this.type = ADVANCED_CODEGEN_OPTION;
 		} else {
 			this.invalid = true;
 		}

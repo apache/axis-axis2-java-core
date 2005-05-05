@@ -8,10 +8,10 @@ import org.apache.axis.om.OMElement;
  * @author chathura@opensource.lk
  *
  */
-public class DefaultTypeMapper implements TypeMapper {
+public class DefaultTypeMapper extends TypeMappingAdapter {
 
 	
-	public Class getJavaTypeMapping(QName qname) {
+	public Class getTypeMapping(QName qname) {
 		return OMElement.class;
 	}
 	

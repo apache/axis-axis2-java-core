@@ -51,9 +51,9 @@ public class ClientInterfaceWriter implements ClassWriterConstants {
 			WSDLOperation operation = (WSDLOperation) iterator.next();
 			if (WSDLConstants.MEP_URI_IN_OUT.equals(operation.getMessageExchangePattern())) {
 				printStream.println( INDENDATION_TAB+"public "
-						+ this.typeMapper.getJavaTypeMapping(operation.getOutputMessage().getElement()).getName()
+						+ this.typeMapper.getTypeMapping(operation.getOutputMessage().getElement()).getName()
 						+" "+ operation.getName().getLocalPart()+"("
-						+this.typeMapper.getJavaTypeMapping(operation.getInputMessage().getElement()).getName()
+						+this.typeMapper.getTypeMapping(operation.getInputMessage().getElement()).getName()
 						+" "+this.typeMapper.getParameterName(operation.getInputMessage().getElement()) 
 						+") throws "+ REMOTE_EXCEPTION+";");
 				printStream.println();

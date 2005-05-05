@@ -3,6 +3,7 @@ package org.apache.axis.wsdl.tojava;
 import java.io.File;
 
 import org.apache.wsdl.WSDLDescription;
+import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
 
 /**
  * @author chathura@opensource.lk
@@ -11,10 +12,10 @@ import org.apache.wsdl.WSDLDescription;
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
 	private WSDLDescription wom;
-
 	private CommandLineOptionParser parser;
-
 	private File outputLocation;
+    private int outputLanguage = XSLTConstants.LanguageTypes.JAVA;
+    private boolean advancedCodeGenEnabled=false;
 
 	/**
 	 * @param wom
@@ -26,6 +27,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 		this.parser = parser;
 		String outputLocation = ((CommandLineOption) parser.getAllOptions().get(
 				OUTPUT_LOCATION_OPTION)).getOptionValue();
+        advancedCodeGenEnabled = (parser.getAllOptions().get(ADVANCED_CODEGEN_OPTION)!=null);
 
 		this.outputLocation = new File(outputLocation);
 
@@ -52,4 +54,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	public File getOutputLocation() {
 		return outputLocation;
 	}
+
+    public int getOutputLanguage() {
+        return outputLanguage;
+    }
+
+    public boolean isAdvancedCodeGenEnabled() {
+        return advancedCodeGenEnabled;
+    }
 }

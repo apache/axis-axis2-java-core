@@ -21,6 +21,7 @@ public class WSDL2Java {
 	private static void printUsage(){
 		System.out.println("Usage WSDL2Java -URI <Location of WSDL> ");
 		System.out.println("-o <output Location> ");
+		System.out.println("-x ");
 		System.exit(0);
 	}
 	
