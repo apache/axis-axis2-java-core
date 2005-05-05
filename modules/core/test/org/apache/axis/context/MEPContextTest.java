@@ -44,13 +44,13 @@ public class MEPContextTest extends AbstractTestCase {
     	
     	messageContext1.setMessageID(new Long(System.currentTimeMillis()).toString());
     	AxisOperation axisOperation = new AxisOperation(new QName("test"));
-    	OperationContext mepContext1 = axisOperation.findMEPContext(messageContext1, true);
+    	OperationContext operationContext1 = axisOperation.findMEPContext(messageContext1, true);
     	
     	MessageContext messageContext2 = this.getBasicMessageContext();
     	messageContext2.setMessageID(new Long(System.currentTimeMillis()).toString());
     	messageContext2.getMessageInformationHeaders().setRelatesTo(new RelatesTo(messageContext1.getMessageID()));
-    	OperationContext mepContext2 = axisOperation.findMEPContext(messageContext2, true);
-    	assertEquals(mepContext1, mepContext2);
+    	OperationContext operationContext2 = axisOperation.findMEPContext(messageContext2, true);
+    	assertEquals(operationContext1, operationContext2);
     }
     
     public MessageContext getBasicMessageContext() throws AxisFault{

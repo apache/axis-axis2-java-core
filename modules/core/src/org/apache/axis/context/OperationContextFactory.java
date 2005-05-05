@@ -21,7 +21,7 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
-public class MEPContextFactory implements WSDLConstants{
+public class OperationContextFactory implements WSDLConstants{
     
     public static OperationContext createMEP(String mepURI,boolean serverSide,AxisOperation axisOp,ServiceContext serviceContext) throws AxisFault{
         if(MEP_URI_IN_ONLY.equals(mepURI) || MEP_URI_IN_OUT.equals(mepURI)){
