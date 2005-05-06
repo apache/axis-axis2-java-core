@@ -16,8 +16,6 @@
 
 package org.apache.axis.context;
 
-import java.util.HashMap;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
@@ -54,23 +52,7 @@ public class MEPContextTest extends AbstractTestCase {
     }
     
     public MessageContext getBasicMessageContext() throws AxisFault{
-    	return new MessageContext( new SessionContext() {
-			/* (non-Javadoc)
-			 * @see org.apache.axis.context.SessionContext#get(java.lang.Object)
-			 */
-			public Object get(Object key) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			/* (non-Javadoc)
-			 * @see org.apache.axis.context.SessionContext#put(java.lang.Object, java.lang.Object)
-			 */
-			public void put(Object key, Object obj) {
-				// TODO Auto-generated method stub
-
-			}
-		},new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")));
+    	return new MessageContext( new SessionContext(null) ,new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")));
     }
     
 }

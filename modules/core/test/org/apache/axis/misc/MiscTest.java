@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisFault;
 
 public class MiscTest extends AbstractTestCase {
@@ -33,11 +32,11 @@ public class MiscTest extends AbstractTestCase {
     }
 
     public void testSessionContext() {
-        SessionContext sc = new SimpleSessionContext();
+        SessionContext sc = new SessionContext(null);
         String key = "Hello";
         Object val = new Object();
-        sc.put(key, val);
-        assertEquals(sc.get(key), val);
+        sc.setProperty(key, val);
+        assertEquals(sc.getProperty(key), val);
     }
 
 
