@@ -19,115 +19,96 @@ package org.apache.wsdl;
  * @author chathura@opensource.lk
  */
 public interface WSDLConstants {
-    /**
-     * Field WSDL2_0_NAMESPACE
-     */
-    public static final String WSDL2_0_NAMESPACE =
-            "http://www.w3.org/2004/03/wsdl";
+	/**
+	 * Field WSDL2_0_NAMESPACE
+	 */
+	public static final String WSDL2_0_NAMESPACE = "http://www.w3.org/2004/03/wsdl";
 
-    /**
-     * Field WSDL1_1_NAMESPACE
-     */
-    public static final String WSDL1_1_NAMESPACE =
-            "http://schemas.xmlsoap.org/wsdl/";
+	/**
+	 * Field WSDL1_1_NAMESPACE
+	 */
+	public static final String WSDL1_1_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
 
-    /**
-     * Field WSDL_NAMESPACES
-     */
-    public static final String[] WSDL_NAMESPACES = {WSDL2_0_NAMESPACE,
-            WSDL1_1_NAMESPACE};
+	/**
+	 * Field WSDL_NAMESPACES
+	 */
+	public static final String[] WSDL_NAMESPACES = { WSDL2_0_NAMESPACE,
+			WSDL1_1_NAMESPACE };
 
-    // TODO Verify weather the value is right with the spec.
+	// TODO Verify weather the value is right with the spec.
 
-    /**
-     * Field WSDL_MESSAGE_DIRECTION_IN
-     */
-    public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
+	/**
+	 * Field WSDL_MESSAGE_DIRECTION_IN
+	 */
+	public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
 
-    // TODO Verify weather the value is right with the spec.
+	// TODO Verify weather the value is right with the spec.
 
-    /**
-     * Field WSDL_MESSAGE_DIRECTION_OUT
-     */
-    public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
+	/**
+	 * Field WSDL_MESSAGE_DIRECTION_OUT
+	 */
+	public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
 
-    // ////////////////////////////////////////////////////////////////
-    // /////////////Message Exchange Pattern Constants/////////////////
-    // ////////////////////////////////////////////////////////////////
+	// ////////////////////////////////////////////////////////////////
+	// /////////////Message Exchange Pattern Constants/////////////////
+	// ////////////////////////////////////////////////////////////////
 
-    /**
-     * Field MEP_URI_IN_ONLY
-     */
-    public static final String MEP_URI_IN_ONLY =
-            "http://www.w3.org/2004/08/wsdl/in-only";
+	/**
+	 * Field MEP_URI_IN_ONLY
+	 */
+	public static final String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
 
-    /**
-     * Field MEP_URI_ROBUST_IN_ONLY
-     */
-    public static final String MEP_URI_ROBUST_IN_ONLY =
-            "http://www.w3.org/2004/08/wsdl/robust-in-only";
+	/**
+	 * Field MEP_URI_ROBUST_IN_ONLY
+	 */
+	public static final String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
 
-    /**
-     * Field MEP_URI_IN_OUT
-     */
-    public static final String MEP_URI_IN_OUT =
-            "http://www.w3.org/2004/08/wsdl/in-out";
+	/**
+	 * Field MEP_URI_IN_OUT
+	 */
+	public static final String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
 
-    /**
-     * Field MEP_URI_IN_OPTIONAL_OUT
-     */
-    public static final String MEP_URI_IN_OPTIONAL_OUT =
-            "http://www.w3.org/2004/08/wsdl/in-opt-out";
+	/**
+	 * Field MEP_URI_IN_OPTIONAL_OUT
+	 */
+	public static final String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
 
-    /**
-     * Field MEP_URI_OUT_ONLY
-     */
-    public static final String MEP_URI_OUT_ONLY =
-            "http://www.w3.org/2004/08/wsdl/out-only";
+	/**
+	 * Field MEP_URI_OUT_ONLY
+	 */
+	public static final String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
 
-    /**
-     * Field MEP_URI_ROBUST_OUT_ONLY
-     */
-    public static final String MEP_URI_ROBUST_OUT_ONLY =
-            "http://www.w3.org/2004/08/wsdl/robust-out-only";
+	/**
+	 * Field MEP_URI_ROBUST_OUT_ONLY
+	 */
+	public static final String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
 
-    /**
-     * Field MEP_URI_OUT_IN
-     */
-    public static final String MEP_URI_OUT_IN =
-            "http://www.w3.org/2004/08/wsdl/out-in";
+	/**
+	 * Field MEP_URI_OUT_IN
+	 */
+	public static final String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
 
-    /**
-     * Field MEP_URI_OUT_OPTIONL_IN
-     */
-    public static final String MEP_URI_OUT_OPTIONL_IN =
-            "http://www.w3.org/2004/08/wsdl/out-opt-in";
-    
-    
-    //////////////////////////////////////////////////
-    //////////////// Message Labels///////////////////
-    //////////////////////////////////////////////////
-    
-    /**
-     * IN Message Lable value for following WSDL 2.0 defined  MEPs
-     * In-Only 
-     * Robust In-Only 
-     * In-Out 
-     * In-Optional-Out 
-     * Out-In 
-     * Out-Optional-In 
-     */
-    public static final String MESSAGE_LABLE_IN = "In";
-    
-    /**
-     * OUT Message Lable value for following WSDL 2.0 defined MEPs
-     * In-Out 
-     * In-Optional-Out 
-     * Out-Only 
-     * Robust Out-Only 
-     * Out-In 
-     * Out-Optional-In 
-     * 
-     */
-    public static final String MESSAGE_LABLE_OUT = "Out";
+	/**
+	 * Field MEP_URI_OUT_OPTIONL_IN
+	 */
+	public static final String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
+
+	//////////////////////////////////////////////////
+	//////////////// Message Labels///////////////////
+	//////////////////////////////////////////////////
+
+	/**
+	 * Constant to represent the message label "In" which is used by the
+	 * following WSDL 2.0 defined MEPs: In-Only, Robust In-Only, In-Out,
+	 * In-Optional-Out, Out-In, Out-Optional-In.
+	 */
+	public static final byte MESSAGE_LABEL_IN = 0;
+
+	/**
+	 * Constant to represent the message label "Out" which is used by the
+	 * following WSDL 2.0 defined MEPs: In-Out, In-Optional-Out, Out-Only,
+	 * Robust Out-Only, Out-In, Out-Optional-In.
+	 *  
+	 */
+	public static final byte MESSAGE_LABEL_OUT = 1;
 }
