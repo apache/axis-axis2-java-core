@@ -29,18 +29,25 @@ import javax.xml.transform.stream.StreamSource;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * 
+ *  The XSLT template processor
+ * this is based on the JDK built in transformers
  */
 public class XSLTTemplateProcessor {
 
-    public static  void parse(OutputStream out,InputStream xmlStream,InputStream xsltStream) throws TransformerFactoryConfigurationError,TransformerException {
-
+    /**
+     * Parses an XML stream with an XSL stream
+     * @param out Stream to write the output
+     * @param xmlStream Source XML stream
+     * @param xsltStream Source XSL stream
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerException
+     */
+    public static  void parse(OutputStream out,InputStream xmlStream,InputStream xsltStream)
+            throws TransformerFactoryConfigurationError,TransformerException {
             Source xmlSource = new StreamSource(xmlStream);
             Source xsltSource =  new StreamSource(xsltStream);
             Result result = new StreamResult(out);
             Transformer transformer = TransformerFactory.newInstance().newTransformer(xsltSource);
-            //set propoerties to remove the XML declaration
-            //transformer.setOutputProperty();
             transformer.transform(xmlSource, result);
 
     }

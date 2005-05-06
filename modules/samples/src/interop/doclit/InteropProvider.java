@@ -85,7 +85,7 @@ public class InteropProvider extends SimpleJavaProvider {
 
     public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
         try {
-            if (WSDLService.STYLE_DOC.equals(msgContext.getOperationContext().getAxisOperation().getStyle())) {
+          //   if (WSDLService.STYLE_DOC.equals(msgContext.getMessageStyle())) {
                 SOAPBody body = msgContext.getEnvelope().getBody();
                 XMLStreamReader xpp = body.getXMLStreamReader();
 
@@ -194,9 +194,9 @@ public class InteropProvider extends SimpleJavaProvider {
 //                msgContext.setEnvelope(responseEnvelope);
 //
 //                return msgContext;
-            } else {
-                throw new AxisFault("this Service only supports doc-lit");
-            }
+//            } else {
+//                throw new AxisFault("this Service only supports doc-lit");
+//            }
 
         } catch (SecurityException e) {
             throw AxisFault.makeFault(e);

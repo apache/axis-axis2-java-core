@@ -16,13 +16,15 @@ package org.apache.axis.wsdl.databinding;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * 
+ *  the C# type mapper
  */
-public class SimpleCsharpTypeMapper extends TypeMappingAdapter{
+public class CsharpTypeMapper extends TypeMappingAdapter{
 
-
-    public SimpleCsharpTypeMapper() {
-        //create the type mapping hastable here
+    /**
+     * Creats a basic Csharp type mapper
+     */
+    public CsharpTypeMapper() {
+        //Todo create the type mapping hastable here
     }
 
 

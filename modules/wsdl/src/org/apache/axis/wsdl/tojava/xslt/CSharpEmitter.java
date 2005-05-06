@@ -3,7 +3,7 @@ package org.apache.axis.wsdl.tojava.xslt;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.axis.wsdl.databinding.SimpleCsharpTypeMapper;
+import org.apache.axis.wsdl.databinding.CsharpTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
 import org.apache.crimson.tree.XmlDocument;
@@ -34,7 +34,7 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
 
     public CSharpEmitter(CodeGenConfiguration configuration) {
         this.configuration = configuration;
-        this.mapper = new SimpleCsharpTypeMapper();
+        this.mapper = new CsharpTypeMapper();
 
     }
 
@@ -45,19 +45,11 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
     }
 
 
-      /*
-    Format of the XML  - Interface
-    <interface namespace="" name="">
-        <method name="">
-            <input>
-            <param name="" type=""/>*
-            </input> ?
-            <output>
-            <param name="" type=""/>?
-            </output>?
-        </method>
-    </interface>
-*/
+    /**
+     *  @see org.apache.axis.wsdl.tojava.xslt.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
+     * @param binding
+     * @return
+     */
     protected XmlDocument createDOMDocuementForInterface(WSDLBinding binding){
         WSDLInterface boundInterface = binding.getBoundInterface();
 
@@ -98,6 +90,11 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
 
     }
 
+    /**
+     * @see org.apache.axis.wsdl.tojava.xslt.MultiLanguageClientEmitter#createDOMDocuementForInterfaceImplementation(org.apache.wsdl.WSDLBinding)
+     * @param binding
+     * @return
+     */
     protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding) {
         return null;  
     }

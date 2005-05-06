@@ -20,11 +20,21 @@ import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
+*  File writer utility for writing out class files
 */
 public class FileWriter {
 
-    public static File createClassFile(File rootLocation,String packageName,String javaFileName,int fileType) throws IOException,Exception{
+    /**
+     * Creates/ returns a file object
+     * @param rootLocation - Location to be written
+     * @param packageName - package, can be '.' seperated
+     * @param fileName name of the file
+     * @param fileType  type of the file, java, csharp, cpp etc
+     * @return  the File that was created
+     * @throws IOException
+     * @throws Exception
+     */
+    public static File createClassFile(File rootLocation,String packageName,String fileName,int fileType) throws IOException,Exception{
 
         File returnFile = null;
         File root = rootLocation;
@@ -46,11 +56,11 @@ public class FileWriter {
 
         String extension = getExtension(fileType);
 
-        if (!javaFileName.endsWith(extension)){
-            javaFileName = javaFileName + extension;
+        if (!fileName.endsWith(extension)){
+            fileName = fileName + extension;
         }
 
-        returnFile = new File(root,javaFileName);
+        returnFile = new File(root,fileName);
 
         if (!returnFile.exists()){
             returnFile.createNewFile();
@@ -61,6 +71,11 @@ public class FileWriter {
         return returnFile;
     }
 
+    /**
+     * Find the extension for a given file type
+     * @param fileType
+     * @return
+     */
     private static String getExtension(int fileType) {
         String extension = "";
         switch (fileType){

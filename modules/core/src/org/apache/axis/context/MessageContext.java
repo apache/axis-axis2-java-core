@@ -114,7 +114,6 @@ public class MessageContext extends AbstractContext {
     public boolean outPutWritten = false;
 
     /**
-     * @param er            registry
      * @param initialProperties of the message context, should be null if no properties
      * @param sessionContext    of the message context, should be null if no sessionContext
      * @throws AxisFault

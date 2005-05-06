@@ -18,14 +18,43 @@ package org.apache.axis.wsdl.databinding;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- *
- */
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*  Interface for the type mapping
+*/
 public interface TypeMapper {
-	
-	public Class getTypeMapping(QName qname);
-	public String getParameterName(QName qname);
+    /**
+     * Get the type mapping class
+     * @param qname name of the XML element to be mapped
+     * @return a class that represents the particualr type
+     */
+    public Class getTypeMapping(QName qname);
+
+    /**
+     * Get the parameter name
+     * @param qname name of the XML element to get a parameter
+     * @return a unique parameter name
+     */
+    public String getParameterName(QName qname);
+
+    /**
+     * Adds a type mapping to the type mapper
+     * @param qname
+     * @param value
+     */
     public void addTypeMapping(QName qname,Object value);
 
 }

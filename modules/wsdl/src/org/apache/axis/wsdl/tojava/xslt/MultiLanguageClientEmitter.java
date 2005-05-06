@@ -31,41 +31,54 @@ import org.w3c.dom.Element;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
+* Abstract Client emitter
+* the XML will look like the following
+* todo escape the following
+* <pre>
+    <interface package="">
+    <method name="">
+    <input>
+        <param name="" type=""/>*
+    </input> ?
+    <output>
+        <param name="" type=""/>?
+    </output>?
+    </method>
+    </interface>
+  </pre>
 */
 
-/*
-Format of the XML  - Interface
-<interface package="">
-<method name="">
-<input>
-<param name="" type=""/>*
-</input> ?
-<output>
-<param name="" type=""/>?
-</output>?
-</method>
 
-</interface>
-*/
 public abstract class MultiLanguageClientEmitter implements Emitter{
 
     protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
 
-
+   /**
+    * Sets the mapper
+    * @see org.apache.axis.wsdl.databinding.TypeMapper
+    * @param mapper
+    */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
     }
 
+    /**
+     * Sets the code generator configuration
+     * @param configuration
+     */
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
     }
 
-
+   /**
+    *
+    * @see org.apache.axis.wsdl.tojava.emitter.Emitter#emitStub()
+    */
     public void emitStub() throws CodeGenerationException {
         try {
+            //get the binding
             WSDLBinding axisBinding = this.configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
             //write interfaces
             writeInterfaces(axisBinding);
@@ -77,6 +90,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         }
     }
 
+    /**
+     * Writes the interfaces
+     * @param axisBinding
+     * @throws Exception
+     */
     private void writeInterfaces(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceModel = createDOMDocuementForInterface(axisBinding);
         InterfaceWriter interfaceWriter =
@@ -86,6 +104,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
        writeClasses(interfaceModel,interfaceWriter);
     }
 
+    /**
+     * Writes the implementations
+     * @param axisBinding
+     * @throws Exception
+     */
     private void writeInterfaceImplementations(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
         InterfaceImplementationWriter interfaceImplWriter =
@@ -94,6 +117,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                 );
         writeClasses(interfaceImplModel,interfaceImplWriter);
     }
+
+    /**
+     * A resusable method for the implementation of interface and implementation writing
+     * @param model
+     * @param writer
+     * @throws IOException
+     * @throws Exception
+     */
     private void writeClasses(XmlDocument model,ClassWriter writer) throws IOException,Exception {
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
         model.write(memoryStream);
@@ -102,14 +133,34 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                 model.getDocumentElement().getAttribute("name"));
         writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
     }
+
+    /**
+     * @see org.apache.axis.wsdl.tojava.emitter.Emitter#emitSkeleton()
+     */
     public void emitSkeleton() throws CodeGenerationException {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    /**
+     * Creates the DOM tree for the interface creation
+     * @param binding
+     * @return
+     */
     protected abstract XmlDocument createDOMDocuementForInterface(WSDLBinding binding);
 
+    /**
+     * Creates the DOM tree for implementations
+     * @param binding
+     * @return
+     */
     protected abstract XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding);
 
+    /**
+     * Finds the input element for the xml document
+     * @param doc
+     * @param operation
+     * @return
+     */
     protected Element getInputElement(XmlDocument doc,WSDLOperation operation){
         Element inputElt = doc.createElement("input");
         //todo this should be multiple
@@ -126,6 +177,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         return inputElt;
     }
 
+    /**
+     * Finds the output element for the output element
+     * @param doc
+     * @param operation
+     * @return
+     */
     protected Element getOutputElement(XmlDocument doc,WSDLOperation operation){
         Element outputElt = doc.createElement("output");
         Element param = doc.createElement("param");

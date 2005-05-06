@@ -21,23 +21,31 @@ import org.apache.axis.om.OMElement;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
+* Default abstract implementation of the type mapper
 */
 public abstract class  TypeMappingAdapter implements TypeMapper{
 
+    //hashmap that contains the type mappings
     protected  HashMap map = new HashMap();
+    //counter variable to generate unique parameter ID's
     protected int counter=0;
+    //Upper limit for the paramete count
     protected static final int UPPER_PARAM_LIMIT = 1000;
 
+    /**
+     *
+     * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
+     */
     public Class getTypeMapping(QName qname) {
-        if (qname==null) return OMElement.class;
-
-        if (map.containsKey(qname.getLocalPart())){
+        if ((qname!=null) && map.containsKey(qname.getLocalPart())){
             return map.get(qname.getLocalPart()).getClass();
         }
         return Object.class;
     }
 
+    /**
+     * @see TypeMapper#getParameterName(javax.xml.namespace.QName)
+     */
     public String getParameterName(QName qname) {
         if (counter==UPPER_PARAM_LIMIT){
             counter=0;
@@ -45,6 +53,9 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
         return "param" + counter++;
     }
 
+    /**
+     * @see TypeMapper#addTypeMapping(javax.xml.namespace.QName, Object)
+     */
     public void addTypeMapping(QName qname, Object value) {
         map.put(qname,value);
     }

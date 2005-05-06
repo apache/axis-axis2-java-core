@@ -23,6 +23,9 @@ import org.apache.axis.wsdl.util.XSLTTemplateProcessor;
 * limitations under the License.
 *
 *
+* Abstract writer to be extended by writers. To use a class writer one needs to call the
+* methods in order
+* ususally it is setLanguage() ->loadTemplate() ->createOutFile() ->WriteOutFile()
 */
 public abstract class ClassWriter {
 
