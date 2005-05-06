@@ -67,7 +67,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                 null,
                 transportIn,
                 transport,
-        OperationContextFactory.createMEP(WSDLConstants.MEP_URI_IN_OUT,false,axisOp, null));
+        OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,axisOp, null));
         mc.setTransportOut(transport);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

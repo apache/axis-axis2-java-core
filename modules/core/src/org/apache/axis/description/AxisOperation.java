@@ -1,6 +1,5 @@
 package org.apache.axis.description;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,80 +15,78 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
 
 /**
  * @author chathura@opensource.lk
- *
+ *  
  */
 public class AxisOperation extends WSDLOperationImpl implements
-		ParameterInclude, WSDLOperation,DescriptionConstants ,PhasesInclude{
+		ParameterInclude, WSDLOperation, DescriptionConstants, PhasesInclude {
 
+	private MessageReceiver messageReceiver;
 
-
-    private MessageReceiver messageReceiver;
-
-	public AxisOperation(){
-        this.setMessageExchangePattern(MEP_URI_IN_OUT);
-		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());        
-        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
-        this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
+	public AxisOperation() {
+		this.setMessageExchangePattern(MEP_URI_IN_OUT);
+		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
+		this.setComponentProperty(MODULEREF_KEY, new ArrayList());
+		this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
 	}
-	
-	public AxisOperation(QName name){
+
+	public AxisOperation(QName name) {
 		this();
 		this.setName(name);
 	}
 
+	public void addModule(QName moduleref) {
+		if (moduleref == null) {
+			return;
+		}
+		Collection collectionModule = (Collection) this
+				.getComponentProperty(MODULEREF_KEY);
+		collectionModule.add(moduleref);
+	}
 
-    public void addModule(QName moduleref) {
-        if (moduleref == null) {
-            return;
-        }
-        Collection collectionModule =
-                (Collection) this.getComponentProperty(MODULEREF_KEY);
-        collectionModule.add(moduleref);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apache.axis.description.AxisService#getModules()
-     */
-
-    /**
-     * Method getModules
-     *
-     * @return
-     */
-    public Collection getModules() {
-        return (Collection) this.getComponentProperty(MODULEREF_KEY);
-    }
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.axis.description.AxisService#getModules()
+	 */
 
 	/**
-     * Method addParameter
-     *
-     * @param param Parameter that will be added
-     */
-    public void addParameter(Parameter param) {
-        if (param == null) {
-            return;
-        }
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
-        paramInclude.addParameter(param);
-    }
+	 * Method getModules
+	 * 
+	 * @return
+	 */
+	public Collection getModules() {
+		return (Collection) this.getComponentProperty(MODULEREF_KEY);
+	}
 
-   
-    /**
-     * Method getParameter
-     *
-     * @param name Name of the parameter
-     * @return 
-     */
-    public Parameter getParameter(String name) {
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
-        return (Parameter) paramInclude.getParameter(name);
-    }
-    
-    /**
+	/**
+	 * Method addParameter
+	 * 
+	 * @param param
+	 *            Parameter that will be added
+	 */
+	public void addParameter(Parameter param) {
+		if (param == null) {
+			return;
+		}
+		ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+				.getComponentProperty(PARAMETER_KEY);
+		paramInclude.addParameter(param);
+	}
+
+	/**
+	 * Method getParameter
+	 * 
+	 * @param name
+	 *            Name of the parameter
+	 * @return
+	 */
+	public Parameter getParameter(String name) {
+		ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+				.getComponentProperty(PARAMETER_KEY);
+		return (Parameter) paramInclude.getParameter(name);
+	}
+
+	/**
 	 * This method is responsible for finding a MEPContext for an incomming
 	 * messages. An incomming message can be of two states.
 	 * 
@@ -111,76 +108,78 @@ public class AxisOperation extends WSDLOperationImpl implements
 	 * @param msgContext
 	 * @return
 	 */
-	public OperationContext findMEPContext(MessageContext msgContext, boolean serverside)
-			throws AxisFault {
-          OperationContext mepContext = null;
-
+	public OperationContext findMEPContext(MessageContext msgContext,
+			boolean serverside) throws AxisFault {
+		OperationContext operationContext = null;
 
 		if (null == msgContext.getRelatesTo()) {
 			//Its a new incomming message so get the factory to create a new
 			// one
-			mepContext = OperationContextFactory.createMEPContext(this
-					.getMessageExchangePattern(), serverside,this,msgContext.getServiceContext());
-
+			operationContext = OperationContextFactory.createMEPContext(this
+					.getMessageExchangePattern(), serverside, this, msgContext
+					.getSessionContext());
 
 		} else {
 			// So this message is part of an ongoing MEP
-			mepContext = msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
+			//			operationContext =
+			// msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
 
-			if (null == mepContext) {
+			if (null == operationContext) {
 				throw new AxisFault(
 						"Cannot relate the message in the operation :"
-								+ this.getName() + " :Unrelated RelatesTO value "+msgContext.getRelatesTo().getValue());
+								+ this.getName()
+								+ " :Unrelated RelatesTO value "
+								+ msgContext.getRelatesTo().getValue());
 			}
 
 		}
 
-		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(), mepContext);
-		mepContext.addMessageContext(msgContext);
-		msgContext.setMepContext(mepContext);
-        if (mepContext.isComplete ()) {
-        	mepContext.cleanup ();
-        }
-        }
-//		return mepContext;
+		//		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(),
+		// operationContext);
+		operationContext.addMessageContext(msgContext);
+		msgContext.setOperationContext(operationContext);
+		if (operationContext.isComplete()) {
+			operationContext.cleanup();
+		}
+
+		return operationContext;
 
 	}
 
+	public MessageReceiver getMessageReciever() {
+		return messageReceiver;
+	}
 
+	public void setMessageReciever(MessageReceiver messageReceiver) {
+		this.messageReceiver = messageReceiver;
+	}
 
-    public MessageReceiver getMessageReciever() {
-        return messageReceiver;
-    }
+	public void setPhases(ArrayList phases, int flow) throws AxisFault {
+		if (phases == null) {
+			return;
+		}
+		PhasesIncludeImpl phaseInclude = (PhasesIncludeImpl) this
+				.getComponentProperty(PHASES_KEY);
+		phaseInclude.setPhases(phases, flow);
+	}
 
-    public void setMessageReciever(MessageReceiver messageReceiver) {
-        this.messageReceiver = messageReceiver;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.axis.description.PhasesInclude#getPhases(int)
+	 */
 
-   public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        if (phases == null) {
-            return;
-        }
-        PhasesIncludeImpl phaseInclude =
-                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
-        phaseInclude.setPhases(phases, flow);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apache.axis.description.PhasesInclude#getPhases(int)
-     */
-
-    /**
-     * Method getPhases
-     *
-     * @param flow
-     * @return
-     * @throws AxisFault
-     */
-    public ArrayList getPhases(int flow) throws AxisFault {
-        PhasesIncludeImpl phaseInclude =
-                (PhasesIncludeImpl) this.getComponentProperty(PHASES_KEY);
-        return (ArrayList) phaseInclude.getPhases(flow);
-    }
+	/**
+	 * Method getPhases
+	 * 
+	 * @param flow
+	 * @return
+	 * @throws AxisFault
+	 */
+	public ArrayList getPhases(int flow) throws AxisFault {
+		PhasesIncludeImpl phaseInclude = (PhasesIncludeImpl) this
+				.getComponentProperty(PHASES_KEY);
+		return (ArrayList) phaseInclude.getPhases(flow);
+	}
 }
 

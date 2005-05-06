@@ -24,62 +24,85 @@ import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.apache.axis.wsdl.databinding.TypeMapper;
-import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 
 /**
  * @author chathura@opensource.lk
- *  
+ *
  */
-public class ClientInterfaceWriter implements ClassWriterConstants {
-
+public class ClientStubWriter  implements ClassWriterConstants{
+	
 	private WSDLInterface womInterface;
-
-	private File directory ;
-
+	
+	private File directory;
+	
 	private TypeMapper typeMapper;
 	
 	
 
-	
-	public ClientInterfaceWriter(WSDLInterface womInterface, File directory,
+	/**
+	 * @param wsdlInterface
+	 * @param directory
+	 * @param typeMapper
+	 */
+	public ClientStubWriter(WSDLInterface wsdlInterface, File directory,
 			TypeMapper typeMapper) {
-		
-		this.womInterface = womInterface;
+		this.womInterface = wsdlInterface;
 		this.directory = directory;
 		this.typeMapper = typeMapper;
 	}
+	
 	public void emit() throws IOException{
+		
 		String name = womInterface.getName().getLocalPart();
+		name += "Stub";
 		OutputStream out = new FileOutputStream(new File(directory, name+CLASS_FILE_EXTENSION));
 		
 		PrintStream printStream = new PrintStream(out);
-		printStream.println(PUBLIC_INTERFACE
+		printStream.println(PUBLIC_CLASS + INDENDATION_SPACE
 				+ name
-				+ " extends "+REMOTE_INTERFACE+ "{");
+				+ " extends "
+				+ ABSTRACT_STUB
+				+ " implements "+REMOTE_INTERFACE+ "{");
 		printStream.println();
+		
+		
+		
+		///Start of Static block
+		printStream.println(INDENDATION_TAB+"static {");
+		printStream.println(INDENDATION_DOUBLE_TAB+ INDENDATION_SPACE
+				+AXIS_OPERATION +INDENDATION_SPACE
+				+STUB_VARIABLE___OPERATION +";");
+		
 		Iterator iterator = womInterface.getAllOperations().values()
-				.iterator();
+		.iterator();
+		int operationCounter = 0;
 		while (iterator.hasNext()) {
-			
-			//FIXME Handle the multipart as multiple arguments.
 			WSDLOperation operation = (WSDLOperation) iterator.next();
-			if (WSDLConstants.MEP_URI_IN_OUT.equals(operation.getMessageExchangePattern())) {
-				printStream.println( INDENDATION_TAB+"public "
-						+ this.typeMapper.getTypeMapping(operation.getOutputMessage().getElement()).getName()
-						+" "+ operation.getName().getLocalPart()+"("
-						+this.typeMapper.getTypeMapping(operation.getInputMessage().getElement()).getName()
-						+" "+this.typeMapper.getParameterName(operation.getInputMessage().getElement()) 
-						+") throws "+ REMOTE_EXCEPTION+";");
-				printStream.println();
+			printStream.println();
+			printStream.println(INDENDATION_DOUBLE_TAB + STUB_VARIABLE___OPERATION
+					+INDENDATION_SPACE + "="
+					+INDENDATION_SPACE + "new"
+					+INDENDATION_SPACE + AXIS_OPERATION
+					+"("+"}"+";");
+			
+			printStream.println(INDENDATION_DOUBLE_TAB
+					+STUB_VARIABLE__OPERATION_ARRRAY
+					+"["+operationCounter+"]"
+					+INDENDATION_SPACE + "="+INDENDATION_SPACE
+					+STUB_VARIABLE___OPERATION +";");
+			printStream.println();
+			
 				
-			}
+			operationCounter++;
 		}
+		printStream.println(INDENDATION_TAB+"}");
+		///End of Static block
 		printStream.println("}");
 		printStream.flush();
 		printStream.close();
-
+		
+		
 	}
-
 }
