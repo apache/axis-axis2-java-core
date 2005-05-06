@@ -141,7 +141,7 @@ public class MessageContext extends AbstractContext {
         super(null);
 
         if (sessionContext == null) {
-            this.sessionContext = new SimpleSessionContext();
+            this.sessionContext = new SessionContext(null);
         } else {
             this.sessionContext = sessionContext;
         }

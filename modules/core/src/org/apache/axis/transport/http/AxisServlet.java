@@ -39,7 +39,6 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.context.SimpleSessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineContextFactory;
@@ -144,7 +143,7 @@ public class AxisServlet extends HttpServlet {
             Object sessionContext = req.getSession().getAttribute(
                     Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
-                sessionContext = new SimpleSessionContext();
+                sessionContext = new SessionContext(null);
                 req.getSession().setAttribute(
                         Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }

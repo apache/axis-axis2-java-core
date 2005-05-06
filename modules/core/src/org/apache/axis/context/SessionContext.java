@@ -19,20 +19,12 @@ package org.apache.axis.context;
  * All the engine componets are stateless accross the executions and all the states should be kept in the
  * Contexts, there are three context Global, Session and Message
  */
-public interface SessionContext {
+public class SessionContext extends AbstractContext {
     /**
-     * Method get
-     *
-     * @param key
-     * @return
-     */
-    public Object get(Object key);
+        * @param parent
+        */
+    public SessionContext(AbstractContext parent) {
+        super(parent);
+    }
 
-    /**
-     * Method put
-     *
-     * @param key
-     * @param obj
-     */
-    public void put(Object key, Object obj);
 }
