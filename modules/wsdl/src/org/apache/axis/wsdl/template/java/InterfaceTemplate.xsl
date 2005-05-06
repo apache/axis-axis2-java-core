@@ -5,11 +5,20 @@
 
     /*
      *  Auto generated java interface by the Axis code generator
-    */
+     */
 
     public interface <xsl:value-of select="@name"></xsl:value-of> {
      <xsl:for-each select="method">
-        public <xsl:value-of select="output/param/@type"></xsl:value-of><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of>(<xsl:value-of select="input/param/@type"></xsl:value-of><xsl:text> </xsl:text><xsl:value-of select="output/param/@name"></xsl:value-of>) throws java.rmi.RemoteException;
+         <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+
+         <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
+         <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
+
+        /**
+         * Auto generated method signature 
+         *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
+         */
+        public  <xsl:value-of select="$outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>) throws java.rmi.RemoteException;
      </xsl:for-each>
     }
     </xsl:template>

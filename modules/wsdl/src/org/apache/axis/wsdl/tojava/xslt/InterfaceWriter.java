@@ -31,6 +31,9 @@ public class InterfaceWriter extends ClassWriter{
         this.language = language;
     }
 
+    /**
+     * @see ClassWriter#loadTemplate()
+     */
      public void loadTemplate(){
         Class clazz = this.getClass();
         switch (language){

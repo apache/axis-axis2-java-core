@@ -1,5 +1,7 @@
 package org.apache.axis.wsdl.databinding;
 
+import javax.xml.namespace.QName;
+
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -41,7 +43,9 @@ package org.apache.axis.wsdl.databinding;
 public class JavaTypeMapper extends TypeMappingAdapter{
 
     public JavaTypeMapper() {
-       this.map.put("string",String.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"string"),String.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"boolean"),Boolean.class);
+
        //add the rest todo the key should be a QName
     }
 

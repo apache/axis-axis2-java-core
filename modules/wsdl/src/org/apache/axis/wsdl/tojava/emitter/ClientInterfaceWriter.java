@@ -66,11 +66,13 @@ public class ClientInterfaceWriter implements ClassWriterConstants {
 			//FIXME Handle the multipart as multiple arguments.
 			WSDLOperation operation = (WSDLOperation) iterator.next();
 			if (WSDLConstants.MEP_URI_IN_OUT.equals(operation.getMessageExchangePattern())) {
-				printStream.println( INDENDATION_TAB+"public "
-						+ this.typeMapper.getTypeMapping(operation.getOutputMessage().getElement()).getName()
+                Class outTypeMapping = this.typeMapper.getTypeMapping(operation.getOutputMessage().getElement());
+                Class inTypeMapping = this.typeMapper.getTypeMapping(operation.getInputMessage().getElement());
+                printStream.println( INDENDATION_TAB+"public "
+						+ outTypeMapping==null?"void" :outTypeMapping.getName()
 						+" "+ operation.getName().getLocalPart()+"("
-						+this.typeMapper.getTypeMapping(operation.getInputMessage().getElement()).getName()
-						+" "+this.typeMapper.getParameterName(operation.getInputMessage().getElement()) 
+                       	+inTypeMapping==null?"":(inTypeMapping.getName()
+						+" "+this.typeMapper.getParameterName(operation.getInputMessage().getElement()))
 						+") throws "+ REMOTE_EXCEPTION+";");
 				printStream.println();
 				

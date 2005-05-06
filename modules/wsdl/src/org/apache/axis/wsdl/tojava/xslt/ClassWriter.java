@@ -33,18 +33,36 @@ public abstract class ClassWriter {
     protected FileOutputStream stream = null;
     protected InputStream xsltStream = null;
     protected int language = XSLTConstants.LanguageTypes.JAVA; //default is again java
-      
+
+    /**
+     * Sets the language
+     * @param language
+     */
     public void setLanguage(int language) {
         this.language = language;
     }
 
+    /**
+     * Load the template
+     */
     public abstract void loadTemplate();
 
+    /**
+     * Creates the output file
+     * @param packageName
+     * @param fileName
+     * @throws Exception
+     */
     public void createOutFile(String packageName,String fileName) throws Exception{
         File outputFile = FileWriter.createClassFile(outputFileLocation,packageName,fileName,language);
         this.stream = new FileOutputStream(outputFile);
     }
 
+    /**
+     * Writes the output file
+     * @param documentStream
+     * @throws Exception
+     */
     public void writeOutFile(InputStream documentStream) throws Exception{
         XSLTTemplateProcessor.parse(this.stream,documentStream,this.xsltStream);
         this.stream.flush();

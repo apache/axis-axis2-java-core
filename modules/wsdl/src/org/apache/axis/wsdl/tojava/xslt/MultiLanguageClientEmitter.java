@@ -169,7 +169,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         paramNameAttr.setValue(this.mapper.getParameterName(operation.getInputMessage().getElement()));
         param.setAttributeNode(paramNameAttr);
         Attr paramTypeAttr = doc.createAttribute("type");
-        paramTypeAttr.setValue(this.mapper.getTypeMapping(operation.getInputMessage().getElement()).getName());
+        Class typeMapping = this.mapper.getTypeMapping(operation.getInputMessage().getElement());
+        paramTypeAttr.setValue(typeMapping==null?"":typeMapping.getName());
         param.setAttributeNode(paramTypeAttr);
 
         inputElt.appendChild(param);
@@ -190,7 +191,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         paramNameAttr.setValue(this.mapper.getParameterName(operation.getOutputMessage().getElement()));
         param.setAttributeNode(paramNameAttr);
         Attr paramTypeAttr = doc.createAttribute("type");
-        paramTypeAttr.setValue(this.mapper.getTypeMapping(operation.getOutputMessage().getElement()).getName());
+        Class typeMapping = this.mapper.getTypeMapping(operation.getOutputMessage().getElement());
+        paramTypeAttr.setValue(typeMapping==null?"":typeMapping.getName());
         param.setAttributeNode(paramTypeAttr);
 
         outputElt.appendChild(param);

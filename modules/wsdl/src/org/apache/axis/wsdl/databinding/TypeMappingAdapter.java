@@ -24,7 +24,7 @@ import org.apache.axis.om.OMElement;
 * Default abstract implementation of the type mapper
 */
 public abstract class  TypeMappingAdapter implements TypeMapper{
-
+    protected static final String XSD_SCHEMA_URL = "http://www.w3.org/2001/XMLSchema";
     //hashmap that contains the type mappings
     protected  HashMap map = new HashMap();
     //counter variable to generate unique parameter ID's
@@ -37,10 +37,16 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
      * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
      */
     public Class getTypeMapping(QName qname) {
-        if ((qname!=null) && map.containsKey(qname.getLocalPart())){
-            return map.get(qname.getLocalPart()).getClass();
+        if ((qname!=null)){
+            Object o = map.get(qname);
+            if (o!=null){
+               return (Class)o;
+            }else{
+                return Object.class;
+            }
         }
-        return Object.class;
+
+        return null;
     }
 
     /**
