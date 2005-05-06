@@ -27,6 +27,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -75,7 +76,7 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
             // find the WebService method
             Class ImplClass = obj.getClass();
 
-            AxisOperation op = msgContext.getoperationConfig();
+            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
             if (op == null) {
                 throw new AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
             }
@@ -95,8 +96,8 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
 
                 OMElement parmeter = null;
                 SOAPEnvelope envelope = null;
-                MessageContext msgContext1 = new MessageContext(msgContext);
-                String style = msgContext.getoperationConfig().getStyle();
+                MessageContext msgContext1 = Utils.copyMessageContext(msgContext);
+                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;

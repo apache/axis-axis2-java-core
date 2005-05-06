@@ -24,8 +24,6 @@ import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 
 public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**

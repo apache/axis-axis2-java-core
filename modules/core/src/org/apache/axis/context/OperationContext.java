@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.PhasesInclude;
-import org.apache.axis.description.PhasesIncludeImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
@@ -73,7 +71,7 @@ public class OperationContext extends AbstractContext {
         }
 
         if (this.isComplete())
-            msgContext.getEngineContext().removeMEP(this);
+            ((ServiceContext)parent).getEngineContext().removeMEP(this);
 
     }
 

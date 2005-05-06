@@ -1,9 +1,10 @@
 package org.apache.axis.wsdl.databinding;
 
-import org.apache.axis.om.OMElement;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+
+import org.apache.axis.om.OMElement;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

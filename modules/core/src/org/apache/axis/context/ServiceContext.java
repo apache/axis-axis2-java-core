@@ -35,4 +35,8 @@ public class ServiceContext  extends AbstractContext{
     public AxisService getServiceConfig() {
         return serviceConfig;
     }
+    
+    public EngineContext getEngineContext(){
+        return (EngineContext)parent;
+    }
 }

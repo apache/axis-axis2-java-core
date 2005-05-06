@@ -37,14 +37,16 @@ public class AxisEngine {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
+    private EngineContext engineContext;
 
     /**
      * Constructor AxisEngine
      *
      *
      */
-    public AxisEngine() {
+    public AxisEngine(EngineContext engineContext) {
         log.info("Axis Engine Started");
+        this.engineContext = engineContext;
     }
 
     /**
@@ -61,13 +63,13 @@ public class AxisEngine {
      */
     public void send(MessageContext context) throws AxisFault {
         try {
-            if(context.getOperationContext() == null){
+            if (context.getOperationContext() == null) {
                 throw new AxisFault("Out flow must have a MEPContext set on the MessageContext");
             }
-            
-            
+
             ExecutionChain chain = context.getExecutionChain();
-            ServiceContext serviceContext = context.getOperationContext().getServiceContext();;
+            ServiceContext serviceContext = context.getOperationContext().getServiceContext();
+            ;
 
             /*
              * There is a two cases, at the server side(response) / client side
@@ -80,8 +82,8 @@ public class AxisEngine {
                 // what are we suppose to do in the client side
                 // how the client side handlers are deployed ??? this is a hack and no client side handlers
 
-//                chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
-                  // TODO : Fix me Srinath
+                //                chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
+                // TODO : Fix me Srinath
                 throw new UnsupportedOperationException();
             } else {
                 if (context.isServerSide() && !context.isProcessingFault()) {
@@ -90,9 +92,7 @@ public class AxisEngine {
             }
 
             // Add the phases that are are at Global scope
-            chain.addPhases(
-                context.getEngineContext().getPhases(
-                    EngineConfiguration.OUTFLOW));
+            chain.addPhases(engineContext.getPhases(EngineConfiguration.OUTFLOW));
             Phase addressingPhase = new SimplePhase("addressing");
             addressingPhase.addHandler(new AddressingOutHandler());
             chain.addPhase(addressingPhase);
@@ -132,8 +132,6 @@ public class AxisEngine {
 
             log.info("starting the out flow");
 
-            EngineContext engContext = context.getEngineContext();
-
             // let us always start with a fresh EC
             ExecutionChain chain = context.getExecutionChain();
 
@@ -141,15 +139,14 @@ public class AxisEngine {
             AxisTransportIn transport = context.getTransportIn();
             if (transport != null) {
                 log.info("Using the transport" + transport.getName());
-                chain.addPhases(
-                    transport.getPhases(EngineConfiguration.INFLOW));
+                chain.addPhases(transport.getPhases(EngineConfiguration.INFLOW));
             }
-            
+
             Phase addressingPhase = new SimplePhase("addressing");
             addressingPhase.addHandler(new AddressingInHandler());
             chain.addPhase(addressingPhase);
             //add the Global flow
-            chain.addPhases(engContext.getPhases(EngineConfiguration.INFLOW));
+            chain.addPhases(engineContext.getPhases(EngineConfiguration.INFLOW));
 
             // create a Dispatch Phase and add it to the Execution Chain
             Phase dispatchPhase = chain.getPhase(SimplePhase.DISPATCH_PHASE);
@@ -161,15 +158,13 @@ public class AxisEngine {
                 //This chain is the default Service diaptacher, the users may opt to overide this by 
                 //adding an Handlers to the DispatchPhase. 
                 dispatchPhase.addHandler(new RequestURIBasedDispatcher());
-                AddressingBasedDispatcher dispatcher =
-                    new AddressingBasedDispatcher();
+                AddressingBasedDispatcher dispatcher = new AddressingBasedDispatcher();
                 dispatchPhase.addHandler(dispatcher);
 
             }
 
             //Service handlers are added to ExecutionChain by this Handler
-            ServiceHandlersChainBuilder handlerChainBuilder =
-                new ServiceHandlersChainBuilder();
+            ServiceHandlersChainBuilder handlerChainBuilder = new ServiceHandlersChainBuilder();
             dispatchPhase.addHandler(handlerChainBuilder);
             chain.addPhase(dispatchPhase);
 
@@ -179,14 +174,14 @@ public class AxisEngine {
             if (context.isServerSide()) {
                 // add invoke Phase
                 MessageReceiver reciver =
-                    context.getoperationConfig().getMessageReciever();
+                    context.getOperationContext().getAxisOperation().getMessageReciever();
                 reciver.recieve(context);
             }
 
             log.info("ending the out flow");
         } catch (Throwable e) {
             handleFault(context, e);
-            
+
         }
     }
 
@@ -199,8 +194,7 @@ public class AxisEngine {
      * @param e
      * @throws AxisFault
      */
-    public void handleFault(MessageContext context, Throwable e)
-        throws AxisFault {
+    public void handleFault(MessageContext context, Throwable e) throws AxisFault {
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
@@ -209,15 +203,13 @@ public class AxisEngine {
             // create a SOAP envelope with the Fault
             MessageContext faultContext =
                 new MessageContext(
-                    context.getEngineContext(),
-                    context.getProperties(),
                     context.getSessionContext(),
                     context.getTransportIn(),
-                    context.getTransportOut(),context.getOperationContext());
+                    context.getTransportOut());
+            faultContext.setOperationContext(context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
-            SOAPEnvelope envelope =
-                OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+            SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();
@@ -229,7 +221,7 @@ public class AxisEngine {
 
             ServiceContext serviceContext = context.getOperationContext().getServiceContext();
             if (serviceContext != null) {
-//                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
+                //                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
                 // TODO : Fix me Srinath
                 throw new UnsupportedOperationException();
             }

@@ -15,16 +15,31 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
+
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.SOAPFaultCode;
+import org.apache.axis.om.SOAPFaultDetail;
+import org.apache.axis.om.SOAPFaultNode;
+import org.apache.axis.om.SOAPFaultReason;
+import org.apache.axis.om.SOAPFaultRole;
+import org.apache.axis.om.SOAPText;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 /**
  * Class SOAPFaultImpl

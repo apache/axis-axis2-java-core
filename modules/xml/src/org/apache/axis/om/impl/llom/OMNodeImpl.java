@@ -20,9 +20,6 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMXMLParserWrapper;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Class OMNodeImpl
  */

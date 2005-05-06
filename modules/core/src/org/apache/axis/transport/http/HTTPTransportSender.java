@@ -149,14 +149,13 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer) {
+        Writer writer)throws AxisFault {
             try {
                 writer.write(new String(HTTPConstants.HTTP).toCharArray());
                 writer.write(new String(HTTPConstants.OK).toCharArray());
                 writer.write("\n\n".toCharArray());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new AxisFault(e);
             }
     }
 

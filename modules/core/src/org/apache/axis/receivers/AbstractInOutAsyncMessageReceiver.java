@@ -35,11 +35,11 @@ public abstract class AbstractInOutAsyncMessageReceiver
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result)throws AxisFault {
                 MessageSender sender =
-                    new MessageSender(messgeCtx.getEngineContext());
+                    new MessageSender(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
                 sender.send(messgeCtx);
             }
             public void handleFault(AxisFault fault)throws AxisFault{
-                AxisEngine engine = new AxisEngine();
+                AxisEngine engine = new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
                 engine.handleFault(messgeCtx,fault);
             }
         };

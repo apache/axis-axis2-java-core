@@ -17,7 +17,12 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.handlers.AbstractHandler;
 
@@ -34,6 +39,8 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
     /**
      * Constructor Dispatcher
      */
+    private EngineContext engineContext;
+    
     public AddressingBasedDispatcher() {
         init(new HandlerMetadata(NAME));
     }
@@ -45,14 +52,17 @@ public class AddressingBasedDispatcher extends AbstractHandler implements Handle
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-//        if (msgctx.getServiceContext() == null) {
+        //TODO FIX this
+        throw new UnsupportedOperationException();
+//        if(msgctx.getOperationContext() != null){
+//        
+//   
 //            EndpointReference toEPR = msgctx.getTo();
 //            QName serviceName = new QName(toEPR.getAddress());
 //            AxisService service =
-//                msgctx.getEngineContext().getEngineConfig().getService(serviceName);
+//            engineContext.getEngineConfig().getService(serviceName);
 //
 //            if (service != null) {
-//                EngineContext engineContext = msgctx.getEngineContext();
 //                ServiceContext serviceContext = engineContext.getService(service.getName());
 //                if (serviceContext == null) {
 //                    serviceContext = new ServiceContext(service,engineContext);

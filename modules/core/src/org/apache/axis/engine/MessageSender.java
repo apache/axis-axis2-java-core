@@ -51,7 +51,7 @@ public class MessageSender {
      * @throws AxisFault
      */
     public void send(MessageContext msgCtx) throws AxisFault {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(msgCtx.getOperationContext().getServiceContext().getEngineContext());
         engine.send(msgCtx);
     }
 }

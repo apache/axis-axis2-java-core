@@ -40,7 +40,7 @@ public abstract class AbstractContext implements Serializable {
      * @param value
      * @param persistent
      */
-    public void put(Object key, Object value, boolean persistent) {
+    public void setProperty(Object key, Object value, boolean persistent) {
         if (persistent) {
             persistentMap.put(key, value);
         } else {
@@ -54,8 +54,8 @@ public abstract class AbstractContext implements Serializable {
      * @param key
      * @param value
      */
-    public void put(Object key, Object value) {
-        this.put(key, value, false);
+    public void setProperty(Object key, Object value) {
+        this.setProperty(key, value, false);
     }
     /**
      * Retrieve an object. Default search is done in the non persistent
@@ -63,8 +63,8 @@ public abstract class AbstractContext implements Serializable {
      * @param key
      * @return
      */
-    public Object get(Object key) {
-        return this.get(key, false);
+    public Object getProperty(Object key) {
+        return this.getProperty(key, false);
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class AbstractContext implements Serializable {
      * @param persistent
      * @return
      */
-    public Object get(Object key, boolean persistent) {
+    public Object getProperty(Object key, boolean persistent) {
         Object obj;
         if (persistent) {
             obj = persistentMap.get(key);
@@ -82,7 +82,7 @@ public abstract class AbstractContext implements Serializable {
             return nonPersistentMap.get(key);
         }
         if (obj == null && parent != null) {
-            obj = parent.get(key, persistent);
+            obj = parent.getProperty(key, persistent);
         }
         return obj;
     }

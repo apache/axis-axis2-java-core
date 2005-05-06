@@ -140,7 +140,7 @@ public class AxisServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             res.setContentType("text/xml; charset=utf-8");
-            AxisEngine engine = new AxisEngine();
+            AxisEngine engine = new AxisEngine(engineContext);
             Object sessionContext = req.getSession().getAttribute(
                     Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
@@ -148,9 +148,7 @@ public class AxisServlet extends HttpServlet {
                 req.getSession().setAttribute(
                         Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }
-            MessageContext msgContext = new MessageContext(engineContext,
-                    null,
-                    (SessionContext) sessionContext,
+            MessageContext msgContext = new MessageContext((SessionContext) sessionContext,
                     engineContext.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
                     engineContext.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);

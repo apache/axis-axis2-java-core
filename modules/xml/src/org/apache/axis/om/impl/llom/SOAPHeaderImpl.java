@@ -15,13 +15,21 @@
 */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
 /**
  * Class SOAPHeaderImpl

@@ -4,7 +4,6 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;

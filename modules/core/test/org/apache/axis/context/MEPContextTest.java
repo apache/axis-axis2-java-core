@@ -54,7 +54,7 @@ public class MEPContextTest extends AbstractTestCase {
     }
     
     public MessageContext getBasicMessageContext() throws AxisFault{
-    	return new MessageContext(engineCtx ,new HashMap(), new SessionContext() {
+    	return new MessageContext( new SessionContext() {
 			/* (non-Javadoc)
 			 * @see org.apache.axis.context.SessionContext#get(java.lang.Object)
 			 */

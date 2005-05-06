@@ -15,7 +15,6 @@
  */
 package org.apache.axis.om;
 
-import javax.xml.namespace.QName;
 
 /**
  * An element in the <CODE>SOAPBody</CODE> object that contains

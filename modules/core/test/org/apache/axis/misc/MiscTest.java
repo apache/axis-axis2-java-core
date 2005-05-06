@@ -47,7 +47,7 @@ public class MiscTest extends AbstractTestCase {
         Exception e = new InvocationTargetException(new Exception());
         assertNotSame(AxisFault.makeFault(e), e);
 
-        e = new AxisFault();
+        e = new AxisFault("");
     }
 
 }

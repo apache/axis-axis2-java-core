@@ -1,5 +1,9 @@
 package org.apache.axis.phaserule;
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetadata;
@@ -8,9 +12,6 @@ import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.phaseresolver.PhaseHolder;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.

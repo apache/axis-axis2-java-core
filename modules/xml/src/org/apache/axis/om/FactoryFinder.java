@@ -15,7 +15,6 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.soap11.SOAP11Factory;
 
 /**
  * Class FactoryFinder

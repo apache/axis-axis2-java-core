@@ -15,13 +15,13 @@
  */
 package org.apache.axis.om.impl.llom.serialize;
 
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMSerializer;
-
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMSerializer;
 
 /**
  * Class StreamingOMSerializer

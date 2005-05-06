@@ -27,7 +27,13 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
@@ -79,7 +85,7 @@ public class InteropProvider extends SimpleJavaProvider {
 
     public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
         try {
-            if (WSDLService.STYLE_DOC.equals(msgContext.getoperationConfig().getStyle())) {
+            if (WSDLService.STYLE_DOC.equals(msgContext.getOperationContext().getAxisOperation().getStyle())) {
                 SOAPBody body = msgContext.getEnvelope().getBody();
                 XMLStreamReader xpp = body.getXMLStreamReader();
 
@@ -109,81 +115,85 @@ public class InteropProvider extends SimpleJavaProvider {
                     operationName = new QName(methodName.substring(0, index));                
                 }
 
-
-                AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
-                if (operationName != null) {
-                    AxisOperation op = service.getOperation(operationName);
-                    if (op != null) {
-                        msgContext.setOperationConfig(op);
-                    } else {
-                        throw new AxisFault("Operation not found " + operationName);
-                    }
-                } else {
-                    throw new AxisFault(
-                        "Operation Name not specifed the request String is " + methodName);
-                }
-
-                //get the implementation class for the Web Service
-                Object obj = getTheImplementationObject(msgContext);
-
-                //find the WebService method
-                Class ImplClass = obj.getClass();
-                AxisOperation op = msgContext.getoperationConfig();
-                methodName = op.getName().getLocalPart();
-
-                Method[] methods = ImplClass.getMethods();
-                for (int i = 0; i < methods.length; i++) {
-                    if (methods[i].getName().equals(methodName)) {
-                        this.method = methods[i];
-                        break;
-                    }
-                }
-                //deserialize (XML-> java)
-                Object[] parms = deserializeParameters(msgContext, method, xpp);
-                //invoke the WebService
-
-                WSDLInteropTestDocLitPortType benchmark = (WSDLInteropTestDocLitPortType) obj;
-                Object result = null;
-                OMElement returnelement = null;
-                SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-                OMNamespace ns = fac.createOMNamespace("http://soapinterop.org/xsd", "doclitTypes");
-
-                if ("echoVoid".equals(methodName)) {
-                    benchmark.echoVoid();
-                    returnelement = fac.createOMElement("echoVoidReturn", ns);
-                } else if ("echoString".equals(methodName)) {
-                    result = benchmark.echoString((String) parms[0]);
-                    returnelement = fac.createOMElement("echoStringReturn", ns);
-                } else if ("echoStringArray".equals(methodName)) {
-                    result = benchmark.echoStringArray((String[]) parms[0]);
-                    returnelement = fac.createOMElement("echoStringArrayReturn", ns);
-                } else if ("echoStruct".equals(methodName)) {
-                    result = benchmark.echoStruct((SOAPStruct) parms[0]);
-                    returnelement = fac.createOMElement("echoStructReturn", ns);
-                }
-                Encoder outobj = null;
-                if (result != null) {
-                    if (result instanceof String || result instanceof String[]) {
-                        outobj = new SimpleTypeEncoder(result);
-                    } else if (result instanceof SOAPStruct) {
-                        outobj = new SOAPStructEncoder((SOAPStruct) result);
-                    }
-                }
-
-                SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
-
-                responseEnvelope.getBody().addChild(returnelement);
-                if (result != null) {
-                    returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
-                    returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI, "arrays");
-                    returnelement.declareNamespace(
-                        "http://soapinterop.org/WSDLInteropTestDocLit",
-                        "s");
-
-                }
-                msgContext.setEnvelope(responseEnvelope);
-
-                return msgContext;
+//              TODO fix this 
+                                      throw new UnsupportedOperationException();
+//                AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
+//                if (operationName != null) {
+//                    AxisOperation op = service.getOperation(operationName);
+//                    if (op != null) {
+//                        
+//                                    
+////                      TODO fix this            
+//                       // msgContext.setOperationConfig(op);
+//                    } else {
+//                        throw new AxisFault("Operation not found " + operationName);
+//                    }
+//                } else {
+//                    throw new AxisFault(
+//                        "Operation Name not specifed the request String is " + methodName);
+//                }
+//
+//                //get the implementation class for the Web Service
+//                Object obj = getTheImplementationObject(msgContext);
+//
+//                //find the WebService method
+//                Class ImplClass = obj.getClass();
+//                AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//                methodName = op.getName().getLocalPart();
+//
+//                Method[] methods = ImplClass.getMethods();
+//                for (int i = 0; i < methods.length; i++) {
+//                    if (methods[i].getName().equals(methodName)) {
+//                        this.method = methods[i];
+//                        break;
+//                    }
+//                }
+//                //deserialize (XML-> java)
+//                Object[] parms = deserializeParameters(msgContext, method, xpp);
+//                //invoke the WebService
+//
+//                WSDLInteropTestDocLitPortType benchmark = (WSDLInteropTestDocLitPortType) obj;
+//                Object result = null;
+//                OMElement returnelement = null;
+//                SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+//                OMNamespace ns = fac.createOMNamespace("http://soapinterop.org/xsd", "doclitTypes");
+//
+//                if ("echoVoid".equals(methodName)) {
+//                    benchmark.echoVoid();
+//                    returnelement = fac.createOMElement("echoVoidReturn", ns);
+//                } else if ("echoString".equals(methodName)) {
+//                    result = benchmark.echoString((String) parms[0]);
+//                    returnelement = fac.createOMElement("echoStringReturn", ns);
+//                } else if ("echoStringArray".equals(methodName)) {
+//                    result = benchmark.echoStringArray((String[]) parms[0]);
+//                    returnelement = fac.createOMElement("echoStringArrayReturn", ns);
+//                } else if ("echoStruct".equals(methodName)) {
+//                    result = benchmark.echoStruct((SOAPStruct) parms[0]);
+//                    returnelement = fac.createOMElement("echoStructReturn", ns);
+//                }
+//                Encoder outobj = null;
+//                if (result != null) {
+//                    if (result instanceof String || result instanceof String[]) {
+//                        outobj = new SimpleTypeEncoder(result);
+//                    } else if (result instanceof SOAPStruct) {
+//                        outobj = new SOAPStructEncoder((SOAPStruct) result);
+//                    }
+//                }
+//
+//                SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
+//
+//                responseEnvelope.getBody().addChild(returnelement);
+//                if (result != null) {
+//                    returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
+//                    returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI, "arrays");
+//                    returnelement.declareNamespace(
+//                        "http://soapinterop.org/WSDLInteropTestDocLit",
+//                        "s");
+//
+//                }
+//                msgContext.setEnvelope(responseEnvelope);
+//
+//                return msgContext;
             } else {
                 throw new AxisFault("this Service only supports doc-lit");
             }

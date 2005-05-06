@@ -15,15 +15,14 @@
  */
 package org.apache.axis.om.impl.llom;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPHeaderBlock;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class SOAPHeaderBlockImpl

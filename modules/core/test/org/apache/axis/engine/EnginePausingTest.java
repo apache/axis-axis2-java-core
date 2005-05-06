@@ -20,8 +20,6 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
@@ -35,12 +33,12 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLService;
 
 public class EnginePausingTest extends AbstractEngineTest {
   
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
+    private EngineContext engineContext;
 
     public EnginePausingTest() {
     }
@@ -56,7 +54,7 @@ public class EnginePausingTest extends AbstractEngineTest {
 
         AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
         
-        EngineContext engineContext = new EngineContext(engineRegistry);
+        engineContext = new EngineContext(engineRegistry);
 
         AxisOperation axisOp = new AxisOperation(operationName);
 
@@ -111,9 +109,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         ServiceContext serviceContext = new ServiceContext(service,engineContext);
         engineContext.addService(serviceContext);
 
-        // TODO : Fix me Srinath
-                throw new UnsupportedOperationException();
-
+//TODO
 //        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);
 //        engineRegistry.addService(service);
 //        service.setStyle(WSDLService.STYLE_DOC);
@@ -126,7 +122,7 @@ public class EnginePausingTest extends AbstractEngineTest {
     }
 
     public void testReceive() throws Exception {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 15);
         for (int i = 0; i < 15; i++) {

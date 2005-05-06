@@ -15,13 +15,11 @@
  */
 package org.apache.axis.context;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
@@ -64,24 +62,13 @@ public class MessageContext extends AbstractContext {
 
     private MessageInformationHeadersCollection messageInformationHeaders;
 
-    private EngineContext engineContext;
-
     private final ExecutionChain chain;
-
-    //    private ServiceContext serviceContext;
-
-    private AxisOperation operationConfig;
 
     private OperationContext operationContext;
 
     private AxisTransportIn transportIn;
 
     private AxisTransportOut transportOut;
-
-    /**
-     * Field properties
-     */
-    private final Map properties;
 
     /**
      * Field sessionContext
@@ -126,26 +113,6 @@ public class MessageContext extends AbstractContext {
 
     public boolean outPutWritten = false;
 
-    public MessageContext(MessageContext oldMessageContext) throws AxisFault {
-        this(
-            oldMessageContext.getEngineContext(),
-            oldMessageContext.getProperties(),
-            oldMessageContext.getSessionContext(),
-            oldMessageContext.getTransportIn(),
-            oldMessageContext.getTransportOut(),
-            oldMessageContext.getOperationContext());
-
-        this.messageInformationHeaders = new MessageInformationHeadersCollection();
-        MessageInformationHeadersCollection oldMessageInfoHeaders =
-            oldMessageContext.getMessageInformationHeaders();
-        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
-        messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
-        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
-
-        this.serverSide = oldMessageContext.isServerSide();
-    }
-
     /**
      * @param er            registry
      * @param initialProperties of the message context, should be null if no properties
@@ -160,29 +127,23 @@ public class MessageContext extends AbstractContext {
         AxisTransportOut transportOut,
         OperationContext mepContext)
         throws AxisFault {
-        this(engineContext, initialProperties, sessionContext, transportIn, transportOut);
+        this(sessionContext, transportIn, transportOut);
         this.operationContext = mepContext;
 
     }
 
     public MessageContext(
-        EngineContext engineContext,
-        Map initialProperties,
         SessionContext sessionContext,
         AxisTransportIn transportIn,
         AxisTransportOut transportOut)
         throws AxisFault {
         super(null);
-        this.engineContext = engineContext;
+
         if (sessionContext == null) {
             this.sessionContext = new SimpleSessionContext();
         } else {
             this.sessionContext = sessionContext;
         }
-        if (initialProperties == null) {
-            initialProperties = new HashMap();
-        }
-        properties = initialProperties;
         chain = new ExecutionChain();
         messageInformationHeaders = new MessageInformationHeadersCollection();
         this.transportIn = transportIn;
@@ -230,14 +191,6 @@ public class MessageContext extends AbstractContext {
      */
     public boolean isProcessingFault() {
         return processingFault;
-    }
-
-    /**
-     * @param key
-     * @return
-     */
-    public Object getProperty(Object key) {
-        return properties.get(key);
     }
 
     /**
@@ -325,14 +278,6 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @param key
-     * @param value
-     */
-    public void setProperty(Object key, Object value) {
-        properties.put(key, value);
-    }
-
-    /**
      * @param reference
      */
     public void setRelatesTo(RelatesTo reference) {
@@ -388,13 +333,6 @@ public class MessageContext extends AbstractContext {
      */
     public ExecutionChain getExecutionChain() {
         return this.chain;
-    }
-
-    /**
-    * @return
-    */
-    public Map getProperties() {
-        return properties;
     }
 
     public void setWSAAction(String actionURI) {
@@ -461,34 +399,6 @@ public class MessageContext extends AbstractContext {
     /**
      * @return
      */
-    public EngineContext getEngineContext() {
-        return engineContext;
-    }
-
-    /**
-     * @param context
-     */
-    public void setEngineContext(EngineContext context) {
-        engineContext = context;
-    }
-
-    /**
-     * @return
-     */
-    public AxisOperation getoperationConfig() {
-        return operationConfig;
-    }
-
-    /**
-     * @param context
-     */
-    public void setOperationConfig(AxisOperation context) {
-        operationConfig = context;
-    }
-
-    /**
-     * @return
-     */
     public OperationContext getOperationContext() {
         return operationContext;
     }
@@ -496,7 +406,7 @@ public class MessageContext extends AbstractContext {
     /**
      * @param context
      */
-    public void setMepContext(OperationContext context) {
+    public void setOperationContext(OperationContext context) {
         operationContext = context;
     }
 
@@ -513,5 +423,5 @@ public class MessageContext extends AbstractContext {
     public void setOutPutWritten(boolean b) {
         outPutWritten = b;
     }
-
+   
 }

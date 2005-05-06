@@ -15,10 +15,14 @@
  */
 package org.apache.axis.transport;
 
-import org.apache.axis.handlers.AbstractHandler;
+
+import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisFault;
 
 /**
  * Class TransportReceiver
  */
-public abstract class TransportReceiver extends AbstractHandler {
+public abstract class TransportReceiver{
+    public abstract void invoke(MessageContext msgContext,EngineContext engineContext) throws AxisFault;
 }

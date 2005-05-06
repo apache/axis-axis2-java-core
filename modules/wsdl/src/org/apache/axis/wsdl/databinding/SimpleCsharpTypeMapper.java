@@ -1,6 +1,5 @@
 package org.apache.axis.wsdl.databinding;
 
-import javax.xml.namespace.QName;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

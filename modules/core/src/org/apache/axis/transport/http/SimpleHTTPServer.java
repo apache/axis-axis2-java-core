@@ -137,8 +137,6 @@ public class SimpleHTTPServer implements Runnable {
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
                             new MessageContext(
-                                this.engineReg,
-                                null,
                                 null,
                                 engineReg.getEngineConfig().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
@@ -150,7 +148,7 @@ public class SimpleHTTPServer implements Runnable {
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        reciver.invoke(msgContext);
+                        reciver.invoke(msgContext,engineReg);
 
                         if (msgContext.getReplyTo() != null
                             && !AddressingConstants.EPR_ANONYMOUS_URL.equals(

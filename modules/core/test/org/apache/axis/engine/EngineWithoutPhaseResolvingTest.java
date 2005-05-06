@@ -25,7 +25,6 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -85,7 +84,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     }
 
     public void testServerSend() throws Exception {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
         fail();
        //TODO mc.setServiceContext(new ServiceContext(service, engineContext));
@@ -93,20 +92,20 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     }
 
     public void testClientSend() throws Exception {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(false); fail();
         //TODO mc.setServiceContext(new ServiceContext(service,engineContext));
         engine.send(mc);
     }
 
     public void testServerReceive() throws Exception {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
         engine.receive(mc);
     }
 
     public void testClientReceive() throws Exception {
-        AxisEngine engine = new AxisEngine();
+        AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(false);
         engine.receive(mc);
     }

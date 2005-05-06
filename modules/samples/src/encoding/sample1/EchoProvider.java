@@ -23,13 +23,21 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.testUtils.ArrayTypeEncoder;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 import org.apache.axis.testUtils.SimpleJavaProvider;
 import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
+import org.apache.axis.util.Utils;
+
+import com.sun.corba.se.internal.javax.rmi.CORBA.Util;
 
 public class EchoProvider extends SimpleJavaProvider {
 
@@ -95,7 +103,7 @@ public class EchoProvider extends SimpleJavaProvider {
 			
 			//find the WebService method  
 			Class ImplClass = obj.getClass();
-            AxisOperation op = msgContext.getoperationConfig();
+            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
 			String methodName = op.getName().getLocalPart();
 			
 			
@@ -160,7 +168,7 @@ public class EchoProvider extends SimpleJavaProvider {
                 "http://axis.apache.org",
                 "s");
 
-            MessageContext resMessageContext = new MessageContext(msgContext);
+            MessageContext resMessageContext = Utils.copyMessageContext(msgContext);
             resMessageContext.setEnvelope(responseEnvelope);
 
 			return resMessageContext;

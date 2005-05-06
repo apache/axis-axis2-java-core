@@ -113,7 +113,7 @@ public class SimpleMailListner implements Runnable {
 
     protected static synchronized AxisEngine getAxisEngine() {
         if (myAxisEngine == null) {
-            myAxisEngine = new AxisEngine();
+            myAxisEngine = new AxisEngine(er);
         }
         return myAxisEngine;
     }

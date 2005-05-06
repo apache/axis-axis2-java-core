@@ -6,8 +6,6 @@ import java.io.FileReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**

@@ -15,11 +15,11 @@
  */
 package org.apache.axis.om.impl.llom.traverse;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class OMChildrenWithSpecificAttributeIterator

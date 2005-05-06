@@ -1,9 +1,9 @@
 package org.apache.axis.wsdl.util;
 
-import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

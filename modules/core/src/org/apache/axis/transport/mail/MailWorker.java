@@ -90,7 +90,7 @@ public class MailWorker implements Runnable {
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            msgContext = new MessageContext(this.reg, null, null,
+            msgContext = new MessageContext(null,
                     reg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
                     reg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);

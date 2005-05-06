@@ -26,6 +26,7 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
+import org.apache.axis.util.Utils;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
@@ -121,10 +122,7 @@ public class Call {
                 registry.getTransportOut(new QName(senderTransport));
 
             final MessageContext msgctx =
-                new MessageContext(
-                    engineContext,
-                    properties,
-                    null,
+                new MessageContext(null,
                     transportIn,
                     transportOut);
                     
@@ -151,11 +149,11 @@ public class Call {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {
-                            MessageContext response = new MessageContext(msgctx);
+                            MessageContext response = Utils.copyMessageContext(msgctx);
                             response.setServerSide(false);
 
                             TransportReceiver receiver = response.getTransportIn().getReciever();
-                            receiver.invoke(response);
+                            receiver.invoke(response,engineContext);
                             SOAPEnvelope resenvelope = response.getEnvelope();
                             AsyncResult asyncResult = new AsyncResult();
                             asyncResult.setResult(resenvelope);
@@ -202,11 +200,11 @@ public class Call {
 
             sender.send(msgctx);
 
-            MessageContext response = new MessageContext(msgctx);
+            MessageContext response = Utils.copyMessageContext(msgctx);
             response.setServerSide(false);
 
             TransportReceiver receiver = response.getTransportIn().getReciever();
-            receiver.invoke(response);
+            receiver.invoke(response,engineContext);
             SOAPEnvelope resenvelope = response.getEnvelope();
 
             // TODO if the resenvelope is a SOAPFault then throw an exception

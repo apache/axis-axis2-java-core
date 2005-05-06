@@ -24,7 +24,16 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.AbstractTestCase;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 public class ElementSerializerTest extends AbstractTestCase {

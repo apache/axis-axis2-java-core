@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -88,7 +89,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public void invoke(MessageContext msgContext,EngineContext engineContext) throws AxisFault{
         Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
@@ -117,7 +118,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
 
                 // TODO take care of other HTTP Headers
             }
-            AxisEngine axisEngine = new AxisEngine();
+            AxisEngine axisEngine = new AxisEngine(engineContext);
             try {
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);

@@ -1,7 +1,11 @@
 
 package userguide.sample1;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.

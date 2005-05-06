@@ -1,8 +1,5 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.FactoryFinder;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;
 
 /**

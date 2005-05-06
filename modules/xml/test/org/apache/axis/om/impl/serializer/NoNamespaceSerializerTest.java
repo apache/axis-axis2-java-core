@@ -10,7 +10,11 @@ import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 /*

@@ -25,7 +25,11 @@ import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
 import org.apache.axis.om.impl.llom.SOAPConstants;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;

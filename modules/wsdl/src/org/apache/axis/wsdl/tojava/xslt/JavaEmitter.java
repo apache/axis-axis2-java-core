@@ -1,5 +1,8 @@
 package org.apache.axis.wsdl.tojava.xslt;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.apache.axis.wsdl.databinding.SimpleJavaTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
@@ -9,9 +12,6 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

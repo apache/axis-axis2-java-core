@@ -18,7 +18,10 @@ package org.apache.axis.util;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -47,16 +50,15 @@ public class Utils {
         int flowtype)
         throws AxisFault {
         // TODO : Fix me Deepal
-                throw new UnsupportedOperationException();
-//        ArrayList faultchain = new ArrayList();
-//        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
-//        faultchain.add(p);
-//        addHandlers(flow, p);
-//        serviceContext.setPhases(faultchain, flowtype);
+        throw new UnsupportedOperationException();
+        //        ArrayList faultchain = new ArrayList();
+        //        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
+        //        faultchain.add(p);
+        //        addHandlers(flow, p);
+        //        serviceContext.setPhases(faultchain, flowtype);
     }
 
-    public static void createExecutionChains(ServiceContext serviceContext)
-        throws AxisFault {
+    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
         AxisService service = serviceContext.getServiceConfig();
         addPhasesToServiceFromFlow(
             serviceContext,
@@ -78,38 +80,65 @@ public class Utils {
     public static AxisService createSimpleService(
         QName serviceName,
         MessageReceiver messageReceiver,
-        String className, QName opName) {
+        String className,
+        QName opName) {
         AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(
-            new ParameterImpl(
-                AbstractMessageReceiver.SERVICE_CLASS,
-            className));
+        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
         AxisOperation axisOp = new AxisOperation(opName);
         axisOp.setMessageReciever(messageReceiver);
         service.addOperation(axisOp);
         return service;
     }
-    
-    public static ServiceContext createServiceContext(AxisService service,EngineContext engineContext) throws AxisFault{
-        ServiceContext serviceContext = new ServiceContext(service,engineContext);
+
+    public static ServiceContext createServiceContext(
+        AxisService service,
+        EngineContext engineContext)
+        throws AxisFault {
+        ServiceContext serviceContext = new ServiceContext(service, engineContext);
         createExecutionChains(serviceContext);
         return serviceContext;
     }
 
     public static AxisService createSimpleService(
-         QName serviceName, String className,QName opName) {
-             return createSimpleService(serviceName,new RawXMLINOutMessageRecevier(),className,opName);   
-     }
+        QName serviceName,
+        String className,
+        QName opName) {
+        return createSimpleService(
+            serviceName,
+            new RawXMLINOutMessageRecevier(),
+            className,
+            opName);
+    }
 
-    public static void addHandlers(Flow flow, SimplePhase phase)
-        throws AxisFault {
+    public static void addHandlers(Flow flow, SimplePhase phase) throws AxisFault {
         if (flow != null) {
             int handlerCount = flow.getHandlerCount();
             for (int i = 0; i < handlerCount; i++) {
                 phase.addHandler(flow.getHandler(i).getHandler());
             }
         }
+    }
+
+    public static MessageContext copyMessageContext(MessageContext oldMessageContext)
+        throws AxisFault {
+        MessageContext messageContext =
+            new MessageContext(
+                oldMessageContext.getSessionContext(),
+                oldMessageContext.getTransportIn(),
+                oldMessageContext.getTransportOut());
+
+        messageContext.setMessageInformationHeaders(new MessageInformationHeadersCollection());
+        MessageInformationHeadersCollection oldMessageInfoHeaders =
+            oldMessageContext.getMessageInformationHeaders();
+        MessageInformationHeadersCollection messageInformationHeaders =
+            new MessageInformationHeadersCollection();
+        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
+        messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
+        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
+        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
+        return messageContext;
+
     }
 
 }

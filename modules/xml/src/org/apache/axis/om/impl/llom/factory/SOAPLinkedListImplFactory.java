@@ -1,7 +1,21 @@
 package org.apache.axis.om.impl.llom.factory;
 
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.*;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPBody;
+import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.om.SOAPFault;
+import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis.om.impl.llom.SOAPBodyImpl;
+import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.om.impl.llom.SOAPFaultImpl;
+import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
+import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
 import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
 
 /**

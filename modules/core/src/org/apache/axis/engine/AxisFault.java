@@ -29,22 +29,16 @@ import java.lang.reflect.InvocationTargetException;
  * </ol>
  */
 public class AxisFault extends java.rmi.RemoteException {
-    /**
-     *
-     */
-    public AxisFault() {
-
-        // TODO Auto-generated constructor stub
-    }
-
+ 
+    public AxisFault(Throwable arg1) {
+         super(arg1.getMessage(), arg1);
+     }
     /**
      * @param arg0
      */
     public AxisFault(String arg0) {
         super(arg0);
-
-        // TODO Auto-generated constructor stub
-    }
+   }
 
     /**
      * @param arg0
@@ -52,8 +46,6 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public AxisFault(String arg0, Throwable arg1) {
         super(arg0, arg1);
-
-        // TODO Auto-generated constructor stub
     }
 
     /**

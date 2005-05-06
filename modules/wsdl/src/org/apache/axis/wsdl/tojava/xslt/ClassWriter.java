@@ -1,11 +1,11 @@
 package org.apache.axis.wsdl.tojava.xslt;
 
-import org.apache.axis.wsdl.util.FileWriter;
-import org.apache.axis.wsdl.util.XSLTTemplateProcessor;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+
+import org.apache.axis.wsdl.util.FileWriter;
+import org.apache.axis.wsdl.util.XSLTTemplateProcessor;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

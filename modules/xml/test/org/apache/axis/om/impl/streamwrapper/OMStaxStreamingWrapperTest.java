@@ -21,7 +21,10 @@ import java.io.FileReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.AbstractTestCase;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 public class OMStaxStreamingWrapperTest extends AbstractTestCase {

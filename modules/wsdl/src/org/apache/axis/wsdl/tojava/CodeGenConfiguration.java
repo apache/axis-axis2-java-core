@@ -2,8 +2,8 @@ package org.apache.axis.wsdl.tojava;
 
 import java.io.File;
 
-import org.apache.wsdl.WSDLDescription;
 import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
+import org.apache.wsdl.WSDLDescription;
 
 /**
  * @author chathura@opensource.lk

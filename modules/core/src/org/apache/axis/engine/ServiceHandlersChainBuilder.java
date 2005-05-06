@@ -32,9 +32,9 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
      * @see org.apache.axis.engine.Handler#invoke(org.apache.axis.context.MessageContext)
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if(msgContext.getoperationConfig() != null){
-            AxisOperation axisOp = msgContext.getoperationConfig();
-            msgContext.setMepContext(axisOp.findMEPContext(msgContext,msgContext.isServerSide()));
+        if(msgContext.getOperationContext() != null){
+            AxisOperation axisOp = msgContext.getOperationContext().getAxisOperation();
+            msgContext.setOperationContext(axisOp.findMEPContext(msgContext,msgContext.isServerSide()));
         }
         
         ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
@@ -42,9 +42,9 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
             // let add the Handlers
             ExecutionChain chain = msgContext.getExecutionChain();
             
-            EngineContext engineContext = msgContext.getEngineContext();
+            EngineContext engineContext = serviceContext.getEngineContext();
 
-            // TODO : Fix me Srinath
+            //TODO : Fix me Srinath
                 throw new UnsupportedOperationException();
 //            if( engineContext.getService(serviceContext.getName()) != null){
 //                engineContext.addService(serviceContext);
