@@ -40,8 +40,8 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     private Map moduleContextMap;
     
     /**
-     * Map containing <code>MessageContext</code> to 
-     * <code>MEPContext</code> mapping.
+     * Map containing <code>MessageID</code> to 
+     * <code>OperationContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
     
