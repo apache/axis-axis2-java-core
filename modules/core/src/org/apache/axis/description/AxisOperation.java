@@ -115,9 +115,9 @@ public class AxisOperation extends WSDLOperationImpl implements
 		if (null == msgContext.getRelatesTo()) {
 			//Its a new incomming message so get the factory to create a new
 			// one
-			operationContext = OperationContextFactory.createMEPContext(this
-					.getMessageExchangePattern(), serverside, this, msgContext
-					.getSessionContext());
+//			operationContext = OperationContextFactory.createMEPContext(this
+//					.getMessageExchangePattern(), serverside, this, msgContext
+//					.getSessionContext());
 
 		} else {
 			// So this message is part of an ongoing MEP
