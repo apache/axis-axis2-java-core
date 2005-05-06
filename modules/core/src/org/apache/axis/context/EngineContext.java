@@ -43,7 +43,7 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
      * Map containing <code>MessageContext</code> to 
      * <code>MEPContext</code> mapping.
      */
-    private final Map mepContextMap = new HashMap();
+    private final Map operationContextMap = new HashMap();
 
     public AxisStorage getStorage() {
         return storage;
@@ -140,24 +140,18 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     }
     
     
-    public void addMEPContext(String messageID, OperationContext mepContext){
-        System.out.println(messageID);
-    	this.mepContextMap.put(messageID, mepContext);
+    public void registerOperationContext(String messageID, OperationContext mepContext){
+        this.operationContextMap.put(messageID, mepContext);
     }
     
     public OperationContext getMEPContext(String messageID){
         System.out.println(messageID);
-    	return(OperationContext)this.mepContextMap.get(messageID);
+    	return(OperationContext)this.operationContextMap.get(messageID);
     }
      
-    public void removeMEP(OperationContext mepContext) throws AxisFault{
-//    	if(!mepContext.isComplete())
-//    		throw new AxisFault("Illegal attempt to drop the global reference of an incomplete MEPContext");
-//    	Iterator iterator = mepContext.getAllMessageContexts().iterator();
-//    	while(iterator.hasNext()){
-//    		MessageContext msgContext = ((MessageContext)iterator.next());
-//    		this.mepContextMap.remove(msgContext.getMessageID());
-//    	}
+   
+    public Map getOperationContextMap(){
+    	return this.operationContextMap;
     }
 
 }

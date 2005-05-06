@@ -18,9 +18,6 @@ package org.apache.axis.context;
 *
 */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
@@ -33,85 +30,52 @@ import org.apache.wsdl.WSDLConstants;
  */
 
 public class OperationContext extends AbstractContext {
-
-    private ArrayList messageContextList;
+	
+	private MessageContext inMessageContext;
+	
+	private MessageContext outMessageContext;
 
     private String MepId;
 
     private AxisOperation axisOperation;
 
-
     public OperationContext(AxisOperation axisOperation,
                             ServiceContext serviceContext) {
         super(serviceContext);
         this.axisOperation = axisOperation;
-
-        // Most frequently used MEPs are IN ONLY and IN-OUT MEP. So the number
-        // of messagecontext for those MEPs are at most 2. Setting the initial
-        // capacity of the arrayList to 2.
-        messageContextList = new ArrayList(2);
     }
 
-    /**
-     *
-     * When a new message is added to the <code>MEPContext</code> the logic
-     * should be included remove the MEPContext from the table in the
-     * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
-     * message the MEPContext should be removed from the AxisOperation
-     *
-     * @param msgContext
-     */
-    public void addMessageContext(MessageContext msgContext) throws AxisFault {
-        if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation
-                .getMessageExchangePattern())) {
-            messageContextList.add(msgContext);
-        } else if (WSDLConstants.MEP_URI_IN_OUT.equals(this.axisOperation
-                .getMessageExchangePattern())) {
-            messageContextList.add(msgContext);
-        }
 
-        if (this.isComplete())
-            ((ServiceContext)parent).getEngineContext().removeMEP(this);
 
-    }
-
-    /**
-     * @param index
-     * @return
-     */
-    public MessageContext getMessageContext(int index) {
-        return (MessageContext) messageContextList.get(index);
-    }
-
-    public MessageContext removeMessageContext(MessageContext ctxt) {
-        messageContextList.remove(ctxt.getMessageID());
-        return ctxt;
-    }
-
-    public List getAllMessageContexts() {
-        return this.messageContextList;
-    }
-
-    public MessageContext getMessageContext(String messageID) throws AxisFault {
-        if (null != messageID) {
-            for (int i = 0; i < this.messageContextList.size(); i++) {
-                if (messageID.equals(((MessageContext) (this.messageContextList
-                        .get(i))).getMessageID())) {
-                    return ((MessageContext) (this.messageContextList.get(i)));
-                }
-            }
-        }
-
-        throw new AxisFault(
-                " Message does not exist in the current MEP : Invalid MessageID :"
-                + messageID);
-    }
 
     public void addMessageContext(String messageLabel, MessageContext msgContext)
             throws AxisFault {
-        // TODO : Chathura
-        throw new UnsupportedOperationException();
-
+    	
+    	if(WSDLConstants.MESSAGE_LABLE_IN.equals(messageLabel)){
+    		if(null == this.inMessageContext){
+    			this.inMessageContext = msgContext;
+    			this.getServiceContext().getEngineContext().registerOperationContext
+					(msgContext.getMessageID(), this);
+    			return;
+    		}    	
+    		throw new AxisFault("Message: messageID "+msgContext.getMessageID()+" is inconsistent " +
+    				"with the MEP. MEP does not" +
+    				" associate with two In Messages");
+    	}else if(WSDLConstants.MESSAGE_LABLE_OUT.equals(messageLabel)){
+    		if(null == this.outMessageContext){
+    			this.outMessageContext = msgContext;
+    			this.getServiceContext().getEngineContext().registerOperationContext
+					(msgContext.getMessageID(), this);
+    			return;
+    		}
+    		throw new AxisFault("Message messageID: "+msgContext.getMessageID()+" is inconsistent " +
+    				"with the MEP. MEP does not" +
+    				" associate with two Out Messages");
+    	}
+    	
+    	throw new AxisFault("MessageLable :"+messageLabel+" is not supported in the OperationContext" +
+    			" implementation. Only "+WSDLConstants.MESSAGE_LABLE_IN+" and "+WSDLConstants.MESSAGE_LABLE_OUT+
+				" are the only known messageLables of the OperationContext implemantation");
     }
 
     /**
@@ -140,21 +104,54 @@ public class OperationContext extends AbstractContext {
 
     }
 
+    /**
+     * Removes the pointers to this <code>OperationContext</code>
+     * in the <code>EngineContext</code>'s OperationContextMap so 
+     * that this  <code>OperationContext</code> will eventually get garbage
+     * collected along with the <code>MessageContext</code>s it
+     * contain.
+     * @throws AxisFault If the MEP is not Complete.
+     */
     public void cleanup() throws AxisFault {
-        //TODO Chathura
-        throw new UnsupportedOperationException();
+    	if(!this.isComplete()){
+    		throw new AxisFault("Illegal attempt to drop the global " +
+    				"reference of an incomplete MEPContext");    		
+    	}
+    	
+    	if(null != this.inMessageContext){
+    		this.getServiceContext().getEngineContext().getOperationContextMap().
+				remove(this.inMessageContext.getMessageID());
+    	}
+    	if(null != this.outMessageContext){
+    		this.getServiceContext().getEngineContext().getOperationContextMap().
+				remove(this.outMessageContext.getMessageID());
+    	}
+    	
     }
-
+    
+    
+    /**
+     * Checks to see if the MEP is complete. i.e. whether 
+     * all the messages that are associated with the MEP 
+     * has arrived and MEP is complete. 
+     * @return
+     */
     public boolean isComplete() {
-        if (WSDLConstants.MEP_URI_IN_ONLY.equals(this.axisOperation
-                .getMessageExchangePattern())) {
-            if (1 == this.messageContextList.size())
-                return true;
-        } else if (WSDLConstants.MEP_URI_IN_OUT.equals(this.axisOperation
-                .getMessageExchangePattern())) {
-            if (2 == this.messageContextList.size())
-                return true;
-        }
+    	if (WSDLConstants.MEP_URI_IN_OUT.equals
+				(this.axisOperation.getMessageExchangePattern()) 
+			|| WSDLConstants.MEP_URI_OUT_IN.equals
+				(this.axisOperation.getMessageExchangePattern())) {
+		    if (null != this.inMessageContext && null != this.outMessageContext)
+		        return true;
+    	} else if (WSDLConstants.MEP_URI_IN_ONLY.equals
+    			(this.axisOperation.getMessageExchangePattern())) {
+    		if (null != this.inMessageContext)
+    			return true;
+    	} else if(WSDLConstants.MEP_URI_OUT_ONLY.equals
+    			(this.axisOperation.getMessageExchangePattern())){
+    		if(null != this.outMessageContext)
+    			return true;
+    	}
 
         return false;
     }
