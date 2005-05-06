@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
@@ -36,23 +37,27 @@ public class MEPContextTest extends AbstractTestCase {
     public MEPContextTest(String arg0) {
         super(arg0);
     }
-    
+    //FIXME TODO Chathura
     public void testMEPfindingOnRelatesTO() throws Exception{
-    	MessageContext messageContext1 = this.getBasicMessageContext();
+    	 
+    	ServiceContext sessionContext = new ServiceContext(new AxisService(),new EngineContext(null));
+		MessageContext messageContext1 = this.getBasicMessageContext();
     	
     	messageContext1.setMessageID(new Long(System.currentTimeMillis()).toString());
     	AxisOperation axisOperation = new AxisOperation(new QName("test"));
-    	OperationContext operationContext1 = axisOperation.findMEPContext(messageContext1, true);
+    	OperationContext operationContext1 = axisOperation.findOperationContext(messageContext1, sessionContext, true);
     	
     	MessageContext messageContext2 = this.getBasicMessageContext();
     	messageContext2.setMessageID(new Long(System.currentTimeMillis()).toString());
     	messageContext2.getMessageInformationHeaders().setRelatesTo(new RelatesTo(messageContext1.getMessageID()));
-    	OperationContext operationContext2 = axisOperation.findMEPContext(messageContext2, true);
+    	OperationContext operationContext2 = axisOperation.findOperationContext(messageContext2, sessionContext,  true);
     	assertEquals(operationContext1, operationContext2);
     }
     
     public MessageContext getBasicMessageContext() throws AxisFault{
-    	return new MessageContext( new SessionContext(null) ,new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")));
+
+    	return new MessageContext(null ,new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")));
+
     }
     
 }

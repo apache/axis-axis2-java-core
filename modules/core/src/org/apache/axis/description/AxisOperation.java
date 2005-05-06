@@ -7,6 +7,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
+import org.apache.axis.context.OperationContextFactory;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.wsdl.WSDLOperation;
@@ -107,34 +109,34 @@ public class AxisOperation extends WSDLOperationImpl implements
 	 * @param msgContext
 	 * @return
 	 */
-	public OperationContext findMEPContext(MessageContext msgContext,
-			boolean serverside) throws AxisFault {
+	public OperationContext findOperationContext(MessageContext msgContext,
+			ServiceContext serviceContext, boolean serverside) throws AxisFault {
 		OperationContext operationContext = null;
 
 		if (null == msgContext.getRelatesTo()) {
 			//Its a new incomming message so get the factory to create a new
 			// one
-//			operationContext = OperationContextFactory.createMEPContext(this
-//					.getMessageExchangePattern(), serverside, this, msgContext
-//					.getSessionContext());
+			operationContext = OperationContextFactory.createMEPContext(
+					getMessageExchangePattern(), serverside, this,
+					serviceContext);
 
 		} else {
 			// So this message is part of an ongoing MEP
 			//			operationContext =
-			// msgContext.getEngineContext().getMEPContext(msgContext.getRelatesTo().getValue());
+			msgContext.getEngineContext().getOperationContext(
+					msgContext.getRelatesTo().getValue());
 
 			if (null == operationContext) {
-				throw new AxisFault(
-						"Cannot relate the message in the operation :"
-								+ this.getName()
-								+ " :Unrelated RelatesTO value "
-								+ msgContext.getRelatesTo().getValue());
+				throw new AxisFault("Cannot relate the message in the operation :"
+					+ this.getName()
+					+ " :Unrelated RelatesTO value "
+					+ msgContext.getRelatesTo().getValue());
 			}
 
 		}
 
-		//		msgContext.getEngineContext().addMEPContext(msgContext.getMessageID(),
-		// operationContext);
+		msgContext.getEngineContext().registerOperationContext(
+				msgContext.getMessageID(), operationContext);
 		operationContext.addMessageContext(msgContext);
 		msgContext.setOperationContext(operationContext);
 		if (operationContext.isComplete()) {

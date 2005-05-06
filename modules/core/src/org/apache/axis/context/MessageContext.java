@@ -114,6 +114,8 @@ public class MessageContext extends AbstractContext {
     private boolean paused = false;
 
     public boolean outPutWritten = false;
+    
+    private String serviceInstanceID;
 
     /**
      * @param initialProperties of the message context, should be null if no properties
@@ -424,5 +426,22 @@ public class MessageContext extends AbstractContext {
     public void setOutPutWritten(boolean b) {
         outPutWritten = b;
     }
+    
+    /**
+	 * @return Returns the serviceInstanceID.
+	 */
+	public String getServiceInstanceID() {
+		return serviceInstanceID;
+	}
+	/**
+	 * @param serviceInstanceID The serviceInstanceID to set.
+	 */
+	public void setServiceInstanceID(String serviceInstanceID) {
+		this.serviceInstanceID = serviceInstanceID;
+	}
+	
+	public EngineContext getEngineContext(){
+		return engineContext;
+	}
 
 }

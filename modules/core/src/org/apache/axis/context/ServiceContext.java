@@ -22,13 +22,30 @@ import org.apache.axis.description.AxisService;
 
 public class ServiceContext  extends AbstractContext{
     private AxisService serviceConfig;   
+    
+    private String serviceInstanceID;
 
     public ServiceContext(AxisService serviceConfig,EngineContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
+        
 
     }
+    
+    
 
+	/**
+	 * @return Returns the serviceInstanceID.
+	 */
+	public String getServiceInstanceID() {
+		return serviceInstanceID;
+	}
+	/**
+	 * @param serviceInstanceID The serviceInstanceID to set.
+	 */
+	public void setServiceInstanceID(String serviceInstanceID) {
+		this.serviceInstanceID = serviceInstanceID;
+	}
     /**
      * @return
      */

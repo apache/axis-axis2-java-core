@@ -137,7 +137,7 @@ public class Call {
                         callbackService.getName().getLocalPart()
                             + "/"
                             + axisOperation.getName().getLocalPart()));
-                axisOperation.findMEPContext(msgctx, false);
+                axisOperation.findOperationContext(msgctx, callbackService.findServiceContext(msgctx), false);
             }
 
             msgctx.setMessageInformationHeaders(messageInfoHeaders);

@@ -34,7 +34,9 @@ public class ServiceHandlersChainBuilder extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         if(msgContext.getOperationContext() != null){
             AxisOperation axisOp = msgContext.getOperationContext().getAxisOperation();
-            msgContext.setOperationContext(axisOp.findMEPContext(msgContext,msgContext.isServerSide()));
+            //TODO FIXME Srinath
+            throw new UnsupportedOperationException();
+//            msgContext.setOperationContext(axisOp.findOperationContext(msgContext, msgContext.get,msgContext.isServerSide()));
         }
         
         ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();

@@ -35,7 +35,7 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     private EngineConfiguration engineConfig;
     private AxisStorage storage;
 
-    private Map serviceContextMap;
+    
     private Map sessionContextMap;
     private Map moduleContextMap;
     
@@ -44,6 +44,9 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
      * <code>MEPContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
+    
+    
+    private final Map serviceContextMap;
 
 
 
@@ -138,8 +141,7 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
         this.operationContextMap.put(messageID, mepContext);
     }
     
-    public OperationContext getMEPContext(String messageID){
-        System.out.println(messageID);
+    public OperationContext getOperationContext(String messageID){        
     	return(OperationContext)this.operationContextMap.get(messageID);
     }
      
@@ -147,10 +149,28 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     public Map getOperationContextMap(){
     	return this.operationContextMap;
     }
+
+    
+    public void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext){
+    	this.serviceContextMap.put(serviceInstanceID, serviceContext);
+    }
+    
+    public ServiceContext getServiceContext(String serviceInstanceID){
+    	return (ServiceContext)this.serviceContextMap.get(serviceInstanceID);
+    }    
+    
+	/**
+	 * @return Returns the serviceContextMap.
+	 */
+	public Map getServiceContextMap() {
+		return serviceContextMap;
+	}
+
     
     public AxisStorage getStorage() {
         return storage;
     }
+
 
     public void setStorage(AxisStorage storage) {
         this.storage = storage;
