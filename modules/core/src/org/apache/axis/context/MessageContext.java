@@ -65,6 +65,8 @@ public class MessageContext extends AbstractContext {
     private final ExecutionChain chain;
 
     private OperationContext operationContext;
+    private ServiceContext serviceContext;
+    private EngineContext engineContext;
 
     private AxisTransportIn transportIn;
 
@@ -422,5 +424,5 @@ public class MessageContext extends AbstractContext {
     public void setOutPutWritten(boolean b) {
         outPutWritten = b;
     }
-   
+
 }

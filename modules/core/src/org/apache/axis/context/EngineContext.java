@@ -45,13 +45,7 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
      */
     private final Map operationContextMap = new HashMap();
 
-    public AxisStorage getStorage() {
-        return storage;
-    }
 
-    public void setStorage(AxisStorage storage) {
-        this.storage = storage;
-    }
 
     private PhasesInclude phaseInclude;
     
@@ -152,6 +146,14 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
    
     public Map getOperationContextMap(){
     	return this.operationContextMap;
+    }
+    
+    public AxisStorage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(AxisStorage storage) {
+        this.storage = storage;
     }
 
 }
