@@ -17,9 +17,7 @@
  */
 package org.apache.axis.clientapi;
 
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.context.ServiceContext;
 
 /**
  * @author hemapani
@@ -28,7 +26,6 @@ import org.apache.axis.description.AxisService;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class MEPClient {
-    private AxisService service;
-    private AxisOperation axisOperation;
-    private SystemContext engineContext;
+    private ServiceContext service;
+
 }
