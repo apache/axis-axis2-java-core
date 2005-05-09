@@ -30,6 +30,7 @@ import org.apache.axis.description.AxisService;
 public class ServiceContextFactory {
 
     public static ServiceContext createServiceContext(SystemContext sysContext,AxisService service){
-        return null;
+        ServiceContext serviceContext = new ServiceContext(service,sysContext);
+        return serviceContext;
     }
 }

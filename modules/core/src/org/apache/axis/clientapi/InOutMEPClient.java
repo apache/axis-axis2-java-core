@@ -28,7 +28,7 @@ import org.apache.axis.description.AxisOperation;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class InOutMEPClient {
+public class InOutMEPClient extends MEPClient{
 
     private String senderTransport = Constants.TRANSPORT_HTTP;
     private String Listenertransport = Constants.TRANSPORT_HTTP;
