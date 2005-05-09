@@ -21,6 +21,8 @@ package org.apache.axis.wsdl.tojava;
  *
  */
 public interface CommandLineOptionConstants {
+	
+	public static final String SOLE_INPUT = "SOLE_INPUT";
 
 	public static final String WSDL_LOCATION_URI_OPTION = "uri";
 	public static final String OUTPUT_LOCATION_OPTION = "o";

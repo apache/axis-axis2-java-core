@@ -6,8 +6,6 @@ import java.io.IOException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Jar;
 
-import sun.rmi.transport.Target;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

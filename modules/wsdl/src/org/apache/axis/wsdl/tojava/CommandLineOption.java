@@ -16,6 +16,8 @@
 
 package org.apache.axis.wsdl.tojava;
 
+import java.util.ArrayList;
+
 /**
  * @author chathura@opensource.lk
  *  
@@ -24,15 +26,23 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
 	private String type;
 
-	private String optionValue;
+	private ArrayList optionValues;
 
 	private boolean invalid = false;
+	
+	public CommandLineOption(String type, String[] values){
+		this.type = type;
+		ArrayList arrayList = new ArrayList(values.length);
+		for(int i =0; i< values.length; i++){
+			arrayList.add(values[i]);
+		}
+	}
 
 	/**
 	 * @param type
-	 * @param optionValue
+	 * @param optionValues
 	 */
-	public CommandLineOption(String type, String optionValue) {
+	public CommandLineOption(String type, ArrayList values) {
 
 		if (("-" + WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(type)) {
 			this.type = WSDL_LOCATION_URI_OPTION;
@@ -44,10 +54,9 @@ public class CommandLineOption implements CommandLineOptionConstants {
 			this.invalid = true;
 		}
 
-		if (optionValue == null) {
-			this.invalid = true;
-		} else {
-			this.optionValue = optionValue;
+		if (null !=  values) {
+			
+			this.optionValues = values ;
 		}
 	}
 
@@ -60,10 +69,10 @@ public class CommandLineOption implements CommandLineOptionConstants {
 	}
 
 	/**
-	 * @return Returns the optionValue.
+	 * @return Returns the optionValues.
 	 */
 	public String getOptionValue() {
-		return optionValue;
+		return (String)optionValues.get(0);
 	}
 
 	/**
@@ -71,5 +80,13 @@ public class CommandLineOption implements CommandLineOptionConstants {
 	 */
 	public boolean isInvalid() {
 		return invalid;
+	}
+	
+	
+	/**
+	 * @return Returns the optionValues.
+	 */
+	public ArrayList getOptionValues() {
+		return optionValues;
 	}
 }

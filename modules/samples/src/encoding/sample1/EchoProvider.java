@@ -37,8 +37,6 @@ import org.apache.axis.testUtils.SimpleTypeEncoder;
 import org.apache.axis.testUtils.SimpleTypeEncodingUtils;
 import org.apache.axis.util.Utils;
 
-import com.sun.corba.se.internal.javax.rmi.CORBA.Util;
-
 public class EchoProvider extends SimpleJavaProvider {
 
     public Object[] deserializeParameters(

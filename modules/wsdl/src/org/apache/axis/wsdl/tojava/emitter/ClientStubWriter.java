@@ -99,7 +99,7 @@ public class ClientStubWriter  implements ClassWriterConstants{
 		}
 		printStream.println(INDENDATION_TAB+"}");
 		///End of Static block
-		printStream.println("}");
+		printStream.println(")");
 		printStream.flush();
 		printStream.close();
 		

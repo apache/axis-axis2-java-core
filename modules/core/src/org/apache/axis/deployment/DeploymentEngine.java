@@ -16,6 +16,19 @@
 
 package org.apache.axis.deployment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.ArchiveReader;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
@@ -23,7 +36,12 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.*;
+import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.description.AxisService;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.engine.EngineConfigurationImpl;
@@ -31,13 +49,6 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
