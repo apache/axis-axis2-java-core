@@ -140,7 +140,7 @@ public class SimpleHTTPServer implements Runnable {
                                 null,
                                 engineReg.getEngineConfig().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
-                                transportOut);
+                                transportOut,engineReg);
                         msgContext.setServerSide(true);
 
                         // We do not have any Addressing Headers to put

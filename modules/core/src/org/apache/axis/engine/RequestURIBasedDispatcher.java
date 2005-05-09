@@ -17,21 +17,24 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.handlers.AbstractHandler;
 
 /**
  * Class Dispatcher
  */
-public class RequestURIBasedDispatcher extends AbstractHandler implements Handler {
+public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /**
      * Field NAME
      */
     public static final QName NAME =
         new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
-    private AxisService service;
+    QName serviceName = null;
+    QName operatoinName = null;
 
     /**
      * Constructor Dispatcher
@@ -40,62 +43,45 @@ public class RequestURIBasedDispatcher extends AbstractHandler implements Handle
         init(new HandlerMetadata(NAME));
     }
 
-    /**
-     * Method invoke
-     *
-     * @param msgctx
-     * @throws AxisFault
+    public AxisOperation findOperation(AxisService service, MessageContext messageContext)
+        throws AxisFault {
+        if (operatoinName != null) {
+            AxisOperation axisOp = service.getOperation(operatoinName);
+            return axisOp;
+        }
+        return null;
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public void invoke(MessageContext msgctx) throws AxisFault {
+    public AxisService findService(MessageContext messageContext) throws AxisFault {
         final String URI_ID_STRING = "/services";
-        if (msgctx.isServerSide()) {
+        if (messageContext.isServerSide()) {
 
-//            EndpointReference toEPR = msgctx.getTo();
-//            String filePart = toEPR.getAddress();
-//
-//            int index = filePart.lastIndexOf(URI_ID_STRING);
-//            String serviceStr = null;
-//            if (index > 0) {
-//                serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-//
-//                EngineContext engineContext = msgctx.getEngineContext();
-//
-//                QName serviceName = null;
-//                QName operatoinName = null;
-//
-//                if ((index = serviceStr.indexOf('/')) > 0) {
-//                    serviceName = new QName(serviceStr.substring(0, index));
-//                    operatoinName = new QName(serviceStr.substring(index + 1));
-//                } else {
-//                    serviceName = new QName(serviceStr);
-//                }
-//
-//                ServiceContext serviceContext = engineContext.getService(serviceName);
-//                if (serviceContext == null) {
-//                    EngineConfiguration registry = msgctx.getEngineContext().getEngineConfig();
-//                    service = registry.getService(serviceName);
-//                    if (service != null) {
-//                        serviceContext = new ServiceContext(service,engineContext);
-//                    }
-//                }
-//                if (serviceContext != null) {
-//                    if (operatoinName != null) {
-//                        AxisOperation axisOp =
-//                            serviceContext.getServiceConfig().getOperation(operatoinName);
-//                        if(axisOp != null){
-//                            msgctx.setOperationConfig(axisOp);
-//                        }
-//                        //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
-//                    }
-//
-//                    msgctx.setServiceContext(serviceContext);
-//                }
-//                
-                throw new UnsupportedOperationException();
+            EndpointReference toEPR = messageContext.getTo();
+            String filePart = toEPR.getAddress();
 
+            int index = filePart.lastIndexOf(URI_ID_STRING);
+            String serviceStr = null;
+            if (index > 0) {
+                serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
+
+                EngineContext engineContext = messageContext.getEngineContext();
+
+                if ((index = serviceStr.indexOf('/')) > 0) {
+                    serviceName = new QName(serviceStr.substring(0, index));
+                    operatoinName = new QName(serviceStr.substring(index + 1));
+                } else {
+                    serviceName = new QName(serviceStr);
+                }
+
+                EngineConfiguration registry = messageContext.getEngineContext().getEngineConfig();
+                return registry.getService(serviceName);
             }
-//        } else {
-//            // TODO client side service Dispatch ,, What this really mean?
-//        }
+        }
+        return null;
+
     }
 }

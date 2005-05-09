@@ -114,31 +114,43 @@ public class MessageContext extends AbstractContext {
     private boolean paused = false;
 
     public boolean outPutWritten = false;
-    
+
     private String serviceInstanceID;
 
     /**
-     * @param initialProperties of the message context, should be null if no properties
-     * @param sessionContext    of the message context, should be null if no sessionContext
+     * 
+     * @param engineContext
+     * @param sessionContext
+     * @param transportIn
+     * @param transportOut
+     * @param mepContext
      * @throws AxisFault
      */
     public MessageContext(
         EngineContext engineContext,
-        Map initialProperties,
         SessionContext sessionContext,
         AxisTransportIn transportIn,
         AxisTransportOut transportOut,
         OperationContext mepContext)
         throws AxisFault {
-        this(sessionContext, transportIn, transportOut);
+        this(sessionContext, transportIn, transportOut, engineContext);
         this.operationContext = mepContext;
 
     }
+    /**
+     * 
+     * @param sessionContext
+     * @param transportIn
+     * @param transportOut
+     * @param engineContext
+     * @throws AxisFault
+     */
 
     public MessageContext(
         SessionContext sessionContext,
         AxisTransportIn transportIn,
-        AxisTransportOut transportOut)
+        AxisTransportOut transportOut,
+        EngineContext engineContext)
         throws AxisFault {
         super(null);
 
@@ -151,6 +163,7 @@ public class MessageContext extends AbstractContext {
         messageInformationHeaders = new MessageInformationHeadersCollection();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
+        this.engineContext = engineContext;
 
     }
 
@@ -426,22 +439,43 @@ public class MessageContext extends AbstractContext {
     public void setOutPutWritten(boolean b) {
         outPutWritten = b;
     }
-    
+
     /**
-	 * @return Returns the serviceInstanceID.
-	 */
-	public String getServiceInstanceID() {
-		return serviceInstanceID;
-	}
-	/**
-	 * @param serviceInstanceID The serviceInstanceID to set.
-	 */
-	public void setServiceInstanceID(String serviceInstanceID) {
-		this.serviceInstanceID = serviceInstanceID;
-	}
-	
-	public EngineContext getEngineContext(){
-		return engineContext;
-	}
+     * @return Returns the serviceInstanceID.
+     */
+    public String getServiceInstanceID() {
+        return serviceInstanceID;
+    }
+    /**
+     * @param serviceInstanceID The serviceInstanceID to set.
+     */
+    public void setServiceInstanceID(String serviceInstanceID) {
+        this.serviceInstanceID = serviceInstanceID;
+    }
+
+    public EngineContext getEngineContext() {
+        return engineContext;
+    }
+
+    /**
+     * @return
+     */
+    public ServiceContext getServiceContext() {
+        return serviceContext;
+    }
+
+    /**
+     * @param context
+     */
+    public void setEngineContext(EngineContext context) {
+        engineContext = context;
+    }
+
+    /**
+     * @param context
+     */
+    public void setServiceContext(ServiceContext context) {
+        serviceContext = context;
+    }
 
 }

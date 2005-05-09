@@ -149,7 +149,7 @@ public class AxisServlet extends HttpServlet {
             }
             MessageContext msgContext = new MessageContext((SessionContext) sessionContext,
                     engineContext.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                    engineContext.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+                    engineContext.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)),engineContext);
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,

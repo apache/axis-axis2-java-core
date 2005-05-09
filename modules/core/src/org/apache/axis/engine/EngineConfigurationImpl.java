@@ -72,7 +72,7 @@ public class EngineConfigurationImpl implements EngineConfiguration {
      *
      * @param global
      */
-    public EngineConfigurationImpl(AxisGlobal global) throws AxisFault {
+    public EngineConfigurationImpl(AxisGlobal global) {
         this.global = global;
         inPhases = new ArrayList();
         outPhases = new ArrayList();

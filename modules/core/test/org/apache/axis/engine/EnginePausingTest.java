@@ -58,7 +58,7 @@ public class EnginePausingTest extends AbstractEngineTest {
 
         AxisOperation axisOp = new AxisOperation(operationName);
 
-        mc = new MessageContext(engineContext, null, null, transportIn,transportOut,OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,axisOp,null));
+        mc = new MessageContext(engineContext, null, transportIn,transportOut,OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,axisOp,null));
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

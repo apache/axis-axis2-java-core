@@ -63,8 +63,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         mc =
             new MessageContext(
                 engineContext,
-                null,
-                null,
+               null,
                 transportIn,
                 transport,
         OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,axisOp, null));

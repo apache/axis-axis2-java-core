@@ -124,7 +124,7 @@ public class Call {
             final MessageContext msgctx =
                 new MessageContext(null,
                     transportIn,
-                    transportOut);
+                    transportOut,engineContext);
                     
 
             msgctx.setEnvelope(env);
@@ -190,7 +190,6 @@ public class Call {
             MessageContext msgctx =
                 new MessageContext(
                     engineContext,
-                    properties,
                     null,
                     transportIn,
                     transportOut,

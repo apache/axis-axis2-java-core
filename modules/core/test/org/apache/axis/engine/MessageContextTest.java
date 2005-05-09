@@ -39,7 +39,6 @@ public class MessageContextTest extends AbstractTestCase {
                 null,
                 null,
                 null,
-                null,
                 OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT, false, null, null));
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();

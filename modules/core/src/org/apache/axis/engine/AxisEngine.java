@@ -164,9 +164,9 @@ public class AxisEngine {
             }
 
             //Service handlers are added to ExecutionChain by this Handler
-            ServiceHandlersChainBuilder handlerChainBuilder = new ServiceHandlersChainBuilder();
-            dispatchPhase.addHandler(handlerChainBuilder);
-            chain.addPhase(dispatchPhase);
+//            ServiceHandlersChainBuilder handlerChainBuilder = new ServiceHandlersChainBuilder();
+//            dispatchPhase.addHandler(handlerChainBuilder);
+//            chain.addPhase(dispatchPhase);
 
             // Start rolling the Service Handlers will,be added by the Dispatcher
             chain.invoke(context);
@@ -205,7 +205,7 @@ public class AxisEngine {
                 new MessageContext(
                     context.getSessionContext(),
                     context.getTransportIn(),
-                    context.getTransportOut());
+                    context.getTransportOut(),engineContext);
             faultContext.setOperationContext(context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);

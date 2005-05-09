@@ -56,7 +56,7 @@ public class MEPContextTest extends AbstractTestCase {
     
     public MessageContext getBasicMessageContext() throws AxisFault{
 
-    	return new MessageContext(null ,new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")));
+    	return new MessageContext(null,new AxisTransportIn(new QName("axis")), new AxisTransportOut(new QName("axis")),engineCtx);
 
     }
     
