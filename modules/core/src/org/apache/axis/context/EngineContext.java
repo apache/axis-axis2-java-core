@@ -30,82 +30,51 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.EngineConfiguration;
 import org.apache.axis.storage.AxisStorage;
 
-public class EngineContext extends AbstractContext implements PhasesInclude{
+public class EngineContext extends AbstractContext implements PhasesInclude {
 
     private EngineConfiguration engineConfig;
     private AxisStorage storage;
 
-    
     private Map sessionContextMap;
     private Map moduleContextMap;
-    
+
     /**
      * Map containing <code>MessageID</code> to 
      * <code>OperationContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
-    
-    
+
     private final Map serviceContextMap;
 
-
-
     private PhasesInclude phaseInclude;
-    
-    public EngineContext(EngineConfiguration registry){
+
+    public EngineContext(EngineConfiguration registry) {
         super(null);
         this.engineConfig = registry;
         serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();
         sessionContextMap = new HashMap();
         phaseInclude = new PhasesIncludeImpl();
-      
+
     }
-    
+
     /**
      * The method is used to do the intialization of the EngineContext, right now we know that
      * module.init(..) is called here
      * @throws AxisFault
      */
-    
-    
-    public void init() throws AxisFault{
-    
+
+    public void init() throws AxisFault {
+
     }
-    
-    
-    public void addService(ServiceContext service){
-        serviceContextMap.put(service.getServiceConfig().getName(),service);
-    }
-    
-    public void removeService(QName name){
+
+    public void removeService(QName name) {
         serviceContextMap.remove(name);
     }
-    
-    public ServiceContext getService(QName serviceName){
-    	// change QName to String above
-    	// - look up service name in registry of deployed services (in myself and if not look up in my parent engineConfig
-    	// - if not found error
-    	// - if found, look for reference properties
-    	// - if have reference properties, use ref prop as key to find the servicecontext
-    	// - if no ref props create new servicecontext
-    	// - return servicecontext
-        return (ServiceContext)serviceContextMap.get(serviceName);
-    
-    }
-    
-    
-
-    
-
-
-
-
-
 
     /**
-     * @return
-     */
+    * @return
+    */
     public EngineConfiguration getEngineConfig() {
         return engineConfig;
     }
@@ -117,7 +86,6 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
         engineConfig = configuration;
     }
 
-  
     /**
      * @param flow
      * @return
@@ -135,42 +103,30 @@ public class EngineContext extends AbstractContext implements PhasesInclude{
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
         phaseInclude.setPhases(phases, flow);
     }
-    
-    
-    public void registerOperationContext(String messageID, OperationContext mepContext){
+
+    public void registerOperationContext(String messageID, OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
-    
-    public OperationContext getOperationContext(String messageID){        
-    	return(OperationContext)this.operationContextMap.get(messageID);
-    }
-     
-   
-    public Map getOperationContextMap(){
-    	return this.operationContextMap;
+
+    public OperationContext getOperationContext(String messageID) {
+        return (OperationContext) this.operationContextMap.get(messageID);
     }
 
-    
-    public void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext){
-    	this.serviceContextMap.put(serviceInstanceID, serviceContext);
+    public Map getOperationContextMap() {
+        return this.operationContextMap;
     }
-    
-    public ServiceContext getServiceContext(String serviceInstanceID){
-    	return (ServiceContext)this.serviceContextMap.get(serviceInstanceID);
-    }    
-    
-	/**
-	 * @return Returns the serviceContextMap.
-	 */
-	public Map getServiceContextMap() {
-		return serviceContextMap;
-	}
 
-    
+    public void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext) {
+        this.serviceContextMap.put(serviceInstanceID, serviceContext);
+    }
+
+    public ServiceContext getServiceContext(String serviceInstanceID) {
+        return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
+    }
+
     public AxisStorage getStorage() {
         return storage;
     }
-
 
     public void setStorage(AxisStorage storage) {
         this.storage = storage;

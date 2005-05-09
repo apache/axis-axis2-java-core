@@ -27,11 +27,11 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,8 +91,8 @@ public class SimpleHTTPServer implements Runnable {
         try {
             this.serverSocket = serverSoc;
             Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
-            EngineContextFactory erfac = (EngineContextFactory) erClass.newInstance();
-            this.engineReg = erfac.createContextBuilder(dir);
+            EngineContextFactory erfac = new EngineContextFactory();
+            this.engineReg = erfac.buildEngineContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);
@@ -140,7 +140,8 @@ public class SimpleHTTPServer implements Runnable {
                                 null,
                                 engineReg.getEngineConfig().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
-                                transportOut,engineReg);
+                                transportOut,
+                                engineReg);
                         msgContext.setServerSide(true);
 
                         // We do not have any Addressing Headers to put
@@ -148,7 +149,7 @@ public class SimpleHTTPServer implements Runnable {
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        reciver.invoke(msgContext,engineReg);
+                        reciver.invoke(msgContext, engineReg);
 
                         if (msgContext.getReplyTo() != null
                             && !AddressingConstants.EPR_ANONYMOUS_URL.equals(

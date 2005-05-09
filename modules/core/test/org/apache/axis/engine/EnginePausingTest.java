@@ -107,7 +107,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         phases.add(phase1);
         
         ServiceContext serviceContext = new ServiceContext(service,engineContext);
-        engineContext.addService(serviceContext);
+        engineContext.registerServiceContext(serviceContext.getServiceInstanceID(),serviceContext);
 
 //TODO
 //        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);

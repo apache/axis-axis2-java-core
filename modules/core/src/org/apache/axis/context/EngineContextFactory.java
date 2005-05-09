@@ -25,7 +25,7 @@ import org.apache.axis.phaseresolver.PhaseResolver;
  * Date: Apr 19, 2005
  * Time: 10:44:38 AM
  */
-public class ContextBuilder {
+public class EngineContextFactory {
 
     public EngineContext buildEngineContext(String RepositaryName) throws DeploymentException {
         EngineContext engineContext = null;
@@ -85,20 +85,20 @@ public class ContextBuilder {
         }
     }
 
-    public ServiceContext createServiceContext(AxisService service,EngineContext context) throws PhaseException {
-        try {
-            ServiceContext serviceContext = new ServiceContext(service,context);
-            PhaseResolver reolve = new PhaseResolver(context.getEngineConfig(),serviceContext);
-            context.addService(serviceContext);
-            serviceContext = reolve.buildchains();
-            engageModules(service,context);
-            return serviceContext;
-        } catch (PhaseException e) {
-            throw new PhaseException(e.getMessage()) ;
-        } catch (AxisFault axisFault) {
-            throw new PhaseException(axisFault.getMessage()) ;
-        }
-    }
+//    public ServiceContext createServiceContext(AxisService service,EngineContext context) throws PhaseException {
+//        try {
+//            ServiceContext serviceContext = new ServiceContext(service,context);
+//            PhaseResolver reolve = new PhaseResolver(context.getEngineConfig(),serviceContext);
+//            context.addService(serviceContext);
+//            serviceContext = reolve.buildchains();
+//            engageModules(service,context);
+//            return serviceContext;
+//        } catch (PhaseException e) {
+//            throw new PhaseException(e.getMessage()) ;
+//        } catch (AxisFault axisFault) {
+//            throw new PhaseException(axisFault.getMessage()) ;
+//        }
+//    }
 
     private void engageModules(AxisService service,EngineContext context) throws AxisFault {
        ArrayList servicemodules = (ArrayList)service.getModules();

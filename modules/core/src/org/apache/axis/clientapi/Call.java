@@ -328,6 +328,8 @@ public class Call {
         callbackService.addOperation(axisOperation);
         axisOperation.setMessageReciever(callbackReceiver);
         listenerManager.makeSureStarted();
-        listenerManager.getEngineContext().addService(new ServiceContext(callbackService, null));
+        
+        ServiceContext serviceContext = new ServiceContext(callbackService, null);
+        listenerManager.getEngineContext().registerServiceContext(serviceContext.getServiceInstanceID(),serviceContext);
     }
 }

@@ -36,12 +36,12 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.EngineContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineContextFactory;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
@@ -88,11 +88,8 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            Class erClass = Class.forName(
-                    "org.apache.axis.deployment.EngineRegistryFactoryImpl");
-            EngineContextFactory erfac =
-                    (EngineContextFactory) erClass.newInstance();
-            engineContext = erfac.createContextBuilder(repoDir);
+            EngineContextFactory erfac = new EngineContextFactory();
+            engineContext = erfac.buildEngineContext(repoDir);
         } catch (Exception e) {
             throw new ServletException(e);
         }
