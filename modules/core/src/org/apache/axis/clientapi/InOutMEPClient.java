@@ -40,14 +40,15 @@ public class InOutMEPClient extends MEPClient{
     private CallbackReceiver callbackReceiver;
 
     public InOutMEPClient(ServiceContext service) {
+        super(service);
         //service context has the engine context set in to it !
     }
 
-    public MessageContext invokeBocking(AxisOperation axisop, MessageContext msgctx) {
+    public MessageContext invokeBlocking(AxisOperation axisop, MessageContext msgctx) {
         return null;
     }
 
-    public MessageContext invokeNonBocking(
+    public MessageContext invokeNonBlocking(
         AxisOperation axisop,
         MessageContext msgctx,
         Callback callback) {

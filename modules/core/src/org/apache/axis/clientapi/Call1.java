@@ -45,11 +45,11 @@ public class Call1 extends InOutMEPClient{
         super(service);
      }
 
-     public MessageContext invokeBocking(String axisop, OMElement payload) {
+     public MessageContext invokeBlocking(String axisop, OMElement payload) {
          return null;
      }
 
-     public MessageContext invokeNonBocking(String axisop, OMElement payload,
+     public MessageContext invokeNonBlocking(String axisop, OMElement payload,
          Callback callback) {
          return null;
      }
