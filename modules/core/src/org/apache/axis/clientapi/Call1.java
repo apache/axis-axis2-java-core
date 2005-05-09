@@ -21,8 +21,8 @@ import java.util.HashMap;
 
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisService;
 import org.apache.axis.om.OMElement;
 
 /**
@@ -39,8 +39,10 @@ public class Call1 extends InOutMEPClient{
     
     
     
-    public Call1(SystemContext sysContext, AxisService service) {
-
+    
+    
+    public Call1(SystemContext sysContext, ServiceContext service) {
+        super(service);
      }
 
      public MessageContext invokeBocking(String axisop, OMElement payload) {

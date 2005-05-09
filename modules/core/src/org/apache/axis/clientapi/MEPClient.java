@@ -25,7 +25,10 @@ import org.apache.axis.context.ServiceContext;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class MEPClient {
+public abstract class MEPClient {
     private ServiceContext service;
+    public MEPClient(ServiceContext service){
+    
+    }
 
 }
