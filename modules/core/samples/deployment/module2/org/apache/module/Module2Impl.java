@@ -1,7 +1,7 @@
 package org.apache.module;
 
 import org.apache.axis.modules.Module;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 
@@ -12,7 +12,7 @@ import org.apache.axis.engine.ExecutionChain;
  * Time: 3:26:07 PM
  */
 public class Module2Impl implements Module{
-    public void init(EngineContext moduleContext) throws AxisFault {
+    public void init(SystemContext moduleContext) throws AxisFault {
         //do nothing
     }
 
