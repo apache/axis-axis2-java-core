@@ -18,7 +18,11 @@ package org.apache.axis.context;
  * 
  */
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
+
 
 public class ServiceContext  extends AbstractContext{
     private AxisService serviceConfig;   
@@ -55,5 +59,10 @@ public class ServiceContext  extends AbstractContext{
     
     public SystemContext getEngineContext(){
         return (SystemContext)parent;
+    }
+    
+    public OperationContext createOperationContext(QName name){
+        AxisOperation axisOp = serviceConfig.getOperation(name);
+        return new OperationContext(axisOp,this);
     }
 }

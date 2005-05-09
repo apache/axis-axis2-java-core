@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.description.AxisService;
 import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.description.PhasesIncludeImpl;
 import org.apache.axis.engine.AxisFault;
@@ -130,6 +131,12 @@ public class SystemContext extends AbstractContext implements PhasesInclude {
 
     public void setStorage(AxisStorage storage) {
         this.storage = storage;
+    }
+
+    public ServiceContext createServiceContext(QName serviceName) throws AxisFault {
+        AxisService service = engineConfig.getService(serviceName);
+        ServiceContext serviceContext = new ServiceContext(service, this);
+        return serviceContext;
     }
 
 }
