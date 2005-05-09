@@ -17,11 +17,11 @@ package org.apache.axis.phaseresolver;
 
 import java.util.ArrayList;
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.SimplePhase;
 import org.apache.commons.logging.Log;
@@ -44,7 +44,7 @@ public class PhaseHolder {
     /**
      * Referance to ServerMetaData inorder to get information about phases.
      */
-    private final EngineConfiguration registry;    // = new  ServerMetaData();
+    private final AxisSystem registry;    // = new  ServerMetaData();
 
     private PhasesInclude phaseInclude;
 
@@ -60,13 +60,13 @@ public class PhaseHolder {
      *
      * @param registry
      */
-    public PhaseHolder(EngineConfiguration registry, PhasesInclude phaseInclude) {
+    public PhaseHolder(AxisSystem registry, PhasesInclude phaseInclude) {
         this.registry = registry;
         this.phaseInclude = phaseInclude;
         fillFlowPhases();
     }
 
-    public PhaseHolder(EngineConfiguration registry) {
+    public PhaseHolder(AxisSystem registry) {
         this.registry = registry;
         this.phaseInclude = null;
         fillFlowPhases();
@@ -255,7 +255,7 @@ public class PhaseHolder {
                             }
                             inChain.add(axisPhase);
                         }
-                        phaseInclude.setPhases(inChain, EngineConfiguration.INFLOW);
+                        phaseInclude.setPhases(inChain, AxisSystem.INFLOW);
                         // service.setPhases(inChain, EngineConfiguration.INFLOW);
                         break;
                     }
@@ -273,7 +273,7 @@ public class PhaseHolder {
                             outChain.add(axisPhase);
                         }
                         //service.setPhases(outChain, EngineConfiguration.OUTFLOW);
-                        phaseInclude.setPhases(outChain, EngineConfiguration.OUTFLOW);
+                        phaseInclude.setPhases(outChain, AxisSystem.OUTFLOW);
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
@@ -289,7 +289,7 @@ public class PhaseHolder {
                             }
                             faultInChain.add(axisPhase);
                         }
-                        phaseInclude.setPhases(faultInChain, EngineConfiguration.FAULT_IN_FLOW);
+                        phaseInclude.setPhases(faultInChain, AxisSystem.FAULT_IN_FLOW);
                         // service.setPhases(faultInChain, EngineConfiguration.FAULT_IN_FLOW);
                         break;
                     }
@@ -306,7 +306,7 @@ public class PhaseHolder {
                             }
                             faultOutChain.add(axisPhase);
                         }
-                        phaseInclude.setPhases(faultOutChain, EngineConfiguration.FAULT_OUT_FLOW);
+                        phaseInclude.setPhases(faultOutChain, AxisSystem.FAULT_OUT_FLOW);
                         //   service.setPhases(faultOutChain, EngineConfiguration.FAULT_IN_FLOW);
                         break;
                     }
@@ -353,7 +353,7 @@ public class PhaseHolder {
                             }
                             inChain.add(axisPhase);
                         }
-                        trnsport.setPhases(inChain, EngineConfiguration.INFLOW);
+                        trnsport.setPhases(inChain, AxisSystem.INFLOW);
                         break;
                     }
                 case PhaseMetadata.OUT_FLOW:
@@ -383,7 +383,7 @@ public class PhaseHolder {
                             }
                             outChain.add(axisPhase);
                         }
-                        trnsport.setPhases(outChain, EngineConfiguration.OUTFLOW);
+                        trnsport.setPhases(outChain, AxisSystem.OUTFLOW);
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
@@ -413,7 +413,7 @@ public class PhaseHolder {
                             }
                             faultChain.add(axisPhase);
                         }
-                        trnsport.setPhases(faultChain, EngineConfiguration.FAULT_IN_FLOW);
+                        trnsport.setPhases(faultChain, AxisSystem.FAULT_IN_FLOW);
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
@@ -443,7 +443,7 @@ public class PhaseHolder {
                             }
                             faultChain.add(axisPhase);
                         }
-                        trnsport.setPhases(faultChain, EngineConfiguration.FAULT_OUT_FLOW);
+                        trnsport.setPhases(faultChain, AxisSystem.FAULT_OUT_FLOW);
                         break;
                     }
             }
@@ -460,7 +460,7 @@ public class PhaseHolder {
      * @param chainType
      * @throws PhaseException
      */
-    public void buildGlobalChain(EngineContext engineContext, int chainType)
+    public void buildGlobalChain(SystemContext engineContext, int chainType)
             throws PhaseException {
         try {
             //OrderThePhases();
@@ -479,7 +479,7 @@ public class PhaseHolder {
                             }
                             inChain.add(axisPhase);
                         }
-                        engineContext.setPhases(inChain, EngineConfiguration.INFLOW);
+                        engineContext.setPhases(inChain, AxisSystem.INFLOW);
                         break;
                     }
                 case PhaseMetadata.OUT_FLOW:
@@ -495,7 +495,7 @@ public class PhaseHolder {
                             }
                             outChain.add(axisPhase);
                         }
-                        engineContext.setPhases(outChain, EngineConfiguration.OUTFLOW);
+                        engineContext.setPhases(outChain, AxisSystem.OUTFLOW);
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
@@ -511,7 +511,7 @@ public class PhaseHolder {
                             }
                             faultChain.add(axisPhase);
                         }
-                        engineContext.setPhases(faultChain, EngineConfiguration.FAULT_IN_FLOW);
+                        engineContext.setPhases(faultChain, AxisSystem.FAULT_IN_FLOW);
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
@@ -527,7 +527,7 @@ public class PhaseHolder {
                             }
                             faultChain.add(axisPhase);
                         }
-                        engineContext.setPhases(faultChain, EngineConfiguration.FAULT_OUT_FLOW);
+                        engineContext.setPhases(faultChain, AxisSystem.FAULT_OUT_FLOW);
                         break;
                     }
             }

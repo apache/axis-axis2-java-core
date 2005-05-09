@@ -25,7 +25,7 @@ public class ServiceContext  extends AbstractContext{
     
     private String serviceInstanceID;
 
-    public ServiceContext(AxisService serviceConfig,EngineContext engineContext) {
+    public ServiceContext(AxisService serviceConfig,SystemContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
         
@@ -53,7 +53,7 @@ public class ServiceContext  extends AbstractContext{
         return serviceConfig;
     }
     
-    public EngineContext getEngineContext(){
-        return (EngineContext)parent;
+    public SystemContext getEngineContext(){
+        return (SystemContext)parent;
     }
 }

@@ -23,7 +23,7 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.phaseresolver.PhaseException;
 
 public class TransportDeploymentTest extends AbstractTestCase {
@@ -37,7 +37,7 @@ public class TransportDeploymentTest extends AbstractTestCase {
     public void testTransports() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
         DeploymentEngine engine = new DeploymentEngine(testResourceDir + "/deployment", "server-transport.xml");
         engine.load();
-        EngineConfiguration er = engine.getEngineconfig();
+        AxisSystem er = engine.getEngineconfig();
         AxisTransportIn transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
         assertNotNull(transport.getInFlow());

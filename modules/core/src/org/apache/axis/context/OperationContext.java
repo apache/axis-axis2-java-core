@@ -70,7 +70,7 @@ public class OperationContext extends AbstractContext {
 		super(serviceContext);
 		this.axisOperation = axisOperation;
 		this.operationMEP = axisOperation.getMessageExchangePattern();
-		this.operationContextMap = ((EngineContext) parent.parent)
+		this.operationContextMap = ((SystemContext) parent.parent)
 				.getOperationContextMap();
 	}
 
@@ -95,8 +95,8 @@ public class OperationContext extends AbstractContext {
 	 * 
 	 * @return parent ServiceContext's parent EngineContext
 	 */
-	public EngineContext getEngineContext() {
-		return (EngineContext) parent.parent;
+	public SystemContext getEngineContext() {
+		return (SystemContext) parent.parent;
 	}
 
 	/**

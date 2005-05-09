@@ -37,7 +37,7 @@ import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.transport.TransportReceiver;
@@ -176,13 +176,13 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
                                     if (INFLOWST.equals(attvalue)) {
-                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
+                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
                                     } else if (OUTFLOWST.equals(attvalue)) {
-                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
+                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
                                     } else if (IN_FAILTFLOW.equals(attvalue)) {
-                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
+                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
                                     } else if (OUT_FAILTFLOW.equals(attvalue)) {
-                                        ((EngineConfigurationImpl) dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
+                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
                                     } else {
                                         throw new DeploymentException("un defined flow type  " + ST);
                                     }

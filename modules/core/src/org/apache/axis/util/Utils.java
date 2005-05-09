@@ -20,7 +20,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisOperation;
@@ -29,7 +29,7 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.engine.SimplePhase;
@@ -64,17 +64,17 @@ public class Utils {
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getInFlow(),
-            EngineConfiguration.INFLOW);
+            AxisSystem.INFLOW);
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getOutFlow(),
-            EngineConfiguration.OUTFLOW);
+            AxisSystem.OUTFLOW);
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getFaultInFlow(),
-            EngineConfiguration.FAULT_IN_FLOW);
+            AxisSystem.FAULT_IN_FLOW);
     }
 
     public static AxisService createSimpleService(
@@ -93,7 +93,7 @@ public class Utils {
 
     public static ServiceContext createServiceContext(
         AxisService service,
-        EngineContext engineContext)
+        SystemContext engineContext)
         throws AxisFault {
         ServiceContext serviceContext = new ServiceContext(service, engineContext);
         createExecutionChains(serviceContext);

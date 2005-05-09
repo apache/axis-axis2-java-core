@@ -8,8 +8,8 @@ import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.PhaseRule;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.phaseresolver.PhaseHolder;
 
@@ -22,7 +22,7 @@ import org.apache.axis.phaseresolver.PhaseHolder;
 public class PhaseRuleTest extends AbstractTestCase {
 
     PhaseRuleTest phaserul;
-    EngineConfiguration registry;
+    AxisSystem registry;
 
     public PhaseRuleTest(String testName) {
         super(testName);
@@ -32,17 +32,17 @@ public class PhaseRuleTest extends AbstractTestCase {
         super.setUp();
         phaserul = new PhaseRuleTest("");
         AxisGlobal global = new AxisGlobal();
-        registry = new EngineConfigurationImpl(global);
+        registry = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
 
         inPhase.add("global");
         inPhase.add("transport");
         inPhase.add("Logging");
         inPhase.add("service");
-        ((EngineConfigurationImpl) registry).setInPhases(inPhase);
-        ((EngineConfigurationImpl) registry).setInFaultPhases(inPhase);
-        ((EngineConfigurationImpl) registry).setOutFaultPhases(inPhase);
-        ((EngineConfigurationImpl) registry).setOutPhases(inPhase);
+        ((AxisSystemImpl) registry).setInPhases(inPhase);
+        ((AxisSystemImpl) registry).setInFaultPhases(inPhase);
+        ((AxisSystemImpl) registry).setOutFaultPhases(inPhase);
+        ((AxisSystemImpl) registry).setOutPhases(inPhase);
 
         Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler").newInstance();
         PhaseHolder ph = new PhaseHolder(registry);

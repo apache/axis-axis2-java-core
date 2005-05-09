@@ -53,7 +53,7 @@ public class EchoRawXMLTest extends TestCase {
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
-    private EngineConfiguration engineRegistry;
+    private AxisSystem engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;

@@ -18,7 +18,7 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -37,7 +37,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     /**
      * Constructor Dispatcher
      */
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     public AddressingBasedDispatcher() {
         init(new HandlerMetadata(NAME));

@@ -45,7 +45,7 @@ public class MessageWithServerTest extends TestCase {
         new QName("http://ws.apache.org/axis2", "echoVoid");
     private QName transportName = new QName("", "NullTransport");
 
-    private EngineConfiguration engineRegistry;
+    private AxisSystem engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;

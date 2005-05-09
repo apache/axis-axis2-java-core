@@ -21,13 +21,13 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
 
 public class RegistryTest extends AbstractTestCase {
-    private EngineConfiguration reg;
+    private AxisSystem reg;
 
     public RegistryTest(String testName) {
         super(testName);
@@ -37,7 +37,7 @@ public class RegistryTest extends AbstractTestCase {
     public void testRegistry() throws Exception {
         AxisGlobal ag = new AxisGlobal();
         testParameteInClude(ag);
-        reg = new EngineConfigurationImpl(ag);
+        reg = new AxisSystemImpl(ag);
 
         QName moduleName = new QName("module1");
         AxisModule modlue = new AxisModule(moduleName);

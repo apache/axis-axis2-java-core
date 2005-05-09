@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 
@@ -27,12 +27,12 @@ import org.apache.axis.context.OperationContext;
  * Class Sender
  */
 public class MessageSender {
-    private EngineContext engineContext;
+    private SystemContext engineContext;
     private MessageInformationHeadersCollection messageInfoHeaders;
     private OperationContext mepContext;
     
     
-    public MessageSender(EngineContext engineContext){
+    public MessageSender(SystemContext engineContext){
         this.engineContext = engineContext;
     }              
     

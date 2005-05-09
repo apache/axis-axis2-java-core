@@ -21,18 +21,18 @@ import java.net.ServerSocket;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class ListenerManager {
-    private EngineContext engineContext;
+    private SystemContext engineContext;
     private boolean started = false;
     private int numberOfserver = 0;
     private SimpleHTTPServer simpleHttpServer;
     private ServerSocket scoket;
 
-    public ListenerManager(EngineContext engineContext) {
+    public ListenerManager(SystemContext engineContext) {
         this.engineContext = engineContext;
     }
 
@@ -57,7 +57,7 @@ public class ListenerManager {
     /**
      * @return
      */
-    public EngineContext getEngineContext() {
+    public SystemContext getEngineContext() {
         return engineContext;
     }
 
@@ -76,7 +76,7 @@ public class ListenerManager {
     /**
      * @param context
      */
-    public void setEngineContext(EngineContext context) {
+    public void setEngineContext(SystemContext context) {
         engineContext = context;
     }
 

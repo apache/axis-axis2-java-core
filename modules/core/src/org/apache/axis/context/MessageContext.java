@@ -64,7 +64,7 @@ public class MessageContext extends AbstractContext {
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     private AxisTransportIn transportIn;
 
@@ -125,7 +125,7 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
     public MessageContext(
-        EngineContext engineContext,
+        SystemContext engineContext,
         SessionContext sessionContext,
         AxisTransportIn transportIn,
         AxisTransportOut transportOut,
@@ -148,7 +148,7 @@ public class MessageContext extends AbstractContext {
         SessionContext sessionContext,
         AxisTransportIn transportIn,
         AxisTransportOut transportOut,
-        EngineContext engineContext)
+        SystemContext engineContext)
         throws AxisFault {
         super(null);
 
@@ -451,7 +451,7 @@ public class MessageContext extends AbstractContext {
         this.serviceInstanceID = serviceInstanceID;
     }
 
-    public EngineContext getEngineContext() {
+    public SystemContext getEngineContext() {
         return engineContext;
     }
 
@@ -465,7 +465,7 @@ public class MessageContext extends AbstractContext {
     /**
      * @param context
      */
-    public void setEngineContext(EngineContext context) {
+    public void setEngineContext(SystemContext context) {
         engineContext = context;
     }
 

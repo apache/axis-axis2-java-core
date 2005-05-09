@@ -16,7 +16,7 @@
 package org.apache.axis.transport;
 
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 
@@ -24,5 +24,5 @@ import org.apache.axis.engine.AxisFault;
  * Class TransportReceiver
  */
 public abstract class TransportReceiver{
-    public abstract void invoke(MessageContext msgContext,EngineContext engineContext) throws AxisFault;
+    public abstract void invoke(MessageContext msgContext,SystemContext engineContext) throws AxisFault;
 }

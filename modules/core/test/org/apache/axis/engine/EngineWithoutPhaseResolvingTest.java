@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.description.AxisGlobal;
@@ -38,11 +38,11 @@ import org.apache.wsdl.WSDLService;
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
     private ArrayList executedHandlers = new ArrayList();
-    private EngineConfiguration engineRegistry;
+    private AxisSystem engineRegistry;
     private QName serviceName = new QName("axis/services/NullService");
     private QName opearationName = new QName("NullOperation");
     private AxisService service;
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     public EngineWithoutPhaseResolvingTest() {
     }
@@ -52,8 +52,8 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     }
     protected void setUp() throws Exception {
 
-        engineRegistry = new EngineConfigurationImpl(new AxisGlobal());
-        engineContext = new EngineContext(engineRegistry);
+        engineRegistry = new AxisSystemImpl(new AxisGlobal());
+        engineContext = new SystemContext(engineRegistry);
         AxisTransportOut transport = new AxisTransportOut(new QName("null"));
         transport.setSender(new NullTransportSender());
 

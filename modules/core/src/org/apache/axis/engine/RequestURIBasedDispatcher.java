@@ -18,7 +18,7 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -68,7 +68,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             if (index > 0) {
                 serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
 
-                EngineContext engineContext = messageContext.getEngineContext();
+                SystemContext engineContext = messageContext.getEngineContext();
 
                 if ((index = serviceStr.indexOf('/')) > 0) {
                     serviceName = new QName(serviceStr.substring(0, index));
@@ -77,7 +77,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                     serviceName = new QName(serviceStr);
                 }
 
-                EngineConfiguration registry = messageContext.getEngineContext().getEngineConfig();
+                AxisSystem registry = messageContext.getEngineContext().getEngineConfig();
                 return registry.getService(serviceName);
             }
         }

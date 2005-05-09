@@ -23,7 +23,7 @@ import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
-import org.apache.axis.engine.EngineConfiguration;
+import org.apache.axis.engine.AxisSystem;
 
 public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**
@@ -36,7 +36,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
     public void testDeployment() throws Exception {
         String filename = "./target/test-resources/deployment";
         EngineContextFactory builder = new EngineContextFactory();
-        EngineConfiguration er = builder.buildEngineContext(filename).getEngineConfig();
+        AxisSystem er = builder.buildEngineContext(filename).getEngineConfig();
 
         assertNotNull(er);
         assertNotNull(er.getGlobal());

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
@@ -38,7 +38,7 @@ public class EnginePausingTest extends AbstractEngineTest {
   
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     public EnginePausingTest() {
     }
@@ -47,14 +47,14 @@ public class EnginePausingTest extends AbstractEngineTest {
         super(arg0);
     }
     protected void setUp() throws Exception {
-        engineRegistry = new EngineConfigurationImpl(new AxisGlobal());
+        engineRegistry = new AxisSystemImpl(new AxisGlobal());
 
         AxisTransportOut transportOut = new AxisTransportOut(new QName("null"));
         transportOut.setSender(new NullTransportSender());
 
         AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
         
-        engineContext = new EngineContext(engineRegistry);
+        engineContext = new SystemContext(engineRegistry);
 
         AxisOperation axisOp = new AxisOperation(operationName);
 

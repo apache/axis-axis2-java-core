@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisModule;
@@ -34,8 +34,8 @@ import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 
 /**
  * Class PhaseResolver
@@ -44,7 +44,7 @@ public class PhaseResolver {
     /**
      * Field engineConfig
      */
-    private final EngineConfiguration engineConfig;
+    private final AxisSystem engineConfig;
 
     /**
      * Field axisService
@@ -63,7 +63,7 @@ public class PhaseResolver {
      *
      * @param engineConfig
      */
-    public PhaseResolver(EngineConfiguration engineConfig) {
+    public PhaseResolver(AxisSystem engineConfig) {
         this.engineConfig = engineConfig;
     }
 
@@ -73,7 +73,7 @@ public class PhaseResolver {
      * @param engineConfig
      * @param serviceContext
      */
-    public PhaseResolver(EngineConfiguration engineConfig,
+    public PhaseResolver(AxisSystem engineConfig,
                          ServiceContext serviceContext) {
         this.engineConfig = engineConfig;
         this.axisService = serviceContext.getServiceConfig();
@@ -345,9 +345,9 @@ public class PhaseResolver {
      * @throws AxisFault
      * @throws PhaseException
      */
-    public EngineContext buildGlobalChains()
+    public SystemContext buildGlobalChains()
             throws AxisFault, PhaseException {
-        EngineContext engineContext = new EngineContext(engineConfig);
+        SystemContext engineContext = new SystemContext(engineConfig);
         AxisGlobal global = engineConfig.getGlobal();
         List modules = (List) global.getModules();
         int count = modules.size();
@@ -357,7 +357,7 @@ public class PhaseResolver {
         for (int type = 1; type < 5; type++) {
             phaseHolder = new PhaseHolder(engineConfig);
             phaseHolder.setFlowType(type);
-            Collection col = ((EngineConfigurationImpl) engineConfig).getModules().values();
+            Collection col = ((AxisSystemImpl) engineConfig).getModules().values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 AxisModule axismodule = (AxisModule) iterator.next();
                 switch (type) {

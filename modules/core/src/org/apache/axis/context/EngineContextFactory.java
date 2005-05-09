@@ -13,8 +13,8 @@ import org.apache.axis.description.AxisModule;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
@@ -27,11 +27,11 @@ import org.apache.axis.phaseresolver.PhaseResolver;
  */
 public class EngineContextFactory {
 
-    public EngineContext buildEngineContext(String RepositaryName) throws DeploymentException {
-        EngineContext engineContext = null;
+    public SystemContext buildEngineContext(String RepositaryName) throws DeploymentException {
+        SystemContext engineContext = null;
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
-            EngineConfiguration configuration = deploymentEngine.load();
+            AxisSystem configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = phaseResolver.buildGlobalChains();
             phaseResolver.buildTranspotsChains();
@@ -44,11 +44,11 @@ public class EngineContextFactory {
         return engineContext;
     }
 
-    public EngineContext buildClientEngineContext(String axis2home) throws DeploymentException {
-            EngineContext engineContext = null;
+    public SystemContext buildClientEngineContext(String axis2home) throws DeploymentException {
+            SystemContext engineContext = null;
             try {
                 DeploymentEngine deploymentEngine = new DeploymentEngine(axis2home);
-                EngineConfiguration configuration = deploymentEngine.loadClient();
+                AxisSystem configuration = deploymentEngine.loadClient();
                 PhaseResolver phaseResolver = new PhaseResolver(configuration);
                 engineContext = phaseResolver.buildGlobalChains();
                 phaseResolver.buildTranspotsChains();
@@ -69,9 +69,9 @@ public class EngineContextFactory {
     */
 
 
-    private void initModules(EngineContext context) throws DeploymentException {
+    private void initModules(SystemContext context) throws DeploymentException {
         try{
-            HashMap modules = ((EngineConfigurationImpl)context.getEngineConfig()).getModules();
+            HashMap modules = ((AxisSystemImpl)context.getEngineConfig()).getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 AxisModule  axismodule = (AxisModule)iterator.next();
@@ -100,7 +100,7 @@ public class EngineContextFactory {
 //        }
 //    }
 
-    private void engageModules(AxisService service,EngineContext context) throws AxisFault {
+    private void engageModules(AxisService service,SystemContext context) throws AxisFault {
        ArrayList servicemodules = (ArrayList)service.getModules();
        ArrayList opModules ;
        Module module ;

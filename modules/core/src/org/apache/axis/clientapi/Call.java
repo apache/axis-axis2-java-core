@@ -9,7 +9,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
@@ -19,8 +19,8 @@ import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
@@ -45,7 +45,7 @@ public class Call {
     private String senderTransport = Constants.TRANSPORT_HTTP;
     private String Listenertransport = Constants.TRANSPORT_HTTP;
 
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     private boolean useSeparateListener = false;
 
@@ -55,13 +55,13 @@ public class Call {
     private ListenerManager listenerManager;
 
     public Call() throws AxisFault {
-        this(new EngineContext(new EngineConfigurationImpl(new AxisGlobal())));
+        this(new SystemContext(new AxisSystemImpl(new AxisGlobal())));
         try {
             //find the deployment mechanism , create
             //a EngineContext .. if the conf file not found
             //deafult one is used
             properties = new HashMap();
-            EngineConfiguration registry = engineContext.getEngineConfig();
+            AxisSystem registry = engineContext.getEngineConfig();
 
             //This is a hack, initialize the transports for the client side 
             AxisTransportOut httpTransportOut =
@@ -92,7 +92,7 @@ public class Call {
         }
     }
 
-    public Call(WSDLDescription wsdlDesc, EngineContext engineContext) {
+    public Call(WSDLDescription wsdlDesc, SystemContext engineContext) {
         messageInfoHeaders = new MessageInformationHeadersCollection();
         this.properties = new HashMap();
         this.engineContext = engineContext;
@@ -103,14 +103,14 @@ public class Call {
         }
     }
 
-    public Call(EngineContext engineContext) {
+    public Call(SystemContext engineContext) {
         this(null, engineContext);
     }
 
     public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
         initializeOperation();
 
-        EngineConfiguration registry = engineContext.getEngineConfig();
+        AxisSystem registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }
@@ -177,7 +177,7 @@ public class Call {
     public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
         initializeOperation();
 
-        EngineConfiguration registry = engineContext.getEngineConfig();
+        AxisSystem registry = engineContext.getEngineConfig();
         if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
             throw new AxisFault("This invocation support only for bi-directional transport");
         }

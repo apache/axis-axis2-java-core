@@ -32,7 +32,7 @@ import org.apache.axis.transport.TransportSender;
 public class AbstractEngineTest extends TestCase {
     protected MessageContext mc;
     protected ArrayList executedHandlers = new ArrayList();
-    protected EngineConfiguration engineRegistry;
+    protected AxisSystem engineRegistry;
     protected QName serviceName = new QName("axis/services/NullService");
     protected QName opearationName = new QName("NullOperation");
     protected AxisService service;

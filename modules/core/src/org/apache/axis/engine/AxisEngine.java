@@ -15,7 +15,7 @@
  */
 package org.apache.axis.engine;
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisTransportIn;
@@ -37,14 +37,14 @@ public class AxisEngine {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
-    private EngineContext engineContext;
+    private SystemContext engineContext;
 
     /**
      * Constructor AxisEngine
      *
      *
      */
-    public AxisEngine(EngineContext engineContext) {
+    public AxisEngine(SystemContext engineContext) {
         log.info("Axis Engine Started");
         this.engineContext = engineContext;
     }
@@ -92,7 +92,7 @@ public class AxisEngine {
             }
 
             // Add the phases that are are at Global scope
-            chain.addPhases(engineContext.getPhases(EngineConfiguration.OUTFLOW));
+            chain.addPhases(engineContext.getPhases(AxisSystem.OUTFLOW));
             Phase addressingPhase = new SimplePhase("addressing");
             addressingPhase.addHandler(new AddressingOutHandler());
             chain.addPhase(addressingPhase);
@@ -100,7 +100,7 @@ public class AxisEngine {
             // Receiving is always a matter of running the transport handlers first
 
             AxisTransportIn transport = context.getTransportIn();
-            chain.addPhases(transport.getPhases(EngineConfiguration.OUTFLOW));
+            chain.addPhases(transport.getPhases(AxisSystem.OUTFLOW));
 
             // startet rolling
             chain.invoke(context);
@@ -139,14 +139,14 @@ public class AxisEngine {
             AxisTransportIn transport = context.getTransportIn();
             if (transport != null) {
                 log.info("Using the transport" + transport.getName());
-                chain.addPhases(transport.getPhases(EngineConfiguration.INFLOW));
+                chain.addPhases(transport.getPhases(AxisSystem.INFLOW));
             }
 
             Phase addressingPhase = new SimplePhase("addressing");
             addressingPhase.addHandler(new AddressingInHandler());
             chain.addPhase(addressingPhase);
             //add the Global flow
-            chain.addPhases(engineContext.getPhases(EngineConfiguration.INFLOW));
+            chain.addPhases(engineContext.getPhases(AxisSystem.INFLOW));
 
             // create a Dispatch Phase and add it to the Execution Chain
             Phase dispatchPhase = chain.getPhase(SimplePhase.DISPATCH_PHASE);
@@ -249,7 +249,7 @@ public class AxisEngine {
      * @param obj the object to be stored
      * @return the storage key
      */
-    public Object store(EngineContext context, Object obj) {
+    public Object store(SystemContext context, Object obj) {
         return context.getStorage().put(obj);
     }
 
@@ -260,7 +260,7 @@ public class AxisEngine {
      * @param key
      * @return
      */
-    public Object retrieve(EngineContext context, Object key) {
+    public Object retrieve(SystemContext context, Object key) {
         return context.getStorage().get(key);
     }
 
@@ -270,7 +270,7 @@ public class AxisEngine {
      * @param key
      * @return  the object removed
      */
-    public Object remove(EngineContext context, Object key) {
+    public Object remove(SystemContext context, Object key) {
         return context.getStorage().remove(key);
     }
 
@@ -279,7 +279,7 @@ public class AxisEngine {
      * @param context
      * @return
      */
-    public boolean clearStorage(EngineContext context) {
+    public boolean clearStorage(SystemContext context) {
         return context.getStorage().clean();
     }
 }

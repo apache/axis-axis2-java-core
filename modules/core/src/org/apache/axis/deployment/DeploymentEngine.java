@@ -43,8 +43,8 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.EngineConfiguration;
-import org.apache.axis.engine.EngineConfigurationImpl;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
 import org.apache.commons.logging.Log;
@@ -75,7 +75,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private EngineConfiguration engineconfig;
+    private AxisSystem engineconfig;
 
     /**
      * this constaructor for the testing
@@ -111,7 +111,7 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @param engineconfig
      */
-    public DeploymentEngine(EngineConfiguration engineconfig) {
+    public DeploymentEngine(AxisSystem engineconfig) {
         this.engineconfig = engineconfig;
     }
 
@@ -164,7 +164,7 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      */
-    public EngineConfiguration getEngineconfig() {
+    public AxisSystem getEngineconfig() {
         return engineconfig;
     }
 
@@ -188,7 +188,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    public EngineConfiguration load() throws DeploymentException {
+    public AxisSystem load() throws DeploymentException {
         if (engineConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
@@ -221,7 +221,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    public EngineConfiguration loadClient() throws DeploymentException {
+    public AxisSystem loadClient() throws DeploymentException {
         if (engineConfigName == null) {
             throw new DeploymentException("path to Client.xml can not be NUll");
         }
@@ -278,9 +278,9 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private EngineConfiguration createEngineConfig() throws AxisFault {
+    private AxisSystem createEngineConfig() throws AxisFault {
         axisGlobal = new AxisGlobal();
-        EngineConfiguration newEngineConfig = new EngineConfigurationImpl(axisGlobal);
+        AxisSystem newEngineConfig = new AxisSystemImpl(axisGlobal);
         return newEngineConfig;
     }
 

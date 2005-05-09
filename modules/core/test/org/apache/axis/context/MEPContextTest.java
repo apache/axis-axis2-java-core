@@ -32,7 +32,7 @@ import org.apache.axis.engine.AxisFault;
  */
 public class MEPContextTest extends AbstractTestCase {
 
-	private EngineContext engineCtx = new EngineContext(null);
+	private SystemContext engineCtx = new SystemContext(null);
 
     public MEPContextTest(String arg0) {
         super(arg0);
@@ -40,7 +40,7 @@ public class MEPContextTest extends AbstractTestCase {
     //FIXME TODO Chathura
     public void testMEPfindingOnRelatesTO() throws Exception{
     	 
-    	ServiceContext sessionContext = new ServiceContext(new AxisService(),new EngineContext(null));
+    	ServiceContext sessionContext = new ServiceContext(new AxisService(),new SystemContext(null));
 		MessageContext messageContext1 = this.getBasicMessageContext();
     	
     	messageContext1.setMessageID(new Long(System.currentTimeMillis()).toString());

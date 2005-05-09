@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.context.EngineContextFactory;
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
@@ -53,7 +53,7 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Field engineReg
      */
-    protected EngineContext engineReg;
+    protected SystemContext engineReg;
 
     /**
      * Field serverSocket
@@ -76,7 +76,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @param reg
      */
-    public SimpleHTTPServer(EngineContext reg, ServerSocket serverSoc) {
+    public SimpleHTTPServer(SystemContext reg, ServerSocket serverSoc) {
         this.engineReg = reg;
         this.serverSocket = serverSoc;
     }
@@ -251,7 +251,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @return
      */
-    public EngineContext getEngineReg() {
+    public SystemContext getEngineReg() {
         return engineReg;
     }
 

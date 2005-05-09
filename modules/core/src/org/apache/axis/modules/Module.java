@@ -17,12 +17,12 @@
  */
 package org.apache.axis.modules;
 
-import org.apache.axis.context.EngineContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 
 public interface Module {
-    public void init(EngineContext moduleContext) throws AxisFault;
+    public void init(SystemContext moduleContext) throws AxisFault;
 
     public void engage(ExecutionChain exeChain) throws AxisFault;
 

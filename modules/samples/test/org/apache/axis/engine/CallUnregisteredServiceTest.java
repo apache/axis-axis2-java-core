@@ -43,7 +43,7 @@ public class CallUnregisteredServiceTest extends TestCase{
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
     
-    private EngineConfiguration engineRegistry;
+    private AxisSystem engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
