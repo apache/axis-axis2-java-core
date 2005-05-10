@@ -1,13 +1,16 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisModule;
 import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.SimplePhase;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.SystemContext;
+import org.apache.axis.context.MessageContext;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ import java.util.ArrayList;
  * Date: May 10, 2005
  * Time: 5:44:58 PM
  */
-public class BuildWithAddressingTest extends AbstractTestCase{
+public class BuildWithAddressingTest extends AbstractTestCase {
 
     public BuildWithAddressingTest(String testName) {
         super(testName);
@@ -45,11 +48,21 @@ public class BuildWithAddressingTest extends AbstractTestCase{
         String filename = "./target/test-resources/deployment";
         EngineContextFactory builder = new EngineContextFactory();
         SystemContext er = builder.buildEngineContext(filename);
-        ArrayList phases =  er.getPhases(AxisSystem.INFLOW);
+        ArrayList phases = er.getPhases(AxisSystem.INFLOW);
         AxisModule modeule = er.getEngineConfig().getModule(new QName("addressing"));
         assertNotNull(modeule);
-        if(phases.size() <= 0 ){
+        if (phases.size() <= 0) {
             fail("this must failed Since there are addressing handlers ");
+        }
+        for (int i = 0; i < phases.size(); i++) {
+            SimplePhase metadata = (SimplePhase) phases.get(i);
+            if ("pre-dispatch".equals(metadata.getPhaseName())) {
+                if (metadata.getHandlerCount() <= 0) {
+                    fail("this must failed Since there are addressing handlers ");
+                } else {
+                    System.out.println("Found pre-dispatch handlers");
+                }
+            }
         }
 
     }
