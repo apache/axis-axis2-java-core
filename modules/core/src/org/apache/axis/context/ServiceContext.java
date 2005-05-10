@@ -18,51 +18,52 @@ package org.apache.axis.context;
  * 
  */
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 
+import javax.xml.namespace.QName;
 
-public class ServiceContext  extends AbstractContext{
-    private AxisService serviceConfig;   
-    
+
+public class ServiceContext extends AbstractContext {
+    private AxisService serviceConfig;
+
     private String serviceInstanceID;
 
-    public ServiceContext(AxisService serviceConfig,SystemContext engineContext) {
+    public ServiceContext(AxisService serviceConfig, SystemContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
-        
+
 
     }
-    
-    
 
-	/**
-	 * @return Returns the serviceInstanceID.
-	 */
-	public String getServiceInstanceID() {
-		return serviceInstanceID;
-	}
-	/**
-	 * @param serviceInstanceID The serviceInstanceID to set.
-	 */
-	public void setServiceInstanceID(String serviceInstanceID) {
-		this.serviceInstanceID = serviceInstanceID;
-	}
+
+    /**
+     * @return Returns the serviceInstanceID.
+     */
+    public String getServiceInstanceID() {
+        return serviceInstanceID;
+    }
+
+    /**
+     * @param serviceInstanceID The serviceInstanceID to set.
+     */
+    public void setServiceInstanceID(String serviceInstanceID) {
+        this.serviceInstanceID = serviceInstanceID;
+    }
+
     /**
      * @return
      */
     public AxisService getServiceConfig() {
         return serviceConfig;
     }
-    
-    public SystemContext getEngineContext(){
-        return (SystemContext)parent;
+
+    public SystemContext getEngineContext() {
+        return (SystemContext) parent;
     }
-    
-    public OperationContext createOperationContext(QName name){
+
+    public OperationContext createOperationContext(QName name) {
         AxisOperation axisOp = serviceConfig.getOperation(name);
-        return new OperationContext(axisOp,this);
+        return new OperationContext(axisOp, this);
     }
 }

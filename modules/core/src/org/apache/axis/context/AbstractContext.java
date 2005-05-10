@@ -20,6 +20,7 @@ import java.util.HashMap;
  *
  * 
  */
+
 public abstract class AbstractContext implements Serializable {
 
     protected transient final HashMap nonPersistentMap;
@@ -36,6 +37,7 @@ public abstract class AbstractContext implements Serializable {
      * Store an object. depending on the persistent flag the
      * object is either saved in the persistent way or the non-persistent
      * way
+     *
      * @param key
      * @param value
      * @param persistent
@@ -51,15 +53,18 @@ public abstract class AbstractContext implements Serializable {
     /**
      * Store an object with the default persistent flag.
      * default is no persistance
+     *
      * @param key
      * @param value
      */
     public void setProperty(Object key, Object value) {
         this.setProperty(key, value, false);
     }
+
     /**
      * Retrieve an object. Default search is done in the non persistent
      * group
+     *
      * @param key
      * @return
      */
@@ -68,7 +73,6 @@ public abstract class AbstractContext implements Serializable {
     }
 
     /**
-     *
      * @param key
      * @param persistent
      * @return

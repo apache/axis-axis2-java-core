@@ -16,12 +16,12 @@ package org.apache.axis.context;
  * limitations under the License.
  */
 
-import java.util.Map;
-
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
+
+import java.util.Map;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -30,7 +30,7 @@ import org.apache.wsdl.WSDLConstants;
  * essentially arbitrary message exchange patterns. So as messages are being
  * exchanged the OperationContext remembers the state of where in the message
  * exchange pattern it is in.
- * <p>
+ * <p/>
  * OperationContextFactory factory. The base implementation of OperationContext
  * supports MEPs which have one input message and/or one output message. That
  * is, it supports the all the MEPs that are in the WSDL 2.0 specification. In
@@ -38,169 +38,165 @@ import org.apache.wsdl.WSDLConstants;
  * creation in the OperationContexFactory.
  */
 public class OperationContext extends AbstractContext {
-	// the in and out messages that may be present
-	private MessageContext inMessageContext;
+    // the in and out messages that may be present
+    private MessageContext inMessageContext;
 
-	private MessageContext outMessageContext;
+    private MessageContext outMessageContext;
 
-	// the AxisOperation of which this is a running instance. The MEP of this
-	// AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
-	private AxisOperation axisOperation;
+    // the AxisOperation of which this is a running instance. The MEP of this
+    // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
+    private AxisOperation axisOperation;
 
-	private int operationMEP;
+    private int operationMEP;
 
-	private boolean isComplete = false;
+    private boolean isComplete = false;
 
-	// this is the global MessageID -> OperationContext map which is stored in
-	// the EngineContext. We're caching it here for faster acccess.
-	private Map operationContextMap;
+    // this is the global MessageID -> OperationContext map which is stored in
+    // the EngineContext. We're caching it here for faster acccess.
+    private Map operationContextMap;
 
-	/**
-	 * Construct a new OperationContext.
-	 * 
-	 * @param axisOperation
-	 *            the AxisOperation whose running instances' state this
-	 *            OperationContext represents.
-	 * @param serviceContext
-	 *            the parent ServiceContext representing any state related to
-	 *            the set of all operations of the service.
-	 */
-	public OperationContext(AxisOperation axisOperation,
-			ServiceContext serviceContext) {
-		super(serviceContext);
-		this.axisOperation = axisOperation;
-		this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
-		this.operationContextMap = ((SystemContext) parent.parent)
-				.getOperationContextMap();
-	}
+    /**
+     * Construct a new OperationContext.
+     *
+     * @param axisOperation  the AxisOperation whose running instances' state this
+     *                       OperationContext represents.
+     * @param serviceContext the parent ServiceContext representing any state related to
+     *                       the set of all operations of the service.
+     */
+    public OperationContext(AxisOperation axisOperation,
+                            ServiceContext serviceContext) {
+        super(serviceContext);
+        this.axisOperation = axisOperation;
+        this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
+        this.operationContextMap = ((SystemContext) parent.parent)
+                .getOperationContextMap();
+    }
 
-	/**
-	 * @return Returns the axisOperation.
-	 */
-	public AxisOperation getAxisOperation() {
-		return axisOperation;
-	}
+    /**
+     * @return Returns the axisOperation.
+     */
+    public AxisOperation getAxisOperation() {
+        return axisOperation;
+    }
 
-	/**
-	 * Return the ServiceContext in which this OperationContext lives.
-	 * 
-	 * @return parent ServiceContext
-	 */
-	public ServiceContext getServiceContext() {
-		return (ServiceContext) parent;
-	}
+    /**
+     * Return the ServiceContext in which this OperationContext lives.
+     *
+     * @return parent ServiceContext
+     */
+    public ServiceContext getServiceContext() {
+        return (ServiceContext) parent;
+    }
 
-	/**
-	 * Return the EngineContext in which the parent ServiceContext lives.
-	 * 
-	 * @return parent ServiceContext's parent EngineContext
-	 */
-	public SystemContext getEngineContext() {
-		return (SystemContext) parent.parent;
-	}
+    /**
+     * Return the EngineContext in which the parent ServiceContext lives.
+     *
+     * @return parent ServiceContext's parent EngineContext
+     */
+    public SystemContext getEngineContext() {
+        return (SystemContext) parent.parent;
+    }
 
-	/**
-	 * 
-	 * When a new message is added to the <code>MEPContext</code> the logic
-	 * should be included remove the MEPContext from the table in the
-	 * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
-	 * message the MEPContext should be removed from the AxisOperation
-	 * 
-	 * @param msgContext
-	 */
-	public void addMessageContext(MessageContext msgContext) throws AxisFault {
-		// this needs to store the msgContext in either inMessageContext or
-		// outMessageContext depending on the MEP of the AxisOperation
-		// and on the current state of the operation.
-		if (WSDLConstants.MEP_CONSTANT_IN_OUT ==operationMEP
-				|| WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == operationMEP
-				|| WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
-			if (inMessageContext == null) {
-				inMessageContext = msgContext;
-			} else {
-				outMessageContext = msgContext;
-				isComplete = true;
-			}
-		} else if (WSDLConstants.MEP_CONSTANT_IN_ONLY == operationMEP) {
-			inMessageContext = msgContext;
-			isComplete = true;
-		} else if (WSDLConstants.MEP_CONSTANT_OUT_ONLY == operationMEP) {
-			outMessageContext = msgContext;
-			isComplete = true;
-		} else if (WSDLConstants.MEP_CONSTANT_OUT_IN == operationMEP
-				|| WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == operationMEP
-				|| WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
-			if (outMessageContext == null) {
-				outMessageContext = msgContext;
-			} else {
-				inMessageContext = msgContext;
-				isComplete = true;
-			}
-		} else {
-			// NOT REACHED: the factory created this context incorrectly
-			throw new AxisError("Invalid behavior of OperationContextFactory");
-		}
-	}
+    /**
+     * When a new message is added to the <code>MEPContext</code> the logic
+     * should be included remove the MEPContext from the table in the
+     * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
+     * message the MEPContext should be removed from the AxisOperation
+     *
+     * @param msgContext
+     */
+    public void addMessageContext(MessageContext msgContext) throws AxisFault {
+        // this needs to store the msgContext in either inMessageContext or
+        // outMessageContext depending on the MEP of the AxisOperation
+        // and on the current state of the operation.
+        if (WSDLConstants.MEP_CONSTANT_IN_OUT == operationMEP
+                || WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == operationMEP
+                || WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
+            if (inMessageContext == null) {
+                inMessageContext = msgContext;
+            } else {
+                outMessageContext = msgContext;
+                isComplete = true;
+            }
+        } else if (WSDLConstants.MEP_CONSTANT_IN_ONLY == operationMEP) {
+            inMessageContext = msgContext;
+            isComplete = true;
+        } else if (WSDLConstants.MEP_CONSTANT_OUT_ONLY == operationMEP) {
+            outMessageContext = msgContext;
+            isComplete = true;
+        } else if (WSDLConstants.MEP_CONSTANT_OUT_IN == operationMEP
+                || WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == operationMEP
+                || WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
+            if (outMessageContext == null) {
+                outMessageContext = msgContext;
+            } else {
+                inMessageContext = msgContext;
+                isComplete = true;
+            }
+        } else {
+            // NOT REACHED: the factory created this context incorrectly
+            throw new AxisError("Invalid behavior of OperationContextFactory");
+        }
+    }
 
-	/**
-	 * 
-	 * @param messageLabel
-	 * @return
-	 * @throws AxisFault
-	 */
-	public MessageContext getMessageContext(byte messageLabel) throws AxisFault {
-		if (messageLabel == WSDLConstants.MESSAGE_LABEL_IN) {
-			return inMessageContext;
-		} else if (messageLabel == WSDLConstants.MESSAGE_LABEL_OUT) {
-			return outMessageContext;
-		} else {
-			throw new AxisFault("Unrecognized message label: '" + messageLabel
-					+ "'");
-		}
-	}
+    /**
+     * @param messageLabel
+     * @return
+     * @throws AxisFault
+     */
+    public MessageContext getMessageContext(byte messageLabel) throws AxisFault {
+        if (messageLabel == WSDLConstants.MESSAGE_LABEL_IN) {
+            return inMessageContext;
+        } else if (messageLabel == WSDLConstants.MESSAGE_LABEL_OUT) {
+            return outMessageContext;
+        } else {
+            throw new AxisFault("Unrecognized message label: '" + messageLabel
+                    + "'");
+        }
+    }
 
-	/**
-	 * Returns the last message which came into the OperationContext. This is
-	 * useful for the WS-Addressing module for example to be figure out where to
-	 * get the ReplyTo information etc. from. Note that while its trivial to
-	 * implement this for the MEPs supported by this particular
-	 * OperationContext, a more complicated MEP could require a hairy
-	 * implementation (or may make you bald).
-	 * 
-	 * @return the last message coming into the operation.
-	 */
-	public MessageContext getLastInMessageContext() {
-		return inMessageContext;
-	}
+    /**
+     * Returns the last message which came into the OperationContext. This is
+     * useful for the WS-Addressing module for example to be figure out where to
+     * get the ReplyTo information etc. from. Note that while its trivial to
+     * implement this for the MEPs supported by this particular
+     * OperationContext, a more complicated MEP could require a hairy
+     * implementation (or may make you bald).
+     *
+     * @return the last message coming into the operation.
+     */
+    public MessageContext getLastInMessageContext() {
+        return inMessageContext;
+    }
 
-	/**
-	 * Checks to see if the MEP is complete. i.e. whether all the messages that
-	 * are associated with the MEP has arrived and MEP is complete.
-	 * 
-	 * @return
-	 */
-	public boolean isComplete() {
-		return isComplete;
-	}
+    /**
+     * Checks to see if the MEP is complete. i.e. whether all the messages that
+     * are associated with the MEP has arrived and MEP is complete.
+     *
+     * @return
+     */
+    public boolean isComplete() {
+        return isComplete;
+    }
 
-	/**
-	 * Removes the pointers to this <code>OperationContext</code> in the
-	 * <code>EngineContext</code>'s OperationContextMap so that this
-	 * <code>OperationContext</code> will eventually get garbage collected
-	 * along with the <code>MessageContext</code>'s it contains. Note that if
-	 * the caller wants to make sure its safe to clean up this OperationContext
-	 * he should call isComplete() first. However, in cases like IN_OPTIONAL_OUT
-	 * and OUT_OPTIONAL_IN, it is possibe this will get called without the MEP
-	 * being complete due to the optional nature of the MEP.
-	 */
-	public void cleanup() {
-		if (null != this.inMessageContext) {
-			operationContextMap.remove(inMessageContext.getMessageID());
-		}
-		if (null != this.outMessageContext) {
-			operationContextMap.remove(outMessageContext.getMessageID());
-		}
-	}
+    /**
+     * Removes the pointers to this <code>OperationContext</code> in the
+     * <code>EngineContext</code>'s OperationContextMap so that this
+     * <code>OperationContext</code> will eventually get garbage collected
+     * along with the <code>MessageContext</code>'s it contains. Note that if
+     * the caller wants to make sure its safe to clean up this OperationContext
+     * he should call isComplete() first. However, in cases like IN_OPTIONAL_OUT
+     * and OUT_OPTIONAL_IN, it is possibe this will get called without the MEP
+     * being complete due to the optional nature of the MEP.
+     */
+    public void cleanup() {
+        if (null != this.inMessageContext) {
+            operationContextMap.remove(inMessageContext.getMessageID());
+        }
+        if (null != this.outMessageContext) {
+            operationContextMap.remove(outMessageContext.getMessageID());
+        }
+    }
 
     
 //    public MessageContext createMessageContext(AxisM){

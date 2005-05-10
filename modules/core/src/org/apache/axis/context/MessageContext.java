@@ -116,7 +116,6 @@ public class MessageContext extends AbstractContext {
     private String serviceInstanceID;
 
     /**
-     * 
      * @param engineContext
      * @param sessionContext
      * @param transportIn
@@ -124,19 +123,18 @@ public class MessageContext extends AbstractContext {
      * @param mepContext
      * @throws AxisFault
      */
-    public MessageContext(
-        SystemContext engineContext,
-        SessionContext sessionContext,
-        AxisTransportIn transportIn,
-        AxisTransportOut transportOut,
-        OperationContext mepContext)
-        throws AxisFault {
+    public MessageContext(SystemContext engineContext,
+                          SessionContext sessionContext,
+                          AxisTransportIn transportIn,
+                          AxisTransportOut transportOut,
+                          OperationContext mepContext)
+            throws AxisFault {
         this(sessionContext, transportIn, transportOut, engineContext);
         this.operationContext = mepContext;
 
     }
+
     /**
-     * 
      * @param sessionContext
      * @param transportIn
      * @param transportOut
@@ -144,12 +142,11 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
 
-    public MessageContext(
-        SessionContext sessionContext,
-        AxisTransportIn transportIn,
-        AxisTransportOut transportOut,
-        SystemContext engineContext)
-        throws AxisFault {
+    public MessageContext(SessionContext sessionContext,
+                          AxisTransportIn transportIn,
+                          AxisTransportOut transportOut,
+                          SystemContext engineContext)
+            throws AxisFault {
         super(null);
 
         if (sessionContext == null) {
@@ -352,12 +349,15 @@ public class MessageContext extends AbstractContext {
     public void setWSAAction(String actionURI) {
         messageInformationHeaders.setAction(actionURI);
     }
+
     public String getWSAAction() {
         return messageInformationHeaders.getAction();
     }
+
     public void setWSAMessageId(String messageID) {
         messageInformationHeaders.setMessageId(messageID);
     }
+
     public String getWSAMessageId() {
         return messageInformationHeaders.getMessageId();
     }
@@ -369,6 +369,7 @@ public class MessageContext extends AbstractContext {
     public void setMessageInformationHeaders(MessageInformationHeadersCollection messageInformationHeaders) {
         this.messageInformationHeaders = messageInformationHeaders;
     }
+
     /**
      * @return
      */
@@ -382,6 +383,7 @@ public class MessageContext extends AbstractContext {
     public void setPaused(boolean b) {
         paused = b;
     }
+
     /**
      * @return
      */
@@ -444,6 +446,7 @@ public class MessageContext extends AbstractContext {
     public String getServiceInstanceID() {
         return serviceInstanceID;
     }
+
     /**
      * @param serviceInstanceID The serviceInstanceID to set.
      */

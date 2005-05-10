@@ -16,19 +16,7 @@
 
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
+import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.ArchiveReader;
 import org.apache.axis.deployment.repository.utill.HDFileItem;
@@ -36,19 +24,22 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
-import org.apache.axis.description.Parameter;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
+import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -93,6 +84,9 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private HDFileItem currentFileItem;
 
+    //tobuild chains
+    private EngineContextFactory factory;
+
     /**
      * This the constructor which is used by Engine inorder to start
      * Deploymenat module,
@@ -103,16 +97,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
         this(RepositaryName, "server.xml");
-    }
-
-    /**
-     * this constructor is used to deploy a web service programatically, by using classLoader
-     * and InputStream
-     *
-     * @param engineconfig
-     */
-    public DeploymentEngine(AxisSystem engineconfig) {
-        this.engineconfig = engineconfig;
     }
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
@@ -151,6 +135,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
+        factory = new EngineContextFactory();
         this.engineConfigName = RepositaryName + '/' + serverXMLFile;
     }
 
@@ -200,8 +185,6 @@ public class DeploymentEngine implements DeploymentConstants {
             parser.processGlobalConfig(axisGlobal);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault.getMessage());
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -233,9 +216,7 @@ public class DeploymentEngine implements DeploymentConstants {
             parser.processGlobalConfig(axisGlobal);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault.getMessage());
-        } catch (XMLStreamException e) {
+        }  catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
         hotDeployment = false;
@@ -278,7 +259,7 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private AxisSystem createEngineConfig() throws AxisFault {
+    private AxisSystem createEngineConfig(){
         axisGlobal = new AxisGlobal();
         AxisSystem newEngineConfig = new AxisSystemImpl(axisGlobal);
         return newEngineConfig;
@@ -286,10 +267,16 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addnewService(AxisService serviceMetaData) throws AxisFault {
-        currentFileItem.setClassLoader();
-        loadServiceProperties(serviceMetaData);
-        engineconfig.addService(serviceMetaData);
-        System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
+        try {
+            currentFileItem.setClassLoader();
+            loadServiceProperties(serviceMetaData);
+            engineconfig.addService(serviceMetaData);
+            factory.createChains(serviceMetaData, engineconfig);
+            System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
+        } catch (PhaseException e) {
+            throw new AxisFault(e);
+        }
+
     }
 
     /**

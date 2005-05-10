@@ -15,27 +15,14 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.SystemContext;
-import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.AxisSystemImpl;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /**
  * Class PhaseResolver
@@ -51,7 +38,6 @@ public class PhaseResolver {
      */
     private AxisService axisService;
 
-    private ServiceContext serviceContext;
 
     /**
      * Field phaseHolder
@@ -74,10 +60,9 @@ public class PhaseResolver {
      * @param serviceContext
      */
     public PhaseResolver(AxisSystem engineConfig,
-                         ServiceContext serviceContext) {
+                         AxisService serviceContext) {
         this.engineConfig = engineConfig;
-        this.axisService = serviceContext.getServiceConfig();
-        this.serviceContext = serviceContext;
+        this.axisService = serviceContext;
     }
 
     /**
@@ -86,7 +71,7 @@ public class PhaseResolver {
      * @throws PhaseException
      * @throws AxisFault
      */
-    public ServiceContext buildchains() throws PhaseException, AxisFault {
+    public void buildchains() throws PhaseException, AxisFault {
         HashMap operations = axisService.getOperations();
         Collection col = operations.values();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
@@ -95,10 +80,9 @@ public class PhaseResolver {
                 buildExcutionChains(i, operation);
             }
         }
-        return this.serviceContext;
     }
 
-    private void buildModuleHandlers(ArrayList allHandlers  , AxisModule module , int flowtype) throws PhaseException {
+    private void buildModuleHandlers(ArrayList allHandlers, AxisModule module, int flowtype) throws PhaseException {
         Flow flow = null;
         switch (flowtype) {
             case PhaseMetadata.IN_FLOW:
@@ -164,7 +148,7 @@ public class PhaseResolver {
             QName name = (QName) modules.get(i);
             module = engineConfig.getModule(name);
             if (module != null) {
-                buildModuleHandlers(allHandlers,module,flowtype);
+                buildModuleHandlers(allHandlers, module, flowtype);
             } else {
                 throw new PhaseException("Referred module is NULL " + name.getLocalPart());
             }
@@ -215,8 +199,8 @@ public class PhaseResolver {
         while (itr.hasNext()) {
             QName moduleref = (QName) itr.next();
             module = engineConfig.getModule(moduleref);
-            if(module != null){
-                 buildModuleHandlers(allHandlers,module,flowtype);
+            if (module != null) {
+                buildModuleHandlers(allHandlers, module, flowtype);
             }
         }
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -226,8 +210,8 @@ public class PhaseResolver {
         while (opitr.hasNext()) {
             QName moduleref = (QName) opitr.next();
             module = engineConfig.getModule(moduleref);
-            if(module != null ){
-                 buildModuleHandlers(allHandlers,module,flowtype);
+            if (module != null) {
+                buildModuleHandlers(allHandlers, module, flowtype);
             }
         }
 

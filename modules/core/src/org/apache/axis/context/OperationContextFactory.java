@@ -23,22 +23,22 @@ import org.apache.wsdl.WSDLConstants;
 
 public class OperationContextFactory implements WSDLConstants {
 
-	public static OperationContext createMEPContext(int mepURI, boolean serverSide,
-			AxisOperation axisOp, ServiceContext serviceContext)
-			throws AxisFault {
-		if (MEP_CONSTANT_IN_OUT == mepURI || MEP_CONSTANT_IN_ONLY ==mepURI
-				|| MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI
-				|| MEP_CONSTANT_ROBUST_IN_ONLY == mepURI
-				|| MEP_CONSTANT_OUT_ONLY == mepURI
-				|| MEP_CONSTANT_OUT_IN == mepURI
-				|| MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI
-				|| MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI) {
-			return new OperationContext(axisOp, serviceContext);
+    public static OperationContext createMEPContext(int mepURI, boolean serverSide,
+                                                    AxisOperation axisOp, ServiceContext serviceContext)
+            throws AxisFault {
+        if (MEP_CONSTANT_IN_OUT == mepURI || MEP_CONSTANT_IN_ONLY == mepURI
+                || MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI
+                || MEP_CONSTANT_ROBUST_IN_ONLY == mepURI
+                || MEP_CONSTANT_OUT_ONLY == mepURI
+                || MEP_CONSTANT_OUT_IN == mepURI
+                || MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI
+                || MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI) {
+            return new OperationContext(axisOp, serviceContext);
 
-		} else {
-			throw new AxisFault("Cannot handle the MEP " + mepURI
-					+ " for the current invocation of Operation ");
-		}
-	}
+        } else {
+            throw new AxisFault("Cannot handle the MEP " + mepURI
+                    + " for the current invocation of Operation ");
+        }
+    }
 
 }

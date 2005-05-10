@@ -18,18 +18,17 @@ package org.apache.axis.context;
  *  Runtime state of the engine
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.description.PhasesIncludeImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.storage.AxisStorage;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SystemContext extends AbstractContext implements PhasesInclude {
 
@@ -40,7 +39,7 @@ public class SystemContext extends AbstractContext implements PhasesInclude {
     private Map moduleContextMap;
 
     /**
-     * Map containing <code>MessageID</code> to 
+     * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
@@ -62,6 +61,7 @@ public class SystemContext extends AbstractContext implements PhasesInclude {
     /**
      * The method is used to do the intialization of the EngineContext, right now we know that
      * module.init(..) is called here
+     *
      * @throws AxisFault
      */
 
@@ -74,8 +74,8 @@ public class SystemContext extends AbstractContext implements PhasesInclude {
     }
 
     /**
-    * @return
-    */
+     * @return
+     */
     public AxisSystem getEngineConfig() {
         return engineConfig;
     }
