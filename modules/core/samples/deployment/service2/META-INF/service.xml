@@ -15,7 +15,6 @@
         <handler name="h1" class="Handler2">
             <order phase="service" phaseFirst="true"/>
         </handler>
-        <handler name="h2" class="Handler2"/>
     </inflow>
 
     <outflow>
@@ -25,9 +24,6 @@
     </outflow>
 
     <INfaultflow>
-        <handler name="h4" class="Handler2">
-        </handler>
-
         <handler name="h5" class="Handler2">
             <order phase="service"/>
         </handler>

@@ -90,7 +90,7 @@ public class SimpleHTTPServer implements Runnable {
     public SimpleHTTPServer(String dir, ServerSocket serverSoc) throws AxisFault {
         try {
             this.serverSocket = serverSoc;
-            Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
+           // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             EngineContextFactory erfac = new EngineContextFactory();
             this.engineReg = erfac.buildEngineContext(dir);
             Thread.sleep(2000);

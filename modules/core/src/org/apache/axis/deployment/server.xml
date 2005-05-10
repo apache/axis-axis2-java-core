@@ -12,6 +12,7 @@
     <module ref="addressing" />
 
     <phaseOrder type="inflow">
+
         <phase name="global"/>
         <phase name="transport"/>
         <phase name="Logging"/>

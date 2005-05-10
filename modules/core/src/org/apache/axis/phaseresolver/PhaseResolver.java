@@ -186,7 +186,7 @@ public class PhaseResolver {
 
                 // todo change this in properway
                 if (metadata.getRules().getPhaseName().equals("")) {
-                    metadata.getRules().setPhaseName("service");
+                    throw new PhaseException("Phase dose not specified");
                 }
                 allHandlers.add(metadata);
             }
@@ -274,7 +274,7 @@ public class PhaseResolver {
 
                     // todo change this in properway
                     if (metadata.getRules().getPhaseName().equals("")) {
-                        metadata.getRules().setPhaseName("transport");
+                         throw new PhaseException("Phase dose not specified");
                     }
                     phaseHolder.addHandler(metadata);
                 }
@@ -314,7 +314,7 @@ public class PhaseResolver {
 
                     // todo change this in properway
                     if (metadata.getRules().getPhaseName().equals("")) {
-                        metadata.getRules().setPhaseName("transport");
+                         throw new PhaseException("Phase dose not specified");
                     }
                     phaseHolder.addHandler(metadata);
                 }

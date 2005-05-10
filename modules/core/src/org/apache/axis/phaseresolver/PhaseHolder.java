@@ -24,17 +24,11 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.SimplePhase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class hold all the phases found in the service.xml and server.xml
  */
 public class PhaseHolder {
-    /**
-     * Field log
-     */
-    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Field phaseholder
@@ -53,7 +47,6 @@ public class PhaseHolder {
     private ArrayList faultInPhases;
     private ArrayList faultOutPhases;
 
-    private int flowType = -1;
 
     /**
      * Constructor PhaseHolder
@@ -96,7 +89,6 @@ public class PhaseHolder {
                     break;
                 }
         }
-        this.flowType = flowType;
     }
 
     private void fillFlowPhases() {
@@ -181,15 +173,6 @@ public class PhaseHolder {
         + " dose not exit in server.xml");
         }
         }*/
-    }
-
-    /**
-     * Method addPhase
-     *
-     * @param phase
-     */
-    private void addPhase(PhaseMetadata phase) {
-        phaseholder.add(phase);
     }
 
     /**
