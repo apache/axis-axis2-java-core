@@ -57,7 +57,6 @@ public class EnginePausingTest extends AbstractEngineTest {
         engineContext = new SystemContext(engineRegistry);
 
         AxisOperation axisOp = new AxisOperation(operationName);
-
         mc = new MessageContext(engineContext, null, transportIn,transportOut,OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp,null));
 
         mc.setTransportOut(transportOut);

@@ -4,10 +4,7 @@
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
 
     <module ref="module1"></module>
-    <module ref="module2"></module>
-
-
-    <!--  Service TypeMapping -->
+       <!--  Service TypeMapping -->
 
     <!--
     Phases

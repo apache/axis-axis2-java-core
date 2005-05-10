@@ -19,8 +19,6 @@ import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.handlers.addressing.AddressingInHandler;
-import org.apache.axis.handlers.addressing.AddressingOutHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -93,9 +91,9 @@ public class AxisEngine {
 
             // Add the phases that are are at Global scope
             chain.addPhases(engineContext.getPhases(AxisSystem.OUTFLOW));
-            Phase addressingPhase = new SimplePhase("addressing");
-            addressingPhase.addHandler(new AddressingOutHandler());
-            chain.addPhase(addressingPhase);
+            //Phase addressingPhase = new SimplePhase("addressing");
+            //addressingPhase.addHandler(new AddressingOutHandler());
+           // chain.addPhase(addressingPhase);
 
             // Receiving is always a matter of running the transport handlers first
 
@@ -142,9 +140,9 @@ public class AxisEngine {
                 chain.addPhases(transport.getPhases(AxisSystem.INFLOW));
             }
 
-            Phase addressingPhase = new SimplePhase("addressing");
-            addressingPhase.addHandler(new AddressingInHandler());
-            chain.addPhase(addressingPhase);
+          //  Phase addressingPhase = new SimplePhase("addressing");
+            //addressingPhase.addHandler(new AddressingInHandler());
+            //chain.addPhase(addressingPhase);
             //add the Global flow
             chain.addPhases(engineContext.getPhases(AxisSystem.INFLOW));
 
