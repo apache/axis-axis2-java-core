@@ -1,11 +1,11 @@
-package org.apache.axis.wsdl.tojava.xslt;
+package org.apache.axis.wsdl.codegen.emitter;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.axis.wsdl.databinding.CsharpTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
-import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLInterface;
@@ -46,7 +46,7 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
 
 
     /**
-     *  @see org.apache.axis.wsdl.tojava.xslt.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
+     *  @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
      * @param binding
      * @return
      */
@@ -91,7 +91,7 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
     }
 
     /**
-     * @see org.apache.axis.wsdl.tojava.xslt.MultiLanguageClientEmitter#createDOMDocuementForInterfaceImplementation(org.apache.wsdl.WSDLBinding)
+     * @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterfaceImplementation(org.apache.wsdl.WSDLBinding)
      * @param binding
      * @return
      */

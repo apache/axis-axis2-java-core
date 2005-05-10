@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava;
+package org.apache.axis.wsdl.codegen;
 
 import java.io.File;
 
-import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
 import org.apache.wsdl.WSDLDescription;
 
 /**

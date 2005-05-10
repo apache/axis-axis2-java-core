@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava.emitter;
+package org.apache.axis.wsdl.codegen.emitter;
 
 /**
  * @author chathura@opensource.lk

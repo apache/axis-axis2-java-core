@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava.extension;
+package org.apache.axis.wsdl.codegen.extension;
 
-import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 
 
 /**

@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava.extension;
-
-import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
-
+package org.apache.axis.wsdl.codegen;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface CodeGenExtention {
+public interface CommandLineOptionConstants {
 	
-	
-	public void init(CodeGenConfiguration configuration);
-	
-	public void engage();
-	
-	
+	public static final String SOLE_INPUT = "SOLE_INPUT";
 
+	public static final String WSDL_LOCATION_URI_OPTION = "uri";
+	public static final String OUTPUT_LOCATION_OPTION = "o";
+	public static final String ADVANCED_CODEGEN_OPTION = "x";
+
+	public static final String INVALID_OPTION= "INVALID_OPTION";
 }

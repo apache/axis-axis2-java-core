@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava;
+package org.apache.axis.wsdl.codegen.extension;
+
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class CodeGenerationException extends Exception {
+public interface CodeGenExtention {
+	
+	
+	public void init(CodeGenConfiguration configuration);
+	
+	public void engage();
+	
+	
 
-	public CodeGenerationException(String message){
-		super(message);
-	}
-	
-	public CodeGenerationException(String message, Throwable throwable){
-		super(message, throwable);
-	}
-	
-	public CodeGenerationException(Throwable throwable){
-		super(throwable);
-	}
 }

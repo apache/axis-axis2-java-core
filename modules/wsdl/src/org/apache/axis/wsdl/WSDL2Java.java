@@ -1,8 +1,9 @@
 package org.apache.axis.wsdl;
 
-import org.apache.axis.wsdl.tojava.CodeGenerationEngine;
-import org.apache.axis.wsdl.tojava.CommandLineOptionConstants;
-import org.apache.axis.wsdl.tojava.CommandLineOptionParser;
+import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis.wsdl.codegen.CommandLineOptionParser;
 
 /**
  * @author chathura@opensource.lk

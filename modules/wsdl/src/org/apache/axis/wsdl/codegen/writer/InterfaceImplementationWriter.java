@@ -1,4 +1,8 @@
-package org.apache.axis.wsdl.tojava.xslt;
+package org.apache.axis.wsdl.codegen.writer;
+
+import org.apache.axis.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
 

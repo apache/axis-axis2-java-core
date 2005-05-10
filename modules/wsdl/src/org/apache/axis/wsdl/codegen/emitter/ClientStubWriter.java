@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava.emitter;
+package org.apache.axis.wsdl.codegen.emitter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.apache.axis.wsdl.databinding.TypeMapper;
+import org.apache.axis.wsdl.codegen.emitter.ClassWriterConstants;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 

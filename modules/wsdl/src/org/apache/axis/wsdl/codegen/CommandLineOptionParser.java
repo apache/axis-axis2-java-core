@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava;
+package org.apache.axis.wsdl.codegen;
+
+import org.apache.axis.wsdl.codegen.CommandLineOption;
+import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

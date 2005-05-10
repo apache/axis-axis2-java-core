@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava.emitter;
+package org.apache.axis.wsdl.codegen.extension;
 
-import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
-import org.apache.axis.wsdl.tojava.CodeGenerationException;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public interface Emitter {
-	
-	public void setCodeGenConfiguration(CodeGenConfiguration configuration);	
-	
-	public void emitStub() throws CodeGenerationException;
-	
-	public void emitSkeleton() throws CodeGenerationException;
-	
+public class AbstractCodeGenerationExtension {
 
+	protected CodeGenConfiguration configuration;
 }

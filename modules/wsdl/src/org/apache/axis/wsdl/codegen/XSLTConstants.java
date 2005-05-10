@@ -1,4 +1,4 @@
-package org.apache.axis.wsdl.tojava.xslt;
+package org.apache.axis.wsdl.codegen;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

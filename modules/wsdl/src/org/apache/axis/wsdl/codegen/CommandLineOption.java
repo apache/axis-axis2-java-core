@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava;
+package org.apache.axis.wsdl.codegen;
 
 import java.util.ArrayList;
 

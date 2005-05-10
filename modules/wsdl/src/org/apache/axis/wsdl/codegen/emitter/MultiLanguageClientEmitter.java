@@ -1,4 +1,4 @@
-package org.apache.axis.wsdl.tojava.xslt;
+package org.apache.axis.wsdl.codegen.emitter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,10 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.axis.wsdl.databinding.TypeMapper;
-import org.apache.axis.wsdl.tojava.CodeGenConfiguration;
-import org.apache.axis.wsdl.tojava.CodeGenerationException;
-import org.apache.axis.wsdl.tojava.emitter.Emitter;
-import org.apache.axis.wsdl.tojava.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenerationException;
+import org.apache.axis.wsdl.codegen.CodeGenerationException;
+import org.apache.axis.wsdl.codegen.emitter.Emitter;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLOperation;
@@ -74,7 +79,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
    /**
     *
-    * @see org.apache.axis.wsdl.tojava.emitter.Emitter#emitStub()
+    * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitStub()
     */
     public void emitStub() throws CodeGenerationException {
         try {
@@ -135,7 +140,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     }
 
     /**
-     * @see org.apache.axis.wsdl.tojava.emitter.Emitter#emitSkeleton()
+     * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitSkeleton()
      */
     public void emitSkeleton() throws CodeGenerationException {
         throw new UnsupportedOperationException("Not supported yet");

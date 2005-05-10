@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.wsdl.tojava;
+package org.apache.axis.wsdl.codegen;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,13 +26,19 @@ import java.util.List;
 import javax.wsdl.WSDLException;
 
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis.wsdl.tojava.emitter.ClientJavaEmitter;
-import org.apache.axis.wsdl.tojava.emitter.Emitter;
-import org.apache.axis.wsdl.tojava.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.tojava.extension.CodeGenExtention;
-import org.apache.axis.wsdl.tojava.xslt.CSharpEmitter;
-import org.apache.axis.wsdl.tojava.xslt.JavaEmitter;
-import org.apache.axis.wsdl.tojava.xslt.XSLTConstants;
+import org.apache.axis.wsdl.codegen.emitter.ClientJavaEmitter;
+import org.apache.axis.wsdl.codegen.emitter.Emitter;
+import org.apache.axis.wsdl.codegen.emitter.Emitter;
+import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
+import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
+import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
+import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
+import org.apache.axis.wsdl.codegen.XSLTConstants;
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.wsdl.WSDLDescription;
 
 /**
