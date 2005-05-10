@@ -193,7 +193,7 @@ public class Call {
                     null,
                     transportIn,
                     transportOut,
-            OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,axisOperation, null));
+            OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOperation, null));
             msgctx.setEnvelope(env);
             msgctx.setMessageInformationHeaders(messageInfoHeaders);
 

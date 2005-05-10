@@ -9,8 +9,10 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
@@ -19,9 +21,12 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
  *  
  */
 public class AxisOperation extends WSDLOperationImpl implements
-		ParameterInclude, WSDLOperation, DescriptionConstants, PhasesInclude {
+		ParameterInclude, WSDLOperation, DescriptionConstants, PhasesInclude,
+		WSDLConstants {
 
 	private MessageReceiver messageReceiver;
+
+	private int mep = MEP_CONSTANT_INVALID;
 
 	public AxisOperation() {
 		this.setMessageExchangePattern(MEP_URI_IN_OUT);
@@ -117,7 +122,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 			//Its a new incomming message so get the factory to create a new
 			// one
 			operationContext = OperationContextFactory.createMEPContext(
-					getMessageExchangePattern(), serverside, this,
+					getAxisSpecifMEPConstant(), serverside, this,
 					serviceContext);
 
 		} else {
@@ -127,10 +132,11 @@ public class AxisOperation extends WSDLOperationImpl implements
 					msgContext.getRelatesTo().getValue());
 
 			if (null == operationContext) {
-				throw new AxisFault("Cannot relate the message in the operation :"
-					+ this.getName()
-					+ " :Unrelated RelatesTO value "
-					+ msgContext.getRelatesTo().getValue());
+				throw new AxisFault(
+						"Cannot relate the message in the operation :"
+								+ this.getName()
+								+ " :Unrelated RelatesTO value "
+								+ msgContext.getRelatesTo().getValue());
 			}
 
 		}
@@ -181,6 +187,46 @@ public class AxisOperation extends WSDLOperationImpl implements
 		PhasesIncludeImpl phaseInclude = (PhasesIncludeImpl) this
 				.getComponentProperty(PHASES_KEY);
 		return (ArrayList) phaseInclude.getPhases(flow);
+	}
+
+	/**
+	 * This method will simply map the String URI of the Message exchange
+	 * pattern to a integer. Further in the first lookup it will cash the looked
+	 * up value so that the subsequent method calls will be extremely efficient.
+	 * 
+	 * @return
+	 */
+	public int getAxisSpecifMEPConstant() {
+		if (this.mep != MEP_CONSTANT_INVALID) {
+			return this.mep;
+		}
+		
+		int temp = MEP_CONSTANT_INVALID;
+
+		if (MEP_URI_IN_OUT.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_IN_OUT;
+		} else if (MEP_URI_IN_ONLY.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_IN_ONLY;
+		} else if (MEP_URI_IN_OPTIONAL_OUT.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_IN_OPTIONAL_OUT;
+		} else if (MEP_URI_OUT_IN.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_OUT_IN;
+		} else if (MEP_URI_OUT_ONLY.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_OUT_ONLY;
+		} else if (MEP_URI_OUT_OPTIONAL_IN.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_OUT_OPTIONAL_IN;
+		} else if (MEP_URI_ROBUST_IN_ONLY.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_ROBUST_IN_ONLY;
+		} else if (MEP_URI_ROBUST_OUT_ONLY.equals(getMessageExchangePattern())) {
+			temp = MEP_CONSTANT_ROBUST_OUT_ONLY;
+		}
+		
+		if(temp == MEP_CONSTANT_INVALID){
+			throw new AxisError("Could not Map the MEP URI to a axis MEP constant value");
+		}
+		this.mep = temp;
+		return this.mep;
+
 	}
 }
 

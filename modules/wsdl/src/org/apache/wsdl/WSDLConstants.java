@@ -29,25 +29,24 @@ public interface WSDLConstants {
 	 */
 	public static final String WSDL1_1_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
 
-	/**
-	 * Field WSDL_NAMESPACES
-	 */
-	public static final String[] WSDL_NAMESPACES = { WSDL2_0_NAMESPACE,
-			WSDL1_1_NAMESPACE };
-
-	// TODO Verify weather the value is right with the spec.
-
+//	/**
+//	 * Field WSDL_NAMESPACES
+//	 */
+//	public static final String[] WSDL_NAMESPACES = { WSDL2_0_NAMESPACE,
+//			WSDL1_1_NAMESPACE };
+//
+//
 	/**
 	 * Field WSDL_MESSAGE_DIRECTION_IN
 	 */
-	public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
+	public static final String WSDL_MESSAGE_DIRECTION_IN = "In";
 
 	// TODO Verify weather the value is right with the spec.
 
 	/**
 	 * Field WSDL_MESSAGE_DIRECTION_OUT
 	 */
-	public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
+	public static final String WSDL_MESSAGE_DIRECTION_OUT = "Out";
 
 	// ////////////////////////////////////////////////////////////////
 	// /////////////Message Exchange Pattern Constants/////////////////
@@ -57,41 +56,61 @@ public interface WSDLConstants {
 	 * Field MEP_URI_IN_ONLY
 	 */
 	public static final String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
+	
+	public static final int MEP_CONSTANT_IN_ONLY = 10;	
 
 	/**
 	 * Field MEP_URI_ROBUST_IN_ONLY
 	 */
 	public static final String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
+	
+	public static final int MEP_CONSTANT_ROBUST_IN_ONLY = 11;
 
 	/**
 	 * Field MEP_URI_IN_OUT
 	 */
 	public static final String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
+	
+	public static final int MEP_CONSTANT_IN_OUT = 12;
 
 	/**
 	 * Field MEP_URI_IN_OPTIONAL_OUT
 	 */
 	public static final String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
+	
+	public static final int MEP_CONSTANT_IN_OPTIONAL_OUT = 13;
 
 	/**
 	 * Field MEP_URI_OUT_ONLY
 	 */
 	public static final String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
+	
+	public static final int MEP_CONSTANT_OUT_ONLY = 14;
 
 	/**
 	 * Field MEP_URI_ROBUST_OUT_ONLY
 	 */
 	public static final String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
+	
+	public static final int MEP_CONSTANT_ROBUST_OUT_ONLY = 15;
 
 	/**
 	 * Field MEP_URI_OUT_IN
 	 */
 	public static final String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
+	
+	public static final int MEP_CONSTANT_OUT_IN = 16;
 
 	/**
 	 * Field MEP_URI_OUT_OPTIONL_IN
 	 */
 	public static final String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
+	
+	public static final int MEP_CONSTANT_OUT_OPTIONAL_IN = 17;
+	
+	
+	
+	public static final int MEP_CONSTANT_INVALID = -1;
 
 	//////////////////////////////////////////////////
 	//////////////// Message Labels///////////////////
@@ -102,7 +121,7 @@ public interface WSDLConstants {
 	 * following WSDL 2.0 defined MEPs: In-Only, Robust In-Only, In-Out,
 	 * In-Optional-Out, Out-In, Out-Optional-In.
 	 */
-	public static final byte MESSAGE_LABEL_IN = 0;
+	public static final int MESSAGE_LABEL_IN = 0;
 
 	/**
 	 * Constant to represent the message label "Out" which is used by the
@@ -110,5 +129,6 @@ public interface WSDLConstants {
 	 * Robust Out-Only, Out-In, Out-Optional-In.
 	 *  
 	 */
-	public static final byte MESSAGE_LABEL_OUT = 1;
+	public static final int MESSAGE_LABEL_OUT = 1;
+	
 }

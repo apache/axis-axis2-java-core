@@ -47,7 +47,7 @@ public class OperationContext extends AbstractContext {
 	// AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
 	private AxisOperation axisOperation;
 
-	private String operationMEP;
+	private int operationMEP;
 
 	private boolean isComplete = false;
 
@@ -69,7 +69,7 @@ public class OperationContext extends AbstractContext {
 			ServiceContext serviceContext) {
 		super(serviceContext);
 		this.axisOperation = axisOperation;
-		this.operationMEP = axisOperation.getMessageExchangePattern();
+		this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
 		this.operationContextMap = ((SystemContext) parent.parent)
 				.getOperationContextMap();
 	}
@@ -112,24 +112,24 @@ public class OperationContext extends AbstractContext {
 		// this needs to store the msgContext in either inMessageContext or
 		// outMessageContext depending on the MEP of the AxisOperation
 		// and on the current state of the operation.
-		if (WSDLConstants.MEP_URI_IN_OUT.equals(operationMEP)
-				|| WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(operationMEP)
-				|| WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(operationMEP)) {
+		if (WSDLConstants.MEP_CONSTANT_IN_OUT ==operationMEP
+				|| WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == operationMEP
+				|| WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
 			if (inMessageContext == null) {
 				inMessageContext = msgContext;
 			} else {
 				outMessageContext = msgContext;
 				isComplete = true;
 			}
-		} else if (WSDLConstants.MEP_URI_IN_ONLY.equals(operationMEP)) {
+		} else if (WSDLConstants.MEP_CONSTANT_IN_ONLY == operationMEP) {
 			inMessageContext = msgContext;
 			isComplete = true;
-		} else if (WSDLConstants.MEP_URI_OUT_ONLY.equals(operationMEP)) {
+		} else if (WSDLConstants.MEP_CONSTANT_OUT_ONLY == operationMEP) {
 			outMessageContext = msgContext;
 			isComplete = true;
-		} else if (WSDLConstants.MEP_URI_OUT_IN.equals(operationMEP)
-				|| WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(operationMEP)
-				|| WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(operationMEP)) {
+		} else if (WSDLConstants.MEP_CONSTANT_OUT_IN == operationMEP
+				|| WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == operationMEP
+				|| WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
 			if (outMessageContext == null) {
 				outMessageContext = msgContext;
 			} else {
@@ -201,8 +201,10 @@ public class OperationContext extends AbstractContext {
 			operationContextMap.remove(outMessageContext.getMessageID());
 		}
 	}
+
     
 //    public MessageContext createMessageContext(AxisM){
 //    
 //    }
+
 }

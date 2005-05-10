@@ -48,7 +48,9 @@ public class AddressingOutHandlerTest extends AbstractTestCase implements Addres
         super.setUp();
         outHandler = new AddressingOutHandler();
         testUtil = new TestUtil();
-        msgCtxt = new MessageContext(null, null, null,null,OperationContextFactory.createMEPContext(WSDLConstants.MEP_URI_IN_OUT,false,null,null));
+
+        msgCtxt = new MessageContext(null, null, null,null,OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,null,null));
+
     }
 
     public void testAddToSOAPHeader() throws Exception {

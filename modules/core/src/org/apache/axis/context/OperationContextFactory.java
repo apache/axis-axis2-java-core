@@ -23,16 +23,16 @@ import org.apache.wsdl.WSDLConstants;
 
 public class OperationContextFactory implements WSDLConstants {
 
-	public static OperationContext createMEPContext(String mepURI, boolean serverSide,
+	public static OperationContext createMEPContext(int mepURI, boolean serverSide,
 			AxisOperation axisOp, ServiceContext serviceContext)
 			throws AxisFault {
-		if (MEP_URI_IN_OUT.equals(mepURI) || MEP_URI_IN_ONLY.equals(mepURI)
-				|| MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)
-				|| MEP_URI_ROBUST_IN_ONLY.equals(mepURI)
-				|| MEP_URI_OUT_ONLY.equals(mepURI)
-				|| MEP_URI_OUT_IN.equals(mepURI)
-				|| MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)
-				|| MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+		if (MEP_CONSTANT_IN_OUT == mepURI || MEP_CONSTANT_IN_ONLY ==mepURI
+				|| MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI
+				|| MEP_CONSTANT_ROBUST_IN_ONLY == mepURI
+				|| MEP_CONSTANT_OUT_ONLY == mepURI
+				|| MEP_CONSTANT_OUT_IN == mepURI
+				|| MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI
+				|| MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI) {
 			return new OperationContext(axisOp, serviceContext);
 
 		} else {
