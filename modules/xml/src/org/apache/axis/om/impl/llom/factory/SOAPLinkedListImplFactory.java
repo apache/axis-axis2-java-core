@@ -75,6 +75,10 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
         return new SOAPEnvelopeImpl(ns, builder);
     }
 
+    public SOAPEnvelope createSOAPEnvelope() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Method createSOAPEnvelope
      *

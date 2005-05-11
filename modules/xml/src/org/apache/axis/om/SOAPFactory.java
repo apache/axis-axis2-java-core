@@ -21,6 +21,21 @@ public interface SOAPFactory extends OMFactory{
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
+
+    /**
+     * @param ns
+     * @param builder
+     * @return
+     */
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
+                                                    OMXMLParserWrapper builder);
+
+    /**
+     * @param ns
+     * @return
+     */
+    public SOAPEnvelope createSOAPEnvelope();
+
     /**
      * @param envelope
      * @return
@@ -35,19 +50,7 @@ public interface SOAPFactory extends OMFactory{
     public SOAPBody createSOAPBody(SOAPEnvelope envelope,
                                             OMXMLParserWrapper builder);
 
-    /**
-     * @param ns
-     * @param builder
-     * @return
-     */
-    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
-                                                    OMXMLParserWrapper builder);
 
-    /**
-     * @param ns
-     * @return
-     */
-    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
 
     /**
      * @param envelope
