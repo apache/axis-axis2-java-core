@@ -29,7 +29,19 @@
             <groupId>axis</groupId>
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
-        </dependency>  
+        </dependency>
+
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis2-wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency> 
+        
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis2-core</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
