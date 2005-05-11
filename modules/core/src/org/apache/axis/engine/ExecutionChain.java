@@ -74,7 +74,7 @@ public class ExecutionChain {
     public void addPhases(ArrayList phases) {
         if ((phases != null) && !phases.isEmpty()) {
             for (int i = 0; i < phases.size(); i++) {
-                addPhase((SimplePhase) phases.get(i));
+                addPhase((Phase) phases.get(i));
             }
         }
     }
@@ -106,7 +106,7 @@ public class ExecutionChain {
                     }
                     break;
                 }else{
-                    SimplePhase phase = (SimplePhase) executionList.get(indexOfPhaseToExecuted);
+                    Phase phase = (Phase) executionList.get(indexOfPhaseToExecuted);
                     if (phase != null) {
                         log.info("Invoke the Phase " + phase.getPhaseName());
                         phase.invoke(msgctx);

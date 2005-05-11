@@ -23,7 +23,8 @@ import org.apache.axis.description.PhasesInclude;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.SimplePhase;
+import org.apache.axis.engine.Phase;
+
 
 /**
  * This class hold all the phases found in the service.xml and server.xml
@@ -231,7 +232,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -248,7 +249,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -265,7 +266,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -282,7 +283,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -315,7 +316,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
@@ -345,7 +346,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
@@ -375,7 +376,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
@@ -405,7 +406,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 try {
@@ -455,7 +456,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -471,7 +472,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -487,7 +488,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());
@@ -503,7 +504,7 @@ public class PhaseHolder {
                         for (int i = 0; i < phaseholder.size(); i++) {
                             PhaseMetadata phase =
                                     (PhaseMetadata) phaseholder.get(i);
-                            SimplePhase axisPhase = new SimplePhase(phase.getName());
+                            Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
                                 axisPhase.addHandler(handlers[j].getHandler());

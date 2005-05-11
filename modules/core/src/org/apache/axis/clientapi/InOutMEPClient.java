@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
@@ -62,6 +63,7 @@ public class InOutMEPClient extends MEPClient {
     //variables use for internal implementations
     protected ListenerManager listenerManager;
     protected CallbackReceiver callbackReceiver;
+    protected EndpointReference to;
 
     public InOutMEPClient(ServiceContext serviceContext) {
         super(serviceContext);
@@ -75,6 +77,8 @@ public class InOutMEPClient extends MEPClient {
 
     public MessageContext invokeBlocking(AxisOperation axisop, final MessageContext msgctx)
         throws AxisFault {
+        msgctx.setTo(to);
+
         SystemContext sysContext = serviceContext.getEngineContext();
         AxisSystem registry = sysContext.getEngineConfig();
 
@@ -112,7 +116,7 @@ public class InOutMEPClient extends MEPClient {
         final MessageContext msgctx,
         final Callback callback)
         throws AxisFault {
-
+        msgctx.setTo(to);
         try {
             final SystemContext syscontext = serviceContext.getEngineContext();
 
@@ -167,9 +171,14 @@ public class InOutMEPClient extends MEPClient {
         }
 
     }
-    
-    
-   
+
+    /**
+      * @param to
+      */
+    public void setTo(EndpointReference to) {
+        this.to = to;
+    }
+
     public void setTransportInfo(
         String senderTransport,
         String listenerTransport,

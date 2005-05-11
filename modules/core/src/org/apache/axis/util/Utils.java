@@ -20,9 +20,9 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.Flow;
@@ -32,7 +32,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.engine.SimplePhase;
+import org.apache.axis.engine.Phase;
 import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 
@@ -111,7 +111,7 @@ public class Utils {
             opName);
     }
 
-    public static void addHandlers(Flow flow, SimplePhase phase) throws AxisFault {
+    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
         if (flow != null) {
             int handlerCount = flow.getHandlerCount();
             for (int i = 0; i < handlerCount; i++) {

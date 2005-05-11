@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
@@ -70,7 +70,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         service.addOperation(axisOp);
         ArrayList phases = new ArrayList();
 
-        SimplePhase phase = new SimplePhase("1");
+        Phase phase = new Phase("1");
         phase.addHandler(new TempHandler(1));
         phase.addHandler(new TempHandler(2));
         phase.addHandler(new TempHandler(3));
@@ -82,7 +82,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         phase.addHandler(new TempHandler(9));
         phases.add(phase);
 
-        phase = new SimplePhase("2");
+        phase = new Phase("2");
         phase.addHandler(new TempHandler(10));
         phase.addHandler(new TempHandler(11));
         phase.addHandler(new TempHandler(12));
@@ -94,7 +94,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         phase.addHandler(new TempHandler(18));
         phases.add(phase);
 
-        SimplePhase phase1 = new SimplePhase("3");
+        Phase phase1 = new Phase("3");
         phase1.addHandler(new TempHandler(19));
         phase1.addHandler(new TempHandler(20));
         phase1.addHandler(new TempHandler(21));

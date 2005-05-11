@@ -1,19 +1,15 @@
 package org.apache.axis.deployment;
 
-import org.apache.axis.AbstractTestCase;
-import org.apache.axis.phaseresolver.PhaseMetadata;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.engine.AxisSystem;
-import org.apache.axis.engine.SimplePhase;
-import org.apache.axis.context.EngineContextFactory;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.context.MessageContext;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
+
+import org.apache.axis.AbstractTestCase;
+import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.SystemContext;
+import org.apache.axis.description.AxisModule;
+import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.Phase;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -55,7 +51,7 @@ public class BuildWithAddressingTest extends AbstractTestCase {
             fail("this must failed Since there are addressing handlers ");
         }
         for (int i = 0; i < phases.size(); i++) {
-            SimplePhase metadata = (SimplePhase) phases.get(i);
+            Phase metadata = (Phase) phases.get(i);
             if ("pre-dispatch".equals(metadata.getPhaseName())) {
                 if (metadata.getHandlerCount() <= 0) {
                     fail("this must failed Since there are addressing handlers ");

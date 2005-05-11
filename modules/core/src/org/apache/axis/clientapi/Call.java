@@ -42,9 +42,6 @@ import org.apache.axis.om.SOAPFactory;
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
  */
 public class Call extends InOutMEPClient {
-
-    private MessageInformationHeadersCollection messageInfoHeaders;
-
     private HashMap properties;
     private boolean isEnvelope = false;
 
@@ -133,7 +130,6 @@ public class Call extends InOutMEPClient {
         }
 
         msgctx.setEnvelope(envelope);
-        msgctx.setMessageInformationHeaders(messageInfoHeaders);
         return msgctx;
     }
 
@@ -150,13 +146,7 @@ public class Call extends InOutMEPClient {
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;
     }
-    /**
-     * @param to
-     */
-    public void setTo(EndpointReference to) {
-        messageInfoHeaders.setTo(to);
-    }
-
+ 
     /**
      * @param key
      * @return

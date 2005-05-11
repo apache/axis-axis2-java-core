@@ -147,9 +147,9 @@ public class AxisEngine {
             chain.addPhases(engineContext.getPhases(AxisSystem.INFLOW));
 
             // create a Dispatch Phase and add it to the Execution Chain
-            Phase dispatchPhase = chain.getPhase(SimplePhase.DISPATCH_PHASE);
+            Phase dispatchPhase = chain.getPhase(Phase.DISPATCH_PHASE);
             if (dispatchPhase == null) {
-                dispatchPhase = new SimplePhase(SimplePhase.DISPATCH_PHASE);
+                dispatchPhase = new Phase(Phase.DISPATCH_PHASE);
             }
 
             if (context.isServerSide()) {
