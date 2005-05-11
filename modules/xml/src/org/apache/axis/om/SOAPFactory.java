@@ -35,6 +35,7 @@ public interface SOAPFactory extends OMFactory{
      * @return
      */
     public SOAPEnvelope createSOAPEnvelope();
+    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
 
     /**
      * @param envelope
