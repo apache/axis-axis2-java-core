@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *  Runtime state of the engine
  */
 package org.apache.axis.modules;
 
 import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.AxisSystem;
 
+/**
+ * Every module provides an implementation of this class. Modules are in one of
+ * three states: "available" and "initialized". All modules that the runtime
+ * detects (from the system modules/ directory or from other means) are said to
+ * be in the "available" state. If some service indicates a dependency on this
+ * module then the module is initialized (once for the life of the system) and
+ * the state changes to "initialized".
+ * 
+ * <p/>Any module which is in the "initialized" state can be engaged as needed
+ * by the engine to respond to a message. Currently module engagement is done
+ * via deployment (using module.xml). In the future we may engage modules
+ * programmatically by introducing an engage() method to this interface, thereby
+ * allowing more dynamic scenarios.
+ */
 public interface Module {
-    public void init(SystemContext moduleContext) throws AxisFault;
+    // initialize the module
+    public void init(AxisSystem axisSystem) throws AxisFault;
 
-    public void engage(ExecutionChain exeChain) throws AxisFault;
+    // TODO figure out how to get the engage() concept done
+    // public void engage(ExecutionChain exeChain) throws AxisFault;
 
-    public void shutDown() throws AxisFault;
+    // shutdown the module
+    public void shutdown(AxisSystem axisSystem) throws AxisFault;
 }
