@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
@@ -15,9 +18,11 @@ import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
+import org.apache.axis.wsdl.codegen.writer.BeanWriter;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLTypes;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -40,17 +45,17 @@ import org.w3c.dom.Element;
 * the XML will look like the following
 * todo escape the following
 * <pre>
-    <interface package="">
-    <method name="">
-    <input>
-        <param name="" type=""/>*
-    </input> ?
-    <output>
-        <param name="" type=""/>?
-    </output>?
-    </method>
-    </interface>
-  </pre>
+<interface package="">
+<method name="">
+<input>
+<param name="" type=""/>*
+</input> ?
+<output>
+<param name="" type=""/>?
+</output>?
+</method>
+</interface>
+</pre>
 */
 
 
@@ -60,11 +65,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
 
-   /**
-    * Sets the mapper
-    * @see org.apache.axis.wsdl.databinding.TypeMapper
-    * @param mapper
-    */
+    /**
+     * Sets the mapper
+     * @see org.apache.axis.wsdl.databinding.TypeMapper
+     * @param mapper
+     */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
     }
@@ -77,10 +82,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         this.configuration = configuration;
     }
 
-   /**
-    *
-    * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitStub()
-    */
+    /**
+     *
+     * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitStub()
+     */
     public void emitStub() throws CodeGenerationException {
         try {
             //get the binding
@@ -100,13 +105,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @param axisBinding
      * @throws Exception
      */
-    private void writeInterfaces(WSDLBinding axisBinding) throws Exception {
+    protected void writeInterfaces(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceModel = createDOMDocuementForInterface(axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
-       writeClasses(interfaceModel,interfaceWriter);
+        writeClasses(interfaceModel,interfaceWriter);
     }
 
     /**
@@ -114,7 +119,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @param axisBinding
      * @throws Exception
      */
-    private void writeInterfaceImplementations(WSDLBinding axisBinding) throws Exception {
+    protected void writeInterfaceImplementations(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
         InterfaceImplementationWriter interfaceImplWriter =
                 new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
@@ -123,6 +128,26 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         writeClasses(interfaceImplModel,interfaceImplWriter);
     }
 
+    /**
+     *
+     * @param wsdlType
+     * @throws Exception
+     */
+    protected void writeBeans(WSDLTypes wsdlType) throws Exception {
+        HashMap typesMap = wsdlType.getTypes();
+        if (typesMap!=null){
+            Collection collection = typesMap.values();
+            for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
+                XmlDocument interfaceModel = createDOMDocuementForBean();
+                BeanWriter beanWriter =
+                        new BeanWriter(this.configuration.getOutputLocation(),
+                                this.configuration.getOutputLanguage()
+                        );
+                writeClasses(interfaceModel,beanWriter);
+            }
+        }
+
+    }
     /**
      * A resusable method for the implementation of interface and implementation writing
      * @param model
@@ -203,6 +228,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         outputElt.appendChild(param);
 
         return outputElt;
+    }
+
+    /**
+     * Todo Finish this
+     * @return
+     */
+    protected XmlDocument createDOMDocuementForBean(){
+        return null;
     }
 }
 

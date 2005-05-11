@@ -1,6 +1,8 @@
 package org.apache.axis.wsdl.databinding;
 
 import javax.xml.namespace.QName;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 /*
@@ -43,10 +45,18 @@ import javax.xml.namespace.QName;
 public class JavaTypeMapper extends TypeMappingAdapter{
 
     public JavaTypeMapper() {
+       //add the basic types to the table 
        this.map.put(new QName(XSD_SCHEMA_URL,"string"),String.class);
        this.map.put(new QName(XSD_SCHEMA_URL,"boolean"),Boolean.class);
-
-       //add the rest todo the key should be a QName
+       this.map.put(new QName(XSD_SCHEMA_URL,"double"),Double.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"long"),Long.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"float"),Float.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"int"),Integer.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"short"),Short.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"byte"),Byte.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"decimal"),BigDecimal.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"date"),Date.class);
+       this.map.put(new QName(XSD_SCHEMA_URL,"QName"),QName.class);
     }
 
 }

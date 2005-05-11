@@ -44,4 +44,12 @@ public interface XSLTConstants {
         public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/InterfaceImplementationTemplate.xsl";
         public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/InterfaceImplementationTemplate.xsl";
     }
+
+    /**
+     * Interface bean templates
+     */
+    public interface XSLTBeanTemplates{
+        public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/BeanTemplate.xsl";
+        public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/BeanTemplate.xsl";
+    }
 }

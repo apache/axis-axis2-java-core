@@ -2,16 +2,22 @@ package org.apache.axis.wsdl.codegen.emitter;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Enumeration;
 
 import org.apache.axis.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenerationException;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -53,6 +59,10 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
     }
 
+    public void emitStub() throws CodeGenerationException {
+        //todo need to out the type mapper code here
+        super.emitStub();
+    }
 
     /**
      * @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
