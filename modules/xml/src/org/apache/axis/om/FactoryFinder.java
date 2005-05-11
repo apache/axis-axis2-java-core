@@ -23,7 +23,7 @@ class FactoryFinder {
     private static final String DEFAULT_OM_FACTORY_CLASS_NAME =
             "org.apache.axis.om.impl.llom.factory.OMLinkedListImplFactory";
     private static final String DEFAULT_SOAP11_FACTORY_CLASS_NAME =
-            "org.apache.axis.om.impl.llom.soap11.SOAP11Factory";
+            "org.apache.axis.om.impl.llom.soap.soap11.SOAP11Factory";
     private static final String DEFAULT_SOAP12_FACTORY_CLASS_NAME =
             "org.apache.axis.om.impl.llom.soap11.SOAP12Factory";
 

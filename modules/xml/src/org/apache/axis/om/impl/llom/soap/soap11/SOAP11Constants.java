@@ -1,7 +1,7 @@
-package org.apache.axis.om.impl.llom;
+package org.apache.axis.om.impl.llom.soap.soap11;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.SOAPText;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -19,23 +19,9 @@ import org.apache.axis.om.SOAPText;
  * the License.
  * <p/>
  */
-public class SOAPTextImpl extends OMElementImpl implements SOAPText{
+public interface SOAP11Constants extends SOAPConstants{
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-    /**
-     * @param parent
-     * @param parent
-     */
-    public SOAPTextImpl(OMElement parent) {
-        super(parent);
-    }
-
-    public void setLang(String lang) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getLang() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+   public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
 }

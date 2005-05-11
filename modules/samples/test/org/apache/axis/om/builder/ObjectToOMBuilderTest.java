@@ -31,8 +31,8 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.builder.dummy.DummyOutObject;
-import org.apache.axis.om.impl.llom.SOAPConstants;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 import org.apache.axis.testUtils.Encoder;
 import org.apache.axis.testUtils.ObjectToOMBuilder;
 

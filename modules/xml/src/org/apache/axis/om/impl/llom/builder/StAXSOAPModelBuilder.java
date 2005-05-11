@@ -27,11 +27,13 @@ import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.impl.llom.SOAPConstants;
-import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.SOAPEnvelopeImpl;
 import org.apache.axis.om.impl.llom.exception.OMBuilderException;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.soap12.SOAP12Constants;
+import org.apache.axis.om.impl.llom.soap.soap12.SOAP12Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

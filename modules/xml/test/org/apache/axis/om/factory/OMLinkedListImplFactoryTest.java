@@ -28,8 +28,9 @@ import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.SOAPFault;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.SOAPConstants;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)

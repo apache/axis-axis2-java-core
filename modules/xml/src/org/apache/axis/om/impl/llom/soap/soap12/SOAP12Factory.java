@@ -1,4 +1,4 @@
-package org.apache.axis.om.impl.llom.soap12;
+package org.apache.axis.om.impl.llom.soap.soap12;
 
 import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;

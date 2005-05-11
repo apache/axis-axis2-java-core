@@ -21,7 +21,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 
-import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
 

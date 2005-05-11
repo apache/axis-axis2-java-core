@@ -10,13 +10,14 @@ import org.apache.axis.om.SOAPFault;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis.om.impl.llom.SOAPBodyImpl;
-import org.apache.axis.om.impl.llom.SOAPConstants;
-import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
-import org.apache.axis.om.impl.llom.SOAPFaultImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
-import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPEnvelopeImpl;
+import org.apache.axis.om.impl.llom.soap.SOAPFaultImpl;
+import org.apache.axis.om.impl.llom.soap.SOAPHeaderBlockImpl;
+import org.apache.axis.om.impl.llom.soap.SOAPHeaderImpl;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
+import org.apache.axis.om.impl.llom.soap.SOAPBodyImpl;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.*;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

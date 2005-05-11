@@ -1,6 +1,6 @@
-package org.apache.axis.om.impl.llom.soap12;
+package org.apache.axis.om.impl.llom.soap.soap12;
 
-import org.apache.axis.om.impl.llom.SOAPConstants;
+import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
