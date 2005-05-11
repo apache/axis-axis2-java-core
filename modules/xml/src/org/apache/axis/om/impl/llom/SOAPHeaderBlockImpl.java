@@ -29,6 +29,8 @@ import org.apache.axis.om.impl.llom.soap11.SOAP11Constants;
  */
 public class SOAPHeaderBlockImpl extends OMElementImpl
         implements SOAPHeaderBlock {
+
+    private boolean processed = false;
     /**
      * @param localName
      * @param ns
@@ -148,5 +150,13 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
             return mustUnderstand.equalsIgnoreCase("true");
         }
         return false;
+    }
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed() {
+        processed = true;
     }
 }

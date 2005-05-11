@@ -16,25 +16,21 @@
 package org.apache.axis.om;
 
 /**
- * <P>An object representing the contents in the SOAP header part
- * of the SOAP envelope. The immediate children of a <CODE>
- * SOAPHeader</CODE> object can be represented only as <CODE>
- * SOAPHeaderBlock</CODE> objects.</P>
- * <P>B <CODE>SOAPHeaderBlock</CODE> object can have other
- * <CODE>OMElement</CODE> objects as its children.</P>
+ * <P>An object representing the contents in the SOAP header part of the SOAP
+ * envelope. The immediate children of a <CODE> SOAPHeader</CODE> object can be
+ * represented only as <CODE> SOAPHeaderBlock</CODE> objects.</P> <P>B
+ * <CODE>SOAPHeaderBlock</CODE> object can have other <CODE>OMElement</CODE>
+ * objects as its children.</P>
  */
 public interface SOAPHeaderBlock extends OMElement {
     /**
-     * Sets the actor associated with this <CODE>
-     * SOAPHeaderBlock</CODE> object to the specified actor. The
-     * default value of an actor is: <CODE>
+     * Sets the actor associated with this <CODE> SOAPHeaderBlock</CODE> object
+     * to the specified actor. The default value of an actor is: <CODE>
      * OMConstants.URI_SOAP_ACTOR_NEXT</CODE>
      *
-     * @param roleURI a <CODE>String</CODE> giving
-     *                 the URI of the actor to set
+     * @param roleURI a <CODE>String</CODE> giving the URI of the actor to set
      * @throws java.lang.IllegalArgumentException
-     *          if
-     *          there is a problem in setting the actor.
+     *          if there is a problem in setting the actor.
      * @see #getRole() getRole()
      */
     public abstract void setRole(String roleURI);
@@ -43,27 +39,23 @@ public interface SOAPHeaderBlock extends OMElement {
      * Returns the uri of the actor associated with this <CODE>
      * SOAPHeaderBlock</CODE> object.
      *
-     * @return a <CODE>String</CODE> giving the URI of the
-     *         actor
+     * @return a <CODE>String</CODE> giving the URI of the actor
      * @see #setRole(java.lang.String) setRole(java.lang.String)
      */
     public abstract String getRole();
 
     /**
-     * Sets the mustUnderstand attribute for this <CODE>
-     * SOAPHeaderBlock</CODE> object to be on or off.
-     * <P>If the mustUnderstand attribute is on, the actor who
-     * receives the <CODE>SOAPHeaderBlock</CODE> must process it
+     * Sets the mustUnderstand attribute for this <CODE> SOAPHeaderBlock</CODE>
+     * object to be on or off. <P>If the mustUnderstand attribute is on, the
+     * actor who receives the <CODE>SOAPHeaderBlock</CODE> must process it
      * correctly. This ensures, for example, that if the <CODE>
-     * SOAPHeaderBlock</CODE> object modifies the message, that
-     * the message is being modified correctly.</P>
+     * SOAPHeaderBlock</CODE> object modifies the message, that the message is
+     * being modified correctly.</P>
      *
-     * @param mustUnderstand <CODE>true</CODE> to
-     *                       set the mustUnderstand attribute on; <CODE>false</CODE>
-     *                       to turn if off
+     * @param mustUnderstand <CODE>true</CODE> to set the mustUnderstand
+     *                       attribute on; <CODE>false</CODE> to turn if off
      * @throws java.lang.IllegalArgumentException
-     *          if
-     *          there is a problem in setting the actor.
+     *          if there is a problem in setting the actor.
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public abstract void setMustUnderstand(boolean mustUnderstand);
@@ -72,9 +64,23 @@ public interface SOAPHeaderBlock extends OMElement {
      * Returns whether the mustUnderstand attribute for this
      * <CODE>SOAPHeaderBlock</CODE> object is turned on.
      *
-     * @return <CODE>true</CODE> if the mustUnderstand attribute of
-     *         this <CODE>SOAPHeaderBlock</CODE> object is turned on;
+     * @return <CODE>true</CODE> if the mustUnderstand attribute of this
+     *         <CODE>SOAPHeaderBlock</CODE> object is turned on;
      *         <CODE>false</CODE> otherwise
      */
     public abstract boolean getMustUnderstand();
+
+
+    public abstract boolean isProcessed();
+
+     /**
+     * We need to know whether all the mustUnderstand headers have been
+     * processed by the node. This will done by a specific validation handler at
+     * the end of the execution chain. For this all the handlers who process a
+     * particular header block must explicitly say that he processesd the header
+     * by calling setProcessed()
+     *
+     */
+    public abstract void setProcessed();
+
 }
