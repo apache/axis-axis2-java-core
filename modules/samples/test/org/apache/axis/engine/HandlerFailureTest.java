@@ -154,11 +154,9 @@ public class HandlerFailureTest extends TestCase {
             org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
             
-            call.setTransport(Constants.TRANSPORT_HTTP);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
             call.setTo(targetEPR);
-            call.setAction(operationName.getLocalPart());
-            call.setOperationName(operationName);
-            SOAPEnvelope resEnv = call.sendReceiveSync(reqEnv);
+            SOAPEnvelope resEnv = (SOAPEnvelope)call.invokeBlocking(operationName.getLocalPart(),reqEnv);
             
             SOAPBody sb = resEnv.getBody();
 

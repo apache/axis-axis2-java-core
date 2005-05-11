@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -106,7 +107,7 @@ public class TestSendReceiveAsync extends TestCase {
                     + "/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
-        call.setListenerTransport("http", true);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -127,7 +128,7 @@ public class TestSendReceiveAsync extends TestCase {
                 e.printStackTrace();
             }
         };
-        call.sendReceiveAsync(envelope, callback);
+        call.invokeNonBlocking("echoOMElement",envelope, callback);
 
     }
 

@@ -193,10 +193,8 @@ public class InteropStub {
                 this.endpointURL);
         Call call = new Call();
         call.setTo(targetEPR);
-        if (SOAPAction!=null){
-            call.setAction(SOAPAction);
-        }
-        return call.sendReceiveSync(env);
+     
+        return (SOAPEnvelope)call.invokeBlocking(SOAPAction,env);
 
     }
 

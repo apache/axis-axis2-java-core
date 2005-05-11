@@ -8,6 +8,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -56,7 +57,7 @@ public class AsynchronousClient {
 		
 		SOAPEnvelope requestEnvelop = ClientUtil.getEchoSoapEnvelop();
 		try {
-			call.setListenerTransport("http", true);
+			call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, true);
 			
 			System.out.println("Sending the Async message ....");
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
@@ -64,7 +65,7 @@ public class AsynchronousClient {
 			writer.flush();
 			System.out.println();
 			
-			call.sendReceiveAsync(requestEnvelop, new ClientEchoCallbackHandler() );
+			call.invokeNonBlocking("echo",requestEnvelop, new ClientEchoCallbackHandler() );
 			
 			
 		} catch (AxisFault e1) {

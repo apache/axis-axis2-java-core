@@ -1,287 +1,155 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *  Runtime state of the engine
+ */
 package org.apache.axis.clientapi;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.context.SystemContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisService;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.AxisSystemImpl;
-import org.apache.axis.engine.MessageSender;
-import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
 import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
-import org.apache.axis.util.Utils;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
+import org.apache.axis.om.SOAPFactory;
 
 /**
- * Created by IntelliJ IDEA.
- * Author : Deepal Jayasinghe
- * Date: Apr 9, 2005
- * Time: 8:00:08 PM
+ * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
  */
-public class Call {
+public class Call extends InOutMEPClient {
 
     private MessageInformationHeadersCollection messageInfoHeaders;
 
     private HashMap properties;
-
-    private String senderTransport = Constants.TRANSPORT_HTTP;
-    private String Listenertransport = Constants.TRANSPORT_HTTP;
-
-    private SystemContext engineContext;
-
-    private boolean useSeparateListener = false;
-
-    private AxisService callbackService;
-    private CallbackReceiver callbackReceiver;
-    private AxisOperation axisOperation;
-    private ListenerManager listenerManager;
+    private boolean isEnvelope = false;
 
     public Call() throws AxisFault {
-        this(new SystemContext(new AxisSystemImpl(new AxisGlobal())));
-        try {
-            //find the deployment mechanism , create
-            //a EngineContext .. if the conf file not found
-            //deafult one is used
-            properties = new HashMap();
-            AxisSystem registry = engineContext.getEngineConfig();
-
-            //This is a hack, initialize the transports for the client side 
-            AxisTransportOut httpTransportOut =
-                new AxisTransportOut(new QName(Constants.TRANSPORT_HTTP));
-            Class className = Class.forName("org.apache.axis.transport.http.HTTPTransportSender");
-            httpTransportOut.setSender((TransportSender) className.newInstance());
-            registry.addTransportOut(httpTransportOut);
-
-            AxisTransportIn axisTr = new AxisTransportIn(new QName(Constants.TRANSPORT_HTTP));
-            className = Class.forName("org.apache.axis.transport.http.HTTPTransportReceiver");
-            axisTr.setReciver((TransportReceiver) className.newInstance());
-            registry.addTransportIn(axisTr);
-
-            AxisTransportOut mailTransportOut =
-                new AxisTransportOut(new QName(Constants.TRANSPORT_MAIL));
-            className = Class.forName("org.apache.axis.transport.mail.MailTransportSender");
-            mailTransportOut.setSender((TransportSender) className.newInstance());
-            registry.addTransportIn(new AxisTransportIn(new QName(Constants.TRANSPORT_MAIL)));
-            registry.addTransportOut(mailTransportOut);
-
-            messageInfoHeaders = new MessageInformationHeadersCollection();
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            throw new AxisFault(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw new AxisFault(e.getMessage(), e);
-        }
+        super(assumeServiceContext());
     }
 
-    public Call(WSDLDescription wsdlDesc, SystemContext engineContext) {
-        messageInfoHeaders = new MessageInformationHeadersCollection();
-        this.properties = new HashMap();
-        this.engineContext = engineContext;
-        callbackReceiver = new CallbackReceiver();
-        listenerManager = new ListenerManager(engineContext);
-        if (wsdlDesc != null) {
-
-        }
+    public Call(ServiceContext service) {
+        super(service);
     }
+    
+    /**
+     * Invoke the blocking/Synchronous call
+     * @param axisop
+     * @param toSend - This can be just OM Element (payload) or the SOAPEnvelope and the
+     * invocation behaves accordingly
+     * @return
+     * @throws AxisFault
+     */
 
-    public Call(SystemContext engineContext) {
-        this(null, engineContext);
-    }
+    public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
 
-    public void sendReceiveAsync(SOAPEnvelope env, final Callback callback) throws AxisFault {
-        initializeOperation();
+        AxisOperation axisConfig =
+            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+      MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
 
-        AxisSystem registry = engineContext.getEngineConfig();
-        if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
-            throw new AxisFault("This invocation support only for bi-directional transport");
-        }
-        try {
-            MessageSender sender = new MessageSender(engineContext);
-
-            final AxisTransportIn transportIn = registry.getTransportIn(new QName(senderTransport));
-            final AxisTransportOut transportOut =
-                registry.getTransportOut(new QName(senderTransport));
-
-            final MessageContext msgctx =
-                new MessageContext(null,
-                    transportIn,
-                    transportOut,engineContext);
-                    
-
-            msgctx.setEnvelope(env);
-
-            if (useSeparateListener) {
-                messageInfoHeaders.setMessageId(String.valueOf(System.currentTimeMillis()));
-                callbackReceiver.addCallback(messageInfoHeaders.getMessageId(), callback);
-                messageInfoHeaders.setReplyTo(
-                listenerManager.replyToEPR(
-                        callbackService.getName().getLocalPart()
-                            + "/"
-                            + axisOperation.getName().getLocalPart()));
-                axisOperation.findOperationContext(msgctx, callbackService.findServiceContext(msgctx), false);
-            }
-
-            msgctx.setMessageInformationHeaders(messageInfoHeaders);
-
-            sender.send(msgctx);
-
-            //TODO start the server
-            if (!useSeparateListener) {
-                Runnable newThread = new Runnable() {
-                    public void run() {
-                        try {
-                            MessageContext response = Utils.copyMessageContext(msgctx);
-                            response.setServerSide(false);
-
-                            TransportReceiver receiver = response.getTransportIn().getReciever();
-                            receiver.invoke(response,engineContext);
-                            SOAPEnvelope resenvelope = response.getEnvelope();
-                            AsyncResult asyncResult = new AsyncResult();
-                            asyncResult.setResult(resenvelope);
-                            callback.onComplete(asyncResult);
-                        } catch (AxisFault e) {
-                            callback.reportError(e);
-                        }
-
-                    }
-                };
-                (new Thread(newThread)).start();
-            }
-
-        } catch (OMException e) {
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
-
-    public SOAPEnvelope sendReceiveSync(SOAPEnvelope env) throws AxisFault {
-        initializeOperation();
-
-        AxisSystem registry = engineContext.getEngineConfig();
-        if (Constants.TRANSPORT_MAIL.equals(senderTransport)) {
-            throw new AxisFault("This invocation support only for bi-directional transport");
-        }
-        try {
-            MessageSender sender = new MessageSender(engineContext);
-
-            AxisTransportIn transportIn = registry.getTransportIn(new QName(senderTransport));
-            AxisTransportOut transportOut = registry.getTransportOut(new QName(senderTransport));
-
-            MessageContext msgctx =
-                new MessageContext(
-                    engineContext,
-                    null,
-                    transportIn,
-                    transportOut,
-            OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOperation, null));
-            msgctx.setEnvelope(env);
-            msgctx.setMessageInformationHeaders(messageInfoHeaders);
-
-            sender.send(msgctx);
-
-            MessageContext response = Utils.copyMessageContext(msgctx);
-            response.setServerSide(false);
-
-            TransportReceiver receiver = response.getTransportIn().getReciever();
-            receiver.invoke(response,engineContext);
-            SOAPEnvelope resenvelope = response.getEnvelope();
-
-            // TODO if the resenvelope is a SOAPFault then throw an exception
-            return resenvelope;
-        } catch (OMException e) {
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
-
-    public void setTransport(String transport) throws AxisFault {
-        if ((Constants.TRANSPORT_HTTP.equals(transport)
-            || Constants.TRANSPORT_MAIL.equals(transport)
-            || Constants.TRANSPORT_TCP.equals(transport))) {
-            this.senderTransport = transport;
+  
+        MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
+        SOAPEnvelope resEnvelope = responseContext.getEnvelope();
+        if (isEnvelope) {
+            return resEnvelope;
         } else {
-            throw new AxisFault("Selected transport dose not suppot ( " + transport + " )");
+            return resEnvelope.getBody().getFirstElement();
         }
     }
-
-    public void addProperty(String key, Object value) {
-        properties.put(key, value);
-    }
-
-    public Object getProperty(String key) {
-        return properties.get(key);
-    }
-
-    public void close() {
-        listenerManager.stopAServer();
-    }
-
- 
-
     /**
-     * @param action
-     */
-    public void setAction(String action) {
-        messageInfoHeaders.setAction(action);
-    }
-
-    /**
-     * @param faultTo
-     */
-    public void setFaultTo(EndpointReference faultTo) {
-        messageInfoHeaders.setFaultTo(faultTo);
-    }
-
-    /**
-     * @param from
-     */
-    public void setFrom(EndpointReference from) {
-        messageInfoHeaders.setFrom(from);
-    }
-
-    /**
-     * @param messageId
-     */
-    public void setMessageId(String messageId) {
-        messageInfoHeaders.setMessageId(messageId);
-    }
-
-    /**
-     * @param relatesTo
+     * Invoke the nonblocking/Asynchronous call
+     * @param axisop
+     * @param toSend - This can be just OM Element (payload) or the SOAPEnvelope and the
+     * invocation behaves accordingly
+     * @param callback
+     * @throws AxisFault
      */
 
-    public void setRelatesTo(RelatesTo relatesTo) {
-        messageInfoHeaders.setRelatesTo(relatesTo);
+    public void invokeNonBlocking(String axisop, OMElement toSend, Callback callback)
+        throws AxisFault {
+            AxisOperation axisConfig =
+                        serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
+        
+
+        super.invokeNonBlocking(axisConfig, msgctx, callback);
+    }
+    
+    /**
+     * Prepare the MessageContext, this is Utility method
+     * @param axisOp
+     * @param toSend
+     * @return
+     * @throws AxisFault
+     */
+
+    private MessageContext prepareTheSystem(AxisOperation axisOp,OMElement toSend) throws AxisFault {
+        SystemContext syscontext = serviceContext.getEngineContext();
+        //Make sure the AxisService object has the AxisOperation
+        serviceContext.getServiceConfig().addOperation(axisOp);
+        
+        
+        AxisTransportIn transportIn =
+            syscontext.getEngineConfig().getTransportIn(new QName(listenertransport));
+        AxisTransportOut transportOut =
+            syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
+
+        MessageContext msgctx = new MessageContext(null, transportIn, transportOut, syscontext);
+
+        SOAPEnvelope envelope = null;
+
+        if (toSend instanceof SOAPEnvelope) {
+            envelope = (SOAPEnvelope) toSend;
+            isEnvelope = true;
+        } else {
+            SOAPFactory omfac = OMAbstractFactory.getSOAP11Factory();
+            envelope = omfac.getDefaultEnvelope();
+            envelope.getBody().addChild(toSend);
+            isEnvelope = false;
+        }
+
+        msgctx.setEnvelope(envelope);
+        msgctx.setMessageInformationHeaders(messageInfoHeaders);
+        return msgctx;
     }
 
     /**
-     * @param replyTo
+     * Assume the values for the SystemContext and ServiceContext to make the NON WSDL cases simple.
+     * @return ServiceContext that has a SystemContext set in and has assumed values.
+     * @throws AxisFault
      */
-    public void setReplyTo(EndpointReference replyTo) {
-        messageInfoHeaders.setReplyTo(replyTo);
+    private static ServiceContext assumeServiceContext() throws AxisFault {
+        SystemContext sysContext = new SystemContext(new AxisSystemImpl(new AxisGlobal()));
+        QName assumedServiceName = new QName("AnonnoymousService");
+        AxisService axisService = new AxisService(assumedServiceName);
+        sysContext.getEngineConfig().addService(axisService);
+        ServiceContext service = sysContext.createServiceContext(assumedServiceName);
+        return service;
     }
-
     /**
      * @param to
      */
@@ -290,46 +158,19 @@ public class Call {
     }
 
     /**
-     * todo
-     * inoder to have asyn support for tansport , it shoud call this method
-     *
-     * @param Listenertransport
-     * @param useSeparateListener
-     * @throws AxisFault
+     * @param key
+     * @return
      */
-    public void setListenerTransport(String Listenertransport, boolean useSeparateListener)
-        throws AxisFault {
-        if ((Constants.TRANSPORT_HTTP.equals(Listenertransport)
-            || Constants.TRANSPORT_MAIL.equals(Listenertransport)
-            || Constants.TRANSPORT_TCP.equals(Listenertransport))) {
-            this.Listenertransport = Listenertransport;
-            this.useSeparateListener = useSeparateListener;
-        } else {
-            throw new AxisFault("Selected transport dose not suppot ( " + senderTransport + " )");
-        }
+    public Object get(Object key) {
+        return properties.get(key);
     }
 
     /**
-     * @param name
+     * @param key
+     * @param value
+     * @return
      */
-    public void setOperationName(QName name) {
-        axisOperation = new AxisOperation(name);
-        messageInfoHeaders.setAction(axisOperation.getName().getLocalPart());
-    }
-    
-    private void initializeOperation() throws AxisFault{
-        if (axisOperation == null) {
-             throw new AxisFault("Operation Name must be specified");
-         } 
-         
-         if(callbackService == null){
-             callbackService = new AxisService(new QName("CallBackService"));
-         } 
-        callbackService.addOperation(axisOperation);
-        axisOperation.setMessageReciever(callbackReceiver);
-        listenerManager.makeSureStarted();
-        
-        ServiceContext serviceContext = new ServiceContext(callbackService, null);
-        listenerManager.getEngineContext().registerServiceContext(serviceContext.getServiceInstanceID(),serviceContext);
+    public Object set(Object key, Object value) {
+        return properties.put(key, value);
     }
 }

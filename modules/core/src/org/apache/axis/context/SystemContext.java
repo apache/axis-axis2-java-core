@@ -135,8 +135,12 @@ public class SystemContext extends AbstractContext implements PhasesInclude {
 
     public ServiceContext createServiceContext(QName serviceName) throws AxisFault {
         AxisService service = engineConfig.getService(serviceName);
-        ServiceContext serviceContext = new ServiceContext(service, this);
-        return serviceContext;
+        if(service != null){
+            ServiceContext serviceContext = new ServiceContext(service, this);
+            return serviceContext;
+        }else{
+            throw new AxisFault("Service not found service name = "+serviceName );
+        }
     }
 
 }

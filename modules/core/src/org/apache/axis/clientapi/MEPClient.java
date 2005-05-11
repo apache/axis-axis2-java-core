@@ -20,15 +20,12 @@ package org.apache.axis.clientapi;
 import org.apache.axis.context.ServiceContext;
 
 /**
- * @author hemapani
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
  */
 public abstract class MEPClient {
-    private ServiceContext service;
+    protected ServiceContext serviceContext;
     public MEPClient(ServiceContext service){
-    
+        this.serviceContext = service;
     }
 
 }

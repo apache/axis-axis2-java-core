@@ -44,7 +44,6 @@ public class EchoStub {
         fac = OMAbstractFactory.getSOAP11Factory();
     }
     public EchoStruct[] echoEchoStructArray(EchoStruct[] in) throws Exception {
-
         EchoStructEncoder encoder = new EchoStructEncoder();
         ArrayTypeEncoder arrayEncoder = new ArrayTypeEncoder(in, encoder);
 
@@ -70,7 +69,7 @@ public class EchoStub {
                 "http://127.0.0.1:8080/axis2/services/echo");
         Call call = new Call();
         call.setTo(targetEPR);
-        SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
+        SOAPEnvelope responseEnv = (SOAPEnvelope)call.invokeBlocking("echoEchoStructArray",envelope);
 
         SOAPBody body = responseEnv.getBody();
         if (body.hasFault()) {

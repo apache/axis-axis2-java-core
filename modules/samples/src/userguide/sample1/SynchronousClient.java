@@ -54,7 +54,7 @@ public class SynchronousClient {
 		call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
 		
 		try {
-			call.setListenerTransport(Constants.SESSION_SCOPE, true);
+			call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, true);
 			SOAPEnvelope requestEnvelop = ClientUtil.getEchoSoapEnvelop();
 			
 			System.out.println("Sending request...");
@@ -62,7 +62,7 @@ public class SynchronousClient {
 			requestEnvelop.serializeWithCache(writer);
 			writer.flush();
 			System.out.println();
-			SOAPEnvelope responceEnvelop = call.sendReceiveSync(requestEnvelop);
+			SOAPEnvelope responceEnvelop = (SOAPEnvelope)call.invokeBlocking("echo",requestEnvelop);
 			System.out.println("Responce received  ...");
 			responceEnvelop.serializeWithCache(writer);
 			writer.flush();

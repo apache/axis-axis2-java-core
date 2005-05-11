@@ -90,7 +90,7 @@ public class TestSendReceive extends TestCase {
                     + "/axis/services/EchoXMLService");
         Call call = new Call();
         call.setTo(targetEPR);
-        SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
+        SOAPEnvelope responseEnv = (SOAPEnvelope)call.invokeBlocking("echoOMElement",envelope);
         responseEnv.serializeWithCache(
             XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
 
