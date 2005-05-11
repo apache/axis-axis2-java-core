@@ -78,6 +78,7 @@ public class AddressingInHandler extends AbstractHandler {
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
+
             EndpointReference epr = null;
             if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeadersCollection.getTo();
@@ -117,6 +118,7 @@ public class AddressingInHandler extends AbstractHandler {
                 RelatesTo relatesTo = new RelatesTo(address, relationshipType == null ? "wsa:Reply" : relationshipType.getValue());
                 messageInformationHeadersCollection.setRelatesTo(relatesTo);
             }
+            soapHeaderBlock.setProcessed();
         }
 
         return messageInformationHeadersCollection;
