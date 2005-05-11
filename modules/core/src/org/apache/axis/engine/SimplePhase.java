@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.engine;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class SimplePhase  implements Phase {
      * Field NAME
      */
     public static final QName NAME = new QName("http://axis.ws.apache.org",
-                    "Phase");
+            "Phase");
 
     /**
      * Field phaseName
@@ -64,7 +64,7 @@ public class SimplePhase  implements Phase {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
-    
+
     private int indexOfHandlerToExecute = 0;
 
     /**
@@ -75,7 +75,7 @@ public class SimplePhase  implements Phase {
     public SimplePhase(String phaseName) {
         handlers = new ArrayList();
         this.phaseName = phaseName;
-        
+
     }
 
     /**
@@ -86,7 +86,7 @@ public class SimplePhase  implements Phase {
      */
     public void addHandler(Handler handler, int index) {
         log.info("Handler " + handler.getName() + "Added to place " + 1
-                        + " At the Phase " + phaseName);
+                + " At the Phase " + phaseName);
         handlers.add(index, handler);
     }
 
@@ -97,7 +97,7 @@ public class SimplePhase  implements Phase {
      */
     public void addHandler(Handler handler) {
         log.info("Handler " + handler.getName() + " Added to the Phase "
-                        + phaseName);
+                + phaseName);
         handlers.add(handler);
     }
 
@@ -108,7 +108,7 @@ public class SimplePhase  implements Phase {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-       // Stack executionStack = new Stack();
+        // Stack executionStack = new Stack();
         try {
             while (indexOfHandlerToExecute < handlers.size() ) {
                 if(msgctx.isPaused()){
@@ -117,18 +117,18 @@ public class SimplePhase  implements Phase {
                     Handler handler = (Handler) handlers.get(indexOfHandlerToExecute);
                     if (handler != null) {
                         log.info("Invoke the Handler " + handler.getName()
-                                        + "with in the Phase " + phaseName);
+                                + "with in the Phase " + phaseName);
                         handler.invoke(msgctx);
                         //This line should be after the invoke as if the invocation failed this handlers is takn care of and 
                         //no need to revoke agien
-               //         executionStack.push(handler);
+                        //         executionStack.push(handler);
                         indexOfHandlerToExecute++;
                     }
                 }
             }
         } catch (Exception e) {
             log.info("Phase " + phaseName + " failed with the "
-                            + e.getMessage());
+                    + e.getMessage());
 //            while (!executionStack.isEmpty()) {
 //                Handler handler = (Handler) executionStack.pop();
 //                log.info("revoke the Handler " + handler.getName()
@@ -180,5 +180,10 @@ public class SimplePhase  implements Phase {
 //        // TODO Auto-generated method stub
 //
 //    }
+    
+
+    public int getHandlerCount(){
+        return handlers.size();
+    }
 
 }
