@@ -16,7 +16,6 @@
  */
 package org.apache.axis.modules;
 
-import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
 
