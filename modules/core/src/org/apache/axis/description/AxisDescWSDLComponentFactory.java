@@ -29,6 +29,7 @@ import org.apache.wsdl.impl.WSDLFeatureImpl;
 import org.apache.wsdl.impl.WSDLImportImpl;
 import org.apache.wsdl.impl.WSDLIncludeImpl;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
+import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.apache.wsdl.impl.WSDLPropertyImpl;
 import org.apache.wsdl.impl.WSDLTypesImpl;
 
@@ -63,11 +64,9 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 		return new WSDLBindingImpl();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis.wsdl.builder.WSDLComponentFactory#createFault()
-	 */
+	
 	public WSDLOperation createOperation() {
-		return null;
+		return new WSDLOperationImpl();
 	}
 
 	
