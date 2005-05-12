@@ -155,21 +155,7 @@ public class OperationContext extends AbstractContext {
         }
     }
 
-    /**
-     * Returns the last message which came into the OperationContext. This is
-     * useful for the WS-Addressing module for example to be figure out where to
-     * get the ReplyTo information etc. from. Note that while its trivial to
-     * implement this for the MEPs supported by this particular
-     * OperationContext, a more complicated MEP could require a hairy
-     * implementation (or may make you bald).
-     *
-     * @return the last message coming into the operation.
-     */
-    public MessageContext getLastInMessageContext() {
-        return inMessageContext;
-    }
-
-    /**
+   /**
      * Checks to see if the MEP is complete. i.e. whether all the messages that
      * are associated with the MEP has arrived and MEP is complete.
      *
