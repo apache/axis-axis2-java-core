@@ -127,7 +127,7 @@ public class Utils {
                 oldMessageContext.getSessionContext(),
                 oldMessageContext.getTransportIn(),
                 oldMessageContext.getTransportOut(),
-                oldMessageContext.getEngineContext());
+                oldMessageContext.getSystemContext());
 
         messageContext.setMessageInformationHeaders(new MessageInformationHeadersCollection());
         MessageInformationHeadersCollection oldMessageInfoHeaders =

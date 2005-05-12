@@ -454,7 +454,7 @@ public class MessageContext extends AbstractContext {
         this.serviceInstanceID = serviceInstanceID;
     }
 
-    public SystemContext getEngineContext() {
+    public SystemContext getSystemContext() {
         return engineContext;
     }
 

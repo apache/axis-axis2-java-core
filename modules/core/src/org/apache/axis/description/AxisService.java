@@ -393,13 +393,13 @@ public class AxisService
     public ServiceContext findServiceContext(MessageContext msgContext) {
         ServiceContext serviceContext = null;
         if (null == msgContext.getServiceInstanceID()) {
-            serviceContext = new ServiceContext(this, msgContext.getEngineContext());
+            serviceContext = new ServiceContext(this, msgContext.getSystemContext());
             //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
             //			msgContext.getEngineContext().registerServiceContext(serviceContext.getServiceInstanceID(),
             // serviceContext);
         } else {
             serviceContext =
-                (ServiceContext) msgContext.getEngineContext().getServiceContext(
+                (ServiceContext) msgContext.getSystemContext().getServiceContext(
                     msgContext.getServiceInstanceID());
         }
 

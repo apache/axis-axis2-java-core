@@ -228,11 +228,11 @@ public class AxisSystemImpl implements AxisSystem {
     }
 
    
-    public ArrayList getInPhases() {
+    public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
         return inPhases;
     }
 
-    public ArrayList getOutPhases() {
+    public ArrayList getOutFlow() {
         return outPhases;
     }
 
@@ -241,14 +241,14 @@ public class AxisSystemImpl implements AxisSystem {
     /**
      * @return
      */
-    public ArrayList getInFaultPhases() {
+    public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
      * @return
      */
-    public ArrayList getOutFaultPhases() {
+    public ArrayList getOutFaultFlow() {
         return outFaultPhases;
     }
 

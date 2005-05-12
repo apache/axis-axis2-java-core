@@ -25,7 +25,11 @@ public class AxisOperation extends WSDLOperationImpl implements
 		WSDLConstants {
 
 	private MessageReceiver messageReceiver;
-
+    private ArrayList remainingPhasesInInFlow;
+    private ArrayList phasesInOutFlow;
+    private ArrayList phasesInFaultInFlow;
+    private ArrayList phasesInFaultOutFlow;
+    
 	private int mep = MEP_CONSTANT_INVALID;
 
 	public AxisOperation() {
@@ -128,7 +132,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 		} else {
 			// So this message is part of an ongoing MEP
 			//			operationContext =
-			msgContext.getEngineContext().getOperationContext(
+			msgContext.getSystemContext().getOperationContext(
 					msgContext.getRelatesTo().getValue());
 
 			if (null == operationContext) {
@@ -141,7 +145,7 @@ public class AxisOperation extends WSDLOperationImpl implements
 
 		}
 
-		msgContext.getEngineContext().registerOperationContext(
+		msgContext.getSystemContext().registerOperationContext(
 				msgContext.getMessageID(), operationContext);
 		operationContext.addMessageContext(msgContext);
 		msgContext.setOperationContext(operationContext);
@@ -228,5 +232,64 @@ public class AxisOperation extends WSDLOperationImpl implements
 		return this.mep;
 
 	}
+    
+    
+    
+    /**
+     * @return
+     */
+    public ArrayList getPhasesInFaultInFlow() {
+        return phasesInFaultInFlow;
+    }
+
+    /**
+     * @return
+     */
+    public ArrayList getPhasesInFaultOutFlow() {
+        return phasesInFaultOutFlow;
+    }
+
+    /**
+     * @return
+     */
+    public ArrayList getPhasesInOutFlow() {
+        return phasesInOutFlow;
+    }
+
+    /**
+     * @return
+     */
+    public ArrayList getRemainingPhasesInInFlow() {
+        return remainingPhasesInInFlow;
+    }
+
+    /**
+     * @param list
+     */
+    public void setPhasesInFaultInFlow(ArrayList list) {
+        phasesInFaultInFlow = list;
+    }
+
+    /**
+     * @param list
+     */
+    public void setPhasesInFaultOutFlow(ArrayList list) {
+        phasesInFaultOutFlow = list;
+    }
+
+    /**
+     * @param list
+     */
+    public void setPhasesInOutFlow(ArrayList list) {
+        phasesInOutFlow = list;
+    }
+
+    /**
+     * @param list
+     */
+    public void setRemainingPhasesInInFlow(ArrayList list) {
+        remainingPhasesInInFlow = list;
+    }
+
 }
 

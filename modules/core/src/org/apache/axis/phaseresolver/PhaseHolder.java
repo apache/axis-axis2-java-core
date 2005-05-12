@@ -97,36 +97,36 @@ public class PhaseHolder {
         outPhases = new ArrayList();
         faultInPhases = new ArrayList();
         faultOutPhases = new ArrayList();
-
-        ArrayList tempPhases = registry.getInPhases();
-        for (int i = 0; i < tempPhases.size(); i++) {
-            String name = (String) tempPhases.get(i);
-            PhaseMetadata pm = new PhaseMetadata(name);
-            inPhases.add(pm);
-        }
-        inPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-        tempPhases = registry.getOutPhases();
-        for (int i = 0; i < tempPhases.size(); i++) {
-            String name = (String) tempPhases.get(i);
-            PhaseMetadata pm = new PhaseMetadata(name);
-            outPhases.add(pm);
-        }
-        outPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-
-        tempPhases = registry.getInFaultPhases();
-        faultInPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-        for (int i = 0; i < tempPhases.size(); i++) {
-            String name = (String) tempPhases.get(i);
-            PhaseMetadata pm = new PhaseMetadata(name);
-            faultInPhases.add(pm);
-        }
-        tempPhases = registry.getOutFaultPhases();
-        for (int i = 0; i < tempPhases.size(); i++) {
-            String name = (String) tempPhases.get(i);
-            PhaseMetadata pm = new PhaseMetadata(name);
-            faultOutPhases.add(pm);
-        }
-        faultOutPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
+//TODO deepal fix this
+//        ArrayList tempPhases = registry.getInPhasesUptoAndIncludingPostDispatch();
+//        for (int i = 0; i < tempPhases.size(); i++) {
+//            String name = (String) tempPhases.get(i);
+//            PhaseMetadata pm = new PhaseMetadata(name);
+//            inPhases.add(pm);
+//        }
+//        inPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
+//        tempPhases = registry.getOutFlow();
+//        for (int i = 0; i < tempPhases.size(); i++) {
+//            String name = (String) tempPhases.get(i);
+//            PhaseMetadata pm = new PhaseMetadata(name);
+//            outPhases.add(pm);
+//        }
+//        outPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
+//
+//        tempPhases = registry.getInFaultFlow();
+//        faultInPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
+//        for (int i = 0; i < tempPhases.size(); i++) {
+//            String name = (String) tempPhases.get(i);
+//            PhaseMetadata pm = new PhaseMetadata(name);
+//            faultInPhases.add(pm);
+//        }
+//        tempPhases = registry.getOutFaultFlow();
+//        for (int i = 0; i < tempPhases.size(); i++) {
+//            String name = (String) tempPhases.get(i);
+//            PhaseMetadata pm = new PhaseMetadata(name);
+//            faultOutPhases.add(pm);
+//        }
+//        faultOutPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
     }
 
     /**

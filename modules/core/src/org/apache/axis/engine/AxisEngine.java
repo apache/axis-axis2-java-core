@@ -238,6 +238,22 @@ public class AxisEngine {
             log.error("Error in fault flow", e);
         }
     }
+    
+    
+    private void verifyContextBuilt(MessageContext msgctx) throws AxisFault{
+        if(msgctx.getSystemContext() == null){
+            throw new AxisFault("OperationContext can not be null");
+        }
+        if(msgctx.getOperationContext() == null){
+            throw new AxisFault("OperationContext can not be null");
+        }
+        if(msgctx.getServiceContext() == null){
+            throw new AxisFault("ServiceContext can not be null");
+        }
+
+        
+    }
+    
 
     /* --------------------------------------------------------------------------------------------*/
     /* -----------------   Methods related to storage ----------------------------------------------*/

@@ -68,7 +68,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             if (index > 0) {
                 serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
 
-                SystemContext engineContext = messageContext.getEngineContext();
+                SystemContext engineContext = messageContext.getSystemContext();
 
                 if ((index = serviceStr.indexOf('/')) > 0) {
                     serviceName = new QName(serviceStr.substring(0, index));
@@ -77,7 +77,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                     serviceName = new QName(serviceStr);
                 }
 
-                AxisSystem registry = messageContext.getEngineContext().getEngineConfig();
+                AxisSystem registry = messageContext.getSystemContext().getEngineConfig();
                 return registry.getService(serviceName);
             }
         }

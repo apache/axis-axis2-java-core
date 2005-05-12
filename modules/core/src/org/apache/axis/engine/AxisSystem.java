@@ -110,11 +110,12 @@ public interface AxisSystem {
      */
     public HashMap getTransports() throws AxisFault;
 
+    /**
+     *  This returns 
+     */
+    public ArrayList getInPhasesUptoAndIncludingPostDispatch();
+  
 
-    public ArrayList getInPhases();
-    public ArrayList getOutPhases();
-    public ArrayList getInFaultPhases() ;
-    public ArrayList getOutFaultPhases();
     
     /**
      * Method getServices
@@ -133,5 +134,6 @@ public interface AxisSystem {
     public HashMap getTransportsIn();
     public HashMap getTransportsOut();
 
-    ArrayList getFaultPhases();
+    
+    
 }
