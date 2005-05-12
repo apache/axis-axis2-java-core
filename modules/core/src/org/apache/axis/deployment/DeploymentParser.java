@@ -42,6 +42,7 @@ import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
+import org.apache.axis.deployment.util.DeploymentTempData;
 
 
 /**
@@ -120,10 +121,10 @@ public class DeploymentParser implements DeploymentConstants {
                         axisGlobal.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
                         TransportOutDescription transportout = proccessTrasnsportOUT();
-                        dpengine.getEngineconfig().addTransportOut(transportout);
+                        dpengine.getAxisConfig().addTransportOut(transportout);
                     } else if (TRANSPORTRECEIVER.equals(ST)) {
                         TransportInDescription transportin = proccessTrasnsportIN();
-                        dpengine.getEngineconfig().addTransportIn(transportin);
+                        dpengine.getAxisConfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
                     } else if (MESSAGERECEIVER.equals(ST)) {
@@ -170,19 +171,20 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
+                        DeploymentTempData tempdata = DeploymentTempData.getInstance();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
                                     if (INFLOWST.equals(attvalue)) {
-                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setInPhases(processPhaseOrder());
+                                        tempdata.setINPhases(processPhaseOrder());
                                     } else if (OUTFLOWST.equals(attvalue)) {
-                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setOutPhases(processPhaseOrder());
+                                        tempdata.setOUTPhases(processPhaseOrder());
                                     } else if (IN_FAILTFLOW.equals(attvalue)) {
-                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setInFaultPhases(processPhaseOrder());
+                                        tempdata.setIN_FaultPhases(processPhaseOrder());
                                     } else if (OUT_FAILTFLOW.equals(attvalue)) {
-                                        ((AxisSystemImpl) dpengine.getEngineconfig()).setOutFaultPhases(processPhaseOrder());
+                                        tempdata.setOUT_FaultPhases(processPhaseOrder());
                                     } else {
                                         throw new DeploymentException("un defined flow type  " + ST);
                                     }
@@ -963,11 +965,12 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (ATTNAME.equals(attname)) {
-                            if (attvalue.equals(PhaseMetadata.PRE_DISPATCH)) {
-                                throw new DeploymentException(attvalue + " is a reserved phase");
-                            } else {
-                                pahseList.add(attvalue);
-                            }
+                            //TODO fix me
+//                            if (attvalue.equals(PhaseMetadata.PRE_DISPATCH)) {
+//                                throw new DeploymentException(attvalue + " is a reserved phase");
+//                            } else {
+//                                pahseList.add(attvalue);
+//                            }
                         }
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);

@@ -125,9 +125,10 @@ public class PhaseResolver {
                  * If the phase property of a handler is pre-dispatch then those handlers
                  * should go to the global chain , to the pre-dispatch phase
                  */
-                if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                    continue;
-                }
+                //TODO fix me
+//                if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
+//                    continue;
+//                }
                 if (metadata.getRules().getPhaseName().equals("")) {
                     throw new PhaseException("Phase dose not specified");
                 }
@@ -371,11 +372,12 @@ public class PhaseResolver {
                          * If the phase property of a handler is pre-dispatch then those handlers
                          * should go to the global chain , to the pre-dispatch phase
                          */
-                        if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                            phaseHolder.addHandler(metadata);
-                        } else {
-                            continue;
-                        }
+                        //TODO fix me
+//                        if (PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
+//                            phaseHolder.addHandler(metadata);
+//                        } else {
+//                            continue;
+//                        }
                     }
                 }
             }
@@ -408,11 +410,12 @@ public class PhaseResolver {
                 if (flow != null) {
                     for (int j = 0; j < flow.getHandlerCount(); j++) {
                         HandlerDescription metadata = flow.getHandler(j);
-                        if (!PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
-                            phaseHolder.addHandler(metadata);
-                        } else {
-                            continue;
-                        }
+                        //TODO fix me
+//                        if (!PhaseMetadata.PRE_DISPATCH.equals(metadata.getRules().getPhaseName())) {
+//                            phaseHolder.addHandler(metadata);
+//                        } else {
+//                            continue;
+//                        }
                     }
                 }
             }

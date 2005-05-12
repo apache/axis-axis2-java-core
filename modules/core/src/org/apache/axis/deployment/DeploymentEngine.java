@@ -37,6 +37,7 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
+import org.apache.axis.deployment.util.DeploymentTempData;
 import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
@@ -77,7 +78,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private AxisConfiguration engineconfig;
+    private AxisConfiguration axisConfig;
 
     /**
      * this constaructor for the testing
@@ -160,8 +161,8 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      */
-    public AxisConfiguration getEngineconfig() {
-        return engineconfig;
+    public AxisConfiguration getAxisConfig() {
+        return axisConfig;
     }
 
     /**
@@ -191,7 +192,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File tempfile = new File(engineConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
-            engineconfig = createEngineConfig();
+            axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.processGlobalConfig(axisGlobal);
         } catch (FileNotFoundException e) {
@@ -211,7 +212,7 @@ public class DeploymentEngine implements DeploymentConstants {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault.getMessage());
         }
-        return engineconfig;
+        return axisConfig;
     }
 
 
@@ -222,7 +223,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File tempfile = new File(engineConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
-            engineconfig = createEngineConfig();
+            axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.processGlobalConfig(axisGlobal);
         } catch (FileNotFoundException e) {
@@ -239,7 +240,7 @@ public class DeploymentEngine implements DeploymentConstants {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault.getMessage());
         }
-        return engineconfig;
+        return axisConfig;
     }
 
     /**
@@ -256,8 +257,14 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
+    private void validateSystemPredefinedPhases(){
+        DeploymentTempData tempdata = DeploymentTempData.getInstance();
+        ArrayList inPhases = tempdata.getINPhases();
+        
+    }
+
     public ModuleDescription getModule(QName moduleName) throws AxisFault {
-        ModuleDescription axisModule = engineconfig.getModule(moduleName);
+        ModuleDescription axisModule = axisConfig.getModule(moduleName);
         return axisModule;
     }
 
@@ -281,8 +288,8 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             currentFileItem.setClassLoader();
             loadServiceProperties(serviceMetaData);
-            engineconfig.addService(serviceMetaData);
-            factory.createChains(serviceMetaData, engineconfig);
+            axisConfig.addService(serviceMetaData);
+            factory.createChains(serviceMetaData, axisConfig);
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
             throw new AxisFault(e);
@@ -386,7 +393,7 @@ public class DeploymentEngine implements DeploymentConstants {
         Flow faultOutFlow = moduelmetada.getFaultOutFlow();
         addFlowHandlers(faultOutFlow);
         loadModuleClass(moduelmetada);
-        engineconfig.addMdoule(moduelmetada);
+        axisConfig.addMdoule(moduelmetada);
     }
 
 
@@ -436,7 +443,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             e.printStackTrace();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
-                                engineconfig.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
+                                axisConfig.getFaulytServices().put(getAxisServiceName(currentFileItem.getName()), serviceStatus);
                             }
                             currentFileItem = null;
                         }
@@ -473,10 +480,10 @@ public class DeploymentEngine implements DeploymentConstants {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
-                        engineconfig.removeService(new QName(serviceName));
+                        axisConfig.removeService(new QName(serviceName));
                         log.info("UnDeployement WS Name  " + wsInfo.getFilename());
                     }
-                    engineconfig.getFaulytServices().remove(serviceName);
+                    axisConfig.getFaulytServices().remove(serviceName);
                 }
 
             }
@@ -546,7 +553,7 @@ public class DeploymentEngine implements DeploymentConstants {
             schme.parseServiceXML(axisService);
             axisService.setClassLoader(classLoader);
             loadServiceProperties(axisService);
-            engineconfig.addService(axisService);
+            axisConfig.addService(axisService);
 
         } catch (XMLStreamException e) {
             throw new DeploymentException("XMLStreamException" + e.getMessage());
