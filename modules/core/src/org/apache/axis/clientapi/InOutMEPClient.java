@@ -70,7 +70,7 @@ public class InOutMEPClient extends MEPClient {
         //service context has the engine context set in to it ! 
         callbackReceiver = new CallbackReceiver();
         listenerManager = new ListenerManager(serviceContext.getEngineContext());
-        listenerManager.getEngineContext().registerServiceContext(
+        listenerManager.getSystemContext().registerServiceContext(
             serviceContext.getServiceInstanceID(),
             serviceContext);
     }

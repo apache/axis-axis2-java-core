@@ -26,14 +26,14 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 
 public class ListenerManager {
-    private SystemContext engineContext;
+    private SystemContext systemContext;
     private boolean started = false;
     private int numberOfserver = 0;
     private SimpleHTTPServer simpleHttpServer;
     private ServerSocket scoket;
 
     public ListenerManager(SystemContext engineContext) {
-        this.engineContext = engineContext;
+        this.systemContext = engineContext;
     }
 
     public void makeSureStarted() throws AxisFault {
@@ -42,7 +42,7 @@ public class ListenerManager {
                 if (started == false) {
 
                     scoket = new ServerSocket(6060);
-                    simpleHttpServer = new SimpleHTTPServer(engineContext, scoket);
+                    simpleHttpServer = new SimpleHTTPServer(systemContext, scoket);
                     simpleHttpServer.start();
                     started = true;
                     numberOfserver++;
@@ -57,8 +57,8 @@ public class ListenerManager {
     /**
      * @return
      */
-    public SystemContext getEngineContext() {
-        return engineContext;
+    public SystemContext getSystemContext() {
+        return systemContext;
     }
 
     public void stopAServer() {
@@ -76,8 +76,8 @@ public class ListenerManager {
     /**
      * @param context
      */
-    public void setEngineContext(SystemContext context) {
-        engineContext = context;
+    public void setSystemContext(SystemContext context) {
+        systemContext = context;
     }
 
 }
