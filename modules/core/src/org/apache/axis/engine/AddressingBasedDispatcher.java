@@ -34,11 +34,6 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public static final QName NAME =
         new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
 
-    /**
-     * Constructor Dispatcher
-     */
-    private ConfigurationContext engineContext;
-
     public AddressingBasedDispatcher() {
         init(new HandlerDescription(NAME));
     }
@@ -69,7 +64,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         QName serviceName = new QName(toEPR.getAddress());
-        ServiceDescription service = engineContext.getEngineConfig().getService(serviceName);
+        ServiceDescription service = messageContext.getSystemContext().getEngineConfig().getService(serviceName);
 
         if (service != null) {
             return service;

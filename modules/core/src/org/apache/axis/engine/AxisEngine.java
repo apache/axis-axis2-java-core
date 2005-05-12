@@ -142,7 +142,7 @@ public class AxisEngine {
             faultContext.setEnvelope(envelope);
 
             OperationContext opContext  = context.getOperationContext();
-            if(opContext == null){
+            if(opContext != null){
                 OperationDescription axisOperation = opContext.getAxisOperation();
                 ArrayList phases = axisOperation.getPhasesInFaultOutFlow();
                 invokePhases(phases, context);
