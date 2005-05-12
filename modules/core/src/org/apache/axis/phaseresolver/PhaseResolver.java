@@ -41,9 +41,9 @@ import org.apache.axis.engine.AxisSystemImpl;
  */
 public class PhaseResolver {
     /**
-     * Field engineConfig
+     * Field axisConfig
      */
-    private final AxisConfiguration engineConfig;
+    private final AxisConfiguration axisConfig;
 
     /**
      * Field axisService
@@ -62,7 +62,7 @@ public class PhaseResolver {
      * @param engineConfig
      */
     public PhaseResolver(AxisConfiguration engineConfig) {
-        this.engineConfig = engineConfig;
+        this.axisConfig = engineConfig;
     }
 
     /**
@@ -73,7 +73,7 @@ public class PhaseResolver {
      */
     public PhaseResolver(AxisConfiguration engineConfig,
                          ServiceDescription serviceContext) {
-        this.engineConfig = engineConfig;
+        this.axisConfig = engineConfig;
         this.axisService = serviceContext;
     }
 
@@ -197,7 +197,7 @@ public class PhaseResolver {
         Iterator itr = collection.iterator();
         while (itr.hasNext()) {
             QName moduleref = (QName) itr.next();
-            module = engineConfig.getModule(moduleref);
+            module = axisConfig.getModule(moduleref);
             if (module != null) {
                 buildModuleHandlers(allHandlers, module, flowtype);
             }
@@ -208,13 +208,13 @@ public class PhaseResolver {
         Iterator opitr = opmodule.iterator();
         while (opitr.hasNext()) {
             QName moduleref = (QName) opitr.next();
-            module = engineConfig.getModule(moduleref);
+            module = axisConfig.getModule(moduleref);
             if (module != null) {
                 buildModuleHandlers(allHandlers, module, flowtype);
             }
         }
 
-        phaseHolder = new PhaseHolder(engineConfig, operation);
+        phaseHolder = new PhaseHolder(axisConfig, operation);
         phaseHolder.setFlowType(flowtype);
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerDescription handlerMetaData =
@@ -230,8 +230,8 @@ public class PhaseResolver {
      * @throws PhaseException
      */
     public void buildTranspotsChains() throws PhaseException {
-        HashMap axisTransportIn = engineConfig.getTransportsIn();
-        HashMap axisTransportOut = engineConfig.getTransportsOut();
+        HashMap axisTransportIn = axisConfig.getTransportsIn();
+        HashMap axisTransportOut = axisConfig.getTransportsOut();
 
         Collection colintrnsport = axisTransportIn.values();
         for (Iterator iterator = colintrnsport.iterator();
@@ -253,7 +253,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineConfig);
+            phaseHolder = new PhaseHolder(axisConfig);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
@@ -293,7 +293,7 @@ public class PhaseResolver {
             throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 4; type++) {
-            phaseHolder = new PhaseHolder(engineConfig);
+            phaseHolder = new PhaseHolder(axisConfig);
             phaseHolder.setFlowType(type);
             switch (type) {
                 case PhaseMetadata.OUT_FLOW:
@@ -330,17 +330,17 @@ public class PhaseResolver {
      */
     public ConfigurationContext buildGlobalChains()
             throws AxisFault, PhaseException {
-        ConfigurationContext engineContext = new ConfigurationContext(engineConfig);
-        GlobalDescription global = engineConfig.getGlobal();
+        ConfigurationContext engineContext = new ConfigurationContext(axisConfig);
+        GlobalDescription global = axisConfig.getGlobal();
         List modules = (List) global.getModules();
         int count = modules.size();
         QName moduleName;
         ModuleDescription module;
         Flow flow = null;
         for (int type = 1; type < 5; type++) {
-            phaseHolder = new PhaseHolder(engineConfig);
+            phaseHolder = new PhaseHolder(axisConfig);
             phaseHolder.setFlowType(type);
-            Collection col = ((AxisSystemImpl) engineConfig).getModules().values();
+            Collection col = ((AxisSystemImpl) axisConfig).getModules().values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 ModuleDescription axismodule = (ModuleDescription) iterator.next();
                 switch (type) {
@@ -384,7 +384,7 @@ public class PhaseResolver {
             ///////////////////////////////////////////////////
             for (int intA = 0; intA < count; intA++) {
                 moduleName = (QName) modules.get(intA);
-                module = engineConfig.getModule(moduleName);
+                module = axisConfig.getModule(moduleName);
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {

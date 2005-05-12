@@ -44,12 +44,10 @@ import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.Parameter;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisSystemImpl;
-import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.*;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -208,6 +206,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         try {
             validateServerModule();
+            validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault.getMessage());
@@ -257,10 +256,24 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private void validateSystemPredefinedPhases(){
+    /**
+     * This method is to check wether some one has change the system pre defined phases for all the
+     * flows if some one has done so will throw a DeploymentException
+     * @throws DeploymentException
+     */
+    private void validateSystemPredefinedPhases() throws DeploymentException {
         DeploymentTempData tempdata = DeploymentTempData.getInstance();
         ArrayList inPhases = tempdata.getINPhases();
-        
+        if(! (((Phase)inPhases.get(0)).getPhaseName().equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+        ((Phase)inPhases.get(1)).getPhaseName().equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+        ((Phase)inPhases.get(2)).getPhaseName().equals(PhaseMetadata.PHASE_DISPATCH) &&
+        ((Phase)inPhases.get(3)).getPhaseName().equals(PhaseMetadata.PHASE_POST_DISPATCH))){
+           throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
+                   " support\n recheck server.xml");
+        }
+        ArrayList outPhaes = tempdata.getOUTPhases();
+        //TODO do the validation code here
+        //ArrayList systemDefaultPhases =((AxisSystemImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
     }
 
     public ModuleDescription getModule(QName moduleName) throws AxisFault {
