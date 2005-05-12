@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.SOAPEnvelope;
@@ -48,7 +48,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      * Constructor AbstractTransportSender
      */
     public AbstractTransportSender() {
-        init(new HandlerMetadata(NAME));
+        init(new HandlerDescription(NAME));
     }
 
     /**

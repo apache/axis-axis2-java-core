@@ -18,8 +18,8 @@ package org.apache.axis.context;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.om.SOAPEnvelope;
@@ -64,11 +64,11 @@ public class MessageContext extends AbstractContext {
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
-    private SystemContext engineContext;
+    private ConfigurationContext engineContext;
 
-    private AxisTransportIn transportIn;
+    private TransportInDescription transportIn;
 
-    private AxisTransportOut transportOut;
+    private TransportOutDescription transportOut;
 
     /**
      * Field sessionContext
@@ -123,10 +123,10 @@ public class MessageContext extends AbstractContext {
      * @param mepContext
      * @throws AxisFault
      */
-    public MessageContext(SystemContext engineContext,
+    public MessageContext(ConfigurationContext engineContext,
                           SessionContext sessionContext,
-                          AxisTransportIn transportIn,
-                          AxisTransportOut transportOut,
+                          TransportInDescription transportIn,
+                          TransportOutDescription transportOut,
                           OperationContext mepContext)
             throws AxisFault {
         this(sessionContext, transportIn, transportOut, engineContext);
@@ -143,9 +143,9 @@ public class MessageContext extends AbstractContext {
      */
 
     public MessageContext(SessionContext sessionContext,
-                          AxisTransportIn transportIn,
-                          AxisTransportOut transportOut,
-                          SystemContext engineContext)
+                          TransportInDescription transportIn,
+                          TransportOutDescription transportOut,
+                          ConfigurationContext engineContext)
             throws AxisFault {
         super(null);
 
@@ -387,28 +387,28 @@ public class MessageContext extends AbstractContext {
     /**
      * @return
      */
-    public AxisTransportIn getTransportIn() {
+    public TransportInDescription getTransportIn() {
         return transportIn;
     }
 
     /**
      * @return
      */
-    public AxisTransportOut getTransportOut() {
+    public TransportOutDescription getTransportOut() {
         return transportOut;
     }
 
     /**
      * @param in
      */
-    public void setTransportIn(AxisTransportIn in) {
+    public void setTransportIn(TransportInDescription in) {
         transportIn = in;
     }
 
     /**
      * @param out
      */
-    public void setTransportOut(AxisTransportOut out) {
+    public void setTransportOut(TransportOutDescription out) {
         transportOut = out;
     }
 
@@ -454,7 +454,7 @@ public class MessageContext extends AbstractContext {
         this.serviceInstanceID = serviceInstanceID;
     }
 
-    public SystemContext getSystemContext() {
+    public ConfigurationContext getSystemContext() {
         return engineContext;
     }
 
@@ -468,7 +468,7 @@ public class MessageContext extends AbstractContext {
     /**
      * @param context
      */
-    public void setEngineContext(SystemContext context) {
+    public void setEngineContext(ConfigurationContext context) {
         engineContext = context;
     }
 

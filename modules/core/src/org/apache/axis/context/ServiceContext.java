@@ -20,16 +20,16 @@ package org.apache.axis.context;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 
 
 public class ServiceContext extends AbstractContext {
-    private AxisService serviceConfig;
+    private ServiceDescription serviceConfig;
 
     private String serviceInstanceID;
 
-    public ServiceContext(AxisService serviceConfig, SystemContext engineContext) {
+    public ServiceContext(ServiceDescription serviceConfig, ConfigurationContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
 
@@ -54,16 +54,16 @@ public class ServiceContext extends AbstractContext {
     /**
      * @return
      */
-    public AxisService getServiceConfig() {
+    public ServiceDescription getServiceConfig() {
         return serviceConfig;
     }
 
-    public SystemContext getEngineContext() {
-        return (SystemContext) parent;
+    public ConfigurationContext getEngineContext() {
+        return (ConfigurationContext) parent;
     }
 
     public OperationContext createOperationContext(QName name) {
-        AxisOperation axisOp = serviceConfig.getOperation(name);
+        OperationDescription axisOp = serviceConfig.getOperation(name);
         return new OperationContext(axisOp, this);
     }
 }

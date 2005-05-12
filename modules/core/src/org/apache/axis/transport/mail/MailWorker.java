@@ -32,7 +32,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.SOAPEnvelope;
@@ -53,7 +53,7 @@ public class MailWorker implements Runnable {
 
     private SMTPClient client = null;
 
-    private SystemContext reg = null;
+    private ConfigurationContext reg = null;
 
     // Current message
     private MimeMessage mimeMessage;
@@ -75,7 +75,7 @@ public class MailWorker implements Runnable {
      * @param mimeMessage
      */
     public MailWorker(SimpleMailListner server, MimeMessage mimeMessage,
-                      SystemContext reg) {
+                      ConfigurationContext reg) {
         this.server = server;
         this.mimeMessage = mimeMessage;
         this.reg = reg;

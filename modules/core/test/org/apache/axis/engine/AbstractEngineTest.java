@@ -23,8 +23,8 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis.transport.TransportSender;
@@ -32,10 +32,10 @@ import org.apache.axis.transport.TransportSender;
 public class AbstractEngineTest extends TestCase {
     protected MessageContext mc;
     protected ArrayList executedHandlers = new ArrayList();
-    protected AxisSystem engineRegistry;
+    protected AxisConfiguration engineRegistry;
     protected QName serviceName = new QName("axis/services/NullService");
     protected QName opearationName = new QName("NullOperation");
-    protected AxisService service;
+    protected ServiceDescription service;
 
     public AbstractEngineTest() {
     }
@@ -85,7 +85,7 @@ public class AbstractEngineTest extends TestCase {
             return null;
         }
 
-        public void init(HandlerMetadata handlerdesc) {
+        public void init(HandlerDescription handlerdesc) {
         }
 
         public void invoke(MessageContext msgContext) throws AxisFault {

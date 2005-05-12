@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.description.GlobalDescription;
 
 public class BadServerXMLTest extends AbstractTestCase {
     /**
@@ -35,7 +35,7 @@ public class BadServerXMLTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/BadServer.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
-            AxisGlobal glabl = new AxisGlobal();
+            GlobalDescription glabl = new GlobalDescription();
             parser.processGlobalConfig(glabl);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {

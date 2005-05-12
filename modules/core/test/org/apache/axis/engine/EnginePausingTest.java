@@ -23,12 +23,12 @@ import javax.xml.namespace.QName;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
@@ -38,7 +38,7 @@ public class EnginePausingTest extends AbstractEngineTest {
   
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
-    private SystemContext engineContext;
+    private ConfigurationContext engineContext;
 
     public EnginePausingTest() {
     }
@@ -47,23 +47,23 @@ public class EnginePausingTest extends AbstractEngineTest {
         super(arg0);
     }
     protected void setUp() throws Exception {
-        engineRegistry = new AxisSystemImpl(new AxisGlobal());
+        engineRegistry = new AxisSystemImpl(new GlobalDescription());
 
-        AxisTransportOut transportOut = new AxisTransportOut(new QName("null"));
+        TransportOutDescription transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new NullTransportSender());
 
-        AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
+        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
         
-        engineContext = new SystemContext(engineRegistry);
+        engineContext = new ConfigurationContext(engineRegistry);
 
-        AxisOperation axisOp = new AxisOperation(operationName);
+        OperationDescription axisOp = new OperationDescription(operationName);
         mc = new MessageContext(engineContext, null, transportIn,transportOut,OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp,null));
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
-        AxisService service = new AxisService(serviceName);
+        ServiceDescription service = new ServiceDescription(serviceName);
         axisOp.setMessageReciever(new NullMessageReceiver());
         
 

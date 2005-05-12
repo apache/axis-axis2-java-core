@@ -29,8 +29,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +53,7 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Field systemContext
      */
-    protected SystemContext systemContext;
+    protected ConfigurationContext systemContext;
 
     /**
      * Field serverSocket
@@ -76,7 +76,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @param systemContext
      */
-    public SimpleHTTPServer(SystemContext systemContext, ServerSocket serverSoc) {
+    public SimpleHTTPServer(ConfigurationContext systemContext, ServerSocket serverSoc) {
         this.systemContext = systemContext;
         this.serverSocket = serverSoc;
     }
@@ -132,7 +132,7 @@ public class SimpleHTTPServer implements Runnable {
                         }
                         Writer out = new OutputStreamWriter(socket.getOutputStream());
                         Reader in = new InputStreamReader(socket.getInputStream());
-                        AxisTransportOut transportOut =
+                        TransportOutDescription transportOut =
                             systemContext.getEngineConfig().getTransportOut(
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
@@ -251,7 +251,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @return
      */
-    public SystemContext getSystemContext() {
+    public ConfigurationContext getSystemContext() {
         return systemContext;
     }
 

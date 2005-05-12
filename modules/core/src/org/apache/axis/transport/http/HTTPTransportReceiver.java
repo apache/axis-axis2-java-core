@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.SOAPEnvelope;
@@ -89,7 +89,7 @@ public class HTTPTransportReceiver extends TransportReceiver {
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext,SystemContext engineContext) throws AxisFault{
+    public void invoke(MessageContext msgContext,ConfigurationContext engineContext) throws AxisFault{
         Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();

@@ -19,14 +19,14 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.engine.Phase;
@@ -36,7 +36,7 @@ import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 public class Utils {
 
     public static void addHandler(Flow flow, Handler handler) {
-        HandlerMetadata hmd = new HandlerMetadata();
+        HandlerDescription hmd = new HandlerDescription();
         hmd.setHandler(handler);
         flow.addHandler(hmd);
     }
@@ -56,48 +56,48 @@ public class Utils {
     }
 
     public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
-        AxisService service = serviceContext.getServiceConfig();
+        ServiceDescription service = serviceContext.getServiceConfig();
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getInFlow(),
-            AxisSystem.INFLOW);
+            AxisConfiguration.INFLOW);
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getOutFlow(),
-            AxisSystem.OUTFLOW);
+            AxisConfiguration.OUTFLOW);
         addPhasesToServiceFromFlow(
             serviceContext,
             Constants.PHASE_SERVICE,
             service.getFaultInFlow(),
-            AxisSystem.FAULT_IN_FLOW);
+            AxisConfiguration.FAULT_IN_FLOW);
     }
 
-    public static AxisService createSimpleService(
+    public static ServiceDescription createSimpleService(
         QName serviceName,
         MessageReceiver messageReceiver,
         String className,
         QName opName) {
-        AxisService service = new AxisService(serviceName);
+        ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
-        AxisOperation axisOp = new AxisOperation(opName);
+        OperationDescription axisOp = new OperationDescription(opName);
         axisOp.setMessageReciever(messageReceiver);
         service.addOperation(axisOp);
         return service;
     }
 
     public static ServiceContext createServiceContext(
-        AxisService service,
-        SystemContext engineContext)
+        ServiceDescription service,
+        ConfigurationContext engineContext)
         throws AxisFault {
         ServiceContext serviceContext = new ServiceContext(service, engineContext);
         createExecutionChains(serviceContext);
         return serviceContext;
     }
 
-    public static AxisService createSimpleService(
+    public static ServiceDescription createSimpleService(
         QName serviceName,
         String className,
         QName opName) {

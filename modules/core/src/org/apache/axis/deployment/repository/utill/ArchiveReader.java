@@ -25,31 +25,31 @@ import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisDescWSDLComponentFactory;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
 
 public class ArchiveReader implements DeploymentConstants {
 
-    public AxisService createService(String filename) throws DeploymentException {
+    public ServiceDescription createService(String filename) throws DeploymentException {
         WSDL1ToWOMBuilder builder = new WSDL1ToWOMBuilder();
         String strArchive = filename;
         ZipInputStream zin;
         boolean foundwsdl = false;
-        AxisService service = null;
+        ServiceDescription service = null;
         try {
             zin = new ZipInputStream(new FileInputStream(strArchive));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEWSDL)) {
-                    service = (AxisService) builder.build(zin, new AxisDescWSDLComponentFactory());
+                    service = (ServiceDescription) builder.build(zin, new AxisDescWSDLComponentFactory());
                     foundwsdl = true;
                     break;
                 }
             }
             zin.close();
             if (!foundwsdl) {
-                service = new AxisService();
+                service = new ServiceDescription();
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());
@@ -65,7 +65,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @param engine
      */
 
-    public void readServiceArchive(String filename, DeploymentEngine engine, AxisService service) throws DeploymentException {
+    public void readServiceArchive(String filename, DeploymentEngine engine, ServiceDescription service) throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
         String strArchive = filename;
@@ -90,7 +90,7 @@ public class ArchiveReader implements DeploymentConstants {
         }
     }
 
-    public void readModuleArchive(String filename, DeploymentEngine engine, AxisModule module) throws DeploymentException {
+    public void readModuleArchive(String filename, DeploymentEngine engine, ModuleDescription module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
         String strArchive = filename;

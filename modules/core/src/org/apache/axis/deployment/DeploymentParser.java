@@ -25,15 +25,15 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.engine.AxisFault;
@@ -77,7 +77,7 @@ public class DeploymentParser implements DeploymentConstants {
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
     }
 
-    public void parseServiceXML(AxisService axisService) throws DeploymentException {
+    public void parseServiceXML(ServiceDescription axisService) throws DeploymentException {
         //To check whether document end tag has encountered
         boolean END_DOCUMENT = false;
         //   ServiceMetaData service = null;
@@ -102,7 +102,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void processGlobalConfig(AxisGlobal axisGlobal) throws DeploymentException {
+    public void processGlobalConfig(GlobalDescription axisGlobal) throws DeploymentException {
         try {
             boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
@@ -119,10 +119,10 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         axisGlobal.addParameter(parameter);
                     } else if (TRANSPORTSENDER.equals(ST)) {
-                        AxisTransportOut transportout = proccessTrasnsportOUT();
+                        TransportOutDescription transportout = proccessTrasnsportOUT();
                         dpengine.getEngineconfig().addTransportOut(transportout);
                     } else if (TRANSPORTRECEIVER.equals(ST)) {
-                        AxisTransportIn transportin = proccessTrasnsportIN();
+                        TransportInDescription transportin = proccessTrasnsportIN();
                         dpengine.getEngineconfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
@@ -209,8 +209,8 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
-    public AxisTransportIn proccessTrasnsportIN() throws DeploymentException {
-        AxisTransportIn transportin = null;
+    public TransportInDescription proccessTrasnsportIN() throws DeploymentException {
+        TransportInDescription transportin = null;
         String attname = pullparser.getAttributeLocalName(0);
         String attvalue = pullparser.getAttributeValue(0);
 
@@ -219,7 +219,7 @@ public class DeploymentParser implements DeploymentConstants {
             attname = pullparser.getAttributeLocalName(i);
             attvalue = pullparser.getAttributeValue(i);
             if (ATTNAME.equals(attname)) {
-                transportin = new AxisTransportIn(new QName(attvalue));
+                transportin = new TransportInDescription(new QName(attvalue));
             } else if (transportin != null && CLASSNAME.equals(attname)) {
                 Class reciever = null;
                 try {
@@ -273,8 +273,8 @@ public class DeploymentParser implements DeploymentConstants {
         return transportin;
     }
 
-    public AxisTransportOut proccessTrasnsportOUT() throws DeploymentException {
-        AxisTransportOut transportout = null;
+    public TransportOutDescription proccessTrasnsportOUT() throws DeploymentException {
+        TransportOutDescription transportout = null;
         String attname;
         String attvalue;
         int attribCount = pullparser.getAttributeCount();
@@ -282,7 +282,7 @@ public class DeploymentParser implements DeploymentConstants {
             attname = pullparser.getAttributeLocalName(i);
             attvalue = pullparser.getAttributeValue(i);
             if (ATTNAME.equals(attname)) {
-                transportout = new AxisTransportOut(new QName(attvalue));
+                transportout = new TransportOutDescription(new QName(attvalue));
             } else if (transportout != null && CLASSNAME.equals(attname)) {
                 Class sender = null;
                 try {
@@ -310,7 +310,7 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         transportout.addParameter(parameter);
                     } else if (transportout != null && INFLOWST.equals(tagnae)) {
-                        throw new DeploymentException("InFlow dose not support in AxisTransportOut  " + tagnae);
+                        throw new DeploymentException("InFlow dose not support in TransportOutDescription  " + tagnae);
                     } else if (transportout != null && OUTFLOWST.equals(tagnae)) {
                         Flow outFlow = processOutFlow();
                         transportout.setOutFlow(outFlow);
@@ -339,7 +339,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * to process service.xml
      */
-    private void procesServiceXML(AxisService axisService) throws DeploymentException {
+    private void procesServiceXML(ServiceDescription axisService) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
         if (attribCount >= 1) {
             for (int i = 0; i < attribCount; i++) {
@@ -382,7 +382,7 @@ public class DeploymentParser implements DeploymentConstants {
                         // todo this should implemnt latter
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
-                        AxisOperation operation = processOperation();
+                        OperationDescription operation = processOperation();
                         axisService.addOperation(operation);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
@@ -484,10 +484,10 @@ public class DeploymentParser implements DeploymentConstants {
      * @throws org.apache.axis.deployment.DeploymentException
      *
      */
-    private HandlerMetadata processHandler() throws DeploymentException {
+    private HandlerDescription processHandler() throws DeploymentException {
         //  String name = pullparser.getLocalName();
         boolean ref_name = false;
-        HandlerMetadata handler = new HandlerMetadata();
+        HandlerDescription handler = new HandlerDescription();
         int attribCount = pullparser.getAttributeCount();
 
         for (int i = 0; i < attribCount; i++) {
@@ -612,9 +612,9 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    private AxisOperation processOperation() throws DeploymentException {
+    private OperationDescription processOperation() throws DeploymentException {
         //  String name = pullparser.getLocalName();
-        AxisOperation operation = new AxisOperation();
+        OperationDescription operation = new OperationDescription();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount > 0) {  // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
@@ -731,7 +731,7 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
 
-    public void processModule(AxisModule module) throws DeploymentException {
+    public void processModule(ModuleDescription module) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
         boolean foundClass = false;
@@ -822,7 +822,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetadata handler = processHandler();
+                        HandlerDescription handler = processHandler();
                         inFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -857,7 +857,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetadata handler = processHandler();
+                        HandlerDescription handler = processHandler();
                         outFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -893,7 +893,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetadata handler = processHandler();
+                        HandlerDescription handler = processHandler();
                         faultFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -927,7 +927,7 @@ public class DeploymentParser implements DeploymentConstants {
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String tagnae = pullparser.getLocalName();
                     if (HANDERST.equals(tagnae)) {
-                        HandlerMetadata handler = processHandler();
+                        HandlerDescription handler = processHandler();
                         faultFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);
@@ -1027,7 +1027,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * to process either module.xml or module elemnt in the service.xml
      */
-    public void procesModuleXML(AxisModule module) throws DeploymentException {
+    public void procesModuleXML(ModuleDescription module) throws DeploymentException {
         boolean END_DOCUMENT = false;
         try {
             while (!END_DOCUMENT) {

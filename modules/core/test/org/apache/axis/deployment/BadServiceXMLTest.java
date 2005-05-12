@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ServiceDescription;
 
 public class BadServiceXMLTest extends AbstractTestCase {
     /**
@@ -35,7 +35,7 @@ public class BadServiceXMLTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/BadService.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
-            AxisService axisService = new AxisService();
+            ServiceDescription axisService = new ServiceDescription();
             parser.parseServiceXML(axisService);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {

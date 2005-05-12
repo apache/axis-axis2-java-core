@@ -35,7 +35,7 @@ public interface ClassWriterConstants {
 	
 	public static final String ABSTRACT_STUB = "org.apache.axis.clientapi.Stub";
 	
-	public static final String AXIS_OPERATION = "org.apache.axis.description.AxisOperation";
+	public static final String AXIS_OPERATION = "org.apache.axis.description.OperationDescription";
 	
 	
 	public static final String INDENDATION_TAB = "\t";

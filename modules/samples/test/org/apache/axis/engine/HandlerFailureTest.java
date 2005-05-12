@@ -26,8 +26,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
 import org.apache.axis.handlers.AbstractHandler;
@@ -85,7 +85,7 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, culprit);
         Utils.addHandler(flow, new SpeakingHandler());
         
-        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
         service.setInFlow(flow);
         
         UtilServer.start();
@@ -99,7 +99,7 @@ public class HandlerFailureTest extends TestCase {
     }
 
     public void testFailureAtServerResponseFlow() throws Exception {
-        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
  
 
         Flow flow = new FlowImpl();
@@ -120,7 +120,7 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, new SpeakingHandler());
         service.setInFlow(flow);
 
-        AxisOperation operation = new AxisOperation(operationName);
+        OperationDescription operation = new OperationDescription(operationName);
         service.addOperation(operation);
 
         UtilServer.start();

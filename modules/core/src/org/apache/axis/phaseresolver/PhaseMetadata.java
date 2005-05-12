@@ -17,7 +17,7 @@ package org.apache.axis.phaseresolver;
 
 import java.util.ArrayList;
 
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 
 /**
  * Class PhaseMetadata
@@ -58,7 +58,7 @@ public class PhaseMetadata {
     /**
      * to keet info about phase first handler
      */
-    private HandlerMetadata phaseFirst;
+    private HandlerDescription phaseFirst;
 
     /**
      * Field phasefirstset
@@ -68,7 +68,7 @@ public class PhaseMetadata {
     /**
      * to keet info about phase last handler
      */
-    private HandlerMetadata phaseLast;
+    private HandlerDescription phaseLast;
 
     /**
      * Field phaselastset
@@ -109,7 +109,7 @@ public class PhaseMetadata {
      *
      * @return
      */
-    public HandlerMetadata getPhaseFirst() {
+    public HandlerDescription getPhaseFirst() {
         return phaseFirst;
     }
 
@@ -119,7 +119,7 @@ public class PhaseMetadata {
      * @param phaseFirst
      * @throws PhaseException
      */
-    public void setPhaseFirst(HandlerMetadata phaseFirst)
+    public void setPhaseFirst(HandlerDescription phaseFirst)
             throws PhaseException {
         if (phasefirstset) {
             throw new PhaseException("PhaseFirst alredy has been set, cannot have two phaseFirst Handler for same phase "
@@ -140,7 +140,7 @@ public class PhaseMetadata {
      *
      * @return
      */
-    public HandlerMetadata getPhaseLast() {
+    public HandlerDescription getPhaseLast() {
         return phaseLast;
     }
 
@@ -150,7 +150,7 @@ public class PhaseMetadata {
      * @param phaseLast
      * @throws PhaseException
      */
-    public void setPhaseLast(HandlerMetadata phaseLast) throws PhaseException {
+    public void setPhaseLast(HandlerDescription phaseLast) throws PhaseException {
         if (phaselastset) {
             throw new PhaseException("PhaseLast already has been set, cannot have two PhaseLast Handler for same phase "
                     + this.name);
@@ -171,7 +171,7 @@ public class PhaseMetadata {
      * @param handler
      * @throws PhaseException
      */
-    public void addHandler(HandlerMetadata handler) throws PhaseException {
+    public void addHandler(HandlerDescription handler) throws PhaseException {
         if (isonehanlder) {
             throw new PhaseException(this.getName() + "can only have one handler, since there is a " +
                     "handler with both phaseFirst and PhaseLast true ");
@@ -212,17 +212,17 @@ public class PhaseMetadata {
      * @return
      * @throws PhaseException
      */
-    public HandlerMetadata[] getOrderedHandlers() throws PhaseException {
+    public HandlerDescription[] getOrderedHandlers() throws PhaseException {
         int size = 0;
 
         /**
          * order the handlers
          */
         orderHandlers();
-        HandlerMetadata handler[];
+        HandlerDescription handler[];
         if (isonehanlder) {
             size = 1;
-            handler = new HandlerMetadata[size];
+            handler = new HandlerDescription[size];
             handler[0] = getPhaseFirst();
             return handler;
         }
@@ -237,9 +237,9 @@ public class PhaseMetadata {
             phaseHandlers.add(getPhaseLast());
         }
         size = phaseHandlers.size();
-        handler = new HandlerMetadata[size];
+        handler = new HandlerDescription[size];
         for (int i = 0; i < phaseHandlers.size(); i++) {
-            handler[i] = (HandlerMetadata) phaseHandlers.get(i);
+            handler[i] = (HandlerDescription) phaseHandlers.get(i);
         }
         return handler;
     }
@@ -268,8 +268,8 @@ public class PhaseMetadata {
         if (getPhaseFirst() != null) {
             String phasFirstname = getPhaseFirst().getName().getLocalPart();
             for (int i = 0; i < phaseHandlers.size(); i++) {
-                HandlerMetadata handler =
-                        (HandlerMetadata) phaseHandlers.get(i);
+                HandlerDescription handler =
+                        (HandlerDescription) phaseHandlers.get(i);
                 if (handler.getRules().getBefore().equals(phasFirstname)) {
                     throw new PhaseException("Try to insert  a Handler "
                             + handler.getName()
@@ -292,8 +292,8 @@ public class PhaseMetadata {
         if (getPhaseLast() != null) {
             String phaseLastName = getPhaseLast().getName().getLocalPart();
             for (int i = 0; i < phaseHandlers.size(); i++) {
-                HandlerMetadata handler =
-                        (HandlerMetadata) phaseHandlers.get(i);
+                HandlerDescription handler =
+                        (HandlerDescription) phaseHandlers.get(i);
                 if (handler.getName().equals(phaseLastName)) {
                     throw new PhaseException("Try to insert a Handler "
                             + handler.getName()
@@ -313,12 +313,12 @@ public class PhaseMetadata {
         int count = 0;
         int before_after = 0;
         boolean status = false;
-        HandlerMetadata handler = null;
+        HandlerDescription handler = null;
         while (phaseHandlers.size() > 0) {
             if (status) {
-                handler = (HandlerMetadata) phaseHandlers.get(0);
+                handler = (HandlerDescription) phaseHandlers.get(0);
             } else {
-                handler = (HandlerMetadata) phaseHandlers.get(count);
+                handler = (HandlerDescription) phaseHandlers.get(count);
             }
             status = false;
             if (count > phaseHandlers.size()) {
@@ -375,7 +375,7 @@ public class PhaseMetadata {
      * @return
      * @throws PhaseException
      */
-    private int getBeforeAfter(HandlerMetadata handler) throws PhaseException {
+    private int getBeforeAfter(HandlerDescription handler) throws PhaseException {
         if ((!handler.getRules().getBefore().equals(""))
                 && (!handler.getRules().getAfter().equals(""))) {
             if (handler.getRules().getBefore().equals(handler.getRules().getAfter())) {
@@ -398,7 +398,7 @@ public class PhaseMetadata {
      * @param handler
      * @return
      */
-    private boolean insertBefore(HandlerMetadata handler) {
+    private boolean insertBefore(HandlerDescription handler) {
         String beforename = handler.getRules().getBefore();
         if (getPhaseLast() != null) {
             if (getPhaseLast().getName().getLocalPart().equals(beforename)) {
@@ -407,7 +407,7 @@ public class PhaseMetadata {
             }
         }
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
+            HandlerDescription temphandler = (HandlerDescription) orderHanders.get(i);
             if (temphandler.getName().getLocalPart().equals(beforename)) {
                 orderHanders.add(i, handler);
                 return true;
@@ -422,7 +422,7 @@ public class PhaseMetadata {
      * @param handler
      * @return
      */
-    private boolean insertAfter(HandlerMetadata handler) {
+    private boolean insertAfter(HandlerDescription handler) {
         String afterName = handler.getRules().getAfter();
         if (getPhaseFirst() != null) {
             if (getPhaseFirst().getName().getLocalPart().equals(afterName)) {
@@ -431,7 +431,7 @@ public class PhaseMetadata {
             }
         }
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
+            HandlerDescription temphandler = (HandlerDescription) orderHanders.get(i);
             if (temphandler.getName().getLocalPart().equals(afterName)) {
                 if (i == orderHanders.size() - 1) {
                     orderHanders.add(handler);
@@ -453,7 +453,7 @@ public class PhaseMetadata {
      * @return
      * @throws PhaseException
      */
-    private boolean insertBeforeandAfter(HandlerMetadata handler)
+    private boolean insertBeforeandAfter(HandlerDescription handler)
             throws PhaseException {
         int before = -1;
         int after = -1;
@@ -480,7 +480,7 @@ public class PhaseMetadata {
         }
 
         for (int i = 0; i < orderHanders.size(); i++) {
-            HandlerMetadata temphandler = (HandlerMetadata) orderHanders.get(i);
+            HandlerDescription temphandler = (HandlerDescription) orderHanders.get(i);
             if (handler.getRules().getAfter().equals(temphandler.getName().getLocalPart())) {
                 after = i;
             } else if (handler.getRules().getBefore().equals(temphandler.getName().getLocalPart())) {

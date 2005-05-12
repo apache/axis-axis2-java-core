@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.phaseresolver.PhaseHolder;
@@ -22,7 +22,7 @@ import org.apache.axis.phaseresolver.PhaseHolder;
 public class PhaseRuleTest extends AbstractTestCase {
 
     PhaseRuleTest phaserul;
-    AxisSystem registry;
+    AxisConfiguration registry;
 
     public PhaseRuleTest(String testName) {
         super(testName);
@@ -31,7 +31,7 @@ public class PhaseRuleTest extends AbstractTestCase {
     public void testPhaseRules() throws Exception {
         super.setUp();
         phaserul = new PhaseRuleTest("");
-        AxisGlobal global = new AxisGlobal();
+        GlobalDescription global = new GlobalDescription();
         registry = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
 
@@ -48,7 +48,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         PhaseHolder ph = new PhaseHolder(registry);
         ph.setFlowType(1);
 
-        HandlerMetadata hm = new HandlerMetadata();
+        HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm.setHandler(han);
         hm.setName(new QName("H1"));
@@ -58,7 +58,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm.setRules(rule);
         ph.addHandler(hm);
 
-        HandlerMetadata hm1 = new HandlerMetadata();
+        HandlerDescription hm1 = new HandlerDescription();
         hm1.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm1.setHandler(han);
         hm1.setName(new QName("H2"));
@@ -68,7 +68,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm1.setRules(rule1);
         ph.addHandler(hm1);
 
-        HandlerMetadata hm2 = new HandlerMetadata();
+        HandlerDescription hm2 = new HandlerDescription();
         hm2.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm2.setHandler(han);
         hm2.setName(new QName("H3"));
@@ -79,7 +79,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm2.setRules(rule2);
         ph.addHandler(hm2);
 
-        HandlerMetadata hm3 = new HandlerMetadata();
+        HandlerDescription hm3 = new HandlerDescription();
         hm3.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm3.setHandler(han);
         hm3.setName(new QName("H4"));
@@ -91,7 +91,7 @@ public class PhaseRuleTest extends AbstractTestCase {
 
         ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {
-            HandlerMetadata metadata = (HandlerMetadata) oh.get(i);
+            HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
         }
     }

@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
@@ -39,7 +39,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
-            AxisService service =
+            ServiceDescription service =
                 msgContext.getOperationContext().getServiceContext().getServiceConfig();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
@@ -64,7 +64,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
       * @throws AxisFault
       */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-        AxisService service =
+        ServiceDescription service =
             msgContext.getOperationContext().getServiceContext().getServiceConfig();
 
         Parameter scopeParam = service.getParameter(SCOPE);

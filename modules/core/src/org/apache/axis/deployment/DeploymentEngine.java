@@ -37,14 +37,14 @@ import org.apache.axis.deployment.repository.utill.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
@@ -77,7 +77,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private AxisSystem engineconfig;
+    private AxisConfiguration engineconfig;
 
     /**
      * this constaructor for the testing
@@ -91,7 +91,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * This to keep a referance to serverMetaData object
      */
     // private static ServerMetaData axisGlobal = new ServerMetaData();
-    private AxisGlobal axisGlobal;
+    private GlobalDescription axisGlobal;
 
     private HDFileItem currentFileItem;
 
@@ -160,7 +160,7 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @return
      */
-    public AxisSystem getEngineconfig() {
+    public AxisConfiguration getEngineconfig() {
         return engineconfig;
     }
 
@@ -184,7 +184,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    public AxisSystem load() throws DeploymentException {
+    public AxisConfiguration load() throws DeploymentException {
         if (engineConfigName == null) {
             throw new DeploymentException("path to Server.xml can not be NUll");
         }
@@ -215,7 +215,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    public AxisSystem loadClient() throws DeploymentException {
+    public AxisConfiguration loadClient() throws DeploymentException {
         if (engineConfigName == null) {
             throw new DeploymentException("path to Client.xml can not be NUll");
         }
@@ -256,8 +256,8 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    public AxisModule getModule(QName moduleName) throws AxisFault {
-        AxisModule axisModule = engineconfig.getModule(moduleName);
+    public ModuleDescription getModule(QName moduleName) throws AxisFault {
+        ModuleDescription axisModule = engineconfig.getModule(moduleName);
         return axisModule;
     }
 
@@ -270,14 +270,14 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(engine, folderName), new DeploymentIterator());
     }
 
-    private AxisSystem createEngineConfig(){
-        axisGlobal = new AxisGlobal();
-        AxisSystem newEngineConfig = new AxisSystemImpl(axisGlobal);
+    private AxisConfiguration createEngineConfig(){
+        axisGlobal = new GlobalDescription();
+        AxisConfiguration newEngineConfig = new AxisSystemImpl(axisGlobal);
         return newEngineConfig;
     }
 
 
-    private void addnewService(AxisService serviceMetaData) throws AxisFault {
+    private void addnewService(ServiceDescription serviceMetaData) throws AxisFault {
         try {
             currentFileItem.setClassLoader();
             loadServiceProperties(serviceMetaData);
@@ -297,7 +297,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param axisService
      * @throws AxisFault
      */
-    private void loadServiceProperties(AxisService axisService) throws AxisFault {
+    private void loadServiceProperties(ServiceDescription axisService) throws AxisFault {
         Flow inflow = axisService.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -321,7 +321,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void loadModuleClass(AxisModule module) throws AxisFault {
+    private void loadModuleClass(ModuleDescription module) throws AxisFault {
         Class moduleClass = null;
         try {
             String readInClass = currentFileItem.getModuleClass();
@@ -341,7 +341,7 @@ public class DeploymentEngine implements DeploymentConstants {
         ClassLoader loader1 = currentFileItem.getClassLoader();
         for (int j = 0; j < count; j++) {
             //todo handle exception in properway
-            HandlerMetadata handlermd = flow.getHandler(j);
+            HandlerDescription handlermd = flow.getHandler(j);
             Class handlerClass = null;
             Handler handler;
             handlerClass = getHandlerClass(handlermd.getClassName(), loader1);
@@ -372,7 +372,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addNewModule(AxisModule moduelmetada) throws AxisFault {
+    private void addNewModule(ModuleDescription moduelmetada) throws AxisFault {
         currentFileItem.setClassLoader();
         Flow inflow = moduelmetada.getInFlow();
         addFlowHandlers(inflow);
@@ -415,7 +415,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         try {
-                            AxisService service = archiveReader.createService(currentFileItem.getAbsolutePath());
+                            ServiceDescription service = archiveReader.createService(currentFileItem.getAbsolutePath());
                             archiveReader.readServiceArchive(currentFileItem.getAbsolutePath(), this, service);
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentFileItem.getName());
@@ -443,7 +443,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         break;
                     case MODULE:
                         try {
-                            AxisModule metaData = new AxisModule();
+                            ModuleDescription metaData = new ModuleDescription();
                             archiveReader.readModuleArchive(currentFileItem.getAbsolutePath(), this, metaData);
                             addNewModule(metaData);
                             log.info("Moduel WS Name  " + currentFileItem.getName() + " modulename :" + metaData.getName());
@@ -508,12 +508,12 @@ public class DeploymentEngine implements DeploymentConstants {
         return fileName;
     }
 
-    /* public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
-    AxisService service = null;
+    /* public ServiceDescription deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
+    ServiceDescription service = null;
     try {
     currentFileItem = new HDFileItem(SERVICE, servieName);
     currentFileItem.setClassLoader(classLoder);
-    service = new AxisService();
+    service = new ServiceDescription();
     DeploymentParser schme = new DeploymentParser(serviceStream, this);
     schme.parseServiceXML(service);
     service = loadServiceProperties(service);
@@ -540,7 +540,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws DeploymentException
      */
-    public AxisService buildService(AxisService axisService, InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
+    public ServiceDescription buildService(ServiceDescription axisService, InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
         try {
             DeploymentParser schme = new DeploymentParser(serviceInputStream, this);
             schme.parseServiceXML(axisService);

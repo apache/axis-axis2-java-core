@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -37,14 +37,14 @@ public class AxisEngine {
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
-    private SystemContext engineContext;
+    private ConfigurationContext engineContext;
 
     /**
      * Constructor AxisEngine
      *
      *
      */
-    public AxisEngine(SystemContext engineContext) {
+    public AxisEngine(ConfigurationContext engineContext) {
         log.info("Axis Engine Started");
         this.engineContext = engineContext;
     }
@@ -90,7 +90,7 @@ public class AxisEngine {
      */
     public void receive(MessageContext context) throws AxisFault {
         try {
-            SystemContext sysCtx = context.getSystemContext();
+            ConfigurationContext sysCtx = context.getSystemContext();
             ArrayList phases = sysCtx.getEngineConfig().getInPhasesUptoAndIncludingPostDispatch();
             invokePhases(phases, context);
             
@@ -143,7 +143,7 @@ public class AxisEngine {
 
             OperationContext opContext  = context.getOperationContext();
             if(opContext == null){
-                AxisOperation axisOperation = opContext.getAxisOperation();
+                OperationDescription axisOperation = opContext.getAxisOperation();
                 ArrayList phases = axisOperation.getPhasesInFaultOutFlow();
                 invokePhases(phases, context);
             }
@@ -161,7 +161,7 @@ public class AxisEngine {
 
     private void verifyContextBuilt(MessageContext msgctx) throws AxisFault {
         if (msgctx.getSystemContext() == null) {
-            throw new AxisFault("SystemContext can not be null");
+            throw new AxisFault("ConfigurationContext can not be null");
         }
         if (msgctx.getOperationContext() == null) {
             throw new AxisFault("OperationContext can not be null");
@@ -187,7 +187,7 @@ public class AxisEngine {
      * @param obj the object to be stored
      * @return the storage key
      */
-    public Object store(SystemContext context, Object obj) {
+    public Object store(ConfigurationContext context, Object obj) {
         return context.getStorage().put(obj);
     }
 
@@ -198,7 +198,7 @@ public class AxisEngine {
      * @param key
      * @return
      */
-    public Object retrieve(SystemContext context, Object key) {
+    public Object retrieve(ConfigurationContext context, Object key) {
         return context.getStorage().get(key);
     }
 
@@ -208,7 +208,7 @@ public class AxisEngine {
      * @param key
      * @return  the object removed
      */
-    public Object remove(SystemContext context, Object key) {
+    public Object remove(ConfigurationContext context, Object key) {
         return context.getStorage().remove(key);
     }
 
@@ -217,7 +217,7 @@ public class AxisEngine {
      * @param context
      * @return
      */
-    public boolean clearStorage(SystemContext context) {
+    public boolean clearStorage(ConfigurationContext context) {
         return context.getStorage().clean();
     }
 }

@@ -9,11 +9,11 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
@@ -27,11 +27,11 @@ import org.apache.axis.phaseresolver.PhaseResolver;
  */
 public class EngineContextFactory {
 
-    public SystemContext buildEngineContext(String RepositaryName) throws DeploymentException {
-        SystemContext engineContext = null;
+    public ConfigurationContext buildEngineContext(String RepositaryName) throws DeploymentException {
+        ConfigurationContext engineContext = null;
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
-            AxisSystem configuration = deploymentEngine.load();
+            AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = phaseResolver.buildGlobalChains();
             phaseResolver.buildTranspotsChains();
@@ -44,11 +44,11 @@ public class EngineContextFactory {
         return engineContext;
     }
 
-    public SystemContext buildClientEngineContext(String axis2home) throws DeploymentException {
-        SystemContext engineContext = null;
+    public ConfigurationContext buildClientEngineContext(String axis2home) throws DeploymentException {
+        ConfigurationContext engineContext = null;
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(axis2home);
-            AxisSystem configuration = deploymentEngine.loadClient();
+            AxisConfiguration configuration = deploymentEngine.loadClient();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = phaseResolver.buildGlobalChains();
             phaseResolver.buildTranspotsChains();
@@ -70,12 +70,12 @@ public class EngineContextFactory {
      */
 
 
-    private void initModules(SystemContext context) throws DeploymentException {
+    private void initModules(ConfigurationContext context) throws DeploymentException {
         try {
             HashMap modules = ((AxisSystemImpl) context.getEngineConfig()).getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                AxisModule axismodule = (AxisModule) iterator.next();
+                ModuleDescription axismodule = (ModuleDescription) iterator.next();
                 Module module = axismodule.getModule();
                 if (module != null) {
                     module.init(context.getEngineConfig());
@@ -86,7 +86,7 @@ public class EngineContextFactory {
         }
     }
 
-    public void createChains(AxisService service, AxisSystem system) throws PhaseException {
+    public void createChains(ServiceDescription service, AxisConfiguration system) throws PhaseException {
         try {
             PhaseResolver reolve = new PhaseResolver(system, service);
             reolve.buildchains();
@@ -98,18 +98,18 @@ public class EngineContextFactory {
         }
     }
 
-    private void engageModules(AxisService service, AxisSystem context) throws AxisFault {
+    private void engageModules(ServiceDescription service, AxisConfiguration context) throws AxisFault {
         ArrayList servicemodules = (ArrayList) service.getModules();
         ArrayList opModules;
         Module module;
         Collection operations = service.getOperations().values();
         for (Iterator iterator = operations.iterator(); iterator.hasNext();) {
-            AxisOperation operation = (AxisOperation) iterator.next();
+            OperationDescription operation = (OperationDescription) iterator.next();
             opModules = (ArrayList) operation.getModules();
             for (int i = 0; i < servicemodules.size(); i++) {
                 QName moduleName = (QName) servicemodules.get(i);
                 module = context.getModule(moduleName).getModule();
-                //todo AxisOperation shoud have a method to get chains
+                //todo OperationDescription shoud have a method to get chains
                 /*ExecutionChain inchain = new ExecutionChain();
                 inchain.addPhases(operation.getPhases(EngineConfiguration.INFLOW));
                 module.engage(inchain);*/

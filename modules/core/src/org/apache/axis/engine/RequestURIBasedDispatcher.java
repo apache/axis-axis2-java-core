@@ -19,10 +19,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.HandlerDescription;
 
 /**
  * Class Dispatcher
@@ -40,13 +40,13 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
      * Constructor Dispatcher
      */
     public RequestURIBasedDispatcher() {
-        init(new HandlerMetadata(NAME));
+        init(new HandlerDescription(NAME));
     }
 
-    public AxisOperation findOperation(AxisService service, MessageContext messageContext)
+    public OperationDescription findOperation(ServiceDescription service, MessageContext messageContext)
         throws AxisFault {
         if (operatoinName != null) {
-            AxisOperation axisOp = service.getOperation(operatoinName);
+            OperationDescription axisOp = service.getOperation(operatoinName);
             return axisOp;
         }
         return null;
@@ -56,7 +56,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public AxisService findService(MessageContext messageContext) throws AxisFault {
+    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         final String URI_ID_STRING = "/services";
         if (messageContext.isServerSide()) {
 
@@ -68,7 +68,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             if (index > 0) {
                 serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
 
-                SystemContext engineContext = messageContext.getSystemContext();
+                ConfigurationContext engineContext = messageContext.getSystemContext();
 
                 if ((index = serviceStr.indexOf('/')) > 0) {
                     serviceName = new QName(serviceStr.substring(0, index));
@@ -77,7 +77,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                     serviceName = new QName(serviceStr);
                 }
 
-                AxisSystem registry = messageContext.getSystemContext().getEngineConfig();
+                AxisConfiguration registry = messageContext.getSystemContext().getEngineConfig();
                 return registry.getService(serviceName);
             }
         }

@@ -19,10 +19,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.HandlerDescription;
 
 /**
  * Class Dispatcher
@@ -37,20 +37,20 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     /**
      * Constructor Dispatcher
      */
-    private SystemContext engineContext;
+    private ConfigurationContext engineContext;
 
     public AddressingBasedDispatcher() {
-        init(new HandlerMetadata(NAME));
+        init(new HandlerDescription(NAME));
     }
 
   
-    public AxisOperation findOperation(AxisService service, MessageContext messageContext)
+    public OperationDescription findOperation(ServiceDescription service, MessageContext messageContext)
         throws AxisFault {
 
         String action = (String) messageContext.getWSAAction();
         if (action != null) {
             QName operationName = new QName(action);
-            AxisOperation op = service.getOperation(operationName);
+            OperationDescription op = service.getOperation(operationName);
             if (op != null) {
                 return op;
             } else {
@@ -66,10 +66,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public AxisService findService(MessageContext messageContext) throws AxisFault {
+    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         QName serviceName = new QName(toEPR.getAddress());
-        AxisService service = engineContext.getEngineConfig().getService(serviceName);
+        ServiceDescription service = engineContext.getEngineConfig().getService(serviceName);
 
         if (service != null) {
             return service;

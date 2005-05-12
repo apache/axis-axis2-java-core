@@ -87,7 +87,7 @@ public class EchoProvider extends SimpleJavaProvider {
 //			
 //			//find the WebService method  
 //			Class ImplClass = obj.getClass();
-//            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//            OperationDescription op = msgContext.getOperationContext().getAxisOperation();
 //			String methodName = op.getName().getLocalPart();
 //			
 //			

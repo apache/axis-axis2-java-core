@@ -39,7 +39,7 @@ public class FlowImpl implements Flow {
      *
      * @param handler
      */
-    public void addHandler(HandlerMetadata handler) {
+    public void addHandler(HandlerDescription handler) {
         list.add(handler);
     }
 
@@ -49,8 +49,8 @@ public class FlowImpl implements Flow {
      * @param index
      * @return
      */
-    public HandlerMetadata getHandler(int index) {
-        return (HandlerMetadata) list.get(index);
+    public HandlerDescription getHandler(int index) {
+        return (HandlerDescription) list.get(index);
     }
 
     /**

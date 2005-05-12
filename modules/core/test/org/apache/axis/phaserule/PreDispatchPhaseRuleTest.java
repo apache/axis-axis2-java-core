@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.phaseresolver.PhaseHolder;
@@ -39,7 +39,7 @@ import org.apache.axis.phaseresolver.PhaseHolder;
 public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
     PreDispatchPhaseRuleTest phaserul;
-    AxisSystem registry;
+    AxisConfiguration registry;
 
     public PreDispatchPhaseRuleTest(String testName) {
         super(testName);
@@ -47,7 +47,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
     public void testPhaseRule() throws Exception {
         phaserul = new PreDispatchPhaseRuleTest("");
-        AxisGlobal global = new AxisGlobal();
+        GlobalDescription global = new GlobalDescription();
         registry = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
 
@@ -65,7 +65,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         ph.setFlowType(1);
 
 
-        HandlerMetadata pre = new HandlerMetadata();
+        HandlerDescription pre = new HandlerDescription();
         pre.setClassName("org.apache.axis.handlers.AbstractHandler");
         pre.setHandler(han);
         pre.setName(new QName("pre-H1"));
@@ -74,7 +74,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         pre.setRules(pre_rule1);
         ph.addHandler(pre);
 
-        HandlerMetadata pre2 = new HandlerMetadata();
+        HandlerDescription pre2 = new HandlerDescription();
         pre2.setClassName("org.apache.axis.handlers.AbstractHandler");
         pre2.setHandler(han);
         pre2.setName(new QName("pre-H2"));
@@ -84,7 +84,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         ph.addHandler(pre2);
 
 
-        HandlerMetadata hm = new HandlerMetadata();
+        HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm.setHandler(han);
         hm.setName(new QName("H1"));
@@ -94,7 +94,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         hm.setRules(rule);
         ph.addHandler(hm);
 
-        HandlerMetadata hm1 = new HandlerMetadata();
+        HandlerDescription hm1 = new HandlerDescription();
         hm1.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm1.setHandler(han);
         hm1.setName(new QName("H2"));
@@ -104,7 +104,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         hm1.setRules(rule1);
         ph.addHandler(hm1);
 
-        HandlerMetadata hm2 = new HandlerMetadata();
+        HandlerDescription hm2 = new HandlerDescription();
         hm2.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm2.setHandler(han);
         hm2.setName(new QName("H3"));
@@ -115,7 +115,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         hm2.setRules(rule2);
         ph.addHandler(hm2);
 
-        HandlerMetadata hm3 = new HandlerMetadata();
+        HandlerDescription hm3 = new HandlerDescription();
         hm3.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm3.setHandler(han);
         hm3.setName(new QName("H4"));
@@ -127,7 +127,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
         ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {
-            HandlerMetadata metadata = (HandlerMetadata) oh.get(i);
+            HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
         }
     }

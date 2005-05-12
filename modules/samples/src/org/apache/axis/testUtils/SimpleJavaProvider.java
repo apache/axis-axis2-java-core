@@ -83,7 +83,7 @@ public class SimpleJavaProvider extends AbstractInOutSyncMessageReceiver impleme
 //
 //                //find the WebService method  
 //                Class ImplClass = obj.getClass();
-//                AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//                OperationDescription op = msgContext.getOperationContext().getAxisOperation();
 //                String methodName = op.getName().getLocalPart();
 //                Method[] methods = ImplClass.getMethods();
 //                for (int i = 0; i < methods.length; i++) {

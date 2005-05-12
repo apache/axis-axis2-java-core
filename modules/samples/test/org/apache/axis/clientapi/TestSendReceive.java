@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
@@ -50,7 +50,7 @@ public class TestSendReceive extends TestCase {
     private MessageContext mc;
 
     private Thread thisThread;
-    private AxisService service;
+    private ServiceDescription service;
 
     private SimpleHTTPServer sas;
 

@@ -46,7 +46,7 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 	
 	public WSDLService createService() {
-		return new AxisService();
+		return new ServiceDescription();
 	}
 
 	

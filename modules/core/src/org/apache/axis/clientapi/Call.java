@@ -23,12 +23,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.om.OMAbstractFactory;
@@ -62,7 +62,7 @@ public class Call extends InOutMEPClient {
 
     public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
 
-        AxisOperation axisConfig =
+        OperationDescription axisConfig =
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
       MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
 
@@ -86,7 +86,7 @@ public class Call extends InOutMEPClient {
 
     public void invokeNonBlocking(String axisop, OMElement toSend, Callback callback)
         throws AxisFault {
-            AxisOperation axisConfig =
+            OperationDescription axisConfig =
                         serviceContext.getServiceConfig().getOperation(new QName(axisop));
         MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
         
@@ -102,15 +102,15 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
 
-    private MessageContext prepareTheSystem(AxisOperation axisOp,OMElement toSend) throws AxisFault {
-        SystemContext syscontext = serviceContext.getEngineContext();
-        //Make sure the AxisService object has the AxisOperation
+    private MessageContext prepareTheSystem(OperationDescription axisOp,OMElement toSend) throws AxisFault {
+        ConfigurationContext syscontext = serviceContext.getEngineContext();
+        //Make sure the ServiceDescription object has the OperationDescription
         serviceContext.getServiceConfig().addOperation(axisOp);
         
         
-        AxisTransportIn transportIn =
+        TransportInDescription transportIn =
             syscontext.getEngineConfig().getTransportIn(new QName(listenertransport));
-        AxisTransportOut transportOut =
+        TransportOutDescription transportOut =
             syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
 
         MessageContext msgctx = new MessageContext(null, transportIn, transportOut, syscontext);
@@ -132,14 +132,14 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Assume the values for the SystemContext and ServiceContext to make the NON WSDL cases simple.
-     * @return ServiceContext that has a SystemContext set in and has assumed values.
+     * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
+     * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
     private static ServiceContext assumeServiceContext() throws AxisFault {
-        SystemContext sysContext = new SystemContext(new AxisSystemImpl(new AxisGlobal()));
+        ConfigurationContext sysContext = new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
         QName assumedServiceName = new QName("AnonnoymousService");
-        AxisService axisService = new AxisService(assumedServiceName);
+        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         sysContext.getEngineConfig().addService(axisService);
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;

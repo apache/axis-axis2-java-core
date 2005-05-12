@@ -20,10 +20,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContextFactory;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Flow;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 
 public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**
@@ -36,11 +36,11 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
     public void testDeployment() throws Exception {
         String filename = "./target/test-resources/deployment";
         EngineContextFactory builder = new EngineContextFactory();
-        AxisSystem er = builder.buildEngineContext(filename).getEngineConfig();
+        AxisConfiguration er = builder.buildEngineContext(filename).getEngineConfig();
 
         assertNotNull(er);
         assertNotNull(er.getGlobal());
-        AxisService service = er.getService(new QName("service2"));
+        ServiceDescription service = er.getService(new QName("service2"));
         assertNotNull(service);
         //commentd since there is no service based messgeRecivers
         /*MessageReceiver provider = service.getMessageReceiver();
@@ -61,7 +61,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertTrue( flow.getHandlerCount() > 0);
         assertNotNull(service.getParameter("para2"));
 
-        AxisOperation op = service.getOperation(new QName("opname"));
+        OperationDescription op = service.getOperation(new QName("opname"));
         assertNotNull(op);
 
     }

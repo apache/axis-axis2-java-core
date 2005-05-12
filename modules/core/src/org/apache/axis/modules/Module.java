@@ -17,7 +17,7 @@
 package org.apache.axis.modules;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 
 /**
  * Every module provides an implementation of this class. Modules are in one of
@@ -35,11 +35,11 @@ import org.apache.axis.engine.AxisSystem;
  */
 public interface Module {
     // initialize the module
-    public void init(AxisSystem axisSystem) throws AxisFault;
+    public void init(AxisConfiguration axisSystem) throws AxisFault;
 
     // TODO figure out how to get the engage() concept done
     // public void engage(ExecutionChain exeChain) throws AxisFault;
 
     // shutdown the module
-    public void shutdown(AxisSystem axisSystem) throws AxisFault;
+    public void shutdown(AxisConfiguration axisSystem) throws AxisFault;
 }

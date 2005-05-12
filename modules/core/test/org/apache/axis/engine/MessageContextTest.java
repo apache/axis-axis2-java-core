@@ -19,8 +19,8 @@ package org.apache.axis.engine;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisGlobal;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
 import org.apache.wsdl.WSDLConstants;
@@ -31,8 +31,8 @@ public class MessageContextTest extends AbstractTestCase {
     }
 
     public void testMesssageContext() throws AxisFault {
-        AxisSystem er = new AxisSystemImpl(new AxisGlobal());
-        SystemContext engineContext = new SystemContext(er);
+        AxisConfiguration er = new AxisSystemImpl(new GlobalDescription());
+        ConfigurationContext engineContext = new ConfigurationContext(er);
         MessageContext msgctx =
             new MessageContext(
                 engineContext,

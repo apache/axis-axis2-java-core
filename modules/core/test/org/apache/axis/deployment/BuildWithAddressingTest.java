@@ -6,9 +6,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContextFactory;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.Phase;
 
 /*
@@ -43,9 +43,9 @@ public class BuildWithAddressingTest extends AbstractTestCase {
     public void testDeployment() throws Exception {
         String filename = "./target/test-resources/deployment";
         EngineContextFactory builder = new EngineContextFactory();
-        SystemContext er = builder.buildEngineContext(filename);
-        ArrayList phases = er.getPhases(AxisSystem.INFLOW);
-        AxisModule modeule = er.getEngineConfig().getModule(new QName("addressing"));
+        ConfigurationContext er = builder.buildEngineContext(filename);
+        ArrayList phases = er.getPhases(AxisConfiguration.INFLOW);
+        ModuleDescription modeule = er.getEngineConfig().getModule(new QName("addressing"));
         assertNotNull(modeule);
         if (phases.size() <= 0) {
             fail("this must failed Since there are addressing handlers ");

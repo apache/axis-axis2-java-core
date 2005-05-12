@@ -26,13 +26,13 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
@@ -74,12 +74,12 @@ public class InOutMEPClient extends MEPClient {
             serviceContext);
     }
 
-    public MessageContext invokeBlocking(AxisOperation axisop, final MessageContext msgctx)
+    public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
         throws AxisFault {
         msgctx.setTo(to);
 
-        SystemContext sysContext = serviceContext.getEngineContext();
-        AxisSystem registry = sysContext.getEngineConfig();
+        ConfigurationContext sysContext = serviceContext.getEngineContext();
+        AxisConfiguration registry = sysContext.getEngineConfig();
 
         try {
             
@@ -111,19 +111,19 @@ public class InOutMEPClient extends MEPClient {
     }
 
     public void invokeNonBlocking(
-        AxisOperation axisop,
+        OperationDescription axisop,
         final MessageContext msgctx,
         final Callback callback)
         throws AxisFault {
         msgctx.setTo(to);
         try {
-            final SystemContext syscontext = serviceContext.getEngineContext();
+            final ConfigurationContext syscontext = serviceContext.getEngineContext();
 
             AxisEngine engine = new AxisEngine(syscontext);
 
-            final AxisTransportIn transportIn =
+            final TransportInDescription transportIn =
                 syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
-            final AxisTransportOut transportOut =
+            final TransportOutDescription transportOut =
                 syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
 
             if (useSeparateListener) {

@@ -20,7 +20,7 @@ import java.io.Serializable;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.Parameter;
 
 /**
@@ -32,7 +32,7 @@ public interface Handler extends Serializable {
      *
      * @param handlerdesc
      */
-    public void init(HandlerMetadata handlerdesc);
+    public void init(HandlerDescription handlerdesc);
 
     /**
      * Invoke is called to do the actual work of the Handler object.

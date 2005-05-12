@@ -33,12 +33,12 @@ public interface Flow {
      * @param index
      * @return
      */
-    public HandlerMetadata getHandler(int index);
+    public HandlerDescription getHandler(int index);
 
     /**
      * Method addHandler
      *
      * @param handler
      */
-    public void addHandler(HandlerMetadata handler);
+    public void addHandler(HandlerDescription handler);
 }

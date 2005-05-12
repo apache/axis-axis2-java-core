@@ -29,9 +29,9 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
@@ -45,7 +45,7 @@ public class MessageWithServerTest extends TestCase {
         new QName("http://ws.apache.org/axis2", "echoVoid");
     private QName transportName = new QName("", "NullTransport");
 
-    private AxisSystem engineRegistry;
+    private AxisConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
@@ -58,19 +58,19 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
         
         
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
         service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
-        AxisModule m1 = new AxisModule(new QName("", "A Mdoule 1"));
+        ModuleDescription m1 = new ModuleDescription(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         service.addModule(m1.getName());
 
-        AxisOperation operation = new AxisOperation(operationName);
+        OperationDescription operation = new OperationDescription(operationName);
         service.addOperation(operation);
 
         UtilServer.deployService(Utils.createServiceContext(service,null));

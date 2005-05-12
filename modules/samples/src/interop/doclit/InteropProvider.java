@@ -106,9 +106,9 @@ public class InteropProvider extends SimpleJavaProvider {
 
 //              TODO fix this 
                                       throw new UnsupportedOperationException();
-//                AxisService service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
+//                ServiceDescription service = msgContext.getOperationContext().getServiceContext().getServiceConfig();
 //                if (operationName != null) {
-//                    AxisOperation op = service.getOperation(operationName);
+//                    OperationDescription op = service.getOperation(operationName);
 //                    if (op != null) {
 //                        
 //                                    
@@ -127,7 +127,7 @@ public class InteropProvider extends SimpleJavaProvider {
 //
 //                //find the WebService method
 //                Class ImplClass = obj.getClass();
-//                AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//                OperationDescription op = msgContext.getOperationContext().getAxisOperation();
 //                methodName = op.getName().getLocalPart();
 //
 //                Method[] methods = ImplClass.getMethods();

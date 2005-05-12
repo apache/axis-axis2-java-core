@@ -21,13 +21,13 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.handlers.AbstractHandler;
 
 public class RegistryTest extends AbstractTestCase {
-    private AxisSystem reg;
+    private AxisConfiguration reg;
 
     public RegistryTest(String testName) {
         super(testName);
@@ -35,16 +35,16 @@ public class RegistryTest extends AbstractTestCase {
 
 
     public void testRegistry() throws Exception {
-        AxisGlobal ag = new AxisGlobal();
+        GlobalDescription ag = new GlobalDescription();
         testParameteInClude(ag);
         reg = new AxisSystemImpl(ag);
 
         QName moduleName = new QName("module1");
-        AxisModule modlue = new AxisModule(moduleName);
+        ModuleDescription modlue = new ModuleDescription(moduleName);
         reg.addMdoule(modlue);
 
         QName serviceName = new QName("service");
-        AxisService service = new AxisService(serviceName);
+        ServiceDescription service = new ServiceDescription(serviceName);
         reg.addService(service);
 
         assertSame(modlue, reg.getModule(moduleName));
@@ -56,12 +56,12 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testHandlerMedatata() {
-        HandlerMetadata hmd = new HandlerMetadata();
+        HandlerDescription hmd = new HandlerDescription();
         testParameteInClude(hmd);
     }
 
     public void testService() {
-        AxisService service = new AxisService(new QName("Service1"));
+        ServiceDescription service = new ServiceDescription(new QName("Service1"));
         testParameteInClude(service);
         testFlowIncludeTest(service);
 
@@ -69,13 +69,13 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testModule() {
-        AxisModule module = new AxisModule(new QName("module1"));
+        ModuleDescription module = new ModuleDescription(new QName("module1"));
         testParameteInClude(module);
         testFlowIncludeTest(module);
     }
 
     public void testOpeartion() {
-        AxisOperation op = new AxisOperation(new QName("op"));
+        OperationDescription op = new OperationDescription(new QName("op"));
         testParameteInClude(op);
     }
 
@@ -107,7 +107,7 @@ public class RegistryTest extends AbstractTestCase {
             public void invoke(MessageContext msgContext) throws AxisFault {
             }
         };
-        handler.init(new HandlerMetadata());
+        handler.init(new HandlerDescription());
         assertNull(handler.getName());
         assertNull(handler.getParameter("hello"));
         handler.cleanup();

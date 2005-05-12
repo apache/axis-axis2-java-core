@@ -18,14 +18,14 @@ package org.apache.axis.context;
 
 import java.util.Map;
 
-import org.apache.axis.description.AxisOperation;
+import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
- * represented by an AxisOperation object. This concept is needed to allow
+ * represented by an OperationDescription object. This concept is needed to allow
  * messages to be grouped into operations as in WSDL 2.0-speak operations are
  * essentially arbitrary message exchange patterns. So as messages are being
  * exchanged the OperationContext remembers the state of where in the message
@@ -43,9 +43,9 @@ public class OperationContext extends AbstractContext {
 
     private MessageContext outMessageContext;
 
-    // the AxisOperation of which this is a running instance. The MEP of this
-    // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
-    private AxisOperation axisOperation;
+    // the OperationDescription of which this is a running instance. The MEP of this
+    // OperationDescription must be one of the 8 predefined ones in WSDL 2.0.
+    private OperationDescription axisOperation;
 
     private int operationMEP;
 
@@ -58,24 +58,24 @@ public class OperationContext extends AbstractContext {
     /**
      * Construct a new OperationContext.
      *
-     * @param axisOperation  the AxisOperation whose running instances' state this
+     * @param axisOperation  the OperationDescription whose running instances' state this
      *                       OperationContext represents.
      * @param serviceContext the parent ServiceContext representing any state related to
      *                       the set of all operations of the service.
      */
-    public OperationContext(AxisOperation axisOperation,
+    public OperationContext(OperationDescription axisOperation,
                             ServiceContext serviceContext) {
         super(serviceContext);
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
-        this.operationContextMap = ((SystemContext) parent.parent)
+        this.operationContextMap = getServiceContext().getEngineContext()
                 .getOperationContextMap();
     }
 
     /**
      * @return Returns the axisOperation.
      */
-    public AxisOperation getAxisOperation() {
+    public OperationDescription getAxisOperation() {
         return axisOperation;
     }
 
@@ -93,21 +93,21 @@ public class OperationContext extends AbstractContext {
      *
      * @return parent ServiceContext's parent EngineContext
      */
-    public SystemContext getEngineContext() {
-        return (SystemContext) parent.parent;
+    public ConfigurationContext getEngineContext() {
+        return (ConfigurationContext) parent.parent;
     }
 
     /**
      * When a new message is added to the <code>MEPContext</code> the logic
      * should be included remove the MEPContext from the table in the
      * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
-     * message the MEPContext should be removed from the AxisOperation
+     * message the MEPContext should be removed from the OperationDescription
      *
      * @param msgContext
      */
     public void addMessageContext(MessageContext msgContext) throws AxisFault {
         // this needs to store the msgContext in either inMessageContext or
-        // outMessageContext depending on the MEP of the AxisOperation
+        // outMessageContext depending on the MEP of the OperationDescription
         // and on the current state of the operation.
         if (WSDLConstants.MEP_CONSTANT_IN_OUT == operationMEP
                 || WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == operationMEP

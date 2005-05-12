@@ -29,7 +29,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
@@ -63,7 +63,7 @@ public class TestSendReceiveAsync extends TestCase {
 
     private boolean finish = false;
 
-    private AxisService service;
+    private ServiceDescription service;
 
     private ClassLoader cl;
 

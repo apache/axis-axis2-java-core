@@ -30,7 +30,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisService;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -54,7 +54,7 @@ public class EchoRawXMLTest extends TestCase {
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
-    private AxisSystem engineRegistry;
+    private AxisConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
@@ -71,7 +71,7 @@ public class EchoRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        AxisService service =
+        ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
                 org.apache.axis.engine.Echo.class.getName(),

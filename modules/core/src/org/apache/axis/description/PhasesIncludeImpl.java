@@ -18,7 +18,7 @@ package org.apache.axis.description;
 import java.util.ArrayList;
 
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 
 /**
  * Util class to implements the Phases include with delegation
@@ -49,13 +49,13 @@ public class PhasesIncludeImpl implements PhasesInclude {
      * @throws AxisFault
      */
     public ArrayList getPhases(int flow) throws AxisFault {
-        if (flow == AxisSystem.INFLOW) {
+        if (flow == AxisConfiguration.INFLOW) {
             return inflow;
-        } else if (flow == AxisSystem.OUTFLOW) {
+        } else if (flow == AxisConfiguration.OUTFLOW) {
             return outflow;
-        } else if (flow == AxisSystem.FAULT_IN_FLOW) {
+        } else if (flow == AxisConfiguration.FAULT_IN_FLOW) {
             return faultInflow;
-        } else if (flow == AxisSystem.FAULT_OUT_FLOW) {
+        } else if (flow == AxisConfiguration.FAULT_OUT_FLOW) {
             return faultOutflow;
         } else {
             throw new AxisFault("Unknown type flow ");
@@ -70,13 +70,13 @@ public class PhasesIncludeImpl implements PhasesInclude {
          * @throws AxisFault
          */
     public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        if (flow == AxisSystem.INFLOW) {
+        if (flow == AxisConfiguration.INFLOW) {
             inflow = phases;
-        } else if (flow == AxisSystem.OUTFLOW) {
+        } else if (flow == AxisConfiguration.OUTFLOW) {
             outflow = phases;
-        } else if (flow == AxisSystem.FAULT_IN_FLOW) {
+        } else if (flow == AxisConfiguration.FAULT_IN_FLOW) {
             faultInflow = phases;
-        }else if (flow == AxisSystem.FAULT_OUT_FLOW) {
+        }else if (flow == AxisConfiguration.FAULT_OUT_FLOW) {
             faultOutflow = phases;
         } else {
             throw new AxisFault("Unknown type flow ");

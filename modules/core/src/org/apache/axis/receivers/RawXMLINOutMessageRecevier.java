@@ -72,7 +72,7 @@ public class RawXMLINOutMessageRecevier extends AbstractInOutSyncMessageReceiver
 ////            // find the WebService method
 ////            Class ImplClass = obj.getClass();
 ////
-////            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+////            OperationDescription op = msgContext.getOperationContext().getAxisOperation();
 ////            if (op == null) {
 ////                throw new AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
 ////            }

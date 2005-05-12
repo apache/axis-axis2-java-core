@@ -24,12 +24,13 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
 import org.apache.wsdl.WSDLConstants;
@@ -38,11 +39,11 @@ import org.apache.wsdl.WSDLService;
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
     private ArrayList executedHandlers = new ArrayList();
-    private AxisSystem engineRegistry;
+    private AxisConfiguration engineRegistry;
     private QName serviceName = new QName("axis/services/NullService");
     private QName opearationName = new QName("NullOperation");
-    private AxisService service;
-    private SystemContext engineContext;
+    private ServiceDescription service;
+    private ConfigurationContext engineContext;
 
     public EngineWithoutPhaseResolvingTest() {
     }
@@ -52,13 +53,22 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     }
     protected void setUp() throws Exception {
 
-        engineRegistry = new AxisSystemImpl(new AxisGlobal());
-        engineContext = new SystemContext(engineRegistry);
-        AxisTransportOut transport = new AxisTransportOut(new QName("null"));
+        engineRegistry = new AxisSystemImpl(new GlobalDescription());
+        engineContext = new ConfigurationContext(engineRegistry);
+
+        TransportOutDescription transport = new TransportOutDescription(new QName("null"));
         transport.setSender(new NullTransportSender());
 
-        AxisTransportIn transportIn = new AxisTransportIn(new QName("null"));
-        AxisOperation axisOp = new AxisOperation(opearationName);
+        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
+        OperationDescription axisOp = new OperationDescription(opearationName);
+
+        service = new ServiceDescription(serviceName);
+        axisOp.setMessageReciever(new NullMessageReceiver());
+        engineRegistry.addService(service);
+        service.setStyle(WSDLService.STYLE_DOC);
+        service.addOperation(axisOp);
+
+        ServiceContext serviceContext = engineContext.createServiceContext(serviceName);
 
         mc =
             new MessageContext(
@@ -66,16 +76,11 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                null,
                 transportIn,
                 transport,
-        OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp, null));
+        OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp, serviceContext));
         mc.setTransportOut(transport);
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
-        service = new AxisService(serviceName);
-        axisOp.setMessageReciever(new NullMessageReceiver());
-        engineRegistry.addService(service);
-        service.setStyle(WSDLService.STYLE_DOC);
-        service.addOperation(axisOp);
 
         mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService"));
         mc.setWSAAction(opearationName.getLocalPart());

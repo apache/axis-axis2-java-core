@@ -21,16 +21,16 @@ import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.description.AxisGlobal;
-import org.apache.axis.description.AxisModule;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.AxisTransportIn;
-import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 
 /**
  * Class EngineRegistryImpl
  */
-public class AxisSystemImpl implements AxisSystem {
+public class AxisSystemImpl implements AxisConfiguration {
     /**
      * To store Erroness services
      */
@@ -58,7 +58,7 @@ public class AxisSystemImpl implements AxisSystem {
     /**
      * Field global
      */
-    private final AxisGlobal global;
+    private final GlobalDescription global;
 
     /**
      * Field phases
@@ -72,7 +72,7 @@ public class AxisSystemImpl implements AxisSystem {
      *
      * @param global
      */
-    public AxisSystemImpl(AxisGlobal global) {
+    public AxisSystemImpl(GlobalDescription global) {
         this.global = global;
         inPhases = new ArrayList();
         outPhases = new ArrayList();
@@ -100,7 +100,7 @@ public class AxisSystemImpl implements AxisSystem {
      * @param module
      * @throws AxisFault
      */
-    public synchronized void addMdoule(AxisModule module) throws AxisFault {
+    public synchronized void addMdoule(ModuleDescription module) throws AxisFault {
         modules.put(module.getName(), module);
     }
 
@@ -110,7 +110,7 @@ public class AxisSystemImpl implements AxisSystem {
      * @param service
      * @throws AxisFault
      */
-    public synchronized void addService(AxisService service) throws AxisFault {
+    public synchronized void addService(ServiceDescription service) throws AxisFault {
         services.put(service.getName(), service);
     }
 
@@ -120,7 +120,7 @@ public class AxisSystemImpl implements AxisSystem {
      * @return
      * @throws AxisFault
      */
-    public AxisGlobal getGlobal() throws AxisFault {
+    public GlobalDescription getGlobal() throws AxisFault {
         return global;
     }
 
@@ -131,8 +131,8 @@ public class AxisSystemImpl implements AxisSystem {
      * @return
      * @throws AxisFault
      */
-    public AxisModule getModule(QName name) throws AxisFault {
-        return (AxisModule) modules.get(name);
+    public ModuleDescription getModule(QName name) throws AxisFault {
+        return (ModuleDescription) modules.get(name);
     }
 
     /**
@@ -151,8 +151,8 @@ public class AxisSystemImpl implements AxisSystem {
      * @return
      * @throws AxisFault
      */
-    public AxisService getService(QName name) throws AxisFault {
-        return (AxisService) services.get(name);
+    public ServiceDescription getService(QName name) throws AxisFault {
+        return (ServiceDescription) services.get(name);
     }
 
     /**
@@ -168,8 +168,8 @@ public class AxisSystemImpl implements AxisSystem {
 
 
 
-    public AxisTransportIn getTransportIn(QName name) throws AxisFault {
-        return (AxisTransportIn) transportsIn.get(name);
+    public TransportInDescription getTransportIn(QName name) throws AxisFault {
+        return (TransportInDescription) transportsIn.get(name);
     }
 
     /**
@@ -178,12 +178,12 @@ public class AxisSystemImpl implements AxisSystem {
      * @param transport
      * @throws AxisFault
      */
-    public synchronized void addTransportIn(AxisTransportIn transport)
+    public synchronized void addTransportIn(TransportInDescription transport)
             throws AxisFault {
         transportsIn.put(transport.getName(), transport);
     }
-    public AxisTransportOut getTransportOut(QName name) throws AxisFault {
-        return (AxisTransportOut) transportsOut.get(name);
+    public TransportOutDescription getTransportOut(QName name) throws AxisFault {
+        return (TransportOutDescription) transportsOut.get(name);
     }
 
     /**
@@ -192,7 +192,7 @@ public class AxisSystemImpl implements AxisSystem {
      * @param transport
      * @throws AxisFault
      */
-    public synchronized void addTransportOut(AxisTransportOut transport)
+    public synchronized void addTransportOut(TransportOutDescription transport)
             throws AxisFault {
         transportsOut.put(transport.getName(), transport);
     }

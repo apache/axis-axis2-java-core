@@ -18,10 +18,10 @@ package org.apache.axis.engine;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisOperation;
-import org.apache.axis.description.AxisService;
-import org.apache.axis.description.HandlerMetadata;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.handlers.AbstractHandler;
 
 /**
@@ -37,10 +37,10 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
     /**
      * Constructor Dispatcher
      */
-    private SystemContext engineContext;
+    private ConfigurationContext engineContext;
     
     public AbstractDispatcher() {
-        init(new HandlerMetadata(NAME));
+        init(new HandlerDescription(NAME));
     }
 
     /**
@@ -52,14 +52,14 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
     public final void invoke(MessageContext msgctx) throws AxisFault {
   
         if(msgctx.getServiceContext() == null){
-            AxisService axisService = findService(msgctx);
+            ServiceDescription axisService = findService(msgctx);
             if(axisService != null){
                 msgctx.setServiceContext(axisService.findServiceContext(msgctx));
             }
         }
 
         if (msgctx.getServiceContext() == null && msgctx.getOperationContext() == null) {
-            AxisOperation axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
+            OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
             if(axisOperation != null){
                 msgctx.setOperationContext(axisOperation.findOperationContext(msgctx,msgctx.getServiceContext(),msgctx.isServerSide()));
             }
@@ -67,7 +67,7 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
 
     }
     
-    public abstract AxisService findService(MessageContext messageContext)throws AxisFault;
-    public abstract AxisOperation findOperation(AxisService service,MessageContext messageContext)throws AxisFault;
+    public abstract ServiceDescription findService(MessageContext messageContext)throws AxisFault;
+    public abstract OperationDescription findOperation(ServiceDescription service,MessageContext messageContext)throws AxisFault;
     
 }
