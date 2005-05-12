@@ -12,13 +12,21 @@
     public class <xsl:value-of select="@name"></xsl:value-of> extends org.apache.axis.clientapi.Stub implements <xsl:value-of select="$interfaceName"/>{
 
        static{
-         org.apache.axis.description.AxisOperation __operation;
+        _axisGlobal = new org.apache.axis.description.AxisGlobal();
+        _axisSystem = new org.apache.axis.engine.AxisSystemImpl(_axisGlobal);
+		_systemContext = new org.apache.axis.context.SystemContext(_axisSystem);
+		_service = new org.apache.axis.description.AxisService();
+
+        _service.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@servicename"/>"));
+
+        org.apache.axis.description.AxisOperation __operation;
+
       <xsl:for-each select="method">
           __operation = new org.apache.axis.description.AxisOperation();
-
+          __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
           // more things are supposed to come here
 
-          _operations[<xsl:value-of select="position()"/>]=__operation;
+          _operations[<xsl:value-of select="position()-1"/>]=__operation;
 
      </xsl:for-each>
        }
@@ -33,8 +41,11 @@
          *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
          */
         public  <xsl:value-of select="$outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>) throws java.rmi.RemoteException;
-            <xsl:if test="$outputtype!=''">return null;</xsl:if>
-            <!-- this needs to be changed -->
+            // we know its call because we have the mep at the time of the stub generation.
+		    Call _call = new Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
+ 		    MessageContext _messageContext = getMessageContext();
+		    _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
+            <xsl:if test="$outputtype!=''">return null;</xsl:if>  <!-- this needs to be changed -->
         }
      </xsl:for-each>
     }

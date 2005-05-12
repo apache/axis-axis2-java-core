@@ -61,6 +61,8 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
     public void emitStub() throws CodeGenerationException {
         //todo need to out the type mapper code here
+        //it can be the
+
         super.emitStub();
     }
 
@@ -95,6 +97,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
         Element methodElement = null;
         Attr methodNameAttr = null;
+        Attr methodURIAttr = null;
         WSDLOperation operation = null;
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
@@ -105,6 +108,10 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
             methodNameAttr = doc.createAttribute("name");
             methodNameAttr.setValue(operation.getName().getLocalPart());
             methodElement.setAttributeNode(methodNameAttr);
+
+            methodURIAttr = doc.createAttribute("namepace");
+            methodURIAttr.setValue(operation.getName().getNamespaceURI());
+            methodElement.setAttributeNode(methodURIAttr);
 
             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
@@ -132,6 +139,14 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         Attr nameAttribute = doc.createAttribute("name");
         nameAttribute.setValue(boundInterface.getName().getLocalPart()+"Stub");
         rootElement.setAttributeNode(nameAttribute);
+
+        Attr nameServiceAttribute = doc.createAttribute("servicename");
+        nameServiceAttribute.setValue(boundInterface.getName().getLocalPart());
+        rootElement.setAttributeNode(nameServiceAttribute);
+
+        Attr nameSpaceAttribute = doc.createAttribute("namespace");
+        nameSpaceAttribute.setValue(boundInterface.getName().getNamespaceURI());
+        rootElement.setAttributeNode(nameSpaceAttribute);
 
         Attr InterfaceNameAttribute = doc.createAttribute("interfaceName");
         InterfaceNameAttribute.setValue(boundInterface.getName().getLocalPart());
