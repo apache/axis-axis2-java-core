@@ -1,9 +1,0 @@
-<service name="">
-
-    <parameter name="ServiceClass" locked="xsd:false">encoding.sample1.EchoImpl</parameter>
-
-    <operation name="echoString"/>
-    <operation name="echoStringArray"/>
-    <operation name="echoEchoStruct"/>
-    <operation name="echoEchoStructArray"/>
-</service>

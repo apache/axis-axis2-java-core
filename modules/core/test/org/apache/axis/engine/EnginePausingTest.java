@@ -20,10 +20,9 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContextFactory;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
@@ -32,7 +31,6 @@ import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
-import org.apache.wsdl.WSDLConstants;
 
 public class EnginePausingTest extends AbstractEngineTest {
   
@@ -57,7 +55,7 @@ public class EnginePausingTest extends AbstractEngineTest {
         engineContext = new ConfigurationContext(engineRegistry);
 
         OperationDescription axisOp = new OperationDescription(operationName);
-        mc = new MessageContext(engineContext, null, transportIn,transportOut,OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp,null));
+        mc = new MessageContext(null, transportIn,transportOut,engineContext);
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);

@@ -90,15 +90,15 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     public void testServerSend() throws Exception {
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
-        fail();
-       //TODO mc.setServiceContext(new ServiceContext(service, engineContext));
+        
+        mc.setServiceContext(engineContext.createServiceContext(serviceName));
         engine.send(mc);
     }
 
     public void testClientSend() throws Exception {
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(false); fail();
-        //TODO mc.setServiceContext(new ServiceContext(service,engineContext));
+        mc.setServiceContext(engineContext.createServiceContext(serviceName));
         engine.send(mc);
     }
 

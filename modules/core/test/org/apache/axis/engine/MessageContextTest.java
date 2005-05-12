@@ -17,13 +17,12 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
-import org.apache.wsdl.WSDLConstants;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
@@ -32,14 +31,12 @@ public class MessageContextTest extends AbstractTestCase {
 
     public void testMesssageContext() throws AxisFault {
         AxisConfiguration er = new AxisSystemImpl(new GlobalDescription());
+        ServiceDescription servicesDesc = new ServiceDescription();
+        er.addService(servicesDesc);
+
         ConfigurationContext engineContext = new ConfigurationContext(er);
-        MessageContext msgctx =
-            new MessageContext(
-                engineContext,
-                null,
-                null,
-                null,
-                OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT, false, null, null));
+
+        MessageContext msgctx = new MessageContext(null, null, null, engineContext);
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 
