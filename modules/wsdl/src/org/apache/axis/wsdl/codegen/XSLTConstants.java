@@ -52,4 +52,13 @@ public interface XSLTConstants {
         public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/BeanTemplate.xsl";
         public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/BeanTemplate.xsl";
     }
+    
+    /**
+     * 
+     * Interface CallbackHanlder Template
+     */
+    public interface XSLTCallbackHandlerTemplates{
+    	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/CallbackHandlerTemplate.xsl";
+    	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/CallbackHandlerTemplate.xsl";
+    }
 }

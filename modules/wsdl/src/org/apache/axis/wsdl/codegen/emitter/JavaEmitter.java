@@ -1,5 +1,6 @@
 package org.apache.axis.wsdl.codegen.emitter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -61,6 +62,30 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         super.emitStub();
     }
 
+    
+    protected XmlDocument createDOMDocumentForCallbackStub(WSDLBinding binding){
+    	WSDLInterface boundInterface = binding.getBoundInterface();
+    	XmlDocument doc = new XmlDocument();
+    	Element rootElement = doc.createElement("class");
+    	
+    	Attr packageAttrebute = doc.createAttribute("package");
+    	packageAttrebute.setValue("something"); //todo set this
+        rootElement.setAttributeNode(packageAttrebute);
+        
+        Attr nameAttribute = doc.createAttribute("name");
+        nameAttribute.setValue(boundInterface.getName().getLocalPart()+ "CallbackHandler");
+        rootElement.setAttributeNode(nameAttribute);
+        
+        Attr nameSpaceAttribute = doc.createAttribute("namespace");
+        nameSpaceAttribute.setValue(boundInterface.getName().getNamespaceURI());
+        rootElement.setAttributeNode(nameSpaceAttribute);
+        
+        this.loadOperations(boundInterface, doc, rootElement);
+
+    	doc.appendChild(rootElement);
+    	return doc;
+    }
+    
     /**
      * @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
      * @param binding
@@ -83,6 +108,12 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         loadOperations(boundInterface, doc, rootElement);
 
         doc.appendChild(rootElement);
+       try {
+			doc.write(System.out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return doc;
 
     }
@@ -149,6 +180,14 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
+        
+        try {
+			doc.write(System.out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         return doc;
 
     }
