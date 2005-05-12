@@ -30,9 +30,9 @@ import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.description.AxisTransportIn;
 import org.apache.axis.description.AxisTransportOut;
+import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystem;
-import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
@@ -82,8 +82,8 @@ public class InOutMEPClient extends MEPClient {
         AxisSystem registry = sysContext.getEngineConfig();
 
         try {
-            MessageSender sender = new MessageSender(sysContext);
-
+            
+            AxisEngine engine = new AxisEngine(sysContext);
             msgctx.setOperationContext(
                 OperationContextFactory.createMEPContext(
                     WSDLConstants.MEP_CONSTANT_IN_OUT,
@@ -91,7 +91,7 @@ public class InOutMEPClient extends MEPClient {
                     axisop,
                     null));
 
-            sender.send(msgctx);
+            engine.send(msgctx);
 
             MessageContext response = new MessageContext(msgctx.getSessionContext(),msgctx.getTransportIn(),msgctx.getTransportOut(),msgctx.getSystemContext());
             response.setServerSide(false);
@@ -119,7 +119,7 @@ public class InOutMEPClient extends MEPClient {
         try {
             final SystemContext syscontext = serviceContext.getEngineContext();
 
-            MessageSender sender = new MessageSender(syscontext);
+            AxisEngine engine = new AxisEngine(syscontext);
 
             final AxisTransportIn transportIn =
                 syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
@@ -138,7 +138,7 @@ public class InOutMEPClient extends MEPClient {
                 axisop.findOperationContext(msgctx, serviceContext, false);
             }
 
-            sender.send(msgctx);
+            engine.send(msgctx);
 
             //TODO start the server
             if (!useSeparateListener) {

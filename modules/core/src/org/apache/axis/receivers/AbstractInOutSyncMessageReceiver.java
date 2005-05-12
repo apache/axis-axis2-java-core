@@ -19,8 +19,8 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.MessageSender;
 
 /**
  * This is the Absract IN-OUT MEP MessageReciver. The
@@ -55,9 +55,9 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
 
         MessageContext resultContext = invokeBusinessLogic(messgeCtx,newmsgCtx);
 
-        MessageSender sender =
-            new MessageSender(
+        AxisEngine engine =
+            new AxisEngine(
                 messgeCtx.getOperationContext().getServiceContext().getEngineContext());
-        sender.send(resultContext);
+        engine.send(resultContext);
     }
 }

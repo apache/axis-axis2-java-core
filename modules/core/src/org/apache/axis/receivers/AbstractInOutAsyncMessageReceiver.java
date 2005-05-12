@@ -18,7 +18,6 @@ package org.apache.axis.receivers;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.MessageSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,9 +33,9 @@ public abstract class AbstractInOutAsyncMessageReceiver
     public final void recieve(final MessageContext messgeCtx) throws AxisFault {
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result)throws AxisFault {
-                MessageSender sender =
-                    new MessageSender(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
-                sender.send(messgeCtx);
+                AxisEngine engine =
+                    new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+                engine.send(messgeCtx);
             }
             public void handleFault(AxisFault fault)throws AxisFault{
                 AxisEngine engine = new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
