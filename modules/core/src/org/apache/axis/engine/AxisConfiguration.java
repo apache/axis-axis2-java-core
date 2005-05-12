@@ -101,7 +101,6 @@ public interface AxisConfiguration {
      */
     public void addMdoule(ModuleDescription module) throws AxisFault;
 
-
     /**
      * Method getTransports
      *
@@ -114,9 +113,8 @@ public interface AxisConfiguration {
      *  This returns 
      */
     public ArrayList getInPhasesUptoAndIncludingPostDispatch();
-  
 
-    
+    public ArrayList getPhasesInOutFaultFlow();
     /**
      * Method getServices
      *
@@ -126,14 +124,11 @@ public interface AxisConfiguration {
 
     public Hashtable getFaulytServices();
 
-
-    public TransportInDescription getTransportIn(QName name) throws AxisFault ;
-    public  void addTransportIn(TransportInDescription transport) throws AxisFault;
-    public TransportOutDescription getTransportOut(QName name) throws AxisFault ;
-    public  void addTransportOut(TransportOutDescription transport) throws AxisFault ;
+    public TransportInDescription getTransportIn(QName name) throws AxisFault;
+    public void addTransportIn(TransportInDescription transport) throws AxisFault;
+    public TransportOutDescription getTransportOut(QName name) throws AxisFault;
+    public void addTransportOut(TransportOutDescription transport) throws AxisFault;
     public HashMap getTransportsIn();
     public HashMap getTransportsOut();
 
-    
-    
 }

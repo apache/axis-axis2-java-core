@@ -12,6 +12,8 @@ import org.apache.axis.context.ServiceContext;
 import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
@@ -37,6 +39,16 @@ public class OperationDescription extends WSDLOperationImpl implements
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
 		this.setComponentProperty(MODULEREF_KEY, new ArrayList());
 		this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
+        
+        remainingPhasesInInFlow = new ArrayList();
+        remainingPhasesInInFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        
+        phasesInOutFlow = new ArrayList();
+        phasesInOutFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        phasesInOutFlow.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
+        
+        phasesInFaultInFlow = new ArrayList();
+        phasesInFaultOutFlow = new ArrayList();
 	}
 
 	public OperationDescription(QName name) {

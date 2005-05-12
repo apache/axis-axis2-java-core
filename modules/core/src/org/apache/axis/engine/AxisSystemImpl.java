@@ -26,6 +26,7 @@ import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 
 /**
  * Class EngineRegistryImpl
@@ -67,6 +68,10 @@ public class AxisSystemImpl implements AxisConfiguration {
     private ArrayList outPhases;
     private ArrayList inFaultPhases;
     private ArrayList outFaultPhases;
+    
+    private ArrayList inPhasesUptoAndIncludingPostDispatch;
+    private ArrayList faultPhases;
+    
     /**
      * Constructor EngineRegistryImpl
      *
@@ -79,6 +84,15 @@ public class AxisSystemImpl implements AxisConfiguration {
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
         errornesServices = new Hashtable();
+        
+        inPhases = new ArrayList();
+        inPhases.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
+        inPhases.add(new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
+                Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
+                dispatch.addHandler(new RequestURIBasedDispatcher(),0);
+                dispatch.addHandler(new AddressingBasedDispatcher(),1);
+        inPhases.add(dispatch) ;
+        inPhases.add(new Phase(PhaseMetadata.PHASE_POST_DISPATCH));
     }
 
     /**
@@ -229,8 +243,11 @@ public class AxisSystemImpl implements AxisConfiguration {
 
    
     public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
-        return inPhases;
+        return inPhasesUptoAndIncludingPostDispatch;
     }
+    public ArrayList getPhasesInOutFaultFlow() {
+            return faultPhases;
+        }
 
     public ArrayList getOutFlow() {
         return outPhases;
