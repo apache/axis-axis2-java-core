@@ -30,7 +30,7 @@ import org.apache.axis.description.TransportOutDescription;
 /**
  * Class EngineRegistryImpl
  */
-public class jAxisSystemImpl implements AxisConfiguration {
+public class AxisSystemImpl implements AxisConfiguration {
     /**
      * To store Erroness services
      */
