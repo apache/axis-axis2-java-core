@@ -65,23 +65,14 @@ public class AddressingOutHandler
             return;
         }
 
-        MessageContext lastInMessageContext = msgContext.getOperationContext().getLastInMessageContext();
-
-
         MessageInformationHeadersCollection messageInformationHeaders =
                 msgContext.getMessageInformationHeaders();
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
 
 
         EndpointReference epr = messageInformationHeaders.getTo();
-        if (epr != null && (lastInMessageContext == null || overrideINMessageInformation)) {
+        if (epr != null) {
             addToSOAPHeader(epr, AddressingConstants.WSA_TO, soapHeader);
-        } else if (lastInMessageContext != null) {
-            if (!msgContext.getEnvelope().getBody().hasFault()) {
-                setINReplyToAsOUTTo(lastInMessageContext, soapHeader);
-            } else {
-                setINFaultToAsOUTTo(lastInMessageContext, soapHeader);
-            }
         }
 
         String action = messageInformationHeaders.getAction();
@@ -111,9 +102,7 @@ public class AddressingOutHandler
         RelatesTo relatesTo = messageInformationHeaders.getRelatesTo();
         OMElement relatesToHeader = null;
 
-        if (!overrideINMessageInformation && lastInMessageContext != null && "".equals(lastInMessageContext.getMessageID())) {
-            relatesToHeader = processStringInfo(lastInMessageContext.getMessageID(), WSA_RELATES_TO, soapHeader);
-        } else if (relatesTo != null) {
+        if (relatesTo != null) {
             relatesToHeader = processStringInfo(relatesTo.getValue(), WSA_RELATES_TO, soapHeader);
         }
 
@@ -127,23 +116,6 @@ public class AddressingOutHandler
                         relatesTo.getRelationshipType(),
                         addressingNamespace);
             }
-    }
-
-
-    private void setINFaultToAsOUTTo(MessageContext lastInMessageContext, SOAPHeader soapHeader) {
-        EndpointReference lastInFaultTo = lastInMessageContext.getFaultTo();
-        if (lastInFaultTo != null) {
-            addToSOAPHeader(lastInFaultTo, AddressingConstants.WSA_TO, soapHeader);
-        } else {
-            setINReplyToAsOUTTo(lastInMessageContext, soapHeader);
-        }
-    }
-
-    private void setINReplyToAsOUTTo(MessageContext lastInMessageContext, SOAPHeader soapHeader) {
-        EndpointReference lastInReplyTo = lastInMessageContext.getReplyTo();
-        if (lastInReplyTo != null) {
-            addToSOAPHeader(lastInReplyTo, AddressingConstants.WSA_TO, soapHeader);
-        }
     }
 
     private OMElement processStringInfo(String value,
