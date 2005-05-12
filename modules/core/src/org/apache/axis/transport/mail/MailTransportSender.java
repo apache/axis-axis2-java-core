@@ -84,7 +84,6 @@ public class MailTransportSender extends AbstractTransportSender {
      */
     public void finalizeSendWithToAddress(
         MessageContext msgContext,
-        EndpointReference epr,
         Writer writer)
         throws AxisFault {
             throw new UnsupportedOperationException();
@@ -114,7 +113,6 @@ public class MailTransportSender extends AbstractTransportSender {
      */
     public void startSendWithToAddress(
         MessageContext msgContext,
-        EndpointReference epr,
         Writer writer)
         throws AxisFault {
             throw new UnsupportedOperationException();

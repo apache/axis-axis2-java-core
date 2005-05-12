@@ -43,138 +43,140 @@ public class EchoProvider extends SimpleJavaProvider {
       MessageContext msgContext,
       Method method)
       throws AxisFault {
-      XMLStreamReader xpp =
-          msgContext.getEnvelope().getBody().getFirstElement().getXMLStreamReader();
-		Class[] parms = method.getParameterTypes();
-		Object[] objs = new Object[parms.length];
-		
-		try {
-			int event = xpp.next();
-			while (XMLStreamConstants.START_ELEMENT != event
-				&& XMLStreamConstants.END_ELEMENT != event) {
-				event = xpp.next();
-			}
-            //now we are at the opearion element event 
-            event = xpp.next();
-            while (XMLStreamConstants.START_ELEMENT != event
-                && XMLStreamConstants.END_ELEMENT != event) {
-                event = xpp.next();
-            }
-        //          now we are at the parameter element event 
-            
-			if (XMLStreamConstants.END_ELEMENT == event) {
-				return null;
-			} else {
-				for (int i = 0; i < parms.length; i++) {
-					if (int.class.equals(parms[i])) {
-						objs[i] =
-							new Integer(
-								SimpleTypeEncodingUtils.deserializeInt(xpp));
-					} else if (String.class.equals(parms[i])) {
-						objs[i] =
-							SimpleTypeEncodingUtils.deserializeString(xpp);
-					} else if (String[].class.equals(parms[i])) {
-						objs[i] =
-							SimpleTypeEncodingUtils.deserializeStringArray(xpp);
-					} else if (EchoStruct.class.equals(parms[i])) {
-						Encoder en = new EchoStructEncoder(null);
-						objs[i] = en.deSerialize(xpp);
-					} else if (EchoStruct[].class.equals(parms[i])) {
-                        Encoder encoder = new ArrayTypeEncoder(new EchoStructEncoder(null));
-						objs[i] = encoder.deSerialize(xpp);
-					} else {
-						throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
-					}
-				}
-				return objs;
-
-			}
-		} catch (Exception e) {
-			throw new AxisFault("Exception",e);
-		}
-	}
-
-    public MessageContext invokeBusinessLogic(MessageContext msgContext) throws AxisFault{
-		try {
-			//get the implementation class for the Web Service 
-			Object obj = getTheImplementationObject(msgContext);
-			
-			//find the WebService method  
-			Class ImplClass = obj.getClass();
-            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
-			String methodName = op.getName().getLocalPart();
-			
-			
-			Method[] methods = ImplClass.getMethods();
-			for (int i = 0; i < methods.length; i++) {
-				if (methods[i].getName().equals(methodName)) {
-					this.method = methods[i];
-					break;
-				}
-			}
-			//deserialize (XML-> java)
-			Object[] parms = deserializeParameters(msgContext, method);
-			//invoke the WebService 
-
-			EchoImpl echo = (EchoImpl)obj;
-			Object result = null;
-			if("echoEchoStruct".equals(methodName))	{
-				result = echo.echoEchoStruct((EchoStruct)parms[0]);
-			}else if ("echoString".equals(methodName))	{
-				result = echo.echoString((String)parms[0]);
-			}else if ("echoStringArray".equals(methodName))	{
-				result = echo.echoStringArray((String[])parms[0]);
-			}else if ("echoEchoStructArray".equals(methodName))	{
-				Object[] parmsIn = (Object[])parms[0];
-				EchoStruct[] structs = new EchoStruct[parmsIn.length];
-				for (int i = 0; i < structs.length; i++) {
-					structs[i] = (EchoStruct) parmsIn[i];
-
-				}
-				result = echo.echoEchoStructArray(structs);
-			}			
-			Encoder outobj = null;
-
-			if (result instanceof String || result instanceof String[]) {
-				outobj = new SimpleTypeEncoder(result);
-			} else if (result instanceof EchoStruct) {
-				outobj = new EchoStructEncoder((EchoStruct) result);
-			} else if (result instanceof EchoStruct[]) {
-				outobj =
-					new ArrayTypeEncoder(
-						(EchoStruct[]) result,
-						new EchoStructEncoder(null));
-			}
-
-			SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-			SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
-
-			OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-			OMElement responseMethodName =
-				fac.createOMElement(methodName + "Response", ns);
-			responseEnvelope.getBody().addChild(responseMethodName);
-            ObjectToOMBuilder builder = new ObjectToOMBuilder(outobj);
-            OMElement returnelement =
-				fac.createOMElement(methodName + "Return", ns,responseMethodName, builder);
-            builder.setStartElement(returnelement);
-			responseMethodName.addChild(returnelement);
-			
-			returnelement.declareNamespace(
-				OMConstants.ARRAY_ITEM_NSURI,
-				"arrays");
-            returnelement.declareNamespace(
-                "http://axis.apache.org",
-                "s");
-
-            MessageContext resMessageContext = Utils.copyMessageContext(msgContext);
-            resMessageContext.setEnvelope(responseEnvelope);
-
-			return resMessageContext;
-		} catch (SecurityException e) {
-			throw AxisFault.makeFault(e);
-		} catch (IllegalArgumentException e) {
-			throw AxisFault.makeFault(e);
-		}
+        //TODO
+        return null;
+//      XMLStreamReader xpp =
+//          msgContext.getEnvelope().getBody().getFirstElement().getXMLStreamReader();
+//		Class[] parms = method.getParameterTypes();
+//		Object[] objs = new Object[parms.length];
+//		
+//		try {
+//			int event = xpp.next();
+//			while (XMLStreamConstants.START_ELEMENT != event
+//				&& XMLStreamConstants.END_ELEMENT != event) {
+//				event = xpp.next();
+//			}
+//            //now we are at the opearion element event 
+//            event = xpp.next();
+//            while (XMLStreamConstants.START_ELEMENT != event
+//                && XMLStreamConstants.END_ELEMENT != event) {
+//                event = xpp.next();
+//            }
+//        //          now we are at the parameter element event 
+//            
+//			if (XMLStreamConstants.END_ELEMENT == event) {
+//				return null;
+//			} else {
+//				for (int i = 0; i < parms.length; i++) {
+//					if (int.class.equals(parms[i])) {
+//						objs[i] =
+//							new Integer(
+//								SimpleTypeEncodingUtils.deserializeInt(xpp));
+//					} else if (String.class.equals(parms[i])) {
+//						objs[i] =
+//							SimpleTypeEncodingUtils.deserializeString(xpp);
+//					} else if (String[].class.equals(parms[i])) {
+//						objs[i] =
+//							SimpleTypeEncodingUtils.deserializeStringArray(xpp);
+//					} else if (EchoStruct.class.equals(parms[i])) {
+//						Encoder en = new EchoStructEncoder(null);
+//						objs[i] = en.deSerialize(xpp);
+//					} else if (EchoStruct[].class.equals(parms[i])) {
+//                        Encoder encoder = new ArrayTypeEncoder(new EchoStructEncoder(null));
+//						objs[i] = encoder.deSerialize(xpp);
+//					} else {
+//						throw new UnsupportedOperationException("Only int,String and String[] is supported yet");
+//					}
+//				}
+//				return objs;
+//
+//			}
+//		} catch (Exception e) {
+//			throw new AxisFault("Exception",e);
+//		}
+//	}
+//
+//    public MessageContext invokeBusinessLogic(MessageContext msgContext,MessageContext newmsgContext) throws AxisFault{
+//		try {
+//			//get the implementation class for the Web Service 
+//			Object obj = getTheImplementationObject(msgContext);
+//			
+//			//find the WebService method  
+//			Class ImplClass = obj.getClass();
+//            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//			String methodName = op.getName().getLocalPart();
+//			
+//			
+//			Method[] methods = ImplClass.getMethods();
+//			for (int i = 0; i < methods.length; i++) {
+//				if (methods[i].getName().equals(methodName)) {
+//					this.method = methods[i];
+//					break;
+//				}
+//			}
+//			//deserialize (XML-> java)
+//			Object[] parms = deserializeParameters(msgContext, method);
+//			//invoke the WebService 
+//
+//			EchoImpl echo = (EchoImpl)obj;
+//			Object result = null;
+//			if("echoEchoStruct".equals(methodName))	{
+//				result = echo.echoEchoStruct((EchoStruct)parms[0]);
+//			}else if ("echoString".equals(methodName))	{
+//				result = echo.echoString((String)parms[0]);
+//			}else if ("echoStringArray".equals(methodName))	{
+//				result = echo.echoStringArray((String[])parms[0]);
+//			}else if ("echoEchoStructArray".equals(methodName))	{
+//				Object[] parmsIn = (Object[])parms[0];
+//				EchoStruct[] structs = new EchoStruct[parmsIn.length];
+//				for (int i = 0; i < structs.length; i++) {
+//					structs[i] = (EchoStruct) parmsIn[i];
+//
+//				}
+//				result = echo.echoEchoStructArray(structs);
+//			}			
+//			Encoder outobj = null;
+//
+//			if (result instanceof String || result instanceof String[]) {
+//				outobj = new SimpleTypeEncoder(result);
+//			} else if (result instanceof EchoStruct) {
+//				outobj = new EchoStructEncoder((EchoStruct) result);
+//			} else if (result instanceof EchoStruct[]) {
+//				outobj =
+//					new ArrayTypeEncoder(
+//						(EchoStruct[]) result,
+//						new EchoStructEncoder(null));
+//			}
+//
+//			SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+//			SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
+//
+//			OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
+//			OMElement responseMethodName =
+//				fac.createOMElement(methodName + "Response", ns);
+//			responseEnvelope.getBody().addChild(responseMethodName);
+//            ObjectToOMBuilder builder = new ObjectToOMBuilder(outobj);
+//            OMElement returnelement =
+//				fac.createOMElement(methodName + "Return", ns,responseMethodName, builder);
+//            builder.setStartElement(returnelement);
+//			responseMethodName.addChild(returnelement);
+//			
+//			returnelement.declareNamespace(
+//				OMConstants.ARRAY_ITEM_NSURI,
+//				"arrays");
+//            returnelement.declareNamespace(
+//                "http://axis.apache.org",
+//                "s");
+//
+//            MessageContext resMessageContext = Utils.copyMessageContext(msgContext);
+//            resMessageContext.setEnvelope(responseEnvelope);
+//
+//			return resMessageContext;
+//		} catch (SecurityException e) {
+//			throw AxisFault.makeFault(e);
+//		} catch (IllegalArgumentException e) {
+//			throw AxisFault.makeFault(e);
+//		}
 	}
 
 }

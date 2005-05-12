@@ -77,9 +77,9 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         
         if(epr!= null){
             out =  openTheConnection(epr);
-            startSendWithToAddress(msgContext,epr,out);
+            startSendWithToAddress(msgContext,out);
             writeMessage(msgContext,out);
-            finalizeSendWithToAddress(msgContext,epr,out);
+            finalizeSendWithToAddress(msgContext,out);
         }else{
             out = (Writer)msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
             if(out != null){
@@ -100,15 +100,14 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                  outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                  envelope.serialize(outputWriter);
                  outputWriter.flush();
-                 out.flush();
              } catch (Exception e) {
                  throw new AxisFault("Stream error", e);
              }
          }
     }
 
-    public abstract void startSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer)throws AxisFault;
-    public abstract void finalizeSendWithToAddress(MessageContext msgContext,EndpointReference epr, Writer writer)throws AxisFault;
+    public abstract void startSendWithToAddress(MessageContext msgContext,Writer writer)throws AxisFault;
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)throws AxisFault;
 
     public abstract void startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;
     public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;

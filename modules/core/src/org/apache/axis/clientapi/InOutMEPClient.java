@@ -36,7 +36,6 @@ import org.apache.axis.engine.MessageSender;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.util.Utils;
 import org.apache.wsdl.WSDLConstants;
 
 /**
@@ -94,7 +93,7 @@ public class InOutMEPClient extends MEPClient {
 
             sender.send(msgctx);
 
-            MessageContext response = Utils.copyMessageContext(msgctx);
+            MessageContext response = new MessageContext(msgctx.getSessionContext(),msgctx.getTransportIn(),msgctx.getTransportOut(),msgctx.getSystemContext());
             response.setServerSide(false);
 
             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -146,7 +145,7 @@ public class InOutMEPClient extends MEPClient {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {
-                            MessageContext response = Utils.copyMessageContext(msgctx);
+                            MessageContext response = new MessageContext(msgctx.getSessionContext(),msgctx.getTransportIn(),msgctx.getTransportOut(),msgctx.getSystemContext());
                             response.setServerSide(false);
 
                             TransportReceiver receiver = response.getTransportIn().getReciever();

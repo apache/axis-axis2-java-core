@@ -18,6 +18,7 @@ package org.apache.axis.util;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
@@ -119,27 +120,4 @@ public class Utils {
             }
         }
     }
-
-    public static MessageContext copyMessageContext(MessageContext oldMessageContext)
-        throws AxisFault {
-        MessageContext messageContext =
-            new MessageContext(
-                oldMessageContext.getSessionContext(),
-                oldMessageContext.getTransportIn(),
-                oldMessageContext.getTransportOut(),
-                oldMessageContext.getSystemContext());
-
-        messageContext.setMessageInformationHeaders(new MessageInformationHeadersCollection());
-        MessageInformationHeadersCollection oldMessageInfoHeaders =
-            oldMessageContext.getMessageInformationHeaders();
-        MessageInformationHeadersCollection messageInformationHeaders =
-            new MessageInformationHeadersCollection();
-        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
-        messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
-        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId()));
-        return messageContext;
-
-    }
-
 }

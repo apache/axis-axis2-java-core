@@ -81,55 +81,57 @@ public class SimpleJavaProvider extends AbstractInOutSyncMessageReceiver impleme
     /* (non-Javadoc)
      * @see org.apache.axis.receivers.AbstractInOutSyncMessageReceiver#invokeBusinessLogic(org.apache.axis.context.MessageContext)
      */
-    public MessageContext invokeBusinessLogic(MessageContext msgContext)
+    public MessageContext invokeBusinessLogic(MessageContext msgContext,MessageContext newmsgctx)
         throws AxisFault {
-            try {
-                //get the implementation class for the Web Service 
-                Object obj = getTheImplementationObject(msgContext);
-
-                //find the WebService method  
-                Class ImplClass = obj.getClass();
-                AxisOperation op = msgContext.getOperationContext().getAxisOperation();
-                String methodName = op.getName().getLocalPart();
-                Method[] methods = ImplClass.getMethods();
-                for (int i = 0; i < methods.length; i++) {
-                    if (methods[i].getName().equals(methodName)) {
-                        this.method = methods[i];
-                        break;
-                    }
-                }
-                //deserialize (XML-> java)
-                Object[] parms = deserializeParameters(msgContext, method);
-                //invoke the WebService 
-                Object result = method.invoke(obj, parms);
-                Encoder outobj = new SimpleTypeEncoder(result);
-                SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-                SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
-
-                OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                OMElement responseMethodName =
-                        fac.createOMElement(methodName + "Response", ns);
-                responseEnvelope.getBody().addChild(responseMethodName);
-                OMElement returnelement =
-                        fac.createOMElement(methodName + "Return", ns);
-                responseMethodName.addChild(returnelement);
-
-                returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
-                returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,
-                        OMConstants.ARRAY_ITEM_NS_PREFIX);
-                msgContext.setEnvelope(responseEnvelope);
-                return msgContext;
-            } catch (SecurityException e) {
-                throw AxisFault.makeFault(e);
-            } catch (IllegalArgumentException e) {
-                throw AxisFault.makeFault(e);
-            } catch (IllegalAccessException e) {
-                throw AxisFault.makeFault(e);
-            } catch (InvocationTargetException e) {
-                throw AxisFault.makeFault(e);
-            } catch (Exception e) {
-                throw AxisFault.makeFault(e);
-            }
+            throw new UnsupportedOperationException();
+            //TODO fix this
+//            try {
+//                //get the implementation class for the Web Service 
+//                Object obj = getTheImplementationObject(msgContext);
+//
+//                //find the WebService method  
+//                Class ImplClass = obj.getClass();
+//                AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+//                String methodName = op.getName().getLocalPart();
+//                Method[] methods = ImplClass.getMethods();
+//                for (int i = 0; i < methods.length; i++) {
+//                    if (methods[i].getName().equals(methodName)) {
+//                        this.method = methods[i];
+//                        break;
+//                    }
+//                }
+//                //deserialize (XML-> java)
+//                Object[] parms = deserializeParameters(msgContext, method);
+//                //invoke the WebService 
+//                Object result = method.invoke(obj, parms);
+//                Encoder outobj = new SimpleTypeEncoder(result);
+//                SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+//                SOAPEnvelope responseEnvelope = fac.getDefaultEnvelope();
+//
+//                OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
+//                OMElement responseMethodName =
+//                        fac.createOMElement(methodName + "Response", ns);
+//                responseEnvelope.getBody().addChild(responseMethodName);
+//                OMElement returnelement =
+//                        fac.createOMElement(methodName + "Return", ns);
+//                responseMethodName.addChild(returnelement);
+//
+//                returnelement.setBuilder(new ObjectToOMBuilder(returnelement, outobj));
+//                returnelement.declareNamespace(OMConstants.ARRAY_ITEM_NSURI,
+//                        OMConstants.ARRAY_ITEM_NS_PREFIX);
+//                msgContext.setEnvelope(responseEnvelope);
+//                return msgContext;
+//            } catch (SecurityException e) {
+//                throw AxisFault.makeFault(e);
+//            } catch (IllegalArgumentException e) {
+//                throw AxisFault.makeFault(e);
+//            } catch (IllegalAccessException e) {
+//                throw AxisFault.makeFault(e);
+//            } catch (InvocationTargetException e) {
+//                throw AxisFault.makeFault(e);
+//            } catch (Exception e) {
+//                throw AxisFault.makeFault(e);
+//            }
     }
 
 }

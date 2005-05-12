@@ -102,7 +102,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         Writer writer) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer)
+    public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault {
             EndpointReference toURL = msgContext.getTo();
             if (toURL != null) {
@@ -159,7 +159,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             }
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, EndpointReference epr,Writer writer) {
+    public void startSendWithToAddress(MessageContext msgContext, Writer writer) {
     }
 
 }
