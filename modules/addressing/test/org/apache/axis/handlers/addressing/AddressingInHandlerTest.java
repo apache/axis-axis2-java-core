@@ -5,6 +5,7 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.handlers.util.TestUtil;
+import org.apache.axis.handlers.AddressingInHandler;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;

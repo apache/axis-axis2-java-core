@@ -4,6 +4,7 @@ import org.apache.axis.modules.Module;
 import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.AxisSystem;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,15 +30,14 @@ import org.apache.axis.engine.ExecutionChain;
  * Time: 12:06:59 PM
  */
 public class AddressingModule implements Module{
-    public void init(SystemContext moduleContext) throws AxisFault {
+
+    // initialize the module
+    public void init(AxisSystem axisSystem) throws AxisFault {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void engage(ExecutionChain exeChain) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void shutDown() throws AxisFault {
+    // shutdown the module
+    public void shutdown(AxisSystem axisSystem) throws AxisFault {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }
