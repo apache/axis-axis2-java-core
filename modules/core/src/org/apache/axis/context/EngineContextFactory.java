@@ -77,7 +77,7 @@ public class EngineContextFactory {
                 AxisModule axismodule = (AxisModule) iterator.next();
                 Module module = axismodule.getModule();
                 if (module != null) {
-                    module.init(context);
+                    module.init(context.getEngineConfig());
                 }
             }
         } catch (AxisFault e) {

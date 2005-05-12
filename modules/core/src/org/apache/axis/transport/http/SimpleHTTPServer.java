@@ -51,9 +51,9 @@ public class SimpleHTTPServer implements Runnable {
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
 
     /**
-     * Field engineReg
+     * Field systemContext
      */
-    protected SystemContext engineReg;
+    protected SystemContext systemContext;
 
     /**
      * Field serverSocket
@@ -74,10 +74,10 @@ public class SimpleHTTPServer implements Runnable {
     /**
      * Constructor SimpleHTTPServer
      *
-     * @param reg
+     * @param systemContext
      */
-    public SimpleHTTPServer(SystemContext reg, ServerSocket serverSoc) {
-        this.engineReg = reg;
+    public SimpleHTTPServer(SystemContext systemContext, ServerSocket serverSoc) {
+        this.systemContext = systemContext;
         this.serverSocket = serverSoc;
     }
 
@@ -92,7 +92,7 @@ public class SimpleHTTPServer implements Runnable {
             this.serverSocket = serverSoc;
            // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             EngineContextFactory erfac = new EngineContextFactory();
-            this.engineReg = erfac.buildEngineContext(dir);
+            this.systemContext = erfac.buildEngineContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);
@@ -127,21 +127,21 @@ public class SimpleHTTPServer implements Runnable {
                         break;
                     }
                     if (socket != null) {
-                        if (engineReg == null) {
+                        if (systemContext == null) {
                             throw new AxisFault("Engine Must be null");
                         }
                         Writer out = new OutputStreamWriter(socket.getOutputStream());
                         Reader in = new InputStreamReader(socket.getInputStream());
                         AxisTransportOut transportOut =
-                            engineReg.getEngineConfig().getTransportOut(
+                            systemContext.getEngineConfig().getTransportOut(
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
                             new MessageContext(
                                 null,
-                                engineReg.getEngineConfig().getTransportIn(
+                                systemContext.getEngineConfig().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
                                 transportOut,
-                                engineReg);
+                                systemContext);
                         msgContext.setServerSide(true);
 
                         // We do not have any Addressing Headers to put
@@ -149,7 +149,7 @@ public class SimpleHTTPServer implements Runnable {
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        reciver.invoke(msgContext, engineReg);
+                        reciver.invoke(msgContext, systemContext);
 
                         if (msgContext.getReplyTo() != null
                             && !AddressingConstants.EPR_ANONYMOUS_URL.equals(
@@ -247,12 +247,12 @@ public class SimpleHTTPServer implements Runnable {
     }
 
     /**
-     * Method getEngineReg
+     * Method getSystemContext
      *
      * @return
      */
-    public SystemContext getEngineReg() {
-        return engineReg;
+    public SystemContext getSystemContext() {
+        return systemContext;
     }
 
     /**

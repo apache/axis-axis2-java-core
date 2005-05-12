@@ -4,6 +4,7 @@ import org.apache.axis.modules.Module;
 import org.apache.axis.context.SystemContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
+import org.apache.axis.engine.AxisSystem;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,15 +13,16 @@ import org.apache.axis.engine.ExecutionChain;
  * Time: 3:16:14 PM
  */
 public class Module1Impl implements Module{
-    public void init(SystemContext moduleContext) throws AxisFault {
-        //do nothing
+
+    // initialize the module
+    public void init(AxisSystem axisSystem) throws AxisFault {
+        /**
+         * in this case in the init the module does not need to do any thing
+         */
     }
 
-    public void engage(ExecutionChain exeChain) throws AxisFault {
-     //do nothing
-    }
-
-    public void shutDown() throws AxisFault {
-       //do nothing
+    // shutdown the module
+    public void shutdown(AxisSystem axisSystem) throws AxisFault {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

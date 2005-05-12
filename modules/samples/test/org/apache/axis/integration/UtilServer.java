@@ -37,13 +37,13 @@ public class UtilServer {
 
     public static synchronized void deployService(ServiceContext service)
             throws AxisFault {
-        reciver.getEngineReg().registerServiceContext(service.getServiceInstanceID(),service);
-        reciver.getEngineReg().getEngineConfig().addService(service.getServiceConfig());
+        reciver.getSystemContext().registerServiceContext(service.getServiceInstanceID(),service);
+        reciver.getSystemContext().getEngineConfig().addService(service.getServiceConfig());
     }
 
     public static synchronized void unDeployService(QName service)
             throws AxisFault {
-        reciver.getEngineReg().getEngineConfig().removeService(service);
+        reciver.getSystemContext().getEngineConfig().removeService(service);
     }
 
     public static synchronized void start() throws Exception {

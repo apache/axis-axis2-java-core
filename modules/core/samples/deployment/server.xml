@@ -1,10 +1,12 @@
 <server name ="AxisJava2.0" >
     <messageReceiver mep="INOUT"  class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
       <phaseOrder type="inflow">
-        <phase name="global"/>
-        <phase name="transport"/>
-        <phase name="Logging"/>
-        <phase name="service"/>
+        <phase name="TransportIn"/>
+        <phase name="PreDispatch"/>
+        <phase name="Dispatch"/>
+        <phase name="PostDispatch"/>
+        <phase name="PolicyDetermination"/>
+        <phase name="MessageProcessing"/>
     </phaseOrder>
     <phaseOrder type="outflow">
         <phase name="global"/>
