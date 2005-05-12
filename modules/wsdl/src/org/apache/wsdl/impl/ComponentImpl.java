@@ -16,6 +16,7 @@
 package org.apache.wsdl.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.wsdl.Component;
 import org.apache.wsdl.WSDLConstants;
@@ -29,6 +30,11 @@ public class ComponentImpl implements WSDLConstants, Component {
      * Field componentProperties
      */
     protected HashMap componentProperties = new HashMap();
+    
+    /**
+     * List of Element 
+     */
+    protected List elments;
 
     /**
      * Field documentation
