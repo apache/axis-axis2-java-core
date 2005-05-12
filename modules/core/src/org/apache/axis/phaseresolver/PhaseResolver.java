@@ -153,23 +153,9 @@ public class PhaseResolver {
         ArrayList allHandlers = new ArrayList();
         ModuleDescription module;
         Flow flow = null;
-        ArrayList modules = (ArrayList) axisService.getModules();
-        ///////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////// GLOBAL HANDLERS ////////////////////////////////////////////////
-        for (int i = 0; i < modules.size(); i++) {
-            QName name = (QName) modules.get(i);
-            module = engineConfig.getModule(name);
-            if (module != null) {
-                buildModuleHandlers(allHandlers, module, flowtype);
-            } else {
-                throw new PhaseException("Referred module is NULL " + name.getLocalPart());
-            }
-        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// SERVICE HANDLERS ///////////////////////////////////////////////
-
-
         switch (flowtype) {
             case PhaseMetadata.IN_FLOW:
                 {
@@ -216,7 +202,7 @@ public class PhaseResolver {
             }
         }
         ///////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////// OPERATION HANDLERS ////////////////////////////////////////////////
+        ///////////////////// OPERATION MODULES ////////////////////////////////////////////////
         Collection opmodule = operation.getModules();
         Iterator opitr = opmodule.iterator();
         while (opitr.hasNext()) {

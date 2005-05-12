@@ -29,7 +29,17 @@ public class PhaseMetadata {
     public static final int FAULT_IN_FLOW = 3;
     public static final int FAULT_OUT_FLOW = 4;
 
-    public static final String PRE_DISPATCH = "pre-dispatch";
+    //INFLOW
+    public static final String PHASE_TRANSPORTIN = "TransportIn";
+    public static final String PHASE_PRE_DISPATCH = "PreDispatch";
+    public static final String PHASE_DISPATCH ="Dispatch";
+    public static final String PHASE_POST_DISPATCH ="PostDispatch";
+    public static final String PHASE_POLICY_DETERMINATION ="PolicyDetermination";
+    public static final String PHASE_MESSAGE_PROCESSING ="MessageProcessing";
+
+    //OUTFLOW
+    public static final String PHASE_MESSAGE_OUT ="MessageOut";
+
     /**
      * Field BOTH_BEFORE_AFTER
      */
