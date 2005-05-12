@@ -19,18 +19,10 @@ import java.lang.reflect.Method;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
-import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.WSDLService;
 
 /**
  * This is a Simple java Provider.

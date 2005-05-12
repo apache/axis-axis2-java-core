@@ -17,7 +17,6 @@
 package org.apache.axis.wsdl.codegen.extension;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 
 /**
  * @author chathura@opensource.lk

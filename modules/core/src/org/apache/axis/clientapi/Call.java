@@ -21,8 +21,6 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.SystemContext;

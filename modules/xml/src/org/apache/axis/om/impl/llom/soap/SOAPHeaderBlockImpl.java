@@ -22,12 +22,10 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.SOAPConstants;
-import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMAttributeImpl;
+import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 
 /**
  * Class SOAPHeaderBlockImpl

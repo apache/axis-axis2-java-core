@@ -18,10 +18,6 @@ package org.apache.axis.util;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.SystemContext;
 import org.apache.axis.description.AxisOperation;

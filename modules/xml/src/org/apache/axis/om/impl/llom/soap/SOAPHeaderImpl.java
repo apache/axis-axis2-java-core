@@ -28,12 +28,9 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
 import org.apache.axis.om.SOAPHeaderBlock;
+import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.SOAPConstants;
-import org.apache.axis.om.impl.llom.soap.SOAPHeaderBlockImpl;
-import org.apache.axis.om.impl.llom.OMElementImpl;
 
 /**
  * Class SOAPHeaderImpl

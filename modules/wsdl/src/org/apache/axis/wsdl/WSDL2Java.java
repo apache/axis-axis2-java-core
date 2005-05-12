@@ -2,7 +2,6 @@ package org.apache.axis.wsdl;
 
 import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis.wsdl.codegen.CommandLineOptionParser;
 
 /**

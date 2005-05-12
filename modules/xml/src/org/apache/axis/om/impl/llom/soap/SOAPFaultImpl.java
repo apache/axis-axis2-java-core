@@ -39,13 +39,10 @@ import org.apache.axis.om.SOAPFaultNode;
 import org.apache.axis.om.SOAPFaultReason;
 import org.apache.axis.om.SOAPFaultRole;
 import org.apache.axis.om.SOAPText;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.SOAPConstants;
-import org.apache.axis.om.impl.llom.soap.SOAPFaulReasonImpl;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 
 /**
  * Class SOAPFaultImpl

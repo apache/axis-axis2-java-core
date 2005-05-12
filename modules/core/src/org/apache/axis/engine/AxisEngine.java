@@ -18,9 +18,9 @@ package org.apache.axis.engine;
 import java.util.ArrayList;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.SystemContext;
-import org.apache.axis.description.AxisTransportIn;
+import org.apache.axis.description.AxisOperation;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
@@ -62,55 +62,18 @@ public class AxisEngine {
      * @see Handler
      */
     public void send(MessageContext msgContext) throws AxisFault {
-//        try {
-//            verifyContextBuilt(msgContext);
-//
-//            OperationContext operationContext = msgContext.getOperationContext();
-//
-//            ArrayList phases = operationContext.getAxisOperation().getPhasesInOutFlow();
+        try {
+            verifyContextBuilt(msgContext);
+            OperationContext operationContext = msgContext.getOperationContext();
 
-//            /*
-//             * There is a two cases, at the server side(response) / client side
-//             * but in the server side there must be a Service object object set, as before the 
-//             * out flow is started the user knows the services that will be invoked. 
-//             */
-//
-//            if (serviceContext != null) {
-//
-//                // what are we suppose to do in the client side
-//                // how the client side handlers are deployed ??? this is a hack and no client side handlers
-//
-//                //                chain.addPhases(serviceContext.getPhases(EngineConfiguration.OUTFLOW));
-//                // TODO : Fix me Srinath
-//                throw new UnsupportedOperationException();
-//            } else {
-//                if (msgContext.isServerSide() && !msgContext.isProcessingFault()) {
-//                    throw new AxisFault("At the Send there must be a Service Object set at the Server Side");
-//                }
-//            }
-//
-//            // Add the phases that are are at Global scope
-//            chain.addPhases(engineContext.getPhases(AxisSystem.OUTFLOW));
-//            //Phase addressingPhase = new SimplePhase("addressing");
-//            //addressingPhase.addHandler(new AddressingOutHandler());
-//            // chain.addPhase(addressingPhase);
-//
-//            // Receiving is always a matter of running the transport handlers first
-//
-//            AxisTransportIn transport = msgContext.getTransportIn();
-//            chain.addPhases(transport.getPhases(AxisSystem.OUTFLOW));
-//
-//            // startet rolling
-//            chain.invoke(msgContext);
-//
-//            TransportSender sender = msgContext.getTransportOut().getSender();
-//            sender.invoke(msgContext);
-//
-//        } catch (AxisFault error) {
-//            //error.printStackTrace();
-//            handleFault(msgContext, error);
-//        }
+            ArrayList phases = operationContext.getAxisOperation().getPhasesInOutFlow();
+            invokePhases(phases, msgContext);
 
+            TransportSender sender = msgContext.getTransportOut().getSender();
+            sender.invoke(msgContext);
+        } catch (Throwable e) {
+            handleFault(msgContext, e);
+        }
     }
 
     /**
@@ -127,59 +90,21 @@ public class AxisEngine {
      */
     public void receive(MessageContext context) throws AxisFault {
         try {
-
-            log.info("starting the out flow");
-
-            // let us always start with a fresh EC
-            ExecutionChain chain = context.getExecutionChain();
-
-            // Construct the transport part of the Handlers
-            AxisTransportIn transport = context.getTransportIn();
-            if (transport != null) {
-                log.info("Using the transport" + transport.getName());
-                chain.addPhases(transport.getPhases(AxisSystem.INFLOW));
-            }
-
-            //  Phase addressingPhase = new SimplePhase("addressing");
-            //addressingPhase.addHandler(new AddressingInHandler());
-            //chain.addPhase(addressingPhase);
-            //add the Global flow
-            chain.addPhases(engineContext.getPhases(AxisSystem.INFLOW));
-
-            // create a Dispatch Phase and add it to the Execution Chain
-            Phase dispatchPhase = chain.getPhase(Phase.DISPATCH_PHASE);
-            if (dispatchPhase == null) {
-                dispatchPhase = new Phase(Phase.DISPATCH_PHASE);
-            }
-
-            if (context.isServerSide()) {
-                //This chain is the default Service diaptacher, the users may opt to overide this by 
-                //adding an Handlers to the DispatchPhase. 
-                dispatchPhase.addHandler(new RequestURIBasedDispatcher());
-                AddressingBasedDispatcher dispatcher = new AddressingBasedDispatcher();
-                dispatchPhase.addHandler(dispatcher);
-
-            }
-
-            //Service handlers are added to ExecutionChain by this Handler
-            //            ServiceHandlersChainBuilder handlerChainBuilder = new ServiceHandlersChainBuilder();
-            //            dispatchPhase.addHandler(handlerChainBuilder);
-            //            chain.addPhase(dispatchPhase);
-
-            // Start rolling the Service Handlers will,be added by the Dispatcher
-            chain.invoke(context);
-
+            SystemContext sysCtx = context.getSystemContext();
+            ArrayList phases = sysCtx.getEngineConfig().getInPhasesUptoAndIncludingPostDispatch();
+            invokePhases(phases, context);
+            
+            OperationContext operationContext = context.getOperationContext();
+            phases = operationContext.getAxisOperation().getPhasesInOutFlow();
+            invokePhases(phases, context);
             if (context.isServerSide()) {
                 // add invoke Phase
                 MessageReceiver reciver =
                     context.getOperationContext().getAxisOperation().getMessageReciever();
                 reciver.recieve(context);
             }
-
-            log.info("ending the out flow");
         } catch (Throwable e) {
             handleFault(context, e);
-
         }
     }
 
@@ -216,25 +141,19 @@ public class AxisEngine {
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
 
-            ExecutionChain chain = faultContext.getExecutionChain();
-
-            ServiceContext serviceContext = context.getOperationContext().getServiceContext();
-            if (serviceContext != null) {
-                //                chain.addPhases(serviceContext.getPhases(EngineConfiguration.FAULT_IN_FLOW));
-                // TODO : Fix me Srinath
-                throw new UnsupportedOperationException();
+            OperationContext opContext  = context.getOperationContext();
+            if(opContext == null){
+                AxisOperation axisOperation = opContext.getAxisOperation();
+                ArrayList phases = axisOperation.getPhasesInFaultOutFlow();
+                invokePhases(phases, context);
             }
-
-            chain.invoke(faultContext);
-            // send the error
+            // Write the the error
             TransportSender sender = context.getTransportOut().getSender();
             sender.invoke(faultContext);
         } else if (!serverSide) {
-
             // if at the client side throw the exception
             throw new AxisFault("", e);
         } else {
-
             // TODO log and exit
             log.error("Error in fault flow", e);
         }

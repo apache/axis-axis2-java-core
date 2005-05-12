@@ -26,19 +26,12 @@ import java.util.List;
 import javax.wsdl.WSDLException;
 
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis.wsdl.codegen.emitter.ClientJavaEmitter;
 import org.apache.axis.wsdl.codegen.emitter.Emitter;
-import org.apache.axis.wsdl.codegen.emitter.Emitter;
-import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
-import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
-import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
-import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
-import org.apache.axis.wsdl.codegen.XSLTConstants;
-import org.apache.axis.wsdl.codegen.XSLTConstants;
-import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
 import org.apache.wsdl.WSDLDescription;
 
 /**

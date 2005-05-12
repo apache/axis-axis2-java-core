@@ -22,9 +22,8 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 import org.apache.axis.om.impl.llom.OMElementImpl;
+import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
 
 /**
  * Class SOAPBodyImpl

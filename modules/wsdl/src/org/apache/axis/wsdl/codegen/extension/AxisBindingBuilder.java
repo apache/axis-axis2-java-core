@@ -19,7 +19,6 @@ package org.apache.axis.wsdl.codegen.extension;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis.wsdl.codegen.extension.AbstractCodeGenerationExtension;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLInterface;

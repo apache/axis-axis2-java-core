@@ -3,9 +3,9 @@ package org.apache.axis.wsdl.codegen.emitter;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.databinding.CsharpTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
-import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLInterface;

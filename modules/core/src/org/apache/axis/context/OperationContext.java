@@ -16,12 +16,12 @@ package org.apache.axis.context;
 * limitations under the License.
 */
 
+import java.util.Map;
+
 import org.apache.axis.description.AxisOperation;
 import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
-
-import java.util.Map;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is

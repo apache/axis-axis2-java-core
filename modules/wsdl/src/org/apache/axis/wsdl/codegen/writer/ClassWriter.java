@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import org.apache.axis.wsdl.codegen.XSLTConstants;
 import org.apache.axis.wsdl.util.FileWriter;
 import org.apache.axis.wsdl.util.XSLTTemplateProcessor;
-import org.apache.axis.wsdl.codegen.XSLTConstants;
-import org.apache.axis.wsdl.codegen.XSLTConstants;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

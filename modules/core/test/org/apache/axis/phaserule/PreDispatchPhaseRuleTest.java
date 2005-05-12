@@ -1,16 +1,17 @@
 package org.apache.axis.phaserule;
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.phaseresolver.PhaseHolder;
 import org.apache.axis.description.AxisGlobal;
 import org.apache.axis.description.HandlerMetadata;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisSystem;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.engine.Handler;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
+import org.apache.axis.phaseresolver.PhaseHolder;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

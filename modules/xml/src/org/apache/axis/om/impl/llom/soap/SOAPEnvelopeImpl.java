@@ -24,7 +24,6 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.SOAPBody;
 import org.apache.axis.om.SOAPEnvelope;
 import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.impl.llom.soap.SOAPConstants;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 
 /**
