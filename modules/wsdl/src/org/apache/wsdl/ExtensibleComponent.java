@@ -17,6 +17,8 @@ package org.apache.wsdl;
 
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -52,4 +54,17 @@ public interface ExtensibleComponent extends Component {
      * @return
      */
     public List getProperties();
+    
+    
+    /**
+     * Adds the <code>Element</code> to the Extensible Component.
+     * @param element
+     */
+    public void addExtensibilityElement(Element element);
+    
+    /**
+     * Returns the Extensibility Elements of the Extensible component;
+     * @return List of <code>Element</code>s
+     */
+    public List getExtensibilityElements();
 }

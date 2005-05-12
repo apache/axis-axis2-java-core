@@ -21,7 +21,8 @@ import java.util.List;
 import org.apache.wsdl.ExtensibleComponent;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLProperty;
-import org.dom4j.Element;
+import org.w3c.dom.Element;
+
 
 /**
  * @author chathura@opensource.lk
