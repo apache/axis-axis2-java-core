@@ -108,12 +108,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         loadOperations(boundInterface, doc, rootElement);
 
         doc.appendChild(rootElement);
-       try {
-			doc.write(System.out);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
         return doc;
 
     }
@@ -181,14 +176,13 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
         
-        try {
-			doc.write(System.out);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+
         return doc;
 
+    }
+
+    protected XmlDocument createDOMDocumentForCallbackStub(WSDLOperation operation) {
+        //todo put the code here
+        return null;
     }
 }

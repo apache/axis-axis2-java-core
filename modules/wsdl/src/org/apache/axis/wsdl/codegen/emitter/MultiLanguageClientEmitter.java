@@ -15,6 +15,7 @@ import org.apache.axis.wsdl.codegen.writer.BeanWriter;
 import org.apache.axis.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis.wsdl.codegen.writer.CallbackWriter;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
@@ -88,9 +89,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             //get the binding
             WSDLBinding axisBinding = this.configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
             //write interfaces
-            writeInterfaces(axisBinding);
+            writeInterface(axisBinding);
             //write interface implementations
-            writeInterfaceImplementations(axisBinding);
+            writeInterfaceImplementation(axisBinding);
+            //write the call back handlers
+            writeCallBackHandlers(axisBinding);
         } catch (Exception e) {
             // e.printStackTrace();
             throw new CodeGenerationException(e);
@@ -98,35 +101,55 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     }
 
     /**
+     *
+     */
+    protected void writeCallBackHandlers(WSDLBinding binding) throws Exception{
+        Collection operationsCollection =  binding.getBoundInterface().getOperations().values();
+        WSDLOperation wsdlOperation = null;
+        for (Iterator iterator = operationsCollection.iterator(); iterator.hasNext();) {
+            wsdlOperation =  (WSDLOperation)iterator.next();
+            XmlDocument interfaceModel = createDOMDocumentForCallbackStub(wsdlOperation);
+            CallbackWriter callbackWriter =
+                    new CallbackWriter(this.configuration.getOutputLocation(),
+                            this.configuration.getOutputLanguage()
+                    );
+            writeClass(interfaceModel,callbackWriter);
+        }
+
+    }
+    /**
      * Writes the interfaces
      * @param axisBinding
      * @throws Exception
      */
-    protected void writeInterfaces(WSDLBinding axisBinding) throws Exception {
+    protected void writeInterface(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceModel = createDOMDocuementForInterface(axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
-        writeClasses(interfaceModel,interfaceWriter);
+        writeClass(interfaceModel,interfaceWriter);
     }
+
+
+
 
     /**
      * Writes the implementations
      * @param axisBinding
      * @throws Exception
      */
-    protected void writeInterfaceImplementations(WSDLBinding axisBinding) throws Exception {
+    protected void writeInterfaceImplementation(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
         InterfaceImplementationWriter interfaceImplWriter =
                 new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
-        writeClasses(interfaceImplModel,interfaceImplWriter);
+        writeClass(interfaceImplModel,interfaceImplWriter);
     }
 
     /**
-     *
+     * todo Not used yet
      * @param wsdlType
      * @throws Exception
      */
@@ -140,7 +163,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                         new BeanWriter(this.configuration.getOutputLocation(),
                                 this.configuration.getOutputLanguage()
                         );
-                writeClasses(interfaceModel,beanWriter);
+                writeClass(interfaceModel,beanWriter);
             }
         }
 
@@ -152,7 +175,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @throws IOException
      * @throws Exception
      */
-    private void writeClasses(XmlDocument model,ClassWriter writer) throws IOException,Exception {
+    private void writeClass(XmlDocument model,ClassWriter writer) throws IOException,Exception {
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
         model.write(memoryStream);
         writer.loadTemplate();
@@ -182,6 +205,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected abstract XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding);
 
+    /**
+     * Generating the callbacks
+     * @param operation
+     * @return
+     */
+    protected abstract XmlDocument createDOMDocumentForCallbackStub(WSDLOperation operation);
     /**
      * Finds the input element for the xml document
      * @param doc
