@@ -1,10 +1,10 @@
 package org.apache.axis;
 
 import org.apache.axis.modules.Module;
-import org.apache.axis.context.SystemContext;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.engine.AxisSystem;
+import org.apache.axis.engine.AxisConfiguration;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -32,12 +32,12 @@ import org.apache.axis.engine.AxisSystem;
 public class AddressingModule implements Module{
 
     // initialize the module
-    public void init(AxisSystem axisSystem) throws AxisFault {
+    public void init(AxisConfiguration axisSystem) throws AxisFault {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     // shutdown the module
-    public void shutdown(AxisSystem axisSystem) throws AxisFault {
+    public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

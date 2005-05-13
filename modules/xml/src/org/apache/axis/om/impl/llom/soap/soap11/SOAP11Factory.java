@@ -19,7 +19,7 @@ import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;
  * the License.
  * <p/>
  */
-public class SOAP11Factory extends SOAPLinkedListImplFactory implements SOAPFactory{
+public class SOAP11Factory extends SOAPLinkedListImplFactory{
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

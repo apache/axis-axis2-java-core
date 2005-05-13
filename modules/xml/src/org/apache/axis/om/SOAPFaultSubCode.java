@@ -23,10 +23,10 @@ public interface SOAPFaultSubCode extends OMElement{
 
     /**
      * Fault SubCode contain only one mandatory Value child. This value child contains a QName
-     * @param soapSubCodeValue
+     * @param soapFaultSubCodeValue
      */
-    public void addValue(SOAPSubCodeValue soapSubCodeValue);
-    public SOAPSubCodeValue getValue();
+    public void addValue(SOAPFaultSubCodeValue soapFaultSubCodeValue);
+    public SOAPFaultSubCodeValue getValue();
 
 
     /**

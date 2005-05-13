@@ -150,7 +150,7 @@ public class SOAPHeaderBlockImpl extends OMElementImpl
         String mustUnderstand = "";
         if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND))
                 != null) {
-            return mustUnderstand.equalsIgnoreCase("true");
+            return mustUnderstand.equalsIgnoreCase("true") || mustUnderstand.equalsIgnoreCase("1") ;
         }
         return false;
     }
