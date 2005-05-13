@@ -137,11 +137,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
-        InterfaceImplementationWriter interfaceImplWriter =
-                new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
+        CallbackHandlerWriter callbackWriterlWriter =
+                new CallbackHandlerWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
-        writeClass(interfaceImplModel,interfaceImplWriter);
+        writeClass(interfaceImplModel,callbackWriterlWriter);
     }
 
     /**
