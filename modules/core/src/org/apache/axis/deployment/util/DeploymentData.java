@@ -88,57 +88,48 @@ public class DeploymentData {
     }
 
     private ArrayList getOperationInPhases() {
-        if (oprationINPhases == null) {
-            oprationINPhases = new ArrayList();
-            for (int i = 0; i < INPhases.size(); i++) {
-                String phaseName = (String) INPhases.get(i);
-                if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
-                        PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName) ||
-                        PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
-                        PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
-                    continue;
-                } else {
-                    oprationINPhases.add(new Phase(phaseName));
-                }
+        oprationINPhases = new ArrayList();
+        for (int i = 0; i < INPhases.size(); i++) {
+            String phaseName = (String) INPhases.get(i);
+            if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
+                    PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName) ||
+                    PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
+                    PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
+                continue;
+            } else {
+                oprationINPhases.add(new Phase(phaseName));
             }
-
         }
         return oprationINPhases;
     }
 
     private ArrayList getOperationOutPhases() {
-        if (oprationOUTPhases == null) {
-            oprationOUTPhases = new ArrayList();
-            for (int i = 0; i < OUTPhases.size(); i++) {
-                String phaseName = (String) OUTPhases.get(i);
-                if (PhaseMetadata.PHASE_TRANSPORT_OUT.equals(phaseName)) {
-                    continue;
-                } else {
-                    oprationOUTPhases.add(new Phase(phaseName));
-                }
+        oprationOUTPhases = new ArrayList();
+        for (int i = 0; i < OUTPhases.size(); i++) {
+            String phaseName = (String) OUTPhases.get(i);
+            if (PhaseMetadata.PHASE_TRANSPORT_OUT.equals(phaseName)) {
+                continue;
+            } else {
+                oprationOUTPhases.add(new Phase(phaseName));
             }
         }
         return oprationOUTPhases;
     }
 
     private ArrayList getOperationInFaultPhases() {
-        if (oprationIN_FaultPhases == null) {
-            oprationIN_FaultPhases = new ArrayList();
-            for (int i = 0; i < IN_FaultPhases.size(); i++) {
-                String phaseName = (String) IN_FaultPhases.get(i);
-                oprationIN_FaultPhases.add(new Phase(phaseName));
-            }
+        oprationIN_FaultPhases = new ArrayList();
+        for (int i = 0; i < IN_FaultPhases.size(); i++) {
+            String phaseName = (String) IN_FaultPhases.get(i);
+            oprationIN_FaultPhases.add(new Phase(phaseName));
         }
         return oprationIN_FaultPhases;
     }
 
     private ArrayList getOperationOutFaultPhases() {
-        if (oprationOUT_FaultPhases == null) {
-            oprationOUT_FaultPhases = new ArrayList();
-            for (int i = 0; i < OUT_FaultPhases.size(); i++) {
-                String phaseName = (String) OUT_FaultPhases.get(i);
-                oprationOUT_FaultPhases.add(new Phase(phaseName));
-            }
+        oprationOUT_FaultPhases = new ArrayList();
+        for (int i = 0; i < OUT_FaultPhases.size(); i++) {
+            String phaseName = (String) OUT_FaultPhases.get(i);
+            oprationOUT_FaultPhases.add(new Phase(phaseName));
         }
         return oprationOUT_FaultPhases;
     }
