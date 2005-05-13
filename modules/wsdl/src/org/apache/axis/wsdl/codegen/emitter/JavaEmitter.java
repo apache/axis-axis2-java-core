@@ -11,6 +11,7 @@ import org.apache.wsdl.WSDLOperation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -62,7 +63,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
     }
 
     
-    protected XmlDocument createDOMDocumentForCallbackStub(WSDLBinding binding){
+    protected XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding){
     	WSDLInterface boundInterface = binding.getBoundInterface();
     	XmlDocument doc = new XmlDocument();
     	Element rootElement = doc.createElement("class");
@@ -78,10 +79,17 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         Attr nameSpaceAttribute = doc.createAttribute("namespace");
         nameSpaceAttribute.setValue(boundInterface.getName().getNamespaceURI());
         rootElement.setAttributeNode(nameSpaceAttribute);
-        
-        this.loadOperations(boundInterface, doc, rootElement);
+        //TODO JAXRPC mapping support should be considered
+        this.loadOperations(boundInterface, doc, rootElement, "on", "Complete");
 
     	doc.appendChild(rootElement);
+    	
+    	try {
+			doc.write(System.out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	return doc;
     }
     
@@ -111,8 +119,12 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
         return doc;
 
     }
+    
+    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement){
+    	loadOperations(boundInterface, doc, rootElement, null, null);
+    }
 
-    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement) {
+    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement, String operationPrefix, String operationPostfix) {
         Collection col = boundInterface.getOperations().values();
 
         Element methodElement = null;
@@ -126,7 +138,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
             methodElement = doc.createElement("method");
             methodNameAttr = doc.createAttribute("name");
-            methodNameAttr.setValue(operation.getName().getLocalPart());
+            methodNameAttr.setValue(operationPrefix + operation.getName().getLocalPart()  + operationPostfix);
             methodElement.setAttributeNode(methodNameAttr);
 
             methodURIAttr = doc.createAttribute("namepace");
@@ -174,14 +186,9 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
 
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
-        
-
+                
         return doc;
 
     }
 
-    protected XmlDocument createDOMDocumentForCallbackStub(WSDLOperation operation) {
-        //todo put the code here
-        return null;
-    }
 }

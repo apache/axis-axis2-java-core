@@ -100,17 +100,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      *
      */
     protected void writeCallBackHandlers(WSDLBinding binding) throws Exception{
-        Collection operationsCollection =  binding.getBoundInterface().getOperations().values();
-        WSDLOperation wsdlOperation = null;
-        for (Iterator iterator = operationsCollection.iterator(); iterator.hasNext();) {
-            wsdlOperation =  (WSDLOperation)iterator.next();
-            XmlDocument interfaceModel = createDOMDocumentForCallbackStub(wsdlOperation);
-            CallbackWriter callbackWriter =
-                    new CallbackWriter(this.configuration.getOutputLocation(),
-                            this.configuration.getOutputLanguage()
-                    );
-            writeClass(interfaceModel,callbackWriter);
-        }
+    	XmlDocument interfaceModel = createDOMDocumentForCallbackHandler(binding);
+        CallbackHandlerWriter writer =
+                new CallbackHandlerWriter(this.configuration.getOutputLocation(),
+                        this.configuration.getOutputLanguage()
+                );
+        writeClass(interfaceModel,writer);
+        
 
     }
     /**
@@ -137,11 +133,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding) throws Exception {
         XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
-        CallbackHandlerWriter callbackWriterlWriter =
-                new CallbackHandlerWriter(this.configuration.getOutputLocation(),
+        InterfaceImplementationWriter writer =
+                new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
-        writeClass(interfaceImplModel,callbackWriterlWriter);
+        writeClass(interfaceImplModel,writer);
     }
 
     /**
@@ -206,7 +202,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @param operation
      * @return
      */
-    protected abstract XmlDocument createDOMDocumentForCallbackStub(WSDLOperation operation);
+    protected abstract XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding);
     /**
      * Finds the input element for the xml document
      * @param doc

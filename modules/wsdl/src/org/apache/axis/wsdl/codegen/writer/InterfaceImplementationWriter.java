@@ -21,12 +21,12 @@ import java.io.File;
  *
  * 
  */
-public class CallbackWriter extends ClassWriter {
-    public CallbackWriter(String outputFileLocation) {
+public class InterfaceImplementationWriter extends ClassWriter {
+    public InterfaceImplementationWriter(String outputFileLocation) {
             this.outputFileLocation = new File(outputFileLocation);
         }
 
-        public CallbackWriter(File outputFileLocation,int language) {
+        public InterfaceImplementationWriter(File outputFileLocation,int language) {
             this.outputFileLocation = outputFileLocation;
             this.language = language;
         }
@@ -38,10 +38,10 @@ public class CallbackWriter extends ClassWriter {
             Class clazz = this.getClass();
             switch (language){
                 case XSLTConstants.LanguageTypes.JAVA:
-                    this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTCallbackHandlerTemplates.JAVA_TEMPLATE);
+                    this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceImplementationTemplates.JAVA_TEMPLATE);
                     break;
                 case XSLTConstants.LanguageTypes.C_SHARP:
-                    this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTCallbackHandlerTemplates.CSHARP_TEMPLATE);
+                    this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceImplementationTemplates.CSHARP_TEMPLATE);
                     break;
                 case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
                 case XSLTConstants.LanguageTypes.VB_DOT_NET:

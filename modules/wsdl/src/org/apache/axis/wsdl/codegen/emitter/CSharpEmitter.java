@@ -104,14 +104,9 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
      * @param binding
      * @return
      */
-    protected XmlDocument createDOMDocumentForCallbackStub(WSDLBinding binding) {
+    protected XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding) {
         return null;
     }
 
-    /**
-     *
-     */
-    protected XmlDocument createDOMDocumentForCallbackStub(WSDLOperation operation) {
-        return null;
-    }
+
 }
