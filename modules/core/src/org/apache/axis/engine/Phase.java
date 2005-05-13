@@ -15,12 +15,11 @@
 */
 package org.apache.axis.engine;
 
+import java.util.ArrayList;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 /**
  * <p>This is Phase, a orderd collection of Handlers.
@@ -28,27 +27,7 @@ import java.util.ArrayList;
  * Should this exttends Hanlders?
  */
 public class Phase {
-    /**
-     * Field DISPATCH_PHASE
-     */
-    public static final String DISPATCH_PHASE = "DispatchPhase";
-
-    /**
-     * Field SERVICE_INVOCATION
-     */
-    public static final String SERVICE_INVOCATION = "ServiceInvocationPhase";
-
-    /**
-     * Field SENDING_PHASE
-     */
-    public static final String SENDING_PHASE = "SendPhase";
-
-    /**
-     * Field NAME
-     */
-    public static final QName NAME = new QName("http://axis.ws.apache.org",
-            "Phase");
-
+ 
     /**
      * Field phaseName
      */
@@ -107,7 +86,6 @@ public class Phase {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-        // Stack executionStack = new Stack();
         try {
             while (indexOfHandlerToExecute < handlers.size() ) {
                 if(msgctx.isPaused()){
@@ -128,31 +106,8 @@ public class Phase {
         } catch (Exception e) {
             log.info("Phase " + phaseName + " failed with the "
                     + e.getMessage());
-//            while (!executionStack.isEmpty()) {
-//                Handler handler = (Handler) executionStack.pop();
-//                log.info("revoke the Handler " + handler.getName()
-//                                + " with in the Phase " + phaseName);
-//                handler.revoke(msgctx);
-//            }
-            throw AxisFault.makeFault(e);
         }
     }
-
-//    /**
-//     * Method revoke
-//     *
-//     * @param msgctx
-//     */
-//    public void revoke(MessageContext msgctx) {
-//        for (int i = handlers.size() - 1; i > -1; i--) {
-//            Handler handler = (Handler) handlers.get(i);
-//            log.info("revoke the Handler " + handler.getName()
-//                            + " with in the Phase " + phaseName);
-//            if (handler != null) {
-//                handler.revoke(msgctx);
-//            }
-//        }
-//    }
 
     /**
      * @return Returns the name.
@@ -161,24 +116,7 @@ public class Phase {
         return phaseName;
     }
 
-    /**
-     * @param phaseName The name to set.
-     */
-    public void setName(String phaseName) {
-        this.phaseName = phaseName;
-    }
-//    public void postCondition(MessageContext msgCtx) throws AxisFault {
-//        
-//
-//    }
-//
-//    /* (non-Javadoc)
-//     * @see org.apache.axis.engine.Phase#preCondition(org.apache.axis.context.MessageContext)
-//     */
-//    public void preCondition(MessageContext msgCtx) throws AxisFault {
-//        // TODO Auto-generated method stub
-//
-//    }
+ 
     
 
     public int getHandlerCount(){

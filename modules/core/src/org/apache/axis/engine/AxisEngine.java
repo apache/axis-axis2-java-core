@@ -95,7 +95,7 @@ public class AxisEngine {
             invokePhases(phases, context);
             
             OperationContext operationContext = context.getOperationContext();
-            phases = operationContext.getAxisOperation().getPhasesOutFlow();
+            phases = operationContext.getAxisOperation().getRemainingPhasesInFlow();
             invokePhases(phases, context);
             if (context.isServerSide()) {
                 // add invoke Phase
@@ -131,6 +131,21 @@ public class AxisEngine {
                     context.getTransportIn(),
                     context.getTransportOut(),
                     engineContext);
+            
+            if(context.getFaultTo() != null){
+                faultContext.setFaultTo(context.getFaultTo());
+            } else{
+                Object writer = context.getProperty(MessageContext.TRANSPORT_WRITER);
+                if(writer != null){
+                    faultContext.setProperty(MessageContext.TRANSPORT_WRITER,writer);
+                }else{
+                    //TODO Opps there are no place to send this, we will log and should we throw the exception? 
+                    log.error("Error in fault flow", e);
+                    e.printStackTrace();
+                }
+            }       
+                    
+                    
             faultContext.setOperationContext(context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);

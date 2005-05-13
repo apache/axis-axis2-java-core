@@ -31,6 +31,9 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 
 /**
+ * By the time this Class is invoked either the To EPR on the MessageContext should be set or
+ * TRANSPORT_WRITER property set in the message Context with a Writer. This Class would write the 
+ * SOAPMessage using either of the methods in the order To then Writer.
  */
 public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
     /**
@@ -58,58 +61,58 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         Writer out = null;
-        
+
         EndpointReference epr = null;
-        
-        if (msgContext.isProcessingFault()) {
-            // Means we are processing fault
-            if (msgContext.getFaultTo() != null &&
-                !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getFaultTo().getAddress())) {
-                    epr = msgContext.getFaultTo();
-            } 
+
+        if (msgContext.getTo() != null
+            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
+            epr = msgContext.getTo();
+        }
+
+        if (epr != null) {
+            out = openTheConnection(epr);
+            startSendWithToAddress(msgContext, out);
+            writeMessage(msgContext, out);
+            finalizeSendWithToAddress(msgContext, out);
         } else {
-            if (msgContext.getTo() != null && 
-                    !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
-                        epr = msgContext.getTo();
-                } 
-        }
-        
-        if(epr!= null){
-            out =  openTheConnection(epr);
-            startSendWithToAddress(msgContext,out);
-            writeMessage(msgContext,out);
-            finalizeSendWithToAddress(msgContext,out);
-        }else{
-            out = (Writer)msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
-            if(out != null){
-                startSendWithOutputStreamFromIncomingConnection(msgContext,out);
-                writeMessage(msgContext,out);
-                finalizeSendWithOutputStreamFromIncomingConnection(msgContext,out);
-            } else{
+            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+            if (out != null) {
+                startSendWithOutputStreamFromIncomingConnection(msgContext, out);
+                writeMessage(msgContext, out);
+                finalizeSendWithOutputStreamFromIncomingConnection(msgContext, out);
+            } else {
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
-            }       
+            }
         }
     }
 
-    public void writeMessage(MessageContext msgContext,Writer out) throws AxisFault{
+    public void writeMessage(MessageContext msgContext, Writer out) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
-         if (envelope != null) {
-             XMLStreamWriter outputWriter = null;
-             try {
-                 outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-                 envelope.serialize(outputWriter);
-                 outputWriter.flush();
-             } catch (Exception e) {
-                 throw new AxisFault("Stream error", e);
-             }
-         }
+        if (envelope != null) {
+            XMLStreamWriter outputWriter = null;
+            try {
+                outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                envelope.serialize(outputWriter);
+                outputWriter.flush();
+            } catch (Exception e) {
+                throw new AxisFault("Stream error", e);
+            }
+        }
     }
 
-    public abstract void startSendWithToAddress(MessageContext msgContext,Writer writer)throws AxisFault;
-    public abstract void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)throws AxisFault;
+    public abstract void startSendWithToAddress(MessageContext msgContext, Writer writer)
+        throws AxisFault;
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
+        throws AxisFault;
 
-    public abstract void startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;
-    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,Writer writer)throws AxisFault;
+    public abstract void startSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer)
+        throws AxisFault;
+    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        Writer writer)
+        throws AxisFault;
 
-    protected abstract Writer openTheConnection(EndpointReference epr)throws AxisFault;
+    protected abstract Writer openTheConnection(EndpointReference epr) throws AxisFault;
 }

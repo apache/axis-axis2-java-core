@@ -16,21 +16,30 @@
 
 package org.apache.axis.engine;
 
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.*;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.HTTPTransportSender;
 import org.apache.wsdl.WSDLService;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
+
 
 public class EnginePausingTest extends TestCase {
 
@@ -45,7 +54,7 @@ public class EnginePausingTest extends TestCase {
 
     public EnginePausingTest(String arg0) throws AxisFault {
         super(arg0);
-
+        executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisSystemImpl(new GlobalDescription());
         engineContext = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
@@ -71,7 +80,7 @@ public class EnginePausingTest extends TestCase {
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
-        mc.setProperty(MessageContext.TRANSPORT_WRITER, System.out);
+        mc.setProperty(MessageContext.TRANSPORT_WRITER, new OutputStreamWriter(System.out));
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
 
@@ -118,14 +127,15 @@ public class EnginePausingTest extends TestCase {
 
         //TODO
         axisOp.getRemainingPhasesInFlow().addAll(phases);
-        mc.setTo(
-            new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
+
         mc.setWSAAction(operationName.getLocalPart());
         System.out.flush();
 
     }
 
     public void testReceive() throws Exception {
+              mc.setTo(
+                    new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
         AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 15);
