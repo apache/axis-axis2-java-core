@@ -16,10 +16,6 @@
 
 package org.apache.axis.deployment.repository.utill;
 
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
@@ -28,6 +24,10 @@ import org.apache.axis.description.AxisDescWSDLComponentFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
+
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ArchiveReader implements DeploymentConstants {
 

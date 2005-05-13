@@ -16,33 +16,20 @@
 
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
+import org.apache.axis.deployment.util.DeploymentData;
+import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystemImpl;
-import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.phaseresolver.PhaseMetadata;
-import org.apache.axis.transport.TransportReceiver;
-import org.apache.axis.transport.TransportSender;
-import org.apache.axis.deployment.util.DeploymentTempData;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -171,7 +158,7 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
-                        DeploymentTempData tempdata = DeploymentTempData.getInstance();
+                        DeploymentData tempdata = DeploymentData.getInstance();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
@@ -385,6 +372,7 @@ public class DeploymentParser implements DeploymentConstants {
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation();
+                        DeploymentData.getInstance().setOperationPhases(operation);
                         axisService.addOperation(operation);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();

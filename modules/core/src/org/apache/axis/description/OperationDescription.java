@@ -23,14 +23,14 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
  *  
  */
 public class OperationDescription extends WSDLOperationImpl implements
-		ParameterInclude, WSDLOperation, DescriptionConstants, PhasesInclude,
+		ParameterInclude, WSDLOperation, DescriptionConstants,
 		WSDLConstants {
 
 	private MessageReceiver messageReceiver;
-    private ArrayList remainingPhasesInInFlow;
-    private ArrayList phasesInOutFlow;
-    private ArrayList phasesInFaultInFlow;
-    private ArrayList phasesInFaultOutFlow;
+    private ArrayList remainingPhasesInFlow;
+    private ArrayList phasesOutFlow;
+    private ArrayList phasesInFaultFlow;
+    private ArrayList phasesOutFaultFlow;
     
 	private int mep = MEP_CONSTANT_INVALID;
 
@@ -38,17 +38,16 @@ public class OperationDescription extends WSDLOperationImpl implements
 		this.setMessageExchangePattern(MEP_URI_IN_OUT);
 		this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
 		this.setComponentProperty(MODULEREF_KEY, new ArrayList());
-		this.setComponentProperty(PHASES_KEY, new PhasesIncludeImpl());
+
+        remainingPhasesInFlow = new ArrayList();
+        remainingPhasesInFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         
-        remainingPhasesInInFlow = new ArrayList();
-        remainingPhasesInInFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        phasesOutFlow = new ArrayList();
+        phasesOutFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        phasesOutFlow.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
         
-        phasesInOutFlow = new ArrayList();
-        phasesInOutFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
-        phasesInOutFlow.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
-        
-        phasesInFaultInFlow = new ArrayList();
-        phasesInFaultOutFlow = new ArrayList();
+        phasesInFaultFlow = new ArrayList();
+        phasesOutFaultFlow = new ArrayList();
 	}
 
 	public OperationDescription(QName name) {
@@ -177,34 +176,7 @@ public class OperationDescription extends WSDLOperationImpl implements
 		this.messageReceiver = messageReceiver;
 	}
 
-	public void setPhases(ArrayList phases, int flow) throws AxisFault {
-		if (phases == null) {
-			return;
-		}
-		PhasesIncludeImpl phaseInclude = (PhasesIncludeImpl) this
-				.getComponentProperty(PHASES_KEY);
-		phaseInclude.setPhases(phases, flow);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.axis.description.PhasesInclude#getPhases(int)
-	 */
-
-	/**
-	 * Method getPhases
-	 * 
-	 * @param flow
-	 * @return
-	 * @throws AxisFault
-	 */
-	public ArrayList getPhases(int flow) throws AxisFault {
-		PhasesIncludeImpl phaseInclude = (PhasesIncludeImpl) this
-				.getComponentProperty(PHASES_KEY);
-		return (ArrayList) phaseInclude.getPhases(flow);
-	}
-
+	
 	/**
 	 * This method will simply map the String URI of the Message exchange
 	 * pattern to a integer. Further in the first lookup it will cash the looked
@@ -250,57 +222,57 @@ public class OperationDescription extends WSDLOperationImpl implements
     /**
      * @return
      */
-    public ArrayList getPhasesInFaultInFlow() {
-        return phasesInFaultInFlow;
+    public ArrayList getPhasesInFaultFlow() {
+        return phasesInFaultFlow;
     }
 
     /**
      * @return
      */
-    public ArrayList getPhasesInFaultOutFlow() {
-        return phasesInFaultOutFlow;
+    public ArrayList getPhasesOutFaultFlow() {
+        return phasesOutFaultFlow;
     }
 
     /**
      * @return
      */
-    public ArrayList getPhasesInOutFlow() {
-        return phasesInOutFlow;
+    public ArrayList getPhasesOutFlow() {
+        return phasesOutFlow;
     }
 
     /**
      * @return
      */
-    public ArrayList getRemainingPhasesInInFlow() {
-        return remainingPhasesInInFlow;
+    public ArrayList getRemainingPhasesInFlow() {
+        return remainingPhasesInFlow;
     }
 
     /**
      * @param list
      */
-    public void setPhasesInFaultInFlow(ArrayList list) {
-        phasesInFaultInFlow = list;
+    public void setPhasesInFaultFlow(ArrayList list) {
+        phasesInFaultFlow = list;
     }
 
     /**
      * @param list
      */
-    public void setPhasesInFaultOutFlow(ArrayList list) {
-        phasesInFaultOutFlow = list;
+    public void setPhasesOutFaultFlow(ArrayList list) {
+        phasesOutFaultFlow = list;
     }
 
     /**
      * @param list
      */
-    public void setPhasesInOutFlow(ArrayList list) {
-        phasesInOutFlow = list;
+    public void setPhasesOutFlow(ArrayList list) {
+        phasesOutFlow = list;
     }
 
     /**
      * @param list
      */
-    public void setRemainingPhasesInInFlow(ArrayList list) {
-        remainingPhasesInInFlow = list;
+    public void setRemainingPhasesInFlow(ArrayList list) {
+        remainingPhasesInFlow = list;
     }
 
 }

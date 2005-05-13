@@ -15,9 +15,9 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-
 import org.apache.axis.description.HandlerDescription;
+
+import java.util.ArrayList;
 
 /**
  * Class PhaseMetadata
@@ -32,13 +32,14 @@ public class PhaseMetadata {
     //INFLOW
     public static final String PHASE_TRANSPORTIN = "TransportIn";
     public static final String PHASE_PRE_DISPATCH = "PreDispatch";
-    public static final String PHASE_DISPATCH ="Dispatch";
-    public static final String PHASE_POST_DISPATCH ="PostDispatch";
-    public static final String PHASE_POLICY_DETERMINATION ="PolicyDetermination";
-    public static final String PHASE_MESSAGE_PROCESSING ="MessageProcessing";
+    public static final String PHASE_DISPATCH = "Dispatch";
+    public static final String PHASE_POST_DISPATCH = "PostDispatch";
+    public static final String PHASE_POLICY_DETERMINATION = "PolicyDetermination";
+    public static final String PHASE_MESSAGE_PROCESSING = "MessageProcessing";
 
     //OUTFLOW
-    public static final String PHASE_MESSAGE_OUT ="MessageOut";
+    public static final String PHASE_MESSAGE_OUT = "MessageOut";
+    public static final String PHASE_TRANSPORT_OUT = "MessageOut";
 
     /**
      * Field BOTH_BEFORE_AFTER

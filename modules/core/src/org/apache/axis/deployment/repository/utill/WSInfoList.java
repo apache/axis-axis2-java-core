@@ -16,13 +16,13 @@
 
 package org.apache.axis.deployment.repository.utill;
 
+import org.apache.axis.deployment.DeploymentConstants;
+import org.apache.axis.deployment.DeploymentEngine;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.axis.deployment.DeploymentConstants;
-import org.apache.axis.deployment.DeploymentEngine;
 
 public class WSInfoList implements DeploymentConstants {
     /**
@@ -73,8 +73,8 @@ public class WSInfoList implements DeploymentConstants {
                     if (!isFileExist(file.getName())) { // chacking whether the file is already deployed
                         WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), SERVICE);
                         jarlist.add(wsInfo);
-                        HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
-                        deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
+                        ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                        deplorer.addtowsToDeploy(archiveFileData);//to inform that new web service is deployed
                     } else {
                         if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
@@ -82,8 +82,8 @@ public class WSInfoList implements DeploymentConstants {
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
                                 WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), SERVICE);
                                 deplorer.addtowstoUnDeploy(wsInfo);  // add entry to undeploy list
-                                HDFileItem hdFileItem = new HDFileItem(file, SERVICE);
-                                deplorer.addtowsToDeploy(hdFileItem);   // add entry to deploylist
+                                ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                                deplorer.addtowsToDeploy(archiveFileData);   // add entry to deploylist
 
                             }
                         }
@@ -95,8 +95,8 @@ public class WSInfoList implements DeploymentConstants {
                     if (!isFileExist(file.getName())) {  // chacking whether the file is already deployed
                         WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), MODULE);
                         jarlist.add(wsInfo);
-                        HDFileItem hdFileItem = new HDFileItem(file, MODULE);
-                        deplorer.addtowsToDeploy(hdFileItem);//to inform that new web service is deployed
+                        ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+                        deplorer.addtowsToDeploy(archiveFileData);//to inform that new web service is deployed
                     } else {
                         if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
@@ -104,8 +104,8 @@ public class WSInfoList implements DeploymentConstants {
                                 tempWSInfo.setLastmodifieddate(file.lastModified());
                                 WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), MODULE);
                                 deplorer.addtowstoUnDeploy(wsInfo);   // add entry to undeploy list
-                                HDFileItem hdFileItem = new HDFileItem(file, MODULE);
-                                deplorer.addtowsToDeploy(hdFileItem); // add entry to deploylist
+                                ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+                                deplorer.addtowsToDeploy(archiveFileData); // add entry to deploylist
 
                             }
                         }

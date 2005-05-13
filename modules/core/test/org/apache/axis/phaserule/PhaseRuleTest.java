@@ -30,7 +30,8 @@ public class PhaseRuleTest extends AbstractTestCase {
 
     public void testPhaseRules() throws Exception {
         super.setUp();
-        phaserul = new PhaseRuleTest("");
+        //TODO fix me
+       /* phaserul = new PhaseRuleTest("");
         GlobalDescription global = new GlobalDescription();
         registry = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
@@ -93,7 +94,9 @@ public class PhaseRuleTest extends AbstractTestCase {
         for (int i = 0; i < oh.size(); i++) {
             HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
-        }
+        }*/
+
+        fail("this must failed gracefully with PhaseException ");
     }
 
     //

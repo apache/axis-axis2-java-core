@@ -15,15 +15,14 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-
-import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhasesInclude;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Phase;
+
+import java.util.ArrayList;
 
 
 /**
@@ -32,101 +31,24 @@ import org.apache.axis.engine.Phase;
 public class PhaseHolder {
 
     /**
-     * Field phaseholder
+     * Field phasemetadatholder
      */
-    private ArrayList phaseholder = new ArrayList();
+    private ArrayList phasemetadatholder;
 
-    /**
-     * Referance to ServerMetaData inorder to get information about phases.
-     */
-    private final AxisConfiguration registry;    // = new  ServerMetaData();
+    private ArrayList phaseList;
 
-    private PhasesInclude phaseInclude;
-
-    private ArrayList inPhases;
-    private ArrayList outPhases;
-    private ArrayList faultInPhases;
-    private ArrayList faultOutPhases;
-
-
-    /**
-     * Constructor PhaseHolder
-     *
-     * @param registry
-     */
-    public PhaseHolder(AxisConfiguration registry, PhasesInclude phaseInclude) {
-        this.registry = registry;
-        this.phaseInclude = phaseInclude;
-        fillFlowPhases();
+    public PhaseHolder(ArrayList phases) {
+        this.phaseList = phases;
+        fillPhaseMetaData();
     }
 
-    public PhaseHolder(AxisConfiguration registry) {
-        this.registry = registry;
-        this.phaseInclude = null;
-        fillFlowPhases();
-    }
-
-
-    public void setFlowType(int flowType) {
-        switch (flowType) {
-            case PhaseMetadata.IN_FLOW:
-                {
-                    phaseholder = inPhases;
-                    break;
-                }
-            case PhaseMetadata.OUT_FLOW:
-                {
-                    phaseholder = outPhases;
-                    break;
-                }
-            case PhaseMetadata.FAULT_IN_FLOW:
-                {
-                    phaseholder = faultInPhases;
-                    break;
-                }
-            case PhaseMetadata.FAULT_OUT_FLOW:
-                {
-                    phaseholder = faultOutPhases;
-                    break;
-                }
+    private void fillPhaseMetaData() {
+        phasemetadatholder = new ArrayList();
+        for (int i = 0; i < phaseList.size(); i++) {
+            Phase phase = (Phase) phaseList.get(i);
+            phasemetadatholder.add(new PhaseMetadata(phase.getPhaseName()));
         }
-    }
 
-    private void fillFlowPhases() {
-        inPhases = new ArrayList();
-        outPhases = new ArrayList();
-        faultInPhases = new ArrayList();
-        faultOutPhases = new ArrayList();
-//TODO deepal fix this
-//        ArrayList tempPhases = registry.getInPhasesUptoAndIncludingPostDispatch();
-//        for (int i = 0; i < tempPhases.size(); i++) {
-//            String name = (String) tempPhases.get(i);
-//            PhaseMetadata pm = new PhaseMetadata(name);
-//            inPhases.add(pm);
-//        }
-//        inPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-//        tempPhases = registry.getOutFlow();
-//        for (int i = 0; i < tempPhases.size(); i++) {
-//            String name = (String) tempPhases.get(i);
-//            PhaseMetadata pm = new PhaseMetadata(name);
-//            outPhases.add(pm);
-//        }
-//        outPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-//
-//        tempPhases = registry.getInFaultFlow();
-//        faultInPhases.add(0, new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
-//        for (int i = 0; i < tempPhases.size(); i++) {
-//            String name = (String) tempPhases.get(i);
-//            PhaseMetadata pm = new PhaseMetadata(name);
-//            faultInPhases.add(pm);
-//        }
-//        tempPhases = registry.getOutFaultFlow();
-//        for (int i = 0; i < tempPhases.size(); i++) {
-//            String name = (String) tempPhases.get(i);
-//            PhaseMetadata pm = new PhaseMetadata(name);
-//            faultOutPhases.add(pm);
-//        }
-//        faultOutPhases.add(new PhaseMetadata(PhaseMetadata.PRE_DISPATCH));
     }
 
     /**
@@ -136,8 +58,8 @@ public class PhaseHolder {
      * @return
      */
     private boolean isPhaseExist(String phaseName) {
-        for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
+        for (int i = 0; i < phasemetadatholder.size(); i++) {
+            PhaseMetadata phase = (PhaseMetadata) phasemetadatholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return true;
             }
@@ -154,37 +76,24 @@ public class PhaseHolder {
     public void addHandler(HandlerDescription handler) throws PhaseException {
         String phaseName = handler.getRules().getPhaseName();
         if (isPhaseExist(phaseName)) {
-            getPhase(phaseName).addHandler(handler);
+            getPhaseMetaData(phaseName).addHandler(handler);
         } else {
             throw new PhaseException("Invalid Phase ," + phaseName
                     + "for the handler "
                     + handler.getName()
                     + " dose not exit in server.xml or refering to phase in diffrent flow");
         }
-        /*
-        else {
-        if (isPhaseExistinER(phaseName)) {
-        PhaseMetadata newpPhase = new PhaseMetadata(phaseName);
-        addPhase(newpPhase);
-        newpPhase.addHandler(handler);
-        } else {
-        throw new PhaseException("Invalid Phase ," + phaseName
-        + "for the handler "
-        + handler.getName()
-        + " dose not exit in server.xml");
-        }
-        }*/
     }
 
     /**
-     * Method getPhase
+     * Method getPhaseMetaData
      *
      * @param phaseName
      * @return
      */
-    private PhaseMetadata getPhase(String phaseName) {
-        for (int i = 0; i < phaseholder.size(); i++) {
-            PhaseMetadata phase = (PhaseMetadata) phaseholder.get(i);
+    private PhaseMetadata getPhaseMetaData(String phaseName) {
+        for (int i = 0; i < phasemetadatholder.size(); i++) {
+            PhaseMetadata phase = (PhaseMetadata) phasemetadatholder.get(i);
             if (phase.getName().equals(phaseName)) {
                 return phase;
             }
@@ -192,13 +101,30 @@ public class PhaseHolder {
         return null;
     }
 
+    /**
+     * this method is used to get the actual phase object given in the phase array list
+     *
+     * @param phaseName
+     * @return
+     */
+    private Phase getPhase(String phaseName) {
+        for (int i = 0; i < phaseList.size(); i++) {
+            Phase phase = (Phase) phaseList.get(i);
+            if (phase.getPhaseName().equals(phaseName)) {
+                return phase;
+            }
+        }
+        return null;
+    }
+
+
     public ArrayList getOrderHandler() throws PhaseException {
         ArrayList handlerList = new ArrayList();
         //OrderThePhases();
         HandlerDescription[] handlers;
-        for (int i = 0; i < phaseholder.size(); i++) {
+        for (int i = 0; i < phasemetadatholder.size(); i++) {
             PhaseMetadata phase =
-                    (PhaseMetadata) phaseholder.get(i);
+                    (PhaseMetadata) phasemetadatholder.get(i);
             handlers = phase.getOrderedHandlers();
             for (int j = 0; j < handlers.length; j++) {
                 handlerList.add(handlers[j]);
@@ -210,93 +136,22 @@ public class PhaseHolder {
 
 
     /**
-     * chainType
-     * 1 : inFlowExcChain
-     * 2 : OutFlowExeChain
-     * 3 : FaultFlowExcechain
-     *
-     * @param chainType
-     * @throws org.apache.axis.phaseresolver.PhaseException
+     * This is used to order handlers inside a phase
      *
      * @throws PhaseException
      */
-    public void getOrderedHandlers(int chainType) throws PhaseException {
-        try {
-            //OrderThePhases();
-
-            HandlerDescription[] handlers;
-            switch (chainType) {
-                case PhaseMetadata.IN_FLOW:
-                    {
-                        ArrayList inChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            inChain.add(axisPhase);
-                        }
-                        phaseInclude.setPhases(inChain, AxisConfiguration.INFLOW);
-                        // service.setPhases(inChain, EngineConfiguration.INFLOW);
-                        break;
-                    }
-                case PhaseMetadata.OUT_FLOW:
-                    {
-                        ArrayList outChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            outChain.add(axisPhase);
-                        }
-                        //service.setPhases(outChain, EngineConfiguration.OUTFLOW);
-                        phaseInclude.setPhases(outChain, AxisConfiguration.OUTFLOW);
-                        break;
-                    }
-                case PhaseMetadata.FAULT_IN_FLOW:
-                    {
-                        ArrayList faultInChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            faultInChain.add(axisPhase);
-                        }
-                        phaseInclude.setPhases(faultInChain, AxisConfiguration.FAULT_IN_FLOW);
-                        // service.setPhases(faultInChain, EngineConfiguration.FAULT_IN_FLOW);
-                        break;
-                    }
-                case PhaseMetadata.FAULT_OUT_FLOW:
-                    {
-                        ArrayList faultOutChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            faultOutChain.add(axisPhase);
-                        }
-                        phaseInclude.setPhases(faultOutChain, AxisConfiguration.FAULT_OUT_FLOW);
-                        //   service.setPhases(faultOutChain, EngineConfiguration.FAULT_IN_FLOW);
-                        break;
-                    }
+    public void getOrderedHandlers() throws PhaseException {
+        HandlerDescription[] handlers;
+        for (int i = 0; i < phasemetadatholder.size(); i++) {
+            PhaseMetadata phase =
+                    (PhaseMetadata) phasemetadatholder.get(i);
+            Phase axisPhase = getPhase(phase.getName());
+            handlers = phase.getOrderedHandlers();
+            if (axisPhase != null) {
+                for (int j = 0; j < handlers.length; j++) {
+                    axisPhase.addHandler(handlers[j].getHandler());
+                }
             }
-        } catch (AxisFault e) {
-            throw new PhaseException(e);
         }
     }
 
@@ -313,9 +168,9 @@ public class PhaseHolder {
                 case PhaseMetadata.IN_FLOW:
                     {
                         ArrayList inChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
+                        for (int i = 0; i < phasemetadatholder.size(); i++) {
                             PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
+                                    (PhaseMetadata) phasemetadatholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -343,9 +198,9 @@ public class PhaseHolder {
                 case PhaseMetadata.OUT_FLOW:
                     {
                         ArrayList outChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
+                        for (int i = 0; i < phasemetadatholder.size(); i++) {
                             PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
+                                    (PhaseMetadata) phasemetadatholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -373,9 +228,9 @@ public class PhaseHolder {
                 case PhaseMetadata.FAULT_IN_FLOW:
                     {
                         ArrayList faultChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
+                        for (int i = 0; i < phasemetadatholder.size(); i++) {
                             PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
+                                    (PhaseMetadata) phasemetadatholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -403,9 +258,9 @@ public class PhaseHolder {
                 case PhaseMetadata.FAULT_OUT_FLOW:
                     {
                         ArrayList faultChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
+                        for (int i = 0; i < phasemetadatholder.size(); i++) {
                             PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
+                                    (PhaseMetadata) phasemetadatholder.get(i);
                             Phase axisPhase = new Phase(phase.getName());
                             handlers = phase.getOrderedHandlers();
                             for (int j = 0; j < handlers.length; j++) {
@@ -436,87 +291,4 @@ public class PhaseHolder {
         }
     }
 
-
-    /**
-     * Method buildGlobalChain
-     *
-     * @param engineContext
-     * @param chainType
-     * @throws PhaseException
-     */
-    public void buildGlobalChain(ConfigurationContext engineContext, int chainType)
-            throws PhaseException {
-        try {
-            //OrderThePhases();
-            HandlerDescription[] handlers;
-            switch (chainType) {
-                case PhaseMetadata.IN_FLOW:
-                    {
-                        ArrayList inChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            inChain.add(axisPhase);
-                        }
-                        engineContext.setPhases(inChain, AxisConfiguration.INFLOW);
-                        break;
-                    }
-                case PhaseMetadata.OUT_FLOW:
-                    {
-                        ArrayList outChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            outChain.add(axisPhase);
-                        }
-                        engineContext.setPhases(outChain, AxisConfiguration.OUTFLOW);
-                        break;
-                    }
-                case PhaseMetadata.FAULT_IN_FLOW:
-                    {
-                        ArrayList faultChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            faultChain.add(axisPhase);
-                        }
-                        engineContext.setPhases(faultChain, AxisConfiguration.FAULT_IN_FLOW);
-                        break;
-                    }
-                case PhaseMetadata.FAULT_OUT_FLOW:
-                    {
-                        ArrayList faultChain = new ArrayList();
-                        for (int i = 0; i < phaseholder.size(); i++) {
-                            PhaseMetadata phase =
-                                    (PhaseMetadata) phaseholder.get(i);
-                            Phase axisPhase = new Phase(phase.getName());
-                            handlers = phase.getOrderedHandlers();
-                            for (int j = 0; j < handlers.length; j++) {
-                                axisPhase.addHandler(handlers[j].getHandler());
-                            }
-                            faultChain.add(axisPhase);
-                        }
-                        engineContext.setPhases(faultChain, AxisConfiguration.FAULT_OUT_FLOW);
-                        break;
-                    }
-            }
-        } catch (AxisFault e) {
-            throw new PhaseException(e);
-        }
-    }
 }

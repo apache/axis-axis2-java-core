@@ -46,7 +46,8 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
     }
 
     public void testPhaseRule() throws Exception {
-        phaserul = new PreDispatchPhaseRuleTest("");
+        //TODO Fix me
+      /*  phaserul = new PreDispatchPhaseRuleTest("");
         GlobalDescription global = new GlobalDescription();
         registry = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
@@ -129,6 +130,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         for (int i = 0; i < oh.size(); i++) {
             HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
-        }
+        }*/
+        fail("this must failed gracefully with PhaseException ");
     }
 }

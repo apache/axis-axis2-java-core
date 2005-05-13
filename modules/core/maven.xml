@@ -13,7 +13,7 @@
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/deployment/service2"/>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/deployment/OutService"/>
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/deployment/module1"/>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/deployment/module2"/>
+	<!--	<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/deployment/module2"/> -->
 	</j:jelly>
       <ant:copy file="${basedir}/test-resources/deployment/server.xml" tofile="${basedir}/target/test-resources/deployment/server.xml"/>
     </postGoal> 

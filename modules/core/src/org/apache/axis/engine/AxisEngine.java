@@ -66,7 +66,7 @@ public class AxisEngine {
             verifyContextBuilt(msgContext);
             OperationContext operationContext = msgContext.getOperationContext();
 
-            ArrayList phases = operationContext.getAxisOperation().getPhasesInOutFlow();
+            ArrayList phases = operationContext.getAxisOperation().getPhasesOutFlow();
             invokePhases(phases, msgContext);
 
             TransportSender sender = msgContext.getTransportOut().getSender();
@@ -95,7 +95,7 @@ public class AxisEngine {
             invokePhases(phases, context);
             
             OperationContext operationContext = context.getOperationContext();
-            phases = operationContext.getAxisOperation().getPhasesInOutFlow();
+            phases = operationContext.getAxisOperation().getPhasesOutFlow();
             invokePhases(phases, context);
             if (context.isServerSide()) {
                 // add invoke Phase
@@ -144,7 +144,7 @@ public class AxisEngine {
             OperationContext opContext  = context.getOperationContext();
             if(opContext != null){
                 OperationDescription axisOperation = opContext.getAxisOperation();
-                ArrayList phases = axisOperation.getPhasesInFaultOutFlow();
+                ArrayList phases = axisOperation.getPhasesOutFaultFlow();
                 invokePhases(phases, context);
             }
             // Write the the error
