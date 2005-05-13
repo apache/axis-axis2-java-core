@@ -16,9 +16,20 @@
 
 package org.apache.axis.transport.mail;
 
-import java.io.ByteArrayInputStream;
-import java.io.Writer;
-import java.util.Properties;
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.smtp.SMTPClient;
+import org.apache.commons.net.smtp.SMTPReply;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -27,21 +38,9 @@ import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.smtp.SMTPClient;
-import org.apache.commons.net.smtp.SMTPReply;
+import java.io.ByteArrayInputStream;
+import java.io.Writer;
+import java.util.Properties;
 
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());

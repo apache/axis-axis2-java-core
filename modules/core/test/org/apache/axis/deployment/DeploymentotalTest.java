@@ -16,14 +16,13 @@
 
 package org.apache.axis.deployment;
 
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.context.EngineContextFactory;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.phaseresolver.PhaseException;
+
+import javax.xml.stream.XMLStreamException;
 
 public class DeploymentotalTest extends TestCase {
     AxisConfiguration er;

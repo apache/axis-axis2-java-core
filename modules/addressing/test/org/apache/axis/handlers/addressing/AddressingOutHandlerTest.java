@@ -1,7 +1,5 @@
 package org.apache.axis.handlers.addressing;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
@@ -11,10 +9,12 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

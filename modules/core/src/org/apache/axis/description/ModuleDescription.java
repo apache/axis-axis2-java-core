@@ -15,9 +15,9 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.modules.Module;
+
+import javax.xml.namespace.QName;
 
 /**
  * <p>This holds the information about a Module. </p>

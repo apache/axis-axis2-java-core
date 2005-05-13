@@ -15,6 +15,8 @@
  */
 package org.apache.axis.om;
 
+import org.apache.axis.soap.SOAPBody;
+
 public class OMBodyTest extends OMTestCase implements OMConstants {
     SOAPBody soapBody;
 

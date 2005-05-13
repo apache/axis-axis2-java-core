@@ -1,21 +1,9 @@
 package org.apache.axis.wsdl.codegen.emitter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.codegen.writer.BeanWriter;
-import org.apache.axis.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
-import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
-import org.apache.axis.wsdl.codegen.writer.CallbackWriter;
+import org.apache.axis.wsdl.codegen.writer.*;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
@@ -23,6 +11,14 @@ import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLTypes;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

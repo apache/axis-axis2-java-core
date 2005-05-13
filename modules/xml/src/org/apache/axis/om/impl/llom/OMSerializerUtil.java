@@ -1,14 +1,13 @@
 package org.apache.axis.om.impl.llom;
 
-import java.util.Iterator;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.Iterator;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

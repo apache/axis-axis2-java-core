@@ -1,8 +1,9 @@
 package org.apache.axis.om;
 
-import javax.xml.namespace.QName;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

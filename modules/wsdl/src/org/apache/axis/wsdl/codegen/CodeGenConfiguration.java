@@ -16,9 +16,9 @@
 
 package org.apache.axis.wsdl.codegen;
 
-import java.io.File;
-
 import org.apache.wsdl.WSDLDescription;
+
+import java.io.File;
 
 /**
  * @author chathura@opensource.lk

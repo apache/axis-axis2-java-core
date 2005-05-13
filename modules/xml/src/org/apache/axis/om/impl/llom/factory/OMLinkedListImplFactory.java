@@ -15,17 +15,12 @@
  */
 package org.apache.axis.om.impl.llom.factory;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class OMLinkedListImplFactory

@@ -16,14 +16,14 @@
  
 package org.apache.axis.registry;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
+import org.apache.axis.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis.handlers.AbstractHandler;
+
+import javax.xml.namespace.QName;
 
 public class Handler3 extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());

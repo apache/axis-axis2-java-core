@@ -1,19 +1,18 @@
 package userguide.sample1;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.soap.SOAPEnvelope;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.

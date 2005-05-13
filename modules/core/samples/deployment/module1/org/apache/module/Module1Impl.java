@@ -1,8 +1,8 @@
 package org.apache.module;
 
-import org.apache.axis.modules.Module;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.modules.Module;
 
 /**
  * Created by IntelliJ IDEA.

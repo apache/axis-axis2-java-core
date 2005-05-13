@@ -22,7 +22,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.soap.SOAPFactory;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {

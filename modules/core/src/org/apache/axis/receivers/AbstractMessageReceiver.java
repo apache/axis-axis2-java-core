@@ -16,15 +16,15 @@
 
 package org.apache.axis.receivers;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
+
+import javax.xml.namespace.QName;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";

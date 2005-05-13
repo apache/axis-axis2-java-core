@@ -16,14 +16,14 @@
  
 package org.apache.axis.deployment;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.description.Flow;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.Flow;
 import org.apache.axis.engine.AxisConfiguration;
+
+import javax.xml.namespace.QName;
 
 public class BuildERWithDeploymentTest extends AbstractTestCase {
     /**

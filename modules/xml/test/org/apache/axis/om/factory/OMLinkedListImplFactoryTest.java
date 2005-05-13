@@ -15,21 +15,10 @@
  */
 package org.apache.axis.om.factory;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMTestUtils;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.soap.SOAPConstants;
-import org.apache.axis.om.impl.llom.soap.soap11.SOAP11Constants;
+import org.apache.axis.om.*;
+import org.apache.axis.soap.*;
+import org.apache.axis.soap.impl.llom.SOAPConstants;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)

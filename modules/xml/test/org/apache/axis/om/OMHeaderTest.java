@@ -15,9 +15,11 @@
  */
 package org.apache.axis.om;
 
-import java.util.Iterator;
-
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis.soap.SOAPHeader;
+import org.apache.axis.soap.SOAPHeaderBlock;
+
+import java.util.Iterator;
 
 public class OMHeaderTest extends OMTestCase {
     SOAPHeader soapHeader;

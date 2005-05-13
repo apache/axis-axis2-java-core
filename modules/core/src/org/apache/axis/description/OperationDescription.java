@@ -1,10 +1,5 @@
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.OperationContextFactory;
@@ -17,6 +12,10 @@ import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author chathura@opensource.lk

@@ -15,18 +15,13 @@
 */
 package org.apache.axis.engine;
 
+import org.apache.axis.description.*;
+import org.apache.axis.phaseresolver.PhaseMetadata;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
-import org.apache.axis.phaseresolver.PhaseMetadata;
 
 /**
  * Class EngineRegistryImpl

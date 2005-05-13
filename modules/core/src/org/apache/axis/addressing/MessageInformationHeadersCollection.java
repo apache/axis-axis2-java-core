@@ -16,7 +16,7 @@
 package org.apache.axis.addressing;
 
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.om.SOAPHeader;
+import org.apache.axis.soap.SOAPHeader;
 
 /**
  * This holds the WSA Message Information Headers

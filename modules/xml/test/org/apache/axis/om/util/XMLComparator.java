@@ -1,13 +1,13 @@
 package org.apache.axis.om.util;
 
-import java.util.Iterator;
-
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

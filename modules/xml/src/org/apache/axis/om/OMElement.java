@@ -15,10 +15,9 @@
 */
 package org.apache.axis.om;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import java.util.Iterator;
 
 /**
  * Interface OMElement

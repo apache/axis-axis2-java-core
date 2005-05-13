@@ -16,8 +16,6 @@
 
 package org.apache.axis.context;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.OperationDescription;
@@ -25,6 +23,8 @@ import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk

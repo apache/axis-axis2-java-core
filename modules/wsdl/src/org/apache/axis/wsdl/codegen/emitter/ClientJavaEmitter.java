@@ -16,13 +16,13 @@
 
 package org.apache.axis.wsdl.codegen.emitter;
 
-import java.io.IOException;
-
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.databinding.DefaultTypeMapper;
 import org.apache.wsdl.WSDLBinding;
+
+import java.io.IOException;
 
 /**
  * @author chathura@opensource.lk

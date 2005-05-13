@@ -15,6 +15,8 @@
  */
 package org.apache.axis.om;
 
+import org.apache.axis.soap.SOAPEnvelope;
+
 public class MessagesTest extends OMTestCase {
     SOAPEnvelope soapEnvelope;
 

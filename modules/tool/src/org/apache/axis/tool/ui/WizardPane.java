@@ -1,14 +1,9 @@
 package org.apache.axis.tool.ui;
 
-import java.awt.LayoutManager;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.io.File;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

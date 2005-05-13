@@ -16,15 +16,15 @@
  
 package org.apache.axis.deployment;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.phaseresolver.PhaseException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 public class TransportDeploymentTest extends AbstractTestCase {
     /**

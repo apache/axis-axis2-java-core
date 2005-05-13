@@ -15,11 +15,10 @@
  */
 package org.apache.axis.wsdl.builder;
 
-import java.io.InputStream;
+import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
-
-import org.apache.wsdl.WSDLDescription;
+import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk

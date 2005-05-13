@@ -16,13 +16,13 @@
 
 package org.apache.axis.transport.mail;
 
-import java.io.Writer;
-import java.net.Socket;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
+
+import java.io.Writer;
+import java.net.Socket;
 
 public class MailTransportSender extends AbstractTransportSender {
     protected Writer out;

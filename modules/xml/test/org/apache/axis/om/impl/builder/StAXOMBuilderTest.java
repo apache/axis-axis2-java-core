@@ -15,18 +15,13 @@
  */
 package org.apache.axis.om.impl.builder;
 
-import java.io.FileReader;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+
+import javax.xml.stream.XMLInputFactory;
+import java.io.FileReader;
+import java.util.Iterator;
 
 public class StAXOMBuilderTest extends AbstractTestCase {
     StAXOMBuilder stAXOMBuilder;

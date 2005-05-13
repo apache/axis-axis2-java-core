@@ -15,39 +15,15 @@
  */
 package org.apache.axis.wsdl.builder.wsdl4j;
 
-import java.util.Iterator;
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+import org.apache.wsdl.*;
+import org.apache.wsdl.impl.WSDLProcessingException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
+import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
-
-import org.apache.axis.wsdl.builder.WSDLComponentFactory;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.impl.WSDLProcessingException;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

@@ -16,27 +16,21 @@
 
 package org.apache.axis.engine;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.HTTPTransportSender;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 public class EnginePausingTest extends TestCase {
 

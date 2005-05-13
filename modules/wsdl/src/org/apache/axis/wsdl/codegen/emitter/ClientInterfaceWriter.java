@@ -16,17 +16,13 @@
 
 package org.apache.axis.wsdl.codegen.emitter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Iterator;
-
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
+
+import java.io.*;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

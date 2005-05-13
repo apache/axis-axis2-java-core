@@ -16,16 +16,15 @@
  
 package org.apache.axis.integration;
 
-import java.io.File;
-import java.net.ServerSocket;
-
-import javax.xml.namespace.QName;
-
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.net.ServerSocket;
 
 public class UtilServer {
     private static int count = 0;

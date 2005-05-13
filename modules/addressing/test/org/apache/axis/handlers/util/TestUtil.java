@@ -1,12 +1,11 @@
 package org.apache.axis.handlers.util;
 
-import java.io.File;
-import java.io.FileReader;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

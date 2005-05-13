@@ -18,10 +18,10 @@ package org.apache.axis.context;
  * 
  */
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
+
+import javax.xml.namespace.QName;
 
 
 public class ServiceContext extends AbstractContext {

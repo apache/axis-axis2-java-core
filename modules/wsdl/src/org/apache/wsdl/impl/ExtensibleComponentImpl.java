@@ -15,13 +15,13 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wsdl.ExtensibleComponent;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLProperty;
 import org.w3c.dom.Element;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**

@@ -1,21 +1,6 @@
 package org.apache.axis.wsdl.builder;
 
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLFault;
-import org.apache.wsdl.WSDLFeature;
-import org.apache.wsdl.WSDLImport;
-import org.apache.wsdl.WSDLInclude;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLProperty;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.*;
 
 /**
  * @author chathura@opensource.lk

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.om;
 
+import org.apache.axis.soap.SOAPEnvelope;
+
 import java.io.File;
 
 public class BadInputTest extends OMTestCase {

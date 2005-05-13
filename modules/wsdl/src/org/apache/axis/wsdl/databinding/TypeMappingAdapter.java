@@ -1,8 +1,7 @@
 package org.apache.axis.wsdl.databinding;
 
-import java.util.HashMap;
-
 import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

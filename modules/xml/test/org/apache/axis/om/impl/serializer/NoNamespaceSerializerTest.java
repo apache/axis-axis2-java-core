@@ -1,21 +1,19 @@
 package org.apache.axis.om.impl.serializer;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
+import junit.framework.TestCase;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
-import junit.framework.TestCase;
-
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

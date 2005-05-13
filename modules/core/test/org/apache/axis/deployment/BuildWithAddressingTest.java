@@ -1,15 +1,14 @@
 package org.apache.axis.deployment;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.Phase;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

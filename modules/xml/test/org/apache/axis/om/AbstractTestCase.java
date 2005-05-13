@@ -15,9 +15,9 @@
  */
 package org.apache.axis.om;
 
-import java.io.File;
-
 import junit.framework.TestCase;
+
+import java.io.File;
 
 /**
  * Abstract base class for test cases.

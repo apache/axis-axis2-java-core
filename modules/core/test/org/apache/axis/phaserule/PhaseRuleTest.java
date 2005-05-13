@@ -1,17 +1,7 @@
 package org.apache.axis.phaserule;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisSystemImpl;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.phaseresolver.PhaseHolder;
 
 /**
  * Created by IntelliJ IDEA.

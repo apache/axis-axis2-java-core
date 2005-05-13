@@ -1,7 +1,6 @@
 package org.apache.axis.storage.impl;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.storage.AxisStorage;
 
 /*

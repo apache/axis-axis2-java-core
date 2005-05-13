@@ -22,7 +22,7 @@ import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.ExecutionChain;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.soap.SOAPEnvelope;
 
 /**
  * The palce where all the service specific states are kept.

@@ -4,8 +4,8 @@ package userguide.sample1;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.

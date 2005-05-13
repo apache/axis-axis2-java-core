@@ -15,12 +15,12 @@
  */
 package org.apache.axis.om.impl.llom.factory;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.SOAPFactory;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Class OMXMLBuilderFactory

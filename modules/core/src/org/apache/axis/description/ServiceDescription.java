@@ -15,16 +15,15 @@
  */
 package org.apache.axis.description;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * Class ServiceDescription

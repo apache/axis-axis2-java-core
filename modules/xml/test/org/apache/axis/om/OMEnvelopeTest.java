@@ -15,6 +15,10 @@
  */
 package org.apache.axis.om;
 
+import org.apache.axis.soap.SOAPBody;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPHeader;
+
 public class OMEnvelopeTest extends OMTestCase {
     public OMEnvelopeTest(String testName) {
         super(testName);

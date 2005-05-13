@@ -15,7 +15,7 @@
  */
 package org.apache.axis.clientapi;
 
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.soap.SOAPEnvelope;
 
 /**
  * Class AsyncResult

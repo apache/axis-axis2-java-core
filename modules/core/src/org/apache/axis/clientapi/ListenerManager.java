@@ -17,13 +17,13 @@
  */
 package org.apache.axis.clientapi;
 
-import java.net.ServerSocket;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
+
+import java.net.ServerSocket;
 
 public class ListenerManager {
     private ConfigurationContext systemContext;

@@ -17,24 +17,19 @@
  */
 package org.apache.axis.clientapi;
 
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.

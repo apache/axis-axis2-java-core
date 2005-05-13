@@ -15,28 +15,12 @@
  */
 package org.apache.wsdl.impl;
 
+import org.apache.wsdl.*;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLFault;
-import org.apache.wsdl.WSDLFeature;
-import org.apache.wsdl.WSDLImport;
-import org.apache.wsdl.WSDLInclude;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLProperty;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
 
 /**
  * @author chathura@opensource.lk

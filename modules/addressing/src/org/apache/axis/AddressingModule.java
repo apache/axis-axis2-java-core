@@ -1,10 +1,8 @@
 package org.apache.axis;
 
-import org.apache.axis.modules.Module;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.modules.Module;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

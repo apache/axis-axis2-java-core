@@ -1,10 +1,10 @@
 package org.apache.axis.tool.core;
 
+import org.apache.axis.tool.control.ProcessException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-
-import org.apache.axis.tool.control.ProcessException;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

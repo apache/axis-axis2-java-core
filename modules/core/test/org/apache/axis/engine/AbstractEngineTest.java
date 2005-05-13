@@ -17,7 +17,6 @@
 package org.apache.axis.engine;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.receivers.AbstractInOutSyncMessageReceiver;
 

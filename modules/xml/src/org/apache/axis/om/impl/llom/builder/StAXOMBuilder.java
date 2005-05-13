@@ -15,18 +15,12 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
+import org.apache.axis.om.*;
+import org.apache.axis.om.impl.llom.OMDocument;
+import org.apache.axis.soap.SOAPEnvelope;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.impl.llom.OMDocument;
 
 /**
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.

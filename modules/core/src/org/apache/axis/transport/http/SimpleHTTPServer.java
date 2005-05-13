@@ -15,25 +15,20 @@
  */
 package org.apache.axis.transport.http;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * This is a simple implementation of an HTTP server for processing

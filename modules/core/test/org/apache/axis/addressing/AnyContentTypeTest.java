@@ -16,9 +16,9 @@
  
 package org.apache.axis.addressing;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
+
+import javax.xml.namespace.QName;
 
 
 public class AnyContentTypeTest extends TestCase {

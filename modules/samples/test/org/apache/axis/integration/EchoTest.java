@@ -16,17 +16,16 @@
 
 package org.apache.axis.integration;
 
+import junit.framework.TestCase;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.soap.SOAPFactory;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import junit.framework.TestCase;
-
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.SOAPFactory;
 
 public class EchoTest extends TestCase {
     private final SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();

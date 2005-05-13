@@ -15,7 +15,6 @@
  */
 package org.apache.axis.transport;
 import junit.framework.TestCase;
-
 import org.apache.axis.transport.mail.SimpleMailListner;
 
 public class SimpleMailListnerTest extends TestCase {

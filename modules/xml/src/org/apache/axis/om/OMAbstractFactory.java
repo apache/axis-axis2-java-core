@@ -1,6 +1,7 @@
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.factory.SOAPLinkedListImplFactory;
+import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.factory.SOAPLinkedListImplFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
