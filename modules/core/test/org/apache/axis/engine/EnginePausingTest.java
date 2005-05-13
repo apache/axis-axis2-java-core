@@ -20,6 +20,10 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.TestCase;
+
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -31,41 +35,52 @@ import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.transport.http.HTTPTransportSender;
+import org.apache.wsdl.WSDLService;
 
-public class EnginePausingTest extends AbstractEngineTest {
-  
+public class EnginePausingTest extends TestCase {
+
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
     private ConfigurationContext engineContext;
 
-    public EnginePausingTest() {
-    }
+    private TransportOutDescription transportOut;
+    private TransportInDescription transportIn;
+    private MessageContext mc;
+    private ArrayList executedHandlers;
 
-    public EnginePausingTest(String arg0) {
+    public EnginePausingTest(String arg0) throws AxisFault {
         super(arg0);
+
+        AxisConfiguration engineRegistry = new AxisSystemImpl(new GlobalDescription());
+        engineContext = new ConfigurationContext(engineRegistry);
+        transportOut = new TransportOutDescription(new QName("null"));
+        transportOut.setSender(new HTTPTransportSender());
+        transportIn = new TransportInDescription(new QName("null"));
+
     }
     protected void setUp() throws Exception {
-        engineRegistry = new AxisSystemImpl(new GlobalDescription());
 
-        TransportOutDescription transportOut = new TransportOutDescription(new QName("null"));
-        transportOut.setSender(new NullTransportSender());
-
-        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
-        
-        engineContext = new ConfigurationContext(engineRegistry);
+        ServiceDescription service = new ServiceDescription(serviceName);
+        service.setStyle(WSDLService.STYLE_DOC);
+        engineContext.getEngineConfig().addService(service);
 
         OperationDescription axisOp = new OperationDescription(operationName);
-        mc = new MessageContext(null, transportIn,transportOut,engineContext);
+        axisOp.setMessageReciever(new MessageReceiver() {
+            public void recieve(MessageContext messgeCtx) throws AxisFault {
+                
+            }
+        });
+        service.addOperation(axisOp);
+
+        mc = new MessageContext(null, transportIn, transportOut, engineContext);
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
+        mc.setProperty(MessageContext.TRANSPORT_WRITER, System.out);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
-        ServiceDescription service = new ServiceDescription(serviceName);
-        axisOp.setMessageReciever(new NullMessageReceiver());
-        
 
-        service.addOperation(axisOp);
         ArrayList phases = new ArrayList();
 
         Phase phase = new Phase("1");
@@ -103,19 +118,16 @@ public class EnginePausingTest extends AbstractEngineTest {
         phase1.addHandler(new TempHandler(26));
         phase1.addHandler(new TempHandler(27));
         phases.add(phase1);
-        
-        ServiceContext serviceContext = new ServiceContext(service,engineContext);
-        engineContext.registerServiceContext(serviceContext.getServiceInstanceID(),serviceContext);
 
-//TODO
-//        serviceContext.setPhases(phases, EngineConfiguration.INFLOW);
-//        engineRegistry.addService(service);
-//        service.setStyle(WSDLService.STYLE_DOC);
-//        mc.setTo(
-//            new EndpointReference(
-//                AddressingConstants.WSA_TO,
-//                "axis/services/NullService/DummyOp"));
-//        mc.setWSAAction(operationName.getLocalPart());
+        ServiceContext serviceContext = new ServiceContext(service, engineContext);
+        engineContext.registerServiceContext(serviceContext.getServiceInstanceID(), serviceContext);
+
+        //TODO
+        axisOp.getRemainingPhasesInFlow().addAll(phases);
+        mc.setTo(
+            new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
+        mc.setWSAAction(operationName.getLocalPart());
+        System.out.flush();
 
     }
 
@@ -135,24 +147,24 @@ public class EnginePausingTest extends AbstractEngineTest {
         }
 
     }
-    
+
     public class TempHandler extends AbstractHandler {
-         private Integer index;
-         private boolean pause = false;
-         public TempHandler(int index, boolean pause) {
-             this.index = new Integer(index);
-             this.pause = pause;
-         }
-         public TempHandler(int index) {
-             this.index = new Integer(index);
-         }
+        private Integer index;
+        private boolean pause = false;
+        public TempHandler(int index, boolean pause) {
+            this.index = new Integer(index);
+            this.pause = pause;
+        }
+        public TempHandler(int index) {
+            this.index = new Integer(index);
+        }
 
-         public void invoke(MessageContext msgContext) throws AxisFault {
-             executedHandlers.add(index);
-             if (pause) {
-                 msgContext.setPaused(true);
-             }
-         }
+        public void invoke(MessageContext msgContext) throws AxisFault {
+            executedHandlers.add(index);
+            if (pause) {
+                msgContext.setPaused(true);
+            }
+        }
 
-     }
+    }
 }

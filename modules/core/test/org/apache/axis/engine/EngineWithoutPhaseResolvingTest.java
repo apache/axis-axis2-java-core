@@ -16,6 +16,8 @@
 
 package org.apache.axis.engine;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
@@ -33,6 +35,7 @@ import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.SOAPFactory;
+import org.apache.axis.transport.http.HTTPTransportSender;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
 
@@ -44,6 +47,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private QName opearationName = new QName("NullOperation");
     private ServiceDescription service;
     private ConfigurationContext engineContext;
+    private OperationDescription axisOp;
 
     public EngineWithoutPhaseResolvingTest() {
     }
@@ -57,10 +61,10 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription(new QName("null"));
-        transport.setSender(new NullTransportSender());
+        transport.setSender(new HTTPTransportSender());
 
         TransportInDescription transportIn = new TransportInDescription(new QName("null"));
-        OperationDescription axisOp = new OperationDescription(opearationName);
+        axisOp = new OperationDescription(opearationName);
 
         service = new ServiceDescription(serviceName);
         axisOp.setMessageReciever(new NullMessageReceiver());
@@ -78,13 +82,14 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                 transport,
         OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp, serviceContext));
         mc.setTransportOut(transport);
+        mc.setProperty(MessageContext.TRANSPORT_WRITER,new OutputStreamWriter(System.out));
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
 
-        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService"));
+        
         mc.setWSAAction(opearationName.getLocalPart());
-
+        System.out.flush();
     }
 
     public void testServerSend() throws Exception {
@@ -103,12 +108,15 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     }
 
     public void testServerReceive() throws Exception {
+        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService"));
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
         engine.receive(mc);
     }
 
     public void testClientReceive() throws Exception {
+        mc.setServiceContext(engineContext.createServiceContext(serviceName));
+        mc.setOperationContext(axisOp.findOperationContext(mc,mc.getServiceContext(),false));
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(false);
         engine.receive(mc);

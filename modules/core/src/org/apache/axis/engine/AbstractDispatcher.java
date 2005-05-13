@@ -58,7 +58,7 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
             }
         }
 
-        if (msgctx.getServiceContext() == null && msgctx.getOperationContext() == null) {
+        if (msgctx.getServiceContext() != null && msgctx.getOperationContext() == null) {
             OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
             if(axisOperation != null){
                 msgctx.setOperationContext(axisOperation.findOperationContext(msgctx,msgctx.getServiceContext(),msgctx.isServerSide()));

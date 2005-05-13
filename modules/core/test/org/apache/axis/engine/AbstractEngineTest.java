@@ -16,26 +16,17 @@
 
 package org.apache.axis.engine;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
 
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.Parameter;
 import org.apache.axis.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.axis.transport.TransportSender;
 
 public class AbstractEngineTest extends TestCase {
-    protected MessageContext mc;
-    protected ArrayList executedHandlers = new ArrayList();
-    protected AxisConfiguration engineRegistry;
-    protected QName serviceName = new QName("axis/services/NullService");
-    protected QName opearationName = new QName("NullOperation");
-    protected ServiceDescription service;
+//    protected ArrayList executedHandlers = new ArrayList();
+//    protected AxisConfiguration engineRegistry;
+//    protected QName serviceName = new QName("axis/services/NullService");
+//    protected QName opearationName = new QName("NullOperation");
+//    protected ServiceDescription service;
 
     public AbstractEngineTest() {
     }
@@ -44,56 +35,33 @@ public class AbstractEngineTest extends TestCase {
         super(arg0);
     }
 
-//    public class TempHandler extends AbstractHandler {
-//        private Integer index;
-//        private boolean pause = false;
-//        public TempHandler(int index, boolean pause) {
-//            this.index = new Integer(index);
-//            this.pause = pause;
-//        }
-//        public TempHandler(int index) {
-//            this.index = new Integer(index);
-//        }
-//
-//        public void invoke(MessageContext msgContext) throws AxisFault {
-//            executedHandlers.add(index);
-//            if (pause) {
-//                msgContext.setPaused(true);
-//            }
-//        }
-//
-//    }
+    //    public class TempHandler extends AbstractHandler {
+    //        private Integer index;
+    //        private boolean pause = false;
+    //        public TempHandler(int index, boolean pause) {
+    //            this.index = new Integer(index);
+    //            this.pause = pause;
+    //        }
+    //        public TempHandler(int index) {
+    //            this.index = new Integer(index);
+    //        }
+    //
+    //        public void invoke(MessageContext msgContext) throws AxisFault {
+    //            executedHandlers.add(index);
+    //            if (pause) {
+    //                msgContext.setPaused(true);
+    //            }
+    //        }
+    //
+    //    }
 
     public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
-        public MessageContext invokeBusinessLogic(MessageContext inMessage,MessageContext outMessage)
+        public MessageContext invokeBusinessLogic(
+            MessageContext inMessage,
+            MessageContext outMessage)
             throws AxisFault {
             return inMessage;
         }
-
     }
-
-    public class NullTransportSender implements TransportSender {
-        public void cleanup() throws AxisFault {
-        }
-
-        public QName getName() {
-            return null;
-        }
-
-        public Parameter getParameter(String name) {
-            return null;
-        }
-
-        public void init(HandlerDescription handlerdesc) {
-        }
-
-        public void invoke(MessageContext msgContext) throws AxisFault {
-        }
-
-        public void revoke(MessageContext msgContext) {
-        }
-
-    }
-
 }

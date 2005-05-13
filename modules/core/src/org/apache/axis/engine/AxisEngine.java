@@ -118,6 +118,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void handleFault(MessageContext context, Throwable e) throws AxisFault {
+        e.printStackTrace();
         boolean serverSide = context.isServerSide();
         log.error("Error Ocurred", e);
         if (serverSide && !context.isProcessingFault()) {
