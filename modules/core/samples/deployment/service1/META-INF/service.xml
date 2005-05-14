@@ -3,19 +3,19 @@
 
     <inflow>
         <handler name="logging" class="org.apache.axis.sample.handlers.LoggingHandler">
-            <order phase="Logging" phaseFirst="true"/>
+            <order phase="userphase1" phaseFirst="true"/>
         </handler>
     </inflow>
 
     <outflow/>
     <INfaultflow>
         <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler">
-             <order phase="service"/>
+             <order phase="userphase1"/>
         </handler>
     </INfaultflow>
     <Outfaultflow>
         <handler name="logging2" class="org.apache.axis.sample.handlers.LoggingHandler">
-             <order phase="service"/>
+             <order phase="userphase1"/>
         </handler>
     </Outfaultflow>
 

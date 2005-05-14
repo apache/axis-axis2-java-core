@@ -1,59 +1,37 @@
-<server name="AxisJava2.0">
-    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+<server name ="AxisJava2.0" >
     <parameter name="hotdeployment" locked="xsd:false">true</parameter>
     <parameter name="hotupdate" locked="xsd:false">true</parameter>
 
-    <module ref="module1"/>
+    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+
     <transportReceiver name="http">
-        <inflow>
-            <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler">
-                <order phase="transport"/>
-            </handler>
-            <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler">
-                <order phase="transport"/>
-            </handler>
-        </inflow>
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">
-        <outflow>
-            <handler name="h1" class="org.apache.axis.deployment.SpeakingHandler">
-                <order phase="transport"/>
-            </handler>
-            <handler name="h2" class="org.apache.axis.deployment.SpeakingHandler">
-                <order phase="transport"/>
-            </handler>
-        </outflow>
     </transportSender>
-    <!--
-      <module ref="uri">
-          <parameter name="para3" locked="xsd:true">10</parameter>
-          <parameter name="para4" locked="xsd:false">LSF</parameter>
-      </module>
-     -->
+
+    <module ref="addressing"/>
 
     <phaseOrder type="inflow">
-        <phase name="global"/>
-        <phase name="transport"/>
-        <phase name="Logging"/>
-        <phase name="service"/>
+        <!--  System pre defined phases       -->
+        <phase name="TransportIn"/>
+        <phase name="PreDispatch"/>
+        <phase name="Dispatch"/>
+        <phase name="PostDispatch"/>
+        <!--  System pre defined phases       -->
+        <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
+        <phase name="userphase1"/>
     </phaseOrder>
     <phaseOrder type="outflow">
-        <phase name="global"/>
-        <phase name="transport"/>
-        <phase name="Logging"/>
-        <phase name="service"/>
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
     </phaseOrder>
     <phaseOrder type="INfaultflow">
-        <phase name="global"/>
-        <phase name="transport"/>
-        <phase name="Logging"/>
-        <phase name="service"/>
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
     </phaseOrder>
     <phaseOrder type="Outfaultflow">
-        <phase name="global"/>
-        <phase name="transport"/>
-        <phase name="Logging"/>
-        <phase name="service"/>
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
     </phaseOrder>
 </server>
 
