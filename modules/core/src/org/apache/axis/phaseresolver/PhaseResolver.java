@@ -57,12 +57,12 @@ public class PhaseResolver {
     /**
      * Constructor PhaseResolver
      *
-     * @param engineConfig
+     * @param axisConfig
      * @param serviceContext
      */
-    public PhaseResolver(AxisConfiguration engineConfig,
+    public PhaseResolver(AxisConfiguration axisConfig,
                          ServiceDescription serviceContext) {
-        this.axisConfig = engineConfig;
+        this.axisConfig = axisConfig;
         this.axisService = serviceContext;
     }
 
@@ -138,6 +138,58 @@ public class PhaseResolver {
         ArrayList allHandlers = new ArrayList();
         ModuleDescription module;
         Flow flow = null;
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////// Handlers from   server.xml from modules/////////////////////////
+        GlobalDescription global = axisConfig.getGlobal();
+        ArrayList modulqnames = (ArrayList) global.getModules();
+        for (int i = 0; i < modulqnames.size(); i++) {
+            QName modulename = (QName) modulqnames.get(i);
+            module = axisConfig.getModule(modulename);
+            if (module != null) {
+                switch (flowtype) {
+                    case PhaseMetadata.IN_FLOW:
+                        {
+                            flow = module.getInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.OUT_FLOW:
+                        {
+                            flow = module.getOutFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_IN_FLOW:
+                        {
+                            flow = module.getFaultInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            flow = module.getFaultOutFlow();
+                            break;
+                        }
+                }
+            } else {
+                throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml"); 
+            }
+
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerDescription metadata = flow.getHandler(j);
+
+                    if (!PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
+                        allHandlers.add(metadata);
+                    } else {
+                        /**
+                         *This handler is trying to added to system pre defined phases , but those handlers
+                         * are already added to global chain which run irrespective of the service
+                         *
+                         */
+                        continue;
+                    }
+                }
+            }
+
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// SERVICE HANDLERS ///////////////////////////////////////////////
@@ -440,8 +492,13 @@ public class PhaseResolver {
                         if (PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
                             phaseHolder.addHandler(metadata);
                         } else {
-                            throw new PhaseException("Global module can not refer service specific phases : "
-                                    + metadata.getRules().getPhaseName());
+                            /**
+                             * These handlers will go to operation's handler chains , since the module
+                             * try to add handlres to both sytem predefined phases and user defined phase
+                             * so global module can do that. here the global module are the module which are
+                             * reffred by server.xml
+                             */
+                            continue;
                         }
                     }
                 }

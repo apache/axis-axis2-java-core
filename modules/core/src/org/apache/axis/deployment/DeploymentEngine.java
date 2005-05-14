@@ -255,10 +255,10 @@ public class DeploymentEngine implements DeploymentConstants {
         DeploymentData tempdata = DeploymentData.getInstance();
         ArrayList inPhases = tempdata.getINPhases();
         //TODO condition checking should be otherway since null value can occur
-        if (!(((Phase) inPhases.get(0)).getPhaseName().equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
-                ((Phase) inPhases.get(1)).getPhaseName().equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                ((Phase) inPhases.get(2)).getPhaseName().equals(PhaseMetadata.PHASE_DISPATCH) &&
-                ((Phase) inPhases.get(3)).getPhaseName().equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+        if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+                ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+                ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
+                ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
                     " support\n recheck server.xml");
         }

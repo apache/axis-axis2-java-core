@@ -1,7 +1,16 @@
 package org.apache.axis.phaserule;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.phaseresolver.PhaseHolder;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,7 +38,7 @@ import org.apache.axis.engine.AxisConfiguration;
 public class InvalidPhaseRuleTest extends AbstractTestCase {
 
     InvalidPhaseRuleTest phaserul;
-    AxisConfiguration registry;
+    AxisConfiguration axisSytem;
 
     public InvalidPhaseRuleTest(String testName) {
         super(testName);
@@ -38,22 +47,13 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
     public void testInvalidPhaseRule1() {
         try {
             super.setUp();
-            //TODO fix me
-            /*phaserul = new InvalidPhaseRuleTest("");
+            phaserul = new InvalidPhaseRuleTest("");
             GlobalDescription global = new GlobalDescription();
-            registry = new AxisSystemImpl(global);
-            ArrayList inPhase = new ArrayList();
-
-            inPhase.add("global");
-            inPhase.add("service");
-            ((AxisSystemImpl) registry).setInPhases(inPhase);
-            ((AxisSystemImpl) registry).setInFaultPhases(inPhase);
-            ((AxisSystemImpl) registry).setOutFaultPhases(inPhase);
-            ((AxisSystemImpl) registry).setOutPhases(inPhase);
+            axisSytem = new AxisSystemImpl(global);
+            ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             Handler han = null;
-            PhaseHolder ph = new PhaseHolder(registry);
-            ph.setFlowType(1);
+            PhaseHolder ph = new PhaseHolder(inPhase);
 
 
             HandlerDescription hm = new HandlerDescription();
@@ -90,7 +90,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             for (int i = 0; i < oh.size(); i++) {
                 HandlerDescription metadata = (HandlerDescription) oh.get(i);
                 System.out.println("Name:" + metadata.getName().getLocalPart());
-            }*/
+            }
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,21 +102,19 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
         try {
             super.setUp();
             //TODO Fix me
-            /*phaserul = new InvalidPhaseRuleTest("");
+            phaserul = new InvalidPhaseRuleTest("");
             GlobalDescription global = new GlobalDescription();
-            registry = new AxisSystemImpl(global);
-            ArrayList inPhase = new ArrayList();
+            axisSytem = new AxisSystemImpl(global);
+            ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             inPhase.add("global");
-            inPhase.add("service");
-            ((AxisSystemImpl) registry).setInPhases(inPhase);
-            ((AxisSystemImpl) registry).setInFaultPhases(inPhase);
-            ((AxisSystemImpl) registry).setOutFaultPhases(inPhase);
-            ((AxisSystemImpl) registry).setOutPhases(inPhase);
+            ((AxisSystemImpl) axisSytem).setInPhases(inPhase);
+            ((AxisSystemImpl) axisSytem).setInFaultPhases(inPhase);
+            ((AxisSystemImpl) axisSytem).setOutFaultPhases(inPhase);
+            ((AxisSystemImpl) axisSytem).setOutPhases(inPhase);
 
             Handler han = null;
-            PhaseHolder ph = new PhaseHolder(registry);
-            ph.setFlowType(1);
+            PhaseHolder ph = new PhaseHolder(inPhase);
 
 
             HandlerDescription hm = new HandlerDescription();
@@ -140,21 +138,11 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             hm1.setRules(rule1);
             ph.addHandler(hm1);
 
-            HandlerDescription hm3 = new HandlerDescription();
-            hm3.setClassName("org.apache.axis.handlers.AbstractHandler");
-            hm3.setHandler(han);
-            hm3.setName(new QName("H4"));
-            PhaseRule rule3 = new PhaseRule();
-            rule3.setPhaseName("Logging");
-            hm3.setRules(rule3);
-            ph.addHandler(hm3);
-
-
             ArrayList oh = ph.getOrderHandler();
             for (int i = 0; i < oh.size(); i++) {
                 HandlerDescription metadata = (HandlerDescription) oh.get(i);
                 System.out.println("Name:" + metadata.getName().getLocalPart());
-            }*/
+            }
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
             e.printStackTrace();

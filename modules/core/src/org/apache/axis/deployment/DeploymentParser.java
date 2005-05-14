@@ -953,12 +953,7 @@ public class DeploymentParser implements DeploymentConstants {
                         String attname = pullparser.getAttributeLocalName(0);
                         String attvalue = pullparser.getAttributeValue(0);
                         if (ATTNAME.equals(attname)) {
-                            //TODO fix me
-//                            if (attvalue.equals(PhaseMetadata.PRE_DISPATCH)) {
-//                                throw new DeploymentException(attvalue + " is a reserved phase");
-//                            } else {
-//                                pahseList.add(attvalue);
-//                            }
+                            pahseList.add(attvalue);
                         }
                     } else {
                         throw new DeploymentException("parser Exception : un supported element" + tagnae);

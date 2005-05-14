@@ -39,20 +39,20 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         //TODO Fix me
       /*  phaserul = new PreDispatchPhaseRuleTest("");
         GlobalDescription global = new GlobalDescription();
-        registry = new AxisSystemImpl(global);
+        axisSytem = new AxisSystemImpl(global);
         ArrayList inPhase = new ArrayList();
 
         inPhase.add("global");
         inPhase.add("transport");
         inPhase.add("Logging");
         inPhase.add("service");
-        ((AxisSystemImpl) registry).setInPhases(inPhase);
-        ((AxisSystemImpl) registry).setInFaultPhases(inPhase);
-        ((AxisSystemImpl) registry).setOutFaultPhases(inPhase);
-        ((AxisSystemImpl) registry).setOutPhases(inPhase);
+        ((AxisSystemImpl) axisSytem).setInPhases(inPhase);
+        ((AxisSystemImpl) axisSytem).setInFaultPhases(inPhase);
+        ((AxisSystemImpl) axisSytem).setOutFaultPhases(inPhase);
+        ((AxisSystemImpl) axisSytem).setOutPhases(inPhase);
 
         Handler han = null;
-        PhaseHolder ph = new PhaseHolder(registry);
+        PhaseHolder ph = new PhaseHolder(axisSytem);
         ph.setFlowType(1);
 
 
