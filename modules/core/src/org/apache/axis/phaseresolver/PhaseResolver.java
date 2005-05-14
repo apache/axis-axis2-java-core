@@ -169,7 +169,7 @@ public class PhaseResolver {
                         }
                 }
             } else {
-                throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml"); 
+                throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml");
             }
 
             if (flow != null) {

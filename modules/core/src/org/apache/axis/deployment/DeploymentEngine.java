@@ -26,7 +26,10 @@ import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
 import org.apache.axis.deployment.util.DeploymentData;
 import org.apache.axis.description.*;
-import org.apache.axis.engine.*;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseMetadata;
@@ -255,14 +258,19 @@ public class DeploymentEngine implements DeploymentConstants {
         DeploymentData tempdata = DeploymentData.getInstance();
         ArrayList inPhases = tempdata.getINPhases();
         //TODO condition checking should be otherway since null value can occur
-        if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
-                ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
-                ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+        try {
+            if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+                    ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+                    ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
+                    ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+                throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
+                        " support\n recheck server.xml");
+            }
+        } catch (DeploymentException e) {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                    " support\n recheck server.xml");
+                        " support\n recheck server.xml");
         }
-        ArrayList outPhaes = tempdata.getOUTPhases();
+        //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here
         //ArrayList systemDefaultPhases =((AxisSystemImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
     }
