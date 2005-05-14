@@ -34,7 +34,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         GlobalDescription global = new GlobalDescription();
         axisSytem = new AxisSystemImpl(global);
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
-       
+
         Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler").newInstance();
         PhaseHolder ph = new PhaseHolder(inPhase);
 
@@ -53,7 +53,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm1.setHandler(han);
         hm1.setName(new QName("H2"));
         PhaseRule rule1 = new PhaseRule();
-        rule1.setPhaseName("Dispatch");
+        rule1.setPhaseName("PreDispatch");
         rule1.setAfter("H1");
         hm1.setRules(rule1);
         ph.addHandler(hm1);
@@ -74,7 +74,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         hm3.setHandler(han);
         hm3.setName(new QName("H4"));
         PhaseRule rule3 = new PhaseRule();
-        rule3.setPhaseName("PreDispatch");
+        rule3.setPhaseName("Dispatch");
         hm3.setRules(rule3);
         ph.addHandler(hm3);
 

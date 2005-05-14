@@ -1,7 +1,16 @@
 package org.apache.axis.phaserule;
 
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.phaseresolver.PhaseHolder;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.Handler;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,7 +38,7 @@ import org.apache.axis.engine.AxisConfiguration;
 public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
     PreDispatchPhaseRuleTest phaserul;
-    AxisConfiguration registry;
+    AxisConfiguration axisSytem;
 
     public PreDispatchPhaseRuleTest(String testName) {
         super(testName);
@@ -37,23 +46,13 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
     public void testPhaseRule() throws Exception {
         //TODO Fix me
-      /*  phaserul = new PreDispatchPhaseRuleTest("");
+        phaserul = new PreDispatchPhaseRuleTest("");
         GlobalDescription global = new GlobalDescription();
         axisSytem = new AxisSystemImpl(global);
-        ArrayList inPhase = new ArrayList();
-
-        inPhase.add("global");
-        inPhase.add("transport");
-        inPhase.add("Logging");
-        inPhase.add("service");
-        ((AxisSystemImpl) axisSytem).setInPhases(inPhase);
-        ((AxisSystemImpl) axisSytem).setInFaultPhases(inPhase);
-        ((AxisSystemImpl) axisSytem).setOutFaultPhases(inPhase);
-        ((AxisSystemImpl) axisSytem).setOutPhases(inPhase);
+        ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;
-        PhaseHolder ph = new PhaseHolder(axisSytem);
-        ph.setFlowType(1);
+        PhaseHolder ph = new PhaseHolder(inPhase);
 
 
         HandlerDescription pre = new HandlerDescription();
@@ -61,16 +60,16 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         pre.setHandler(han);
         pre.setName(new QName("pre-H1"));
         PhaseRule pre_rule1 = new PhaseRule();
-        pre_rule1.setPhaseName("pre-dispatch");
+        pre_rule1.setPhaseName("PreDispatch");
         pre.setRules(pre_rule1);
         ph.addHandler(pre);
 
         HandlerDescription pre2 = new HandlerDescription();
         pre2.setClassName("org.apache.axis.handlers.AbstractHandler");
         pre2.setHandler(han);
-        pre2.setName(new QName("pre-H2"));
+        pre2.setName(new QName("dispatch"));
         PhaseRule prerule2 = new PhaseRule();
-        prerule2.setPhaseName("pre-dispatch");
+        prerule2.setPhaseName("Dispatch");
         pre2.setRules(prerule2);
         ph.addHandler(pre2);
 
@@ -78,9 +77,9 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm.setHandler(han);
-        hm.setName(new QName("H1"));
+        hm.setName(new QName("pre-H2"));
         PhaseRule rule = new PhaseRule();
-        rule.setPhaseName("global");
+        rule.setPhaseName("PreDispatch");
         rule.setPhaseFirst(true);
         hm.setRules(rule);
         ph.addHandler(hm);
@@ -88,10 +87,10 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         HandlerDescription hm1 = new HandlerDescription();
         hm1.setClassName("org.apache.axis.handlers.AbstractHandler");
         hm1.setHandler(han);
-        hm1.setName(new QName("H2"));
+        hm1.setName(new QName("pre-H3"));
         PhaseRule rule1 = new PhaseRule();
-        rule1.setPhaseName("global");
-        rule1.setAfter("H1");
+        rule1.setPhaseName("PreDispatch");
+        rule1.setAfter("pre-H2");
         hm1.setRules(rule1);
         ph.addHandler(hm1);
 
@@ -100,9 +99,9 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         hm2.setHandler(han);
         hm2.setName(new QName("H3"));
         PhaseRule rule2 = new PhaseRule();
-        rule2.setPhaseName("global");
-        rule2.setAfter("H1");
-        rule2.setBefore("H2");
+        rule2.setPhaseName("PreDispatch");
+        rule2.setAfter("pre-H2");
+        rule2.setBefore("pre-H3");
         hm2.setRules(rule2);
         ph.addHandler(hm2);
 
@@ -111,7 +110,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         hm3.setHandler(han);
         hm3.setName(new QName("H4"));
         PhaseRule rule3 = new PhaseRule();
-        rule3.setPhaseName("Logging");
+        rule3.setPhaseName("PostDispatch");
         hm3.setRules(rule3);
         ph.addHandler(hm3);
 
@@ -120,7 +119,6 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
         for (int i = 0; i < oh.size(); i++) {
             HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
-        }*/
-        fail("this must failed gracefully with PhaseException ");
+        }
     }
 }
