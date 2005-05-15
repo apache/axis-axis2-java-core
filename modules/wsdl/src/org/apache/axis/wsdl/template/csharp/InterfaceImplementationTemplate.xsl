@@ -48,7 +48,7 @@
         /// &lt;summary&gt;
         /// Auto generated method signature
         ///&lt;/summary&gt;
-        ///<xsl:if test="$inputtype!=''"><param name="$inputparam"></param></xsl:if>
+        ///<xsl:if test="$inputtype!=''">&lt;param name="<xsl:value-of select="$inputparam"/>"/&gt;</xsl:if>
         ///
         public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
         {
@@ -70,7 +70,7 @@
         ///&lt;summary&gt;
         ///Auto generated method signature
         ///&lt;/summary&gt;
-        ///<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
+        ///<xsl:if test="$inputtype!=''">&lt;param name="<xsl:value-of select="$inputparam"/>"/&gt;</xsl:if>
         ///
         public void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
         {
