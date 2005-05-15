@@ -18,6 +18,8 @@ package org.apache.axis.wsdl.codegen;
 *   Constants for the XSLT related items
 */
 public interface XSLTConstants {
+    String DEFAULT_PACKAGE_NAME = "codegen";
+
     /**
      * Language constants
      */

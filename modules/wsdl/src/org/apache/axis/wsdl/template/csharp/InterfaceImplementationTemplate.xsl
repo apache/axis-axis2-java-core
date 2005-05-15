@@ -6,21 +6,25 @@
     <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
-    package <xsl:value-of select="$package"/>;
+    namespace <xsl:value-of select="$package"/>{
 
-    /*
-     *  Auto generated java implementation by the Axis code generator
-    */
+    /// &lt;summary&gt;
+    /// Auto generated C# implementation by the Axis code generator
+    /// This is meant to be used with the IKVM converted Axis libraries
+    ///&lt;/summary&gt;
 
-    public class <xsl:value-of select="@name"></xsl:value-of> extends org.apache.axis.clientapi.Stub implements <xsl:value-of select="$interfaceName"/>{
+    public class <xsl:value-of select="@name"/> :org.apache.axis.clientapi.Stub,<xsl:value-of select="$interfaceName"/>{
+
         private static org.apache.axis.description.AxisGlobal  _axisGlobal = null;
         private static org.apache.axis.engine.AxisSystemImpl   _axisSystem = null;
         private static org.apache.axis.context.SystemContext   _systemContext = null;
         private static org.apache.axis.description.AxisService   _service = null;
         private static org.apache.axis.description.AxisOperation[] _operations = new org.apache.axis.description.AxisOperation[<xsl:value-of select="count(method)"/>];
 
-
-       static{
+       ///&lt;summary&gt;
+       /// static constructor
+       ///&lt; /summary &gt;
+       static <xsl:value-of select="@name"/>(){
          _axisGlobal = new org.apache.axis.description.AxisGlobal();
          _axisSystem = new org.apache.axis.engine.AxisSystemImpl(_axisGlobal);
 		 _systemContext = new org.apache.axis.context.SystemContext(_axisSystem);
@@ -41,12 +45,13 @@
          <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
 
          <xsl:if test="$isSync='1'">
-        /**
-         * Auto generated method signature
-         * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@name"/>
-         *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
-         */
-        public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>) throws java.rmi.RemoteException{
+        /// &lt;summary&gt;
+        /// Auto generated method signature
+        ///&lt;/summary&gt;
+        ///<xsl:if test="$inputtype!=''"><param name="$inputparam"></param></xsl:if>
+        ///
+        public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
+        {
 
 		    org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
  		    org.apache.axis.context.MessageContext _messageContext = getMessageContext();
@@ -62,30 +67,40 @@
         }
         </xsl:if>
         <xsl:if test="$isAsync='1'">
-         /**
-         * Auto generated method signature
-         * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@name"/>
-         *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
-         */
-        public void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>) throws java.rmi.RemoteException{
+        ///&lt;summary&gt;
+        ///Auto generated method signature
+        ///&lt;/summary&gt;
+        ///<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
+        ///
+        public void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
+        {
                 // we know its call because we have the mep at the time of the stub generation.
 		        org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
  		        org.apache.axis.context.MessageContext _messageContext = getMessageContext();
-		        _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis.clientapi.CallBack(){
-                   public void onComplete(org.apache.axis.clientapi.AsyncResult result){
-                         new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveResult<xsl:value-of select="@name"/>(result);
-                   }
-                   public void reportError(java.lang.Exception e){
-                         new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveError<xsl:value-of select="@name"/>(e);
-                   }
-
-              }
-            );
-
+		        _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new CallBack<xsl:value-of select="generate-id()"/>());
             <!-- this needs to be changed -->
+        }
+
+        ///&lt;summary&gt;
+        ///  C# does not support anoynmous inner classes
+        ///&lt;/summary&gt;
+        private class CallBack<xsl:value-of select="generate-id()"/>:org.apache.axis.clientapi.CallBack
+        {
+          public void onComplete(org.apache.axis.clientapi.AsyncResult result)
+           {
+                    new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveResult<xsl:value-of select="@name"/>(result);
+           }
+           public void reportError(java.lang.Exception e)
+           {
+                     new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveError<xsl:value-of select="@name"/>(e);
+           }
+
+
+
         }
       </xsl:if>
      </xsl:for-each>
+    }
     }
     </xsl:template>
  </xsl:stylesheet>

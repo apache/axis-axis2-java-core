@@ -9,6 +9,7 @@ import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.WSDLInterface;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -54,6 +55,8 @@ import java.util.Iterator;
 
 
 public abstract class MultiLanguageClientEmitter implements Emitter{
+    private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
+    private static final String STUB_SUFFIX = "Stub";
 
     protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
@@ -91,7 +94,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             //write the call back handlers
             writeCallBackHandlers(axisBinding);
         } catch (Exception e) {
-            // e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
@@ -100,13 +102,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      *
      */
     protected void writeCallBackHandlers(WSDLBinding binding) throws Exception{
-    	XmlDocument interfaceModel = createDOMDocumentForCallbackHandler(binding);
-        CallbackHandlerWriter writer =
-                new CallbackHandlerWriter(this.configuration.getOutputLocation(),
-                        this.configuration.getOutputLanguage()
-                );
-        writeClass(interfaceModel,writer);
-        
+
+        if (configuration.isAsyncOn()){
+            XmlDocument interfaceModel = createDOMDocumentForCallbackHandler(binding);
+            CallbackHandlerWriter callbackWriter =
+                    new CallbackHandlerWriter(this.configuration.getOutputLocation(),
+                            this.configuration.getOutputLanguage()
+                    );
+            writeClass(interfaceModel,callbackWriter);
+        }
 
     }
     /**
@@ -183,26 +187,27 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         throw new UnsupportedOperationException("Not supported yet");
     }
 
-    /**
-     * Creates the DOM tree for the interface creation
-     * @param binding
-     * @return
-     */
-    protected abstract XmlDocument createDOMDocuementForInterface(WSDLBinding binding);
-
-    /**
-     * Creates the DOM tree for implementations
-     * @param binding
-     * @return
-     */
-    protected abstract XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding);
-
-    /**
+     /**
      * Generating the callbacks
-     * @param operation
+     * @param binding
      * @return
      */
-    protected abstract XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding);
+     protected XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding){
+    	WSDLInterface boundInterface = binding.getBoundInterface();
+    	XmlDocument doc = new XmlDocument();
+    	Element rootElement = doc.createElement("callback");
+    	addAttribute(doc,"package",configuration.getPackageName(),rootElement);
+    	addAttribute(doc,"name",boundInterface.getName().getLocalPart()+CALL_BACK_HANDLER_SUFFIX,rootElement);
+    	addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
+
+        //TODO JAXRPC mapping support should be considered
+        this.loadOperations(boundInterface, doc, rootElement);
+        //this.loadOperations(boundInterface, doc, rootElement, "on", "Complete");
+
+    	doc.appendChild(rootElement);
+    	return doc;
+    }
+
     /**
      * Finds the input element for the xml document
      * @param doc
@@ -213,13 +218,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         Element inputElt = doc.createElement("input");
         //todo this should be multiple
         Element param = doc.createElement("param");
-        Attr paramNameAttr = doc.createAttribute("name");
-        paramNameAttr.setValue(this.mapper.getParameterName(operation.getInputMessage().getElement()));
-        param.setAttributeNode(paramNameAttr);
-        Attr paramTypeAttr = doc.createAttribute("type");
+        addAttribute(doc,"name",this.mapper.getParameterName(operation.getInputMessage().getElement()),param);
+
         Class typeMapping = this.mapper.getTypeMapping(operation.getInputMessage().getElement());
-        paramTypeAttr.setValue(typeMapping==null?"":typeMapping.getName());
-        param.setAttributeNode(paramTypeAttr);
+        String typeMappingStr  =typeMapping==null?"":typeMapping.getName();
+        addAttribute(doc,"type",typeMappingStr,param);
 
         inputElt.appendChild(param);
 
@@ -235,14 +238,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     protected Element getOutputElement(XmlDocument doc,WSDLOperation operation){
         Element outputElt = doc.createElement("output");
         Element param = doc.createElement("param");
-        Attr paramNameAttr = doc.createAttribute("name");
-        paramNameAttr.setValue(this.mapper.getParameterName(operation.getOutputMessage().getElement()));
-        param.setAttributeNode(paramNameAttr);
-        Attr paramTypeAttr = doc.createAttribute("type");
-        Class typeMapping = this.mapper.getTypeMapping(operation.getOutputMessage().getElement());
-        paramTypeAttr.setValue(typeMapping==null?"":typeMapping.getName());
-        param.setAttributeNode(paramTypeAttr);
+        addAttribute(doc,"name",this.mapper.getParameterName(operation.getOutputMessage().getElement()),param);
 
+        Class typeMapping = this.mapper.getTypeMapping(operation.getOutputMessage().getElement());
+        String typeMappingStr=typeMapping==null?"":typeMapping.getName();
+        addAttribute(doc,"type",typeMappingStr,param);
         outputElt.appendChild(param);
 
         return outputElt;
@@ -254,6 +254,82 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected XmlDocument createDOMDocuementForBean(){
         return null;
+    }
+
+      /**
+     * Creates the DOM tree for the interface creation
+     * @param binding
+     * @return
+     */
+    protected XmlDocument createDOMDocuementForInterface(WSDLBinding binding){
+           WSDLInterface boundInterface = binding.getBoundInterface();
+
+           XmlDocument doc = new XmlDocument();
+           Element rootElement = doc.createElement("interface");
+           addAttribute(doc,"package",configuration.getPackageName(),rootElement);
+    	   addAttribute(doc,"name",boundInterface.getName().getLocalPart(),rootElement);
+    	   fillSyncAttributes(doc, rootElement);
+           loadOperations(boundInterface, doc, rootElement);
+           doc.appendChild(rootElement);
+
+           return doc;
+
+       }
+
+       private void fillSyncAttributes(XmlDocument doc, Element rootElement) {
+           addAttribute(doc,"isAsync",this.configuration.isAsyncOn()?"1":"0",rootElement);
+           addAttribute(doc,"isSync",this.configuration.isSyncOn()?"1":"0",rootElement);
+        }
+
+       private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement){
+           loadOperations(boundInterface, doc, rootElement, null, null);
+       }
+
+       private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement, String operationPrefix, String operationPostfix) {
+           Collection col = boundInterface.getOperations().values();
+           Element methodElement = null;
+           WSDLOperation operation = null;
+
+           for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+               operation = (WSDLOperation) iterator.next();
+               methodElement = doc.createElement("method");
+               addAttribute(doc,"name",operation.getName().getLocalPart(),methodElement);
+               addAttribute(doc,"namepace",operation.getName().getNamespaceURI(),methodElement);
+               methodElement.appendChild(getInputElement(doc,operation));
+               methodElement.appendChild(getOutputElement(doc,operation));
+               rootElement.appendChild(methodElement);
+           }
+       }
+
+       /**
+     * Creates the DOM tree for implementations
+     * @param binding
+     * @return
+     */
+       protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding) {
+           WSDLInterface boundInterface = binding.getBoundInterface();
+
+           XmlDocument doc = new XmlDocument();
+           Element rootElement = doc.createElement("class");
+           addAttribute(doc,"package",configuration.getPackageName(),rootElement);
+    	   addAttribute(doc,"name",boundInterface.getName().getLocalPart()+STUB_SUFFIX,rootElement);
+    	   addAttribute(doc,"servicename",boundInterface.getName().getLocalPart(),rootElement);
+    	   addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
+    	   addAttribute(doc,"interfaceName",boundInterface.getName().getLocalPart(),rootElement);
+    	   addAttribute(doc,"callbackname",boundInterface.getName().getLocalPart() + CALL_BACK_HANDLER_SUFFIX,rootElement);
+           fillSyncAttributes(doc, rootElement);
+           loadOperations(boundInterface, doc, rootElement);
+           doc.appendChild(rootElement);
+
+           return doc;
+
+       }
+
+    protected void addAttribute(XmlDocument document,String AttribName, String attribValue, Element element){
+        Attr attribute = document.createAttribute(AttribName);
+        attribute.setValue(attribValue);
+        element.setAttributeNode(attribute);
+
     }
 }
 

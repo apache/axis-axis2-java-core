@@ -19,9 +19,13 @@ public class WSDL2Java {
 	}
 	
 	private static void printUsage(){
-		System.out.println("Usage WSDL2Java -URI <Location of WSDL> ");
-		System.out.println("-o <output Location> ");
-		System.out.println("-x ");
+		System.out.println("Usage WSDL2Java -URI <Location of WSDL> :WSDL file location ");
+		System.out.println("-o <output Location> : output file location ");
+		System.out.println("-x : Switch to advanced mode. Default is off");
+		System.out.println("-a : Generate async style code only. Default if off");
+		System.out.println("-s : Generate sync style code only. Default if off. takes precedence over -a");
+		System.out.println("-p <package name> : set custom package name");
+		System.out.println("-l <language> : valid languages are java and csharp. Default is java");
 		System.exit(0);
 	}
 	

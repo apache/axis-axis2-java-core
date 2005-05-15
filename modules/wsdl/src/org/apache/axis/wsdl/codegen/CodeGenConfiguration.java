@@ -19,6 +19,7 @@ package org.apache.axis.wsdl.codegen;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
@@ -31,6 +32,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	private File outputLocation;
     private int outputLanguage = XSLTConstants.LanguageTypes.JAVA;
     private boolean advancedCodeGenEnabled=false;
+    private boolean asyncOn=true;
+    private boolean syncOn=true;
+    private String packageName=XSLTConstants.DEFAULT_PACKAGE_NAME;
 
 	/**
 	 * @param wom
@@ -38,17 +42,43 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	 */
 	public CodeGenConfiguration(WSDLDescription wom,
 			CommandLineOptionParser parser) {
-		this.wom = wom;
+        this.wom = wom;
 		this.parser = parser;
-		String outputLocation = ((CommandLineOption) parser.getAllOptions().get(
-				OUTPUT_LOCATION_OPTION)).getOptionValue();
-        advancedCodeGenEnabled = (parser.getAllOptions().get(ADVANCED_CODEGEN_OPTION)!=null);
 
-		this.outputLocation = new File(outputLocation);
+        Map optionMap = parser.getAllOptions();
+
+		String outputLocation = ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION)).getOptionValue();
+        this.outputLocation = new File(outputLocation);
+
+        advancedCodeGenEnabled = (optionMap.get(ADVANCED_CODEGEN_OPTION)!=null);
+        boolean asyncFlagPresent = (optionMap.get(CODEGEN_ASYNC_ONLY_OPTION)!=null);
+        boolean syncFlagPresent = (optionMap.get(CODEGEN_SYNC_ONLY_OPTION)!=null);
+        if (asyncFlagPresent) {this.asyncOn=true;this.syncOn=false;}
+        if (syncFlagPresent) {this.asyncOn=false;this.syncOn=true;}
+
+        CommandLineOption packageOption = (CommandLineOption)optionMap.get(PACKAGE_OPTION);
+        if(packageOption!=null) {this.packageName = packageOption.getOptionValue();}
+
+        CommandLineOption langOption = (CommandLineOption)optionMap.get(STUB_LANGUAGE_OPTION);
+        if (langOption!=null){
+            loadLanguge(langOption.getOptionValue());
+        }
 
 	}
 
-	/**
+    private void loadLanguge(String langName) {
+        if (LanguageNames.JAVA.equalsIgnoreCase(langName)){
+            this.outputLanguage = XSLTConstants.LanguageTypes.JAVA;
+        }else if (LanguageNames.C_SHARP.equalsIgnoreCase(langName)){
+            this.outputLanguage = XSLTConstants.LanguageTypes.C_SHARP;
+        }else if (LanguageNames.C_PLUS_PLUS.equalsIgnoreCase(langName)){
+            this.outputLanguage = XSLTConstants.LanguageTypes.C_PLUS_PLUS;
+        }else if (LanguageNames.VB_DOT_NET.equalsIgnoreCase(langName)){
+            this.outputLanguage = XSLTConstants.LanguageTypes.VB_DOT_NET;
+        }
+    }
+
+    /**
 	 * @return Returns the parser.
 	 */
 	public CommandLineOptionParser getParser() {
@@ -76,5 +106,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public boolean isAdvancedCodeGenEnabled() {
         return advancedCodeGenEnabled;
+    }
+
+    public boolean isAsyncOn() {
+        return asyncOn;
+    }
+
+
+    public boolean isSyncOn() {
+        return syncOn;
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 }

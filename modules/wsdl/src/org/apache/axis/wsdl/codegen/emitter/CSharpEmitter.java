@@ -3,6 +3,7 @@ package org.apache.axis.wsdl.codegen.emitter;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.databinding.CsharpTypeMapper;
 import org.apache.axis.wsdl.databinding.TypeMapper;
+import org.apache.axis.wsdl.databinding.DefaultTypeMapper;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLInterface;
@@ -34,7 +35,8 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
 
     public CSharpEmitter(CodeGenConfiguration configuration) {
         this.configuration = configuration;
-        this.mapper = new CsharpTypeMapper();
+//        this.mapper = new CsharpTypeMapper();
+        this.mapper = new DefaultTypeMapper();
 
     }
 
@@ -44,69 +46,5 @@ public class CSharpEmitter extends MultiLanguageClientEmitter{
 
     }
 
-
-    /**
-     *  @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterface(org.apache.wsdl.WSDLBinding)
-     * @param binding
-     * @return
-     */
-    protected XmlDocument createDOMDocuementForInterface(WSDLBinding binding){
-        WSDLInterface boundInterface = binding.getBoundInterface();
-
-        XmlDocument doc = new XmlDocument();
-        Element rootElement = doc.createElement("interface");
-
-        Attr packageAttribute = doc.createAttribute("package");
-        packageAttribute.setValue("something"); //todo set this
-        rootElement.setAttributeNode(packageAttribute);
-
-        Attr nameAttribute = doc.createAttribute("name");
-        nameAttribute.setValue(boundInterface.getName().getLocalPart());
-        rootElement.setAttributeNode(nameAttribute);
-
-        Collection col = boundInterface.getOperations().values();
-
-        Element methodElement = null;
-        Attr methodNameAttr = null;
-        WSDLOperation operation = null;
-
-        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-
-            operation = (WSDLOperation) iterator.next();
-
-            methodElement = doc.createElement("method");
-            methodNameAttr = doc.createAttribute("name");
-            methodNameAttr.setValue(operation.getName().getLocalPart());
-            methodElement.setAttributeNode(methodNameAttr);
-
-            methodElement.appendChild(getInputElement(doc,operation));
-            methodElement.appendChild(getOutputElement(doc,operation));
-
-            rootElement.appendChild(methodElement);
-
-        }
-       doc.appendChild(rootElement);
-       return doc;
-
-    }
-
-    /**
-     * @see org.apache.axis.wsdl.codegen.emitter.MultiLanguageClientEmitter#createDOMDocuementForInterfaceImplementation(org.apache.wsdl.WSDLBinding)
-     * @param binding
-     * @return
-     */
-    protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding) {
-        return null;  
-    }
-
-    /**
-     * 
-     * @param binding
-     * @return
-     */
-    protected XmlDocument createDOMDocumentForCallbackHandler(WSDLBinding binding) {
-        return null;
-    }
-
-
+   
 }

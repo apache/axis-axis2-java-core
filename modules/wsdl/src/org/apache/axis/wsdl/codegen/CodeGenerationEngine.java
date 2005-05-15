@@ -84,6 +84,7 @@ public class CodeGenerationEngine {
 
             case XSLTConstants.LanguageTypes.C_SHARP:
                 clientEmitter = new CSharpEmitter(this.configuration);
+                break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
             case XSLTConstants.LanguageTypes.VB_DOT_NET:
 
