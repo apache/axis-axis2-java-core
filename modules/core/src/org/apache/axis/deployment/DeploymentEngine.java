@@ -365,7 +365,6 @@ public class DeploymentEngine implements DeploymentConstants {
         int count = flow.getHandlerCount();
         ClassLoader loader1 = currentArchiveFile.getClassLoader();
         for (int j = 0; j < count; j++) {
-            //todo handle exception in properway
             HandlerDescription handlermd = flow.getHandler(j);
             Class handlerClass = null;
             Handler handler;
@@ -430,7 +429,6 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public void doDeploy() {
-        //todo complete this
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
@@ -448,17 +446,14 @@ public class DeploymentEngine implements DeploymentConstants {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + de);
                             serviceStatus = "Error:\n" + de.getMessage();
-                            de.printStackTrace();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
                             serviceStatus = "Error:\n" + axisFault.getMessage();
-                            axisFault.printStackTrace();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("Exception  " + e);
                             serviceStatus = "Error:\n" + e.getMessage();
-                            e.printStackTrace();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
                                 axisConfig.getFaulytServices().put(getAxisServiceName(currentArchiveFile.getName()), serviceStatus);
@@ -490,7 +485,6 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public void unDeploy() {
-        //todo complete this
         String serviceName = "";
         try {
             if (wsToUnDeploy.size() > 0) {
