@@ -28,7 +28,6 @@ import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.engine.SpeakingHandler;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;

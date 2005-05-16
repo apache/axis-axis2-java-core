@@ -1,25 +1,13 @@
 <module name="addressing" class="org.apache.axis.AddressingModule">
     <inflow>
         <handler name="AddressingInHandler" class="org.apache.axis.handlers.AddressingInHandler">
-            <order phase="pre-dispatch"/>
+            <order phase="PreDispatch"/>
         </handler>
     </inflow>
 
     <outflow>
         <handler name="AddressingOutHandler" class="org.apache.axis.handlers.AddressingOutHandler">
-            <order phase="pre-dispatch"/>
+            <order phase="addressing"/>
         </handler>
     </outflow>
-
-    <Outfaultflow>
-        <handler name="Fault_AddressingOutHandler" class="org.apache.axis.handlers.AddressingOutHandler">
-            <order phase="pre-dispatch"/>
-        </handler>
-    </Outfaultflow>
-
-    <INfaultflow>
-        <handler name="Fault_AddressingInHandler" class="org.apache.axis.handlers.AddressingInHandler">
-            <order phase="pre-dispatch"/>
-        </handler>
-    </INfaultflow>
 </module>
