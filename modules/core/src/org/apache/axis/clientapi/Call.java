@@ -45,7 +45,7 @@ public class Call extends InOutMEPClient {
     public Call(ServiceContext service) {
         super(service);
     }
-    
+
     /**
      * Invoke the blocking/Synchronous call
      * @param axisop
@@ -59,9 +59,12 @@ public class Call extends InOutMEPClient {
 
         OperationDescription axisConfig =
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
-      MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
+        if (axisConfig == null) {
+            axisConfig = new OperationDescription(new QName(axisop));
+            serviceContext.getServiceConfig().addOperation(axisConfig);
+        }
+        MessageContext msgctx = prepareTheSystem(axisConfig, toSend);
 
-  
         MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
         SOAPEnvelope resEnvelope = responseContext.getEnvelope();
         if (isEnvelope) {
@@ -81,14 +84,13 @@ public class Call extends InOutMEPClient {
 
     public void invokeNonBlocking(String axisop, OMElement toSend, Callback callback)
         throws AxisFault {
-            OperationDescription axisConfig =
-                        serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        MessageContext msgctx = prepareTheSystem(axisConfig,toSend);
-        
+        OperationDescription axisConfig =
+            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        MessageContext msgctx = prepareTheSystem(axisConfig, toSend);
 
         super.invokeNonBlocking(axisConfig, msgctx, callback);
     }
-    
+
     /**
      * Prepare the MessageContext, this is Utility method
      * @param axisOp
@@ -97,12 +99,12 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
 
-    private MessageContext prepareTheSystem(OperationDescription axisOp,OMElement toSend) throws AxisFault {
+    private MessageContext prepareTheSystem(OperationDescription axisOp, OMElement toSend)
+        throws AxisFault {
         ConfigurationContext syscontext = serviceContext.getEngineContext();
         //Make sure the ServiceDescription object has the OperationDescription
         serviceContext.getServiceConfig().addOperation(axisOp);
-        
-        
+
         TransportInDescription transportIn =
             syscontext.getEngineConfig().getTransportIn(new QName(listenertransport));
         TransportOutDescription transportOut =
@@ -121,7 +123,6 @@ public class Call extends InOutMEPClient {
             envelope.getBody().addChild(toSend);
             isEnvelope = false;
         }
-
         msgctx.setEnvelope(envelope);
         return msgctx;
     }
@@ -132,14 +133,15 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
     private static ServiceContext assumeServiceContext() throws AxisFault {
-        ConfigurationContext sysContext = new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
+        ConfigurationContext sysContext =
+            new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         sysContext.getEngineConfig().addService(axisService);
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;
     }
- 
+
     /**
      * @param key
      * @return

@@ -61,17 +61,18 @@ public class MessageWithServerTest extends TestCase {
         
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
-        service.setFaultInFlow(new MockFlow("service faultflow", 1));
+        //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         ModuleDescription m1 = new ModuleDescription(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
-        m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
+        //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         service.addModule(m1.getName());
 
         OperationDescription operation = new OperationDescription(operationName);
         service.addOperation(operation);
 
         UtilServer.deployService(service);
+        UtilServer.start();
     }
 
     protected void tearDown() throws Exception {

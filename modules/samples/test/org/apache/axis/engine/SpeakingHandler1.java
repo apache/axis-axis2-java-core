@@ -17,7 +17,10 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.PhaseRule;
 import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,6 +33,12 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
 
     public SpeakingHandler1(String message) {
         this.message = message;
+        HandlerDescription handlerDesc = new HandlerDescription();
+        PhaseRule rule = new PhaseRule();
+        rule.setPhaseName(PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        handlerDesc.setRules(rule);
+        handlerDesc.setHandler(this);
+        init(handlerDesc);
     }
 
     public QName getName() {
@@ -46,6 +55,10 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
 
     public void setName(QName name) {
         this.name = name;
+    }
+    
+    public HandlerDescription getHandlerDescription(){
+        return handlerDesc;
     }
 
 }

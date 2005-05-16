@@ -75,24 +75,39 @@ public class InOutMEPClient extends MEPClient {
 
     public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
         throws AxisFault {
-        msgctx.setTo(to);
+        verifyInvocation(axisop);
 
+        msgctx.setTo(to);
+        msgctx.setServiceContext(serviceContext);
+        ConfigurationContext syscontext = serviceContext.getEngineContext();
+        final TransportInDescription transportIn =
+            syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
+        final TransportOutDescription transportOut =
+            syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
+        msgctx.setTransportIn(transportIn);    
+        msgctx.setTransportOut(transportOut);
+        
         ConfigurationContext sysContext = serviceContext.getEngineContext();
         AxisConfiguration registry = sysContext.getEngineConfig();
 
         try {
-            
+
             AxisEngine engine = new AxisEngine(sysContext);
             msgctx.setOperationContext(
                 OperationContextFactory.createMEPContext(
                     WSDLConstants.MEP_CONSTANT_IN_OUT,
                     false,
                     axisop,
-                    null));
+                    serviceContext));
 
             engine.send(msgctx);
 
-            MessageContext response = new MessageContext(msgctx.getSessionContext(),msgctx.getTransportIn(),msgctx.getTransportOut(),msgctx.getSystemContext());
+            MessageContext response =
+                new MessageContext(
+                    msgctx.getSessionContext(),
+                    msgctx.getTransportIn(),
+                    msgctx.getTransportOut(),
+                    msgctx.getSystemContext());
             response.setServerSide(false);
 
             TransportReceiver receiver = response.getTransportIn().getReciever();
@@ -114,6 +129,7 @@ public class InOutMEPClient extends MEPClient {
         final MessageContext msgctx,
         final Callback callback)
         throws AxisFault {
+        verifyInvocation(axisop);
         msgctx.setTo(to);
         try {
             final ConfigurationContext syscontext = serviceContext.getEngineContext();
@@ -145,7 +161,12 @@ public class InOutMEPClient extends MEPClient {
                 Runnable newThread = new Runnable() {
                     public void run() {
                         try {
-                            MessageContext response = new MessageContext(msgctx.getSessionContext(),msgctx.getTransportIn(),msgctx.getTransportOut(),msgctx.getSystemContext());
+                            MessageContext response =
+                                new MessageContext(
+                                    msgctx.getSessionContext(),
+                                    msgctx.getTransportIn(),
+                                    msgctx.getTransportOut(),
+                                    msgctx.getSystemContext());
                             response.setServerSide(false);
 
                             TransportReceiver receiver = response.getTransportIn().getReciever();

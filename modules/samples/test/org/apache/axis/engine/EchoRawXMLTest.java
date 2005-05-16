@@ -30,6 +30,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
@@ -58,6 +59,8 @@ public class EchoRawXMLTest extends TestCase {
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
+    private ServiceContext serviceContext;
+
 
     private boolean finish = false;
 
@@ -76,7 +79,9 @@ public class EchoRawXMLTest extends TestCase {
                 serviceName,
                 org.apache.axis.engine.Echo.class.getName(),
                 operationName);
-        Utils.resolvePhases(engineRegistry,service);
+        UtilServer.deployService(service);
+        serviceContext = UtilServer.getConfigurationContext().createServiceContext(service.getName());
+        
     }
 
     protected void tearDown() throws Exception {

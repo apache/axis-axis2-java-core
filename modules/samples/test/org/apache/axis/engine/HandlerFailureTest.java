@@ -32,6 +32,7 @@ import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
@@ -77,12 +78,12 @@ public class HandlerFailureTest extends TestCase {
 
     public void testFailureAtServerRequestFlow() throws Exception {
         Flow flow = new FlowImpl();
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, culprit);
-        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, culprit,PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
         
         ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
         service.setInFlow(flow);
@@ -102,21 +103,21 @@ public class HandlerFailureTest extends TestCase {
  
 
         Flow flow = new FlowImpl();
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
         service.setInFlow(flow);
 
 
         flow = new FlowImpl();
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, new SpeakingHandler());
-        Utils.addHandler(flow, culprit);
-        Utils.addHandler(flow, new SpeakingHandler());
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, culprit,PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
         service.setInFlow(flow);
 
         OperationDescription operation = new OperationDescription(operationName);

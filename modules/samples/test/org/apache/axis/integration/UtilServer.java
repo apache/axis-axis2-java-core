@@ -90,4 +90,8 @@ public class UtilServer {
             count--;
         }
     }
+    
+    public static ConfigurationContext getConfigurationContext(){
+        return reciver.getSystemContext();
+    }
 }

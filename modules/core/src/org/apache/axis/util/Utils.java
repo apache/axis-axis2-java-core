@@ -21,23 +21,31 @@ import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ParameterImpl;
+import org.apache.axis.description.PhaseRule;
 import org.apache.axis.description.ServiceDescription;
+
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.engine.SpeakingHandler;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 
 public class Utils {
-
-    public static void addHandler(Flow flow, Handler handler) {
-        HandlerDescription hmd = new HandlerDescription();
-        hmd.setHandler(handler);
-        flow.addHandler(hmd);
+    
+    public static void addHandler(Flow flow,Handler handler,String phaseName){
+        HandlerDescription handlerDesc = new HandlerDescription();
+        PhaseRule rule = new PhaseRule(phaseName);
+        handlerDesc.setRules(rule);
+        handler.init(handlerDesc);
+        handlerDesc.setHandler(handler);
+        flow.addHandler(handlerDesc);
     }
+
+   
 //    public static void addPhasesToServiceFromFlow(
 //        ServiceContext serviceContext,
 //        String phaseName,

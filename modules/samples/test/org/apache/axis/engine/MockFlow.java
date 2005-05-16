@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.engine;
 
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.FlowImpl;
-import org.apache.axis.util.Utils;
-
 
 public class MockFlow extends FlowImpl implements Flow {
     public MockFlow(String message, int length) {
         super();
         for (int i = 0; i < length; i++) {
             SpeakingHandler1 h1 = new SpeakingHandler1("Executing " + i + " inside " + message);
-            Utils.addHandler(this, h1);
-        }
+            this.addHandler(h1.getHandlerDescription());
+         }
     }
 
 }

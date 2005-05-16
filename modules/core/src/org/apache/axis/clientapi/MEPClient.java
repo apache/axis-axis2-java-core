@@ -18,6 +18,8 @@
 package org.apache.axis.clientapi;
 
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.engine.AxisFault;
 
 /**
  * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
@@ -26,6 +28,12 @@ public abstract class MEPClient {
     protected ServiceContext serviceContext;
     public MEPClient(ServiceContext service){
         this.serviceContext = service;
+    }
+    
+    protected void verifyInvocation(OperationDescription axisop) throws AxisFault{
+        if(axisop == null){
+            throw new AxisFault("OperationDescription can not be null");
+         }   
     }
 
 }

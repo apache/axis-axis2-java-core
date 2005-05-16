@@ -19,6 +19,7 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
@@ -68,8 +69,10 @@ public class AxisEngine {
 
             ArrayList phases = operationContext.getAxisOperation().getPhasesOutFlow();
             invokePhases(phases, msgContext);
+            
+            TransportOutDescription transportOut = msgContext.getTransportOut();
 
-            TransportSender sender = msgContext.getTransportOut().getSender();
+            TransportSender sender = transportOut.getSender();
             sender.invoke(msgContext);
         } catch (Throwable e) {
             handleFault(msgContext, e);
