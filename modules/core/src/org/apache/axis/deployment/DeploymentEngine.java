@@ -214,18 +214,23 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     public AxisConfiguration loadClient(String clientHome) throws DeploymentException {
-        checkClientHome(clientHome);
-        if (engineConfigName == null) {
-            throw new DeploymentException("path to client.xml can not be NUll");
+        InputStream in = null;
+        if (clientHome != null) {
+            checkClientHome(clientHome);
+            try {
+                File tempfile = new File(engineConfigName);
+                in = new FileInputStream(tempfile);
+            } catch (FileNotFoundException e) {
+                throw new DeploymentException("Exception at deployment", e);
+            }
+        } else {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            in = cl.getResourceAsStream("org/apache/axis/deployment/client.xml");
         }
-        File tempfile = new File(engineConfigName);
         try {
-            InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.processGlobalConfig(axisGlobal);
-        } catch (FileNotFoundException e) {
-            throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
