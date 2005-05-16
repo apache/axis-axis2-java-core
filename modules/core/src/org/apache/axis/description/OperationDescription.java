@@ -1,5 +1,6 @@
 package org.apache.axis.description;
 
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.context.OperationContextFactory;
@@ -142,7 +143,8 @@ public class OperationDescription extends WSDLOperationImpl implements
 		} else {
 			// So this message is part of an ongoing MEP
 			//			operationContext =
-			msgContext.getSystemContext().getOperationContext(
+			ConfigurationContext configContext =  msgContext.getSystemContext();
+            operationContext = configContext.getOperationContext(
 					msgContext.getRelatesTo().getValue());
 
 			if (null == operationContext) {
