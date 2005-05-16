@@ -86,8 +86,7 @@ public class Phase {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
-        try {
-            while (indexOfHandlerToExecute < handlers.size() ) {
+            while (indexOfHandlerToExecute < handlers.size()) {
                 if(msgctx.isPaused()){
                     break;
                 }else{
@@ -103,10 +102,6 @@ public class Phase {
                     }
                 }
             }
-        } catch (Exception e) {
-            log.info("Phase " + phaseName + " failed with the "
-                    + e.getMessage());
-        }
     }
 
     /**

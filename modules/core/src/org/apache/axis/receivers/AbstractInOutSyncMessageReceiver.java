@@ -52,12 +52,15 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
             new RelatesTo(
                 oldMessageInfoHeaders.getMessageId(),
                 AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-
-        MessageContext resultContext = invokeBusinessLogic(messgeCtx,newmsgCtx);
+        newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
+        newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_WRITER,messgeCtx.getProperty(MessageContext.TRANSPORT_WRITER));
+        
+        invokeBusinessLogic(messgeCtx,newmsgCtx);
 
         AxisEngine engine =
             new AxisEngine(
                 messgeCtx.getOperationContext().getServiceContext().getEngineContext());
-        engine.send(resultContext);
+        engine.send(newmsgCtx);
     }
 }

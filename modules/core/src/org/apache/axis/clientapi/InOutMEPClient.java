@@ -32,6 +32,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -108,13 +109,18 @@ public class InOutMEPClient extends MEPClient {
                     msgctx.getTransportIn(),
                     msgctx.getTransportOut(),
                     msgctx.getSystemContext());
+            response.setProperty(MessageContext.TRANSPORT_READER,msgctx.getProperty(MessageContext.TRANSPORT_READER)) ;                   
             response.setServerSide(false);
+            response.setOperationContext(msgctx.getOperationContext());
+            response.setServiceContext(msgctx.getServiceContext());
 
-            TransportReceiver receiver = response.getTransportIn().getReciever();
+            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
+            TransportReceiver receiver = new HTTPTransportReceiver();
             receiver.invoke(response, sysContext);
             SOAPEnvelope resenvelope = response.getEnvelope();
-
-            // TODO if the resenvelope is a SOAPFault then throw an exception
+            if(resenvelope.getBody().hasFault()){
+                throw new AxisFault(resenvelope.getBody().getFault().getException());
+            }
             return response;
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
