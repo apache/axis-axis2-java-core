@@ -30,14 +30,14 @@ import javax.xml.namespace.QName;
  * @author chathura@opensource.lk
  *
  */
-public class MEPContextTest extends AbstractTestCase {
+public class OperationContextTest extends AbstractTestCase {
 
 	private ConfigurationContext engineCtx = new ConfigurationContext(null);
 
-    public MEPContextTest(String arg0) {
+    public OperationContextTest(String arg0) {
         super(arg0);
     }
-    //FIXME TODO Chathura
+    
     public void testMEPfindingOnRelatesTO() throws Exception{
     	 
     	ServiceContext sessionContext = new ServiceContext(new ServiceDescription(),new ConfigurationContext(null));
