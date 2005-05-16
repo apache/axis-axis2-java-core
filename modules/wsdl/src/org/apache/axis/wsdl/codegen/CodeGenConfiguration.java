@@ -32,9 +32,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	private File outputLocation;
     private int outputLanguage = XSLTConstants.LanguageTypes.JAVA;
     private boolean advancedCodeGenEnabled=false;
+
     private boolean asyncOn=true;
     private boolean syncOn=true;
     private String packageName=XSLTConstants.DEFAULT_PACKAGE_NAME;
+
 
 	/**
 	 * @param wom
@@ -113,6 +115,22 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return advancedCodeGenEnabled;
     }
 
+    
+    
+	/**
+	 * @return Returns the packageName.
+	 */
+	public String getPackageName() {
+		return packageName;
+	}
+	/**
+	 * @param packageName The packageName to set.
+	 */
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+
+
     public boolean isAsyncOn() {
         return asyncOn;
     }
@@ -122,7 +140,5 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return syncOn;
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
+   
 }

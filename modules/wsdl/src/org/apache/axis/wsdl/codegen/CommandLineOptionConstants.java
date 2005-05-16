@@ -27,10 +27,14 @@ public interface CommandLineOptionConstants {
 	public static final String WSDL_LOCATION_URI_OPTION = "uri";
 	public static final String OUTPUT_LOCATION_OPTION = "o";
 	public static final String ADVANCED_CODEGEN_OPTION = "x";
+
+	public static final String CLIENT_PACKAGE = "clientpackage";
+
 	public static final String CODEGEN_ASYNC_ONLY_OPTION = "a";
 	public static final String CODEGEN_SYNC_ONLY_OPTION = "s";
 	public static final String PACKAGE_OPTION = "p";
 	public static final String STUB_LANGUAGE_OPTION = "l";
+
 
 	public static final String INVALID_OPTION= "INVALID_OPTION";
 

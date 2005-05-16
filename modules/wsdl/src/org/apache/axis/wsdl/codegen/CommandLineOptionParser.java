@@ -37,7 +37,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
 	 * @param args
 	 * @return CommandLineOption List
 	 */
-private Map parse(String[] args){
+	private Map parse(String[] args){
 		Map commandLineOptions = new HashMap();
 		
 		if(0 == args.length)

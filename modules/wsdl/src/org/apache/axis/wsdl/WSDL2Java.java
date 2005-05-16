@@ -26,6 +26,7 @@ public class WSDL2Java {
 		System.out.println("-s : Generate sync style code only. Default if off. takes precedence over -a");
 		System.out.println("-p <package name> : set custom package name");
 		System.out.println("-l <language> : valid languages are java and csharp. Default is java");
+		System.out.println("-clientpackage <client package");
 		System.exit(0);
 	}
 	

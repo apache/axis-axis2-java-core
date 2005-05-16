@@ -47,11 +47,26 @@ public class CommandLineOption implements CommandLineOptionConstants {
         type = type.toLowerCase();
         this.type = type;
         this.validate(type);
+        
+        if (( WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(type)) {
+			this.type = WSDL_LOCATION_URI_OPTION;
+		} else if (( OUTPUT_LOCATION_OPTION).equalsIgnoreCase(type)) {
+			this.type = OUTPUT_LOCATION_OPTION;
+		} else if (( ADVANCED_CODEGEN_OPTION).equalsIgnoreCase(type)) {
+			this.type = ADVANCED_CODEGEN_OPTION;
+		} else if(( CLIENT_PACKAGE).equalsIgnoreCase(type)){
+			this.type = CLIENT_PACKAGE;
+		} else {
+			this.invalid = true;
+		}
 
         if (null !=  values) {
             this.optionValues = values ;
         }
     }
+
+
+		
 
     /**
      * @return Returns the type.
@@ -60,6 +75,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
     public String getType() {
         return type;
     }
+
 
     /**
      * @return Returns the optionValues.
@@ -93,6 +109,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
             (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (PACKAGE_OPTION).equalsIgnoreCase(optionType)||
+			(CLIENT_PACKAGE).equalsIgnoreCase(optionType) ||
             (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
     }
 }

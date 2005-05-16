@@ -23,6 +23,7 @@ import org.apache.axis.wsdl.codegen.emitter.Emitter;
 import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
+import org.apache.axis.wsdl.codegen.extension.PackageFinder;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -67,6 +68,9 @@ public class CodeGenerationEngine {
         AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
         axisBindingBuilder.init(this.configuration);
         axisBindingBuilder.engage();
+        PackageFinder packageFinder = new PackageFinder();
+        packageFinder.init(this.configuration);
+		this.moduleEndpoints.add(packageFinder);
 
     }
 
