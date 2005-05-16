@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CommandLineOption;
 import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis.wsdl.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
 
 /**
@@ -30,10 +31,6 @@ import org.apache.wsdl.WSDLBinding;
 public class PackageFinder extends AbstractCodeGenerationExtension implements
 		CodeGenExtention {
 
-	public static final String DEFAULT_PACKAGE = "axis2";
-	
-	private static final String HTTP_PRFIX ="http://";
-
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
 
@@ -41,37 +38,17 @@ public class PackageFinder extends AbstractCodeGenerationExtension implements
 
 	public void engage() {
 		Map allOptions = this.configuration.getParser().getAllOptions();
-		String packageName = ((CommandLineOption)(allOptions.get(CommandLineOptionConstants.CLIENT_PACKAGE))).getOptionValue();
-		if(null == packageName || "".equals(packageName))
-			packageName = DEFAULT_PACKAGE;
-		
+        CommandLineOption packageOption = (CommandLineOption)(allOptions.get(CommandLineOptionConstants.PACKAGE_OPTION));
+        String packageName = packageOption==null?null:packageOption.getOptionValue();
+
 		if (packageName == null) {
 			WSDLBinding binding = configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
 			String temp = binding.getBoundInterface().getName().getNamespaceURI();
-			//Striping off the http:// prefix
-			String[] splitValues = temp.split(HTTP_PRFIX);			
-			packageName = splitValues[1].trim();	
-			if(null == packageName || "".equals(packageName))
-				packageName = DEFAULT_PACKAGE;
-			
-			if(packageName.endsWith("/"))
-				packageName = packageName.substring(0, packageName.length()-1 );
-			
-			packageName = packageName.replace('.', '#');
-			String[] individualPackageNames = packageName.split("#");
-			if(individualPackageNames.length>0){
-				packageName = individualPackageNames[individualPackageNames.length -1];
-				for(int i = individualPackageNames.length -2; i>=0; i--){
-					packageName = packageName+ "." +individualPackageNames[i];
-				}
-			}
+			packageName = URLProcessor.getNameSpaceFromURL(temp);
 		}	
 		
 		if(null == packageName || "".equals(packageName))
-			packageName = DEFAULT_PACKAGE;
-		
-	
-		
+			packageName = URLProcessor.DEFAULT_PACKAGE;
 		
 		this.configuration.setPackageName(packageName.toLowerCase());
 

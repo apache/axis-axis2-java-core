@@ -29,9 +29,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
     private boolean invalid = false;
 
     public CommandLineOption(String type, String[] values){
-        if (type.startsWith("-")) type = type.replaceFirst("-","");
-        type = type.toLowerCase();
-        this.type = type;
+        updateType(type);
         ArrayList arrayList = new ArrayList(values.length);
         for(int i =0; i< values.length; i++){
             arrayList.add(values[i]);
@@ -39,26 +37,18 @@ public class CommandLineOption implements CommandLineOptionConstants {
         this.optionValues = arrayList;
     }
 
+    private void updateType(String type) {
+        if (type.startsWith("-")) type = type.replaceFirst("-","");
+        type = type.toLowerCase();
+        this.type = type;
+    }
+
     /**
      * @param type
      */
     public CommandLineOption(String type, ArrayList values) {
-        if (type.startsWith("-")) type = type.replaceFirst("-","");
-        type = type.toLowerCase();
-        this.type = type;
-        this.validate(type);
-        
-        if (( WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(type)) {
-			this.type = WSDL_LOCATION_URI_OPTION;
-		} else if (( OUTPUT_LOCATION_OPTION).equalsIgnoreCase(type)) {
-			this.type = OUTPUT_LOCATION_OPTION;
-		} else if (( ADVANCED_CODEGEN_OPTION).equalsIgnoreCase(type)) {
-			this.type = ADVANCED_CODEGEN_OPTION;
-		} else if(( CLIENT_PACKAGE).equalsIgnoreCase(type)){
-			this.type = CLIENT_PACKAGE;
-		} else {
-			this.invalid = true;
-		}
+        updateType(type);
+        this.validate(this.type);
 
         if (null !=  values) {
             this.optionValues = values ;
@@ -109,7 +99,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
             (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (PACKAGE_OPTION).equalsIgnoreCase(optionType)||
-			(CLIENT_PACKAGE).equalsIgnoreCase(optionType) ||
+			//(CLIENT_PACKAGE).equalsIgnoreCase(optionType) ||
             (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
     }
 }
