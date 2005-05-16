@@ -159,8 +159,6 @@ public class PhaseHolder {
     public void buildTransportChain(PhasesInclude trnsport, int chainType)
             throws PhaseException {
         try {
-            //OrderThePhases();
-
             HandlerDescription[] handlers;
             Class handlerClass = null;
             Handler handler;

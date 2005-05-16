@@ -41,6 +41,14 @@ public class PhaseMetadata {
     public static final String PHASE_MESSAGE_OUT = "MessageOut";
     public static final String PHASE_TRANSPORT_OUT = "MessageOut";
 
+
+    /**
+     * todo  I think thi shas to be change
+     * All the handlers inside transportsender and TranportRecievre in server.xml gose
+     * to this phase 
+     */
+    public static final String TRANSPORT_PHASE = "TRANSPORT";
+
     /**
      * Field BOTH_BEFORE_AFTER
      */

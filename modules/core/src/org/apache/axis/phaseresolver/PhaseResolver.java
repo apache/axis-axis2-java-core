@@ -20,6 +20,7 @@ import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.util.PhaseValidator;
 
 import javax.xml.namespace.QName;
@@ -307,36 +308,33 @@ public class PhaseResolver {
 
     private void buildINTransportChains(TransportInDescription transport)
             throws PhaseException {
-        //TODO Fix me
-        /*Flow flow = null;
+        Flow flow = null;
         for (int type = 1; type < 4; type++) {
-        phaseHolder = new PhaseHolder(axisConfig);
-        phaseHolder.setFlowType(type);
-        switch (type) {
-        case PhaseMetadata.IN_FLOW:
-        {
-        flow = transport.getInFlow();
-        break;
+            switch (type) {
+                case PhaseMetadata.IN_FLOW:
+                    {
+                        flow = transport.getInFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_IN_FLOW:
+                    {
+                        flow = transport.getFaultFlow();
+                        break;
+                    }
+            }
+            if (flow != null) {
+                ArrayList phaseList = new ArrayList();
+                phaseList.add(new Phase(PhaseMetadata.TRANSPORT_PHASE));
+                phaseHolder = new PhaseHolder(phaseList);
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerDescription metadata = flow.getHandler(j);
+                    metadata.getRules().setPhaseName(PhaseMetadata.TRANSPORT_PHASE);
+                    phaseHolder.addHandler(metadata);
+                    phaseHolder.addHandler(metadata);
+                }
+            }
+            phaseHolder.buildTransportChain(transport, type);
         }
-        case PhaseMetadata.FAULT_IN_FLOW:
-        {
-        flow = transport.getFaultFlow();
-        break;
-        }
-        }
-        if (flow != null) {
-        for (int j = 0; j < flow.getHandlerCount(); j++) {
-        HandlerDescription metadata = flow.getHandler(j);
-
-        // todo change this in properway
-        if (metadata.getRules().getPhaseName().equals("")) {
-        throw new PhaseException("Phase dose not specified");
-        }
-        phaseHolder.addHandler(metadata);
-        }
-        }
-        phaseHolder.buildTransportChain(transport, type);
-        }*/
     }
 
 
@@ -348,36 +346,32 @@ public class PhaseResolver {
      */
     private void buildOutTransportChains(TransportOutDescription transport)
             throws PhaseException {
-        //TODO fix me
-        /*Flow flow = null;
-        for (int type = 1; type < 4; type++) {
-        phaseHolder = new PhaseHolder(axisConfig);
-        phaseHolder.setFlowType(type);
-        switch (type) {
-        case PhaseMetadata.OUT_FLOW:
-        {
-        flow = transport.getOutFlow();
-        break;
+        Flow flow = null;
+        for (int type = 1; type < 5; type++) {
+            switch (type) {
+                case PhaseMetadata.OUT_FLOW:
+                    {
+                        flow = transport.getOutFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_OUT_FLOW:
+                    {
+                        flow = transport.getFaultFlow();
+                        break;
+                    }
+            }
+            if (flow != null) {
+                ArrayList phaseList = new ArrayList();
+                phaseList.add(new Phase(PhaseMetadata.TRANSPORT_PHASE));
+                phaseHolder = new PhaseHolder(phaseList);
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerDescription metadata = flow.getHandler(j);
+                    metadata.getRules().setPhaseName(PhaseMetadata.TRANSPORT_PHASE);
+                    phaseHolder.addHandler(metadata);
+                }
+            }
+            phaseHolder.buildTransportChain(transport, type);
         }
-        case PhaseMetadata.FAULT_OUT_FLOW:
-        {
-        flow = transport.getFaultFlow();
-        break;
-        }
-        }
-        if (flow != null) {
-        for (int j = 0; j < flow.getHandlerCount(); j++) {
-        HandlerDescription metadata = flow.getHandler(j);
-
-        // todo change this in properway
-        if (metadata.getRules().getPhaseName().equals("")) {
-        throw new PhaseException("Phase dose not specified");
-        }
-        phaseHolder.addHandler(metadata);
-        }
-        }
-        phaseHolder.buildTransportChain(transport, type);
-        }*/
     }
 
     /**
@@ -418,46 +412,6 @@ public class PhaseResolver {
                         break;
                     }
             }
-            //TODO NOTE : the following section commented since are not going to init all the module
-            //if they are not refered by some one  (Deepal)
-            /*Collection col = ((AxisSystemImpl) axisConfig).getModules().values();
-            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            ModuleDescription axismodule = (ModuleDescription) iterator.next();
-            switch (type) {
-            case PhaseMetadata.IN_FLOW:
-            {
-            flow = axismodule.getInFlow();
-            break;
-            }
-            case PhaseMetadata.OUT_FLOW:
-            {
-            flow = axismodule.getOutFlow();
-            break;
-            }
-            case PhaseMetadata.FAULT_IN_FLOW:
-            {
-            flow = axismodule.getFaultInFlow();
-            break;
-            }
-            case PhaseMetadata.FAULT_OUT_FLOW:
-            {
-            flow = axismodule.getFaultOutFlow();
-            break;
-            }
-            }
-            if (flow != null) {
-            for (int j = 0; j < flow.getHandlerCount(); j++) {
-            HandlerDescription metadata = flow.getHandler(j);
-
-            if(PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())){
-            phaseHolder.addHandler(metadata);
-            } else {
-            throw new PhaseException("Global module can not refer service specific phases : "
-            + metadata.getRules().getPhaseName());
-            }
-            }
-            }
-            }*/
             ////////////////////////////////////////////////////////////////////////////////////
             /////////////////// Modules refered by server.xml //////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////
