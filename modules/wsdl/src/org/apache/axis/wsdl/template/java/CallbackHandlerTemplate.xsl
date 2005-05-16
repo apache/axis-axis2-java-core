@@ -8,11 +8,26 @@
      */
 
     public class <xsl:value-of select="@name"/>{
+    
+    
+    
+	private Object clientData;
+		
+		
+	/**
+	* User can pass in any object that needs to be accessed once the NonBlocking 
+	* Web service call is finished and appropreate method of this CallBack is called.
+	* @param clientData Object mechanism by which the user can pass in user data
+	* that will be avilable at the time this callback is called.
+	*/
+	public <xsl:value-of select="@name"/>(Object clientData){
+		this.clientData = clientData;
+	}
 
 
 	<xsl:for-each select="method">
          /**
-         * auto generated Axis2 call back method
+         * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
          *
          */
         public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis.clientapi.AsyncResult result) {
