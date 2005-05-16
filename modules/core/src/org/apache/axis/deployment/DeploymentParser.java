@@ -90,7 +90,8 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void processGlobalConfig(GlobalDescription axisGlobal) throws DeploymentException {
+    public void processGlobalConfig(GlobalDescription axisGlobal , String starttag) throws DeploymentException {
+        String START_TAG = starttag;
         try {
             boolean END_DOCUMENT = false;
             while (!END_DOCUMENT) {
@@ -101,7 +102,7 @@ public class DeploymentParser implements DeploymentConstants {
                     break;
                 } else if (eventType == XMLStreamConstants.START_ELEMENT) {
                     String ST = pullparser.getLocalName(); //Staring tag name
-                    if (SERVERST.equals(ST)) {
+                    if (START_TAG.equals(ST)) {
                         //todo complete this to fill the names
                     } else if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
@@ -185,7 +186,7 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
-                    if (SERVERST.equals(endtagname)) {
+                    if (START_TAG.equals(endtagname)) {
                         END_DOCUMENT = true;
                         break;
                     }

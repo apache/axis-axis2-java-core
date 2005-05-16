@@ -48,6 +48,7 @@ public interface DeploymentConstants {
 
     String SERVICETAG = "service";
     String SERVERST = "server";
+    String CLIENTST = "client" ;
 
     // for serviemetadat
     String PROVIDERNAME = "provider";

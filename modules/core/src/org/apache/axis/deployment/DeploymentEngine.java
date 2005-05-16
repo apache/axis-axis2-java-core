@@ -190,7 +190,7 @@ public class DeploymentEngine implements DeploymentConstants {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal);
+            parser.processGlobalConfig(axisGlobal , SERVERST);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -203,7 +203,7 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListenerImpl(folderName, this);
         }
         try {
-            validateServerModule();
+            validateModuleRefs();
             validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
@@ -230,7 +230,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal);
+            parser.processGlobalConfig(axisGlobal ,CLIENTST);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -238,7 +238,7 @@ public class DeploymentEngine implements DeploymentConstants {
         hotUpdate = false;
         new RepositoryListenerImpl(folderName, this);
         try {
-            validateServerModule();
+            validateModuleRefs();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault.getMessage());
@@ -292,7 +292,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void validateServerModule() throws AxisFault {
+    private void validateModuleRefs() throws AxisFault {
         Iterator itr = axisGlobal.getModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
