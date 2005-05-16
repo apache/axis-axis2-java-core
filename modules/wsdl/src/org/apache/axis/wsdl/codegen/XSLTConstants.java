@@ -63,4 +63,17 @@ public interface XSLTConstants {
     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/CallbackHandlerTemplate.xsl";
     	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/CallbackHandlerTemplate.xsl";
     }
+
+     /**
+     *
+     * Interface skeletons
+     */
+    public interface XSLTSkeletonTemplates{
+    	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/SkeletonTemplate.xsl";
+    	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/SkeletonTemplate.xsl";
+    }
+
+     public interface XSLTServiceXMLTemplates{
+    	public static final String GENERAL_SERVICE_TEMPLATE = "/org/apache/axis/wsdl/template/general/ServiceXMLTemplate.xsl";
+    }
 }

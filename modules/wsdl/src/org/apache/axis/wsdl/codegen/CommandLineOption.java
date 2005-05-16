@@ -95,11 +95,11 @@ public class CommandLineOption implements CommandLineOptionConstants {
     private void validate(String optionType){
         invalid =  !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
             (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
-            (ADVANCED_CODEGEN_OPTION).equalsIgnoreCase(optionType) ||
+            (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
             (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
             (PACKAGE_OPTION).equalsIgnoreCase(optionType)||
-			//(CLIENT_PACKAGE).equalsIgnoreCase(optionType) ||
+            (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType)||
             (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
     }
 }

@@ -29,13 +29,12 @@ public class FileWriter {
      * @param rootLocation - Location to be written
      * @param packageName - package, can be '.' seperated
      * @param fileName name of the file
-     * @param fileType  type of the file, java, csharp, cpp etc
+     * @param extension  type of the file, java, csharp, cpp etc
      * @return  the File that was created
      * @throws IOException
      * @throws Exception
      */
-    public static File createClassFile(File rootLocation,String packageName,String fileName,int fileType) throws IOException,Exception{
-
+    public static File createClassFile(File rootLocation,String packageName,String fileName,String extension) throws IOException,Exception{
         File returnFile = null;
         File root = rootLocation;
 
@@ -49,12 +48,8 @@ public class FileWriter {
                 if (!tempFile.exists()){
                     tempFile.mkdir();
                 }
-
             }
         }
-
-
-        String extension = getExtension(fileType);
 
         if (!fileName.endsWith(extension)){
             fileName = fileName + extension;
@@ -65,10 +60,23 @@ public class FileWriter {
         if (!returnFile.exists()){
             returnFile.createNewFile();
         }
-
-
-
         return returnFile;
+    }
+
+    /**
+     * Creates/ returns a file object
+     * @param rootLocation - Location to be written
+     * @param packageName - package, can be '.' seperated
+     * @param fileName name of the file
+     * @param fileType  type of the file, java, csharp, cpp etc. Guesses the extension with the
+     * file type
+     * @return  the File that was created
+     * @throws IOException
+     * @throws Exception
+     */
+    public static File createClassFile(File rootLocation,String packageName,String fileName,int fileType) throws IOException,Exception{
+        return createClassFile(rootLocation,packageName,fileName,getExtension(fileType));
+
     }
 
     /**
@@ -83,6 +91,7 @@ public class FileWriter {
             case XSLTConstants.LanguageTypes.C_SHARP: extension=".cs";break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS: extension=".cpp";break;
             case XSLTConstants.LanguageTypes.VB_DOT_NET: extension=".vb";break;
+            default: extension=".xml";
         }
         return extension;
     }

@@ -52,7 +52,7 @@
  		    org.apache.axis.context.MessageContext _messageContext = getMessageContext();
              <xsl:if test="$outputtype=''">
              _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
-             return null;
+             return;
              </xsl:if>
              <xsl:if test="$outputtype!=''">
              Object obj = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
