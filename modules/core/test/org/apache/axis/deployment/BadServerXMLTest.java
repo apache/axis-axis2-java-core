@@ -36,7 +36,7 @@ public class BadServerXMLTest extends AbstractTestCase {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/BadServer.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
             GlobalDescription glabl = new GlobalDescription();
-            parser.processGlobalConfig(glabl);
+            parser.processGlobalConfig(glabl,DeploymentConstants.SERVERST);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
             return;

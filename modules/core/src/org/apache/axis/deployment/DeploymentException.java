@@ -16,13 +16,14 @@
 
 package org.apache.axis.deployment;
 
-public class DeploymentException extends Exception {
+import org.apache.axis.engine.AxisFault;
+
+public class DeploymentException extends AxisFault {
     public DeploymentException(Throwable cause) {
         super(cause);
     }
 
-    public DeploymentException() {
-    }
+ 
 
     public DeploymentException(String message) {
         super(message);

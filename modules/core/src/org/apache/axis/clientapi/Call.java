@@ -18,8 +18,10 @@
 package org.apache.axis.clientapi;
 
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
@@ -132,8 +134,9 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
-    private static ServiceContext assumeServiceContext() throws AxisFault {
-        ConfigurationContext sysContext =
+    private static ServiceContext assumeServiceContext() throws AxisFault{
+        EngineContextFactory efac = new EngineContextFactory();
+        ConfigurationContext sysContext = efac.buildClientEngineContext(null);
             new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
