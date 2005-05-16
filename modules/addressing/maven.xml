@@ -8,8 +8,8 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <postGoal name="test:compile">
-        <j:jelly xmlns="jelly:ant">
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src"/>
-	  </j:jelly>
+	    <jar jarfile="target/addressing.mar" basedir="target/test-classes" >
+			<include name="**" />
+		</jar>
      </postGoal> 
  </project>

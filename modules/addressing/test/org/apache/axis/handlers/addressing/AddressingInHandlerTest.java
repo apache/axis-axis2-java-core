@@ -1,5 +1,7 @@
 package org.apache.axis.handlers.addressing;
 
+import junit.framework.TestCase;
+
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -25,7 +27,7 @@ import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
  * the License.
  * <p/>
  */
-public class AddressingInHandlerTest extends AbstractTestCase {
+public class AddressingInHandlerTest extends TestCase {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
