@@ -42,6 +42,11 @@
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>addressing</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <!-- external JARs -->
         <dependency>
