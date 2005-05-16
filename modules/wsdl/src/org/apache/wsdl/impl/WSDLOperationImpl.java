@@ -17,6 +17,7 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.util.LinkedList;
@@ -62,7 +63,7 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
     /**
      * Field style
      */
-    private String style;
+    private String style = WSDLService.STYLE_DOC;
 
     /**
      * Field safety

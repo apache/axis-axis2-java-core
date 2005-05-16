@@ -85,9 +85,9 @@ public class InOutMEPClient extends MEPClient {
             syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
         final TransportOutDescription transportOut =
             syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
-        msgctx.setTransportIn(transportIn);    
+        msgctx.setTransportIn(transportIn);
         msgctx.setTransportOut(transportOut);
-        
+
         ConfigurationContext sysContext = serviceContext.getEngineContext();
         AxisConfiguration registry = sysContext.getEngineConfig();
 
@@ -109,7 +109,9 @@ public class InOutMEPClient extends MEPClient {
                     msgctx.getTransportIn(),
                     msgctx.getTransportOut(),
                     msgctx.getSystemContext());
-            response.setProperty(MessageContext.TRANSPORT_READER,msgctx.getProperty(MessageContext.TRANSPORT_READER)) ;                   
+            response.setProperty(
+                MessageContext.TRANSPORT_READER,
+                msgctx.getProperty(MessageContext.TRANSPORT_READER));
             response.setServerSide(false);
             response.setOperationContext(msgctx.getOperationContext());
             response.setServiceContext(msgctx.getServiceContext());
@@ -118,7 +120,7 @@ public class InOutMEPClient extends MEPClient {
             TransportReceiver receiver = new HTTPTransportReceiver();
             receiver.invoke(response, sysContext);
             SOAPEnvelope resenvelope = response.getEnvelope();
-            if(resenvelope.getBody().hasFault()){
+            if (resenvelope.getBody().hasFault()) {
                 throw new AxisFault(resenvelope.getBody().getFault().getException());
             }
             return response;
@@ -146,6 +148,8 @@ public class InOutMEPClient extends MEPClient {
                 syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
             final TransportOutDescription transportOut =
                 syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
+            msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
+            msgctx.setServiceContext(serviceContext);
 
             if (useSeparateListener) {
                 String messageID = String.valueOf(System.currentTimeMillis());
@@ -157,7 +161,7 @@ public class InOutMEPClient extends MEPClient {
                         serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
                             + axisop.getName().getLocalPart()));
-                axisop.findOperationContext(msgctx, serviceContext, false);
+
             }
 
             engine.send(msgctx);
@@ -174,8 +178,13 @@ public class InOutMEPClient extends MEPClient {
                                     msgctx.getTransportOut(),
                                     msgctx.getSystemContext());
                             response.setServerSide(false);
+                            response.setProperty(
+                                MessageContext.TRANSPORT_READER,
+                                msgctx.getProperty(MessageContext.TRANSPORT_READER));
+                            response.setOperationContext(msgctx.getOperationContext());
+                            response.setServiceContext(msgctx.getServiceContext());
 
-                            TransportReceiver receiver = response.getTransportIn().getReciever();
+                            TransportReceiver receiver = new HTTPTransportReceiver();
                             receiver.invoke(response, syscontext);
                             SOAPEnvelope resenvelope = response.getEnvelope();
                             AsyncResult asyncResult = new AsyncResult();

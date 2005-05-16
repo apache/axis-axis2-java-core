@@ -94,6 +94,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 envelope.serialize(outputWriter);
                 outputWriter.flush();
+                out.flush();
             } catch (Exception e) {
                 throw new AxisFault("Stream error", e);
             }

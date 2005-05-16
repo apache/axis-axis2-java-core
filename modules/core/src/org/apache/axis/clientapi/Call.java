@@ -17,21 +17,36 @@
  */
 package org.apache.axis.clientapi;
 
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.AddressingModule;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.description.*;
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.FlowImpl;
+import org.apache.axis.description.GlobalDescription;
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.PhaseRule;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.handlers.addressing.AddressingInHandler;
+import org.apache.axis.handlers.addressing.AddressingOutHandler;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 
-import javax.xml.namespace.QName;
-import java.util.HashMap;
+import com.sun.net.ssl.internal.www.protocol.https.Handler;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
@@ -88,6 +103,10 @@ public class Call extends InOutMEPClient {
         throws AxisFault {
         OperationDescription axisConfig =
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        if (axisConfig == null) {
+            axisConfig = new OperationDescription(new QName(axisop));
+            serviceContext.getServiceConfig().addOperation(axisConfig);
+        }
         MessageContext msgctx = prepareTheSystem(axisConfig, toSend);
 
         super.invokeNonBlocking(axisConfig, msgctx, callback);
@@ -134,10 +153,33 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
-    private static ServiceContext assumeServiceContext() throws AxisFault{
+    private static ServiceContext assumeServiceContext() throws AxisFault {
         EngineContextFactory efac = new EngineContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-            new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
+        new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
+
+        //Add the addressing modules
+        ModuleDescription addressingModule = new ModuleDescription();
+        addressingModule.setName(new QName("addressing"));
+        Flow inflow = new FlowImpl();
+        HandlerDescription handlerDesc = new HandlerDescription();
+        handlerDesc.setRules(new PhaseRule(PhaseMetadata.PHASE_PRE_DISPATCH));
+        handlerDesc.setHandler(new AddressingInHandler());
+        inflow.addHandler(handlerDesc);
+        addressingModule.setInFlow(inflow);
+
+        Flow outflow = new FlowImpl();
+        handlerDesc = new HandlerDescription();
+        handlerDesc.setRules(new PhaseRule(PhaseMetadata.PHASE_PRE_DISPATCH));
+        handlerDesc.setHandler(new AddressingOutHandler());
+        outflow.addHandler(handlerDesc);
+        addressingModule.setInFlow(outflow);
+        addressingModule.setModule(new AddressingModule());
+        sysContext.getEngineConfig().addMdoule(addressingModule);
+        sysContext.getEngineConfig().getGlobal().addModule(addressingModule.getName());
+
+
+        //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         sysContext.getEngineConfig().addService(axisService);

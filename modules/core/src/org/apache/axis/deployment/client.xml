@@ -3,7 +3,6 @@
     <parameter name="hotupdate" locked="xsd:false">true</parameter>
 
     <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
-
     <transportReceiver name="http" >
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">

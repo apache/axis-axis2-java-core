@@ -33,6 +33,7 @@ import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
+import org.apache.wsdl.WSDLService;
 
 public class Utils {
     
@@ -86,8 +87,10 @@ public class Utils {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
+        
         OperationDescription axisOp = new OperationDescription(opName);
         axisOp.setMessageReciever(messageReceiver);
+        axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);
         return service;
     }

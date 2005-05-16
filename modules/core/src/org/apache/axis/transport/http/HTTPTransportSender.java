@@ -37,27 +37,27 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     private Socket socket;
     private ByteArrayOutputStream outputStream;
-    /**
-     * Method obtainOutputStream
-     *
-     * @param msgContext
-     * @return
-     * @throws AxisFault
-     */
-    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
-        if (!msgContext.isServerSide()) {
-            //create a new byte buffer output stream
-            outputStream = new ByteArrayOutputStream();
-            out = new OutputStreamWriter(outputStream);
-        } else {
-            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
-        }
-        if (out == null) {
-            throw new AxisFault("can not find the suffient information to find endpoint");
-        } else {
-            return out;
-        }
-    }
+//    /**
+//     * Method obtainOutputStream
+//     *
+//     * @param msgContext
+//     * @return
+//     * @throws AxisFault
+//     */
+//    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
+//        if (!msgContext.isServerSide()) {
+//            //create a new byte buffer output stream
+//            outputStream = new ByteArrayOutputStream();
+//            out = new OutputStreamWriter(outputStream);
+//        } else {
+//            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+//        }
+//        if (out == null) {
+//            throw new AxisFault("can not find the suffient information to find endpoint");
+//        } else {
+//            return out;
+//        }
+//    }
 
 
     /**

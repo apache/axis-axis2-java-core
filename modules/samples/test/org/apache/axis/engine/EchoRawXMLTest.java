@@ -48,7 +48,7 @@ public class EchoRawXMLTest extends TestCase {
         new EndpointReference(
             AddressingConstants.WSA_TO,
             "http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT + 1)
+                + (UtilServer.TESTING_PORT +1)
                 + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -149,47 +149,47 @@ public class EchoRawXMLTest extends TestCase {
             SOAPEnvelope result = (SOAPEnvelope)call.invokeBlocking(operationName.getLocalPart(),reqEnv);
             result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
         }
-        
-
-    public void testEchoXMLCompleteASync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Assimov, the foundation Sega");
-        method.addChild(value);
-        reqEnv.getBody().addChild(method);
-
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                try {
-                    result.getResponseEnvelope().serialize(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                } catch (XMLStreamException e) {
-                    reportError(e);
-                } finally {
-                    finish = true;
-                }
-            }
-
-            public void reportError(Exception e) {
-                e.printStackTrace();
-                finish = true;
-            }
-        };
-
-        call.invokeNonBlocking(operationName.getLocalPart(), reqEnv, callback);
-        while (!finish) {
-            Thread.sleep(1000);
-        }
-
-        log.info("send the reqest");
-    }
+//        
+//
+//    public void testEchoXMLCompleteASync() throws Exception {
+//        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+//
+//        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+//        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+//        OMElement method = fac.createOMElement("echoOMElement", omNs);
+//        OMElement value = fac.createOMElement("myValue", omNs);
+//        value.setText("Isaac Assimov, the foundation Sega");
+//        method.addChild(value);
+//        reqEnv.getBody().addChild(method);
+//
+//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+//
+//        call.setTo(targetEPR);
+//        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+//        Callback callback = new Callback() {
+//            public void onComplete(AsyncResult result) {
+//                try {
+//                    result.getResponseEnvelope().serialize(
+//                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+//                } catch (XMLStreamException e) {
+//                    reportError(e);
+//                } finally {
+//                    finish = true;
+//                }
+//            }
+//
+//            public void reportError(Exception e) {
+//                e.printStackTrace();
+//                finish = true;
+//            }
+//        };
+//
+//        call.invokeNonBlocking(operationName.getLocalPart(), reqEnv, callback);
+//        while (!finish) {
+//            Thread.sleep(1000);
+//        }
+//
+//        log.info("send the reqest");
+//    }
 
 }

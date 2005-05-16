@@ -27,7 +27,7 @@ import org.apache.axis.engine.AxisFault;
  * protected abstract methods are only for the sake of breaking down the logic
  */
 public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageReceiver {
-    public abstract MessageContext invokeBusinessLogic(
+    public abstract void invokeBusinessLogic(
         MessageContext inMessage,
         MessageContext outMessage)
         throws AxisFault;
