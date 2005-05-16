@@ -48,7 +48,7 @@ public class EchoRawXMLTest extends TestCase {
         new EndpointReference(
             AddressingConstants.WSA_TO,
             "http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT +1)
+                + (UtilServer.TESTING_PORT)
                 + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
