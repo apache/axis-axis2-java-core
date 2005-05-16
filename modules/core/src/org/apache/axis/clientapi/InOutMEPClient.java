@@ -128,6 +128,7 @@ public class InOutMEPClient extends MEPClient {
             if (useSeparateListener) {
                 String messageID = String.valueOf(System.currentTimeMillis());
                 msgctx.setMessageID(messageID);
+                axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
                     listenerManager.replyToEPR(

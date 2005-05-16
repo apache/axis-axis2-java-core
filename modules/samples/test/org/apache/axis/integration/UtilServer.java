@@ -47,7 +47,6 @@ public class UtilServer {
 
     public static synchronized void start() throws Exception {
         if (count == 0) {
-            Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             EngineContextFactory erfac = new EngineContextFactory();
             
             File file = new File("target/test-resources/samples");

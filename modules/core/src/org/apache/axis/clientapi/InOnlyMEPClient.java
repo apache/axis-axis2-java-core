@@ -17,22 +17,75 @@
  */
 package org.apache.axis.clientapi;
 
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.miheaders.RelatesTo;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.OperationDescription;
 
-/**
- * @author hemapani
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+
 public class InOnlyMEPClient extends MEPClient{
-
+    private MessageInformationHeadersCollection messageInformationHeaders;
     /**
      * @param service
      */
     public InOnlyMEPClient(ServiceContext service) {
         super(service);
         // TODO Auto-generated constructor stub
+    }
+    
+    public void send(OperationDescription axisop, final MessageContext msgctx){
+  
+    }
+
+    /**
+     * @param action
+     */
+    public void setAction(String action) {
+        messageInformationHeaders.setAction(action);
+    }
+
+    /**
+     * @param faultTo
+     */
+    public void setFaultTo(EndpointReference faultTo) {
+        messageInformationHeaders.setFaultTo(faultTo);
+    }
+
+    /**
+     * @param from
+     */
+    public void setFrom(EndpointReference from) {
+        messageInformationHeaders.setFrom(from);
+    }
+
+    /**
+     * @param messageId
+     */
+    public void setMessageId(String messageId) {
+        messageInformationHeaders.setMessageId(messageId);
+    }
+
+    /**
+     * @param relatesTo
+     */
+    public void setRelatesTo(RelatesTo relatesTo) {
+        messageInformationHeaders.setRelatesTo(relatesTo);
+    }
+
+    /**
+     * @param replyTo
+     */
+    public void setReplyTo(EndpointReference replyTo) {
+        messageInformationHeaders.setReplyTo(replyTo);
+    }
+
+    /**
+     * @param to
+     */
+    public void setTo(EndpointReference to) {
+        messageInformationHeaders.setTo(to);
     }
 
 }
