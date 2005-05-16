@@ -15,15 +15,16 @@
  */
 package org.apache.axis.phaseresolver;
 
+import org.apache.axis.engine.AxisFault;
+
 /**
  * Class PhaseException
  */
-public class PhaseException extends Exception {
+public class PhaseException extends AxisFault {
     /**
      * Constructor PhaseException
      */
-    public PhaseException() {
-    }
+ 
 
     /**
      * Constructor PhaseException

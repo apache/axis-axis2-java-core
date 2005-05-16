@@ -71,7 +71,7 @@ public class MessageWithServerTest extends TestCase {
         OperationDescription operation = new OperationDescription(operationName);
         service.addOperation(operation);
 
-        UtilServer.deployService(Utils.createServiceContext(service,null));
+        UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {

@@ -19,8 +19,11 @@ package org.apache.axis.integration;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
+import org.apache.axis.util.Utils;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -34,10 +37,10 @@ public class UtilServer {
 
 
 
-    public static synchronized void deployService(ServiceContext service)
+    public static synchronized void deployService(ServiceDescription service)
             throws AxisFault {
-        reciver.getSystemContext().registerServiceContext(service.getServiceInstanceID(),service);
-        reciver.getSystemContext().getEngineConfig().addService(service.getServiceConfig());
+        reciver.getSystemContext().getEngineConfig().addService(service);        
+        Utils.resolvePhases(reciver.getSystemContext().getEngineConfig(),service);
     }
 
     public static synchronized void unDeployService(QName service)
@@ -49,7 +52,7 @@ public class UtilServer {
         if (count == 0) {
             EngineContextFactory erfac = new EngineContextFactory();
             
-            File file = new File("target/test-resources/samples");
+            File file = new File("modules/samples/target/test-resources/samples");
             System.out.println(new File(file,"server.xml").exists());
             ConfigurationContext er = erfac.buildEngineContext(file.getAbsolutePath());
             try {

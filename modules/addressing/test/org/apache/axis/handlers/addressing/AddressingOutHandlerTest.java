@@ -1,6 +1,9 @@
 package org.apache.axis.handlers.addressing;
 
-import org.apache.axis.AbstractTestCase;
+import javax.xml.namespace.QName;
+
+import junit.framework.TestCase;
+
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
@@ -13,8 +16,6 @@ import org.apache.axis.om.impl.llom.util.XMLComparator;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,7 +33,7 @@ import javax.xml.namespace.QName;
  * the License.
  * <p/>
  */
-public class AddressingOutHandlerTest extends AbstractTestCase implements AddressingConstants {
+public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

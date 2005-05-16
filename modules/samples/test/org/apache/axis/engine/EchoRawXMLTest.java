@@ -76,7 +76,7 @@ public class EchoRawXMLTest extends TestCase {
                 serviceName,
                 org.apache.axis.engine.Echo.class.getName(),
                 operationName);
-        UtilServer.deployService(Utils.createServiceContext(service, null));
+        Utils.resolvePhases(engineRegistry,service);
     }
 
     protected void tearDown() throws Exception {

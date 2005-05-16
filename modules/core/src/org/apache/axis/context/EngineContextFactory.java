@@ -37,8 +37,6 @@ public class EngineContextFactory {
             initModules(engineContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage());
-        } catch (PhaseException e) {
-            throw new DeploymentException(e.getMessage());
         }
         return engineContext;
     }
@@ -54,8 +52,6 @@ public class EngineContextFactory {
             initModules(engineContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage());
-        } catch (PhaseException e) {
-            throw new DeploymentException(e.getMessage());
         }
         return engineContext;
     }

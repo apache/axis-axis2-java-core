@@ -15,15 +15,21 @@
  */
 package org.apache.axis.util;
 
-import org.apache.axis.Constants;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.*;
-import org.apache.axis.engine.*;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.description.Flow;
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ParameterImpl;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Handler;
+import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.phaseresolver.PhaseException;
+import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
-
-import javax.xml.namespace.QName;
 
 public class Utils {
 
@@ -32,39 +38,37 @@ public class Utils {
         hmd.setHandler(handler);
         flow.addHandler(hmd);
     }
-    public static void addPhasesToServiceFromFlow(
-        ServiceContext serviceContext,
-        String phaseName,
-        Flow flow,
-        int flowtype)
-        throws AxisFault {
-        // TODO : Fix me Deepal
-        throw new UnsupportedOperationException();
-        //        ArrayList faultchain = new ArrayList();
-        //        SimplePhase p = new SimplePhase(Constants.PHASE_SERVICE);
-        //        faultchain.add(p);
-        //        addHandlers(flow, p);
-        //        serviceContext.setPhases(faultchain, flowtype);
-    }
+//    public static void addPhasesToServiceFromFlow(
+//        ServiceContext serviceContext,
+//        String phaseName,
+//        Flow flow,
+//        int flowtype)
+//        throws AxisFault {
+//                ArrayList faultchain = new ArrayList();
+//                Phase p = new Phase(Constants.PHASE_SERVICE);
+//                faultchain.add(p);
+//                addHandlers(flow, p);
+//                serviceContext.setPhases(faultchain, flowtype);
+//    }
 
-    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
-        ServiceDescription service = serviceContext.getServiceConfig();
-        addPhasesToServiceFromFlow(
-            serviceContext,
-            Constants.PHASE_SERVICE,
-            service.getInFlow(),
-            AxisConfiguration.INFLOW);
-        addPhasesToServiceFromFlow(
-            serviceContext,
-            Constants.PHASE_SERVICE,
-            service.getOutFlow(),
-            AxisConfiguration.OUTFLOW);
-        addPhasesToServiceFromFlow(
-            serviceContext,
-            Constants.PHASE_SERVICE,
-            service.getFaultInFlow(),
-            AxisConfiguration.FAULT_IN_FLOW);
-    }
+//    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
+//        ServiceDescription service = serviceContext.getServiceConfig();
+//        addPhasesToServiceFromFlow(
+//            serviceContext,
+//            Constants.PHASE_SERVICE,
+//            service.getInFlow(),
+//            AxisConfiguration.INFLOW);
+//        addPhasesToServiceFromFlow(
+//            serviceContext,
+//            Constants.PHASE_SERVICE,
+//            service.getOutFlow(),
+//            AxisConfiguration.OUTFLOW);
+//        addPhasesToServiceFromFlow(
+//            serviceContext,
+//            Constants.PHASE_SERVICE,
+//            service.getFaultInFlow(),
+//            AxisConfiguration.FAULT_IN_FLOW);
+//    }
 
     public static ServiceDescription createSimpleService(
         QName serviceName,
@@ -80,14 +84,14 @@ public class Utils {
         return service;
     }
 
-    public static ServiceContext createServiceContext(
-        ServiceDescription service,
-        ConfigurationContext engineContext)
-        throws AxisFault {
-        ServiceContext serviceContext = new ServiceContext(service, engineContext);
-        createExecutionChains(serviceContext);
-        return serviceContext;
-    }
+//    public static ServiceContext createServiceContext(
+//        ServiceDescription service,
+//        ConfigurationContext engineContext)
+//        throws AxisFault {
+//        ServiceContext serviceContext = new ServiceContext(service, engineContext);
+//        createExecutionChains(serviceContext);
+//        return serviceContext;
+//    }
 
     public static ServiceDescription createSimpleService(
         QName serviceName,
@@ -100,12 +104,16 @@ public class Utils {
             opName);
     }
 
-    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
-        if (flow != null) {
-            int handlerCount = flow.getHandlerCount();
-            for (int i = 0; i < handlerCount; i++) {
-                phase.addHandler(flow.getHandler(i).getHandler());
-            }
-        }
+//    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
+//        if (flow != null) {
+//            int handlerCount = flow.getHandlerCount();
+//            for (int i = 0; i < handlerCount; i++) {
+//                phase.addHandler(flow.getHandler(i).getHandler());
+//            }
+//        }
+//    }
+    public static void resolvePhases(AxisConfiguration axisconfig,ServiceDescription serviceDesc) throws AxisFault, PhaseException{
+        PhaseResolver pr = new PhaseResolver(axisconfig,serviceDesc);
+        pr.buildchains();
     }
 }

@@ -8,8 +8,7 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <postGoal name="test:compile">
-        <attainGoal name="samples"/>
         <mkdir dir="target/test-resources/samples/modules"/>
-        <copy file="../addressing/target/addressing.mar" tofile="target/test-resources/samples/modules"/>
+        <copy file="../addressing/target/addressing.mar" tofile="target/test-resources/samples/modules/addressing.mar"/>
     </postGoal> 
  </project>

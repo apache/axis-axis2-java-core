@@ -2,7 +2,6 @@ package org.apache.axis.handlers.addressing;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.AbstractTestCase;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
