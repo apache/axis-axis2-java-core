@@ -44,8 +44,7 @@ public class EngineContextFactory {
     public ConfigurationContext buildClientEngineContext(String axis2home) throws DeploymentException {
         ConfigurationContext engineContext = null;
         try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(axis2home);
-            AxisConfiguration configuration = deploymentEngine.loadClient();
+            AxisConfiguration configuration = new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = phaseResolver.buildGlobalChains();
             phaseResolver.buildTranspotsChains();

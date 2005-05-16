@@ -213,9 +213,10 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    public AxisConfiguration loadClient() throws DeploymentException {
+    public AxisConfiguration loadClient(String clientHome) throws DeploymentException {
+        checkClientHome(clientHome);
         if (engineConfigName == null) {
-            throw new DeploymentException("path to Client.xml can not be NUll");
+            throw new DeploymentException("path to client.xml can not be NUll");
         }
         File tempfile = new File(engineConfigName);
         try {
@@ -238,6 +239,48 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException(axisFault.getMessage());
         }
         return axisConfig;
+    }
+
+
+    private void checkClientHome(String clientHome) throws DeploymentException {
+        String clientXML = "client.xml";
+        this.folderName = clientHome;
+        File repository = new File(clientHome);
+        if (!repository.exists()) {
+            repository.mkdirs();
+            File servcies = new File(repository, "services");
+            File modules = new File(repository, "modules");
+            modules.mkdirs();
+            servcies.mkdirs();
+        }
+        File serverConf = new File(repository, clientXML);
+        if (!serverConf.exists()) {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/client.xml");
+            if (in != null) {
+                try {
+                    serverConf.createNewFile();
+                    FileOutputStream out = new FileOutputStream(serverConf);
+                    int BUFSIZE = 512; // since only a test file going to load , the size has selected
+                    byte[] buf = new byte[BUFSIZE];
+                    int read;
+                    while ((read = in.read(buf)) > 0) {
+                        out.write(buf, 0, read);
+                    }
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    throw new DeploymentException(e.getMessage());
+                }
+
+
+            } else {
+                throw new DeploymentException("can not found org/apache/axis/deployment/client.xml");
+
+            }
+        }
+        factory = new EngineContextFactory();
+        this.engineConfigName = clientHome + '/' + clientXML;
     }
 
     /**
@@ -579,6 +622,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * This method can be used to build ModuleDescription for a given module archiev file
+     *
      * @param modulearchive
      * @return
      * @throws DeploymentException
