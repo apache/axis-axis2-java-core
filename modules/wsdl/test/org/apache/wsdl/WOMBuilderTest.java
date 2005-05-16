@@ -44,11 +44,7 @@ public class WOMBuilderTest extends AbstractTestCase {
     }
 
     private void initialize() throws Exception {
-    	
-//    	File file =new File("S.wsdl");
-//    	
-//    	
-//    	new FileOutputStream(file).write(123);
+
         if (null == this.womDescription) {
             InputStream in = new FileInputStream(this.getTestResourceFile("SeismicService.wsdl"));
             this.womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);

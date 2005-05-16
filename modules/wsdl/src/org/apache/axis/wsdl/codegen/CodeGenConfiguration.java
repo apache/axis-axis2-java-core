@@ -42,12 +42,14 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	 */
 	public CodeGenConfiguration(WSDLDescription wom,
 			CommandLineOptionParser parser) {
-        this.wom = wom;
+        this(wom,parser.getAllOptions());
 		this.parser = parser;
+	}
 
-        Map optionMap = parser.getAllOptions();
+    public CodeGenConfiguration(WSDLDescription wom,Map optionMap) {
+       this.wom = wom;
 
-		String outputLocation = ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION)).getOptionValue();
+       String outputLocation = ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION)).getOptionValue();
         this.outputLocation = new File(outputLocation);
 
         advancedCodeGenEnabled = (optionMap.get(ADVANCED_CODEGEN_OPTION)!=null);
@@ -64,7 +66,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             loadLanguge(langOption.getOptionValue());
         }
 
-	}
+     }
+
+
+
 
     private void loadLanguge(String langName) {
         if (LanguageNames.JAVA.equalsIgnoreCase(langName)){

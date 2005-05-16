@@ -44,7 +44,12 @@ public class CodeGenerationEngine {
     private CodeGenConfiguration configuration;
 
 
-
+    public CodeGenerationEngine(CodeGenConfiguration config){
+        this.configuration = config;
+        AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
+        axisBindingBuilder.init(this.configuration);
+        axisBindingBuilder.engage();
+    }
 
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException{
         WSDLDescription wom ;

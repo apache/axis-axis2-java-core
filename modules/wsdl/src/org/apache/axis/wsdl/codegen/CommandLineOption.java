@@ -29,11 +29,14 @@ public class CommandLineOption implements CommandLineOptionConstants {
     private boolean invalid = false;
 
     public CommandLineOption(String type, String[] values){
+        if (type.startsWith("-")) type = type.replaceFirst("-","");
+        type = type.toLowerCase();
         this.type = type;
         ArrayList arrayList = new ArrayList(values.length);
         for(int i =0; i< values.length; i++){
             arrayList.add(values[i]);
         }
+        this.optionValues = arrayList;
     }
 
     /**
