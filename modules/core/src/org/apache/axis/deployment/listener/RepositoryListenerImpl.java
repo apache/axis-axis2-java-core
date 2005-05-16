@@ -61,7 +61,29 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      */
     public void checkModules() {
         String modulepath = folderName + MODULE_PATH;
-        searchWS(modulepath, MODULE);
+        String files[];
+        currentJars = new ArrayList();
+        File root = new File(modulepath);
+        // adding the root folder to the vector
+        currentJars.add(root);
+
+        while (currentJars.size() > 0) {        // loop until empty
+            File dir = (File) currentJars.get(0); // get first dir
+            currentJars.remove(0);       // remove it
+            files = dir.list();              // get list of files
+            if (files == null) {
+                continue;
+            }
+            for (int i = 0; i < files.length; i++) { // iterate
+                File f = new File(dir, files[i]);
+                if (f.isDirectory()) {        // see if it's a directory
+                    currentJars.add(0, f);
+                } // add dir to start of agenda
+                else if (isModuleArchiveFile(f.getName())) {
+                    wsinfoList.addWSInfoItem(f, MODULE);
+                }
+            }
+        }
     }
 
     /**
@@ -99,7 +121,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * this is the actual method that is call from scheduler
      */
     public void startListent() {
-        checkModules();
+       // checkModules();
         checkServices();
         update();
     }
@@ -127,7 +149,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
                 if (f.isDirectory()) {        // see if it's a directory
                     currentJars.add(0, f);
                 } // add dir to start of agenda
-                else if (isJarFile(f.getName())) {
+                else if (isServiceArchiveFile(f.getName())) {
                     wsinfoList.addWSInfoItem(f, type);
                 }
             }
@@ -140,8 +162,15 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * @param filename
      * @return
      */
-    private boolean isJarFile(String filename) {
+    private boolean isServiceArchiveFile(String filename) {
         if (filename.endsWith(".jar") | filename.equals(".aar")) {
+            return true;
+        }
+        return false;
+    }
+
+     private boolean isModuleArchiveFile(String filename) {
+        if (filename.endsWith(".jar") | filename.equals(".mar")) {
             return true;
         }
         return false;
