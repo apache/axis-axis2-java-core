@@ -90,6 +90,12 @@ public class DeploymentEngine implements DeploymentConstants {
     private EngineContextFactory factory;
 
     /**
+     * Default constructor is need to deploye module and service programatically
+     */
+    public DeploymentEngine() {
+    }
+
+    /**
      * This the constructor which is used by Engine inorder to start
      * Deploymenat module,
      *
@@ -268,7 +274,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         } catch (DeploymentException e) {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                        " support\n recheck server.xml");
+                    " support\n recheck server.xml");
         }
         //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here
@@ -576,5 +582,39 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         return axisService;
     }
+
+    /**
+     * This method can be used to build ModuleDescription for a given module archiev file
+     * @param modulearchive
+     * @return
+     * @throws DeploymentException
+     */
+
+    public ModuleDescription buildModule(File modulearchive) throws DeploymentException {
+        ModuleDescription axismodule = null;
+        try {
+            currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
+            axismodule = new ModuleDescription();
+            ArchiveReader archiveReader = new ArchiveReader();
+            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule);
+            currentArchiveFile.setClassLoader();
+            Flow inflow = axismodule.getInFlow();
+            addFlowHandlers(inflow);
+
+            Flow outFlow = axismodule.getOutFlow();
+            addFlowHandlers(outFlow);
+
+            Flow faultInFlow = axismodule.getFaultInFlow();
+            addFlowHandlers(faultInFlow);
+
+            Flow faultOutFlow = axismodule.getFaultOutFlow();
+            addFlowHandlers(faultOutFlow);
+            loadModuleClass(axismodule);
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault);
+        }
+        return axismodule;
+    }
+
 
 }
