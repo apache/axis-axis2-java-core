@@ -170,7 +170,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
      private boolean isModuleArchiveFile(String filename) {
-        if (filename.endsWith(".jar") | filename.equals(".mar")) {
+        if (filename.endsWith(".jar") || filename.endsWith(".mar")) {
             return true;
         }
         return false;

@@ -175,7 +175,8 @@
 		<exclude>**/*AddressingInHandlerTest.java</exclude>
 		<exclude>**/*AddressingOutHandlerTest.java</exclude> 
 		<exclude>**/*EngineWithDynamicPhaseResolvingTest.java</exclude> 
-		<exclude>**/*PhaseResolvingTest.java</exclude> 
+		<exclude>**/*PhaseResolvingTest.java</exclude>
+	    <exclude>**/*AddressingModuleTest.java</exclude>
       </excludes>
      <includes>
         <include>**/*Test.java</include>
