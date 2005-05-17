@@ -177,6 +177,8 @@
 		<exclude>**/*EngineWithDynamicPhaseResolvingTest.java</exclude> 
 		<exclude>**/*PhaseResolvingTest.java</exclude>
 	    <exclude>**/*AddressingModuleTest.java</exclude>
+	    <exclude>**/*EchoRawXMLOnTwoChannelsTest.java</exclude>
+	    
       </excludes>
      <includes>
         <include>**/*Test.java</include>
