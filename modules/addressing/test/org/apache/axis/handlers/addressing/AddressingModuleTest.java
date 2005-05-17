@@ -35,9 +35,11 @@ public class AddressingModuleTest extends TestCase {
 
     public void testExtractAddressingInformationFromHeaders() throws DeploymentException {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
+        //File file = new File("target/addressing.mar");
+        File file = new File("modules/samples/target/addressing.mar");
+        assertTrue(file.exists());
         ModuleDescription moduleDesc =
-            deploymentEngine.buildModule(
-                new File("target/addressing.mar"));
+            deploymentEngine.buildModule(file);
         assertNotNull(moduleDesc);
 
     }
