@@ -36,6 +36,7 @@ public class ComponentImpl implements WSDLConstants, Component {
      */
     protected List elments;
 
+    
     /**
      * Field documentation
      */

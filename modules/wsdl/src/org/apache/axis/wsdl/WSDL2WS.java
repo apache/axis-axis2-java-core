@@ -4,11 +4,22 @@ import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis.wsdl.codegen.CommandLineOptionParser;
 
-/**
- * @author chathura@opensource.lk
+ /**
+ * Copyright 2004,2005 The Apache Software Foundation.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-public class WSDL2Java {
+public class WSDL2WS {
 	
 	
 	public static void main(String[] args) throws Exception{
@@ -19,7 +30,7 @@ public class WSDL2Java {
 	}
 	
 	private static void printUsage(){
-		System.out.println("Usage WSDL2Java -uri <Location of WSDL> :WSDL file location ");
+		System.out.println("Usage WSDL2WS -uri <Location of WSDL> :WSDL file location ");
 		System.out.println("-o <output Location> : output file location ");
 		System.out.println("-x : Switch to advanced mode. Default is off");
 		System.out.println("-a : Generate async style code only. Default if off");
