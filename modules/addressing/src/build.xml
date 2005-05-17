@@ -6,7 +6,7 @@
 	<property name="build.lib" location="${build}/lib"/>
 	<property name="lib" location="lib"/>
 	<property name="root" location="../../../"/>
-	<property name="jar.dir" location="${root}/target/addressing"/>
+	<property name="jar.dir" location="${root}/target/addressing/"/>
 	
 	<path id="axis.test.classpath">
 		<path refid="maven.dependency.classpath"></path>
@@ -31,14 +31,14 @@
 		</copy>
 
 		<mkdir dir="${jar.dir}"/>
-		<jar jarfile="${jar.dir}/addressing.jar" basedir="${build.classes}" >
+		<jar jarfile="${jar.dir}/addressing.mar" basedir="${build.classes}" >
 			<include name="**" />
 		</jar>
 		<delete dir="${build}"/>
 	</target>
 	
 	<target name="init">
-		<uptodate property="jars.uptodate" targetfile="${jar.dir}/addressing.jar">
+		<uptodate property="jars.uptodate" targetfile="${jar.dir}/addressing.mar">
 			<srcfiles dir="${src}">
 				<include name="**/*.java"/>
 				<include name="**/*.xml"/>

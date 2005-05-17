@@ -1,24 +1,5 @@
 <service  messageReceiver="org.apache.axis.receivers.RawXMLINOutMessageRecevier" style="rpc" contextPath="services">
 
     <parameter name="ServiceClass" locked="xsd:false">userguide.sample1.EchoXML</parameter>
-
- <inflow>
-        <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
-        <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
-            <order phase="Logging"/>            
-        </handler>        
-    </inflow>
-
-    <outflow>
-        
-    </outflow>
-
-    <INfaultflow>
-        <handler name="LoggingHandler" class="userguide.sample1.LoggingHandler">
-        <!--Phase Ordering (e.g. phaseFirst="true") will be introdeced from M2-->
-            <order phase="Logging"/>            
-        </handler>
-    </INfaultflow>
-    
     <operation name="echo" qname="echo"/>
 </service>

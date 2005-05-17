@@ -190,7 +190,7 @@ public class DeploymentEngine implements DeploymentConstants {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal , SERVERST);
+            parser.processGlobalConfig(axisGlobal, SERVERST);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -230,7 +230,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal ,CLIENTST);
+            parser.processGlobalConfig(axisGlobal, CLIENTST);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -447,18 +447,25 @@ public class DeploymentEngine implements DeploymentConstants {
     private void addNewModule(ModuleDescription moduelmetada) throws AxisFault {
         currentArchiveFile.setClassLoader();
         Flow inflow = moduelmetada.getInFlow();
-        addFlowHandlers(inflow);
-
+        if (inflow != null) {
+            addFlowHandlers(inflow);
+        }
         Flow outFlow = moduelmetada.getOutFlow();
-        addFlowHandlers(outFlow);
-
+        if (outFlow != null) {
+            addFlowHandlers(outFlow);
+        }
         Flow faultInFlow = moduelmetada.getFaultInFlow();
-        addFlowHandlers(faultInFlow);
+        if (faultInFlow != null) {
+            addFlowHandlers(faultInFlow);
+        }
 
         Flow faultOutFlow = moduelmetada.getFaultOutFlow();
-        addFlowHandlers(faultOutFlow);
+        if (faultOutFlow != null) {
+            addFlowHandlers(faultOutFlow);
+        }
         loadModuleClass(moduelmetada);
         axisConfig.addMdoule(moduelmetada);
+        System.out.println("adding new module");
     }
 
 
