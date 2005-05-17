@@ -52,7 +52,8 @@ public class UtilServer {
         if (count == 0) {
             EngineContextFactory erfac = new EngineContextFactory();
             
-            File file = new File("modules/samples/target/test-resources/samples");
+            //File file = new File("modules/samples/target/test-resources/samples");
+            File file = new File("target/test-resources/samples");
             System.out.println(new File(file,"server.xml").exists());
             ConfigurationContext er = erfac.buildEngineContext(file.getAbsolutePath());
             try {

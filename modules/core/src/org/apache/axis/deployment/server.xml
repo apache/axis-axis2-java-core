@@ -8,7 +8,7 @@
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">
     </transportSender>
-   <module ref="addressing"/>
+   <!--   <module ref="addressing"/> -->
     <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
