@@ -8,7 +8,10 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <postGoal name="test:compile">
-	    <jar jarfile="target/addressing.mar" basedir="target/test-classes" >
+            <mkdir dir="traget/classes/META-INF"/>
+            <copy file="src/META-INF/module.xml" 
+		tofile="traget/classes/META-INF/module.xml"/>
+	    <jar jarfile="target/addressing.mar" basedir="target/classes" >
 			<include name="**" />
 		</jar>
      </postGoal> 
