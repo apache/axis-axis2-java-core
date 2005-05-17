@@ -7,6 +7,11 @@ import junit.framework.TestCase;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.ModuleDescription;
+import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisFault;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -33,16 +38,15 @@ public class AddressingModuleTest extends TestCase {
         super(testName);
     }
 
-    public void testExtractAddressingInformationFromHeaders() throws DeploymentException {
-        try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine();
-            File file = new File("target/addressing.mar");
-            assertTrue(file.exists());
-            ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
+    public void testExtractAddressingInformationFromHeaders() throws AxisFault {
+            EngineContextFactory builder = new EngineContextFactory();
+            AxisConfiguration er = builder.buildEngineContext("target").getEngineConfig();
+
+            //DeploymentEngine deploymentEngine = new DeploymentEngine();
+            //File file = new File("target/addressing.mar");
+            //assertTrue(file.exists());
+            ModuleDescription moduleDesc = er.getModule(new QName("addressing"));//deploymentEngine.buildModule(file);
             assertNotNull(moduleDesc);
-        } catch (DeploymentException e) {
-            e.printStackTrace();
-        }
 
     }
 

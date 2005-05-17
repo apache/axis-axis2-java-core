@@ -9,10 +9,15 @@
     xmlns:ant="jelly:ant">
     <postGoal name="test:compile">
             <mkdir dir="target/classes/META-INF"/>
-            <copy file="src/META-INF/module.xml" 
+            <copy file="src/META-INF/module.xml"
 		tofile="target/classes/META-INF/module.xml"/>
+         <copy file="./test-resources/server.xml"
+		tofile="target/server.xml"/>
+        <mkdir dir="target/modules"/>
 	    <jar jarfile="target/addressing.mar" basedir="target/classes" >
 			<include name="**" />
 		</jar>
-     </postGoal> 
+        <copy file="target/addressing.mar"
+		tofile="target/modules/addressing.mar"/>
+     </postGoal>
  </project>
