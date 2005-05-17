@@ -649,16 +649,21 @@ public class DeploymentEngine implements DeploymentConstants {
             archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule);
             currentArchiveFile.setClassLoader();
             Flow inflow = axismodule.getInFlow();
-            addFlowHandlers(inflow);
-
+            if (inflow != null) {
+                addFlowHandlers(inflow);
+            }
             Flow outFlow = axismodule.getOutFlow();
-            addFlowHandlers(outFlow);
-
+            if (outFlow != null) {
+                addFlowHandlers(outFlow);
+            }
             Flow faultInFlow = axismodule.getFaultInFlow();
-            addFlowHandlers(faultInFlow);
-
+            if (faultInFlow != null) {
+                addFlowHandlers(faultInFlow);
+            }
             Flow faultOutFlow = axismodule.getFaultOutFlow();
-            addFlowHandlers(faultOutFlow);
+            if (faultOutFlow != null) {
+                addFlowHandlers(faultOutFlow);
+            }
             loadModuleClass(axismodule);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);

@@ -34,13 +34,15 @@ public class AddressingModuleTest extends TestCase {
     }
 
     public void testExtractAddressingInformationFromHeaders() throws DeploymentException {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
-        //File file = new File("target/addressing.mar");
-        File file = new File("modules/samples/target/addressing.mar");
-        assertTrue(file.exists());
-        ModuleDescription moduleDesc =
-            deploymentEngine.buildModule(file);
-        assertNotNull(moduleDesc);
+        try {
+            DeploymentEngine deploymentEngine = new DeploymentEngine();
+            File file = new File("target/addressing.mar");
+            assertTrue(file.exists());
+            ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
+            assertNotNull(moduleDesc);
+        } catch (DeploymentException e) {
+            e.printStackTrace();
+        }
 
     }
 
