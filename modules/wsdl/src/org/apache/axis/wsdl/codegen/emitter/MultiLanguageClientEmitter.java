@@ -309,6 +309,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,"package",configuration.getPackageName(),rootElement);
         addAttribute(doc,"name",boundInterface.getName().getLocalPart(),rootElement);
+        addAttribute(doc,"callbackname",boundInterface.getName().getLocalPart() + CALL_BACK_HANDLER_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);

@@ -22,6 +22,14 @@ import java.util.regex.Matcher;
  */
 public class URLProcessor {
     public static final String DEFAULT_PACKAGE = "axis2";
+
+    /**
+     * Breaks a given url to a package
+     * e.g. http://www.google.com/test will become
+     * com.google.www
+     * @param url
+     * @return
+     */
     public static String getNameSpaceFromURL(String url){
            String returnPackageName = "";
            String regularExpression = "//[\\w\\.]*";

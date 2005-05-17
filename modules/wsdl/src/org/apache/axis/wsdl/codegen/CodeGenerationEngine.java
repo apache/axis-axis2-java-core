@@ -18,7 +18,6 @@ package org.apache.axis.wsdl.codegen;
 
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
-import org.apache.axis.wsdl.codegen.emitter.ClientJavaEmitter;
 import org.apache.axis.wsdl.codegen.emitter.Emitter;
 import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;

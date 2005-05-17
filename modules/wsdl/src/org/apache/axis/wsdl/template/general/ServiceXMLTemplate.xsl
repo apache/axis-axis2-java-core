@@ -5,7 +5,7 @@
     <service name="">
     <parameter name="ServiceClass" locked="xsd:false"><xsl:value-of select="@package"/>.<xsl:value-of select="@name"/></parameter>
     <xsl:for-each select="method">
-         <xsl:comment>Mounting the method</xsl:comment>
+         <xsl:comment>Mounting the method <xsl:value-of select="@name"/> </xsl:comment>
          <operation><xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute></operation>
      </xsl:for-each>
     </service>

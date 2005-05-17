@@ -22,23 +22,14 @@ import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.engine.AxisFault;
 
-
-
-
-
-
-
-
 /**
  * @author chathura@opensource.lk
  *
  */
 public abstract class Stub {
 	
-	protected org.apache.axis.context.ConfigurationContext _confiurationContext;
-	
+	protected org.apache.axis.context.ConfigurationContext _configurationContext;
 	protected org.apache.axis.description.ServiceDescription _service;
-	
 	protected static org.apache.axis.description.OperationDescription[] _operations;
 	
 	/**
@@ -47,12 +38,11 @@ public abstract class Stub {
 	 * ServiceContext across operations.
 	 */
 	protected boolean _maintainSession = false;
-	
 	protected String _currentSessionId = null;
 	
 	
 	protected Stub(QName serviceName, String axis2Home)throws DeploymentException, AxisFault{
-		_confiurationContext = new EngineContextFactory().buildClientEngineContext(axis2Home);
+		_configurationContext = new EngineContextFactory().buildClientEngineContext(axis2Home);
 		_service = new org.apache.axis.description.ServiceDescription();		
 		_service.setName(serviceName);
 		
@@ -60,7 +50,7 @@ public abstract class Stub {
 			_service.addOperation(_operations[i]);
 		}
 		
-		_confiurationContext.getEngineConfig().addService(_service);
+		_configurationContext.getEngineConfig().addService(_service);
 	}
 	
 	public abstract void _setSessionInfo(Object key, Object value) throws Exception;
@@ -70,7 +60,6 @@ public abstract class Stub {
 	
 	public void _startSession(){
 		_maintainSession = true;
-		
 		_currentSessionId = getID() ;
 	}
 	
