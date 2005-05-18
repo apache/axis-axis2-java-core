@@ -150,13 +150,8 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      * @return
      */
     public WSDLOperation getOperation(String nCName) {
-        Object temp = this.operations.get(nCName);
-        if (null == temp) {
-            throw new WSDLProcessingException(
-                    "No Operation found with the QName with ncname/ ncname with "
-                            + nCName);
-        }
-        return (WSDLOperation) temp;
+        return (WSDLOperation)this.operations.get(nCName);
+        
     }
 
     /**

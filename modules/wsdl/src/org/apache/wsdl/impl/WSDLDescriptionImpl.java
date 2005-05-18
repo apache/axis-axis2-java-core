@@ -475,7 +475,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
 	
 	public WSDLBinding getFirstBinding(){
 		Iterator bindingIterator = this.bindings.values().iterator();
-		while(bindingIterator.hasNext()){
+		if(bindingIterator.hasNext()){
 			return (WSDLBinding)bindingIterator.next();
 		}
 		throw new WSDLProcessingException("No Binding Components are available");
