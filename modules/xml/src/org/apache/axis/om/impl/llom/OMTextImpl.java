@@ -15,10 +15,15 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis.om.DataHandler;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
 
 /**
  * Class OMTextImpl
@@ -27,6 +32,16 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     protected String value;
     protected short textType = TEXT_NODE;
+    protected String mimeType;
+
+    public OMTextImpl(String s, String mimeType) {
+        this(s);
+        this.mimeType = mimeType;
+    }
+    public OMTextImpl(OMElement parent, String s, String mimeType) {
+        this(parent, s);
+        this.mimeType = mimeType;
+    }
 
     /**
      * Constructor OMTextImpl
@@ -49,8 +64,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this.value = s;
     }
 
-
-
     /**
      * @return
      * @throws org.apache.axis.om.OMException
@@ -65,7 +78,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @throws XMLStreamException
      */
     public void serializeWithCache(XMLStreamWriter writer)
-            throws XMLStreamException {
+        throws XMLStreamException {
         if (textType == TEXT_NODE) {
             writer.writeCharacters(this.value);
         } else if (textType == COMMENT_NODE) {
@@ -88,11 +101,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @throws OMException
      */
     public void discard() throws OMException {
-          if (done){
-              this.detach();
-          }else{
-              builder.discard(this.parent);
-          }
+        if (done) {
+            this.detach();
+        } else {
+            builder.discard(this.parent);
+        }
     }
 
     /**
@@ -104,6 +117,28 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     public boolean isOptimized() {
-        return false;  //Todo
+        return false; //Todo
     }
+
+    /**
+     * @return
+     * @throws org.apache.axis.om.OMException
+     * @throws OMException
+     */
+    public DataHandler getDataHandler() throws OMException {
+        try {
+            if ((value = getText()) != null) {
+                DataHandler dh =
+                    (DataHandler) (Class
+                        .forName("org.apache.axis.om.impl.llom.mtom.DataHandlerImpl"))
+                        .newInstance();
+                dh.init(value, mimeType);
+            }
+        } catch (Exception e) {
+            throw new OMException(e);
+        }
+        return null;
+
+    }
+
 }

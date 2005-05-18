@@ -42,6 +42,7 @@ public interface OMNode {
      */
     public static final short COMMENT_NODE = 8;
 
+    public static final short BLOB_NODE = 8;
 
     /**
      * This method should return the immediate parent of the node.
@@ -153,7 +154,7 @@ public interface OMNode {
      * @throws XMLStreamException
      */
     public void serializeWithCache(XMLStreamWriter writer)
-            throws XMLStreamException;
+        throws XMLStreamException;
 
     /**
      * Serilaize the node without caching
@@ -161,8 +162,7 @@ public interface OMNode {
      * @param writer
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer)
-            throws XMLStreamException;
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException;
 
     /**
      * Builds itself

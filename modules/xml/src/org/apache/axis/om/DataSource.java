@@ -15,25 +15,33 @@
  */
 package org.apache.axis.om;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
- * Interface OMText
+ * @author srinath
+ *
+ * To change the template for this generated type comment go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface OMText extends OMNode {
+public interface DataSource {
     /**
-     * Returns the text value of this node
      * @return
      */
-    String getText();
-
-    /*
-     * Re think about this
-     */
-    DataHandler getDataHandler();
-
+    public abstract String getContentType();
     /**
-     *
-     * @return boolean flag saying whether the node contains
-     * an optimized text or not
+     * @return
+     * @throws java.io.IOException
      */
-    boolean isOptimized();
+    public abstract InputStream getInputStream() throws IOException;
+    /**
+     * @return
+     */
+    public abstract String getName();
+    /**
+     * @return
+     * @throws java.io.IOException
+     */
+    public abstract OutputStream getOutputStream() throws IOException;
 }

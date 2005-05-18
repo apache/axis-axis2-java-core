@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.om;
+package org.apache.axis.om.impl.llom.mtom;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.activation.DataHandler;
+
+import org.apache.axis.om.OMException;
 
 /**
- * Interface OMText
+ * @author Thilina
+ * @date Mar 20, 2005
  */
-public interface OMText extends OMNode {
-    /**
-     * Returns the text value of this node
-     * @return
-     */
-    String getText();
+public interface OMBlob {
+    public abstract OutputStream getOutputStream() throws IOException;
 
-    /*
-     * Re think about this
-     */
-    DataHandler getDataHandler();
-
-    /**
-     *
-     * @return boolean flag saying whether the node contains
-     * an optimized text or not
-     */
-    boolean isOptimized();
+    public abstract DataHandler getDataHandler() throws OMException;
 }

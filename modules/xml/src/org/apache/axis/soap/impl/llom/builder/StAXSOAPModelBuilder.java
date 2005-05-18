@@ -77,6 +77,14 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
         parseHeaders();
     }
+    
+    public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
+            super(parser);
+            soapFactory = factory;
+            identifySOAPVersion();
+
+            parseHeaders();
+        }
 
     private void identifySOAPVersion() {
         SOAPEnvelope soapEnvelope = getSOAPEnvelope();
@@ -166,7 +174,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * @param isEnvelope
      * @return
      */
-    private OMElement constructNode(OMElement parent, String elementName,
+    protected OMElement constructNode(OMElement parent, String elementName,
                                     boolean isEnvelope) {
         OMElement element = null;
         if (parent == null) {

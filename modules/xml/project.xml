@@ -25,6 +25,73 @@
     <description>AXIOM, The Object Model of Axis 2.0. This helps Axis 2.0 to have a light weight, efficient object model on StAX</description>
 
 
+<build>
+    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+    <sourceDirectory>src</sourceDirectory>
+    <unitTestSourceDirectory>test</unitTestSourceDirectory>
+
+	<sourceModifications>
+		<sourceModification>
+			<className>javax.activation.DataHandler</className>
+			<excludes>
+				<exclude>**/mtom/**.java</exclude>
+			</excludes>
+		</sourceModification>
+		<sourceModification>
+			<className>javax.mail.internet.MimeMessage</className>
+			<excludes>
+				<exclude>**/mtom/**.java</exclude>
+			</excludes>
+		</sourceModification>
+	</sourceModifications>
+	
+	
+
+    <unitTest>
+     <includes>
+        <include>**/*Test.java</include>
+      </includes> 
+      
+     <resources>
+         <resource>
+             	<directory>${basedir}/test-resources</directory>
+          </resource>
+          <resource>
+        		<directory>conf</directory>
+       			 <includes>
+          			<include>**/*.properties</include>
+        		</includes>
+      </resource>
+      <resource>
+       	 	<directory>src</directory>
+        	<includes>
+          		<include>**/*.properties</include>
+          		<include>**/*.xml</include>
+        	</includes>
+      </resource>
+     </resources>
+    </unitTest>
+    
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+
+
+
     <dependencies>
         <!-- external JARs -->
         <dependency>
@@ -55,7 +122,7 @@
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
 
-	<dependency>
+	    <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
@@ -64,5 +131,16 @@
             </properties>
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
+
+        <!--
+        <dependency>
+            <groupId>j2ee</groupId>
+            <artifactId>activation</artifactId>
+            <jar>activation.jar</jar>
+            <properties>
+                <module>flase</module>
+            </properties>
+        </dependency>
+		-->        
     </dependencies>
 </project>
