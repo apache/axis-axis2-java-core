@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Class HTTPTransportReceiver
  */
-public class HTTPTransportReceiver extends TransportReceiver {
+public class HTTPTransportReceiver  {
     /**
      * Field END
      */

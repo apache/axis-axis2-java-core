@@ -16,13 +16,14 @@
 package org.apache.axis.transport;
 
 
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.MessageContext;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.engine.AxisFault;
 
 /**
  * Class TransportReceiver
  */
 public abstract class TransportReceiver{
-    public abstract void invoke(MessageContext msgContext,ConfigurationContext engineContext) throws AxisFault;
+    public abstract void start()throws AxisFault;
+    public abstract void stop()throws AxisFault;
+    public abstract EndpointReference replyToEPR(String serviceName)throws AxisFault ;
 }

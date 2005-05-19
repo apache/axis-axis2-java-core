@@ -17,11 +17,13 @@ package org.apache.axis.transport.http;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.TransportReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +41,7 @@ import java.net.Socket;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer implements Runnable {
+public class SimpleHTTPServer extends TransportReceiver implements Runnable{
     /**
      * Field log
      */
@@ -196,7 +198,7 @@ public class SimpleHTTPServer implements Runnable {
      *
      * @throws Exception
      */
-    public void start() throws Exception {
+    public void start() throws AxisFault {
         Thread newThread = new Thread(this);
         newThread.start();
     }
@@ -274,4 +276,13 @@ public class SimpleHTTPServer implements Runnable {
             reciver.stop();
         }
     }
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportReceiver#replyToEPR(java.lang.String)
+     */
+    public EndpointReference replyToEPR(String serviceName) {
+        return new EndpointReference(
+            AddressingConstants.WSA_REPLY_TO,
+            "http://127.0.0.1:" + (serverSocket.getLocalPort() + 1) + "/axis/services/" + serviceName);
+    }
+
 }

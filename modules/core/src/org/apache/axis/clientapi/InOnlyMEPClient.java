@@ -31,7 +31,6 @@ import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
 
@@ -80,7 +79,7 @@ public class InOnlyMEPClient extends MEPClient {
         response.setServiceContext(msgctx.getServiceContext());
 
         //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-        TransportReceiver receiver = new HTTPTransportReceiver();
+        HTTPTransportReceiver receiver = new HTTPTransportReceiver();
         receiver.invoke(response, sysContext);
         SOAPEnvelope resenvelope = response.getEnvelope();
         if (response!= null && resenvelope.getBody().hasFault()) {

@@ -28,6 +28,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
@@ -38,6 +40,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Class HTTPTransportReceiver
  */
-public class TCPServer implements Runnable {
+public class TCPServer extends TransportReceiver implements Runnable {
     private int port = 8000;
     private ServerSocket serversocket;
     private boolean started = false;
@@ -77,8 +80,9 @@ public class TCPServer implements Runnable {
 
     public void run() {
         while (started) {
+            Socket socket = null;
             try {
-                Socket socket = null;
+                
                 try {
                     socket = serversocket.accept();
                 } catch (java.io.InterruptedIOException iie) {
@@ -91,7 +95,7 @@ public class TCPServer implements Runnable {
                 Reader in = new InputStreamReader(socket.getInputStream());
                 TransportOutDescription transportOut =
                     configContext.getEngineConfig().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP));
+                        new QName(Constants.TRANSPORT_TCP));
                 MessageContext msgContext =
                     new MessageContext(
                         null,
@@ -100,7 +104,7 @@ public class TCPServer implements Runnable {
                         transportOut,
                         configContext);
                 msgContext.setServerSide(true);
-                
+                msgContext.setProperty(MessageContext.TRANSPORT_WRITER, new OutputStreamWriter(socket.getOutputStream()));
                 
                 AxisEngine engine = new AxisEngine(configContext);
                 try {
@@ -113,14 +117,40 @@ public class TCPServer implements Runnable {
                 engine.receive(msgContext);
             } catch (Throwable e) {
                 log.error(e);
-            } 
+            } finally{
+               try {
+                     socket.close();
+                     if(!started){
+                         serversocket.close();
+                     }
+                } catch (IOException e1) {
+                   log.error(e1);
+                }
+            }
         }
+        
     }
 
     public synchronized void start() {
         started = true;
         Thread thread = new Thread(this);
         thread.start();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportReceiver#replyToEPR(java.lang.String)
+     */
+    public EndpointReference replyToEPR(String serviceName) throws AxisFault {
+        return new EndpointReference(
+        AddressingConstants.WSA_REPLY_TO,
+        "http://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportReceiver#stop()
+     */
+    public void stop() throws AxisFault {
+        started = false;
     }
 
 }

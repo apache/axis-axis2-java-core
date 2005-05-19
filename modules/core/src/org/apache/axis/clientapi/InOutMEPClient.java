@@ -35,7 +35,6 @@ import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
 
@@ -105,10 +104,6 @@ public class InOutMEPClient extends MEPClient {
         super(serviceContext, WSDLConstants.MEP_URI_OUT_IN);
         //service context has the engine context set in to it ! 
         callbackReceiver = new CallbackReceiver();
-        listenerManager = new ListenerManager(serviceContext.getEngineContext());
-        listenerManager.getSystemContext().registerServiceContext(
-            serviceContext.getServiceInstanceID(),
-            serviceContext);
     }
 
 //    this method is commented out, till we implemented it     
@@ -165,7 +160,7 @@ public class InOutMEPClient extends MEPClient {
             response.setServiceContext(msgctx.getServiceContext());
 
             //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-            TransportReceiver receiver = new HTTPTransportReceiver();
+            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
             receiver.invoke(response, sysContext);
             SOAPEnvelope resenvelope = response.getEnvelope();
             if (resenvelope.getBody().hasFault()) {
@@ -212,7 +207,7 @@ public class InOutMEPClient extends MEPClient {
                     listenerManager.replyToEPR(
                         serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
-                            + axisop.getName().getLocalPart()));
+                            + axisop.getName().getLocalPart(),listenerTransport));
 
             }
 
@@ -236,7 +231,7 @@ public class InOutMEPClient extends MEPClient {
                             response.setOperationContext(msgctx.getOperationContext());
                             response.setServiceContext(msgctx.getServiceContext());
 
-                            TransportReceiver receiver = new HTTPTransportReceiver();
+                            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
                             receiver.invoke(response, syscontext);
                             SOAPEnvelope resenvelope = response.getEnvelope();
                             AsyncResult asyncResult = new AsyncResult();
@@ -298,7 +293,7 @@ public class InOutMEPClient extends MEPClient {
         }
 
         if (useSeparateListener == true) {
-            listenerManager.makeSureStarted();
+            ListenerManager.makeSureStarted(listenerTransport,serviceContext.getEngineContext());
         }
     }
 
