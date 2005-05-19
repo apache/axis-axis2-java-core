@@ -181,6 +181,8 @@
 
 	    <exclude>**/*Phase*.java</exclude>
           <exclude>**/*InvalidServiceTest.java</exclude>
+          <exclude>**/*Deploy*.java</exclude>
+
           
    
       </excludes>
