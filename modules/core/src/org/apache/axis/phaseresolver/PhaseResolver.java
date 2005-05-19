@@ -241,7 +241,7 @@ public class PhaseResolver {
             if (module != null) {
                 buildModuleHandlers(allHandlers, module, flowtype);
             }
-        }
+        }*/
 
         switch (flowtype) {
             case PhaseMetadata.IN_FLOW:
@@ -264,7 +264,7 @@ public class PhaseResolver {
                     phaseHolder = new PhaseHolder(operation.getPhasesOutFaultFlow());
                     break;
                 }
-        }*/
+        }
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerDescription handlerMetaData =
                     (HandlerDescription) allHandlers.get(i);

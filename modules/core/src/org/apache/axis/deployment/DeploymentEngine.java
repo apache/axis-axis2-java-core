@@ -359,7 +359,14 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader();
             loadServiceProperties(serviceMetaData);
             axisConfig.addService(serviceMetaData);
-            factory.createChains(serviceMetaData, axisConfig, currentArchiveFile.getModules());
+            
+            ArrayList list = currentArchiveFile.getModules();
+            for(int i = 0;i<list.size();i++){
+                ModuleDescription module = axisConfig.getModule((QName)list.get(i));
+                serviceMetaData.engageModule(module);
+            }
+            
+            ///factory.createChains(serviceMetaData, axisConfig, );
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
             throw new AxisFault(e);

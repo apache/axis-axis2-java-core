@@ -82,7 +82,7 @@ public class EngineContextFactory {
         }
     }
 
-    public void createChains(ServiceDescription service, AxisConfiguration system , ArrayList modules) throws PhaseException {
+    public static void createChains(ServiceDescription service, AxisConfiguration system , ArrayList modules) throws PhaseException {
         try {
             PhaseResolver reolve = new PhaseResolver(system, service);
             reolve.buildchains();

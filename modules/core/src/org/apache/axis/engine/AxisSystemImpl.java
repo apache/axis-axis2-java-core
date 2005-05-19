@@ -131,6 +131,8 @@ public class AxisSystemImpl implements AxisConfiguration {
      */
     public synchronized void addService(ServiceDescription service) throws AxisFault {
         services.put(service.getName(), service);
+        PhaseResolver handlerResolver = new PhaseResolver(this,service);
+        handlerResolver.buildchains();
     }
 
     /**

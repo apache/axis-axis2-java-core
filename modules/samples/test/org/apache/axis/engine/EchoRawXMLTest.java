@@ -18,7 +18,12 @@ package org.apache.axis.engine;
 
 //todo
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
 import junit.framework.TestCase;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -30,17 +35,13 @@ import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 
 public class EchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
@@ -87,21 +88,19 @@ public class EchoRawXMLTest extends TestCase {
         UtilServer.stop();
     }
 
-    private SOAPEnvelope createEnvelope(SOAPFactory fac) {
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+    private OMElement createEnvelope() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
-        reqEnv.getBody().addChild(method);
-        return reqEnv;
+        
+        return method;
     }
 
     public void testEchoXMLASync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
-        SOAPEnvelope reqEnv = createEnvelope(fac);
+                OMElement payload = createEnvelope();
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
@@ -125,7 +124,7 @@ public class EchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(), reqEnv, callback);
+        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
         while (!finish) {
             Thread.sleep(1000);
         }
@@ -136,15 +135,15 @@ public class EchoRawXMLTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        SOAPEnvelope reqEnv = createEnvelope(fac);
+        OMElement payload = createEnvelope();
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
-        SOAPEnvelope result =
-                (SOAPEnvelope) call.invokeBlocking(operationName.getLocalPart(), reqEnv);
+        OMElement result =
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
     }
 }

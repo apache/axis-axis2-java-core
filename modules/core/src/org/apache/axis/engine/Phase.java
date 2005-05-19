@@ -469,7 +469,7 @@ public class Phase {
                 insertAfter(handler.getHandler());
             }
             case ANYWHERE : {
-                handlers.add(handler);
+                handlers.add(handler.getHandler());
             }
         }
     }
