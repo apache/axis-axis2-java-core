@@ -14,8 +14,10 @@
 
     public class <xsl:value-of select="@name"/> extends org.apache.axis.clientapi.Stub implements <xsl:value-of select="$interfaceName"/>{
         public static final String AXIS2_HOME = ".";
+
         static{
           org.apache.axis.description.OperationDescription __operation;
+           _operations = new org.apache.axis.description.OperationDescription[<xsl:value-of select="count(method)"/>];
       <xsl:for-each select="method">
           __operation = new org.apache.axis.description.OperationDescription();
           __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
@@ -61,6 +63,7 @@
     private org.apache.axis.context.MessageContext _getMessageContext(){
             return null;
     }
+
      <xsl:for-each select="method">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
          <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->

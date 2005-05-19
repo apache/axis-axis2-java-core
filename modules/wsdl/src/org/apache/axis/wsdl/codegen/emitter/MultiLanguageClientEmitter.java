@@ -335,7 +335,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
-            addAttribute(doc,"name",operation.getName().getLocalPart(),methodElement);
+            addAttribute(doc,"name",removeUnsuitableCharacters(operation.getName().getLocalPart()),methodElement);
             addAttribute(doc,"namepace",operation.getName().getNamespaceURI(),methodElement);
             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
@@ -371,6 +371,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         Attr attribute = document.createAttribute(AttribName);
         attribute.setValue(attribValue);
         element.setAttributeNode(attribute);
+    }
+
+    protected String removeUnsuitableCharacters(String word){
+        return word.replaceAll("\\W","_");
     }
 
 }
