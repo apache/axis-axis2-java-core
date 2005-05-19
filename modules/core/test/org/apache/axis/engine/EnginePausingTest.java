@@ -16,19 +16,12 @@
 
 package org.apache.axis.engine;
 
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.TransportInDescription;
@@ -39,6 +32,9 @@ import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.HTTPTransportSender;
 import org.apache.wsdl.WSDLService;
 
+import javax.xml.namespace.QName;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 
 public class EnginePausingTest extends TestCase {
@@ -55,13 +51,14 @@ public class EnginePausingTest extends TestCase {
     public EnginePausingTest(String arg0) throws AxisFault {
         super(arg0);
         executedHandlers = new ArrayList();
-        AxisConfiguration engineRegistry = new AxisSystemImpl(new GlobalDescription());
+        AxisConfiguration engineRegistry = new AxisSystemImpl();
         engineContext = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new HTTPTransportSender());
         transportIn = new TransportInDescription(new QName("null"));
 
     }
+
     protected void setUp() throws Exception {
 
         ServiceDescription service = new ServiceDescription(serviceName);
@@ -71,7 +68,7 @@ public class EnginePausingTest extends TestCase {
         OperationDescription axisOp = new OperationDescription(operationName);
         axisOp.setMessageReciever(new MessageReceiver() {
             public void recieve(MessageContext messgeCtx) throws AxisFault {
-                
+
             }
         });
         service.addOperation(axisOp);
@@ -134,8 +131,7 @@ public class EnginePausingTest extends TestCase {
     }
 
     public void testReceive() throws Exception {
-              mc.setTo(
-                    new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
+        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
         AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 15);
@@ -155,10 +151,12 @@ public class EnginePausingTest extends TestCase {
     public class TempHandler extends AbstractHandler {
         private Integer index;
         private boolean pause = false;
+
         public TempHandler(int index, boolean pause) {
             this.index = new Integer(index);
             this.pause = pause;
         }
+
         public TempHandler(int index) {
             this.index = new Integer(index);
         }

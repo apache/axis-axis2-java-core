@@ -19,9 +19,7 @@ import org.apache.axis.description.*;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * Class EngineRegistryImpl
@@ -52,11 +50,6 @@ public class AxisSystemImpl implements AxisConfiguration {
     private final HashMap transportsOut = new HashMap();
 
     /**
-     * Field global
-     */
-    private final GlobalDescription global;
-
-    /**
      * Field phases
      */
     private ArrayList inPhases;
@@ -66,14 +59,31 @@ public class AxisSystemImpl implements AxisConfiguration {
     
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private ArrayList faultPhases;
-    
+
+
+
+    /////////////////////// From AxisGlobal /////////////////////////////////////
+     /**
+     * Field paramInclude
+     */
+    protected final ParameterInclude paramInclude;
+
+    /**
+     * Field modules
+     */
+    protected final List modulesqNames;
+
+    protected HashMap messagRecievers;
+    /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
      * Constructor EngineRegistryImpl
      *
-     * @param global
      */
-    public AxisSystemImpl(GlobalDescription global) {
-        this.global = global;
+    public AxisSystemImpl() {
+        paramInclude = new ParameterIncludeImpl();
+        modulesqNames = new ArrayList();
+        messagRecievers = new HashMap();
+
         inPhases = new ArrayList();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
@@ -121,16 +131,6 @@ public class AxisSystemImpl implements AxisConfiguration {
      */
     public synchronized void addService(ServiceDescription service) throws AxisFault {
         services.put(service.getName(), service);
-    }
-
-    /**
-     * Method getGlobal
-     *
-     * @return
-     * @throws AxisFault
-     */
-    public GlobalDescription getGlobal() throws AxisFault {
-        return global;
     }
 
     /**
@@ -277,5 +277,53 @@ public class AxisSystemImpl implements AxisConfiguration {
     public void setOutFaultPhases(ArrayList list) {
         outFaultPhases = list;
     }
+
+  ////////////////////////// Form Axis Global
+
+     public void addMessageReceiver(String key ,MessageReceiver messageReceiver){
+        messagRecievers.put(key,messageReceiver) ;
+    }
+
+    public MessageReceiver getMessageReceiver(String key){
+        return (MessageReceiver)messagRecievers.get(key);
+    }
+
+    /**
+        * Method getParameter
+        *
+        * @param name
+        * @return
+        */
+       public Parameter getParameter(String name) {
+           return paramInclude.getParameter(name);
+       }
+
+       /**
+        * Method addParameter
+        *
+        * @param param
+        */
+       public void addParameter(Parameter param) {
+           paramInclude.addParameter(param);
+       }
+
+
+    /**
+        * Method addModule
+        *
+        * @param moduleref
+        */
+       public void addModule(QName moduleref) {
+           modulesqNames.add(moduleref);
+       }
+
+       /**
+        * Method getModuleList
+        *
+        * @return
+        */
+       public Collection getModuleList() {
+           return modulesqNames;
+       }
 
 }

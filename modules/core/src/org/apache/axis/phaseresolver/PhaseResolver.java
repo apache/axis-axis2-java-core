@@ -141,8 +141,7 @@ public class PhaseResolver {
         Flow flow = null;
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// Handlers from   server.xml from modules/////////////////////////
-        GlobalDescription global = axisConfig.getGlobal();
-        ArrayList modulqnames = (ArrayList) global.getModules();
+        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl)axisConfig).getModuleList();
         for (int i = 0; i < modulqnames.size(); i++) {
             QName modulename = (QName) modulqnames.get(i);
             module = axisConfig.getModule(modulename);
@@ -383,8 +382,7 @@ public class PhaseResolver {
     public ConfigurationContext buildGlobalChains()
             throws AxisFault, PhaseException {
         ConfigurationContext engineContext = new ConfigurationContext(axisConfig);
-        GlobalDescription global = axisConfig.getGlobal();
-        List modules = (List) global.getModules();
+        List modules = (List) ((AxisSystemImpl)axisConfig).getModuleList();
         int count = modules.size();
         QName moduleName;
         ModuleDescription module;

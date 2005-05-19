@@ -22,7 +22,10 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.*;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.HTTPTransportSender;
@@ -49,9 +52,10 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     public EngineWithoutPhaseResolvingTest(String arg0) {
         super(arg0);
     }
+
     protected void setUp() throws Exception {
 
-        engineRegistry = new AxisSystemImpl(new GlobalDescription());
+        engineRegistry = new AxisSystemImpl();
         engineContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription(new QName("null"));
@@ -74,19 +78,18 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         ServiceContext serviceContext = engineContext.createServiceContext(serviceName);
 
         mc =
-            new MessageContext(
-                engineContext,
-               null,
-                transportIn,
-                transport,
-        OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,false,axisOp, serviceContext));
+                new MessageContext(engineContext,
+                        null,
+                        transportIn,
+                        transport,
+                        OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT, false, axisOp, serviceContext));
         mc.setTransportOut(transport);
-        mc.setProperty(MessageContext.TRANSPORT_WRITER,new OutputStreamWriter(System.out));
+        mc.setProperty(MessageContext.TRANSPORT_WRITER, new OutputStreamWriter(System.out));
         mc.setServerSide(true);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
 
-        
+
         mc.setWSAAction(opearationName.getLocalPart());
         System.out.flush();
     }

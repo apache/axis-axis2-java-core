@@ -82,7 +82,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * This to keep a referance to serverMetaData object
      */
     // private static ServerMetaData axisGlobal = new ServerMetaData();
-    private GlobalDescription axisGlobal;
 
     private ArchiveFileData currentArchiveFile;
 
@@ -166,8 +165,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = axisGlobal.getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = axisGlobal.getParameter(HOTUPDATE);
+        Parameter parahotdeployment = ((AxisSystemImpl)axisConfig).getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = ((AxisSystemImpl)axisConfig).getParameter(HOTUPDATE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
@@ -190,7 +189,7 @@ public class DeploymentEngine implements DeploymentConstants {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal, SERVERST);
+            parser.processGlobalConfig(((AxisSystemImpl)axisConfig), SERVERST);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -230,7 +229,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(axisGlobal, CLIENTST);
+            parser.processGlobalConfig(((AxisSystemImpl)axisConfig), CLIENTST);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -293,11 +292,11 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void validateModuleRefs() throws AxisFault {
-        Iterator itr = axisGlobal.getModules().iterator();
+        Iterator itr = ((AxisSystemImpl)axisConfig).getModuleList().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
             if (getModule(qName) == null) {
-                throw new AxisFault(axisGlobal + " Refer to invalid module " + qName + " has not bean deployed yet !");
+                throw new AxisFault(((AxisSystemImpl)axisConfig) + " Refer to invalid module " + qName + " has not bean deployed yet !");
             }
         }
     }
@@ -344,8 +343,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     private AxisConfiguration createEngineConfig() {
-        axisGlobal = new GlobalDescription();
-        AxisConfiguration newEngineConfig = new AxisSystemImpl(axisGlobal);
+        AxisConfiguration newEngineConfig = new AxisSystemImpl();
         return newEngineConfig;
     }
 

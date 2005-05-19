@@ -1,7 +1,6 @@
 package org.apache.axis.phaserule;
 
 import org.apache.axis.AbstractTestCase;
-import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
@@ -48,8 +47,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
         try {
             super.setUp();
             phaserul = new InvalidPhaseRuleTest("");
-            GlobalDescription global = new GlobalDescription();
-            axisSytem = new AxisSystemImpl(global);
+            axisSytem = new AxisSystemImpl();
             ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             Handler han = null;
@@ -103,8 +101,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             super.setUp();
             //TODO Fix me
             phaserul = new InvalidPhaseRuleTest("");
-            GlobalDescription global = new GlobalDescription();
-            axisSytem = new AxisSystemImpl(global);
+            axisSytem = new AxisSystemImpl();
             ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             inPhase.add("global");

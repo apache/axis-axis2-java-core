@@ -20,6 +20,7 @@ import org.apache.axis.deployment.util.DeploymentData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
+import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.TransportSender;
 
@@ -90,7 +91,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void processGlobalConfig(GlobalDescription axisGlobal , String starttag) throws DeploymentException {
+    public void processGlobalConfig(AxisSystemImpl axisGlobal , String starttag) throws DeploymentException {
         String START_TAG = starttag;
         try {
             boolean END_DOCUMENT = false;

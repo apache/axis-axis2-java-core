@@ -18,26 +18,14 @@ package org.apache.axis.engine;
 
 //todo
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.description.GlobalDescription;
-import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
@@ -50,13 +38,16 @@ import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
 public class EchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
-                + "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO,
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -82,13 +73,12 @@ public class EchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
         service =
-            Utils.createSimpleService(
-                serviceName,
-                org.apache.axis.engine.Echo.class.getName(),
-                operationName);
+                Utils.createSimpleService(serviceName,
+                        org.apache.axis.engine.Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-            UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(service.getName());
 
     }
 
@@ -121,8 +111,7 @@ public class EchoRawXMLTest extends TestCase {
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serializeWithCache(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {
@@ -155,7 +144,7 @@ public class EchoRawXMLTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         SOAPEnvelope result =
-            (SOAPEnvelope) call.invokeBlocking(operationName.getLocalPart(), reqEnv);
+                (SOAPEnvelope) call.invokeBlocking(operationName.getLocalPart(), reqEnv);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
     }
 }

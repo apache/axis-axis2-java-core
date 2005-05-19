@@ -19,7 +19,6 @@ package org.apache.axis.engine;
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPFactory;
@@ -30,7 +29,7 @@ public class MessageContextTest extends AbstractTestCase {
     }
 
     public void testMesssageContext() throws AxisFault {
-        AxisConfiguration er = new AxisSystemImpl(new GlobalDescription());
+        AxisConfiguration er = new AxisSystemImpl();
         ServiceDescription servicesDesc = new ServiceDescription();
         er.addService(servicesDesc);
 

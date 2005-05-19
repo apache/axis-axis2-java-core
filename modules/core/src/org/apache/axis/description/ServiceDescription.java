@@ -78,11 +78,11 @@ public class ServiceDescription
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.description.ServiceDescription#getModules()
+     * @see org.apache.axis.description.ServiceDescription#getModuleList()
      */
 
     /**
-     * Method getModules
+     * Method getModuleList
      * 
      * @return
      */

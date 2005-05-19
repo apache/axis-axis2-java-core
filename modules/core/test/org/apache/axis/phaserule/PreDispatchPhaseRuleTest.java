@@ -2,7 +2,6 @@ package org.apache.axis.phaserule;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.phaseresolver.PhaseHolder;
-import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
@@ -47,8 +46,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
     public void testPhaseRule() throws Exception {
         //TODO Fix me
         phaserul = new PreDispatchPhaseRuleTest("");
-        GlobalDescription global = new GlobalDescription();
-        axisSytem = new AxisSystemImpl(global);
+        axisSytem = new AxisSystemImpl();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;

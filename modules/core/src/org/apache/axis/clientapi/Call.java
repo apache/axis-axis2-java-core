@@ -25,7 +25,6 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.EngineContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
@@ -102,7 +101,7 @@ public class Call extends InOutMEPClient {
     private static ServiceContext assumeServiceContext() throws AxisFault {
         EngineContextFactory efac = new EngineContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-        new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
+        new ConfigurationContext(new AxisSystemImpl());
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");

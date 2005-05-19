@@ -47,14 +47,6 @@ public interface AxisConfiguration {
     public static final int FAULT_OUT_FLOW = 10006;
 
     /**
-     * Method getGlobal
-     *
-     * @return
-     * @throws AxisFault
-     */
-    public GlobalDescription getGlobal() throws AxisFault;
-
-    /**
      * Method getService
      *
      * @param name
