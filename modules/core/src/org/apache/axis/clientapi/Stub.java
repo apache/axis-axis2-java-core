@@ -19,8 +19,18 @@ package org.apache.axis.clientapi;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
 
 /**
  * @author chathura@opensource.lk
@@ -28,10 +38,13 @@ import org.apache.axis.engine.AxisFault;
  */
 public abstract class Stub {
 	
-	protected org.apache.axis.context.ConfigurationContext _configurationContext;
-	protected org.apache.axis.description.ServiceDescription _service;
-	protected static org.apache.axis.description.OperationDescription[] _operations;
-	
+	protected ConfigurationContext _configurationContext;
+	protected static ServiceDescription _service;
+	protected ServiceContext _serviceContext;
+    protected EndpointReference toEPR ;
+
+
+
 	/**
 	 * If _maintainSession is set to True all the calls will use the same 
 	 * ServiceContext and the user can Share information through that 
@@ -41,23 +54,31 @@ public abstract class Stub {
 	protected String _currentSessionId = null;
 	
 	
-	protected Stub(QName serviceName, String axis2Home)throws DeploymentException, AxisFault{
-		_configurationContext = new EngineContextFactory().buildClientEngineContext(axis2Home);
-		_service = new org.apache.axis.description.ServiceDescription();		
-		_service.setName(serviceName);
-		
-		for (int i = 0; i < _operations.length; i++) {
-			_service.addOperation(_operations[i]);
-		}
-		
-		_configurationContext.getEngineConfig().addService(_service);
+	protected Stub()throws DeploymentException, AxisFault{
+
 	}
 	
-	public abstract void _setSessionInfo(Object key, Object value) throws Exception;
-	
-	public abstract Object _getSessionInfo(Object key) throws Exception ;
-	
-	
+//	public abstract void _setSessionInfo(Object key, Object value) throws Exception;
+//
+//	public abstract Object _getSessionInfo(Object key) throws Exception ;
+
+     public void _setSessionInfo(Object key, Object value)throws java.lang.Exception{
+		if(!_maintainSession){
+			//TODO Comeup with a Exception
+			throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
+		}
+		_configurationContext.getServiceContext(_currentSessionId).setProperty(key, value);
+	}
+
+
+	public Object _getSessionInfo(Object key) throws java.lang.Exception{
+		if(!_maintainSession){
+			//TODO Comeup with a Exception
+			throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
+		}
+		return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
+	}
+
 	public void _startSession(){
 		_maintainSession = true;
 		_currentSessionId = getID() ;
@@ -78,4 +99,17 @@ public abstract class Stub {
 		//TODO Get the UUID generator to generate values
 		return Long.toString(System.currentTimeMillis());
 	}
+
+    protected SOAPEnvelope createEnvelope(OMElement omElement){
+        SOAPEnvelope env = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        env.getBody().addChild(omElement);
+        return env;
+    }
+     /**
+     * get the message context
+     */
+    protected MessageContext getMessageContext() throws AxisFault {
+            return new MessageContext(null,null,null,_configurationContext);
+    }
 }
+

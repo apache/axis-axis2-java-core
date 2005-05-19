@@ -190,11 +190,23 @@ public class InOutMEPClient extends MEPClient {
             if (senderTransport == null) {
                 senderTransport = inferTransport(to);
             }
+            if(listenerTransport == null){
+                listenerTransport = senderTransport;
+            }
 
-            final TransportInDescription transportIn =
-                syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
-            final TransportOutDescription transportOut =
-                syscontext.getEngineConfig().getTransportOut(new QName(listenerTransport));
+
+            if(msgctx.getTransportIn() == null){
+                final TransportInDescription transportIn =
+                    syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
+                msgctx.setTransportIn(transportIn);
+            }
+            if(msgctx.getTransportOut() == null){
+                final TransportOutDescription transportOut =
+                    syscontext.getEngineConfig().getTransportOut(new QName(listenerTransport));
+                msgctx.setTransportOut(transportOut);
+            }
+
+
             msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
             msgctx.setServiceContext(serviceContext);
 
