@@ -93,5 +93,12 @@ public interface WSDLComponentFactory {
 	 * @return A new instance of <code>WSDLExtensibilityElement</code>
 	 */
 	public WSDLExtensibilityElement createWSDLExtensibilityElement();
+	
+	 
+	/**
+	 * 
+	 * @return A new instance of <code>WSDLExtensibilityAttribute</code>
+	 */
+	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute();
 
 }

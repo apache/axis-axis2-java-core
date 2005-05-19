@@ -15,15 +15,43 @@
  */
 package org.apache.axis.wsdl.builder.wsdl4j;
 
-import org.apache.axis.wsdl.builder.WSDLComponentFactory;
-import org.apache.wsdl.*;
-import org.apache.wsdl.impl.WSDLProcessingException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Input;
+import javax.wsdl.Operation;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
-import java.util.Iterator;
+
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+import org.apache.wsdl.Component;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.impl.WSDLProcessingException;
 
 /**
  * @author chathura@opensource.lk
@@ -350,37 +378,11 @@ public class WSDLPump {
 
 		wsdlEndpoint.setBinding(this.womDefinition.getBinding(wsdl4jPort
 				.getBinding().getQName()));
-		///Extesibility elements.
+//		this.copyExtensibilityAttribute(wsdl4jPort.getExtensionAttributes(), wsdlEndpoint);
+//		this.copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdlEndpoint);
 	}
 
-	//    ///////////////////////////Util Methods
-	// ////////////////////////////////////
-	//   
-	//    /**
-	//     * Will return the URI for the MEP. if null will retun the IN_OUT as
-	// default
-	//     * pattern.
-	//     */
-	//    private String getRelaventMEPForTheMessageStyle(OperationType
-	// operationType) {
-	//
-	//        if (null != operationType) {
-	//
-	//            if (operationType.equals(OperationType.REQUEST_RESPONSE))
-	//                return WSDLConstants.MEP_URI_IN_OUT;
-	//
-	//            if (operationType.equals(OperationType.ONE_WAY))
-	//                return WSDLConstants.MEP_URI_IN_ONLY;
-	//
-	//            if (operationType.equals(OperationType.NOTIFICATION))
-	//                return WSDLConstants.MEP_URI_OUT_ONLY;
-	//
-	//            if (operationType.equals(OperationType.SOLICIT_RESPONSE))
-	//                return WSDLConstants.MEP_URI_OUT_IN;
-	//        }
-	//        //TODO
-	//        return WSDLConstants.MEP_URI_OUT_IN;
-	//    }
+	
 
 	/**
 	 * This method will fill up the gap of WSDL 1.1 and WSDL 2.0 w.r.t. the
@@ -428,6 +430,47 @@ public class WSDLPump {
 					.addSuperInterface((WSDLInterface) interfaceIterator.next());
 		}
 		return newBoundInterface;
+	}
+	
+	/**
+	 * Get the Extensible elements form wsdl4jExtensibleElements <code>Vector</code>if any and
+	 * copy them to <code>Component</code>
+	 * @param wsdl4jExtensibleElements
+	 * @param womExtensibleElements
+	 */
+	private void copyExtensibleElements(List wsdl4jExtensibleElements, Component component){
+		Iterator iterator = wsdl4jExtensibleElements.iterator();
+		while(iterator.hasNext()){
+			Object obj = iterator.next();
+			if(obj instanceof UnknownExtensibilityElement){
+				UnknownExtensibilityElement temp = (UnknownExtensibilityElement)(obj);
+				WSDLExtensibilityElement extensibilityElement = this.wsdlComponenetFactory.createWSDLExtensibilityElement();
+				extensibilityElement.setElement(temp.getElement());
+				Boolean required = temp.getRequired();
+				if(null != required){
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			}
+		}
+	}
+	
+	/**
+	 * Get the Extensible Attributes from wsdl4jExtensibilityAttribute <code>Map</code> if
+	 * any and copy them to the <code>Component</code>
+	 * @param wsdl4jExtensibilityAttributes
+	 * @param component
+	 */
+	private void copyExtensibilityAttribute(Map wsdl4jExtensibilityAttributes, Component component){
+		Iterator iterator = wsdl4jExtensibilityAttributes.keySet().iterator();
+		while(iterator.hasNext()){
+			QName attributeName = (QName)iterator.next();
+			QName value = (QName)wsdl4jExtensibilityAttributes.get(attributeName);
+			WSDLExtensibilityAttribute attribute = this.wsdlComponenetFactory.createWSDLExtensibilityAttribute();
+			attribute.setKey(attributeName);
+			attribute.setValue(value);
+			component.addExtensibleAttributes(attribute);
+		}
 	}
 
 }

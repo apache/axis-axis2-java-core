@@ -16,6 +16,7 @@
 package org.apache.wsdl;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author chathura@opensource.lk
@@ -50,4 +51,29 @@ public interface Component {
      * @return
      */
     public Object getComponentProperty(Object key);
+    
+    /**
+     * Adds the <code>WSDLExtensibilityElement</code> to the Extensible Component.
+     * @param element
+     */
+    public void addExtensibilityElement(WSDLExtensibilityElement element);
+    
+    /**
+     * Returns the Extensibility Elements of the Extensible component;
+     * @return List of <code>Element</code>s
+     */
+    public List getExtensibilityElements();
+    
+    /**
+	 * Returns a <code>List</code> of ExtensibleAttributes of this component.
+	 * @return  <code>List</code> 
+	 */
+	public List getExtensibilityAttributes() ;
+	
+	/**
+	 * Adds the <code>ExtensibilityAttribute</code> as a attrebute of this 
+	 * Component.
+	 * @param attribute <code>ExtensibilityAttribute</code>
+	 */
+	public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute) ;
 }

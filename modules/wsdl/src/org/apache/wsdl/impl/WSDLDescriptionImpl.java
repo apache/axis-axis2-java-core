@@ -480,4 +480,8 @@ public class WSDLDescriptionImpl extends ComponentImpl
 		}
 		throw new WSDLProcessingException("No Binding Components are available");
 	}
+	
+	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute(){
+		return new WSDLExtensibilityAttributeImpl();
+	}
 }

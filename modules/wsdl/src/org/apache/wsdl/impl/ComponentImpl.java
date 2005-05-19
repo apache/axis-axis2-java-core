@@ -15,15 +15,15 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.Component;
-import org.apache.wsdl.ExtensibilityAttribute;
-import org.apache.wsdl.WSDLConstants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.wsdl.Component;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.w3c.dom.Document;
 
 /**
  * @author Chathura Herath
@@ -120,7 +120,7 @@ public class ComponentImpl implements WSDLConstants, Component {
 	 * 
 	 * @param element
 	 */
-	public void addExtensibilityElement(Element element) {
+	public void addExtensibilityElement(WSDLExtensibilityElement element) {
 		if (null == this.elements) {
 			this.elements = new LinkedList();
 		}
@@ -147,7 +147,7 @@ public class ComponentImpl implements WSDLConstants, Component {
 	 * Component.
 	 * @param attribute <code>ExtensibilityAttribute</code>
 	 */
-	public void addExtensibleAttributes(ExtensibilityAttribute attribute) {
+	public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute) {
 		if (null == this.attributes) {
 			this.attributes = new LinkedList();
 		}

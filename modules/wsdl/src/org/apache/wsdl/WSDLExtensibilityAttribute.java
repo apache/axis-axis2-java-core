@@ -14,34 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.wsdl.impl;
+package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
-
-import org.apache.wsdl.ExtensibilityAttribute;
 
 /**
  * @author chathura@opensource.lk
  *
  */
-public class ExtensibilityAttributeImpl implements ExtensibilityAttribute {
+public interface WSDLExtensibilityAttribute {
 	
-	private QName key;
+	public abstract QName getKey();
+
+	public abstract QName getValue();
 	
-	private QName value;
+	public void setKey(QName key);
 	
-	/**
-	 * @param key
-	 * @param value
-	 */
-	public ExtensibilityAttributeImpl(QName key, QName value) {
-		this.key = key;
-		this.value = value;
-	}
-	public QName getKey() {
-		return key;
-	}
-	public QName getValue() {
-		return value;
-	}
+	public void setValue(QName value);
 }
