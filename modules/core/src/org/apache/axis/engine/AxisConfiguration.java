@@ -88,6 +88,13 @@ public interface AxisConfiguration {
      */
     public void addMdoule(ModuleDescription module) throws AxisFault;
 
+     /**
+      * To engae a module at the run time it can be used this method
+      * @param moduleref
+      * @throws AxisFault
+      */
+     public void engageModule(QName moduleref) throws AxisFault ;
+
     /**
      * Method getTransports
      *

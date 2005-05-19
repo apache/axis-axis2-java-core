@@ -55,23 +55,30 @@ public class OperationDescription extends WSDLOperationImpl implements
 		this.setName(name);
 	}
 
-	public void addModule(QName moduleref) {
-		if (moduleref == null) {
-			return;
-		}
-		Collection collectionModule = (Collection) this
-				.getComponentProperty(MODULEREF_KEY);
-		collectionModule.add(moduleref);
-	}
+    /** To ebgage a module it is reuired to use this method
+     * @param moduleref
+     * @throws AxisFault
+     */
+     public void engageModule(QName moduleref) throws AxisFault {
+       //TODO Fix me Deepal
+          if (moduleref == null) {
+            return;
+        }
+        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        collectionModule.add(moduleref);
+    }
+
+
+
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.apache.axis.description.ServiceDescription#getModuleList()
+	 * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
 	 */
 
 	/**
-	 * Method getModuleList
+	 * Method getEngadgedModules
 	 * 
 	 * @return
 	 */

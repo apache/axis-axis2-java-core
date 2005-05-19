@@ -141,7 +141,7 @@ public class PhaseResolver {
         Flow flow = null;
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// Handlers from   server.xml from modules/////////////////////////
-        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl)axisConfig).getModuleList();
+        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl)axisConfig).getEngadgedModules();
         for (int i = 0; i < modulqnames.size(); i++) {
             QName modulename = (QName) modulqnames.get(i);
             module = axisConfig.getModule(modulename);
@@ -229,7 +229,7 @@ public class PhaseResolver {
 
         ///////////////////////////////////////////////////////////////////////////////////////
         ///////////////////// SERVICE MODULE HANDLERS ////////////////////////////////////////////////
-        Collection collection = axisService.getModules();
+        Collection collection = axisService.getEngagedModules();
         Iterator itr = collection.iterator();
         while (itr.hasNext()) {
             QName moduleref = (QName) itr.next();
@@ -381,7 +381,7 @@ public class PhaseResolver {
     public ConfigurationContext buildGlobalChains()
             throws AxisFault, PhaseException {
         ConfigurationContext engineContext = new ConfigurationContext(axisConfig);
-        List modules = (List) ((AxisSystemImpl)axisConfig).getModuleList();
+        List modules = (List) ((AxisSystemImpl)axisConfig).getEngadgedModules();
         int count = modules.size();
         QName moduleName;
         ModuleDescription module;
@@ -456,5 +456,12 @@ public class PhaseResolver {
             }
         }
         return engineContext;
+    }
+
+
+
+
+    public void engageModuleGlobally(ModuleDescription module){
+
     }
 }

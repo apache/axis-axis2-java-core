@@ -154,7 +154,8 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (REF.equals(attname)) {
-                                    axisGlobal.addModule(new QName(attvalue));
+                                    //axisGlobal.addModule(new QName(attvalue));
+                                    //todo fix me deepal
                                 }
                             }
                         }
@@ -375,6 +376,22 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation();
                         DeploymentData.getInstance().setOperationPhases(operation);
+                        if(operation.getMessageReciever() == null ) {
+                            try {
+                                /**
+                                 * Setting default Message Recive as Message Reciever
+                                 */
+                                ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
+                                Class    messageReceiver = Class.forName("org.apache.axis.receivers.RawXMLINOutMessageRecevier", true, loader1);
+                                operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
+                            } catch (ClassNotFoundException e) {
+                                throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                            } catch (IllegalAccessException e) {
+                                throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                            } catch (InstantiationException e) {
+                                throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
+                            }
+                        }
                         axisService.addOperation(operation);
                     } else if (INFLOWST.equals(ST)) {
                         Flow inFlow = processInFlow();
@@ -397,8 +414,10 @@ public class DeploymentParser implements DeploymentConstants {
                                 if (REF.equals(attname)) {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
-                                    } else
-                                        axisService.addModule(new QName(attvalue));
+                                    } else {
+                                      //TODO Fix me Deepal
+                                    //    axisService.addModule(new QName(attvalue));
+                                    }
                                 }
                             }
                         }
@@ -635,8 +654,10 @@ public class DeploymentParser implements DeploymentConstants {
                                 if (REF.equals(attname)) {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
-                                    } else
-                                        operation.addModule(new QName(attvalue));
+                                    } else {
+                                        //operation.addModule(new QName(attvalue));
+                                        //TODO Fix me Deepal
+                                    }
                                 }
                             }
                         }

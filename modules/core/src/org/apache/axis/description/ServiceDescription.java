@@ -17,6 +17,8 @@ package org.apache.axis.description;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
@@ -63,12 +65,13 @@ public class ServiceDescription
      */
 
     /**
-     * Method addModule
-     * 
+     * To ebgage a module it is reuired to use this method
      * @param moduleref
+     * @throws AxisFault
      */
-    public void addModule(QName moduleref) {
-        if (moduleref == null) {
+     public void engageModule(QName moduleref) throws AxisFault {
+       //TODO Fix me Deepal
+          if (moduleref == null) {
             return;
         }
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
@@ -78,15 +81,15 @@ public class ServiceDescription
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.description.ServiceDescription#getModuleList()
+     * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
      */
 
     /**
-     * Method getModuleList
+     * Method getEngadgedModules
      * 
      * @return
      */
-    public Collection getModules() {
+    public Collection getEngagedModules() {
         return (Collection) this.getComponentProperty(MODULEREF_KEY);
     }
 

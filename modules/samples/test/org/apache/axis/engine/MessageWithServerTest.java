@@ -66,7 +66,7 @@ public class MessageWithServerTest extends TestCase {
         ModuleDescription m1 = new ModuleDescription(new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
-        service.addModule(m1.getName());
+        service.engageModule(m1.getName());
 
         OperationDescription operation = new OperationDescription(operationName);
         service.addOperation(operation);

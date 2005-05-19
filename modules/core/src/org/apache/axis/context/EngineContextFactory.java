@@ -93,7 +93,7 @@ public class EngineContextFactory {
     }
 
     private void engageModules(ServiceDescription service, AxisConfiguration context) throws AxisFault {
-        ArrayList servicemodules = (ArrayList) service.getModules();
+        ArrayList servicemodules = (ArrayList) service.getEngagedModules();
         ArrayList opModules;
         Module module;
         Collection operations = service.getOperations().values();

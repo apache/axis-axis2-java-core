@@ -17,6 +17,7 @@ package org.apache.axis.engine;
 
 import org.apache.axis.description.*;
 import org.apache.axis.phaseresolver.PhaseMetadata;
+import org.apache.axis.phaseresolver.PhaseResolver;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -28,7 +29,7 @@ public class AxisSystemImpl implements AxisConfiguration {
     /**
      * To store Erroness services
      */
-    private  Hashtable errornesServices;
+    private Hashtable errornesServices;
 
     /**
      * Field modules
@@ -56,14 +57,14 @@ public class AxisSystemImpl implements AxisConfiguration {
     private ArrayList outPhases;
     private ArrayList inFaultPhases;
     private ArrayList outFaultPhases;
-    
+
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private ArrayList faultPhases;
 
 
 
     /////////////////////// From AxisGlobal /////////////////////////////////////
-     /**
+    /**
      * Field paramInclude
      */
     protected final ParameterInclude paramInclude;
@@ -71,17 +72,16 @@ public class AxisSystemImpl implements AxisConfiguration {
     /**
      * Field modules
      */
-    protected final List modulesqNames;
+    protected final List engagedModules;
 
     protected HashMap messagRecievers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
      * Constructor EngineRegistryImpl
-     *
      */
     public AxisSystemImpl() {
         paramInclude = new ParameterIncludeImpl();
-        modulesqNames = new ArrayList();
+        engagedModules = new ArrayList();
         messagRecievers = new HashMap();
 
         inPhases = new ArrayList();
@@ -89,14 +89,14 @@ public class AxisSystemImpl implements AxisConfiguration {
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
         errornesServices = new Hashtable();
-        
+
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
-                Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
-                dispatch.addHandler(new RequestURIBasedDispatcher(),0);
-                dispatch.addHandler(new AddressingBasedDispatcher(),1);
-        inPhasesUptoAndIncludingPostDispatch.add(dispatch) ;
+        Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
+        dispatch.addHandler(new RequestURIBasedDispatcher(), 0);
+        dispatch.addHandler(new AddressingBasedDispatcher(), 1);
+        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_POST_DISPATCH));
     }
 
@@ -110,7 +110,7 @@ public class AxisSystemImpl implements AxisConfiguration {
     }
 
     public Hashtable getFaulytServices() {
-        return  errornesServices;
+        return errornesServices;
     }
 
     /**
@@ -145,11 +145,10 @@ public class AxisSystemImpl implements AxisConfiguration {
     }
 
     /**
-     * 
      * @return
      */
-    public HashMap getModules(){
-        return  modules;
+    public HashMap getModules() {
+        return modules;
     }
 
 
@@ -175,8 +174,6 @@ public class AxisSystemImpl implements AxisConfiguration {
     }
 
 
-
-
     public TransportInDescription getTransportIn(QName name) throws AxisFault {
         return (TransportInDescription) transportsIn.get(name);
     }
@@ -191,6 +188,7 @@ public class AxisSystemImpl implements AxisConfiguration {
             throws AxisFault {
         transportsIn.put(transport.getName(), transport);
     }
+
     public TransportOutDescription getTransportOut(QName name) throws AxisFault {
         return (TransportOutDescription) transportsOut.get(name);
     }
@@ -236,20 +234,20 @@ public class AxisSystemImpl implements AxisConfiguration {
         this.outPhases = outPhases;
     }
 
-   
+
     public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
         return inPhasesUptoAndIncludingPostDispatch;
     }
+
     public ArrayList getPhasesInOutFaultFlow() {
-            return faultPhases;
-        }
+        return faultPhases;
+    }
 
     public ArrayList getOutFlow() {
         return outPhases;
     }
 
- 
- 
+
     /**
      * @return
      */
@@ -278,52 +276,49 @@ public class AxisSystemImpl implements AxisConfiguration {
         outFaultPhases = list;
     }
 
-  ////////////////////////// Form Axis Global
+    ////////////////////////// Form Axis Global
 
-     public void addMessageReceiver(String key ,MessageReceiver messageReceiver){
-        messagRecievers.put(key,messageReceiver) ;
+    public void addMessageReceiver(String key, MessageReceiver messageReceiver) {
+        messagRecievers.put(key, messageReceiver);
     }
 
-    public MessageReceiver getMessageReceiver(String key){
-        return (MessageReceiver)messagRecievers.get(key);
+    public MessageReceiver getMessageReceiver(String key) {
+        return (MessageReceiver) messagRecievers.get(key);
     }
 
     /**
-        * Method getParameter
-        *
-        * @param name
-        * @return
-        */
-       public Parameter getParameter(String name) {
-           return paramInclude.getParameter(name);
-       }
-
-       /**
-        * Method addParameter
-        *
-        * @param param
-        */
-       public void addParameter(Parameter param) {
-           paramInclude.addParameter(param);
-       }
-
+     * Method getParameter
+     *
+     * @param name
+     * @return
+     */
+    public Parameter getParameter(String name) {
+        return paramInclude.getParameter(name);
+    }
 
     /**
-        * Method addModule
-        *
-        * @param moduleref
-        */
-       public void addModule(QName moduleref) {
-           modulesqNames.add(moduleref);
-       }
+     * Method addParameter
+     *
+     * @param param
+     */
+    public void addParameter(Parameter param) {
+        paramInclude.addParameter(param);
+    }
+    /**
+     * Method getEngadgedModules
+     *
+     * @return
+     */
+    public Collection getEngadgedModules() {
+        return engagedModules;
+    }
 
-       /**
-        * Method getModuleList
-        *
-        * @return
-        */
-       public Collection getModuleList() {
-           return modulesqNames;
-       }
+    public void engageModule(QName moduleref) throws AxisFault {
+        ModuleDescription module = getModule(moduleref);
+        if (module != null) {
+            new PhaseResolver(this).engageModuleGlobally(module);
+        }
+        engagedModules.add(moduleref);
+    }
 
 }

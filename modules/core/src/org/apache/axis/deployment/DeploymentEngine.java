@@ -292,7 +292,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void validateModuleRefs() throws AxisFault {
-        Iterator itr = ((AxisSystemImpl)axisConfig).getModuleList().iterator();
+        Iterator itr = ((AxisSystemImpl)axisConfig).getEngadgedModules().iterator();
         while (itr.hasNext()) {
             QName qName = (QName) itr.next();
             if (getModule(qName) == null) {
