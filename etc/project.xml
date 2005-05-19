@@ -178,7 +178,11 @@
 		<exclude>**/*PhaseResolvingTest.java</exclude>
 	    <!-- <exclude>**/*AddressingModuleTest.java</exclude> -->
 	    <exclude>**/*EchoRawXMLOnTwoChannelsTest.java</exclude>
-	    
+
+	    <exclude>**/*Phase*.java</exclude>
+          <exclude>**/*InvalidServiceTest.java</exclude>
+          
+   
       </excludes>
      <includes>
         <include>**/*Test.java</include>
