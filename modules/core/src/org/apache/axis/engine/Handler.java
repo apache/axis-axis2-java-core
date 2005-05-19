@@ -48,7 +48,7 @@ public interface Handler extends Serializable {
      */
     public void invoke(MessageContext msgContext) throws AxisFault;
 
-  
+
     /**
      * Method getName
      *
@@ -70,4 +70,12 @@ public interface Handler extends Serializable {
      * @throws AxisFault
      */
     public void cleanup() throws AxisFault;
+
+    /**
+     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
+     * so the argumnet pass when it call return as HnadlerDescription
+     *
+     * @return
+     */
+    public HandlerDescription getHandlerDesc();
 }

@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
  * Class AbstractHandler
  */
 public abstract class AbstractHandler implements Handler {
+
     /**
      * Field EMPTY_HANDLER_METADATA
      */
@@ -87,5 +88,15 @@ public abstract class AbstractHandler implements Handler {
      */
     public void init(HandlerDescription handlerdesc) {
         this.handlerDesc = handlerdesc;
+    }
+
+    /**
+     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
+     * so the argumnet pass when it call return as HnadlerDescription
+     *
+     * @return
+     */
+    public HandlerDescription getHandlerDesc() {
+        return handlerDesc;
     }
 }

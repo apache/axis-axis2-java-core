@@ -30,25 +30,11 @@ import java.util.ArrayList;
  */
 public class PhaseHolder {
 
-    /**
-     * Field phasemetadatholder
-     */
-    private ArrayList phasemetadatholder;
 
     private ArrayList phaseList;
 
     public PhaseHolder(ArrayList phases) {
         this.phaseList = phases;
-        fillPhaseMetaData();
-    }
-
-    private void fillPhaseMetaData() {
-        phasemetadatholder = new ArrayList();
-        for (int i = 0; i < phaseList.size(); i++) {
-            Phase phase = (Phase) phaseList.get(i);
-            phasemetadatholder.add(new PhaseMetadata(phase.getPhaseName()));
-        }
-
     }
 
     /**
@@ -58,9 +44,9 @@ public class PhaseHolder {
      * @return
      */
     private boolean isPhaseExist(String phaseName) {
-        for (int i = 0; i < phasemetadatholder.size(); i++) {
-            PhaseMetadata phase = (PhaseMetadata) phasemetadatholder.get(i);
-            if (phase.getName().equals(phaseName)) {
+        for (int i = 0; i < phaseList.size(); i++) {
+            Phase phase = (Phase) phaseList.get(i);
+            if (phase.getPhaseName().equals(phaseName)) {
                 return true;
             }
         }
@@ -76,7 +62,7 @@ public class PhaseHolder {
     public void addHandler(HandlerDescription handler) throws PhaseException {
         String phaseName = handler.getRules().getPhaseName();
         if (isPhaseExist(phaseName)) {
-            getPhaseMetaData(phaseName).addHandler(handler);
+            getPhase(phaseName).addHandler(handler);
         } else {
             throw new PhaseException("Invalid Phase ," + phaseName
                     + "for the handler "
@@ -84,23 +70,6 @@ public class PhaseHolder {
                     + " dose not exit in server.xml or refering to phase in diffrent flow");
         }
     }
-
-    /**
-     * Method getPhaseMetaData
-     *
-     * @param phaseName
-     * @return
-     */
-    private PhaseMetadata getPhaseMetaData(String phaseName) {
-        for (int i = 0; i < phasemetadatholder.size(); i++) {
-            PhaseMetadata phase = (PhaseMetadata) phasemetadatholder.get(i);
-            if (phase.getName().equals(phaseName)) {
-                return phase;
-            }
-        }
-        return null;
-    }
-
     /**
      * this method is used to get the actual phase object given in the phase array list
      *
@@ -118,47 +87,9 @@ public class PhaseHolder {
     }
 
 
-    public ArrayList getOrderHandler() throws PhaseException {
-        ArrayList handlerList = new ArrayList();
-        //OrderThePhases();
-        HandlerDescription[] handlers;
-        for (int i = 0; i < phasemetadatholder.size(); i++) {
-            PhaseMetadata phase =
-                    (PhaseMetadata) phasemetadatholder.get(i);
-            handlers = phase.getOrderedHandlers();
-            for (int j = 0; j < handlers.length; j++) {
-                handlerList.add(handlers[j]);
-            }
-
-        }
-        return handlerList;
-    }
-
-
-    /**
-     * This is used to order handlers inside a phase
-     *
-     * @throws PhaseException
-     */
-    public void getOrderedHandlers() throws PhaseException {
-        HandlerDescription[] handlers;
-        for (int i = 0; i < phasemetadatholder.size(); i++) {
-            PhaseMetadata phase =
-                    (PhaseMetadata) phasemetadatholder.get(i);
-            Phase axisPhase = getPhase(phase.getName());
-            handlers = phase.getOrderedHandlers();
-            if (axisPhase != null) {
-                for (int j = 0; j < handlers.length; j++) {
-                    axisPhase.addHandler(handlers[j].getHandler());
-                }
-            }
-        }
-    }
-
-
     public void buildTransportChain(PhasesInclude trnsport, int chainType)
             throws PhaseException {
-        try {
+        /*try {
             HandlerDescription[] handlers;
             Class handlerClass = null;
             Handler handler;
@@ -286,7 +217,7 @@ public class PhaseHolder {
             }
         } catch (AxisFault e) {
             throw new PhaseException(e);
-        }
+        }*/
     }
 
 }

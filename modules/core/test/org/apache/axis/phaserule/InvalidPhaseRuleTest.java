@@ -84,11 +84,11 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             ph.addHandler(hm3);
 
 
-            ArrayList oh = ph.getOrderHandler();
+           /* ArrayList oh = ph.getOrderHandler();
             for (int i = 0; i < oh.size(); i++) {
                 HandlerDescription metadata = (HandlerDescription) oh.get(i);
                 System.out.println("Name:" + metadata.getName().getLocalPart());
-            }
+            }*/
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,11 +135,11 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             hm1.setRules(rule1);
             ph.addHandler(hm1);
 
-            ArrayList oh = ph.getOrderHandler();
+           /* ArrayList oh = ph.getOrderHandler();
             for (int i = 0; i < oh.size(); i++) {
                 HandlerDescription metadata = (HandlerDescription) oh.get(i);
                 System.out.println("Name:" + metadata.getName().getLocalPart());
-            }
+            }*/
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
             e.printStackTrace();

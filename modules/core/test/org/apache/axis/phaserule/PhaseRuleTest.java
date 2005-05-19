@@ -77,10 +77,10 @@ public class PhaseRuleTest extends AbstractTestCase {
         ph.addHandler(hm3);
 
 
-        ArrayList oh = ph.getOrderHandler();
+        /*ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {
             HandlerDescription metadata = (HandlerDescription) oh.get(i);
             System.out.println("Name:" + metadata.getName().getLocalPart());
-        }
+        }*/
     }
 }

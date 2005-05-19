@@ -277,7 +277,6 @@ public class PhaseResolver {
                     (HandlerDescription) allHandlers.get(i);
             phaseHolder.addHandler(handlerMetaData);
         }
-        phaseHolder.getOrderedHandlers();
     }
 
     /**
@@ -455,7 +454,6 @@ public class PhaseResolver {
                     }
                 }
             }
-            phaseHolder.getOrderedHandlers();
         }
         return engineContext;
     }
