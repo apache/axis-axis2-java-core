@@ -28,21 +28,16 @@ import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.GlobalDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.AxisSystemImpl;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
  */
 public class Call extends InOutMEPClient {
     private HashMap properties;
-    private boolean isEnvelope = false;
 
     public Call() throws AxisFault {
         super(assumeServiceContext());
@@ -69,15 +64,11 @@ public class Call extends InOutMEPClient {
             axisConfig = new OperationDescription(new QName(axisop));
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
-        MessageContext msgctx = prepareTheSystem(axisConfig, toSend);
+        MessageContext msgctx = prepareTheSystem(toSend);
 
         MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
         SOAPEnvelope resEnvelope = responseContext.getEnvelope();
-        if (isEnvelope) {
-            return resEnvelope;
-        } else {
-            return resEnvelope.getBody().getFirstElement();
-        }
+        return resEnvelope.getBody().getFirstElement();
     }
     /**
      * Invoke the nonblocking/Asynchronous call
@@ -96,46 +87,12 @@ public class Call extends InOutMEPClient {
             axisConfig = new OperationDescription(new QName(axisop));
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
-        MessageContext msgctx = prepareTheSystem(axisConfig, toSend);
+        MessageContext msgctx = prepareTheSystem(toSend);
 
         super.invokeNonBlocking(axisConfig, msgctx, callback);
     }
 
-    /**
-     * Prepare the MessageContext, this is Utility method
-     * @param axisOp
-     * @param toSend
-     * @return
-     * @throws AxisFault
-     */
-
-    private MessageContext prepareTheSystem(OperationDescription axisOp, OMElement toSend)
-        throws AxisFault {
-        ConfigurationContext syscontext = serviceContext.getEngineContext();
-        //Make sure the ServiceDescription object has the OperationDescription
-        serviceContext.getServiceConfig().addOperation(axisOp);
-
-        TransportInDescription transportIn =
-            syscontext.getEngineConfig().getTransportIn(new QName(listenertransport));
-        TransportOutDescription transportOut =
-            syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
-
-        MessageContext msgctx = new MessageContext(null, transportIn, transportOut, syscontext);
-
-        SOAPEnvelope envelope = null;
-
-        if (toSend instanceof SOAPEnvelope) {
-            envelope = (SOAPEnvelope) toSend;
-            isEnvelope = true;
-        } else {
-            SOAPFactory omfac = OMAbstractFactory.getSOAP11Factory();
-            envelope = omfac.getDefaultEnvelope();
-            envelope.getBody().addChild(toSend);
-            isEnvelope = false;
-        }
-        msgctx.setEnvelope(envelope);
-        return msgctx;
-    }
+  
 
     /**
      * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
@@ -146,27 +103,6 @@ public class Call extends InOutMEPClient {
         EngineContextFactory efac = new EngineContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
         new ConfigurationContext(new AxisSystemImpl(new GlobalDescription()));
-
-//        //Add the addressing modules
-//        ModuleDescription addressingModule = new ModuleDescription();
-//        addressingModule.setName(new QName("addressing"));
-//        Flow inflow = new FlowImpl();
-//        HandlerDescription handlerDesc = new HandlerDescription();
-//        handlerDesc.setRules(new PhaseRule(PhaseMetadata.PHASE_PRE_DISPATCH));
-//        handlerDesc.setHandler(new AddressingInHandler());
-//        inflow.addHandler(handlerDesc);
-//        addressingModule.setInFlow(inflow);
-//
-//        Flow outflow = new FlowImpl();
-//        handlerDesc = new HandlerDescription();
-//        handlerDesc.setRules(new PhaseRule(PhaseMetadata.PHASE_PRE_DISPATCH));
-//        handlerDesc.setHandler(new AddressingOutHandler());
-//        outflow.addHandler(handlerDesc);
-//        addressingModule.setInFlow(outflow);
-//        addressingModule.setModule(new AddressingModule());
-//        sysContext.getEngineConfig().addMdoule(addressingModule);
-//        sysContext.getEngineConfig().getGlobal().addModule(addressingModule.getName());
-
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");

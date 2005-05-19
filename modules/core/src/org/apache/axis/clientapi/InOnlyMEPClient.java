@@ -17,26 +17,70 @@
  */
 package org.apache.axis.clientapi;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.http.HTTPTransportReceiver;
+import org.apache.wsdl.WSDLConstants;
 
-
-public class InOnlyMEPClient extends MEPClient{
-    private MessageInformationHeadersCollection messageInformationHeaders;
-    /**
-     * @param service
-     */
-    public InOnlyMEPClient(ServiceContext service) {
-        super(service);
-        // TODO Auto-generated constructor stub
-    }
+public class InOnlyMEPClient extends MEPClient {
+    protected MessageInformationHeadersCollection messageInformationHeaders;
+    protected String senderTransport;
     
-    public void send(OperationDescription axisop, final MessageContext msgctx){
-  
+    
+    public InOnlyMEPClient(ServiceContext service) {
+        super(service,WSDLConstants.MEP_URI_IN_ONLY);
+    }
+
+    public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
+        verifyInvocation(axisop);
+        msgctx.setMessageInformationHeaders(messageInformationHeaders);
+        msgctx.setServiceContext(serviceContext);
+        ConfigurationContext syscontext = serviceContext.getEngineContext();
+        TransportInDescription transportIn =
+            syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
+        msgctx.setTransportIn(transportIn);
+
+        ConfigurationContext sysContext = serviceContext.getEngineContext();
+        AxisConfiguration registry = sysContext.getEngineConfig();
+
+        AxisEngine engine = new AxisEngine(sysContext);
+        msgctx.setOperationContext(axisop.findOperationContext(msgctx,serviceContext,false));
+
+        engine.send(msgctx);
+
+        MessageContext response =
+            new MessageContext(
+                msgctx.getSessionContext(),
+                msgctx.getTransportIn(),
+                msgctx.getTransportOut(),
+                msgctx.getSystemContext());
+        response.setProperty(
+            MessageContext.TRANSPORT_READER,
+            msgctx.getProperty(MessageContext.TRANSPORT_READER));
+        response.setServerSide(false);
+        response.setOperationContext(msgctx.getOperationContext());
+        response.setServiceContext(msgctx.getServiceContext());
+
+        //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
+        TransportReceiver receiver = new HTTPTransportReceiver();
+        receiver.invoke(response, sysContext);
+        SOAPEnvelope resenvelope = response.getEnvelope();
+        if (response!= null && resenvelope.getBody().hasFault()) {
+            throw new AxisFault(resenvelope.getBody().getFault().getException());
+        }
     }
 
     /**

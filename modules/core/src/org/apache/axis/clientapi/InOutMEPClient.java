@@ -65,7 +65,7 @@ public class InOutMEPClient extends MEPClient {
     protected EndpointReference to;
 
     public InOutMEPClient(ServiceContext serviceContext) {
-        super(serviceContext);
+        super(serviceContext,WSDLConstants.MEP_URI_OUT_IN);
         //service context has the engine context set in to it ! 
         callbackReceiver = new CallbackReceiver();
         listenerManager = new ListenerManager(serviceContext.getEngineContext());
