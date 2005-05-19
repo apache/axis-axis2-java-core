@@ -15,13 +15,12 @@
  */
 package org.apache.wsdl.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wsdl.ExtensibleComponent;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLProperty;
-import org.w3c.dom.Element;
-
-import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -39,11 +38,7 @@ public class ExtensibleComponentImpl extends ComponentImpl
      */
     private List properties = null;
     
-    /**
-     * Field Namespace Qualified elements that can be sticked in the 
-     * component.
-     */
-    private List elements = null;
+    
 
     /**
      * Will add a <code>WSDLFeature</code> to the feature list.
@@ -103,28 +98,5 @@ public class ExtensibleComponentImpl extends ComponentImpl
         return this.properties;
     }
     
-    /**
-     * Adds the <code>Element</code> to the Extensible Component.
-     * @param element
-     */
-    public void addExtensibilityElement(Element element){
-    	if(null == this.elements){
-    		this.elements = new LinkedList();
-    	}
-    	if(null == element)
-    		return;
-    	this.elements.add(element);
-    	
-    }
-    
-    /**
-     * Returns the Extensibility Elements of the Extensible component;
-     * @return List of <code>Element</code>s
-     */
-    public List getExtensibilityElements(){
-    	if(null == this.elements){
-    		return new LinkedList();
-    	}
-    	return this.elements;
-    }
+  
 }
