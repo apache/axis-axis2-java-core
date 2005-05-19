@@ -28,7 +28,6 @@ import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystemImpl;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPEnvelope;
 
@@ -37,11 +36,20 @@ import org.apache.axis.soap.SOAPEnvelope;
  */
 public class Call extends InOutMEPClient {
     private HashMap properties;
+    
+    /**
+     * this is a convenience Class, here the Call will assume a Annoynmous Service.
+     * @throws AxisFault
+     */
 
     public Call() throws AxisFault {
         super(assumeServiceContext());
     }
 
+    /**
+     * @see InOutMEPClient constructer
+     * @param service
+     */
     public Call(ServiceContext service) {
         super(service);
     }
@@ -49,8 +57,7 @@ public class Call extends InOutMEPClient {
     /**
      * Invoke the blocking/Synchronous call
      * @param axisop
-     * @param toSend - This can be just OM Element (payload) or the SOAPEnvelope and the
-     * invocation behaves accordingly
+     * @param toSend - This should be OM Element (payload)
      * @return
      * @throws AxisFault
      */
@@ -72,7 +79,7 @@ public class Call extends InOutMEPClient {
     /**
      * Invoke the nonblocking/Asynchronous call
      * @param axisop
-     * @param toSend - This can be just OM Element (payload) or the SOAPEnvelope and the
+     * @param toSend -  This should be OM Element (payload)
      * invocation behaves accordingly
      * @param callback
      * @throws AxisFault
@@ -101,7 +108,6 @@ public class Call extends InOutMEPClient {
     private static ServiceContext assumeServiceContext() throws AxisFault {
         EngineContextFactory efac = new EngineContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-        new ConfigurationContext(new AxisSystemImpl());
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");

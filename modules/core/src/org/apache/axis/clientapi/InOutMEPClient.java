@@ -17,6 +17,10 @@
  */
 package org.apache.axis.clientapi;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
@@ -34,9 +38,6 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportReceiver;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
 
 /**
  * This Class capture handling the In-Out type Method invocations. this provides the 
@@ -77,6 +78,28 @@ public class InOutMEPClient extends MEPClient {
      */
     protected CallbackReceiver callbackReceiver;
     
+    
+    /**
+     * This accepts a ServiceContext, and the ServiceContext should have all the parents set in to it right
+     * Ideall this should be generated from a WSDL, we do not have it yet. 
+     * 
+     * Follwoing code works for the time been
+     * <code>
+     *  EngineContextFactory efac = new EngineContextFactory();
+        ConfigurationContext sysContext = efac.buildClientEngineContext(null); 
+        // above line "null" may be a file name if you know the client repssitory
+
+        //create new service
+        QName assumedServiceName = new QName("Your Service");
+        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        sysContext.getEngineConfig().addService(axisService);
+        ServiceContext service = sysContext.createServiceContext(assumedServiceName);
+        return service;
+     * 
+     * </code>
+     * 
+     * @param serviceContext
+     */    
 
     public InOutMEPClient(ServiceContext serviceContext) {
         super(serviceContext, WSDLConstants.MEP_URI_OUT_IN);
@@ -87,6 +110,12 @@ public class InOutMEPClient extends MEPClient {
             serviceContext.getServiceInstanceID(),
             serviceContext);
     }
+
+//    this method is commented out, till we implemented it     
+//    public InOutMEPClient(String wsdlfile) {
+//        super(null, WSDLConstants.MEP_URI_OUT_IN);
+//        throw new UnsupportedOperationException();
+//    }
 
     public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
         throws AxisFault {
