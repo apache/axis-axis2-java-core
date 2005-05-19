@@ -32,6 +32,7 @@ public interface CommandLineOptionConstants {
 	public static final String CODEGEN_SYNC_ONLY_OPTION = "s";
 	public static final String PACKAGE_OPTION = "p";
 	public static final String STUB_LANGUAGE_OPTION = "l";
+	public static final String GENERATE_TEST_CASE_OPTION = "t";
 
 
 	public static final String INVALID_OPTION= "INVALID_OPTION";

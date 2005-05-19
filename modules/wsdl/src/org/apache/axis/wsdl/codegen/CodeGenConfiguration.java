@@ -37,6 +37,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean syncOn=true;
     private boolean serverSide=false;
     private boolean generateDeployementDescriptor=true;
+    private boolean writeTestCase=false;
     private String packageName=XSLTConstants.DEFAULT_PACKAGE_NAME;
 
 
@@ -58,7 +59,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
         serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION)!=null);
         generateDeployementDescriptor = (optionMap.get(GENERATE_SERVICE_DESCRIPTION_OPTION)!=null);
-        
+        writeTestCase = (optionMap.get(GENERATE_TEST_CASE_OPTION)!=null);
+
         boolean asyncFlagPresent = (optionMap.get(CODEGEN_ASYNC_ONLY_OPTION)!=null);
         boolean syncFlagPresent = (optionMap.get(CODEGEN_SYNC_ONLY_OPTION)!=null);
         if (asyncFlagPresent) {this.asyncOn=true;this.syncOn=false;}
@@ -152,5 +154,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public boolean isGenerateDeployementDescriptor() {
         return generateDeployementDescriptor;
+    }
+
+    public boolean isWriteTestCase() {
+        return writeTestCase;
     }
 }

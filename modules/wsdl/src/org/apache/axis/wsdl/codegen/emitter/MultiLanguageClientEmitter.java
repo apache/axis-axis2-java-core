@@ -10,8 +10,12 @@ import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLEndpoint;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +61,7 @@ import java.util.Iterator;
 public abstract class MultiLanguageClientEmitter implements Emitter{
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
+    private static final String TEST_SUFFIX = "Test";
 
     protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
@@ -86,13 +91,26 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     public void emitStub() throws CodeGenerationException {
         try {
             //get the binding
-            WSDLBinding axisBinding = this.configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
+            WSDLDescription wom = this.configuration.getWom();
+            WSDLBinding axisBinding = wom.getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
+            WSDLService axisService = null;
             //write interfaces
+            HashMap services = wom.getServices();
+            if (!services.isEmpty()) {
+                if (services.size()==1){
+                     axisService = (WSDLService)services.values().toArray()[0];
+                }else{
+                    throw new UnsupportedOperationException("Single service WSDL files only");
+                }
+            }
+
             writeInterface(axisBinding);
             //write interface implementations
-            writeInterfaceImplementation(axisBinding);
+            writeInterfaceImplementation(axisBinding,axisService);
             //write the call back handlers
             writeCallBackHandlers(axisBinding);
+            //write the test classes
+            writeTestClasses(axisBinding);
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
@@ -110,6 +128,22 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                             this.configuration.getOutputLanguage()
                     );
             writeClass(interfaceModel,callbackWriter);
+        }
+
+    }
+
+    /**
+     *
+     */
+    protected void writeTestClasses(WSDLBinding binding) throws Exception{
+
+        if (configuration.isWriteTestCase()){
+            XmlDocument classModel = createDOMDocuementForTestCase(binding);
+            TestClassWriter callbackWriter =
+                    new TestClassWriter(this.configuration.getOutputLocation(),
+                            this.configuration.getOutputLanguage()
+                    );
+            writeClass(classModel,callbackWriter);
         }
 
     }
@@ -166,8 +200,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @param axisBinding
      * @throws Exception
      */
-    protected void writeInterfaceImplementation(WSDLBinding axisBinding) throws Exception {
-        XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding);
+    protected void writeInterfaceImplementation(WSDLBinding axisBinding,WSDLService service) throws Exception {
+        XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding, service);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
@@ -336,34 +370,75 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
             addAttribute(doc,"name",removeUnsuitableCharacters(operation.getName().getLocalPart()),methodElement);
-            addAttribute(doc,"namepace",operation.getName().getNamespaceURI(),methodElement);
+            addAttribute(doc,"namespace",operation.getName().getNamespaceURI(),methodElement);
             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
             rootElement.appendChild(methodElement);
         }
     }
 
-    /**
-     * Creates the DOM tree for implementations
-     * @param binding
-     * @return
-     */
-    protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding) {
+    protected XmlDocument createDOMDocuementForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         XmlDocument doc = new XmlDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,"package",configuration.getPackageName(),rootElement);
-        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+STUB_SUFFIX,rootElement);
-        addAttribute(doc,"servicename",boundInterface.getName().getLocalPart(),rootElement);
+        String localPart = boundInterface.getName().getLocalPart();
+        addAttribute(doc,"name",localPart+TEST_SUFFIX,rootElement);
         addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
-        addAttribute(doc,"interfaceName",boundInterface.getName().getLocalPart(),rootElement);
-        addAttribute(doc,"callbackname",boundInterface.getName().getLocalPart() + CALL_BACK_HANDLER_SUFFIX,rootElement);
+        addAttribute(doc,"interfaceName",localPart,rootElement);
+        addAttribute(doc,"callbackname",localPart + CALL_BACK_HANDLER_SUFFIX,rootElement);
+        addAttribute(doc,"stubname",localPart + STUB_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
 
         return doc;
+
+    }
+
+
+    /**
+     * Creates the DOM tree for implementations
+     * @param binding
+     * @param service
+     * @return
+     */
+    protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding, WSDLService service) {
+        WSDLInterface boundInterface = binding.getBoundInterface();
+        WSDLEndpoint endpoint = null;
+        HashMap endpoints = service.getEndpoints();
+        XmlDocument doc = new XmlDocument();
+        Element rootElement = doc.createElement("class");
+        addAttribute(doc,"package",configuration.getPackageName(),rootElement);
+        String localPart = boundInterface.getName().getLocalPart();
+        addAttribute(doc,"name",localPart+STUB_SUFFIX,rootElement);
+        addAttribute(doc,"servicename",localPart,rootElement);
+        addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
+        addAttribute(doc,"interfaceName",localPart,rootElement);
+        addAttribute(doc,"callbackname",localPart + CALL_BACK_HANDLER_SUFFIX,rootElement);
+//        addAttribute(doc,"testcase",localPart + TEST_SUFFIX,rootElement);
+        addEndpoints(doc,rootElement,endpoints);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement);
+        doc.appendChild(rootElement);
+
+        return doc;
+
+    }
+
+    protected void addEndpoints(XmlDocument doc,Element rootElement,HashMap endpointMap){
+        Object[] endpoints = endpointMap.values().toArray();
+        WSDLEndpoint endpoint;
+        Element endpointElement;
+        Text text;
+        for (int i = 0; i < endpoints.length; i++) {
+            endpoint = (WSDLEndpoint)endpoints[i];
+            endpointElement = doc.createElement("endpoint");
+            text = doc.createTextNode(endpoint.toString());     //todo How to get the end point address
+            endpointElement.appendChild(text);
+            rootElement.appendChild(endpointElement);
+        }
 
     }
 
