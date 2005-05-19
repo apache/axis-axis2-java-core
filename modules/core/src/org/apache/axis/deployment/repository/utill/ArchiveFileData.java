@@ -18,10 +18,12 @@ package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.engine.AxisFault;
 
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 
 /**
  * ArchiveFileData = Hot Deployment File Item , to store infromation of the module or servise
@@ -35,6 +37,9 @@ public class ArchiveFileData {
     private String messgeReceiver;
     private String moduleClass;
     private String name;
+
+    private ArrayList modules = new ArrayList() ;
+
 
     public ArchiveFileData(int type, String name) {
         this.type = type;
@@ -110,5 +115,13 @@ public class ArchiveFileData {
                 throw new AxisFault(e.getMessage(), e);
             }
         }
+    }
+    
+    public void addModule(QName moduleName){
+        modules.add(moduleName);
+    }
+
+    public ArrayList getModules(){
+        return modules;
     }
 }

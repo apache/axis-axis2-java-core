@@ -32,7 +32,8 @@ public class EngineContextFactory {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            engineContext = phaseResolver.buildGlobalChains();
+            //TODO have to do smt Deepal
+            engineContext = new ConfigurationContext(configuration) ;
             phaseResolver.buildTranspotsChains();
             initModules(engineContext);
         } catch (AxisFault axisFault) {
@@ -46,7 +47,8 @@ public class EngineContextFactory {
         try {
             AxisConfiguration configuration = new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            engineContext = phaseResolver.buildGlobalChains();
+               //TODO have to do smt Deepal
+            engineContext = new ConfigurationContext(configuration) ;
             phaseResolver.buildTranspotsChains();
             initModules(engineContext);
         } catch (AxisFault axisFault) {
@@ -80,39 +82,19 @@ public class EngineContextFactory {
         }
     }
 
-    public void createChains(ServiceDescription service, AxisConfiguration system) throws PhaseException {
+    public void createChains(ServiceDescription service, AxisConfiguration system , ArrayList modules) throws PhaseException {
         try {
             PhaseResolver reolve = new PhaseResolver(system, service);
             reolve.buildchains();
-            engageModules(service, system);
+            for (int i = 0; i < modules.size(); i++) {
+                QName qName = (QName) modules.get(i);
+                ModuleDescription moduledecs = system.getModule(qName);
+                reolve.engageModuleToService(service,moduledecs);
+            }
         } catch (PhaseException e) {
             throw new PhaseException(e.getMessage());
         } catch (AxisFault axisFault) {
             throw new PhaseException(axisFault.getMessage());
-        }
-    }
-
-    private void engageModules(ServiceDescription service, AxisConfiguration context) throws AxisFault {
-        ArrayList servicemodules = (ArrayList) service.getEngagedModules();
-        ArrayList opModules;
-        Module module;
-        Collection operations = service.getOperations().values();
-        for (Iterator iterator = operations.iterator(); iterator.hasNext();) {
-            OperationDescription operation = (OperationDescription) iterator.next();
-            opModules = (ArrayList) operation.getModules();
-            for (int i = 0; i < servicemodules.size(); i++) {
-                QName moduleName = (QName) servicemodules.get(i);
-                module = context.getModule(moduleName).getModule();
-                //todo OperationDescription shoud have a method to get chains
-                /*ExecutionChain inchain = new ExecutionChain();
-                inchain.addPhases(operation.getPhases(EngineConfiguration.INFLOW));
-                module.engage(inchain);*/
-            }
-            for (int i = 0; i < opModules.size(); i++) {
-                QName moduleName = (QName) opModules.get(i);
-                module = context.getModule(moduleName).getModule();
-            }
-
         }
     }
 }

@@ -15,7 +15,6 @@
 */
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
@@ -24,7 +23,10 @@ import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.util.PhaseValidator;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Class PhaseResolver
@@ -33,7 +35,7 @@ public class PhaseResolver {
     /**
      * Field axisConfig
      */
-    private final AxisConfiguration axisConfig;
+    private  AxisConfiguration axisConfig;
 
     /**
      * Field axisService
@@ -45,6 +47,9 @@ public class PhaseResolver {
      * Field phaseHolder
      */
     private PhaseHolder phaseHolder;
+
+    public PhaseResolver() {
+    }
 
     /**
      * default constructor , to obuild chains for GlobalDescription
@@ -141,7 +146,7 @@ public class PhaseResolver {
         Flow flow = null;
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// Handlers from   server.xml from modules/////////////////////////
-        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl)axisConfig).getEngadgedModules();
+        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl) axisConfig).getEngadgedModules();
         for (int i = 0; i < modulqnames.size(); i++) {
             QName modulename = (QName) modulqnames.get(i);
             module = axisConfig.getModule(modulename);
@@ -226,19 +231,7 @@ public class PhaseResolver {
                 allHandlers.add(metadata);
             }
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////// SERVICE MODULE HANDLERS ////////////////////////////////////////////////
-        Collection collection = axisService.getEngagedModules();
-        Iterator itr = collection.iterator();
-        while (itr.hasNext()) {
-            QName moduleref = (QName) itr.next();
-            module = axisConfig.getModule(moduleref);
-            if (module != null) {
-                buildModuleHandlers(allHandlers, module, flowtype);
-            }
-        }
-        ///////////////////////////////////////////////////////////////////////////////////////
+       /* ///////////////////////////////////////////////////////////////////////////////////////
         ///////////////////// OPERATION MODULES ////////////////////////////////////////////////
         Collection opmodule = operation.getModules();
         Iterator opitr = opmodule.iterator();
@@ -271,7 +264,7 @@ public class PhaseResolver {
                     phaseHolder = new PhaseHolder(operation.getPhasesOutFaultFlow());
                     break;
                 }
-        }
+        }*/
         for (int i = 0; i < allHandlers.size(); i++) {
             HandlerDescription handlerMetaData =
                     (HandlerDescription) allHandlers.get(i);
@@ -285,22 +278,23 @@ public class PhaseResolver {
      * @throws PhaseException
      */
     public void buildTranspotsChains() throws PhaseException {
-        HashMap axisTransportIn = axisConfig.getTransportsIn();
-        HashMap axisTransportOut = axisConfig.getTransportsOut();
-
-        Collection colintrnsport = axisTransportIn.values();
-        for (Iterator iterator = colintrnsport.iterator();
-             iterator.hasNext();) {
-            TransportInDescription transport = (TransportInDescription) iterator.next();
-            buildINTransportChains(transport);
-        }
-
-        Collection colouttrnsport = axisTransportOut.values();
-        for (Iterator iterator = colouttrnsport.iterator();
-             iterator.hasNext();) {
-            TransportOutDescription transport = (TransportOutDescription) iterator.next();
-            buildOutTransportChains(transport);
-        }
+        //TODO Fix me Deepal
+//        HashMap axisTransportIn = axisConfig.getTransportsIn();
+//        HashMap axisTransportOut = axisConfig.getTransportsOut();
+//
+//        Collection colintrnsport = axisTransportIn.values();
+//        for (Iterator iterator = colintrnsport.iterator();
+//             iterator.hasNext();) {
+//            TransportInDescription transport = (TransportInDescription) iterator.next();
+//            buildINTransportChains(transport);
+//        }
+//
+//        Collection colouttrnsport = axisTransportOut.values();
+//        for (Iterator iterator = colouttrnsport.iterator();
+//             iterator.hasNext();) {
+//            TransportOutDescription transport = (TransportOutDescription) iterator.next();
+//            buildOutTransportChains(transport);
+//        }
     }
 
 
@@ -368,23 +362,99 @@ public class PhaseResolver {
                     phaseHolder.addHandler(metadata);
                 }
             }
-            phaseHolder.buildTransportChain(transport, type);
+            //TODO fix Me Deepal
+            //phaseHolder.buildTransportChain(transport, type);
+        }
+    }
+
+
+    public void engageModuleGlobally(ModuleDescription module) throws AxisFault {
+        enageToGlobalChain(module);
+        HashMap services = axisConfig.getServices();
+        Collection serviceCol = services.values();
+        for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
+            ServiceDescription serviceDescription = (ServiceDescription) iterator.next();
+            engageModuleToServiceFromGlobal(serviceDescription, module);
         }
     }
 
     /**
-     * Method buildGlobalChains
+     * To engage modules come form global
      *
-     * @throws AxisFault
+     * @param service
+     * @param module
      * @throws PhaseException
      */
-    public ConfigurationContext buildGlobalChains()
-            throws AxisFault, PhaseException {
-        ConfigurationContext engineContext = new ConfigurationContext(axisConfig);
-        List modules = (List) ((AxisSystemImpl)axisConfig).getEngadgedModules();
-        int count = modules.size();
-        QName moduleName;
-        ModuleDescription module;
+    public void engageModuleToServiceFromGlobal(ServiceDescription service, ModuleDescription module) throws PhaseException {
+        HashMap opeartions = service.getOperations();
+        Collection opCol = opeartions.values();
+        for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
+            OperationDescription opDesc = (OperationDescription) iterator.next();
+            Flow flow = null;
+            for (int type = 1; type < 5; type++) {
+                switch (type) {
+                    case PhaseMetadata.IN_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getRemainingPhasesInFlow());
+                            break;
+                        }
+                    case PhaseMetadata.OUT_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesOutFlow());
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_IN_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesInFaultFlow());
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesOutFaultFlow());
+                            break;
+                        }
+                }
+                ////////////////////////////////////////////////////////////////////////////////////
+                /////////////////// Modules refered by server.xml //////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////
+                switch (type) {
+                    case PhaseMetadata.IN_FLOW:
+                        {
+                            flow = module.getInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.OUT_FLOW:
+                        {
+                            flow = module.getOutFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_IN_FLOW:
+                        {
+                            flow = module.getFaultInFlow();
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            flow = module.getFaultOutFlow();
+                            break;
+                        }
+                }
+                if (flow != null) {
+                    for (int j = 0; j < flow.getHandlerCount(); j++) {
+                        HandlerDescription metadata = flow.getHandler(j);
+                        if (!PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
+                            phaseHolder.addHandler(metadata);
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void enageToGlobalChain(ModuleDescription module) throws PhaseException {
         Flow flow = null;
         for (int type = 1; type < 5; type++) {
             switch (type) {
@@ -412,9 +482,80 @@ public class PhaseResolver {
             ////////////////////////////////////////////////////////////////////////////////////
             /////////////////// Modules refered by server.xml //////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////
-            for (int intA = 0; intA < count; intA++) {
-                moduleName = (QName) modules.get(intA);
-                module = axisConfig.getModule(moduleName);
+            switch (type) {
+                case PhaseMetadata.IN_FLOW:
+                    {
+                        flow = module.getInFlow();
+                        break;
+                    }
+                case PhaseMetadata.OUT_FLOW:
+                    {
+                        flow = module.getOutFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_IN_FLOW:
+                    {
+                        flow = module.getFaultInFlow();
+                        break;
+                    }
+                case PhaseMetadata.FAULT_OUT_FLOW:
+                    {
+                        flow = module.getFaultOutFlow();
+                        break;
+                    }
+            }
+            if (flow != null) {
+                for (int j = 0; j < flow.getHandlerCount(); j++) {
+                    HandlerDescription metadata = flow.getHandler(j);
+                    if (PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
+                        phaseHolder.addHandler(metadata);
+                    } else {
+                        /**
+                         * These handlers will go to operation's handler chains , since the module
+                         * try to add handlres to both sytem predefined phases and user defined phase
+                         * so global module can do that. here the global module are the module which are
+                         * reffred by server.xml
+                         */
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void engageModuleToService(ServiceDescription service, ModuleDescription module) throws PhaseException {
+        HashMap opeartions = service.getOperations();
+        Collection opCol = opeartions.values();
+        for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
+            OperationDescription opDesc = (OperationDescription) iterator.next();
+            Flow flow = null;
+            for (int type = 1; type < 5; type++) {
+                switch (type) {
+                    case PhaseMetadata.IN_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getRemainingPhasesInFlow());
+                            break;
+                        }
+                    case PhaseMetadata.OUT_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesOutFlow());
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_IN_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesInFaultFlow());
+                            break;
+                        }
+                    case PhaseMetadata.FAULT_OUT_FLOW:
+                        {
+                            phaseHolder = new PhaseHolder(opDesc.getPhasesOutFaultFlow());
+                            break;
+                        }
+                }
+                ////////////////////////////////////////////////////////////////////////////////////
+                /////////////////// Modules refered by server.xml //////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {
@@ -440,28 +581,15 @@ public class PhaseResolver {
                 if (flow != null) {
                     for (int j = 0; j < flow.getHandlerCount(); j++) {
                         HandlerDescription metadata = flow.getHandler(j);
-                        if (PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
+                        if (!PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
                             phaseHolder.addHandler(metadata);
                         } else {
-                            /**
-                             * These handlers will go to operation's handler chains , since the module
-                             * try to add handlres to both sytem predefined phases and user defined phase
-                             * so global module can do that. here the global module are the module which are
-                             * reffred by server.xml
-                             */
-                            continue;
+                            throw new PhaseException("Service specific module can not refer system pre defined phases : "
+                                    + metadata.getRules().getPhaseName());
                         }
                     }
                 }
             }
         }
-        return engineContext;
-    }
-
-
-
-
-    public void engageModuleGlobally(ModuleDescription module){
-
     }
 }

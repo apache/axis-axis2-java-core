@@ -33,6 +33,7 @@ import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseMetadata;
+import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -165,8 +166,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = ((AxisSystemImpl)axisConfig).getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = ((AxisSystemImpl)axisConfig).getParameter(HOTUPDATE);
+        Parameter parahotdeployment = ((AxisSystemImpl) axisConfig).getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = ((AxisSystemImpl) axisConfig).getParameter(HOTUPDATE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
@@ -189,7 +190,7 @@ public class DeploymentEngine implements DeploymentConstants {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisSystemImpl)axisConfig), SERVERST);
+            parser.processGlobalConfig(((AxisSystemImpl) axisConfig), SERVERST);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -202,7 +203,7 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListenerImpl(folderName, this);
         }
         try {
-            validateModuleRefs();
+            engagdeModules();
             validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
@@ -229,7 +230,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisSystemImpl)axisConfig), CLIENTST);
+            parser.processGlobalConfig(((AxisSystemImpl) axisConfig), CLIENTST);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -237,7 +238,7 @@ public class DeploymentEngine implements DeploymentConstants {
         hotUpdate = false;
         new RepositoryListenerImpl(folderName, this);
         try {
-            validateModuleRefs();
+            engagdeModules();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault.getMessage());
@@ -291,13 +292,18 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void validateModuleRefs() throws AxisFault {
-        Iterator itr = ((AxisSystemImpl)axisConfig).getEngadgedModules().iterator();
-        while (itr.hasNext()) {
-            QName qName = (QName) itr.next();
-            if (getModule(qName) == null) {
-                throw new AxisFault(((AxisSystemImpl)axisConfig) + " Refer to invalid module " + qName + " has not bean deployed yet !");
+    private void engagdeModules() throws AxisFault {
+        ArrayList modules = DeploymentData.getInstance().getModules();
+        PhaseResolver resolver = new PhaseResolver(axisConfig);
+        for (Iterator iterator = modules.iterator(); iterator.hasNext();) {
+            QName name = (QName) iterator.next();
+            ModuleDescription modeuldesc = ((AxisSystemImpl) axisConfig).getModule(name);
+            if (modeuldesc != null) {
+                resolver.engageModuleGlobally(modeuldesc);
+            } else {
+                throw new AxisFault(((AxisSystemImpl) axisConfig) + " Refer to invalid module " + name + " has not bean deployed yet !");
             }
+
         }
     }
 
@@ -353,7 +359,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader();
             loadServiceProperties(serviceMetaData);
             axisConfig.addService(serviceMetaData);
-            factory.createChains(serviceMetaData, axisConfig);
+            factory.createChains(serviceMetaData, axisConfig, currentArchiveFile.getModules());
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
             throw new AxisFault(e);

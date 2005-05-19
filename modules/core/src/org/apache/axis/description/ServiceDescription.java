@@ -69,11 +69,11 @@ public class ServiceDescription
      * @param moduleref
      * @throws AxisFault
      */
-     public void engageModule(QName moduleref) throws AxisFault {
-       //TODO Fix me Deepal
-          if (moduleref == null) {
+     public void engageModule(ModuleDescription moduleref) throws AxisFault {
+        if (moduleref == null) {
             return;
         }
+        new PhaseResolver().engageModuleToService(this,moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleref);
     }

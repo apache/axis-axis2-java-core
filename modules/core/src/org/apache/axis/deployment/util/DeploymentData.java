@@ -4,6 +4,7 @@ import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /*
@@ -33,6 +34,8 @@ public class DeploymentData {
 
     private static DeploymentData deploymentData;
 
+    private ArrayList modules ;
+
     private ArrayList INPhases;
     private ArrayList OUTPhases;
     private ArrayList IN_FaultPhases;
@@ -44,7 +47,7 @@ public class DeploymentData {
     private ArrayList oprationOUT_FaultPhases;
 
     private DeploymentData() {
-
+      modules = new ArrayList();
     }
 
     public static DeploymentData getInstance() {
@@ -143,5 +146,12 @@ public class DeploymentData {
         }
     }
 
+    public void addModule(QName moduleName){
+        modules.add(moduleName);
+    }
+
+    public ArrayList getModules(){
+        return modules;
+    }
 
 }

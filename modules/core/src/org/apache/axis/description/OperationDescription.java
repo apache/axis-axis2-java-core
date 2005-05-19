@@ -59,13 +59,14 @@ public class OperationDescription extends WSDLOperationImpl implements
      * @param moduleref
      * @throws AxisFault
      */
-     public void engageModule(QName moduleref) throws AxisFault {
+     public void engageModule(ModuleDescription moduleref) throws AxisFault {
        //TODO Fix me Deepal
           if (moduleref == null) {
             return;
         }
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleref);
+        throw new UnsupportedOperationException("This is not implemanted yet : Deepal");
     }
 
 

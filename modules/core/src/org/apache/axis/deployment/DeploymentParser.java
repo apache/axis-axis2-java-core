@@ -154,8 +154,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (REF.equals(attname)) {
-                                    //axisGlobal.addModule(new QName(attvalue));
-                                    //todo fix me deepal
+                                    DeploymentData.getInstance().addModule(new QName(attvalue));
                                 }
                             }
                         }
@@ -415,8 +414,7 @@ public class DeploymentParser implements DeploymentConstants {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
                                     } else {
-                                      //TODO Fix me Deepal
-                                    //    axisService.addModule(new QName(attvalue));
+                                        dpengine.getCurrentFileItem().addModule(new QName(attvalue));
                                     }
                                 }
                             }
@@ -655,6 +653,7 @@ public class DeploymentParser implements DeploymentConstants {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
                                     } else {
+                                        throw new UnsupportedOperationException("not yet Implememt : Deepal");
                                         //operation.addModule(new QName(attvalue));
                                         //TODO Fix me Deepal
                                     }
