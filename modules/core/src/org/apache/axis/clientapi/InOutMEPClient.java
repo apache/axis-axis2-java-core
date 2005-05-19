@@ -47,8 +47,8 @@ public class InOutMEPClient extends MEPClient {
     /**
      * transport that should be used for sending and reciving the message
      */
-    protected String senderTransport = Constants.TRANSPORT_HTTP;
-    protected String listenertransport = Constants.TRANSPORT_HTTP;
+    protected String senderTransport;
+    protected String listenerTransport = Constants.TRANSPORT_HTTP;
 
     /** 
      * Should the two SOAPMessage are sent over same channel over seperate channels.
@@ -58,14 +58,28 @@ public class InOutMEPClient extends MEPClient {
      *      SMTP transport support only two channel case
      */
     protected boolean useSeparateListener = false;
-
-    //variables use for internal implementations
-    protected ListenerManager listenerManager;
-    protected CallbackReceiver callbackReceiver;
+    
+    /**
+     * The address the message should be send
+     */
     protected EndpointReference to;
 
+
+    //variables use for internal implementations
+    
+    /**
+     * The Listener Manager is tempory hack to make it work till will Generalize the Transport Layer More.
+     */
+    protected ListenerManager listenerManager;
+    
+    /**
+     * This is used for the Receiving the Async Messages 
+     */
+    protected CallbackReceiver callbackReceiver;
+    
+
     public InOutMEPClient(ServiceContext serviceContext) {
-        super(serviceContext,WSDLConstants.MEP_URI_OUT_IN);
+        super(serviceContext, WSDLConstants.MEP_URI_OUT_IN);
         //service context has the engine context set in to it ! 
         callbackReceiver = new CallbackReceiver();
         listenerManager = new ListenerManager(serviceContext.getEngineContext());
@@ -81,10 +95,15 @@ public class InOutMEPClient extends MEPClient {
         msgctx.setTo(to);
         msgctx.setServiceContext(serviceContext);
         ConfigurationContext syscontext = serviceContext.getEngineContext();
+
+        if (senderTransport == null) {
+            senderTransport = inferTransport(to);
+        }
         final TransportInDescription transportIn =
             syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
         final TransportOutDescription transportOut =
-            syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
+            syscontext.getEngineConfig().getTransportOut(new QName(listenerTransport));
+
         msgctx.setTransportIn(transportIn);
         msgctx.setTransportOut(transportOut);
 
@@ -144,10 +163,14 @@ public class InOutMEPClient extends MEPClient {
 
             AxisEngine engine = new AxisEngine(syscontext);
 
+            if (senderTransport == null) {
+                senderTransport = inferTransport(to);
+            }
+
             final TransportInDescription transportIn =
                 syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
             final TransportOutDescription transportOut =
-                syscontext.getEngineConfig().getTransportOut(new QName(senderTransport));
+                syscontext.getEngineConfig().getTransportOut(new QName(listenerTransport));
             msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
             msgctx.setServiceContext(serviceContext);
 
@@ -213,6 +236,22 @@ public class InOutMEPClient extends MEPClient {
     public void setTo(EndpointReference to) {
         this.to = to;
     }
+
+    /**
+     * Set transport information to the the Call, for find how the each parameter acts see the commant at the instance 
+     * variables. The senarios supoorted are as follows.
+     * [senderTransport, listenerTransport, useSeparateListener]
+     * http, http, true
+     * http, http, false
+     * http,smtp,true
+     * smtp,http,true
+     * smtp,smtp,true
+     *  
+     * @param senderTransport
+     * @param listenerTransport
+     * @param useSeparateListener
+     * @throws AxisFault
+     */
 
     public void setTransportInfo(
         String senderTransport,

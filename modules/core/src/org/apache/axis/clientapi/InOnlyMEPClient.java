@@ -49,6 +49,11 @@ public class InOnlyMEPClient extends MEPClient {
         msgctx.setMessageInformationHeaders(messageInformationHeaders);
         msgctx.setServiceContext(serviceContext);
         ConfigurationContext syscontext = serviceContext.getEngineContext();
+        
+        if(senderTransport == null ){
+            senderTransport = inferTransport(messageInformationHeaders.getTo());
+        }
+        
         TransportInDescription transportIn =
             syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
         msgctx.setTransportIn(transportIn);
