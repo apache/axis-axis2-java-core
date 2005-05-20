@@ -16,8 +16,6 @@
 
 package org.apache.axis.engine;
 
-
-
 import java.io.File;
 
 import javax.xml.namespace.QName;
@@ -43,7 +41,6 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
@@ -68,7 +65,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     private Thread thisThread;
     private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
-    
+
     private boolean finish = false;
 
     public EchoRawXMLOnTwoChannelsTest() {
@@ -81,8 +78,9 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getEngineConfig().engageModule(new QName("addressing"));
-        
+        UtilServer.getConfigurationContext().getEngineConfig().engageModule(
+            new QName("addressing"));
+
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
@@ -110,15 +108,13 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         return reqEnv;
     }
 
-
     public void testEchoXMLCompleteASync() throws Exception {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File("target/test-resources/repository-client/modules/addressing.mar");
         //File file = new File("modules/samples/target/test-resources/repository-client/modules/addressing.mar");
-        
+
         assertTrue(file.exists());
-        ModuleDescription moduleDesc =
-            deploymentEngine.buildModule(file);
+        ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
@@ -126,26 +122,21 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         sysContext.getEngineConfig().addMdoule(moduleDesc);
         sysContext.getEngineConfig().engageModule(moduleDesc.getName());
         ServiceDescription service =
-                   Utils.createSimpleService(
-                       serviceName,
-                       org.apache.axis.engine.Echo.class.getName(),
-                       operationName);
+            Utils.createSimpleService(
+                serviceName,
+                org.apache.axis.engine.Echo.class.getName(),
+                operationName);
         sysContext.getEngineConfig().addService(service);
-        Utils.resolvePhases(sysContext.getEngineConfig(),service);
+        Utils.resolvePhases(sysContext.getEngineConfig(), service);
         ServiceContext serviceContext = sysContext.createServiceContext(service.getName());
-        
-        
-        
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
-
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
-
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
 
@@ -174,13 +165,13 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         while (!finish) {
             Thread.sleep(1000);
             index++;
-            if(index > 10 ){
+            if (index > 10) {
                 throw new AxisFault("Server is shutdown as the Async response take too longs time");
             }
         }
 
         log.info("send the reqest");
 
-}
+    }
 
 }

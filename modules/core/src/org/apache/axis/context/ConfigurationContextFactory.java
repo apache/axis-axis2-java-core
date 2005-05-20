@@ -24,22 +24,22 @@ import org.apache.axis.phaseresolver.PhaseResolver;
  * Date: Apr 19, 2005
  * Time: 10:44:38 AM
  */
-public class EngineContextFactory {
+public class ConfigurationContextFactory {
 
     public ConfigurationContext buildEngineContext(String RepositaryName) throws DeploymentException {
-        ConfigurationContext engineContext = null;
+        ConfigurationContext configurationContext = null;
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             //TODO have to do smt Deepal
-            engineContext = new ConfigurationContext(configuration) ;
+            configurationContext = new ConfigurationContext(configuration) ;
             phaseResolver.buildTranspotsChains();
-            initModules(engineContext);
+            initModules(configurationContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault.getMessage());
         }
-        return engineContext;
+        return configurationContext;
     }
 
     public ConfigurationContext buildClientEngineContext(String axis2home) throws DeploymentException {
@@ -82,13 +82,13 @@ public class EngineContextFactory {
         }
     }
 
-    public static void createChains(ServiceDescription service, AxisConfiguration system , ArrayList modules) throws PhaseException {
+    public static void createChains(ServiceDescription service, AxisConfiguration configurationContextVal , ArrayList modules) throws PhaseException {
         try {
-            PhaseResolver reolve = new PhaseResolver(system, service);
+            PhaseResolver reolve = new PhaseResolver(configurationContextVal, service);
             reolve.buildchains();
             for (int i = 0; i < modules.size(); i++) {
                 QName qName = (QName) modules.get(i);
-                ModuleDescription moduledecs = system.getModule(qName);
+                ModuleDescription moduledecs = configurationContextVal.getModule(qName);
                 reolve.engageModuleToService(service,moduledecs);
             }
         } catch (PhaseException e) {

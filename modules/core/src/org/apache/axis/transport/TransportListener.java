@@ -20,9 +20,9 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.engine.AxisFault;
 
 /**
- * Class TransportReceiver
+ * Class TransportListener
  */
-public abstract class TransportReceiver{
+public abstract class TransportListener{
     public abstract void start()throws AxisFault;
     public abstract void stop()throws AxisFault;
     public abstract EndpointReference replyToEPR(String serviceName)throws AxisFault ;
