@@ -9,10 +9,7 @@
                  org.apache.axis.addressing.AddressingConstants,
                  org.apache.axis.addressing.EndpointReference,
                  org.apache.axis.clientapi.Call,
-                 org.apache.axis.testUtils.ObjectToOMBuilder,
-                 org.apache.axis.testUtils.SimpleTypeEncoder,
                  org.apache.axis.om.*,
-                 org.apache.axis.testUtils.SimpleTypeEncodingUtils,
                  org.apache.axis.soap.SOAPBody,
                  org.apache.axis.soap.SOAPEnvelope,
                  org.apache.axis.soap.SOAPFactory"

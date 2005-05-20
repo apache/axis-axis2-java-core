@@ -18,9 +18,9 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.deployment.util.DeploymentData;
 import org.apache.axis.description.*;
+import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.TransportSender;
 
@@ -91,7 +91,7 @@ public class DeploymentParser implements DeploymentConstants {
     /**
      * To process server.xml
      */
-    public void processGlobalConfig(AxisConfigurationImpl axisGlobal , String starttag) throws DeploymentException {
+    public void processGlobalConfig(AxisConfigurationImpl axisGlobal, String starttag) throws DeploymentException {
         String START_TAG = starttag;
         try {
             boolean END_DOCUMENT = false;
@@ -364,6 +364,9 @@ public class DeploymentParser implements DeploymentConstants {
                         Parameter parameter = processParameter();
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
+                    } else if (DESCRIPTION.equals(ST)) {
+                        String desc = processDescription();
+                        axisService.setServiceDescription(desc);
                     } else if (TYPEMAPPINGST.equals(ST)) {
                         throw new UnsupportedOperationException("Type mapping dose not implemented yet ");
                         //  processTypeMapping();
@@ -373,13 +376,13 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation();
                         DeploymentData.getInstance().setOperationPhases(operation);
-                        if(operation.getMessageReciever() == null ) {
+                        if (operation.getMessageReciever() == null) {
                             try {
                                 /**
                                  * Setting default Message Recive as Message Reciever
                                  */
                                 ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
-                                Class    messageReceiver = Class.forName("org.apache.axis.receivers.RawXMLINOutMessageRecevier", true, loader1);
+                                Class messageReceiver = Class.forName("org.apache.axis.receivers.RawXMLINOutMessageRecevier", true, loader1);
                                 operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException("Error in loading messageRecivers " + e.getMessage());
@@ -430,6 +433,32 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
+    private String processDescription() throws DeploymentException {
+        String desc = "";
+        boolean END_DESC = false;
+        try {
+            while (!END_DESC) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                    END_DESC = true;
+                } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (DESCRIPTION.equals(endtagname)) {
+                        END_DESC = true;
+                        break;
+                    }
+
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                    desc += pullparser.getText();
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("parser Exception", e);
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+        return desc;
+    }
 
     private Parameter processParameter() throws DeploymentException {
         Parameter parameter = new ParameterImpl();
@@ -759,7 +788,8 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                 }
             }
-        } if(!foundClass) {
+        }
+        if (!foundClass) {
             throw new DeploymentException("Module Implemantation class dose not found");
         }
         boolean END_MODULE = false;

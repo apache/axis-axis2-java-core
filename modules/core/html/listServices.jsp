@@ -1,7 +1,7 @@
-<%@ page import="org.apache.axis.description.AxisService,
-                 org.apache.axis.Constants,
-                 org.apache.axis.description.AxisOperation,
-                 java.util.*"%>
+<%@ page import="org.apache.axis.Constants,
+                 java.util.*,
+                 org.apache.axis.description.ServiceDescription,
+                 org.apache.axis.description.OperationDescription"%>
  <%--
     /*
  * Copyright 2002,2004 The Apache Software Foundation.
@@ -38,11 +38,12 @@
         Collection servicecol = serviceMap.values();
         Collection operationsList;
        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
-            AxisService axisService = (AxisService) iterator.next();
+            ServiceDescription axisService = (ServiceDescription) iterator.next();
             operations = axisService.getOperations();
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
-            %><hr><h3><font color="blue"><%=serviceName%></font></h3>
+            %><hr><h2><font color="blue"><%=serviceName%></font></h2>
+            <h4><font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
             if (operationsList.size() > 0) {
                 %><i>Available operations</i><%
@@ -51,7 +52,7 @@
             }
            %><ul><%
             for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                OperationDescription axisOperation = (OperationDescription) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li><%
             }
            %></ul>

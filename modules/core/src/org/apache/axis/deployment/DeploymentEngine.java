@@ -387,6 +387,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         }
             ///factory.createChains(serviceMetaData, axisConfig, );
+            System.out.println("service Description : " + serviceMetaData.getServiceDescription());
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
             throw new AxisFault(e);

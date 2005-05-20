@@ -1,10 +1,10 @@
 <%@ page import="java.util.Iterator,
-                 org.apache.axis.description.AxisOperation,
                  java.util.HashMap,
                  java.util.Collection,
-                 org.apache.axis.description.AxisService,
                  org.apache.axis.Constants,
-                 java.util.Hashtable"%>
+                 java.util.Hashtable,
+                 org.apache.axis.description.ServiceDescription,
+                 org.apache.axis.description.OperationDescription"%>
  <%--
   Created by IntelliJ IDEA.
   User: Ajith
@@ -22,7 +22,7 @@
         <jsp:include page="include/header.inc"></jsp:include>
 
         <%
-            AxisService service = (AxisService)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
+            ServiceDescription service = (ServiceDescription)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
             //System.out.println("service = " + service);
             String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
             System.out.println("isFault = " + isFault);
@@ -57,7 +57,7 @@
                 }
         %><ul><%
                 for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                    AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                    OperationDescription axisOperation = (OperationDescription) iterator1.next();
         %><li>
 <%=axisOperation.getName().getLocalPart()%></li>
 <%

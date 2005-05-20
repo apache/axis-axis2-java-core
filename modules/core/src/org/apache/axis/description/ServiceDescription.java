@@ -40,6 +40,8 @@ public class ServiceDescription
      */
     protected final HashMap operationsMap = new HashMap();
 
+    private String serviceDescription = "Not Specified";
+
     /**
      * Constructor ServiceDescription
      */
@@ -407,6 +409,22 @@ public class ServiceDescription
 
         return serviceContext;
 
+    }
+
+    /**
+     * To get the description about the service
+     * @return
+     */
+    public String getServiceDescription() {
+        return serviceDescription;
+    }
+
+    /**
+     * Set the description about the service
+     * @param serviceDescription
+     */
+    public void setServiceDescription(String serviceDescription) {
+        this.serviceDescription = serviceDescription;
     }
 
 }

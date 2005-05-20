@@ -74,9 +74,7 @@ public interface DeploymentConstants {
     String PHASEFIRST = "phaseFirst";
     String PHASELAST = "phaseLast";
     String ORDER = "order";  // to resolve the order tag
-
-    String JAVAST = "http://ws.apache.org/axis2/deployment/java";
-    String JAVAIMPL = "implementation";
+    String DESCRIPTION = "description";
 
     String TRANSPORTSTAG = "transports";
     String TRANSPORTTAG = "transport";
@@ -88,5 +86,6 @@ public interface DeploymentConstants {
 
     String HOTDEPLOYMENT = "hotdeployment";
     String HOTUPDATE = "hotupdate";
+
 
 }
