@@ -7,6 +7,7 @@ import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.soap.*;
 import org.apache.axis.soap.impl.llom.*;
+import org.apache.axis.soap.impl.llom.SOAPConstants;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 
 /**

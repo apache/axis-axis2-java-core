@@ -31,7 +31,7 @@ public class TestUtil{
 
     protected static final String IN_FILE_NAME = "soapmessage.xml";
     protected StAXSOAPModelBuilder builder;
-    protected String testResourceDir = "src" + File.separator + "test-resources";
+    protected String testResourceDir = "test-resources";
 
 
     public StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {

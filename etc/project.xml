@@ -170,9 +170,7 @@
     
       <excludes>
         <exclude>**/*Abstract*.java</exclude>
-	    <exclude>**/*Util*.java</exclude>
-		<exclude>**/*AddressingInHandlerTest.java</exclude>
-		<exclude>**/*AddressingOutHandlerTest.java</exclude> 
+	    <exclude>**/*Util*.java</exclude> 
 		<exclude>**/*PhaseResolvingTest.java</exclude>
 
 	    <exclude>**/*Phase*.java</exclude>
