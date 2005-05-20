@@ -365,12 +365,10 @@ public class DeploymentParser implements DeploymentConstants {
                         axisService.addParameter(parameter);
                         //axisService. .appParameter(parameter);
                     } else if (TYPEMAPPINGST.equals(ST)) {
-                        throw new UnsupportedOperationException();
-                        // todo this should implemnt latter
+                        throw new UnsupportedOperationException("Type mapping dose not implemented yet ");
                         //  processTypeMapping();
                     } else if (BEANMAPPINGST.equals(ST)) {
-                        throw new UnsupportedOperationException();
-                        // todo this should implemnt latter
+                        throw new UnsupportedOperationException("Bean mapping dose not implemented yet ");
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation();
@@ -458,7 +456,6 @@ public class DeploymentParser implements DeploymentConstants {
 
         boolean END_PARAMETER = false;
         String element = ""; // to store the paramater elemnt
-        //todo this should change to support xsdany
         try {
             while (!END_PARAMETER) {
                 int eventType = pullparser.next();
@@ -518,8 +515,6 @@ public class DeploymentParser implements DeploymentConstants {
                 } else {
                     ref_name = true;
                     throw new UnsupportedOperationException("This should be implmented");
-                    //TODO implement this
-
                 }
             }
         }
@@ -595,8 +590,6 @@ public class DeploymentParser implements DeploymentConstants {
      *
      */
     public void processTypeMapping() throws DeploymentException {
-        //todo complete this method
-        // and modify to return a type mapping object
         boolean END_TYPEMAPPING = false;
         try {
             while (!END_TYPEMAPPING) {
@@ -689,8 +682,6 @@ public class DeploymentParser implements DeploymentConstants {
                             } else {
                                 throw new UnsupportedOperationException(attname + " is not allowed in messageRecievr element");
                             }
-                        } else {
-                            //todo   if user dose not specify the messageReciever then the defaullt one has to be used
                         }
                     }
 
@@ -719,8 +710,6 @@ public class DeploymentParser implements DeploymentConstants {
      *
      */
     public void processBeanMapping() throws DeploymentException {
-        //todo complete this method
-        // and modify to return a type mapping object
         boolean END_BEANMAPPING = false;
         try {
             while (!END_BEANMAPPING) {
@@ -766,13 +755,14 @@ public class DeploymentParser implements DeploymentConstants {
                     if (ref_name) {
                         throw new DeploymentException("Module canot have both name and ref  " + attvalue);
                     } else {
-                        //TODO implement this , boz this is not complete
                         //  module.setRef(attvalue);
                         ref_name = true;
                         throw new UnsupportedOperationException("This should be implemented");
                     }
                 }
             }
+        } if(!foundClass) {
+            throw new DeploymentException("Module Implemantation class dose not found");
         }
         boolean END_MODULE = false;
         try {
@@ -802,7 +792,6 @@ public class DeploymentParser implements DeploymentConstants {
                     } else {
                         throw new UnsupportedOperationException(ST + "elment is not allowed in module.xml");
                     }
-                    //todo has to be implemnt this
                     // complete implenatation
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -1053,7 +1042,7 @@ public class DeploymentParser implements DeploymentConstants {
                         throw new DeploymentException("parser Exception : un supported element" + ST);
                     }
                     //processStartElement();
-                    break;//todo this has to be chenfed only for testng
+                    break;
                 }
             }
         } catch (XMLStreamException e) {

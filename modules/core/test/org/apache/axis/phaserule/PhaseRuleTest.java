@@ -33,12 +33,14 @@ public class PhaseRuleTest extends AbstractTestCase {
         axisSytem = new AxisConfigurationImpl();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
-        Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler").newInstance();
+        Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler",true, Thread.currentThread().getContextClassLoader()).newInstance();
         PhaseHolder ph = new PhaseHolder(inPhase);
 
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis.handlers.AbstractHandler");
-        hm.setHandler(han);
+        Handler h1 = new PhaseRuleHandlers();
+        h1.init(hm);
+        hm.setHandler(h1);
         hm.setName(new QName("H1"));
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName("PreDispatch");
@@ -48,7 +50,9 @@ public class PhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm1 = new HandlerDescription();
         hm1.setClassName("org.apache.axis.handlers.AbstractHandler");
-        hm1.setHandler(han);
+        Handler h2 = new PhaseRuleHandlers();
+        h2.init(hm1);
+        hm1.setHandler(h2);
         hm1.setName(new QName("H2"));
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PreDispatch");
@@ -58,7 +62,9 @@ public class PhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm2 = new HandlerDescription();
         hm2.setClassName("org.apache.axis.handlers.AbstractHandler");
-        hm2.setHandler(han);
+        Handler h3 = new PhaseRuleHandlers();
+        h3.init(hm2);
+        hm2.setHandler(h3);
         hm2.setName(new QName("H3"));
         PhaseRule rule2 = new PhaseRule();
         rule2.setPhaseName("PreDispatch");
@@ -69,7 +75,9 @@ public class PhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm3 = new HandlerDescription();
         hm3.setClassName("org.apache.axis.handlers.AbstractHandler");
-        hm3.setHandler(han);
+        Handler h4 = new PhaseRuleHandlers();
+        h4.init(hm3);
+        hm3.setHandler(h4);
         hm3.setName(new QName("H4"));
         PhaseRule rule3 = new PhaseRule();
         rule3.setPhaseName("Dispatch");

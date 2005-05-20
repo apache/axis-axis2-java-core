@@ -18,6 +18,8 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.transport.TransportListener;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 
 /**
  * Represents a transport deployed in AXis2
@@ -51,6 +53,15 @@ public class TransportInDescription
 
     protected TransportListener reciever;
 
+    //to store handler in inFlow
+    private Phase inPhase ;
+    //to store handler Fault in inFlow
+    private Phase faultPhase ;
+
+
+
+
+
     /**
      * Constructor AxisTransport
      *
@@ -59,6 +70,8 @@ public class TransportInDescription
     public TransportInDescription(QName name) {
         paramInclude = new ParameterIncludeImpl();
         this.name = name;
+        inPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
+        faultPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
     }
 
     /**
@@ -121,6 +134,22 @@ public class TransportInDescription
      */
     public void setReciver(TransportListener receiver) {
         reciever = receiver;
+    }
+
+    public Phase getInPhase() {
+        return inPhase;
+    }
+
+    public void setInPhase(Phase inPhase) {
+        this.inPhase = inPhase;
+    }
+
+    public Phase getFaultPhase() {
+        return faultPhase;
+    }
+
+    public void setFaultPhase(Phase faultPhase) {
+        this.faultPhase = faultPhase;
     }
 
 }

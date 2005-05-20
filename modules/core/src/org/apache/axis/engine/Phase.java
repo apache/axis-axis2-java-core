@@ -429,10 +429,10 @@ public class Phase {
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
             if (handler.getHandlerDesc().getRules().getAfter().equals(
-                    temphandler.getName().getLocalPart())) {
+                    temphandler.getHandlerDesc().getName().getLocalPart())) {
                 after = i;
             } else if (handler.getHandlerDesc().getRules().getBefore().equals(
-                    temphandler.getName().getLocalPart())) {
+                    temphandler.getHandlerDesc().getName().getLocalPart())) {
                 before = i;
             }
             if ((after >= 0) && (before >= 0)) {
@@ -440,7 +440,7 @@ public class Phase {
                 if (after > before) {
                     //TODO fix me Deepal , (have to check this)
                     throw new PhaseException("incorrect handler order for "
-                            + handler.getName());
+                            + handler.getHandlerDesc().getName());
                 } else {
                     if (after + 1 <= handlers.size()) {
                         handlers.add(after + 1, handler);

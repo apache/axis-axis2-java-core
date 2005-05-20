@@ -278,54 +278,55 @@ public class PhaseResolver {
      * @throws PhaseException
      */
     public void buildTranspotsChains() throws PhaseException {
-        //TODO Fix me Deepal
-//        HashMap axisTransportIn = axisConfig.getTransportsIn();
-//        HashMap axisTransportOut = axisConfig.getTransportsOut();
-//
-//        Collection colintrnsport = axisTransportIn.values();
-//        for (Iterator iterator = colintrnsport.iterator();
-//             iterator.hasNext();) {
-//            TransportInDescription transport = (TransportInDescription) iterator.next();
-//            buildINTransportChains(transport);
-//        }
-//
-//        Collection colouttrnsport = axisTransportOut.values();
-//        for (Iterator iterator = colouttrnsport.iterator();
-//             iterator.hasNext();) {
-//            TransportOutDescription transport = (TransportOutDescription) iterator.next();
-//            buildOutTransportChains(transport);
-//        }
+        HashMap axisTransportIn = axisConfig.getTransportsIn();
+        HashMap axisTransportOut = axisConfig.getTransportsOut();
+
+        Collection colintrnsport = axisTransportIn.values();
+        for (Iterator iterator = colintrnsport.iterator();
+             iterator.hasNext();) {
+            TransportInDescription transport = (TransportInDescription) iterator.next();
+            buildINTransportChains(transport);
+        }
+
+        Collection colouttrnsport = axisTransportOut.values();
+        for (Iterator iterator = colouttrnsport.iterator();
+             iterator.hasNext();) {
+            TransportOutDescription transport = (TransportOutDescription) iterator.next();
+            buildOutTransportChains(transport);
+        }
     }
 
 
     private void buildINTransportChains(TransportInDescription transport)
             throws PhaseException {
         Flow flow = null;
+        Phase phase = null;
         for (int type = 1; type < 4; type++) {
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
                     {
                         flow = transport.getInFlow();
+                        phase = transport.getInPhase();
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
                     {
                         flow = transport.getFaultFlow();
+                        phase = transport.getFaultPhase();
                         break;
                     }
             }
             if (flow != null) {
-                ArrayList phaseList = new ArrayList();
-                phaseList.add(new Phase(PhaseMetadata.TRANSPORT_PHASE));
-                phaseHolder = new PhaseHolder(phaseList);
+                ArrayList handlers = new ArrayList();
                 for (int j = 0; j < flow.getHandlerCount(); j++) {
                     HandlerDescription metadata = flow.getHandler(j);
                     metadata.getRules().setPhaseName(PhaseMetadata.TRANSPORT_PHASE);
-                    phaseHolder.addHandler(metadata);
-                    phaseHolder.addHandler(metadata);
+                    handlers.add(metadata);
                 }
+                new PhaseHolder().buildTransportHandlerChain(phase, handlers);
+            }else {
+                continue;
             }
-            phaseHolder.buildTransportChain(transport, type);
         }
     }
 
@@ -339,31 +340,33 @@ public class PhaseResolver {
     private void buildOutTransportChains(TransportOutDescription transport)
             throws PhaseException {
         Flow flow = null;
+        Phase phase = null;
         for (int type = 1; type < 5; type++) {
             switch (type) {
                 case PhaseMetadata.OUT_FLOW:
                     {
                         flow = transport.getOutFlow();
+                        phase = transport.getOutPhase();
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
                     {
                         flow = transport.getFaultFlow();
+                        phase = transport.getFaultPhase();
                         break;
                     }
             }
-            if (flow != null) {
-                ArrayList phaseList = new ArrayList();
-                phaseList.add(new Phase(PhaseMetadata.TRANSPORT_PHASE));
-                phaseHolder = new PhaseHolder(phaseList);
+           if (flow != null) {
+                ArrayList handlers = new ArrayList();
                 for (int j = 0; j < flow.getHandlerCount(); j++) {
                     HandlerDescription metadata = flow.getHandler(j);
                     metadata.getRules().setPhaseName(PhaseMetadata.TRANSPORT_PHASE);
-                    phaseHolder.addHandler(metadata);
+                    handlers.add(metadata);
                 }
+                new PhaseHolder().buildTransportHandlerChain(phase, handlers);
+            }else {
+                continue;
             }
-            //TODO fix Me Deepal
-            //phaseHolder.buildTransportChain(transport, type);
         }
     }
 

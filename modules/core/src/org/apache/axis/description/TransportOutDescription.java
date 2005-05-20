@@ -18,6 +18,8 @@ package org.apache.axis.description;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.transport.TransportSender;
+import org.apache.axis.engine.Phase;
+import org.apache.axis.phaseresolver.PhaseMetadata;
 
 /**
  * Represents a transport deployed in AXis2
@@ -40,7 +42,8 @@ public class TransportOutDescription
      */
     private Flow faultFlow;
 
-
+   private Phase outPhase;
+   private  Phase faultPhase;
 
     /**
      * Field name
@@ -58,6 +61,8 @@ public class TransportOutDescription
     public TransportOutDescription(QName name) {
         paramInclude = new ParameterIncludeImpl();
         this.name = name;
+        outPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
+        faultPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
     }
 
     /**
@@ -124,6 +129,22 @@ public class TransportOutDescription
 
     public void setFaultFlow(Flow faultFlow) {
         this.faultFlow = faultFlow;
+    }
+
+    public Phase getOutPhase() {
+        return outPhase;
+    }
+
+    public void setOutPhase(Phase outPhase) {
+        this.outPhase = outPhase;
+    }
+
+    public Phase getFaultPhase() {
+        return faultPhase;
+    }
+
+    public void setFaultPhase(Phase faultPhase) {
+        this.faultPhase = faultPhase;
     }
 
 }
