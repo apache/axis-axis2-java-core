@@ -40,7 +40,7 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Class HTTPTransportReceiver
  */
-public class TCPServer extends TransportReceiver implements Runnable {
+public class TCPServer extends TransportListener implements Runnable {
     private int port = 8000;
     private ServerSocket serversocket;
     private boolean started = false;
@@ -138,7 +138,7 @@ public class TCPServer extends TransportReceiver implements Runnable {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis.transport.TransportReceiver#replyToEPR(java.lang.String)
+     * @see org.apache.axis.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         return new EndpointReference(
@@ -147,7 +147,7 @@ public class TCPServer extends TransportReceiver implements Runnable {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis.transport.TransportReceiver#stop()
+     * @see org.apache.axis.transport.TransportListener#stop()
      */
     public void stop() throws AxisFault {
         started = false;

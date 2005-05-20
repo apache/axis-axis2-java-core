@@ -17,7 +17,7 @@ package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportListener;
 
 /**
  * Represents a transport deployed in AXis2
@@ -49,7 +49,7 @@ public class TransportInDescription
     protected QName name;
 
 
-    protected TransportReceiver reciever;
+    protected TransportListener reciever;
 
     /**
      * Constructor AxisTransport
@@ -112,14 +112,14 @@ public class TransportInDescription
     /**
      * @return
      */
-    public TransportReceiver getReciever() {
+    public TransportListener getReciever() {
         return reciever;
     }
 
     /**
      * @param receiver
      */
-    public void setReciver(TransportReceiver receiver) {
+    public void setReciver(TransportListener receiver) {
         reciever = receiver;
     }
 

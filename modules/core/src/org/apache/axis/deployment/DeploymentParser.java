@@ -21,7 +21,7 @@ import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.engine.AxisConfigurationImpl;
-import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.TransportSender;
 
 import javax.xml.namespace.QName;
@@ -215,7 +215,7 @@ public class DeploymentParser implements DeploymentConstants {
                 Class reciever = null;
                 try {
                     reciever = Class.forName(attvalue, true, Thread.currentThread().getContextClassLoader());
-                    TransportReceiver trnsrecievr = (TransportReceiver) reciever.newInstance();
+                    TransportListener trnsrecievr = (TransportListener) reciever.newInstance();
                     transportin.setReciver(trnsrecievr);
                 } catch (ClassNotFoundException e) {
                     throw  new DeploymentException(e.getMessage());

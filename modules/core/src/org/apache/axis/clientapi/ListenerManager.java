@@ -24,16 +24,16 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.transport.tcp.TCPServer;
 
 public class ListenerManager {
 
-    public static TransportReceiver httpListener;
-    public static TransportReceiver tcpListener;
-    public static TransportReceiver mailListener;
-    public static TransportReceiver jmsListener;
+    public static TransportListener httpListener;
+    public static TransportListener tcpListener;
+    public static TransportListener mailListener;
+    public static TransportListener jmsListener;
     public static ConfigurationContext configurationContext;
 
     public static final void makeSureStarted(

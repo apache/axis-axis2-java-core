@@ -23,7 +23,7 @@ import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.transport.TransportReceiver;
+import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +41,7 @@ import java.net.Socket;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer extends TransportReceiver implements Runnable{
+public class SimpleHTTPServer extends TransportListener implements Runnable{
     /**
      * Field log
      */
@@ -50,7 +50,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
     /**
      * Field systemContext
      */
-    protected ConfigurationContext systemContext;
+    protected ConfigurationContext configurationContext;
 
     /**
      * Field serverSocket
@@ -74,7 +74,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
      * @param systemContext
      */
     public SimpleHTTPServer(ConfigurationContext systemContext, ServerSocket serverSoc) {
-        this.systemContext = systemContext;
+        this.configurationContext = systemContext;
         this.serverSocket = serverSoc;
     }
 
@@ -89,7 +89,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
             this.serverSocket = serverSoc;
            // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            this.systemContext = erfac.buildEngineContext(dir);
+            this.configurationContext = erfac.buildEngineContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);
@@ -124,21 +124,21 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
                         break;
                     }
                     if (socket != null) {
-                        if (systemContext == null) {
+                        if (configurationContext == null) {
                             throw new AxisFault("Engine Must be null");
                         }
                         Writer out = new OutputStreamWriter(socket.getOutputStream());
                         Reader in = new InputStreamReader(socket.getInputStream());
                         TransportOutDescription transportOut =
-                            systemContext.getEngineConfig().getTransportOut(
+                            configurationContext.getEngineConfig().getTransportOut(
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
                             new MessageContext(
                                 null,
-                                systemContext.getEngineConfig().getTransportIn(
+                                configurationContext.getEngineConfig().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
                                 transportOut,
-                                systemContext);
+                                configurationContext);
                         msgContext.setServerSide(true);
 
                         // We do not have any Addressing Headers to put
@@ -146,7 +146,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        reciver.invoke(msgContext, systemContext);
+                        reciver.invoke(msgContext, configurationContext);
 
                         if (msgContext.getReplyTo() != null
                             && !AddressingConstants.EPR_ANONYMOUS_URL.equals(
@@ -249,7 +249,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
      * @return
      */
     public ConfigurationContext getSystemContext() {
-        return systemContext;
+        return configurationContext;
     }
 
     /**
@@ -277,7 +277,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
         }
     }
     /* (non-Javadoc)
-     * @see org.apache.axis.transport.TransportReceiver#replyToEPR(java.lang.String)
+     * @see org.apache.axis.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) {
         return new EndpointReference(
