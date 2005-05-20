@@ -68,11 +68,6 @@ public class InOutMEPClient extends MEPClient {
     //variables use for internal implementations
     
     /**
-     * The Listener Manager is tempory hack to make it work till will Generalize the Transport Layer More.
-     */
-    protected ListenerManager listenerManager;
-    
-    /**
      * This is used for the Receiving the Async Messages 
      */
     protected CallbackReceiver callbackReceiver;
@@ -207,8 +202,6 @@ public class InOutMEPClient extends MEPClient {
             }
 
 
-            msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
-            msgctx.setServiceContext(serviceContext);
 
             if (useSeparateListener) {
                 String messageID = String.valueOf(System.currentTimeMillis());
@@ -216,13 +209,14 @@ public class InOutMEPClient extends MEPClient {
                 axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
-                    listenerManager.replyToEPR(
+                ListenerManager.replyToEPR(
                         serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
                             + axisop.getName().getLocalPart(),listenerTransport));
 
             }
-
+            msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
+            msgctx.setServiceContext(serviceContext);
             engine.send(msgctx);
 
             //TODO start the server

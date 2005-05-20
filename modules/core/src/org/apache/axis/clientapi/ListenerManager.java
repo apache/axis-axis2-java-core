@@ -44,6 +44,7 @@ public class ListenerManager {
             ListenerManager.configurationContext = configurationContext;
             if (Constants.TRANSPORT_HTTP.equals(transport) && httpListener == null) {
                 httpListener = new SimpleHTTPServer(configurationContext, new ServerSocket(6060));
+                httpListener.start();
             } else if (Constants.TRANSPORT_JMS.equals(transport) && jmsListener == null) {
                 throw new UnsupportedOperationException();
             } else if (Constants.TRANSPORT_MAIL.equals(transport) && mailListener == null) {
@@ -56,15 +57,15 @@ public class ListenerManager {
         }
     }
 
-    public EndpointReference replyToEPR(String serviceName, String transport) throws AxisFault {
+    public static EndpointReference replyToEPR(String serviceName, String transport) throws AxisFault {
         ListenerManager.configurationContext = configurationContext;
-        if (Constants.TRANSPORT_HTTP.equals(transport) && httpListener == null) {
+        if (Constants.TRANSPORT_HTTP.equals(transport) && httpListener != null) {
             return httpListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_JMS.equals(transport) && jmsListener == null) {
+        } else if (Constants.TRANSPORT_JMS.equals(transport) && jmsListener != null) {
             return jmsListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_MAIL.equals(transport) && mailListener == null) {
+        } else if (Constants.TRANSPORT_MAIL.equals(transport) && mailListener != null) {
             return mailListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_TCP.equals(transport) && tcpListener == null) {
+        } else if (Constants.TRANSPORT_TCP.equals(transport) && tcpListener != null) {
             return tcpListener.replyToEPR(serviceName);
         }
         throw new AxisFault(

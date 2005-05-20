@@ -107,11 +107,6 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
-		<!-- <exclude>**/*EchoTest.java</exclude> -->
-		<!-- <exclude>**/*TransportDeploymentTest.java</exclude>  -->
-		<!-- <exclude>**/*BuildERWithDeploymentTest.java</exclude> 
- 				<exclude>**/*EchoRawXMLTest.java</exclude>
-           		<exclude>**/*HandlerFailureTest.java</exclude>  -->
       </excludes>
      <includes>
         <include>**/*Test.java</include>

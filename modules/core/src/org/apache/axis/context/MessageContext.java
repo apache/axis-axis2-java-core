@@ -21,7 +21,6 @@ import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.ExecutionChain;
 import org.apache.axis.soap.SOAPEnvelope;
 
 /**
@@ -60,8 +59,7 @@ public class MessageContext extends AbstractContext {
 
     private MessageInformationHeadersCollection messageInformationHeaders;
 
-    private final ExecutionChain chain;
-
+    
     private OperationContext operationContext;
     private ServiceContext serviceContext;
     private ConfigurationContext engineContext;
@@ -116,6 +114,24 @@ public class MessageContext extends AbstractContext {
     private String serviceInstanceID;
 
     /**
+      * @param engineContext
+      * @param sessionContext
+      * @param transportIn
+      * @param transportOut
+      * @param mepContext
+      * @throws AxisFault
+      */
+    public MessageContext(
+        ConfigurationContext engineContext,
+        MessageInformationHeadersCollection addressingHeaders)
+        throws AxisFault {
+        super(null);
+        this.messageInformationHeaders = addressingHeaders;
+        this.engineContext = engineContext;
+        sessionContext = null;
+    }
+
+    /**
      * @param engineContext
      * @param sessionContext
      * @param transportIn
@@ -123,12 +139,13 @@ public class MessageContext extends AbstractContext {
      * @param mepContext
      * @throws AxisFault
      */
-    public MessageContext(ConfigurationContext engineContext,
-                          SessionContext sessionContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut,
-                          OperationContext mepContext)
-            throws AxisFault {
+    public MessageContext(
+        ConfigurationContext engineContext,
+        SessionContext sessionContext,
+        TransportInDescription transportIn,
+        TransportOutDescription transportOut,
+        OperationContext mepContext)
+        throws AxisFault {
         this(sessionContext, transportIn, transportOut, engineContext);
         this.operationContext = mepContext;
 
@@ -142,11 +159,12 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
 
-    public MessageContext(SessionContext sessionContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut,
-                          ConfigurationContext engineContext)
-            throws AxisFault {
+    public MessageContext(
+        SessionContext sessionContext,
+        TransportInDescription transportIn,
+        TransportOutDescription transportOut,
+        ConfigurationContext engineContext)
+        throws AxisFault {
         super(null);
 
         if (sessionContext == null) {
@@ -154,7 +172,6 @@ public class MessageContext extends AbstractContext {
         } else {
             this.sessionContext = sessionContext;
         }
-        chain = new ExecutionChain();
         messageInformationHeaders = new MessageInformationHeadersCollection();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
@@ -342,9 +359,7 @@ public class MessageContext extends AbstractContext {
      *
      * @return
      */
-    public ExecutionChain getExecutionChain() {
-        return this.chain;
-    }
+  
 
     public void setWSAAction(String actionURI) {
         messageInformationHeaders.setAction(actionURI);
@@ -364,10 +379,6 @@ public class MessageContext extends AbstractContext {
 
     public MessageInformationHeadersCollection getMessageInformationHeaders() {
         return messageInformationHeaders;
-    }
-
-    public void setMessageInformationHeaders(MessageInformationHeadersCollection messageInformationHeaders) {
-        this.messageInformationHeaders = messageInformationHeaders;
     }
 
     /**
@@ -477,6 +488,13 @@ public class MessageContext extends AbstractContext {
      */
     public void setServiceContext(ServiceContext context) {
         serviceContext = context;
+    }
+
+    /**
+     * @param collection
+     */
+    public void setMessageInformationHeaders(MessageInformationHeadersCollection collection) {
+        messageInformationHeaders = collection;
     }
 
 }

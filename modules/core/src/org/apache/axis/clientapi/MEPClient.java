@@ -51,6 +51,10 @@ public abstract class MEPClient {
                     + " And the Axis Operations suppiled supports "
                     + axisop.getMessageExchangePattern());
         }
+        
+        if(serviceContext.getServiceConfig().getOperation(axisop.getName()) == null){
+            serviceContext.getServiceConfig().addOperation(axisop);
+        }
     }
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {

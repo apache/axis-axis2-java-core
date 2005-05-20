@@ -7,7 +7,7 @@
 
     <outflow>
         <handler name="AddressingOutHandler" class="org.apache.axis.handlers.addressing.AddressingOutHandler">
-            <order phase="addressing"/>
+            <order phase="MessageOut"/>
         </handler>
     </outflow>
 </module>

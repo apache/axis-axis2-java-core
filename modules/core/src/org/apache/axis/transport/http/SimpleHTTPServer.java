@@ -282,7 +282,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
     public EndpointReference replyToEPR(String serviceName) {
         return new EndpointReference(
             AddressingConstants.WSA_REPLY_TO,
-            "http://127.0.0.1:" + (serverSocket.getLocalPort() + 1) + "/axis/services/" + serviceName);
+            "http://127.0.0.1:" + (serverSocket.getLocalPort()) + "/axis/services/" + serviceName);
     }
 
 }
