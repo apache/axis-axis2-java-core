@@ -109,27 +109,27 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     }
 
     public void testEchoXMLCompleteASync() throws Exception {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File("target/test-resources/repository-client/modules/addressing.mar");
-        //File file = new File("modules/samples/target/test-resources/repository-client/modules/addressing.mar");
-
-        assertTrue(file.exists());
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
-
-        ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-        new ConfigurationContext(new AxisConfigurationImpl());
-        sysContext.getEngineConfig().addMdoule(moduleDesc);
-        sysContext.getEngineConfig().engageModule(moduleDesc.getName());
+//        DeploymentEngine deploymentEngine = new DeploymentEngine();
+//        File file = new File(UtilServer.TESTING_REPOSITORY + "/addressing.mar");
+//        assertTrue(file.exists());
+//        ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
+//
+//        ConfigurationContextFactory efac = new ConfigurationContextFactory();
+//        ConfigurationContext sysContext = efac.buildClientEngineContext(null);
+//        new ConfigurationContext(new AxisConfigurationImpl());
+//        sysContext.getEngineConfig().addMdoule(moduleDesc);
+//        sysContext.getEngineConfig().engageModule(moduleDesc.getName());
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
                 org.apache.axis.engine.Echo.class.getName(),
                 operationName);
-        sysContext.getEngineConfig().addService(service);
-        Utils.resolvePhases(sysContext.getEngineConfig(), service);
-        ServiceContext serviceContext = sysContext.createServiceContext(service.getName());
-
+//        sysContext.getEngineConfig().addService(service);
+//        Utils.resolvePhases(sysContext.getEngineConfig(), service);
+//        ServiceContext serviceContext = sysContext.createServiceContext(service.getName());
+        ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(service);
+        
+        
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");

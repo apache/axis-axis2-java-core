@@ -37,28 +37,27 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     private Socket socket;
     private ByteArrayOutputStream outputStream;
-//    /**
-//     * Method obtainOutputStream
-//     *
-//     * @param msgContext
-//     * @return
-//     * @throws AxisFault
-//     */
-//    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
-//        if (!msgContext.isServerSide()) {
-//            //create a new byte buffer output stream
-//            outputStream = new ByteArrayOutputStream();
-//            out = new OutputStreamWriter(outputStream);
-//        } else {
-//            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
-//        }
-//        if (out == null) {
-//            throw new AxisFault("can not find the suffient information to find endpoint");
-//        } else {
-//            return out;
-//        }
-//    }
-
+    //    /**
+    //     * Method obtainOutputStream
+    //     *
+    //     * @param msgContext
+    //     * @return
+    //     * @throws AxisFault
+    //     */
+    //    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
+    //        if (!msgContext.isServerSide()) {
+    //            //create a new byte buffer output stream
+    //            outputStream = new ByteArrayOutputStream();
+    //            out = new OutputStreamWriter(outputStream);
+    //        } else {
+    //            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+    //        }
+    //        if (out == null) {
+    //            throw new AxisFault("can not find the suffient information to find endpoint");
+    //        } else {
+    //            return out;
+    //        }
+    //    }
 
     /**
      * Method writeTransportHeaders
@@ -95,42 +94,40 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault {
-            EndpointReference toURL = msgContext.getTo();
-            if (toURL != null) {
-                try {
-                    URL url = new URL(toURL.getAddress());
-                    SocketAddress add =
-                        new InetSocketAddress(
-                            url.getHost(),
-                            url.getPort() == -1 ? 80 : url.getPort());
-                    socket = new Socket();
-                    socket.connect(add);
-                    OutputStream outS = socket.getOutputStream();
-                    byte[] bytes = outputStream.toByteArray();
+        EndpointReference toURL = msgContext.getTo();
+        if (toURL != null) {
+            try {
+                URL url = new URL(toURL.getAddress());
+                SocketAddress add =
+                    new InetSocketAddress(url.getHost(), url.getPort() == -1 ? 80 : url.getPort());
+                socket = new Socket();
+                socket.connect(add);
+                OutputStream outS = socket.getOutputStream();
+                byte[] bytes = outputStream.toByteArray();
 
-                    Writer realOut = new OutputStreamWriter(outS);
-                    //write header to the out put stream
-                    writeTransportHeaders(realOut, url, msgContext, bytes.length);
-                    realOut.flush();
-                    //write the content to the real output stream
-                    outS.write(bytes);
-                    outS.flush();
+                Writer realOut = new OutputStreamWriter(outS);
+                //write header to the out put stream
+                writeTransportHeaders(realOut, url, msgContext, bytes.length);
+                realOut.flush();
+                //write the content to the real output stream
+                outS.write(bytes);
+                outS.flush();
 
-                    msgContext.setProperty(
-                        MessageContext.TRANSPORT_READER,
-                        new InputStreamReader(socket.getInputStream()));
-                    msgContext.setProperty(HTTPConstants.SOCKET, socket);
+                msgContext.setProperty(
+                    MessageContext.TRANSPORT_READER,
+                    new InputStreamReader(socket.getInputStream()));
+                msgContext.setProperty(HTTPConstants.SOCKET, socket);
 
-                    socket.shutdownOutput();
+                socket.shutdownOutput();
 
-                } catch (MalformedURLException e) {
-                    throw new AxisFault(e.getMessage(), e);
-                } catch (IOException e) {
-                    throw new AxisFault(e.getMessage(), e);
-                }
-            } else {
-                throw new AxisFault("to EPR must be specified");
+            } catch (MalformedURLException e) {
+                throw new AxisFault(e.getMessage(), e);
+            } catch (IOException e) {
+                throw new AxisFault(e.getMessage(), e);
             }
+        } else {
+            throw new AxisFault("to EPR must be specified");
+        }
     }
 
     protected Writer openTheConnection(EndpointReference epr) {
@@ -140,17 +137,33 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)throws AxisFault {
-            try {
-                writer.write(new String(HTTPConstants.HTTP).toCharArray());
-                writer.write(new String(HTTPConstants.OK).toCharArray());
-                writer.write("\n\n".toCharArray());
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
+        Writer writer)
+        throws AxisFault {
+        try {
+            writer.write(new String(HTTPConstants.HTTP).toCharArray());
+            writer.write(new String(HTTPConstants.OK).toCharArray());
+            writer.write("\n\n".toCharArray());
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
     public void startSendWithToAddress(MessageContext msgContext, Writer writer) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportSender#cleanUp()
+     */
+    public void cleanUp() throws AxisFault {
+        try {
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
+
+        } catch (IOException e) {
+        }
+
     }
 
 }

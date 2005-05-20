@@ -16,21 +16,16 @@
 
 package org.apache.axis.clientapi;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ServiceContext;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.OperationDescription;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.soap.SOAPEnvelope;
 
 /**
  * @author chathura@opensource.lk

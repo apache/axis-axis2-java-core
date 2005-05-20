@@ -100,11 +100,12 @@ public class TCPServer extends TransportListener implements Runnable {
                     new MessageContext(
                         null,
                         configContext.getEngineConfig().getTransportIn(
-                            new QName(Constants.TRANSPORT_HTTP)),
+                            new QName(Constants.TRANSPORT_TCP)),
                         transportOut,
                         configContext);
                 msgContext.setServerSide(true);
-                msgContext.setProperty(MessageContext.TRANSPORT_WRITER, new OutputStreamWriter(socket.getOutputStream()));
+                msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
+                msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                 
                 AxisEngine engine = new AxisEngine(configContext);
                 try {
@@ -117,12 +118,16 @@ public class TCPServer extends TransportListener implements Runnable {
                 engine.receive(msgContext);
             } catch (Throwable e) {
                 log.error(e);
+                e.printStackTrace();
             } finally{
                try {
-                     socket.close();
-                     if(!started){
-                         serversocket.close();
-                     }
+                   if(socket != null){
+                       socket.close();                   
+                       if(!started){
+                           serversocket.close();
+                       }
+                   }
+
                 } catch (IOException e1) {
                    log.error(e1);
                 }
@@ -150,7 +155,12 @@ public class TCPServer extends TransportListener implements Runnable {
      * @see org.apache.axis.transport.TransportListener#stop()
      */
     public void stop() throws AxisFault {
-        started = false;
+        try {
+            this.serversocket.close();        
+            started = false;
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
 }

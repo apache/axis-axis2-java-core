@@ -16,21 +16,21 @@
 
 package org.apache.axis.transport.mail;
 
+import java.util.Properties;
+
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.pop3.POP3Client;
-import org.apache.commons.net.pop3.POP3MessageInfo;
-
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.Reader;
-import java.util.Properties;
 
 /**
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
@@ -51,10 +51,9 @@ import java.util.Properties;
  *  
  */
 
-public class SimpleMailListner implements Runnable {
-    
-    
-    protected static Log log = LogFactory.getLog(SimpleMailListner.class.getName());
+public class SimpleMailListener implements Runnable {
+
+    protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
 
     private String host;
 
@@ -64,10 +63,9 @@ public class SimpleMailListner implements Runnable {
 
     private String password;
 
-    private static ConfigurationContext er = null;
+    private ConfigurationContext er = null;
 
-    public SimpleMailListner(String host, int port, String userid, String password,
-            String dir) {
+    public SimpleMailListener(String host, int port, String userid, String password, String dir) {
         this.host = host;
         this.port = port;
         this.userid = userid;
@@ -79,12 +77,24 @@ public class SimpleMailListner implements Runnable {
             e.printStackTrace();
         }
         try {
-            System.out
-                    .println("Sleeping for a bit to let the engine start up.");
-            Thread.sleep(9000);
+            System.out.println("Sleeping for a bit to let the engine start up.");
+            Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.debug(e1.getMessage(), e1);
         }
+    }
+
+    public SimpleMailListener(
+        String host,
+        int port,
+        String userid,
+        String password,
+        ConfigurationContext er) {
+        this.host = host;
+        this.port = port;
+        this.userid = userid;
+        this.password = password;
+        this.er = er;
     }
 
     // Are we doing threads?
@@ -96,25 +106,6 @@ public class SimpleMailListner implements Runnable {
 
     public boolean getDoThreads() {
         return doThreads;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    // Axis server (shared between instances)
-    // In axis2 AxisEngine gives the functionality of AxisServer in axis 1.
-    private static AxisEngine myAxisEngine = null;
-
-    //This is needed to create the AxisEngine. Have to find out how to get this
-    // wrking in the class -- CT 07-Feb-2005.
-    private static AxisConfiguration reg = null;
-
-    protected static synchronized AxisEngine getAxisEngine() {
-        if (myAxisEngine == null) {
-            myAxisEngine = new AxisEngine(er);
-        }
-        return myAxisEngine;
     }
 
     // are we stopped?
@@ -130,73 +121,58 @@ public class SimpleMailListner implements Runnable {
         // port)); TODO Issue #1 CT 07-Feb-2005.
         // Accept and process requests from the socket
         if (!stopped) {
-            System.out
-                    .println("Mail listner is being setup to listen to the address "
-                            + userid + "@" + host + " On port " + port);
-            log.info("Mail listner is being setup to listen to the address "
-                    + userid + "@" + host + " On port " + port);
+            String logMessage =
+                "Mail listner is being setup to listen to the address "
+                    + userid
+                    + "@"
+                    + host
+                    + " On port "
+                    + port;
+            System.out.println(logMessage);
+            log.info(logMessage);
         }
         while (!stopped) {
             try {
-                pop3.connect(host, port);
-                pop3.login(userid, password);
-                System.out.println("Checking for messages");
-                log.info("Checking for messages");
-                POP3MessageInfo[] messages = pop3.listMessages();
-                if (messages != null && messages.length > 0) {
-                    System.out.println("Found messages " + messages.length);
-                    log.info("Found messages " + messages.length);
-                    for (int i = 0; i < messages.length; i++) {
-                        Reader reader = pop3
-                                .retrieveMessage(messages[i].number);
-                        if (reader == null) {
-                            continue;
-                        }
-
-                        StringBuffer buffer = new StringBuffer();
-                        BufferedReader bufferedReader = new BufferedReader(
-                                reader);
-                        int ch;
-                        while ((ch = bufferedReader.read()) != -1) {
-                            buffer.append((char) ch);
-                        }
-                        bufferedReader.close();
-                        ByteArrayInputStream bais = new ByteArrayInputStream(
-                                buffer.toString().getBytes());
-                        Properties prop = new Properties();
-                        Session session = Session
-                                .getDefaultInstance(prop, null);
-
-                        MimeMessage mimeMsg = new MimeMessage(session, bais);
-                        pop3.deleteMessage(messages[i].number);
-                        if (mimeMsg != null) {
-                            MailWorker worker = new MailWorker(this, mimeMsg,
-                                    er);
-                            if (doThreads) {
-                                Thread thread = new Thread(worker);
-                                thread.setDaemon(true);
-                                thread.start();
-                            } else {
-                                worker.run();
-                            }
+                PasswordAuthentication authentication =
+                    new PasswordAuthentication(userid, password);
+                Properties props = new Properties();
+                props.put("mail.user", userid);
+                props.put("mail.host", host);
+                props.put("mail.store.protocol", "pop3");
+                props.put("mail.transport.protocol", "smtp");
+                Session session = Session.getInstance(props);
+                Store store = session.getStore();
+                store.connect();
+                Folder root = store.getDefaultFolder();
+                Folder inbox = root.getFolder("inbox");
+                inbox.open(Folder.READ_WRITE);
+                Message[] msgs = inbox.getMessages();
+                int numMessages = msgs.length;
+                if (msgs.length == 0) {
+                    System.out.println("No messages in inbox");
+                }
+                for (int i = 0; i < msgs.length; i++) {
+                    MimeMessage msg = (MimeMessage) msgs[i];
+                    if (msg != null) {
+                        MailWorker worker = new MailWorker(msg, er);
+                        if (doThreads) {
+                            Thread thread = new Thread(worker);
+                            thread.setDaemon(true);
+                            thread.start();
+                        } else {
+                            worker.run();
                         }
                     }
+                    msg.setFlag(Flags.Flag.DELETED, true);
                 }
-            } catch (java.io.InterruptedIOException iie) {
-                log.debug(
-                        "InterruptedIOException error occured in the mail listner."
-                                + iie.getMessage(), iie);
-                System.out
-                        .println("InterruptedIOException error occured in the mail listner."
-                                + iie.getMessage());
+                inbox.close(true);
+                store.close();
             } catch (Exception e) {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
-                log.debug("An error occured when running the mail listner."
-                        + e.getMessage(), e);
-                System.out
-                        .println("An error occured when running the mail listner."
-                                + e.getMessage());
+                log.debug("An error occured when running the mail listner." + e.getMessage(), e);
+                System.out.println(
+                    "An error occured when running the mail listner." + e.getMessage());
                 break;
             }
             try {
@@ -207,11 +183,10 @@ public class SimpleMailListner implements Runnable {
                 //log.error(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
                 log.debug(
-                        "An error occured when trying to disconnect from the Server."
-                                + e.getMessage(), e);
-                System.out
-                        .println("An error occured when trying to disconnect from the Server."
-                                + e.getMessage());
+                    "An error occured when trying to disconnect from the Server." + e.getMessage(),
+                    e);
+                System.out.println(
+                    "An error occured when trying to disconnect from the Server." + e.getMessage());
             }
         }
 
@@ -310,15 +285,15 @@ public class SimpleMailListner implements Runnable {
             String host = optHostName; //opts.getHost();
             int port = ((optUseCustomPort) ? optCustomPortToUse : 110);
             POP3Client pop3 = new POP3Client();
-            SimpleMailListner sas = new SimpleMailListner(host, port, optUserName,
-                    optPassword, optDir);
+            SimpleMailListener sas =
+                new SimpleMailListener(host, port, optUserName, optPassword, optDir);
             sas.setPOP3(pop3);
             sas.start();
         } catch (Exception e) {
             // log.error(Messages.getMessage("exception00"), e); TODO Issue #1
             // CT 07-Feb-2005.
-            log
-                    .error("An error occured in the main method of SimpleMailListner. TODO Detailed error message needs to be inserted here.");
+            log.error(
+                "An error occured in the main method of SimpleMailListner. TODO Detailed error message needs to be inserted here.");
             return;
         }
 

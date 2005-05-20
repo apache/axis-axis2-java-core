@@ -22,4 +22,13 @@ public class MailConstants {
     public final static String POP3_PASSWORD = "transport.mail.pop3.password";
 
     public final static String HEADER_SOAP_ACTION = "transport.mail.soapaction";
+    
+    public final static String CONTENT_TYPE = "transport.mail.contenttype";
+    
+    public final static String CONTENT_LOCAION = "transport.mail.contentlocation";
+    
+    
+    public final static String HOST = "host";
+    public final static String USER = "user";
+    public final static String PASSWORD = "password";
 }

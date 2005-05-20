@@ -88,7 +88,9 @@ public class HTTPTransportReceiver  {
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext,ConfigurationContext engineContext) throws AxisFault{
+    public SOAPEnvelope checkForResponse(MessageContext msgContext,ConfigurationContext engineContext) throws AxisFault{
+        SOAPEnvelope soapEnvelope = null;
+        
         Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
@@ -112,20 +114,19 @@ public class HTTPTransportReceiver  {
                     msgContext.setProperty(
                         MessageContext.TRANSPORT_SUCCEED,
                         HTTPConstants.RESPONSE_ACK_CODE_VAL);
-                    return;
+                    return soapEnvelope;
                 }
 
                 // TODO take care of other HTTP Headers
             }
-            AxisEngine axisEngine = new AxisEngine(engineContext);
+
             try {
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-                msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+                return (SOAPEnvelope) builder.getDocumentElement();
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }
-            axisEngine.receive(msgContext);
         } else {
             throw new AxisFault("Input reader not found");
         }

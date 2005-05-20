@@ -22,7 +22,9 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -146,7 +148,10 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        reciver.invoke(msgContext, configurationContext);
+                        msgContext.setEnvelope(reciver.checkForResponse(msgContext, configurationContext));
+                        
+                        AxisEngine engine = new AxisEngine(configurationContext);
+                        engine.receive(msgContext);
 
                         if (msgContext.getReplyTo() != null
                             && !AddressingConstants.EPR_ANONYMOUS_URL.equals(

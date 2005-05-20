@@ -64,7 +64,8 @@ public class TCPTransportSender extends AbstractTransportSender {
     public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault {
         try {
-            socket.close();
+            socket.shutdownOutput();
+            msgContext.setProperty(MessageContext.TRANSPORT_READER, new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             throw new AxisFault(e);
         }
@@ -97,6 +98,18 @@ public class TCPTransportSender extends AbstractTransportSender {
     }
 
     public void startSendWithToAddress(MessageContext msgContext, Writer writer) {
+    }
+
+    public void cleanUp() throws AxisFault {
+        try {
+            if(socket != null){
+                socket.close();
+                socket = null;
+            }
+            
+        } catch (IOException e) {
+        }
+
     }
 
 }

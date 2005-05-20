@@ -15,10 +15,11 @@
  */
 package org.apache.axis.transport;
 import junit.framework.TestCase;
-import org.apache.axis.transport.mail.SimpleMailListner;
+
+import org.apache.axis.transport.mail.SimpleMailListener;
 
 public class SimpleMailListnerTest extends TestCase {
-    private SimpleMailListner sas;
+    private SimpleMailListener sas;
     public SimpleMailListnerTest(String testName) {
         super(testName);
     }

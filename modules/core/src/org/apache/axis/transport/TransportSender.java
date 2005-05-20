@@ -15,10 +15,12 @@
  */
 package org.apache.axis.transport;
 
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 
 /**
  * Interface TransportSender
  */
 public interface TransportSender extends Handler {
+    public void cleanUp() throws AxisFault;
 }
