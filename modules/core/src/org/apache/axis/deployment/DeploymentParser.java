@@ -646,9 +646,7 @@ public class DeploymentParser implements DeploymentConstants {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(ST + " module is invalid or dose not have bean deployed");
                                     } else {
-                                        throw new UnsupportedOperationException("not yet Implememt : Deepal");
-                                        //operation.addModule(new QName(attvalue));
-                                        //TODO Fix me Deepal
+                                        operation.addModule(new QName(attvalue));
                                     }
                                 }
                             }

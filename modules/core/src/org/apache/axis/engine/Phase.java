@@ -279,13 +279,17 @@ public class Phase {
                 } else {
                     handlers.add(handler.getHandler());
                     isonehanlder = true;
+                    return;
                 }
             } else if (handler.getRules().isPhaseFirst()) {
                 setPhaseFirst(handler.getHandler());
+                return;
             } else if (handler.getRules().isPhaseLast()) {
                 setPhaseLast(handler.getHandler());
+                return;
             } else {
                 insertHandler(handler);
+                return;
             }
 
         }
@@ -364,8 +368,8 @@ public class Phase {
      */
     private void insertAfter(Handler handler) {
         String afterName = handler.getHandlerDesc().getRules().getAfter();
-        if (phaseLast != null) {
-            if (phaseLast.getHandlerDesc().getName().getLocalPart().equals(afterName)) {
+        if (phaseFirst != null) {
+            if (phaseFirst.getHandlerDesc().getName().getLocalPart().equals(afterName)) {
                 handlers.add(0, handler);
                 return;
             }
@@ -406,33 +410,27 @@ public class Phase {
          * just add the entery to vector
          */
         if ((phaseFirst != null) && (phaseLast != null)) {
-            if ((phaseFirst.getHandlerDesc().getName().getLocalPart().equals(
-                    handler.getHandlerDesc().getRules().getAfter()))
-                    && (phaseLast.getHandlerDesc().getName().getLocalPart().equals(
-                            handler.getHandlerDesc().getRules().getBefore()))) {
+            if ((phaseFirst.getHandlerDesc().getName().getLocalPart().equals(handler.getHandlerDesc().getRules().getAfter()))
+                    && (phaseLast.getHandlerDesc().getName().getLocalPart().equals(handler.getHandlerDesc().getRules().getBefore()))) {
                 handlers.add(handler);
                 return;
             }
         }
 
         if (phaseFirst != null &&
-                (phaseFirst.getHandlerDesc().getName().getLocalPart().equals(
-                        handler.getHandlerDesc().getRules().getAfter()))) {
+                (phaseFirst.getHandlerDesc().getName().getLocalPart().equals(handler.getHandlerDesc().getRules().getAfter()))) {
             after = 0;
         }
         if (phaseLast != null &&
-                (phaseLast.getHandlerDesc().getName().getLocalPart().equals(
-                        handler.getHandlerDesc().getRules().getBefore()))) {
+                (phaseLast.getHandlerDesc().getName().getLocalPart().equals(handler.getHandlerDesc().getRules().getBefore()))) {
             before = handlers.size();
         }
 
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
-            if (handler.getHandlerDesc().getRules().getAfter().equals(
-                    temphandler.getHandlerDesc().getName().getLocalPart())) {
+            if (handler.getHandlerDesc().getRules().getAfter().equals(temphandler.getHandlerDesc().getName().getLocalPart())) {
                 after = i;
-            } else if (handler.getHandlerDesc().getRules().getBefore().equals(
-                    temphandler.getHandlerDesc().getName().getLocalPart())) {
+            } else if (handler.getHandlerDesc().getRules().getBefore().equals(temphandler.getHandlerDesc().getName().getLocalPart())) {
                 before = i;
             }
             if ((after >= 0) && (before >= 0)) {
@@ -454,24 +452,53 @@ public class Phase {
         }
         handlers.add(handler);
     }
+
     private void insertHandler(HandlerDescription handler) throws PhaseException {
-        int type = getBeforeAfter(handler.getHandler());
-        validateafter(handler.getHandler());
-        validatebefore(handler.getHandler());
-        switch(type){
-            case BOTH_BEFORE_AFTER : {
-                insertBeforeandAfter(handler.getHandler());
-            }
-            case BEFORE : {
-                insertBefore(handler.getHandler());
-            }
-            case AFTER : {
-                insertAfter(handler.getHandler());
-            }
-            case ANYWHERE : {
-                handlers.add(handler.getHandler());
-            }
+        Handler han = handler.getHandler();
+        int type = getBeforeAfter(han);
+        validateafter(han);
+        validatebefore(han);
+        switch (type) {
+            case BOTH_BEFORE_AFTER:
+                {
+                    insertBeforeandAfter(han);
+                    break;
+                }
+            case BEFORE:
+                {
+                    insertBefore(han);
+                    break;
+                }
+            case AFTER:
+                {
+                    insertAfter(han);
+                    break;
+                }
+            case ANYWHERE:
+                {
+                    handlers.add(han);
+                    break;
+                }
         }
+    }
+
+   /**
+    * To get the all the handlers in the phase
+    * @return
+    */
+    public ArrayList getHandlers() {
+        ArrayList phaseHandlers = new ArrayList();
+        if (phaseFirst != null) {
+            phaseHandlers.add(phaseFirst);
+        }
+        for (int i = 0; i < handlers.size(); i++) {
+            Handler handler = (Handler) handlers.get(i);
+            phaseHandlers.add(handler);
+        }
+        if (phaseLast != null) {
+            phaseHandlers.add(phaseLast);
+        }
+        return phaseHandlers;
     }
 
 }

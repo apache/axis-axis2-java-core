@@ -40,9 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -363,9 +361,31 @@ public class DeploymentEngine implements DeploymentConstants {
             ArrayList list = currentArchiveFile.getModules();
             for(int i = 0;i<list.size();i++){
                 ModuleDescription module = axisConfig.getModule((QName)list.get(i));
-                serviceMetaData.engageModule(module);
+                if (module != null) {
+                    serviceMetaData.engageModule(module);
+                } else {
+                    throw new DeploymentException("Service  "  +  serviceMetaData.getName().getLocalPart() +
+                            "  Refer to invalide module  " + ((QName)list.get(i)).getLocalPart());
+                }
             }
-            
+
+         HashMap opeartions = serviceMetaData.getOperations();
+        Collection opCol = opeartions.values();
+        for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
+            OperationDescription opDesc = (OperationDescription) iterator.next();
+            ArrayList modules = opDesc.getModuleRefs();
+            for (int i = 0; i < modules.size(); i++) {
+                QName moduleName = (QName) modules.get(i);
+                ModuleDescription module = axisConfig.getModule(moduleName);
+                if(module != null) {
+                    opDesc.engageModule(module);
+                } else {
+                    throw new DeploymentException("Operation "  +  opDesc.getName().getLocalPart() +
+                            "  Refer to invalide module  " + moduleName.getLocalPart());
+                }
+            }
+
+        }
             ///factory.createChains(serviceMetaData, axisConfig, );
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
