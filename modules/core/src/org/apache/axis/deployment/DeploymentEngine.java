@@ -28,7 +28,7 @@ import org.apache.axis.deployment.util.DeploymentData;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.modules.Module;
 import org.apache.axis.phaseresolver.PhaseException;
@@ -166,8 +166,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = ((AxisSystemImpl) axisConfig).getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = ((AxisSystemImpl) axisConfig).getParameter(HOTUPDATE);
+        Parameter parahotdeployment = ((AxisConfigurationImpl) axisConfig).getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = ((AxisConfigurationImpl) axisConfig).getParameter(HOTUPDATE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
@@ -190,7 +190,7 @@ public class DeploymentEngine implements DeploymentConstants {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisSystemImpl) axisConfig), SERVERST);
+            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), SERVERST);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -230,7 +230,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisSystemImpl) axisConfig), CLIENTST);
+            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), CLIENTST);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -297,11 +297,11 @@ public class DeploymentEngine implements DeploymentConstants {
         PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modules.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
-            ModuleDescription modeuldesc = ((AxisSystemImpl) axisConfig).getModule(name);
+            ModuleDescription modeuldesc = ((AxisConfigurationImpl) axisConfig).getModule(name);
             if (modeuldesc != null) {
                 resolver.engageModuleGlobally(modeuldesc);
             } else {
-                throw new AxisFault(((AxisSystemImpl) axisConfig) + " Refer to invalid module " + name + " has not bean deployed yet !");
+                throw new AxisFault(((AxisConfigurationImpl) axisConfig) + " Refer to invalid module " + name + " has not bean deployed yet !");
             }
 
         }
@@ -331,7 +331,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here
-        //ArrayList systemDefaultPhases =((AxisSystemImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
+        //ArrayList systemDefaultPhases =((AxisConfigurationImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
     }
 
     public ModuleDescription getModule(QName moduleName) throws AxisFault {
@@ -349,7 +349,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     private AxisConfiguration createEngineConfig() {
-        AxisConfiguration newEngineConfig = new AxisSystemImpl();
+        AxisConfiguration newEngineConfig = new AxisConfigurationImpl();
         return newEngineConfig;
     }
 

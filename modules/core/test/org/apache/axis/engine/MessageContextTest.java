@@ -29,7 +29,7 @@ public class MessageContextTest extends AbstractTestCase {
     }
 
     public void testMesssageContext() throws AxisFault {
-        AxisConfiguration er = new AxisSystemImpl();
+        AxisConfiguration er = new AxisConfigurationImpl();
         ServiceDescription servicesDesc = new ServiceDescription();
         er.addService(servicesDesc);
 

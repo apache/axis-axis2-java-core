@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Class EngineRegistryImpl
  */
-public class AxisSystemImpl implements AxisConfiguration {
+public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * To store Erroness services
      */
@@ -79,7 +79,7 @@ public class AxisSystemImpl implements AxisConfiguration {
     /**
      * Constructor EngineRegistryImpl
      */
-    public AxisSystemImpl() {
+    public AxisConfigurationImpl() {
         paramInclude = new ParameterIncludeImpl();
         engagedModules = new ArrayList();
         messagRecievers = new HashMap();

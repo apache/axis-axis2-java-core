@@ -122,7 +122,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
         EngineContextFactory efac = new EngineContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-        new ConfigurationContext(new AxisSystemImpl());
+        new ConfigurationContext(new AxisConfigurationImpl());
         sysContext.getEngineConfig().addMdoule(moduleDesc);
         sysContext.getEngineConfig().engageModule(moduleDesc.getName());
         ServiceDescription service =
@@ -170,8 +170,13 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         };
 
         call.invokeNonBlocking(operationName.getLocalPart(), method, callback);
+        int index = 0;
         while (!finish) {
             Thread.sleep(1000);
+            index++;
+            if(index > 10 ){
+                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+            }
         }
 
         log.info("send the reqest");

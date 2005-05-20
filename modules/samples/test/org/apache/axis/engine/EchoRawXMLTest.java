@@ -125,9 +125,15 @@ public class EchoRawXMLTest extends TestCase {
         };
 
         call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
+        int index = 0;
         while (!finish) {
             Thread.sleep(1000);
+            index++;
+            if(index > 10 ){
+                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+            }
         }
+
 
         log.info("send the reqest");
     }

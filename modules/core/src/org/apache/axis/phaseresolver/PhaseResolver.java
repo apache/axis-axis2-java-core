@@ -18,7 +18,7 @@ package org.apache.axis.phaseresolver;
 import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.util.PhaseValidator;
 
@@ -146,7 +146,7 @@ public class PhaseResolver {
         Flow flow = null;
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// Handlers from   server.xml from modules/////////////////////////
-        ArrayList modulqnames = (ArrayList) ((AxisSystemImpl) axisConfig).getEngadgedModules();
+        ArrayList modulqnames = (ArrayList) ((AxisConfigurationImpl) axisConfig).getEngadgedModules();
         for (int i = 0; i < modulqnames.size(); i++) {
             QName modulename = (QName) modulqnames.get(i);
             module = axisConfig.getModule(modulename);
@@ -460,22 +460,22 @@ public class PhaseResolver {
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
                     {
-                        phaseHolder = new PhaseHolder(((AxisSystemImpl) axisConfig).getInPhasesUptoAndIncludingPostDispatch());
+                        phaseHolder = new PhaseHolder(((AxisConfigurationImpl) axisConfig).getInPhasesUptoAndIncludingPostDispatch());
                         break;
                     }
                 case PhaseMetadata.OUT_FLOW:
                     {
-                        phaseHolder = new PhaseHolder(((AxisSystemImpl) axisConfig).getOutFlow());
+                        phaseHolder = new PhaseHolder(((AxisConfigurationImpl) axisConfig).getOutFlow());
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
                     {
-                        phaseHolder = new PhaseHolder(((AxisSystemImpl) axisConfig).getInFaultFlow());
+                        phaseHolder = new PhaseHolder(((AxisConfigurationImpl) axisConfig).getInFaultFlow());
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
                     {
-                        phaseHolder = new PhaseHolder(((AxisSystemImpl) axisConfig).getOutFaultFlow());
+                        phaseHolder = new PhaseHolder(((AxisConfigurationImpl) axisConfig).getOutFaultFlow());
                         break;
                     }
             }

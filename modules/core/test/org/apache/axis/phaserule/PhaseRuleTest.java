@@ -5,7 +5,7 @@ import org.apache.axis.phaseresolver.PhaseHolder;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisSystemImpl;
+import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.Handler;
 
 import javax.xml.namespace.QName;
@@ -30,7 +30,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         super.setUp();
         //TODO fix me
         phaserul = new PhaseRuleTest("");
-        axisSytem = new AxisSystemImpl();
+        axisSytem = new AxisConfigurationImpl();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;//(Handler)Class.forName("org.apache.axis.handlers.AbstractHandler").newInstance();

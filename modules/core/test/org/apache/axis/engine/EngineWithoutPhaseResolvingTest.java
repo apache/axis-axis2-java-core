@@ -55,7 +55,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
     protected void setUp() throws Exception {
 
-        engineRegistry = new AxisSystemImpl();
+        engineRegistry = new AxisConfigurationImpl();
         engineContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription(new QName("null"));
