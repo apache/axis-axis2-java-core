@@ -19,7 +19,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisEngine;
@@ -87,7 +87,7 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            EngineContextFactory erfac = new EngineContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             engineContext = erfac.buildEngineContext(repoDir);
         } catch (Exception e) {
             throw new ServletException(e);

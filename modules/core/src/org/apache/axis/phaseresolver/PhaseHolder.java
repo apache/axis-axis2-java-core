@@ -15,14 +15,11 @@
 */
 package org.apache.axis.phaseresolver;
 
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.PhasesInclude;
-import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.Handler;
-import org.apache.axis.engine.Phase;
-
 import java.util.ArrayList;
+
+import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.engine.Phase;
 
 
 /**
@@ -87,7 +84,7 @@ public class PhaseHolder {
     }
 
 
-    public void buildTransportChain(PhasesInclude trnsport, int chainType)
+    public void buildTransportChain(TransportInDescription trnsport, int chainType)
             throws PhaseException {
         /*try {
             HandlerDescription[] handlers;

@@ -16,7 +16,7 @@
 
 package org.apache.axis.deployment;
 
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.utill.ArchiveFileData;
 import org.apache.axis.deployment.repository.utill.ArchiveReader;
@@ -87,7 +87,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private ArchiveFileData currentArchiveFile;
 
     //tobuild chains
-    private EngineContextFactory factory;
+    private ConfigurationContextFactory factory;
 
     /**
      * Default constructor is need to deploye module and service programatically
@@ -143,7 +143,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        factory = new EngineContextFactory();
+        factory = new ConfigurationContextFactory();
         this.engineConfigName = RepositaryName + '/' + serverXMLFile;
     }
 
@@ -284,7 +284,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        factory = new EngineContextFactory();
+        factory = new ConfigurationContextFactory();
         this.engineConfigName = clientHome + '/' + clientXML;
     }
 

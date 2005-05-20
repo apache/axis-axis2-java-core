@@ -18,19 +18,17 @@ package org.apache.axis.context;
  *  Runtime state of the engine
  */
 
-import org.apache.axis.description.PhasesInclude;
-import org.apache.axis.description.PhasesIncludeImpl;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.storage.AxisStorage;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-public class ConfigurationContext extends AbstractContext implements PhasesInclude {
+public class ConfigurationContext extends AbstractContext{
 
     private AxisConfiguration engineConfig;
     private AxisStorage storage;
@@ -46,16 +44,12 @@ public class ConfigurationContext extends AbstractContext implements PhasesInclu
 
     private final Map serviceContextMap;
 
-    private PhasesInclude phaseInclude;
-
     public ConfigurationContext(AxisConfiguration registry) {
         super(null);
         this.engineConfig = registry;
         serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();
         sessionContextMap = new HashMap();
-        phaseInclude = new PhasesIncludeImpl();
-
     }
 
     /**
@@ -87,25 +81,7 @@ public class ConfigurationContext extends AbstractContext implements PhasesInclu
         engineConfig = configuration;
     }
 
-    /**
-     * @param flow
-     * @return
-     * @throws AxisFault
-     */
-    public ArrayList getPhases(int flow) throws AxisFault {
-        return phaseInclude.getPhases(flow);
-    }
-
-    /**
-     * @param phases
-     * @param flow
-     * @throws AxisFault
-     */
-    public void setPhases(ArrayList phases, int flow) throws AxisFault {
-        phaseInclude.setPhases(phases, flow);
-    }
-
-    public void registerOperationContext(String messageID, OperationContext mepContext) {
+     public void registerOperationContext(String messageID, OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
 

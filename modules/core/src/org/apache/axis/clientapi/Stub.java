@@ -18,7 +18,7 @@ package org.apache.axis.clientapi;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.MessageContext;

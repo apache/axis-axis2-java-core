@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -38,7 +38,7 @@ public class ModifiedConfigFileTest extends TestCase {
     public void testPhaseOrderchage() {
         try {
             String filename = "./test-resources/deployment/BadConfigOrderChange";
-            EngineContextFactory builder = new EngineContextFactory();
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
             er = builder.buildEngineContext(filename).getEngineConfig();
             fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
                     "inphases , phase order dose not\" +\n support\\n recheck server.xml\"");

@@ -2,7 +2,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.AbstractTestCase;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.Phase;
@@ -42,7 +42,7 @@ public class BuildWithAddressingTest extends AbstractTestCase {
     public void testDeployment()  {
         //todo this test has to be complete   Deepal once addressing module finalize
        /* String filename = "./target/test-resources/deployment";
-        EngineContextFactory builder = new EngineContextFactory();
+        ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext er = builder.buildEngineContext(filename);
         ArrayList phases = er.getPhases(AxisConfiguration.INFLOW);
         ModuleDescription modeule = er.getEngineConfig().getModule(new QName("addressing"));

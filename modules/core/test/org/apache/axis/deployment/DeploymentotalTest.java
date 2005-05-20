@@ -17,7 +17,7 @@
 package org.apache.axis.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.phaseresolver.PhaseException;
@@ -30,7 +30,7 @@ public class DeploymentotalTest extends TestCase {
     public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
         String filename = "./target/test-resources/deployment";
 
-        EngineContextFactory builder = new EngineContextFactory();
+        ConfigurationContextFactory builder = new ConfigurationContextFactory();
         er = builder.buildEngineContext(filename).getEngineConfig();
     }
 

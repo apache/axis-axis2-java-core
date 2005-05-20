@@ -32,7 +32,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.deployment.DeploymentEngine;
@@ -120,7 +120,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         ModuleDescription moduleDesc =
             deploymentEngine.buildModule(file);
 
-        EngineContextFactory efac = new EngineContextFactory();
+        ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
         new ConfigurationContext(new AxisConfigurationImpl());
         sysContext.getEngineConfig().addMdoule(moduleDesc);

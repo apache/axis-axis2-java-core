@@ -2,7 +2,7 @@ package org.apache.axis.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -34,7 +34,7 @@ public class SystemPhasesremovedTest extends TestCase{
         public void testPhaseOrderchage() {
             try {
                 String filename = "./test-resources/deployment/SystemPhaseRemove";
-                EngineContextFactory builder = new EngineContextFactory();
+                ConfigurationContextFactory builder = new ConfigurationContextFactory();
                 er = builder.buildEngineContext(filename).getEngineConfig();
                 fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
                         "inphases , phase order dose not\" +\n support\\n recheck server.xml\"");

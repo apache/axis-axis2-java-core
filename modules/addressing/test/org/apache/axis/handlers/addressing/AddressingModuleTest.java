@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 
@@ -39,7 +39,7 @@ public class AddressingModuleTest extends TestCase {
     }
 
     public void testExtractAddressingInformationFromHeaders() throws AxisFault {
-//            EngineContextFactory builder = new EngineContextFactory();
+//            ConfigurationContextFactory builder = new ConfigurationContextFactory();
 //            AxisConfiguration er = builder.buildEngineContext("target").getEngineConfig();
 //
 //            //DeploymentEngine deploymentEngine = new DeploymentEngine();

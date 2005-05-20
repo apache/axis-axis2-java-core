@@ -31,7 +31,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.TransportOutDescription;
@@ -58,7 +58,7 @@ public class TCPServer extends TransportReceiver implements Runnable {
 
     public TCPServer(int port, String dir) throws AxisFault {
         try {
-            EngineContextFactory erfac = new EngineContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             ConfigurationContext configContext = erfac.buildEngineContext(dir);
             this.configContext = configContext;
             serversocket = new ServerSocket(port);

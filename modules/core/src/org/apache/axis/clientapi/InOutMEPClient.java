@@ -79,7 +79,7 @@ public class InOutMEPClient extends MEPClient {
      * 
      * Follwoing code works for the time been
      * <code>
-     *  EngineContextFactory efac = new EngineContextFactory();
+     *  ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null); 
         // above line "null" may be a file name if you know the client repssitory
 

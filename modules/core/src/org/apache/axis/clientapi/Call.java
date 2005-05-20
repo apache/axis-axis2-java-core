@@ -22,7 +22,7 @@ import java.util.HashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
@@ -106,7 +106,7 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
     private static ServiceContext assumeServiceContext() throws AxisFault {
-        EngineContextFactory efac = new EngineContextFactory();
+        ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
 
         //create new service

@@ -1,7 +1,7 @@
 package org.apache.axis.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.engine.AxisConfiguration;
 
 /*
@@ -37,7 +37,7 @@ public class InvalidServiceTest extends TestCase {
     public void testInvalidService() {
         try {
             String filename = "./target/test-resources/InvalidDeployment";
-            EngineContextFactory builder = new EngineContextFactory();
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
             er = builder.buildEngineContext(filename).getEngineConfig();
             String msg = (String) er.getFaulytServices().get("invalidService");
             if (msg == null || msg.equals("")) {

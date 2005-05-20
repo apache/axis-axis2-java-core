@@ -19,7 +19,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
@@ -88,7 +88,7 @@ public class SimpleHTTPServer extends TransportReceiver implements Runnable{
         try {
             this.serverSocket = serverSoc;
            // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
-            EngineContextFactory erfac = new EngineContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             this.systemContext = erfac.buildEngineContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {

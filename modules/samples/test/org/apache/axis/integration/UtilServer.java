@@ -17,7 +17,7 @@
 package org.apache.axis.integration;
 
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisConfiguration;
@@ -50,7 +50,7 @@ public class UtilServer {
 
     public static synchronized void start() throws Exception {
         if (count == 0) {
-            EngineContextFactory erfac = new EngineContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             
             //File file = new File("modules/samples/target/test-resources/samples");
             File file = new File("target/test-resources/samples");

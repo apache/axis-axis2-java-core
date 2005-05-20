@@ -17,7 +17,7 @@
 package org.apache.axis.transport.mail;
 
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.EngineContextFactory;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.commons.logging.Log;
@@ -73,7 +73,7 @@ public class SimpleMailListner implements Runnable {
         this.userid = userid;
         this.password = password;
         try {
-            EngineContextFactory builder = new EngineContextFactory();
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
             er = builder.buildEngineContext(dir);
         } catch (Exception e) {
             e.printStackTrace();
