@@ -172,12 +172,7 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude> 
 		<exclude>**/*PhaseResolvingTest.java</exclude>
-
-	    <exclude>**/*Phase*.java</exclude>
-          <exclude>**/*InvalidServiceTest.java</exclude>
-          <exclude>**/*Deploy*.java</exclude>
-
-          
+  
    
       </excludes>
      <includes>
