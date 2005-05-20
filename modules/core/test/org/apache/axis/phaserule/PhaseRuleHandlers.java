@@ -47,11 +47,12 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.info("I am " + message + " Handler Running :)");
+        System.out.println("I am " + name + " Handler Running :)");
+        log.info("I am " + name + " Handler Running :)");
     }
 
     public void revoke(MessageContext msgContext) {
-        log.info("I am " + message + " Handler Running :)");
+        log.info("I am " + name + " Handler Running :)");
     }
 
     public void setName(QName name) {
