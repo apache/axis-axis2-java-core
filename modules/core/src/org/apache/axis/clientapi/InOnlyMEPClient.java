@@ -80,7 +80,7 @@ public class InOnlyMEPClient extends MEPClient {
 
         //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
         HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-        receiver.checkForResponse(response, sysContext);
+        receiver.checkForMessage(response, sysContext);
         SOAPEnvelope resenvelope = response.getEnvelope();
         if (response!= null && resenvelope.getBody().hasFault()) {
             throw new AxisFault(resenvelope.getBody().getFault().getException());

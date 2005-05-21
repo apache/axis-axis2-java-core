@@ -25,7 +25,7 @@ public abstract class AbstractContext implements Serializable {
 
     protected transient final HashMap nonPersistentMap;
     protected final HashMap persistentMap;
-    protected final AbstractContext parent;
+    protected AbstractContext parent;
 
     protected AbstractContext(AbstractContext parent) {
         this.persistentMap = new HashMap();
@@ -42,7 +42,7 @@ public abstract class AbstractContext implements Serializable {
      * @param value
      * @param persistent
      */
-    public void setProperty(Object key, Object value, boolean persistent) {
+    public void setProperty(String key, Object value, boolean persistent) {
         if (persistent) {
             persistentMap.put(key, value);
         } else {
@@ -57,7 +57,7 @@ public abstract class AbstractContext implements Serializable {
      * @param key
      * @param value
      */
-    public void setProperty(Object key, Object value) {
+    public void setProperty(String key, Object value) {
         this.setProperty(key, value, false);
     }
 
@@ -68,7 +68,7 @@ public abstract class AbstractContext implements Serializable {
      * @param key
      * @return
      */
-    public Object getProperty(Object key) {
+    public Object getProperty(String key) {
         return this.getProperty(key, false);
     }
 
@@ -77,17 +77,31 @@ public abstract class AbstractContext implements Serializable {
      * @param persistent
      * @return
      */
-    public Object getProperty(Object key, boolean persistent) {
-        Object obj;
+    public Object getProperty(String key, boolean persistent) {
+        Object obj = null;
         if (persistent) {
             obj = persistentMap.get(key);
-
-        } else {
-            return nonPersistentMap.get(key);
+        }
+        if(obj == null){
+            obj =  nonPersistentMap.get(key);
         }
         if (obj == null && parent != null) {
             obj = parent.getProperty(key, persistent);
         }
         return obj;
     }
+    /**
+     * @param context
+     */
+    public void setParent(AbstractContext context) {
+        parent = context;
+    }
+
+    /**
+     * @return
+     */
+    public AbstractContext getParent() {
+        return parent;
+    }
+
 }

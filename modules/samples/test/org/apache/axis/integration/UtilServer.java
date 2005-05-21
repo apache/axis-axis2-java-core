@@ -104,7 +104,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
-        new ConfigurationContext(new AxisConfigurationImpl());
+        
         sysContext.getEngineConfig().addMdoule(moduleDesc);
         sysContext.getEngineConfig().engageModule(moduleDesc.getName());
 

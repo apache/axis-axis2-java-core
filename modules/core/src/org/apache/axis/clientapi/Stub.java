@@ -57,7 +57,7 @@ public abstract class Stub {
 //
 //	public abstract Object _getSessionInfo(Object key) throws Exception ;
 
-     public void _setSessionInfo(Object key, Object value)throws java.lang.Exception{
+     public void _setSessionInfo(String key, Object value)throws java.lang.Exception{
 		if(!_maintainSession){
 			//TODO Comeup with a Exception
 			throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
@@ -66,7 +66,7 @@ public abstract class Stub {
 	}
 
 
-	public Object _getSessionInfo(Object key) throws java.lang.Exception{
+	public Object _getSessionInfo(String key) throws java.lang.Exception{
 		if(!_maintainSession){
 			//TODO Comeup with a Exception
 			throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");

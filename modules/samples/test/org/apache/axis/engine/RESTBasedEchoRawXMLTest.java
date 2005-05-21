@@ -16,78 +16,77 @@
 
 package org.apache.axis.engine;
 
-
+//todo
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.AsyncResult;
-import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
-import org.apache.axis.integration.UtilsTCPServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public class TCPEchoRawXMLTest extends TestCase {
+public class RESTBasedEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
                     "http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
+    private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
+    private AxisConfiguration engineRegistry;
     private MessageContext mc;
-    private SimpleHTTPServer sas;
-    private ServiceDescription service;
+    //private Thread thisThread;
+   // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
-    
+    private ServiceDescription service;
+
     private boolean finish = false;
 
-    public TCPEchoRawXMLTest() {
-        super(TCPEchoRawXMLTest.class.getName());
+    public RESTBasedEchoRawXMLTest() {
+        super(RESTBasedEchoRawXMLTest.class.getName());
     }
 
-    public TCPEchoRawXMLTest(String testName) {
+    public RESTBasedEchoRawXMLTest(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
-        UtilsTCPServer.start();
-
-        
-        //create and deploy the service
+        UtilServer.start();
+        Parameter parameter = new ParameterImpl(Constants.DO_REST,"true");
+        ((AxisConfigurationImpl)UtilServer.getConfigurationContext().getEngineConfig()).addParameter(parameter);
         service =
                 Utils.createSimpleService(serviceName,
                         org.apache.axis.engine.Echo.class.getName(),
                         operationName);
-        UtilsTCPServer.deployService(service);
-        
-        ServiceDescription service =
-                   Utils.createSimpleService(
-                       serviceName,
-                       org.apache.axis.engine.Echo.class.getName(),
-                       operationName);
-               serviceContext = UtilServer.createAdressedEnabledClientSide(service);
+        UtilServer.deployService(service);
+        serviceContext =
+                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                
+
     }
 
     protected void tearDown() throws Exception {
-        UtilsTCPServer.stop();
+        UtilServer.unDeployService(serviceName);
+        UtilServer.stop();
     }
 
     private OMElement createEnvelope() {
@@ -101,52 +100,55 @@ public class TCPEchoRawXMLTest extends TestCase {
         return method;
     }
 
-    public void testEchoXMLASync() throws Exception {
-                OMElement payload = createEnvelope();
-
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
-
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
-
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                try {
-                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                } catch (XMLStreamException e) {
-                    reportError(e);
-                } finally {
-                    finish = true;
-                }
-            }
-
-            public void reportError(Exception e) {
-                e.printStackTrace();
-                finish = true;
-            }
-        };
-
-        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
-        int index = 0;
-        while (!finish) {
-            Thread.sleep(1000);
-            index++;
-            if(index > 10 ){
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
-            }
-        }
-    }
+//    public void testEchoXMLASync() throws Exception {
+//                OMElement payload = createEnvelope();
+//
+//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+//
+//        call.setTo(targetEPR);
+//        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+//
+//        Callback callback = new Callback() {
+//            public void onComplete(AsyncResult result) {
+//                try {
+//                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+//                } catch (XMLStreamException e) {
+//                    reportError(e);
+//                } finally {
+//                    finish = true;
+//                }
+//            }
+//
+//            public void reportError(Exception e) {
+//                e.printStackTrace();
+//                finish = true;
+//            }
+//        };
+//
+//        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
+//        int index = 0;
+//        while (!finish) {
+//            Thread.sleep(1000);
+//            index++;
+//            if(index > 10 ){
+//                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+//            }
+//        }
+//
+//
+//        log.info("send the reqest");
+//    }
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
+        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
-
+        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.set(Constants.DO_REST,"true");
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));

@@ -77,7 +77,6 @@ public class InOutMEPClient extends MEPClient {
      * This is used for the Receiving the Async Messages 
      */
     protected CallbackReceiver callbackReceiver;
-
     /**
      * This accepts a ServiceContext, and the ServiceContext should have all the parents set in to it right
      * Ideall this should be generated from a WSDL, we do not have it yet. 
@@ -112,7 +111,9 @@ public class InOutMEPClient extends MEPClient {
     //        throw new UnsupportedOperationException();
     //    }
 
-    public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
+    public MessageContext invokeBlocking(
+        OperationDescription axisop,
+        final MessageContext msgctx)
         throws AxisFault {
         verifyInvocation(axisop);
 
@@ -125,63 +126,33 @@ public class InOutMEPClient extends MEPClient {
         ConfigurationContext sysContext = serviceContext.getEngineContext();
         AxisConfiguration registry = sysContext.getEngineConfig();
 
-        try {
+        msgctx.setOperationContext(
+            OperationContextFactory.createMEPContext(
+                WSDLConstants.MEP_CONSTANT_IN_OUT,
+                false,
+                axisop,
+                serviceContext));
+        MessageContext response =
+            TwoChannelBasedSender.send(msgctx, listenerTransport);
 
-            AxisEngine engine = new AxisEngine(sysContext);
-            msgctx.setOperationContext(
-                OperationContextFactory.createMEPContext(
-                    WSDLConstants.MEP_CONSTANT_IN_OUT,
-                    false,
-                    axisop,
-                    serviceContext));
-
-            engine.send(msgctx);
-
-            MessageContext response =
-                new MessageContext(
-                    msgctx.getSessionContext(),
-                    msgctx.getTransportIn(),
-                    msgctx.getTransportOut(),
-                    msgctx.getSystemContext());
-            response.setProperty(
-                MessageContext.TRANSPORT_READER,
-                msgctx.getProperty(MessageContext.TRANSPORT_READER));
-            response.setServerSide(false);
-            response.setOperationContext(msgctx.getOperationContext());
-            response.setServiceContext(msgctx.getServiceContext());
-
-            SOAPEnvelope resenvelope = checkReturnChannel(response);
-            if (resenvelope != null) {
-                response.setEnvelope(resenvelope);
-                engine = new AxisEngine(serviceContext.getEngineContext());
-                engine.receive(response);
-
-                resenvelope = response.getEnvelope();
-                if (resenvelope.getBody().hasFault()) {
-                    throw new AxisFault(resenvelope.getBody().getFault().getException());
-                }
-            } else {
-                throw new AxisFault("Blocking invocation always expect a response");
-            }
-            response.getTransportOut().getSender().cleanUp();
-            return response;
-        } catch (OMException e) {
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+        SOAPEnvelope resenvelope = response.getEnvelope();
+        if (resenvelope.getBody().hasFault()) {
+            throw new AxisFault(
+                resenvelope.getBody().getFault().getException());
         }
-
+        return response;
     }
 
     public void invokeNonBlocking(
-        OperationDescription axisop,
+        final OperationDescription axisop,
         final MessageContext msgctx,
         final Callback callback)
         throws AxisFault {
         verifyInvocation(axisop);
         msgctx.setTo(to);
         try {
-            final ConfigurationContext syscontext = serviceContext.getEngineContext();
+            final ConfigurationContext syscontext =
+                serviceContext.getEngineContext();
 
             AxisEngine engine = new AxisEngine(syscontext);
             //TODO
@@ -194,57 +165,91 @@ public class InOutMEPClient extends MEPClient {
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
                     ListenerManager.replyToEPR(
-                        serviceContext.getServiceConfig().getName().getLocalPart()
+                        serviceContext
+                            .getServiceConfig()
+                            .getName()
+                            .getLocalPart()
                             + "/"
                             + axisop.getName().getLocalPart(),
                         listenerTransport));
+                msgctx.setOperationContext(
+                    axisop.findOperationContext(msgctx, serviceContext, false));
+                msgctx.setServiceContext(serviceContext);
+                engine.send(msgctx);
+                msgctx.getTransportOut().getSender().cleanUp();
 
-            }
-            msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext, false));
-            msgctx.setServiceContext(serviceContext);
-            engine.send(msgctx);
-
-            //TODO start the server
-            if (!useSeparateListener) {
-                Runnable newThread = new Runnable() {
+            } else {
+                Thread thread = new Thread(new Runnable() {
                     public void run() {
                         try {
+                            msgctx.setOperationContext(
+                                OperationContextFactory.createMEPContext(
+                                    WSDLConstants.MEP_CONSTANT_IN_OUT,
+                                    false,
+                                    axisop,
+                                    serviceContext));
+                            msgctx.setServiceContext(serviceContext);
                             MessageContext response =
-                                new MessageContext(
-                                    msgctx.getSessionContext(),
-                                    msgctx.getTransportIn(),
-                                    msgctx.getTransportOut(),
-                                    msgctx.getSystemContext());
-                            response.setServerSide(false);
-                            response.setProperty(
-                                MessageContext.TRANSPORT_READER,
-                                msgctx.getProperty(MessageContext.TRANSPORT_READER));
-                            response.setOperationContext(msgctx.getOperationContext());
-                            response.setServiceContext(msgctx.getServiceContext());
-
-                            SOAPEnvelope resenvelope = checkReturnChannel(response);
-                            if (resenvelope != null) {
-                                response.setEnvelope(resenvelope);
-                                AxisEngine engine =
-                                    new AxisEngine(serviceContext.getEngineContext());
-                                engine.receive(response);
-
-                                resenvelope = response.getEnvelope();
-                                AsyncResult asyncResult = new AsyncResult();
-                                asyncResult.setResult(resenvelope);
-                                callback.onComplete(asyncResult);
-                            } else {
-                                throw new AxisFault("Blocking invocation always expect a response");
-                            }
+                                TwoChannelBasedSender.send(
+                                    msgctx,
+                                    listenerTransport);
+                            SOAPEnvelope resenvelope = response.getEnvelope();
+                            AsyncResult asyncResult = new AsyncResult();
+                            asyncResult.setResult(resenvelope);
+                            callback.onComplete(asyncResult);
                         } catch (AxisFault e) {
                             callback.reportError(e);
                         }
-
                     }
-                };
-                (new Thread(newThread)).start();
+                });
+                thread.start();
             }
-            msgctx.getTransportOut().getSender().cleanUp();
+
+            //            //TODO start the server
+            //            if (!useSeparateListener) {
+            //                Runnable newThread = new Runnable() {
+            //                    public void run() {
+            //                        try {
+            //                            MessageContext response =
+            //                                new MessageContext(
+            //                                    msgctx.getSessionContext(),
+            //                                    msgctx.getTransportIn(),
+            //                                    msgctx.getTransportOut(),
+            //                                    msgctx.getSystemContext());
+            //                            response.setServerSide(false);
+            //                            response.setProperty(
+            //                                MessageContext.TRANSPORT_READER,
+            //                                msgctx.getProperty(
+            //                                    MessageContext.TRANSPORT_READER));
+            //                            response.setOperationContext(
+            //                                msgctx.getOperationContext());
+            //                            response.setServiceContext(
+            //                                msgctx.getServiceContext());
+            //
+            //                            SOAPEnvelope resenvelope =
+            //                                checkReturnChannel(response);
+            //                            if (resenvelope != null) {
+            //                                response.setEnvelope(resenvelope);
+            //                                AxisEngine engine =
+            //                                    new AxisEngine(
+            //                                        serviceContext.getEngineContext());
+            //                                engine.receive(response);
+            //
+            //                                resenvelope = response.getEnvelope();
+            //                                AsyncResult asyncResult = new AsyncResult();
+            //                                asyncResult.setResult(resenvelope);
+            //                                callback.onComplete(asyncResult);
+            //                            } else {
+            //                                throw new AxisFault("Blocking invocation always expect a response");
+            //                            }
+            //                        } catch (AxisFault e) {
+            //                            callback.reportError(e);
+            //                        }
+            //
+            //                    }
+            //                };
+            //                (new Thread(newThread)).start();
+            //            }
 
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
@@ -296,26 +301,37 @@ public class InOutMEPClient extends MEPClient {
         }
 
         if (useSeparateListener == true) {
-            ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
+            ListenerManager.makeSureStarted(
+                listenerTransport,
+                serviceContext.getEngineContext());
         }
     }
 
-    private SOAPEnvelope checkReturnChannel(MessageContext response) throws AxisFault {
+    private SOAPEnvelope checkReturnChannel(MessageContext response)
+        throws AxisFault {
         SOAPEnvelope resenvelope = null;
         try {
             //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
             if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
                 HTTPTransportReceiver receiver = new HTTPTransportReceiver();
                 resenvelope =
-                    receiver.checkForResponse(response, serviceContext.getEngineContext());
+                    receiver.checkForMessage(
+                        response,
+                        serviceContext.getEngineContext());
             } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
-                Reader in = (Reader) response.getProperty(MessageContext.TRANSPORT_READER);
-                if(in != null){
-                    XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                Reader in =
+                    (Reader) response.getProperty(
+                        MessageContext.TRANSPORT_READER);
+                if (in != null) {
+                    XMLStreamReader xmlreader =
+                        XMLInputFactory.newInstance().createXMLStreamReader(in);
                     StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
                     resenvelope = (SOAPEnvelope) builder.getDocumentElement();
-                }else{
-                    throw new AxisFault("Sync invocation expect a proeprty "+ MessageContext.TRANSPORT_READER + " set ");
+                } else {
+                    throw new AxisFault(
+                        "Sync invocation expect a proeprty "
+                            + MessageContext.TRANSPORT_READER
+                            + " set ");
                 }
             }
         } catch (XMLStreamException e) {
@@ -336,7 +352,10 @@ public class InOutMEPClient extends MEPClient {
 
         if (msgctx.getTransportIn() == null) {
             final TransportInDescription transportIn =
-                serviceContext.getEngineContext().getEngineConfig().getTransportIn(
+                serviceContext
+                    .getEngineContext()
+                    .getEngineConfig()
+                    .getTransportIn(
                     new QName(senderTransport));
             if (transportIn != null) {
                 msgctx.setTransportIn(transportIn);
@@ -347,7 +366,10 @@ public class InOutMEPClient extends MEPClient {
         }
         if (msgctx.getTransportOut() == null) {
             final TransportOutDescription transportOut =
-                serviceContext.getEngineContext().getEngineConfig().getTransportOut(
+                serviceContext
+                    .getEngineContext()
+                    .getEngineConfig()
+                    .getTransportOut(
                     new QName(listenerTransport));
             if (transportOut != null) {
                 msgctx.setTransportOut(transportOut);

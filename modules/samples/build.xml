@@ -10,7 +10,7 @@
                                                                      
      ====================================================================== -->
 <project name="samples" basedir="." default="compile">
-	<property name="src.dir" value="src/java" />
+	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="${build.dir}/lib" />
 	<property name="classes.dir" value="./classes" />

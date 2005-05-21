@@ -28,7 +28,7 @@ import java.util.Hashtable;
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
  */
-public interface AxisConfiguration {
+public interface AxisConfiguration extends ParameterInclude{
     /**
      * Field INFLOW
      */

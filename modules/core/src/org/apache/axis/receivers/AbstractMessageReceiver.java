@@ -74,18 +74,18 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             return makeNewServiceObject(msgContext);
         } else if (Constants.SESSION_SCOPE.equals(scope)) {
             SessionContext sessionContext = msgContext.getSessionContext();
-            Object obj = sessionContext.getProperty(serviceName);
+            Object obj = sessionContext.getProperty(serviceName.getLocalPart());
             if (obj == null) {
                 obj = makeNewServiceObject(msgContext);
-                sessionContext.setProperty(serviceName, obj);
+                sessionContext.setProperty(serviceName.getLocalPart(), obj);
             }
             return obj;
         } else if (Constants.APPLICATION_SCOPE.equals(scope)) {
             SessionContext globalContext = msgContext.getSessionContext();
-            Object obj = globalContext.getProperty(serviceName);
+            Object obj = globalContext.getProperty(serviceName.getLocalPart());
             if (obj == null) {
                 obj = makeNewServiceObject(msgContext);
-                globalContext.setProperty(serviceName, obj);
+                globalContext.setProperty(serviceName.getLocalPart(), obj);
             }
             return obj;
         } else {

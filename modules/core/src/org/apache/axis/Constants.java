@@ -102,6 +102,8 @@ public class Constants {
     public static final String ERROR_SERVICE_MAP = "errprservicemap";
 
     public static final String IS_FAULTY = "Fault";
+    
+    public static final String DO_REST = "doREST";
 
 
 

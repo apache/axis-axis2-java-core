@@ -18,8 +18,12 @@ package org.apache.axis.context;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.soap.SOAPEnvelope;
 
@@ -59,7 +63,6 @@ public class MessageContext extends AbstractContext {
 
     private MessageInformationHeadersCollection messageInformationHeaders;
 
-    
     private OperationContext operationContext;
     private ServiceContext serviceContext;
     private ConfigurationContext engineContext;
@@ -359,7 +362,6 @@ public class MessageContext extends AbstractContext {
      *
      * @return
      */
-  
 
     public void setWSAAction(String actionURI) {
         messageInformationHeaders.setAction(actionURI);
@@ -435,6 +437,10 @@ public class MessageContext extends AbstractContext {
      */
     public void setOperationContext(OperationContext context) {
         operationContext = context;
+        if (serviceContext != null && operationContext.getParent() == null) {
+            operationContext.setParent(serviceContext);
+        }
+        this.setParent(operationContext);
     }
 
     /**
@@ -488,6 +494,9 @@ public class MessageContext extends AbstractContext {
      */
     public void setServiceContext(ServiceContext context) {
         serviceContext = context;
+        if (operationContext != null && operationContext.getParent() != null) {
+            operationContext.setParent(context);
+        }
     }
 
     /**
@@ -497,4 +506,39 @@ public class MessageContext extends AbstractContext {
         messageInformationHeaders = collection;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis.context.AbstractContext#getProperty(java.lang.Object, boolean)
+     */
+    public Object getProperty(String key, boolean persistent) {
+        Object obj = super.getProperty(key, persistent);
+
+        //The context hirachy might not have constructed fully, the check should 
+        //look for the disconnected grandparents
+        if (obj == null
+            && operationContext == null
+            && serviceContext != null) {
+            obj = serviceContext.getProperty(key, persistent);
+        }
+        if (obj == null && operationContext == null) {
+            obj = engineContext.getProperty(key, persistent);
+        }
+        //Search the configurations
+        Parameter param = null;
+        if (obj == null && operationContext != null) {
+            OperationDescription opDesc = operationContext.getAxisOperation();
+            param = opDesc.getParameter(key);
+        }
+        if (param == null && serviceContext != null) {
+            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+            param = serviceDesc.getParameter(key);
+        }
+        if (param == null && engineContext != null) {
+            AxisConfiguration baseConfig = engineContext.getEngineConfig();
+            param = baseConfig.getParameter(key);
+        }
+        if (param != null) {
+            obj = param.getValue();
+        }
+        return obj;
+    }
 }

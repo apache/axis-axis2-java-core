@@ -15,6 +15,16 @@
  */
 package org.apache.axis.transport.http;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -24,15 +34,9 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -148,7 +152,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        msgContext.setEnvelope(reciver.checkForResponse(msgContext, configurationContext));
+                        msgContext.setEnvelope(reciver.checkForMessage(msgContext, configurationContext));
                         
                         AxisEngine engine = new AxisEngine(configurationContext);
                         engine.receive(msgContext);

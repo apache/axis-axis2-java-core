@@ -8,6 +8,11 @@
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">
     </transportSender>
+    <transportReceiver name="tcp"/>
+    <transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
+    
+    
+    
    <!--   <module ref="addressing"/> -->
     <phaseOrder type="inflow">
         <!--  System pre defined phases       -->

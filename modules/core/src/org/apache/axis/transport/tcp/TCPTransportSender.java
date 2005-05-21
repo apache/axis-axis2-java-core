@@ -58,7 +58,6 @@ public class TCPTransportSender extends AbstractTransportSender {
     public void finalizeSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
         Writer writer) {
-        throw new UnsupportedOperationException();
     }
 
     public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
@@ -94,7 +93,6 @@ public class TCPTransportSender extends AbstractTransportSender {
         MessageContext msgContext,
         Writer writer)
         throws AxisFault {
-        throw new UnsupportedOperationException();
     }
 
     public void startSendWithToAddress(MessageContext msgContext, Writer writer) {

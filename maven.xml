@@ -149,7 +149,7 @@
 			</ant:fileset> 
 		</ant:copy>
 		<ant:copy todir="target/dist-bin/samples">
-			<ant:fileset dir="modules/samples/src/java">
+			<ant:fileset dir="modules/samples/src">
 				<ant:include name="userguide/**"/>
 			</ant:fileset> 
 		</ant:copy> 
@@ -201,10 +201,10 @@
            use="true"
            windowtitle="Axis2 API">
            		<ant:sourcepath>
-	           		<ant:pathelement location="modules/core/src/java"/>
-	           		<ant:pathelement location="modules/deployment/src/java"/>	           		
-	           		<ant:pathelement location="modules/wsdl/src/java"/>
-	           		<ant:pathelement location="modules/om/src/java"/>
+	           		<ant:pathelement location="modules/core/src"/>
+	           		<ant:pathelement location="modules/deployment/src"/>	           		
+	           		<ant:pathelement location="modules/wsdl/src"/>
+	           		<ant:pathelement location="modules/om/src"/>
            </ant:sourcepath>
   </ant:javadoc>
   </goal>

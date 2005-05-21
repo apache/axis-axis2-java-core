@@ -15,18 +15,11 @@
  */
 package org.apache.axis.transport.http;
 
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SessionContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -39,11 +32,24 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
+
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.ConfigurationContextFactory;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.SessionContext;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
 
 /**
  * Class AxisServlet
@@ -52,20 +58,20 @@ public class AxisServlet extends HttpServlet {
     /**
      * Field engineRegistry
      */
-    
+
     private ConfigurationContext engineContext;
 
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
      */
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
-            "listServices.jsp";
+        "listServices.jsp";
 
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
      */
     private static final String LIST_SINGLE_SERVICE_JSP_NAME =
-            "listSingleService.jsp";
+        "listSingleService.jsp";
 
     /**
      * Field allowListServices
@@ -87,7 +93,8 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+            ConfigurationContextFactory erfac =
+                new ConfigurationContextFactory();
             engineContext = erfac.buildEngineContext(repoDir);
         } catch (Exception e) {
             throw new ServletException(e);
@@ -103,11 +110,13 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(
-            HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-            throws ServletException, IOException {
+        HttpServletRequest httpServletRequest,
+        HttpServletResponse httpServletResponse)
+        throws ServletException, IOException {
         String filePart = httpServletRequest.getRequestURL().toString();
-        if (allowListServices && (filePart != null)
-                && filePart.endsWith(Constants.LISTSERVICES)) {
+        if (allowListServices
+            && (filePart != null)
+            && filePart.endsWith(Constants.LISTSERVICES)) {
             listServices(httpServletRequest, httpServletResponse);
             return;
         } else {
@@ -132,40 +141,62 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         try {
             res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine = new AxisEngine(engineContext);
-            Object sessionContext = req.getSession().getAttribute(
+            Object sessionContext =
+                req.getSession().getAttribute(
                     Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
                 req.getSession().setAttribute(
-                        Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
+                    Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
             }
-            MessageContext msgContext = new MessageContext((SessionContext) sessionContext,
-                    engineContext.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                    engineContext.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_HTTP)),engineContext);
+            MessageContext msgContext =
+                new MessageContext(
+                    (SessionContext) sessionContext,
+                    engineContext.getEngineConfig().getTransportIn(
+                        new QName(Constants.TRANSPORT_HTTP)),
+                    engineContext.getEngineConfig().getTransportOut(
+                        new QName(Constants.TRANSPORT_HTTP)),
+                    engineContext);
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                            filePart));
+            msgContext.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO, filePart));
             String soapActionString =
-                    req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+                req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             if (soapActionString != null) {
                 msgContext.setWSAAction(soapActionString);
             }
             XMLStreamReader reader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(
+                XMLInputFactory.newInstance().createXMLStreamReader(
                     new BufferedReader(
-                            new InputStreamReader(req.getInputStream())));
-            StAXBuilder builder =
-            new StAXSOAPModelBuilder(reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+                        new InputStreamReader(req.getInputStream())));
+                        
+            //Check for the REST behaviour, if you desire rest beahaviour
+            //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+           Object doREST = msgContext.getProperty(Constants.DO_REST);
+            StAXBuilder builder = null;
+            SOAPEnvelope envelope = null;
+            if (doREST != null && "true".equals(doREST)) {
+                SOAPFactory soapFactory = new SOAP11Factory();
+                builder = new StAXOMBuilder(reader);
+                builder.setOmbuilderFactory(soapFactory);
+                envelope = soapFactory.getDefaultEnvelope();
+                envelope.getBody().addChild(builder.getDocumentElement());
+            } else {
+                builder = new StAXSOAPModelBuilder(reader);
+                envelope = (SOAPEnvelope) builder.getDocumentElement();
+            }
             
+            msgContext.setEnvelope(envelope);
 
-            msgContext.setProperty(MessageContext.TRANSPORT_WRITER,
-                    new BufferedWriter(res.getWriter()));
+            msgContext.setProperty(
+                MessageContext.TRANSPORT_WRITER,
+                new BufferedWriter(res.getWriter()));
             engine.receive(msgContext);
         } catch (AxisFault e) {
             throw new ServletException(e);
@@ -184,10 +215,12 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     private void listServices(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+        throws IOException {
         HashMap services = engineContext.getEngineConfig().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP, engineContext.getEngineConfig().getFaulytServices());
+        req.getSession().setAttribute(
+            Constants.ERROR_SERVICE_MAP,
+            engineContext.getEngineConfig().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -200,16 +233,21 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     private void listService(
-            HttpServletRequest req, HttpServletResponse res, String filePart)
-            throws IOException {
-        String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
+        HttpServletRequest req,
+        HttpServletResponse res,
+        String filePart)
+        throws IOException {
+        String serviceName =
+            filePart.substring(
+                filePart.lastIndexOf("/") + 1,
                 filePart.length());
         HashMap services = engineContext.getEngineConfig().getServices();
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE,
-                        serviceObj);
+                req.getSession().setAttribute(
+                    Constants.SINGLE_SERVICE,
+                    serviceObj);
             }
         }
         String URI = req.getRequestURI();

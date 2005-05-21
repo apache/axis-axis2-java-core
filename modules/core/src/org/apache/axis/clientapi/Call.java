@@ -121,8 +121,8 @@ public class Call extends InOutMEPClient {
      * @param key
      * @return
      */
-    public Object get(Object key) {
-        return properties.get(key);
+    public Object get(String key) {
+        return serviceContext.getProperty(key);
     }
 
     /**
@@ -130,7 +130,7 @@ public class Call extends InOutMEPClient {
      * @param value
      * @return
      */
-    public Object set(Object key, Object value) {
-        return properties.put(key, value);
+    public void set(String key, Object value) {
+        serviceContext.getEngineContext().setProperty(key,value);
     }
 }

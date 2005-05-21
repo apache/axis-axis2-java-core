@@ -62,13 +62,16 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
      */
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
-        QName serviceName = new QName(toEPR.getAddress());
-        ServiceDescription service = messageContext.getSystemContext().getEngineConfig().getService(serviceName);
+        ServiceDescription service = null;
+        if(toEPR != null){
+            QName serviceName = new QName(toEPR.getAddress());
+            service = messageContext.getSystemContext().getEngineConfig().getService(serviceName);
+        }
 
         if (service != null) {
             return service;
         } else {
-            throw new AxisFault("No service found under the " + toEPR.getAddress());
+            throw new AxisFault("No service found under the Service " + ((toEPR!= null)?toEPR.getAddress():""));
         }
     }
 

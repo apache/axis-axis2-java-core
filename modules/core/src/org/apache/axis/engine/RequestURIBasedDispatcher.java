@@ -43,7 +43,9 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    public OperationDescription findOperation(ServiceDescription service, MessageContext messageContext)
+    public OperationDescription findOperation(
+        ServiceDescription service,
+        MessageContext messageContext)
         throws AxisFault {
         if (operatoinName != null) {
             OperationDescription axisOp = service.getOperation(operatoinName);
@@ -56,29 +58,36 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
+    public ServiceDescription findService(MessageContext messageContext)
+        throws AxisFault {
         final String URI_ID_STRING = "/services";
         if (messageContext.isServerSide()) {
 
             EndpointReference toEPR = messageContext.getTo();
-            String filePart = toEPR.getAddress();
+            if (toEPR != null) {
+                String filePart = toEPR.getAddress();
 
-            int index = filePart.lastIndexOf(URI_ID_STRING);
-            String serviceStr = null;
-            if (index > 0) {
-                serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
+                int index = filePart.lastIndexOf(URI_ID_STRING);
+                String serviceStr = null;
+                if (index > 0) {
+                    serviceStr =
+                        filePart.substring(index + URI_ID_STRING.length() + 1);
 
-                ConfigurationContext engineContext = messageContext.getSystemContext();
+                    ConfigurationContext engineContext =
+                        messageContext.getSystemContext();
 
-                if ((index = serviceStr.indexOf('/')) > 0) {
-                    serviceName = new QName(serviceStr.substring(0, index));
-                    operatoinName = new QName(serviceStr.substring(index + 1));
-                } else {
-                    serviceName = new QName(serviceStr);
+                    if ((index = serviceStr.indexOf('/')) > 0) {
+                        serviceName = new QName(serviceStr.substring(0, index));
+                        operatoinName =
+                            new QName(serviceStr.substring(index + 1));
+                    } else {
+                        serviceName = new QName(serviceStr);
+                    }
+
+                    AxisConfiguration registry =
+                        messageContext.getSystemContext().getEngineConfig();
+                    return registry.getService(serviceName);
                 }
-
-                AxisConfiguration registry = messageContext.getSystemContext().getEngineConfig();
-                return registry.getService(serviceName);
             }
         }
         return null;

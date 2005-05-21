@@ -7,5 +7,7 @@
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis.transport.http.HTTPTransportSender">
     </transportSender>
+    <transportReceiver name="tcp"/>
+    <transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
 </client>
 

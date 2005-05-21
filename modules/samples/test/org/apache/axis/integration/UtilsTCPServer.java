@@ -33,15 +33,15 @@ public class UtilsTCPServer {
     private static ConfigurationContext configurationContext;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
-    public static final String TESTING_REPOSITORY = "target/test-resources/samples";
-    //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
 
-    public static synchronized void deployService(ServiceDescription service) throws AxisFault {
+    public static synchronized void deployService(ServiceDescription service)
+        throws AxisFault {
         configurationContext.getEngineConfig().addService(service);
 
     }
 
-    public static synchronized void unDeployService(QName service) throws AxisFault {
+    public static synchronized void unDeployService(QName service)
+        throws AxisFault {
         configurationContext.getEngineConfig().removeService(service);
     }
 
@@ -50,19 +50,25 @@ public class UtilsTCPServer {
 
             //start tcp server
 
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            File file = new File(TESTING_REPOSITORY);
+            ConfigurationContextFactory erfac =
+                new ConfigurationContextFactory();
+            File file = new File(UtilServer.TESTING_REPOSITORY);
+            System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("repository directory does not exists");
             }
-            configurationContext = erfac.buildEngineContext(file.getAbsolutePath());
+
+            configurationContext =
+                erfac.buildEngineContext(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-
-            reciver = new TCPServer(UtilServer.TESTING_PORT, configurationContext);
+            configurationContext.getEngineConfig().engageModule(
+                new QName("addressing"));
+            reciver =
+                new TCPServer(UtilServer.TESTING_PORT, configurationContext);
             reciver.start();
 
         }
