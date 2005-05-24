@@ -135,5 +135,9 @@ public class InOnlyMEPClient extends MEPClient {
     public void setTo(EndpointReference to) {
         messageInformationHeaders.setTo(to);
     }
+    
+    public void engageModule(QName name) throws AxisFault{
+        serviceContext.getEngineContext().getEngineConfig().engageModule(name);
+    }
 
 }

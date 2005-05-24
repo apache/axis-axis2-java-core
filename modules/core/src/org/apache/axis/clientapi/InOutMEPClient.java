@@ -116,31 +116,64 @@ public class InOutMEPClient extends MEPClient {
         final MessageContext msgctx)
         throws AxisFault {
         verifyInvocation(axisop);
+        if (useSeparateListener) {
+            SyncCallBack callback = new SyncCallBack();
+            invokeNonBlocking(axisop, msgctx, callback);
+            int index = 0;
+            while (!callback.hasResult()) {
+                if (index < 20) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new AxisFault(e);
+                    }
+                } else {
+                    throw new AxisFault("Time out waiting for the response");
+                }
+            }
+            if (callback.envelope != null) {
+                MessageContext resMsgctx =
+                    new MessageContext(
+                        serviceContext.getEngineContext(),
+                        null,
+                        null,
+                        null,
+                        null);
+                resMsgctx.setEnvelope(callback.envelope);
+                return resMsgctx;
+            } else {
+                if (callback.error instanceof AxisFault) {
+                    throw (AxisFault) callback.error;
+                } else {
+                    throw new AxisFault(callback.error);
+                }
+            }
+        } else {
+            msgctx.setTo(to);
+            msgctx.setServiceContext(serviceContext);
+            ConfigurationContext syscontext = serviceContext.getEngineContext();
 
-        msgctx.setTo(to);
-        msgctx.setServiceContext(serviceContext);
-        ConfigurationContext syscontext = serviceContext.getEngineContext();
+            checkTransport(msgctx);
 
-        checkTransport(msgctx);
+            ConfigurationContext sysContext = serviceContext.getEngineContext();
+            AxisConfiguration registry = sysContext.getEngineConfig();
 
-        ConfigurationContext sysContext = serviceContext.getEngineContext();
-        AxisConfiguration registry = sysContext.getEngineConfig();
+            msgctx.setOperationContext(
+                OperationContextFactory.createMEPContext(
+                    WSDLConstants.MEP_CONSTANT_IN_OUT,
+                    false,
+                    axisop,
+                    serviceContext));
+            MessageContext response =
+                TwoChannelBasedSender.send(msgctx, listenerTransport);
 
-        msgctx.setOperationContext(
-            OperationContextFactory.createMEPContext(
-                WSDLConstants.MEP_CONSTANT_IN_OUT,
-                false,
-                axisop,
-                serviceContext));
-        MessageContext response =
-            TwoChannelBasedSender.send(msgctx, listenerTransport);
-
-        SOAPEnvelope resenvelope = response.getEnvelope();
-        if (resenvelope.getBody().hasFault()) {
-            throw new AxisFault(
-                resenvelope.getBody().getFault().getException());
+            SOAPEnvelope resenvelope = response.getEnvelope();
+            if (resenvelope.getBody().hasFault()) {
+                throw new AxisFault(
+                    resenvelope.getBody().getFault().getException());
+            }
+            return response;
         }
-        return response;
     }
 
     public void invokeNonBlocking(
@@ -379,6 +412,20 @@ public class InOutMEPClient extends MEPClient {
 
         }
 
+    }
+
+    public class SyncCallBack extends Callback {
+        private SOAPEnvelope envelope;
+        private Exception error;
+        public void onComplete(AsyncResult result) {
+            this.envelope = result.getResponseEnvelope();
+        }
+        public void reportError(Exception e) {
+            error = e;
+        }
+        public boolean hasResult() {
+            return envelope != null || error != null;
+        }
     }
 
 }
