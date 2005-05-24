@@ -39,8 +39,8 @@ public class UtilServer {
     private static SimpleHTTPServer reciver;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
-    //public static final String TESTING_REPOSITORY = "target/test-resources/samples";
-    public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
+    public static final String TESTING_REPOSITORY = "target/test-resources/samples";
+    //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         reciver.getSystemContext().getEngineConfig().addService(service);
