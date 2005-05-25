@@ -114,7 +114,7 @@ public class ArchiveFileData {
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }
-        }
+        } 
     }
     
     public void addModule(QName moduleName){

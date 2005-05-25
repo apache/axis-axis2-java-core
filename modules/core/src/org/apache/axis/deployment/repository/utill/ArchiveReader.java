@@ -25,9 +25,11 @@ import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
 
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+import java.util.jar.JarInputStream;
 
 public class ArchiveReader implements DeploymentConstants {
 
@@ -115,6 +117,69 @@ public class ArchiveReader implements DeploymentConstants {
             throw new DeploymentException(e.getMessage());
         }
     }
+
+    /**
+     * This method first check whether the given module is there in the user home dirctory if so return
+     * that , else try to read the given module form classpath (from resources ) if found first get the module.mar
+     * file from the resourceStream and write that into user home/axis2home/nodule directory
+     * @param moduleName
+     * @return
+     * @throws DeploymentException
+     */
+    public File creatModuleArchivefromResource(String moduleName) throws DeploymentException {
+        File modulearchiveFile = null;
+        try {
+            int BUFFER = 2048;
+            String userHome = System.getProperty("user.home");
+            File userHomedir = new File(userHome);
+            File modules = null;
+            File repository = new File(userHomedir, "Axis2Home");
+            if (!repository.exists()) {
+                repository.mkdirs();
+                modules = new File(repository, "modules");
+                modules.mkdirs();
+            }
+            String modulearchiveName =moduleName + ".mar";
+            modulearchiveFile = new File(modules,modulearchiveName);
+            if (modulearchiveFile.exists()) {
+                return modulearchiveFile;
+            } else {
+                modulearchiveFile.createNewFile();
+            }
+            FileOutputStream dest = new
+                    FileOutputStream(modulearchiveFile);
+            ZipOutputStream out = new ZipOutputStream(new
+                    BufferedOutputStream(dest));
+            byte data[] = new byte[BUFFER];
+
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
+            if(in == null ){
+                cl.getResourceAsStream("modules/" + moduleName + ".jar");
+            }
+            if(in == null){
+                throw new DeploymentException( moduleName + " dose not found");
+            }
+            ZipInputStream zin = null;
+            zin = new ZipInputStream(in);
+            ZipEntry entry;
+            while ((entry = zin.getNextEntry()) != null) {
+                ZipEntry zip = new ZipEntry(entry);
+                out.putNextEntry(zip);
+                System.out.println("entry = " + entry.getName());
+                int count;
+                while ((count = zin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+            }
+            out.close();
+            zin.close();
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
+        return  modulearchiveFile;
+    }
+
 }
 
 
