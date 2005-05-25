@@ -87,6 +87,8 @@ public interface OMFactory {
      */
     public OMText createText(String s);
 
+    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
+
 
 
     // make the constructor protected

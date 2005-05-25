@@ -19,6 +19,7 @@ import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
+import org.apache.axis.om.impl.llom.OMAttributeImpl;
 
 import javax.xml.namespace.QName;
 
@@ -122,6 +123,10 @@ public class OMLinkedListImplFactory implements OMFactory {
     ;
         return textNode;
     }
+
+    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
+          return new OMAttributeImpl(localName, ns, value);
+      }
 
 
 }
