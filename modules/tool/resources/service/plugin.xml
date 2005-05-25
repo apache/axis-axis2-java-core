@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="Axis_Service_Archiver"
+   name="Axis Service Maker"
+   version="1.0.0"
+   provider-name="Apache Software Foundation"
+   class="org.apache.axis.tool.eclipse.plugin.ServiceArchiver">
+
+   <runtime>
+      <library name="Axis_Service_Archiver.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.eclipse.jface.text"/>
+   </requires>
+
+<extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Axis2 Wizards"
+            id="Axis2_Wizards">
+      </category>
+      <wizard
+            name="Axis2 Service Archiver"
+            icon="icons/sample.gif"
+            category="Axis2_Wizards"
+            class="org.apache.axis.tool.eclipse.ui.ServiceArchiveWizard"
+            id="org.apache.axis.tool.service.serviceWizard">
+      </wizard>
+   </extension>
+</plugin>

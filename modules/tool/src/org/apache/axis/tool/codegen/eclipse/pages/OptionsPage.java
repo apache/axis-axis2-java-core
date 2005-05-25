@@ -36,7 +36,8 @@ public class OptionsPage extends WizardPage implements UIConstants {
     private Button serverSideCheckBoxButton;
     
     /**
-     * @param pageName
+     * @param
+     *
      */
     public OptionsPage() {
         super(CodegenWizardPlugin.getResourceString("page2.name"));
