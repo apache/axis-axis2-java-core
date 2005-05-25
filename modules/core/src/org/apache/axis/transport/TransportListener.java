@@ -15,15 +15,21 @@
  */
 package org.apache.axis.transport;
 
-
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisFault;
 
 /**
  * Class TransportListener
  */
-public abstract class TransportListener{
-    public abstract void start()throws AxisFault;
-    public abstract void stop()throws AxisFault;
-    public abstract EndpointReference replyToEPR(String serviceName)throws AxisFault ;
+public abstract class TransportListener {
+    public static final String PARAM_PORT = "port";
+
+    public abstract void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+        throws AxisFault;
+    public abstract void start() throws AxisFault;
+    public abstract void stop() throws AxisFault;
+    public abstract EndpointReference replyToEPR(String serviceName) throws AxisFault;
+
 }

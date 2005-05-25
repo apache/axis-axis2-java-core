@@ -35,7 +35,7 @@ public class MessageContextTest extends AbstractTestCase {
 
         ConfigurationContext engineContext = new ConfigurationContext(er);
 
-        MessageContext msgctx = new MessageContext(null, null, null, engineContext);
+        MessageContext msgctx = new MessageContext(engineContext);
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

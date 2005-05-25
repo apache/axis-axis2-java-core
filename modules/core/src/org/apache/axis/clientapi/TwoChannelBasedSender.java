@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -33,7 +34,7 @@ import org.apache.axis.transport.http.HTTPTransportReceiver;
 
 
 public class TwoChannelBasedSender {
-    public static MessageContext send(MessageContext msgctx,String listenerTransport) throws AxisFault{
+    public static MessageContext send(MessageContext msgctx,TransportInDescription transportIn) throws AxisFault{
        
         AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
        
@@ -41,11 +42,10 @@ public class TwoChannelBasedSender {
         engine.send(msgctx);
 
         MessageContext response =
-            new MessageContext(
+            new MessageContext(msgctx.getSystemContext(),
                 msgctx.getSessionContext(),
                 msgctx.getTransportIn(),
-                msgctx.getTransportOut(),
-                msgctx.getSystemContext());
+                msgctx.getTransportOut());
         response.setProperty(
             MessageContext.TRANSPORT_READER,
             msgctx.getProperty(MessageContext.TRANSPORT_READER));
@@ -57,11 +57,11 @@ public class TwoChannelBasedSender {
         SOAPEnvelope resenvelope = null;
                 try {
                     //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-                    if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
+                    if (Constants.TRANSPORT_HTTP.equals(transportIn.getName().getLocalPart())) {
                         HTTPTransportReceiver receiver = new HTTPTransportReceiver();
                         resenvelope =
                             receiver.checkForMessage(response,msgctx.getSystemContext());
-                    } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
+                    } else if (Constants.TRANSPORT_TCP.equals(transportIn.getName().getLocalPart())) {
                         Reader in = (Reader) response.getProperty(MessageContext.TRANSPORT_READER);
                         if(in != null){
                             XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);

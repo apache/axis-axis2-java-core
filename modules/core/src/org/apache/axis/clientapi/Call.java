@@ -36,7 +36,7 @@ import org.apache.axis.soap.SOAPEnvelope;
  */
 public class Call extends InOutMEPClient {
     private HashMap properties;
-    
+
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
      * @throws AxisFault
@@ -98,16 +98,19 @@ public class Call extends InOutMEPClient {
         super.invokeNonBlocking(axisConfig, msgctx, callback);
     }
 
-  
-
     /**
      * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
     private static ServiceContext assumeServiceContext() throws AxisFault {
-        ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext = efac.buildClientEngineContext(null);
+        ConfigurationContext sysContext = null;
+        if (ListenerManager.configurationContext == null) {
+            ConfigurationContextFactory efac = new ConfigurationContextFactory();
+            sysContext = efac.buildClientEngineContext(null);
+        }else{
+            sysContext = ListenerManager.configurationContext;
+        }
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
@@ -131,6 +134,6 @@ public class Call extends InOutMEPClient {
      * @return
      */
     public void set(String key, Object value) {
-        serviceContext.getEngineContext().setProperty(key,value);
+        serviceContext.getEngineContext().setProperty(key, value);
     }
 }

@@ -28,9 +28,12 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.ListenerManager;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -47,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer extends TransportListener implements Runnable{
+public class SimpleHTTPServer extends TransportListener implements Runnable {
     /**
      * Field log
      */
@@ -74,6 +77,9 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
      */
     private boolean stopped = false;
 
+    public SimpleHTTPServer() {
+    }
+
     /**
      * Constructor SimpleHTTPServer
      *
@@ -93,7 +99,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
     public SimpleHTTPServer(String dir, ServerSocket serverSoc) throws AxisFault {
         try {
             this.serverSocket = serverSoc;
-           // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
+            // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             this.configurationContext = erfac.buildEngineContext(dir);
             Thread.sleep(2000);
@@ -140,11 +146,10 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
                             new MessageContext(
-                                null,
+                                configurationContext,
                                 configurationContext.getAxisConfiguration().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
-                                transportOut,
-                                configurationContext);
+                                transportOut);
                         msgContext.setServerSide(true);
 
                         // We do not have any Addressing Headers to put
@@ -152,8 +157,9 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
                         msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        msgContext.setEnvelope(reciver.checkForMessage(msgContext, configurationContext));
-                        
+                        msgContext.setEnvelope(
+                            reciver.checkForMessage(msgContext, configurationContext));
+
                         AxisEngine engine = new AxisEngine(configurationContext);
                         engine.receive(msgContext);
 
@@ -292,6 +298,15 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
         return new EndpointReference(
             AddressingConstants.WSA_REPLY_TO,
             "http://127.0.0.1:" + (serverSocket.getLocalPort()) + "/axis/services/" + serviceName);
+    }
+
+    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) throws AxisFault {
+        this.configurationContext = axisConf;
+        Parameter param = transprtIn.getParameter(PARAM_PORT);
+        if(param!= null){
+            int port = Integer.parseInt((String)param.getValue());
+            serverSocket = ListenerManager.openSocket(port);
+        }
     }
 
 }

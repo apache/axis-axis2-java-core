@@ -56,7 +56,7 @@ public class ContextHireachyTest extends TestCase {
             configurationContext.createServiceContext(
                 serviceDescription.getName());
         MessageContext msgctx =
-            new MessageContext(null, null, null, configurationContext);
+            new MessageContext(configurationContext);
         OperationContext opContext =
             operationDescription.findOperationContext(
                 msgctx,
@@ -91,7 +91,7 @@ public class ContextHireachyTest extends TestCase {
             new ConfigurationContext(axisConfiguration);
   
         MessageContext msgctx =
-            new MessageContext(null, null, null, configurationContext);
+            new MessageContext(configurationContext);
   
         //test the complte Hisracy built
         assertEquals(msgctx.getParent(), null);

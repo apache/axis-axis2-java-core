@@ -17,10 +17,14 @@
  */
 package org.apache.axis.clientapi;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -59,7 +63,7 @@ public abstract class MEPClient {
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {
         MessageContext msgctx =
-            new MessageContext(null, null, null, serviceContext.getEngineContext());
+            new MessageContext(serviceContext.getEngineContext());
 
         SOAPEnvelope envelope = null;
         SOAPFactory omfac = OMAbstractFactory.getSOAP11Factory();
@@ -69,7 +73,7 @@ public abstract class MEPClient {
         return msgctx;
     }
 
-    public String inferTransport(EndpointReference epr) {
+    public TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
         String transport = null;
         if (epr != null) {
             String toURL = epr.getAddress();
@@ -78,7 +82,9 @@ public abstract class MEPClient {
                 transport = toURL.substring(0, index);
             }
         }
-        return transport;
+        return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
+                            new QName(transport));
+         
     }
 
 }

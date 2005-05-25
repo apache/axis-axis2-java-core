@@ -26,7 +26,7 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -36,7 +36,7 @@ import org.apache.wsdl.WSDLConstants;
 
 public class InOnlyMEPClient extends MEPClient {
     protected MessageInformationHeadersCollection messageInformationHeaders;
-    protected String senderTransport;
+    protected TransportOutDescription senderTransport;
     
     
     public InOnlyMEPClient(ServiceContext service) {
@@ -53,9 +53,7 @@ public class InOnlyMEPClient extends MEPClient {
             senderTransport = inferTransport(messageInformationHeaders.getTo());
         }
         
-        TransportInDescription transportIn =
-            syscontext.getAxisConfiguration().getTransportIn(new QName(senderTransport));
-        msgctx.setTransportIn(transportIn);
+        msgctx.setTransportOut(senderTransport);
 
         ConfigurationContext sysContext = serviceContext.getEngineContext();
         AxisConfiguration registry = sysContext.getAxisConfiguration();
@@ -66,11 +64,10 @@ public class InOnlyMEPClient extends MEPClient {
         engine.send(msgctx);
 
         MessageContext response =
-            new MessageContext(
+            new MessageContext(msgctx.getSystemContext(),
                 msgctx.getSessionContext(),
                 msgctx.getTransportIn(),
-                msgctx.getTransportOut(),
-                msgctx.getSystemContext());
+                msgctx.getTransportOut());
         response.setProperty(
             MessageContext.TRANSPORT_READER,
             msgctx.getProperty(MessageContext.TRANSPORT_READER));
@@ -139,5 +136,7 @@ public class InOnlyMEPClient extends MEPClient {
     public void engageModule(QName name) throws AxisFault{
         serviceContext.getEngineContext().getAxisConfiguration().engageModule(name);
     }
+    
+ 
 
 }

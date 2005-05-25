@@ -122,39 +122,40 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
         // call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                try {
-                    result.getResponseEnvelope().serialize(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                } catch (XMLStreamException e) {
-                    reportError(e);
-                } finally {
+        try {
+            call.setTo(targetEPR);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
+            Callback callback = new Callback() {
+                public void onComplete(AsyncResult result) {
+                    try {
+                        result.getResponseEnvelope().serialize(
+                            XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+                    } catch (XMLStreamException e) {
+                        reportError(e);
+                    } finally {
+                        finish = true;
+                    }
+                }
+
+                public void reportError(Exception e) {
+                    e.printStackTrace();
                     finish = true;
                 }
-            }
+            };
 
-            public void reportError(Exception e) {
-                e.printStackTrace();
-                finish = true;
+            call.invokeNonBlocking(operationName.getLocalPart(), method, callback);
+            int index = 0;
+            while (!finish) {
+                Thread.sleep(1000);
+                index++;
+                if (index > 10) {
+                    throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                }
             }
-        };
-
-        call.invokeNonBlocking(operationName.getLocalPart(), method, callback);
-        int index = 0;
-        while (!finish) {
-            Thread.sleep(1000);
-            index++;
-            if (index > 10) {
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
-            }
+            log.info("send the reqest");
+        } finally {
+            call.close();
         }
 
-        log.info("send the reqest");
-
     }
-
- 
-}
+ }

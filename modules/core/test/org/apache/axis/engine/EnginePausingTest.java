@@ -73,7 +73,7 @@ public class EnginePausingTest extends TestCase {
         });
         service.addOperation(axisOp);
 
-        mc = new MessageContext(null, transportIn, transportOut, engineContext);
+        mc = new MessageContext(engineContext, transportIn, transportOut);
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);

@@ -1,7 +1,11 @@
 package org.apache.axis.phaserule;
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
+
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
@@ -11,9 +15,6 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.PhaseHolder;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -47,8 +48,7 @@ public class PhaseFirstTest extends TestCase {
         Phase p2 = new Phase("PhaseB");
         phases.add(p2);
 
-        MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()),
-                new MessageInformationHeadersCollection());
+        MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
 
         PhaseHolder ph = new PhaseHolder(phases);
         HandlerDescription hm = new HandlerDescription();

@@ -19,59 +19,89 @@ package org.apache.axis.clientapi;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
 
-import org.apache.axis.Constants;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.TransportListener;
-import org.apache.axis.transport.http.SimpleHTTPServer;
-import org.apache.axis.transport.tcp.TCPServer;
 
 public class ListenerManager {
 
-    public static TransportListener httpListener;
-    public static TransportListener tcpListener;
-    public static TransportListener mailListener;
-    public static TransportListener jmsListener;
+    public static int port = 6059;
+    public static HashMap listeners = new HashMap();
     public static ConfigurationContext configurationContext;
 
     public static final void makeSureStarted(
         String transport,
         ConfigurationContext configurationContext)
         throws AxisFault {
-        try {
-            ListenerManager.configurationContext = configurationContext;
-            if (Constants.TRANSPORT_HTTP.equals(transport) && httpListener == null) {
-                httpListener = new SimpleHTTPServer(configurationContext, new ServerSocket(6060));
-                httpListener.start();
-            } else if (Constants.TRANSPORT_JMS.equals(transport) && jmsListener == null) {
-                throw new UnsupportedOperationException();
-            } else if (Constants.TRANSPORT_MAIL.equals(transport) && mailListener == null) {
-                throw new UnsupportedOperationException();
-            } else if (Constants.TRANSPORT_TCP.equals(transport) && tcpListener == null) {
-                tcpListener = new TCPServer(7070, configurationContext);
+        if (ListenerManager.configurationContext != null && configurationContext != ListenerManager.configurationContext) {
+            throw new AxisFault("Only One ConfigurationContext Instance we support at the Client Side");
+        }
+
+        ListenerManager.configurationContext = configurationContext;
+        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        if (tsState == null) {
+            TransportInDescription tranportIn =
+                configurationContext.getAxisConfiguration().getTransportIn(new QName(transport));
+            TransportListener listener = tranportIn.getReciever();
+            listener.init(configurationContext, tranportIn);
+            listener.start();
+            tsState = new TransportListnerState(listener);
+            listeners.put(transport,tsState);
+        }
+        tsState.waitingCalls++;
+    }
+
+    public static final void stop(String transport) throws AxisFault {
+        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        if (tsState != null) {
+            tsState.waitingCalls--;
+            if (tsState.waitingCalls == 0) {
+                tsState.listener.stop();
             }
-        } catch (IOException e) {
-            throw new AxisFault(e);
         }
     }
 
-    public static EndpointReference replyToEPR(String serviceName, String transport) throws AxisFault {
-        ListenerManager.configurationContext = configurationContext;
-        if (Constants.TRANSPORT_HTTP.equals(transport) && httpListener != null) {
-            return httpListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_JMS.equals(transport) && jmsListener != null) {
-            return jmsListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_MAIL.equals(transport) && mailListener != null) {
-            return mailListener.replyToEPR(serviceName);
-        } else if (Constants.TRANSPORT_TCP.equals(transport) && tcpListener != null) {
-            return tcpListener.replyToEPR(serviceName);
-        }
-        throw new AxisFault(
-            "Calling method before starting the with makeSureStarted(..) Listener transport =  "
-                + transport);
+    public static EndpointReference replyToEPR(String serviceName, String transport)
+        throws AxisFault {
+        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        if (tsState != null) {
+            return tsState.listener.replyToEPR(serviceName);
+        } else {
+            throw new AxisFault(
+                "Calling method before starting the with makeSureStarted(..) Listener transport =  "
+                    + transport);
 
+        }
+
+    }
+
+    public int getPort() {
+        port++;
+        return port;
+    }
+
+    public static class TransportListnerState {
+        public TransportListnerState(TransportListener listener) {
+            this.listener = listener;
+        }
+        public int waitingCalls = 0;
+        public TransportListener listener;
+    }
+
+    public static ServerSocket openSocket(int port) throws AxisFault  {
+        for (int i = 0; i < 5; i++) {
+            try {
+                return new ServerSocket(port + i);
+            } catch (IOException e) {
+            }
+        }
+        throw new AxisFault("failed to open the scoket");
     }
 
 }

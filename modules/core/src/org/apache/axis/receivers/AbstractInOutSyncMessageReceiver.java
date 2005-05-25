@@ -34,11 +34,10 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
 
     public final void recieve(MessageContext messgeCtx) throws AxisFault {
         MessageContext newmsgCtx =
-            new MessageContext(
+            new MessageContext(messgeCtx.getSystemContext(),
                 messgeCtx.getSessionContext(),
                 messgeCtx.getTransportIn(),
-                messgeCtx.getTransportOut(),
-                messgeCtx.getSystemContext());
+                messgeCtx.getTransportOut());
 
         newmsgCtx.setMessageInformationHeaders(new MessageInformationHeadersCollection());
         MessageInformationHeadersCollection oldMessageInfoHeaders =

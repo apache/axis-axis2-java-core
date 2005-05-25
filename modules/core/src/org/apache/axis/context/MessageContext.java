@@ -115,43 +115,23 @@ public class MessageContext extends AbstractContext {
     public boolean outPutWritten = false;
 
     private String serviceInstanceID;
-
+    
     /**
-      * @param configurationContext
-      * @param sessionContext
-      * @param transportIn
-      * @param transportOut
-      * @param mepContext
-      * @throws AxisFault
-      */
-    public MessageContext(
-        ConfigurationContext engineContext,
-        MessageInformationHeadersCollection addressingHeaders)
-        throws AxisFault {
-        super(null);
-        this.messageInformationHeaders = addressingHeaders;
-        this.configurationContext = engineContext;
-        sessionContext = null;
-    }
-
-    /**
-     * @param configurationContext
-     * @param sessionContext
-     * @param transportIn
-     * @param transportOut
-     * @param mepContext
+     * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
+     * @param engineContext
      * @throws AxisFault
      */
+
+    public MessageContext(ConfigurationContext engineContext) throws AxisFault {
+        this(engineContext, null, null, null);
+    }
+
     public MessageContext(
         ConfigurationContext engineContext,
-        SessionContext sessionContext,
         TransportInDescription transportIn,
-        TransportOutDescription transportOut,
-        OperationContext mepContext)
+        TransportOutDescription transportOut)
         throws AxisFault {
-        this(sessionContext, transportIn, transportOut, engineContext);
-        this.operationContext = mepContext;
-
+        this(engineContext, null, transportIn, transportOut);
     }
 
     /**
@@ -163,10 +143,10 @@ public class MessageContext extends AbstractContext {
      */
 
     public MessageContext(
+        ConfigurationContext engineContext,
         SessionContext sessionContext,
         TransportInDescription transportIn,
-        TransportOutDescription transportOut,
-        ConfigurationContext engineContext)
+        TransportOutDescription transportOut)
         throws AxisFault {
         super(null);
 
@@ -514,9 +494,7 @@ public class MessageContext extends AbstractContext {
 
         //The context hirachy might not have constructed fully, the check should 
         //look for the disconnected grandparents
-        if (obj == null
-            && operationContext == null
-            && serviceContext != null) {
+        if (obj == null && operationContext == null && serviceContext != null) {
             obj = serviceContext.getProperty(key, persistent);
         }
         if (obj == null && operationContext == null) {

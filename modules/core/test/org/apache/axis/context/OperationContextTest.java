@@ -56,7 +56,7 @@ public class OperationContextTest extends AbstractTestCase {
     
     public MessageContext getBasicMessageContext() throws AxisFault{
 
-    	return new MessageContext(null,new TransportInDescription(new QName("axis")), new TransportOutDescription(new QName("axis")),engineCtx);
+    	return new MessageContext(engineCtx,new TransportInDescription(new QName("axis")), new TransportOutDescription(new QName("axis")));
 
     }
     

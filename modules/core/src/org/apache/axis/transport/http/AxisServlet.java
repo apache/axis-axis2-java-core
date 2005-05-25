@@ -40,8 +40,6 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -155,13 +153,12 @@ public class AxisServlet extends HttpServlet {
                     sessionContext);
             }
             MessageContext msgContext =
-                new MessageContext(
+                new MessageContext(engineContext,
                     (SessionContext) sessionContext,
                     engineContext.getAxisConfiguration().getTransportIn(
                         new QName(Constants.TRANSPORT_HTTP)),
                     engineContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP)),
-                    engineContext);
+                        new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(

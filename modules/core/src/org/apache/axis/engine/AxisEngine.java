@@ -129,11 +129,10 @@ public class AxisEngine {
 
             // create a SOAP envelope with the Fault
             MessageContext faultContext =
-                new MessageContext(
+                new MessageContext(engineContext,
                     context.getSessionContext(),
                     context.getTransportIn(),
-                    context.getTransportOut(),
-                    engineContext);
+                    context.getTransportOut());
             
             if(context.getFaultTo() != null){
                 faultContext.setFaultTo(context.getFaultTo());

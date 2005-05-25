@@ -126,5 +126,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
 
     }
+    
+    
 
 }

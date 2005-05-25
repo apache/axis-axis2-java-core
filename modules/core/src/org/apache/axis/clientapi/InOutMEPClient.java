@@ -42,6 +42,7 @@ import org.apache.axis.om.OMException;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
 
@@ -51,11 +52,12 @@ import org.apache.wsdl.WSDLConstants;
  * MessageContext and the more convients API is provided by the Call
  */
 public class InOutMEPClient extends MEPClient {
+    protected TransportListener listener;
     /**
      * transport that should be used for sending and reciving the message
      */
-    protected String senderTransport;
-    protected String listenerTransport = Constants.TRANSPORT_HTTP;
+    protected TransportOutDescription senderTransport;
+    protected TransportInDescription listenerTransport;
 
     /** 
      * Should the two SOAPMessage are sent over same channel over seperate channels.
@@ -131,7 +133,7 @@ public class InOutMEPClient extends MEPClient {
             }
             if (callback.envelope != null) {
                 MessageContext resMsgctx =
-                    new MessageContext(serviceContext.getEngineContext(), null, null, null, null);
+                    new MessageContext(serviceContext.getEngineContext());
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -187,11 +189,10 @@ public class InOutMEPClient extends MEPClient {
                 axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
-                    ListenerManager.replyToEPR(
+                ListenerManager.replyToEPR(
                         serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
-                            + axisop.getName().getLocalPart(),
-                        listenerTransport));
+                            + axisop.getName().getLocalPart(),listenerTransport.getName().getLocalPart()));
                 msgctx.setOperationContext(
                     axisop.findOperationContext(msgctx, serviceContext, false));
                 msgctx.setServiceContext(serviceContext);
@@ -305,8 +306,6 @@ public class InOutMEPClient extends MEPClient {
         String listenerTransport,
         boolean useSeparateListener)
         throws AxisFault {
-        this.senderTransport = senderTransport;
-        this.listenerTransport = listenerTransport;
 
         if (useSeparateListener
             || (senderTransport.equals(listenerTransport)
@@ -318,7 +317,13 @@ public class InOutMEPClient extends MEPClient {
             throw new AxisFault("useSeparateListener = false is only supports by the htpp transport set as the sender and receiver");
         }
 
+        this.senderTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(new QName(senderTransport));
+        this.listenerTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(new QName(listenerTransport));
+
         if (useSeparateListener == true) {
+//            listener = this.listenerTransport.getReciever();
+//            listener.init(serviceContext.getEngineContext(),this.listenerTransport);
+//            listener.start();
             ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
         }
     }
@@ -357,30 +362,15 @@ public class InOutMEPClient extends MEPClient {
             senderTransport = inferTransport(to);
         }
         if (listenerTransport == null) {
-            listenerTransport = senderTransport;
+            listenerTransport =  serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
+            senderTransport.getName());
         }
 
         if (msgctx.getTransportIn() == null) {
-            final TransportInDescription transportIn =
-                serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
-                    new QName(senderTransport));
-            if (transportIn != null) {
-                msgctx.setTransportIn(transportIn);
-            } else {
-                throw new AxisFault("Unknown transport " + listenerTransport);
-            }
-
+                msgctx.setTransportIn(listenerTransport);
         }
         if (msgctx.getTransportOut() == null) {
-            final TransportOutDescription transportOut =
-                serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
-                    new QName(listenerTransport));
-            if (transportOut != null) {
-                msgctx.setTransportOut(transportOut);
-            } else {
-                throw new AxisFault("Unknown transport " + senderTransport);
-            }
-
+                msgctx.setTransportOut(senderTransport);
         }
 
     }
@@ -402,5 +392,12 @@ public class InOutMEPClient extends MEPClient {
     public void engageModule(QName moduleName) throws AxisFault {
         serviceContext.getEngineContext().getAxisConfiguration().engageModule(moduleName);
     }
+    
+    public void close() throws AxisFault{
+//        if(listener != null){
+//            listener.stop();
+//        }
+        ListenerManager.stop(listenerTransport.getName().getLocalPart());
+     }
 
 }

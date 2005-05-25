@@ -29,7 +29,6 @@ import org.apache.axis.context.ServiceContext;
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
@@ -40,7 +39,7 @@ public class UtilServer {
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
     public static final String TESTING_REPOSITORY = "target/test-resources/samples";
-    //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
+   // public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         reciver.getSystemContext().getAxisConfiguration().addService(service);

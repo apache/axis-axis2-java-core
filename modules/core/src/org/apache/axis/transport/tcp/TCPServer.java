@@ -30,10 +30,13 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.ListenerManager;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
@@ -82,7 +85,7 @@ public class TCPServer extends TransportListener implements Runnable {
         while (started) {
             Socket socket = null;
             try {
-                
+
                 try {
                     socket = serversocket.accept();
                 } catch (java.io.InterruptedIOException iie) {
@@ -90,7 +93,7 @@ public class TCPServer extends TransportListener implements Runnable {
                     log.debug(e);
                     break;
                 }
-                
+
                 Writer out = new OutputStreamWriter(socket.getOutputStream());
                 Reader in = new InputStreamReader(socket.getInputStream());
                 TransportOutDescription transportOut =
@@ -98,18 +101,18 @@ public class TCPServer extends TransportListener implements Runnable {
                         new QName(Constants.TRANSPORT_TCP));
                 MessageContext msgContext =
                     new MessageContext(
-                        null,
+                        configContext,
                         configContext.getAxisConfiguration().getTransportIn(
                             new QName(Constants.TRANSPORT_TCP)),
-                        transportOut,
-                        configContext);
+                        transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
                 msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
-                
+
                 AxisEngine engine = new AxisEngine(configContext);
                 try {
-                    XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                    XMLStreamReader xmlreader =
+                        XMLInputFactory.newInstance().createXMLStreamReader(in);
                     StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
                     msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
                 } catch (Exception e) {
@@ -119,21 +122,21 @@ public class TCPServer extends TransportListener implements Runnable {
             } catch (Throwable e) {
                 log.error(e);
                 e.printStackTrace();
-            } finally{
-               try {
-                   if(socket != null){
-                       socket.close();                   
-                       if(!started){
-                           serversocket.close();
-                       }
-                   }
+            } finally {
+                try {
+                    if (socket != null) {
+                        socket.close();
+                        if (!started) {
+                            serversocket.close();
+                        }
+                    }
 
                 } catch (IOException e1) {
-                   log.error(e1);
+                    log.error(e1);
                 }
             }
         }
-        
+
     }
 
     public synchronized void start() {
@@ -147,8 +150,8 @@ public class TCPServer extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         return new EndpointReference(
-        AddressingConstants.WSA_REPLY_TO,
-        "http://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
+            AddressingConstants.WSA_REPLY_TO,
+            "http://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
     }
 
     /* (non-Javadoc)
@@ -156,11 +159,22 @@ public class TCPServer extends TransportListener implements Runnable {
      */
     public void stop() throws AxisFault {
         try {
-            this.serversocket.close();        
+            this.serversocket.close();
             started = false;
         } catch (IOException e) {
             throw new AxisFault(e);
         }
+    }
+
+    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+        throws AxisFault {
+        this.configContext = axisConf;
+        Parameter param = transprtIn.getParameter(PARAM_PORT);
+        if (param != null) {
+            int port = Integer.parseInt((String) param.getValue());
+            serversocket = ListenerManager.openSocket(port);
+        }
+
     }
 
 }

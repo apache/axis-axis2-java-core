@@ -4,17 +4,18 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.addressing.*;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.AnyContentType;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.MessageInformationHeadersCollection;
+import org.apache.axis.addressing.ServiceName;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContextFactory;
 import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.wsdl.WSDLConstants;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -108,7 +109,8 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         RelatesTo relatesTo = new RelatesTo("http://www.relatesTo.org/service/", "TestRelation");
         mIHeaders.setRelatesTo(relatesTo);
 
-        msgCtxt = new MessageContext(null, mIHeaders);
+        msgCtxt = new MessageContext(null);
+        msgCtxt.setMessageInformationHeaders(mIHeaders);
         msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
         outHandler.invoke(msgCtxt);
 

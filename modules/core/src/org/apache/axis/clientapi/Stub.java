@@ -104,7 +104,7 @@ public abstract class Stub {
      * get the message context
      */
     protected MessageContext getMessageContext() throws AxisFault {
-            return new MessageContext(null,null,null,_configurationContext);
+            return new MessageContext(_configurationContext);
     }
 }
 
