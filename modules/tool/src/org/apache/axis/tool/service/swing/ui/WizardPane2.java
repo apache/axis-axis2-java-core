@@ -1,18 +1,27 @@
-package org.apache.axis.tool.ui;
+package org.apache.axis.tool.service.swing.ui;
+
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import org.apache.axis.tool.bean.Page2Bean;
 import org.apache.axis.tool.bean.WizardBean;
 import org.apache.axis.tool.control.Controller;
 import org.apache.axis.tool.control.ProcessException;
 import org.apache.axis.tool.util.Constants;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

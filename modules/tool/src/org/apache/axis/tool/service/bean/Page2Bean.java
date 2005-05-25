@@ -1,4 +1,4 @@
-package org.apache.axis.tool.bean;
+package org.apache.axis.tool.service.bean;
 
 import java.util.ArrayList;
 
