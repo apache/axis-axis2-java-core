@@ -26,10 +26,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-//import org.eclipse.ui.ide.IDE;
 
 /**
- *  
+ *  The main wizard for the codegen wizard
  */
 
 public class CodeGenWizard extends Wizard implements INewWizard {

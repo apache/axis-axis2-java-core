@@ -1,12 +1,21 @@
 package org.apache.axis.tool.codegen.eclipse.pages;
 
 import org.apache.axis.tool.codegen.eclipse.CodegenWizardPlugin;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * The first page of the code generator wizrad. 
@@ -27,6 +36,7 @@ public class WSDLFileSelectionPage extends WizardPage {
 		setTitle(CodegenWizardPlugin.getResourceString("page1.title"));
 		setDescription(CodegenWizardPlugin.getResourceString("page1.desc"));
 		this.selection = selection;
+		setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
 	}
 
 	/**
@@ -110,6 +120,10 @@ public class WSDLFileSelectionPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
+	/**
+	 * Get the file name
+	 * @return
+	 */
 	public String getFileName() {
 		return fileText.getText();
 	}

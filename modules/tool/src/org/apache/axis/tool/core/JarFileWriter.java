@@ -1,10 +1,10 @@
 package org.apache.axis.tool.core;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Jar;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Jar;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

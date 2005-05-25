@@ -35,9 +35,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 public class OutputPage extends WizardPage {
     private Text outputLocation;
-
     private Button browseButton;
-
     private Button locationSelectCheckBox;
 
     /**
@@ -47,12 +45,12 @@ public class OutputPage extends WizardPage {
         super(CodegenWizardPlugin.getResourceString("page3.name"));
         setTitle(CodegenWizardPlugin.getResourceString("page3.title"));
         setDescription(CodegenWizardPlugin.getResourceString("page3.desc"));
+        setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
 
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
@@ -91,11 +89,20 @@ public class OutputPage extends WizardPage {
         this.setPageComplete(true);
 
     }
-
+    
+    /**
+     * get the output location
+     * @return
+     */
     public String getOutputLocation() {
         return outputLocation.getText();
     }
 
+    /**
+     * Worker method for handling modifications to the 
+     * textbox
+     *
+     */
     private void handleModifyEvent() {
         String text = this.outputLocation.getText();
         if ((text == null) || (text.trim().equals(""))) {
@@ -107,8 +114,7 @@ public class OutputPage extends WizardPage {
     }
 
     /**
-     * Updates the wizard page messages
-     * 
+     * Updates the wizard page error messages
      * @param message
      */
     private void updateStatus(String message) {
@@ -116,6 +122,10 @@ public class OutputPage extends WizardPage {
         setPageComplete(message == null);
     }
 
+    /**
+     * Handle the browse button events
+     *
+     */
     private void handleBrowse() {
         boolean location = false;//locationSelectCheckBox.getSelection();
         if (!location) {
@@ -130,7 +140,7 @@ public class OutputPage extends WizardPage {
     				getShell(),
     				ResourcesPlugin.getWorkspace().getRoot(),
     				false,
-    				"Select new file container");
+    				CodegenWizardPlugin.getResourceString("page3.containerbox.title"));
     		if (dialog.open() == ContainerSelectionDialog.OK) {
     			Object[] result = dialog.getResult();
     			if (result.length == 1) {

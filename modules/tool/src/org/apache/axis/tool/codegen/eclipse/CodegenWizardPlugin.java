@@ -1,5 +1,6 @@
 package org.apache.axis.tool.codegen.eclipse;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.BundleContext;
 import java.util.*;
@@ -12,6 +13,7 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
 	private static CodegenWizardPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	private static ImageDescriptor wizardImageDescriptor;
 	
 	/**
 	 * The constructor.
@@ -66,4 +68,12 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
+	
+	public static ImageDescriptor getWizardImageDescriptor(){
+	    if (wizardImageDescriptor==null){
+	        wizardImageDescriptor =CodegenWizardPlugin.imageDescriptorFromPlugin("Axis2_Codegen_Wizard","icons/asf-feather.gif");
+	    }
+	    return wizardImageDescriptor;
+	}
+	
 }

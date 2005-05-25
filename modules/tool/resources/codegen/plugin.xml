@@ -36,12 +36,12 @@
          point="org.eclipse.ui.newWizards">
       <category
             name="Axis2 Wizards"
-            id="Axis2_Codegen_Wizards">
+            id="Axis2_Wizards">
       </category>
       <wizard
             name="Axis2 Code Generator"
-            icon="icons/sample.gif"
-            category="Axis2_Codegen_Wizards"
+            icon="icons/icon.gif"
+            category="Axis2_Wizards"
             class="org.apache.axis.tool.codegen.eclipse.CodeGenWizard"
             id="org.apache.axis.tool.codegen.eclipse.CodeGenWizard">
       </wizard>

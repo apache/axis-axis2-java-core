@@ -33,6 +33,8 @@ public class OptionsPage extends WizardPage implements UIConstants {
     private Button syncOnlyRadioButton;
     private Button asyncOnlyRadioButton;
     private Text packageText;
+    private Button serverSideCheckBoxButton;
+    
     /**
      * @param pageName
      */
@@ -40,6 +42,7 @@ public class OptionsPage extends WizardPage implements UIConstants {
         super(CodegenWizardPlugin.getResourceString("page2.name"));
 		setTitle(CodegenWizardPlugin.getResourceString("page2.title"));
 		setDescription(CodegenWizardPlugin.getResourceString("page2.desc"));
+		setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
         
     }
 
@@ -63,6 +66,7 @@ public class OptionsPage extends WizardPage implements UIConstants {
 		languageSelectionComboBox = new Combo(container, SWT.DROP_DOWN |SWT.BORDER |SWT.READ_ONLY);
 		//fill the combo
 		this.fillLanguageCombo();
+		
 		languageSelectionComboBox.setLayoutData(gd);
 		syncOnlyRadioButton = new Button(container,SWT.RADIO);
 		syncOnlyRadioButton.setText(CodegenWizardPlugin.getResourceString("page2.sync.caption"));
@@ -73,16 +77,24 @@ public class OptionsPage extends WizardPage implements UIConstants {
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(CodegenWizardPlugin.getResourceString("page2.package.caption"));
+		
 		packageText = new Text(container,SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		packageText.setLayoutData(gd);
-		packageText.setText("default");
+		packageText.setText("default");//get this text from the URLProcessor
+		
+		serverSideCheckBoxButton = new Button(container,SWT.CHECK);
+		serverSideCheckBoxButton.setText(CodegenWizardPlugin.getResourceString("page2.serverside.caption"));
 		
 		setControl(container);
 		setPageComplete(true);
 
     }
     
+    /**
+     * Fill the combo with proper language names
+     *
+     */
     private void fillLanguageCombo(){
         
         languageSelectionComboBox.add(JAVA);
@@ -93,22 +105,42 @@ public class OptionsPage extends WizardPage implements UIConstants {
     }
     
     /**
-     * 
+     * Get the selected language
      * @return
      */
     public String getSelectedLanguage(){
         return languageSelectionComboBox.getItem(languageSelectionComboBox.getSelectionIndex());
     }
 
+    /**
+     * the async only status
+     * @return
+     */
     public boolean isAsyncOnlyOn(){
         return asyncOnlyRadioButton.getSelection();
     }
     
+    /**
+     * the sync only status
+     * @return
+     */
     public boolean isSyncOnlyOn(){
         return syncOnlyRadioButton.getSelection();
     }
     
+    /**
+     * return the package name
+     * @return
+     */
     public String getPackageName(){
        return this.packageText.getText();
+    }
+    
+    /**
+     * The serverside status
+     * @return
+     */
+    public boolean isServerside(){
+        return this.serverSideCheckBoxButton.getSelection();
     }
 }
