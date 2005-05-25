@@ -77,8 +77,8 @@ public class MailWorker implements Runnable {
             msgContext =
                 new MessageContext(
                     null,
-                    reg.getEngineConfig().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
-                    reg.getEngineConfig().getTransportOut(new QName(Constants.TRANSPORT_MAIL)),
+                    reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
+                    reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)),
                     reg);
             msgContext.setServerSide(true);
 

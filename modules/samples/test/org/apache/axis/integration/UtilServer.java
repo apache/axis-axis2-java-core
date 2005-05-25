@@ -43,12 +43,12 @@ public class UtilServer {
     //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
-        reciver.getSystemContext().getEngineConfig().addService(service);
-        Utils.resolvePhases(reciver.getSystemContext().getEngineConfig(), service);
+        reciver.getSystemContext().getAxisConfiguration().addService(service);
+        Utils.resolvePhases(reciver.getSystemContext().getAxisConfiguration(), service);
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
-        reciver.getSystemContext().getEngineConfig().removeService(service);
+        reciver.getSystemContext().getAxisConfiguration().removeService(service);
     }
 
     public static synchronized void start() throws Exception {
@@ -105,10 +105,10 @@ public class UtilServer {
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
         
-        sysContext.getEngineConfig().addMdoule(moduleDesc);
-        sysContext.getEngineConfig().engageModule(moduleDesc.getName());
+        sysContext.getAxisConfiguration().addMdoule(moduleDesc);
+        sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
-        sysContext.getEngineConfig().addService(service);
+        sysContext.getAxisConfiguration().addService(service);
         //Utils.resolvePhases(sysContext.getEngineConfig(), service);
         ServiceContext serviceContext = sysContext.createServiceContext(service.getName());
         return serviceContext;

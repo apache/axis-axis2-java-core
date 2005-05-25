@@ -94,7 +94,7 @@ public class AxisEngine {
     public void receive(MessageContext context) throws AxisFault {
         try {
             ConfigurationContext sysCtx = context.getSystemContext();
-            ArrayList phases = sysCtx.getEngineConfig().getInPhasesUptoAndIncludingPostDispatch();
+            ArrayList phases = sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
             invokePhases(phases, context);
             
             OperationContext operationContext = context.getOperationContext();

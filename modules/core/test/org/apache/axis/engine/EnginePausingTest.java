@@ -63,7 +63,7 @@ public class EnginePausingTest extends TestCase {
 
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setStyle(WSDLService.STYLE_DOC);
-        engineContext.getEngineConfig().addService(service);
+        engineContext.getAxisConfiguration().addService(service);
 
         OperationDescription axisOp = new OperationDescription(operationName);
         axisOp.setMessageReciever(new MessageReceiver() {

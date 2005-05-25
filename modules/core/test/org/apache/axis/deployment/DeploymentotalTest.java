@@ -31,7 +31,7 @@ public class DeploymentotalTest extends TestCase {
         String filename = "./target/test-resources/deployment";
 
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        er = builder.buildEngineContext(filename).getEngineConfig();
+        er = builder.buildEngineContext(filename).getAxisConfiguration();
     }
 
 }

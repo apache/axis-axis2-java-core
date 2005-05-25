@@ -94,12 +94,12 @@ public class TCPServer extends TransportListener implements Runnable {
                 Writer out = new OutputStreamWriter(socket.getOutputStream());
                 Reader in = new InputStreamReader(socket.getInputStream());
                 TransportOutDescription transportOut =
-                    configContext.getEngineConfig().getTransportOut(
+                    configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_TCP));
                 MessageContext msgContext =
                     new MessageContext(
                         null,
-                        configContext.getEngineConfig().getTransportIn(
+                        configContext.getAxisConfiguration().getTransportIn(
                             new QName(Constants.TRANSPORT_TCP)),
                         transportOut,
                         configContext);

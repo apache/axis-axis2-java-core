@@ -157,9 +157,9 @@ public class AxisServlet extends HttpServlet {
             MessageContext msgContext =
                 new MessageContext(
                     (SessionContext) sessionContext,
-                    engineContext.getEngineConfig().getTransportIn(
+                    engineContext.getAxisConfiguration().getTransportIn(
                         new QName(Constants.TRANSPORT_HTTP)),
-                    engineContext.getEngineConfig().getTransportOut(
+                    engineContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)),
                     engineContext);
             msgContext.setServerSide(true);
@@ -216,11 +216,11 @@ public class AxisServlet extends HttpServlet {
      */
     private void listServices(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
-        HashMap services = engineContext.getEngineConfig().getServices();
+        HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(
             Constants.ERROR_SERVICE_MAP,
-            engineContext.getEngineConfig().getFaulytServices());
+            engineContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -241,7 +241,7 @@ public class AxisServlet extends HttpServlet {
             filePart.substring(
                 filePart.lastIndexOf("/") + 1,
                 filePart.length());
-        HashMap services = engineContext.getEngineConfig().getServices();
+        HashMap services = engineContext.getAxisConfiguration().getServices();
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {

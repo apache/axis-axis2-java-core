@@ -85,7 +85,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                     }
 
                     AxisConfiguration registry =
-                        messageContext.getSystemContext().getEngineConfig();
+                        messageContext.getSystemContext().getAxisConfiguration();
                     return registry.getService(serviceName);
                 }
             }

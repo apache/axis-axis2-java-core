@@ -72,7 +72,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
         Parameter parameter = new ParameterImpl(Constants.DO_REST,"true");
-        ((AxisConfigurationImpl)UtilServer.getConfigurationContext().getEngineConfig()).addParameter(parameter);
+        ((AxisConfigurationImpl)UtilServer.getConfigurationContext().getAxisConfiguration()).addParameter(parameter);
         service =
                 Utils.createSimpleService(serviceName,
                         org.apache.axis.engine.Echo.class.getName(),

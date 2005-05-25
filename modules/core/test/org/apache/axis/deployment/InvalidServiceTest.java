@@ -38,7 +38,7 @@ public class InvalidServiceTest extends TestCase {
         try {
             String filename = "./target/test-resources/InvalidDeployment";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er = builder.buildEngineContext(filename).getEngineConfig();
+            er = builder.buildEngineContext(filename).getAxisConfiguration();
             String msg = (String) er.getFaulytServices().get("invalidService");
             if (msg == null || msg.equals("")) {
                 fail("this must failed gracefully with AxisFault ervice specifi module can not" +

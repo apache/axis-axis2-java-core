@@ -65,7 +65,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
         ServiceDescription service = null;
         if(toEPR != null){
             QName serviceName = new QName(toEPR.getAddress());
-            service = messageContext.getSystemContext().getEngineConfig().getService(serviceName);
+            service = messageContext.getSystemContext().getAxisConfiguration().getService(serviceName);
         }
 
         if (service != null) {

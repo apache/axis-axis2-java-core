@@ -30,7 +30,7 @@ import org.apache.axis.storage.AxisStorage;
 
 public class ConfigurationContext extends AbstractContext{
 
-    private AxisConfiguration engineConfig;
+    private AxisConfiguration axisConfiguration;
     private AxisStorage storage;
 
     private Map sessionContextMap;
@@ -46,7 +46,7 @@ public class ConfigurationContext extends AbstractContext{
 
     public ConfigurationContext(AxisConfiguration registry) {
         super(null);
-        this.engineConfig = registry;
+        this.axisConfiguration = registry;
         serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();
         sessionContextMap = new HashMap();
@@ -70,15 +70,15 @@ public class ConfigurationContext extends AbstractContext{
     /**
      * @return
      */
-    public AxisConfiguration getEngineConfig() {
-        return engineConfig;
+    public AxisConfiguration getAxisConfiguration() {
+        return axisConfiguration;
     }
 
     /**
      * @param configuration
      */
-    public void setEngineConfig(AxisConfiguration configuration) {
-        engineConfig = configuration;
+    public void setAxisConfiguration(AxisConfiguration configuration) {
+        axisConfiguration = configuration;
     }
 
      public void registerOperationContext(String messageID, OperationContext mepContext) {
@@ -110,7 +110,7 @@ public class ConfigurationContext extends AbstractContext{
     }
 
     public ServiceContext createServiceContext(QName serviceName) throws AxisFault {
-        ServiceDescription service = engineConfig.getService(serviceName);
+        ServiceDescription service = axisConfiguration.getService(serviceName);
         if(service != null){
             ServiceContext serviceContext = new ServiceContext(service, this);
             return serviceContext;

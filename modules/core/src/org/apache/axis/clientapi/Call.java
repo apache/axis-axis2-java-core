@@ -112,7 +112,7 @@ public class Call extends InOutMEPClient {
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
-        sysContext.getEngineConfig().addService(axisService);
+        sysContext.getAxisConfiguration().addService(axisService);
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;
     }

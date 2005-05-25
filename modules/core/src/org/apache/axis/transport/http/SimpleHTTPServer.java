@@ -136,12 +136,12 @@ public class SimpleHTTPServer extends TransportListener implements Runnable{
                         Writer out = new OutputStreamWriter(socket.getOutputStream());
                         Reader in = new InputStreamReader(socket.getInputStream());
                         TransportOutDescription transportOut =
-                            configurationContext.getEngineConfig().getTransportOut(
+                            configurationContext.getAxisConfiguration().getTransportOut(
                                 new QName(Constants.TRANSPORT_HTTP));
                         MessageContext msgContext =
                             new MessageContext(
                                 null,
-                                configurationContext.getEngineConfig().getTransportIn(
+                                configurationContext.getAxisConfiguration().getTransportIn(
                                     new QName(Constants.TRANSPORT_HTTP)),
                                 transportOut,
                                 configurationContext);

@@ -36,13 +36,13 @@ public class UtilsTCPServer {
 
     public static synchronized void deployService(ServiceDescription service)
         throws AxisFault {
-        configurationContext.getEngineConfig().addService(service);
+        configurationContext.getAxisConfiguration().addService(service);
 
     }
 
     public static synchronized void unDeployService(QName service)
         throws AxisFault {
-        configurationContext.getEngineConfig().removeService(service);
+        configurationContext.getAxisConfiguration().removeService(service);
     }
 
     public static synchronized void start() throws Exception {
@@ -65,7 +65,7 @@ public class UtilsTCPServer {
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            configurationContext.getEngineConfig().engageModule(
+            configurationContext.getAxisConfiguration().engageModule(
                 new QName("addressing"));
             reciver =
                 new TCPServer(UtilServer.TESTING_PORT, configurationContext);

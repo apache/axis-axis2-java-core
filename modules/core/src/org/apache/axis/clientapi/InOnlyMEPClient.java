@@ -54,11 +54,11 @@ public class InOnlyMEPClient extends MEPClient {
         }
         
         TransportInDescription transportIn =
-            syscontext.getEngineConfig().getTransportIn(new QName(senderTransport));
+            syscontext.getAxisConfiguration().getTransportIn(new QName(senderTransport));
         msgctx.setTransportIn(transportIn);
 
         ConfigurationContext sysContext = serviceContext.getEngineContext();
-        AxisConfiguration registry = sysContext.getEngineConfig();
+        AxisConfiguration registry = sysContext.getAxisConfiguration();
 
         AxisEngine engine = new AxisEngine(sysContext);
         msgctx.setOperationContext(axisop.findOperationContext(msgctx,serviceContext,false));
@@ -137,7 +137,7 @@ public class InOnlyMEPClient extends MEPClient {
     }
     
     public void engageModule(QName name) throws AxisFault{
-        serviceContext.getEngineContext().getEngineConfig().engageModule(name);
+        serviceContext.getEngineContext().getAxisConfiguration().engageModule(name);
     }
 
 }

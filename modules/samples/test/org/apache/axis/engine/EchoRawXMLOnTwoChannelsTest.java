@@ -72,7 +72,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getEngineConfig().engageModule(
+        UtilServer.getConfigurationContext().getAxisConfiguration().engageModule(
             new QName("addressing"));
 
         ServiceDescription service =

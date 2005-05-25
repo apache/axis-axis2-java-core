@@ -35,7 +35,7 @@ public class SystemPhasesremovedTest extends TestCase{
             try {
                 String filename = "./test-resources/deployment/SystemPhaseRemove";
                 ConfigurationContextFactory builder = new ConfigurationContextFactory();
-                er = builder.buildEngineContext(filename).getEngineConfig();
+                er = builder.buildEngineContext(filename).getAxisConfiguration();
                 fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
                         "inphases , phase order dose not\" +\n support\\n recheck server.xml\"");
             } catch (DeploymentException e) {

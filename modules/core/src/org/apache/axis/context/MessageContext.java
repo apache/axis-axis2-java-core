@@ -65,7 +65,7 @@ public class MessageContext extends AbstractContext {
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
-    private ConfigurationContext engineContext;
+    private ConfigurationContext configurationContext;
 
     private TransportInDescription transportIn;
 
@@ -117,7 +117,7 @@ public class MessageContext extends AbstractContext {
     private String serviceInstanceID;
 
     /**
-      * @param engineContext
+      * @param configurationContext
       * @param sessionContext
       * @param transportIn
       * @param transportOut
@@ -130,12 +130,12 @@ public class MessageContext extends AbstractContext {
         throws AxisFault {
         super(null);
         this.messageInformationHeaders = addressingHeaders;
-        this.engineContext = engineContext;
+        this.configurationContext = engineContext;
         sessionContext = null;
     }
 
     /**
-     * @param engineContext
+     * @param configurationContext
      * @param sessionContext
      * @param transportIn
      * @param transportOut
@@ -158,7 +158,7 @@ public class MessageContext extends AbstractContext {
      * @param sessionContext
      * @param transportIn
      * @param transportOut
-     * @param engineContext
+     * @param configurationContext
      * @throws AxisFault
      */
 
@@ -178,7 +178,7 @@ public class MessageContext extends AbstractContext {
         messageInformationHeaders = new MessageInformationHeadersCollection();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
-        this.engineContext = engineContext;
+        this.configurationContext = engineContext;
 
     }
 
@@ -472,7 +472,7 @@ public class MessageContext extends AbstractContext {
     }
 
     public ConfigurationContext getSystemContext() {
-        return engineContext;
+        return configurationContext;
     }
 
     /**
@@ -485,8 +485,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @param context
      */
-    public void setEngineContext(ConfigurationContext context) {
-        engineContext = context;
+    public void setConfigurationContext(ConfigurationContext context) {
+        configurationContext = context;
     }
 
     /**
@@ -520,7 +520,7 @@ public class MessageContext extends AbstractContext {
             obj = serviceContext.getProperty(key, persistent);
         }
         if (obj == null && operationContext == null) {
-            obj = engineContext.getProperty(key, persistent);
+            obj = configurationContext.getProperty(key, persistent);
         }
         //Search the configurations
         Parameter param = null;
@@ -532,8 +532,8 @@ public class MessageContext extends AbstractContext {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
             param = serviceDesc.getParameter(key);
         }
-        if (param == null && engineContext != null) {
-            AxisConfiguration baseConfig = engineContext.getEngineConfig();
+        if (param == null && configurationContext != null) {
+            AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
             param = baseConfig.getParameter(key);
         }
         if (param != null) {

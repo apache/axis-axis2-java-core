@@ -68,13 +68,13 @@ public class ConfigurationContextFactory {
 
     private void initModules(ConfigurationContext context) throws DeploymentException {
         try {
-            HashMap modules = ((AxisConfigurationImpl) context.getEngineConfig()).getModules();
+            HashMap modules = ((AxisConfigurationImpl) context.getAxisConfiguration()).getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 ModuleDescription axismodule = (ModuleDescription) iterator.next();
                 Module module = axismodule.getModule();
                 if (module != null) {
-                    module.init(context.getEngineConfig());
+                    module.init(context.getAxisConfiguration());
                 }
             }
         } catch (AxisFault e) {

@@ -149,7 +149,7 @@ public class InOutMEPClient extends MEPClient {
             checkTransport(msgctx);
 
             ConfigurationContext sysContext = serviceContext.getEngineContext();
-            AxisConfiguration registry = sysContext.getEngineConfig();
+            AxisConfiguration registry = sysContext.getAxisConfiguration();
 
             msgctx.setOperationContext(
                 OperationContextFactory.createMEPContext(
@@ -362,7 +362,7 @@ public class InOutMEPClient extends MEPClient {
 
         if (msgctx.getTransportIn() == null) {
             final TransportInDescription transportIn =
-                serviceContext.getEngineContext().getEngineConfig().getTransportIn(
+                serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
                     new QName(senderTransport));
             if (transportIn != null) {
                 msgctx.setTransportIn(transportIn);
@@ -373,7 +373,7 @@ public class InOutMEPClient extends MEPClient {
         }
         if (msgctx.getTransportOut() == null) {
             final TransportOutDescription transportOut =
-                serviceContext.getEngineContext().getEngineConfig().getTransportOut(
+                serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
                     new QName(listenerTransport));
             if (transportOut != null) {
                 msgctx.setTransportOut(transportOut);
@@ -400,7 +400,7 @@ public class InOutMEPClient extends MEPClient {
     }
 
     public void engageModule(QName moduleName) throws AxisFault {
-        serviceContext.getEngineContext().getEngineConfig().engageModule(moduleName);
+        serviceContext.getEngineContext().getAxisConfiguration().engageModule(moduleName);
     }
 
 }
