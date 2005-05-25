@@ -111,9 +111,7 @@ public class InOutMEPClient extends MEPClient {
     //        throw new UnsupportedOperationException();
     //    }
 
-    public MessageContext invokeBlocking(
-        OperationDescription axisop,
-        final MessageContext msgctx)
+    public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
         throws AxisFault {
         verifyInvocation(axisop);
         if (useSeparateListener) {
@@ -133,12 +131,7 @@ public class InOutMEPClient extends MEPClient {
             }
             if (callback.envelope != null) {
                 MessageContext resMsgctx =
-                    new MessageContext(
-                        serviceContext.getEngineContext(),
-                        null,
-                        null,
-                        null,
-                        null);
+                    new MessageContext(serviceContext.getEngineContext(), null, null, null, null);
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -164,13 +157,11 @@ public class InOutMEPClient extends MEPClient {
                     false,
                     axisop,
                     serviceContext));
-            MessageContext response =
-                TwoChannelBasedSender.send(msgctx, listenerTransport);
+            MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
 
             SOAPEnvelope resenvelope = response.getEnvelope();
             if (resenvelope.getBody().hasFault()) {
-                throw new AxisFault(
-                    resenvelope.getBody().getFault().getException());
+                throw new AxisFault(resenvelope.getBody().getFault().getException());
             }
             return response;
         }
@@ -184,8 +175,7 @@ public class InOutMEPClient extends MEPClient {
         verifyInvocation(axisop);
         msgctx.setTo(to);
         try {
-            final ConfigurationContext syscontext =
-                serviceContext.getEngineContext();
+            final ConfigurationContext syscontext = serviceContext.getEngineContext();
 
             AxisEngine engine = new AxisEngine(syscontext);
             //TODO
@@ -198,10 +188,7 @@ public class InOutMEPClient extends MEPClient {
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
                     ListenerManager.replyToEPR(
-                        serviceContext
-                            .getServiceConfig()
-                            .getName()
-                            .getLocalPart()
+                        serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
                             + axisop.getName().getLocalPart(),
                         listenerTransport));
@@ -223,9 +210,7 @@ public class InOutMEPClient extends MEPClient {
                                     serviceContext));
                             msgctx.setServiceContext(serviceContext);
                             MessageContext response =
-                                TwoChannelBasedSender.send(
-                                    msgctx,
-                                    listenerTransport);
+                                TwoChannelBasedSender.send(msgctx, listenerTransport);
                             SOAPEnvelope resenvelope = response.getEnvelope();
                             AsyncResult asyncResult = new AsyncResult();
                             asyncResult.setResult(resenvelope);
@@ -334,27 +319,19 @@ public class InOutMEPClient extends MEPClient {
         }
 
         if (useSeparateListener == true) {
-            ListenerManager.makeSureStarted(
-                listenerTransport,
-                serviceContext.getEngineContext());
+            ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
         }
     }
 
-    private SOAPEnvelope checkReturnChannel(MessageContext response)
-        throws AxisFault {
+    private SOAPEnvelope checkReturnChannel(MessageContext response) throws AxisFault {
         SOAPEnvelope resenvelope = null;
         try {
             //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
             if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
                 HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-                resenvelope =
-                    receiver.checkForMessage(
-                        response,
-                        serviceContext.getEngineContext());
+                resenvelope = receiver.checkForMessage(response, serviceContext.getEngineContext());
             } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
-                Reader in =
-                    (Reader) response.getProperty(
-                        MessageContext.TRANSPORT_READER);
+                Reader in = (Reader) response.getProperty(MessageContext.TRANSPORT_READER);
                 if (in != null) {
                     XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(in);
@@ -385,10 +362,7 @@ public class InOutMEPClient extends MEPClient {
 
         if (msgctx.getTransportIn() == null) {
             final TransportInDescription transportIn =
-                serviceContext
-                    .getEngineContext()
-                    .getEngineConfig()
-                    .getTransportIn(
+                serviceContext.getEngineContext().getEngineConfig().getTransportIn(
                     new QName(senderTransport));
             if (transportIn != null) {
                 msgctx.setTransportIn(transportIn);
@@ -399,10 +373,7 @@ public class InOutMEPClient extends MEPClient {
         }
         if (msgctx.getTransportOut() == null) {
             final TransportOutDescription transportOut =
-                serviceContext
-                    .getEngineContext()
-                    .getEngineConfig()
-                    .getTransportOut(
+                serviceContext.getEngineContext().getEngineConfig().getTransportOut(
                     new QName(listenerTransport));
             if (transportOut != null) {
                 msgctx.setTransportOut(transportOut);
@@ -426,6 +397,10 @@ public class InOutMEPClient extends MEPClient {
         public boolean hasResult() {
             return envelope != null || error != null;
         }
+    }
+
+    public void engageModule(QName moduleName) throws AxisFault {
+        serviceContext.getEngineContext().getEngineConfig().engageModule(moduleName);
     }
 
 }

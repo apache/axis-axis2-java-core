@@ -18,15 +18,12 @@ package org.apache.axis.engine;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.AsyncResult;
-import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
@@ -42,7 +39,7 @@ import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class EchoRawXMLOnTwoChannelsTest extends TestCase {
+public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     private EndpointReference targetEPR =
         new EndpointReference(
             AddressingConstants.WSA_TO,
@@ -62,11 +59,11 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
     private boolean finish = false;
 
-    public EchoRawXMLOnTwoChannelsTest() {
-        super(EchoRawXMLOnTwoChannelsTest.class.getName());
+    public EchoRawXMLOnTwoChannelsSyncTest() {
+        super(EchoRawXMLOnTwoChannelsSyncTest.class.getName());
     }
 
-    public EchoRawXMLOnTwoChannelsTest(String testName) {
+    public EchoRawXMLOnTwoChannelsSyncTest(String testName) {
         super(testName);
     }
 
@@ -102,7 +99,9 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         return reqEnv;
     }
 
-    public void testEchoXMLCompleteASync() throws Exception {
+
+
+    public void testEchoXMLCompleteSync() throws Exception {
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
@@ -120,41 +119,12 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         method.addChild(value);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
-        // call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                try {
-                    result.getResponseEnvelope().serialize(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                } catch (XMLStreamException e) {
-                    reportError(e);
-                } finally {
-                    finish = true;
-                }
-            }
 
-            public void reportError(Exception e) {
-                e.printStackTrace();
-                finish = true;
-            }
-        };
-
-        call.invokeNonBlocking(operationName.getLocalPart(), method, callback);
-        int index = 0;
-        while (!finish) {
-            Thread.sleep(1000);
-            index++;
-            if (index > 10) {
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
-            }
-        }
-
-        log.info("send the reqest");
+        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
+        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
 
     }
 
- 
 }
