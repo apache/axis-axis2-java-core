@@ -8,7 +8,6 @@ import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLFault;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLImport;
@@ -18,6 +17,8 @@ import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.extensions.ExtensionFactory;
+import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 import org.apache.wsdl.impl.WSDLBindingImpl;
 import org.apache.wsdl.impl.WSDLBindingMessageReferenceImpl;
@@ -25,7 +26,6 @@ import org.apache.wsdl.impl.WSDLBindingOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.impl.WSDLEndpointImpl;
 import org.apache.wsdl.impl.WSDLExtensibilityAttributeImpl;
-import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 import org.apache.wsdl.impl.WSDLFaultImpl;
 import org.apache.wsdl.impl.WSDLFeatureImpl;
 import org.apache.wsdl.impl.WSDLImportImpl;
@@ -111,13 +111,19 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 	public WSDLBindingOperation createWSDLBindingOperation(){
 		return new WSDLBindingOperationImpl();
 	}
-	
-	public WSDLExtensibilityElement createWSDLExtensibilityElement(){
-		return new WSDLExtensibilityElementImpl();
-	}
-	
+		
 	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute(){
 		return new WSDLExtensibilityAttributeImpl();
+	}
+	
+	/**
+	 * 
+	 * @return A new Instance of <code>ExtensionFactory</code> that
+	 * is capable of creating the correct <code>ExtensibilityElement</code>
+	 * given a <code>QName</code>.
+	 */
+	public ExtensionFactory createExtensionFactory(){
+		return new ExtensionFactoryImpl();
 	}
 
 }
