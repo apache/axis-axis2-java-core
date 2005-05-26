@@ -123,7 +123,7 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
-		<!-- <exclude>**/*TCPEchoRawXMLTest.java</exclude> -->
+		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
       </excludes>
      <includes>
         <include>**/*Test.java</include>

@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.PhaseRule;
 import org.apache.axis.description.ServiceDescription;
@@ -125,4 +126,13 @@ public class Utils {
         PhaseResolver pr = new PhaseResolver(axisconfig,serviceDesc);
         pr.buildchains();
     }
+    
+    public static String getParameterValue(Parameter param){
+        if(param == null){
+            return null;
+        }else{
+            return (String)param.getValue();
+        }
+    }
+    
 }

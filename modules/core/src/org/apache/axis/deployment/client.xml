@@ -15,5 +15,22 @@
     	<parameter name="port" locked="xsd:false">6060</parameter>
     </transportReceiver>
     <transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
+    
+     <transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
+    	<parameter name="transport.mail.pop3.host" locked="xsd:false">mail.itambalama.com</parameter>
+    	<parameter name="transport.mail.pop3.user" locked="xsd:false">axis2.mail.test@itambalama.com</parameter>
+    	<parameter name="transport.mail.pop3.password" locked="xsd:false">2sixa.mail</parameter>
+    	<parameter name="transport.mail.pop3.port" locked="xsd:false">110</parameter>
+    	<parameter name="transport.mail.replyToAddress" locked="xsd:false">axis2.mail.test@itambalama.com</parameter>
+    </transportReceiver>
+    <transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender">
+    	<parameter name="transport.mail.smtp.host" locked="xsd:false">mail.itambalama.com</parameter>
+    	<parameter name="transport.mail.smtp.user" locked="xsd:false">axis2.mail.test</parameter>
+    	<parameter name="transport.mail.smtp.password" locked="xsd:false">2sixa.mail</parameter>
+    	<parameter name="transport.mail.smtp.port" locked="xsd:false">25</parameter>
+    </transportSender>
+    
+    
+    
 </client>
 

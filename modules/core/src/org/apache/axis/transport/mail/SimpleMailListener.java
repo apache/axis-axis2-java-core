@@ -18,6 +18,7 @@ package org.apache.axis.transport.mail;
 
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -26,8 +27,14 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.TransportListener;
+import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.pop3.POP3Client;
@@ -51,28 +58,38 @@ import org.apache.commons.net.pop3.POP3Client;
  *  
  */
 
-public class SimpleMailListener implements Runnable {
+public class SimpleMailListener extends TransportListener implements Runnable {
 
     protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
 
     private String host;
 
-    private int port;
+    private String port;
 
-    private String userid;
+    private String user;
 
     private String password;
 
-    private ConfigurationContext er = null;
+    private ConfigurationContext configurationContext = null;
 
-    public SimpleMailListener(String host, int port, String userid, String password, String dir) {
+    private String replyTo;
+
+    public SimpleMailListener() {
+    }
+
+    public SimpleMailListener(
+        String host,
+        String port,
+        String userid,
+        String password,
+        String dir) {
         this.host = host;
         this.port = port;
-        this.userid = userid;
+        this.user = userid;
         this.password = password;
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er = builder.buildEngineContext(dir);
+            configurationContext = builder.buildEngineContext(dir);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,15 +103,15 @@ public class SimpleMailListener implements Runnable {
 
     public SimpleMailListener(
         String host,
-        int port,
+        String port,
         String userid,
         String password,
         ConfigurationContext er) {
         this.host = host;
         this.port = port;
-        this.userid = userid;
+        this.user = userid;
         this.password = password;
-        this.er = er;
+        this.configurationContext = er;
     }
 
     // Are we doing threads?
@@ -123,7 +140,7 @@ public class SimpleMailListener implements Runnable {
         if (!stopped) {
             String logMessage =
                 "Mail listner is being setup to listen to the address "
-                    + userid
+                    + user
                     + "@"
                     + host
                     + " On port "
@@ -133,14 +150,17 @@ public class SimpleMailListener implements Runnable {
         }
         while (!stopped) {
             try {
-                PasswordAuthentication authentication =
-                    new PasswordAuthentication(userid, password);
+                final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
                 Properties props = new Properties();
-                props.put("mail.user", userid);
+                props.put("mail.user", user);
                 props.put("mail.host", host);
                 props.put("mail.store.protocol", "pop3");
                 props.put("mail.transport.protocol", "smtp");
-                Session session = Session.getInstance(props);
+                Session session = Session.getInstance(props,new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return authentication;
+                    }
+                });
                 Store store = session.getStore();
                 store.connect();
                 Folder root = store.getDefaultFolder();
@@ -154,7 +174,7 @@ public class SimpleMailListener implements Runnable {
                 for (int i = 0; i < msgs.length; i++) {
                     MimeMessage msg = (MimeMessage) msgs[i];
                     if (msg != null) {
-                        MailWorker worker = new MailWorker(msg, er);
+                        MailWorker worker = new MailWorker(msg, configurationContext);
                         if (doThreads) {
                             Thread thread = new Thread(worker);
                             thread.setDaemon(true);
@@ -227,7 +247,7 @@ public class SimpleMailListener implements Runnable {
      * @param daemon
      *            a boolean indicating if the thread should be a daemon.
      */
-    public void start(boolean daemon) throws Exception {
+    public void start(boolean daemon) {
         if (doThreads) {
             Thread thread = new Thread(this);
             thread.setDaemon(daemon);
@@ -240,7 +260,7 @@ public class SimpleMailListener implements Runnable {
     /**
      * Start this server as a NON-daemon.
      */
-    public void start() throws Exception {
+    public void start() {
         start(false);
     }
 
@@ -249,7 +269,7 @@ public class SimpleMailListener implements Runnable {
      * 
      * This will interrupt any pending accept().
      */
-    public void stop() throws Exception {
+    public void stop() {
         /*
          * Close the server socket cleanly, but avoid fresh accepts while the
          * socket is closing.
@@ -283,7 +303,7 @@ public class SimpleMailListener implements Runnable {
         try {
             doThreads = optDoThreads; //(opts.isFlagSet('t') > 0);
             String host = optHostName; //opts.getHost();
-            int port = ((optUseCustomPort) ? optCustomPortToUse : 110);
+            String port = String.valueOf(((optUseCustomPort) ? optCustomPortToUse : 110));
             POP3Client pop3 = new POP3Client();
             SimpleMailListener sas =
                 new SimpleMailListener(host, port, optUserName, optPassword, optDir);
@@ -298,4 +318,41 @@ public class SimpleMailListener implements Runnable {
         }
 
     }
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportListener#init(org.apache.axis.context.ConfigurationContext, org.apache.axis.description.TransportInDescription)
+     */
+    public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
+        throws AxisFault {
+        this.configurationContext = configurationContext;
+
+        user = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_USER));
+        host = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_HOST));
+        password = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_PASSWORD));
+        port = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_PORT));
+        replyTo = Utils.getParameterValue(transportIn.getParameter(MailConstants.RAPLY_TO));
+        if (user == null || host == null || password == null || port == null) {
+            throw new AxisFault(
+                "user, port, host or password not set, "
+                    + "   [user null = "
+                    + (user == null)
+                    + ", password null= "
+                    + (password == null)
+                    + ", host null "
+                    + (host == null)
+                    + ",port null "
+                    + (port == null));
+        }
+
+        POP3Client pop3 = new POP3Client();
+        this.setPOP3(pop3);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportListener#replyToEPR(java.lang.String)
+     */
+    public EndpointReference replyToEPR(String serviceName) throws AxisFault {
+        // TODO Auto-generated method stub
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo);
+    }
+
 }

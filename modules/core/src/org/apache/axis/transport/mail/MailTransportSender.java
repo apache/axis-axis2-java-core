@@ -23,6 +23,7 @@ import java.io.PipedOutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -32,8 +33,10 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
+import org.apache.axis.util.Utils;
 
 public class MailTransportSender extends AbstractTransportSender {
     private String host;
@@ -49,13 +52,10 @@ public class MailTransportSender extends AbstractTransportSender {
 
     public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault {
-        throw new UnsupportedOperationException();
 
     }
 
     public void startSendWithToAddress(MessageContext msgContext, Writer writer) throws AxisFault {
-        throw new UnsupportedOperationException();
-
     }
 
     protected Writer openTheConnection(EndpointReference epr) throws AxisFault {
@@ -85,24 +85,50 @@ public class MailTransportSender extends AbstractTransportSender {
         Writer writer)
         throws AxisFault {
         try {
-            PasswordAuthentication authentication = new PasswordAuthentication(user, password);
-            Properties props = new Properties();
-            props.put("mail.user", user);
-            props.put("mail.host", host);
-            props.put("mail.store.protocol", "pop3");
-            props.put("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.port", smtpPort);
-            Session session = Session.getInstance(props);
+            TransportOutDescription transportOut = msgContext.getTransportOut();
+            user = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_USER));
+            host = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_HOST));
+            password =
+                Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PASSWORD));
+            smtpPort = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PORT));
+            if (user != null && host != null && password != null && smtpPort != null) {
+                final PasswordAuthentication authentication =
+                    new PasswordAuthentication(user, password);
+                Properties props = new Properties();
+                props.put("mail.user", user);
+                props.put("mail.host", host);
+                props.put("mail.store.protocol", "pop3");
+                props.put("mail.transport.protocol", "smtp");
+                props.put("mail.smtp.port", smtpPort);
+                Session session = Session.getInstance(props, new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return authentication;
+                    }
+                });
 
-            MimeMessage msg = new MimeMessage(session, in);
-            String action = msgContext.getWSAAction();
-            if (action != null) {
-                msg.setHeader("transport.mail.soapaction", action);
+                MimeMessage msg = new MimeMessage(session, in);
+                String action = msgContext.getWSAAction();
+                if (action != null) {
+                    msg.setHeader("transport.mail.soapaction", action);
+                }
+
+                msg.addRecipients(Message.RecipientType.TO, msgContext.getTo().getAddress());
+                msg.setSubject(msgContext.getTo().getAddress());
+                Transport.send(msg);
+
+            } else {
+                throw new AxisFault(
+                    "user, port, host or password not set, "
+                        + "   [user null = "
+                        + (user == null)
+                        + ", password null= "
+                        + (password == null)
+                        + ", host null "
+                        + (host == null)
+                        + ",port null "
+                        + (smtpPort == null));
+
             }
-
-            msg.addRecipients(Message.RecipientType.TO, msgContext.getTo().getAddress());
-            msg.setSubject(msgContext.getTo().getAddress());
-            Transport.send(msg);
         } catch (MessagingException e) {
             throw new AxisFault(e);
         }
