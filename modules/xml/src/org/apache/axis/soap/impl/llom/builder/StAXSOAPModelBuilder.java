@@ -260,14 +260,14 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             switch (token) {
                 case XMLStreamConstants.START_ELEMENT:
                     elementLevel++;
-                    System.out.println("Start ==> "+parser.getLocalName());
+                   // System.out.println("Start ==> "+parser.getLocalName());
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     lastNode = createOMText();
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    System.out.println("End ==> "+parser.getLocalName());
+                   //System.out.println("End ==> "+parser.getLocalName());
 
                     if (lastNode.isComplete()) {
                         OMElement parent = lastNode.getParent();

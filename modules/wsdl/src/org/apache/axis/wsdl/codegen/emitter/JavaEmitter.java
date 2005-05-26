@@ -40,7 +40,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
      */
     public JavaEmitter(CodeGenConfiguration configuration) {
         this.configuration = configuration;
-        this.mapper = new DefaultTypeMapper();
+        this.mapper = new JavaTypeMapper();
 
     }
 

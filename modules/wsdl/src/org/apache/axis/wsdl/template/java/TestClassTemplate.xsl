@@ -17,7 +17,9 @@
 
 
      <xsl:for-each select="method">
-
+         <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+         <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
+         <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
          <xsl:if test="$isSync='1'">
 
         /**
@@ -26,7 +28,16 @@
         public  void test<xsl:value-of select="@name"/>() throws java.lang.Exception{
 
         <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();
-         assertNotNull(stub.<xsl:value-of select="@name"/>(getRPCStyleChildElement("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>")));
+           <xsl:choose>
+             <xsl:when test="$inputtype!=''">
+               assertNotNull(stub.<xsl:value-of select="@name"/>(
+                                (<xsl:value-of select="$inputtype"/>)createTestInput(<xsl:value-of select="$inputtype"/>.class)));//this should come as a type
+              </xsl:when>
+              <xsl:otherwise>
+                assertNotNull(stub.<xsl:value-of select="@name"/>());
+             </xsl:otherwise>
+            </xsl:choose>
+
 
 
         }
@@ -38,10 +49,21 @@
          */
         public  void testStart<xsl:value-of select="@name"/>() throws java.lang.Exception{
             <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();
-            stub.start<xsl:value-of select="@name"/>(
-                    getRPCStyleChildElement("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>"),
+             <xsl:choose>
+             <xsl:when test="$inputtype!=''">
+                stub.start<xsl:value-of select="@name"/>(
+                   (<xsl:value-of select="$inputtype"/>)createTestInput(<xsl:value-of select="$inputtype"/>.class),
                     new <xsl:value-of select="$tempCallbackName"/>()
-            );
+                );
+              </xsl:when>
+              <xsl:otherwise>
+                stub.start<xsl:value-of select="@name"/>(
+                    new <xsl:value-of select="$tempCallbackName"/>()
+                );
+             </xsl:otherwise>
+            </xsl:choose>
+
+
         }
 
         private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>{
@@ -59,21 +81,25 @@
       </xsl:if>
      </xsl:for-each>
 
-       private org.apache.axis.om.OMElement getRPCStyleChildElement(String methodNamespaceURI,String methodName){
-         org.apache.axis.om.OMFactory omFactory = org.apache.axis.om.OMAbstractFactory.getOMFactory();
-         org.apache.axis.om.OMNamespace ns = omFactory.createOMNamespace(methodNamespaceURI,"ns");
-         org.apache.axis.om.OMNamespace emptyNS = omFactory.createOMNamespace("",null);
-         org.apache.axis.om.OMNamespace soapEnvNs = omFactory.createOMNamespace(
-                org.apache.axis.soap.impl.llom.soap11.SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                org.apache.axis.soap.impl.llom.soap11.SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX) ;
-        org.apache.axis.om.OMElement rootElt =  omFactory.createOMElement(methodName,ns);
-        rootElt.declareNamespace(soapEnvNs);
-        rootElt.addAttribute("encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",soapEnvNs);
 
-        //have to add the parameters here
+     public static Object createTestInput(Class paramClass){
 
-        return rootElt;
+       if (paramClass.equals(String.class)){
+           return new String("Test");
+       }else if (paramClass.equals(Integer.class)){
+            return new Integer(1);
+       }else if (paramClass.equals(Float.class)){
+           return new Float(2);
+       }else if (paramClass.equals(Double.class)){
+           return new Double(3);
+       //todo this seems to be a long list... needs to complete this
+       //}else if (paramClass.equals(OMElement.class)){
+       //  return null;
+       }else{
+         return new Object();
        }
+
+    }
     }
     </xsl:template>
  </xsl:stylesheet>

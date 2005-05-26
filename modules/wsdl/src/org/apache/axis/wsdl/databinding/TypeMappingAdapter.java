@@ -1,5 +1,7 @@
 package org.apache.axis.wsdl.databinding;
 
+import org.apache.axis.om.OMElement;
+
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
@@ -39,7 +41,7 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
             if (o!=null){
                return (Class)o;
             }else{
-                return Object.class;
+                return OMElement.class;
             }
         }
 
