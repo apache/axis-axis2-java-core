@@ -34,6 +34,7 @@ import javax.wsdl.Service;
 import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
@@ -46,11 +47,12 @@ import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.extensions.DefaultExtensibilityElement;
+import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.impl.WSDLProcessingException;
 
 /**
@@ -96,20 +98,19 @@ public class WSDLPump {
 		wsdlDefinition
 				.setTargetNameSpace(wsdl4JDefinition.getTargetNamespace());
 
-		//////////////////////////////////////////////////////////////////////////////
-		//Order of the following itmes shouldn't be changed unless you really
-		// //
-		// know what you are doing. Reason being the components that are //
-		// copied(pumped) towards the end depend on the components that has //
-		// already being pumped. Following Lists some of the dependencies //
+		/////////////////////////////////////////////////////////////////////
+		// Order of the following items shouldn't be changed unless you //
+		// really know what you are doing. Reason being the components that //
+		// are copied(pumped) towards the end depend on the components that //
+		// has already being pumped. Following Lists some of the //
+		// dependencies. //
 		//1) The Binding refers to the Interface //
-		//2) Thw Endpoint refers tot he Bindings //
+		//2) The Endpoint refers to the Bindings //
 		// .... //
-		//																		   	//
-		//////////////////////////////////////////////////////////////////////////////
+		//																   	//
+		//////////////////////////////////////////////////////////////////////
 
-		/////////////////////////(1)First pump the
-		// Types//////////////////////////////
+		//////////////////(1)First Copy the Types/////////////////////////////
 		//Types may get changed inside the Operation pumping.
 
 		Types wsdl4jTypes = wsdl4JDefinition.getTypes();
@@ -117,48 +118,29 @@ public class WSDLPump {
 			WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
 			Iterator wsdl4jelmentsIterator = wsdl4jTypes
 					.getExtensibilityElements().iterator();
-			ExtensibilityElement wsdl4jElement;
-			WSDLExtensibilityElement womElement;
-			UnknownExtensibilityElement temp = new UnknownExtensibilityElement();
-			while (wsdl4jelmentsIterator.hasNext()) {
-				wsdl4jElement = (ExtensibilityElement) wsdl4jelmentsIterator
-						.next();
-				womElement = this.wsdlComponenetFactory
-						.createWSDLExtensibilityElement();
-				if (null != wsdl4jElement.getRequired())
-					womElement.setRequired(wsdl4jElement.getRequired()
-							.booleanValue());
-				//FIXME Find a permanent solution.
-				if (wsdl4jElement.getClass().equals(temp.getClass())) {
-					womElement
-							.setElement(((UnknownExtensibilityElement) wsdl4jElement)
-									.getElement());
-				}
-				wsdlTypes
-						.addElement(wsdl4jElement.getElementType(), womElement);
-			}
+			this.copyExtensibleElements(wsdlTypes.getExtensibilityElements(),
+					wsdlTypes);
+
 			this.womDefinition.setTypes(wsdlTypes);
 		}
 
-		////////////////////////(2)Pump the
-		// Interfaces///////////////////////////
-		//pump the Interfaces: Get the PortTypes from WSDL4J parse OM and pump
-		// it to the
+		///////////////////(2)Copy the Interfaces///////////////////////////
+		//copy the Interfaces: Get the PortTypes from WSDL4J parse OM and
+		// copy it to the
 		//WOM's WSDLInterface Components
 
 		Iterator portTypeIterator = wsdl4JDefinition.getPortTypes().values()
 				.iterator();
 		WSDLInterface wsdlInterface;
+		PortType portType;
 		while (portTypeIterator.hasNext()) {
 			wsdlInterface = this.wsdlComponenetFactory.createInterface();
-			this.populateInterfaces(wsdlInterface, (PortType) portTypeIterator
-					.next());
+			portType = (PortType) portTypeIterator.next();
+			this.populateInterfaces(wsdlInterface, portType);
 			wsdlDefinition.addInterface(wsdlInterface);
-
 		}
 
-		//////////////////////////(3)Pump the
-		// Bindings///////////////////////////////
+		//////////////////(3)Copy the Bindings///////////////////////
 		//pump the Bindings: Get the Bindings map from WSDL4J and create a new
 		// map of
 		//WSDLBinding elements
@@ -166,26 +148,29 @@ public class WSDLPump {
 		Iterator bindingIterator = wsdl4JDefinition.getBindings().values()
 				.iterator();
 		WSDLBinding wsdlBinding;
+		Binding wsdl4jBinding;
 		while (bindingIterator.hasNext()) {
 			wsdlBinding = this.wsdlComponenetFactory.createBinding();
-			this
-					.populateBindings(wsdlBinding, (Binding) bindingIterator
-							.next());
+			wsdl4jBinding = (Binding) bindingIterator.next();
+			this.populateBindings(wsdlBinding, wsdl4jBinding);
+			this.copyExtensibleElements(wsdl4jBinding.getExtensibilityElements(), 
+										wsdlBinding);
 			wsdlDefinition.addBinding(wsdlBinding);
 
 		}
 
-		//////////////////////////(4)Pump the
-		// Services///////////////////////////////
+		///////////////////(4)Copy the Services///////////////////////////////
 
 		Iterator serviceIterator = wsdl4JDefinition.getServices().values()
 				.iterator();
 		WSDLService wsdlService;
+		Service wsdl4jService;
 		while (serviceIterator.hasNext()) {
 			wsdlService = this.wsdlComponenetFactory.createService();
-			this
-					.populateServices(wsdlService, (Service) serviceIterator
-							.next());
+			wsdl4jService = (Service) serviceIterator.next();
+			this.populateServices(wsdlService, wsdl4jService);
+			this.copyExtensibleElements(wsdl4jService.getExtensibilityElements(), 
+										wsdlService);
 			wsdlDefinition.addService(wsdlService);
 		}
 
@@ -204,25 +189,24 @@ public class WSDLPump {
 	//FIXME Evaluate a way of injecting features and priperties with a general
 	// formatted input
 	private void populateInterfaces(WSDLInterface wsdlInterface,
-			PortType wsdl4jPortType) {
+										PortType wsdl4jPortType) {
 
 		//Copy the Attrebute information items
-		//Copied with the Same QName so it will reqire no Query in Binding
-		// pumping.
+		//Copied with the Same QName so it will require no Query in Binding
+		//Coping.
 		wsdlInterface.setName(wsdl4jPortType.getQName());
-
-		Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
-				.iterator();
+		Iterator wsdl4JOperationsIterator = 
+			wsdl4jPortType.getOperations().iterator();
 		WSDLOperation wsdloperation;
+		Operation wsdl4jOperation;
 		while (wsdl4JOperationsIterator.hasNext()) {
 			wsdloperation = this.wsdlComponenetFactory.createOperation();
+			wsdl4jOperation = (Operation) wsdl4JOperationsIterator.next();
 			this.populateOperations(wsdloperation,
-					(Operation) wsdl4JOperationsIterator.next(), wsdl4jPortType
-							.getQName().getNamespaceURI());
+								wsdl4jOperation, 
+								wsdl4jPortType.getQName().getNamespaceURI());
 			wsdlInterface.setOperation(wsdloperation);
-
 		}
-
 	}
 
 	/**
@@ -232,26 +216,30 @@ public class WSDLPump {
 		//Copy attrebutes
 		wsdlBinding.setName(wsdl4JBinding.getQName());
 		QName interfaceName = wsdl4JBinding.getPortType().getQName();
-		WSDLInterface wsdlInterface = this.womDefinition
-				.getInterface(interfaceName);
+		WSDLInterface wsdlInterface = 
+				this.womDefinition.getInterface(interfaceName);
+		
 		//FIXME Do We need this eventually???
 		if (null == wsdlInterface)
 			throw new WSDLProcessingException(
 					"Interface/PortType not found for the Binding :"
-							+ wsdlBinding.getName());
-
+					+ wsdlBinding.getName());
 		wsdlBinding.setBoundInterface(wsdlInterface);
-
-		Iterator bindingoperationsIterator = wsdl4JBinding
-				.getBindingOperations().iterator();
-
+		Iterator bindingoperationsIterator = 
+					wsdl4JBinding.getBindingOperations().iterator();
 		WSDLBindingOperation wsdlBindingOperation;
+		BindingOperation wsdl4jBindingOperation;
 		while (bindingoperationsIterator.hasNext()) {
-			wsdlBindingOperation = this.wsdlComponenetFactory
-					.createWSDLBindingOperation();
+			wsdlBindingOperation = 
+				this.wsdlComponenetFactory.createWSDLBindingOperation();
+			wsdl4jBindingOperation = 
+				(BindingOperation)bindingoperationsIterator.next();
 			this.populateBindingOperation(wsdlBindingOperation,
-					(BindingOperation) bindingoperationsIterator.next(),
-					wsdl4JBinding.getQName().getNamespaceURI());
+								wsdl4jBindingOperation,
+								wsdl4JBinding.getQName().getNamespaceURI());
+			this.copyExtensibleElements(
+					wsdl4jBindingOperation.getExtensibilityElements(), 
+					wsdlBindingOperation);
 			wsdlBinding.addBindingOperation(wsdlBindingOperation);
 		}
 
@@ -259,14 +247,19 @@ public class WSDLPump {
 
 	public void populateServices(WSDLService wsdlService, Service wsdl4jService) {
 		wsdlService.setName(wsdl4jService.getQName());
-		Iterator wsdl4jportsIterator = wsdl4jService.getPorts().values()
-				.iterator();
+		Iterator wsdl4jportsIterator = 
+			wsdl4jService.getPorts().values().iterator();
 		wsdlService.setServiceInterface(this.getBoundInterface(wsdlService));
 		WSDLEndpoint wsdlEndpoint;
+		Port wsdl4jPort;
 		while (wsdl4jportsIterator.hasNext()) {
 			wsdlEndpoint = this.wsdlComponenetFactory.createEndpoint();
-			this.populatePorts(wsdlEndpoint, (Port) wsdl4jportsIterator.next(),
-					wsdl4jService.getQName().getNamespaceURI());
+			wsdl4jPort = (Port) wsdl4jportsIterator.next();
+			this.populatePorts(wsdlEndpoint, 
+						wsdl4jPort,
+						wsdl4jService.getQName().getNamespaceURI());
+			this.copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), 
+										wsdlEndpoint);
 			wsdlService.setEndpoint(wsdlEndpoint);
 		}
 
@@ -283,11 +276,7 @@ public class WSDLPump {
 
 		//This code make no attempt to make use of the special xs:Token
 		//defined in the WSDL 2.0. eg like #any, #none
-	
-		//OperationType wsdl4jOperation.getStyle()
-
 		// Create the Input Message and add
-
 		Input wsdl4jInputMessage = wsdl4jOperation.getInput();
 		MessageReference wsdlInputMessage = this.wsdlComponenetFactory
 				.createMessageReference();
@@ -297,48 +286,41 @@ public class WSDLPump {
 		// the Types.
 		//TODO
 
-
-		if(wsdl4jInputMessage.getMessage().getParts().size()>1)
+		if (wsdl4jInputMessage.getMessage().getParts().size() > 1)
 			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts().values().iterator();
-		if(inputIterator.hasNext()){
-			Part part = ((Part)inputIterator.next());
-			QName element ;
-			if(null != (element= part.getTypeName())){
+		Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts()
+				.values().iterator();
+		if (inputIterator.hasNext()) {
+			Part part = ((Part) inputIterator.next());
+			QName element;
+			if (null != (element = part.getTypeName())) {
 				wsdlInputMessage.setElement(element);
-			}else{
+			} else {
 				wsdlInputMessage.setElement(part.getElementName());
 			}
 		}
-
-		
 		wsdlOperation.setInputMessage(wsdlInputMessage);
-		
-		
+
 		//Create an output message and add
 		Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
-		MessageReference wsdlOutputMessage = this.wsdlComponenetFactory.createMessageReference();
+		MessageReference wsdlOutputMessage = 
+			this.wsdlComponenetFactory.createMessageReference();
 		wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-		
-		if(wsdl4jOutputMessage.getMessage().getParts().size()>1)
+
+		if (wsdl4jOutputMessage.getMessage().getParts().size() > 1)
 			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator outputIterator = wsdl4jOutputMessage.getMessage().getParts().values().iterator();
-		if(outputIterator.hasNext()){
-			Part outPart = ((Part)outputIterator.next());
-			QName typeName ;
-			if(null != (typeName = outPart.getTypeName())){
+		Iterator outputIterator = 
+			wsdl4jOutputMessage.getMessage().getParts().values().iterator();
+		if (outputIterator.hasNext()) {
+			Part outPart = ((Part) outputIterator.next());
+			QName typeName;
+			if (null != (typeName = outPart.getTypeName())) {
 				wsdlOutputMessage.setElement(typeName);
-			}else{
+			} else {
 				wsdlOutputMessage.setElement(outPart.getElementName());
 			}
 		}
-	
-		
 		wsdlOperation.setOutputMessage(wsdlOutputMessage);
-		//TODO
-
-		
-
 		//Set the MEP
 		wsdlOperation.setMessageExchangePattern(WSDL11MEPFinder
 				.getMEP(wsdl4jOperation));
@@ -349,16 +331,19 @@ public class WSDLPump {
 			WSDLBindingOperation wsdlBindingOperation,
 			BindingOperation wsdl4jBindingOperation,
 			String nameSpaceOfTheBindingOperation) {
+		
 		wsdlBindingOperation.setName(new QName(nameSpaceOfTheBindingOperation,
-				wsdl4jBindingOperation.getName()));
+									wsdl4jBindingOperation.getName()));
 
-		BindingInput wsdl4jInputBinding = wsdl4jBindingOperation
-				.getBindingInput();
-		WSDLBindingMessageReference wsdlInputBinding = this.wsdlComponenetFactory
-				.createWSDLBindingMessageReference();
+		BindingInput wsdl4jInputBinding = 
+			wsdl4jBindingOperation.getBindingInput();
+		WSDLBindingMessageReference wsdlInputBinding = 
+			this.wsdlComponenetFactory.createWSDLBindingMessageReference();
 
 		wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-		//TODO
+		//TODO Faults
+		this.copyExtensibleElements(wsdl4jInputBinding.getExtensibilityElements(), 
+								wsdlInputBinding);
 		wsdlBindingOperation.setInput(wsdlInputBinding);
 
 		BindingOutput wsdl4jOutputBinding = wsdl4jBindingOperation
@@ -367,7 +352,9 @@ public class WSDLPump {
 				.createWSDLBindingMessageReference();
 
 		wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-		//TODO
+		//TODO Faults
+		this.copyExtensibleElements(wsdl4jOutputBinding.getExtensibilityElements(), 
+								wsdlOutputBinding);
 		wsdlBindingOperation.setInput(wsdlOutputBinding);
 
 	}
@@ -378,11 +365,8 @@ public class WSDLPump {
 
 		wsdlEndpoint.setBinding(this.womDefinition.getBinding(wsdl4jPort
 				.getBinding().getQName()));
-//		this.copyExtensibilityAttribute(wsdl4jPort.getExtensionAttributes(), wsdlEndpoint);
-//		this.copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdlEndpoint);
-	}
-
 	
+	}
 
 	/**
 	 * This method will fill up the gap of WSDL 1.1 and WSDL 2.0 w.r.t. the
@@ -431,42 +415,68 @@ public class WSDLPump {
 		}
 		return newBoundInterface;
 	}
-	
+
 	/**
-	 * Get the Extensible elements form wsdl4jExtensibleElements <code>Vector</code>if any and
-	 * copy them to <code>Component</code>
+	 * Get the Extensible elements form wsdl4jExtensibleElements
+	 * <code>Vector</code> if any and copy them to <code>Component</code>
+	 * 
 	 * @param wsdl4jExtensibleElements
 	 * @param womExtensibleElements
 	 */
-	private void copyExtensibleElements(List wsdl4jExtensibleElements, Component component){
+	private void copyExtensibleElements(List wsdl4jExtensibleElements,
+			Component component) {
 		Iterator iterator = wsdl4jExtensibleElements.iterator();
-		while(iterator.hasNext()){
-			Object obj = iterator.next();
-			if(obj instanceof UnknownExtensibilityElement){
-				UnknownExtensibilityElement temp = (UnknownExtensibilityElement)(obj);
-				WSDLExtensibilityElement extensibilityElement = this.wsdlComponenetFactory.createWSDLExtensibilityElement();
-				extensibilityElement.setElement(temp.getElement());
-				Boolean required = temp.getRequired();
-				if(null != required){
+		ExtensionFactory extensionFactory = this.wsdlComponenetFactory
+				.createExtensionFactory();
+		while (iterator.hasNext()) {
+
+			ExtensibilityElement wsdl4jElement = (ExtensibilityElement) iterator
+					.next();
+
+			if (wsdl4jElement instanceof UnknownExtensibilityElement) {
+				UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
+				DefaultExtensibilityElement extensibilityElement = (DefaultExtensibilityElement) extensionFactory
+						.getExtensionElement(wsdl4jElement.getElementType());
+				extensibilityElement.setElement(unknown.getElement());
+				Boolean required = unknown.getRequired();
+				if (null != required) {
 					extensibilityElement.setRequired(required.booleanValue());
 				}
 				component.addExtensibilityElement(extensibilityElement);
+			} else if (wsdl4jElement instanceof SOAPAddress) {
+				SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
+				org.apache.wsdl.extensions.SOAPAddress extensibilityElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
+						.getExtensionElement(soapAddress.getElementType());
+				extensibilityElement.setLocationURI(soapAddress
+						.getLocationURI());
+				Boolean required = soapAddress.getRequired();
+				if (null != required) {
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			} else {
+//				throw new AxisError(
+//						"An Extensible item "+wsdl4jElement.getElementType()+" went unparsed during WSDL Parsing");
 			}
 		}
 	}
-	
+
 	/**
-	 * Get the Extensible Attributes from wsdl4jExtensibilityAttribute <code>Map</code> if
-	 * any and copy them to the <code>Component</code>
+	 * Get the Extensible Attributes from wsdl4jExtensibilityAttribute
+	 * <code>Map</code> if any and copy them to the <code>Component</code>
+	 * 
 	 * @param wsdl4jExtensibilityAttributes
 	 * @param component
 	 */
-	private void copyExtensibilityAttribute(Map wsdl4jExtensibilityAttributes, Component component){
+	private void copyExtensibilityAttribute(Map wsdl4jExtensibilityAttributes,
+			Component component) {
 		Iterator iterator = wsdl4jExtensibilityAttributes.keySet().iterator();
-		while(iterator.hasNext()){
-			QName attributeName = (QName)iterator.next();
-			QName value = (QName)wsdl4jExtensibilityAttributes.get(attributeName);
-			WSDLExtensibilityAttribute attribute = this.wsdlComponenetFactory.createWSDLExtensibilityAttribute();
+		while (iterator.hasNext()) {
+			QName attributeName = (QName) iterator.next();
+			QName value = (QName) wsdl4jExtensibilityAttributes
+					.get(attributeName);
+			WSDLExtensibilityAttribute attribute = this.wsdlComponenetFactory
+					.createWSDLExtensibilityAttribute();
 			attribute.setKey(attributeName);
 			attribute.setValue(value);
 			component.addExtensibleAttributes(attribute);

@@ -15,38 +15,18 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLTypes;
 
 /**
  * @author chathura@opensource.lk
  */
 public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
-    /**
-     * Field extensionElements
-     */
-    private HashMap extensionElements = new HashMap();
 
-    /**
-     * Sets the <code>ExtensionElement</code>s as a <code>HashMap</code>
-     *
-     * @return
-     */
-    public HashMap getTypes() {
-        return extensionElements;
-    }
-
-    /**
-     * Returns all the <code>ExtensionElement</code>s as a <code>HashMap</code>
-     *
-     * @param types
-     */
-    public void setTypes(HashMap types) {
-        this.extensionElements = types;
-    }
 
     /**
      * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>
@@ -54,18 +34,25 @@ public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
      * @param qName
      * @param element
      */
-    public void addElement(QName qName, WSDLExtensibilityElement element) {
-        this.extensionElements.put(qName, element);
+    public void addElement(WSDLExtensibilityElement element) {
+        this.addExtensibilityElement(element);
     }
 
     /**
-     * Will return the Element with the given <code>QName</code>
+     * Will return the first Element with the given <code>QName</code>
      * Returns null if not found.
      *
      * @param qName
      * @return
      */
-    public WSDLExtensibilityElement getElement(QName qName) {
-        return (WSDLExtensibilityElement) this.extensionElements.get(qName);
+    public WSDLExtensibilityElement getFirstElement(QName qName) {
+        Iterator iterator = this.getExtensibilityElements().iterator();
+		while(iterator.hasNext()){
+			WSDLExtensibilityElement temp =(WSDLExtensibilityElement)iterator.next();
+			if(temp.getType().equals(qName))
+				return temp;        	
+        }
+		
+		return null;
     }
 }

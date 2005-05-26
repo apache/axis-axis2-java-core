@@ -1,6 +1,22 @@
 package org.apache.axis.wsdl.builder;
 
-import org.apache.wsdl.*;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLFault;
+import org.apache.wsdl.WSDLFeature;
+import org.apache.wsdl.WSDLImport;
+import org.apache.wsdl.WSDLInclude;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLProperty;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.extensions.ExtensionFactory;
 
 /**
  * @author chathura@opensource.lk
@@ -88,17 +104,19 @@ public interface WSDLComponentFactory {
 	 */
 	public WSDLBindingOperation createWSDLBindingOperation();
 	
-	/**
-	 * 
-	 * @return A new instance of <code>WSDLExtensibilityElement</code>
-	 */
-	public WSDLExtensibilityElement createWSDLExtensibilityElement();
-	
-	 
+		 
 	/**
 	 * 
 	 * @return A new instance of <code>WSDLExtensibilityAttribute</code>
 	 */
 	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute();
+	
+	/**
+	 * 
+	 * @return A new Instance of <code>ExtensionFactory</code> that
+	 * is capable of creating the correct <code>ExtensibilityElement</code>
+	 * given a <code>QName</code>.
+	 */
+	public ExtensionFactory createExtensionFactory();
 
 }

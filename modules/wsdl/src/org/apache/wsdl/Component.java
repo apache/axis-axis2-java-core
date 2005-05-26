@@ -53,7 +53,7 @@ public interface Component {
     public Object getComponentProperty(Object key);
     
     /**
-     * Adds the <code>WSDLExtensibilityElement</code> to the Extensible Component.
+     * Adds the <code>ExtensibilityElement</code> to the Extensible Component.
      * @param element
      */
     public void addExtensibilityElement(WSDLExtensibilityElement element);

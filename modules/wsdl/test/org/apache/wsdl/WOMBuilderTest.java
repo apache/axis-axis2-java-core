@@ -16,9 +16,9 @@
 package org.apache.wsdl;
 
 
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
-import org.apache.wsdl.util.Utils;
-import org.w3c.dom.Document;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
@@ -26,9 +26,10 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
+
+import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import org.apache.wsdl.util.Utils;
+import org.w3c.dom.Document;
 
 /**
  * @author chathura@opensource.lk
@@ -63,7 +64,7 @@ public class WOMBuilderTest extends AbstractTestCase {
         ;
         assertEquals(womDescription.getServices().size(), wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getBindings().size(), wsdl4jDefinition.getBindings().size());
-        assertEquals(womDescription.getTypes().getTypes().size(), wsdl4jDefinition.getTypes().getExtensibilityElements().size());
+        
     }
 
     public void testInterfacesComponent() throws Exception {
