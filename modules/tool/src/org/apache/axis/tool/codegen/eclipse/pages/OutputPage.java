@@ -46,6 +46,8 @@ public class OutputPage extends WizardPage {
         setTitle(CodegenWizardPlugin.getResourceString("page3.title"));
         setDescription(CodegenWizardPlugin.getResourceString("page3.desc"));
         setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
+        //set the page complete status to false at initilaization
+        setPageComplete(false);
 
     }
 
@@ -86,7 +88,7 @@ public class OutputPage extends WizardPage {
 //        locationSelectCheckBox.setText("Workspace projects only");
 
         setControl(container);
-        this.setPageComplete(true);
+        
 
     }
     

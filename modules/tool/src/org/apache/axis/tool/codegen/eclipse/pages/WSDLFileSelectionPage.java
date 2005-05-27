@@ -37,6 +37,8 @@ public class WSDLFileSelectionPage extends WizardPage {
 		setDescription(CodegenWizardPlugin.getResourceString("page1.desc"));
 		this.selection = selection;
 		setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
+		//set the page complete status to false at initiation 
+		setPageComplete(false);
 	}
 
 	/**
@@ -85,16 +87,13 @@ public class WSDLFileSelectionPage extends WizardPage {
 			return;
 		}
 	    
-		int dotLoc = fileName.lastIndexOf('.');
-		
-		if (dotLoc != -1) {
-			String ext = fileName.substring(dotLoc + 1);
-			if (ext.equalsIgnoreCase("wsdl") == false) {
-				updateStatus(CodegenWizardPlugin.getResourceString("File extension must be wsdl"));
+		if (!fileName.matches(".*\\.wsdl")){
+				updateStatus(CodegenWizardPlugin.getResourceString("page1.error.wrongextension"));
 				return;
-			}
-		}  
+		 }
+		 
 	    updateStatus(null);
+	    
 	}
 	
 	/**

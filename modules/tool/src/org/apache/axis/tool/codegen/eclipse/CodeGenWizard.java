@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
 /**
- *  The main wizard for the codegen wizard
+ * The main wizard for the codegen wizard
  */
 
 public class CodeGenWizard extends Wizard implements INewWizard {
@@ -40,12 +40,16 @@ public class CodeGenWizard extends Wizard implements INewWizard {
 
     private ISelection selection;
 
+    private boolean canFinish = false;
+
     /**
      * Constructor for CodeGenWizard.
      */
     public CodeGenWizard() {
         super();
         setNeedsProgressMonitor(true);
+        this.setWindowTitle(CodegenWizardPlugin
+                .getResourceString("general.name"));
     }
 
     /**
@@ -59,6 +63,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         addPage(page2);
         page3 = new OutputPage();
         addPage(page3);
+
     }
 
     /**
@@ -68,19 +73,17 @@ public class CodeGenWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
 
         try {
-           // getContainer().run(true, false, op);
+            // getContainer().run(true, false, op);
             doFinish();
         } catch (Exception e) {
             e.printStackTrace();
             MessageDialog.openError(getShell(), CodegenWizardPlugin
-                    .getResourceString("general.Error"), e
-                    .getMessage());
+                    .getResourceString("general.Error"), e.getMessage());
             return false;
         }
-        MessageDialog.openInformation(this.getShell(),
-                CodegenWizardPlugin.getResourceString("genearal.name"),
-                CodegenWizardPlugin.getResourceString("wizard.success")
-                );
+        MessageDialog.openInformation(this.getShell(), CodegenWizardPlugin
+                .getResourceString("general.name"), CodegenWizardPlugin
+                .getResourceString("wizard.success"));
         return true;
     }
 
@@ -89,9 +92,8 @@ public class CodeGenWizard extends Wizard implements INewWizard {
      */
 
     private void doFinish() {
-
+  
         try {
-                   
             WSDLDescription wom = this.getWOM(page1.getFileName());
             Map optionsMap = fillOptionMap();
             CodeGenConfiguration codegenConfig = new CodeGenConfiguration(wom,
@@ -101,23 +103,19 @@ public class CodeGenWizard extends Wizard implements INewWizard {
             throw new RuntimeException(e);
         }
 
-    } 
+    }
 
     /**
      *  
      */
     private Map fillOptionMap() {
         Map optionMap = new HashMap();
-        
+
         optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
                         getStringArray(page1.getFileName())));
-        
-        optionMap.put(CommandLineOptionConstants.ADVANCED_CODEGEN_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.ADVANCED_CODEGEN_OPTION,
-                        new String[0]));
+
         if (page2.isAsyncOnlyOn()) {
             optionMap
                     .put(
@@ -147,11 +145,32 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                 new CommandLineOption(
                         CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
                         getStringArray(page3.getOutputLocation())));
+        if (page2.isServerside()) {
+            optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                            new String[0]));
+
+            if (page2.isServerXML()) {
+                optionMap
+                        .put(
+                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                                new CommandLineOption(
+                                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                                        new String[0]));
+            }
+        }
+        if (page2.isGenerateTestCase()){
+            optionMap
+            .put(
+                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                            new String[0])); 
+        }
         //System.out.println(page3.getOutputLocation());
         return optionMap;
     }
-
-   
 
     private String mapLanguagesWithCombo(String UILangValue) {
         if (UIConstants.JAVA.equals(UILangValue)) {
@@ -180,10 +199,10 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         InputStream in = new FileInputStream(new File(wsdlLocation));
         return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
     }
-    
-    private String[] getStringArray(String value){
+
+    private String[] getStringArray(String value) {
         String[] values = new String[1];
-        values[0]=value;
+        values[0] = value;
         return values;
     }
 }
