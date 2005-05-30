@@ -40,7 +40,7 @@
            this.toEPR = new org.apache.axis.addressing.EndpointReference(org.apache.axis.addressing.AddressingConstants.WSA_TO,targetEndpoint);
 		    //creating the configuration
            _configurationContext = new org.apache.axis.context.ConfigurationContextFactory().buildClientEngineContext(axis2Home);
-            _configurationContext.getEngineConfig().addService(_service);
+            _configurationContext.getAxisConfiguration().addService(_service);
            _serviceContext = _configurationContext.createServiceContext(_service.getName());
 
 	    }
