@@ -326,6 +326,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         }
         if (module != null) {
             new PhaseResolver(this).engageModuleGlobally(module);
+        } else {
+             throw new AxisFault(this + " Refer to invalid module "
+                     + moduleref.getLocalPart() + " has not bean deployed yet !");
         }
         engagedModules.add(moduleref);
     }

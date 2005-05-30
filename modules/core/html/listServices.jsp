@@ -43,7 +43,7 @@
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
             %><hr><h2><font color="blue"><%=serviceName%></font></h2>
-            <h4><font color="black"><%=axisService.getServiceDescription()%></h4>
+            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
             if (operationsList.size() > 0) {
                 %><i>Available operations</i><%

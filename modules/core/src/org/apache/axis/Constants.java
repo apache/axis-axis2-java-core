@@ -92,9 +92,26 @@ public class Constants {
     public static final String LISTSERVICES = "listServices";
 
     /**
+     * List service for adminpagse
+     */
+    public static final String ADMIN_LISTSERVICES = "listService";
+
+    public static final String LIST_MODULES = "listModules";
+
+    public static final String LIST_GLOABLLY_ENGAGED_MODULES = "globalModules";
+
+    public static final String LIST_PHASES = "listPhases";
+
+    /**
      * Field SERVICE_MAP
      */
     public static final String SERVICE_MAP = "servicemap";
+    /**
+     * Field Available modules
+     */
+    public static final String MODULE_MAP = "modulemap";
+
+    public static final String PHASE_LIST = "phaseList";
 
     /**
      * Errorness servcie

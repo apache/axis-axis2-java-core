@@ -293,16 +293,10 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void engagdeModules() throws AxisFault {
         ArrayList modules = DeploymentData.getInstance().getModules();
-        PhaseResolver resolver = new PhaseResolver(axisConfig);
+        // PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modules.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
-            ModuleDescription modeuldesc = ((AxisConfigurationImpl) axisConfig).getModule(name);
-            if (modeuldesc != null) {
-                resolver.engageModuleGlobally(modeuldesc);
-            } else {
-                throw new AxisFault(((AxisConfigurationImpl) axisConfig) + " Refer to invalid module " + name + " has not bean deployed yet !");
-            }
-
+            ((AxisConfigurationImpl) axisConfig).engageModule(name);
         }
     }
 
@@ -358,7 +352,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader();
             loadServiceProperties(serviceMetaData);
             axisConfig.addService(serviceMetaData);
-            
+
             ArrayList list = currentArchiveFile.getModules();
             for(int i = 0;i<list.size();i++){
                 ModuleDescription module = axisConfig.getModule((QName)list.get(i));
@@ -370,23 +364,23 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
             }
 
-         HashMap opeartions = serviceMetaData.getOperations();
-        Collection opCol = opeartions.values();
-        for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
-            OperationDescription opDesc = (OperationDescription) iterator.next();
-            ArrayList modules = opDesc.getModuleRefs();
-            for (int i = 0; i < modules.size(); i++) {
-                QName moduleName = (QName) modules.get(i);
-                ModuleDescription module = axisConfig.getModule(moduleName);
-                if(module != null) {
-                    opDesc.engageModule(module);
-                } else {
-                    throw new DeploymentException("Operation "  +  opDesc.getName().getLocalPart() +
-                            "  Refer to invalide module  " + moduleName.getLocalPart());
+            HashMap opeartions = serviceMetaData.getOperations();
+            Collection opCol = opeartions.values();
+            for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
+                OperationDescription opDesc = (OperationDescription) iterator.next();
+                ArrayList modules = opDesc.getModuleRefs();
+                for (int i = 0; i < modules.size(); i++) {
+                    QName moduleName = (QName) modules.get(i);
+                    ModuleDescription module = axisConfig.getModule(moduleName);
+                    if(module != null) {
+                        opDesc.engageModule(module);
+                    } else {
+                        throw new DeploymentException("Operation "  +  opDesc.getName().getLocalPart() +
+                                "  Refer to invalide module  " + moduleName.getLocalPart());
+                    }
                 }
-            }
 
-        }
+            }
             ///factory.createChains(serviceMetaData, axisConfig, );
             System.out.println("service Description : " + serviceMetaData.getServiceDescription());
             System.out.println("adding new service : " + serviceMetaData.getName().getLocalPart());
@@ -703,5 +697,5 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         return axismodule;
     }
-   
+
 }

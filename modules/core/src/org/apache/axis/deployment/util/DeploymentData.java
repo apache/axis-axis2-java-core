@@ -47,7 +47,7 @@ public class DeploymentData {
     private ArrayList oprationOUT_FaultPhases;
 
     private DeploymentData() {
-      modules = new ArrayList();
+        modules = new ArrayList();
     }
 
     public static DeploymentData getInstance() {
@@ -90,8 +90,9 @@ public class DeploymentData {
         return OUT_FaultPhases;
     }
 
-    private ArrayList getOperationInPhases() {
+    public ArrayList getOperationInPhases() {
         oprationINPhases = new ArrayList();
+        oprationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         for (int i = 0; i < INPhases.size(); i++) {
             String phaseName = (String) INPhases.get(i);
             if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
@@ -106,7 +107,7 @@ public class DeploymentData {
         return oprationINPhases;
     }
 
-    private ArrayList getOperationOutPhases() {
+    public ArrayList getOperationOutPhases() {
         oprationOUTPhases = new ArrayList();
         for (int i = 0; i < OUTPhases.size(); i++) {
             String phaseName = (String) OUTPhases.get(i);
@@ -116,10 +117,12 @@ public class DeploymentData {
                 oprationOUTPhases.add(new Phase(phaseName));
             }
         }
+        oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
         return oprationOUTPhases;
     }
 
-    private ArrayList getOperationInFaultPhases() {
+    public ArrayList getOperationInFaultPhases() {
         oprationIN_FaultPhases = new ArrayList();
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             String phaseName = (String) IN_FaultPhases.get(i);
@@ -128,7 +131,7 @@ public class DeploymentData {
         return oprationIN_FaultPhases;
     }
 
-    private ArrayList getOperationOutFaultPhases() {
+    public ArrayList getOperationOutFaultPhases() {
         oprationOUT_FaultPhases = new ArrayList();
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             String phaseName = (String) OUT_FaultPhases.get(i);
