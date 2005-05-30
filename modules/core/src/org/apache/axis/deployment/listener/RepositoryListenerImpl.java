@@ -163,7 +163,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * @return
      */
     private boolean isServiceArchiveFile(String filename) {
-        if (filename.endsWith(".jar") | filename.equals(".aar")) {
+        if (filename.endsWith(".jar") | filename.endsWith(".aar")) {
             return true;
         }
         return false;

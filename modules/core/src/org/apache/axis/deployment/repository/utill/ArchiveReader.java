@@ -111,7 +111,7 @@ public class ArchiveReader implements DeploymentConstants {
             //  zin.closeEntry();
             zin.close();
             if (!foundmoduleXML) {
-                throw new DeploymentException("module.xml not found");
+                throw new DeploymentException("module.xml not found  for the module :  " + strArchive);
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());

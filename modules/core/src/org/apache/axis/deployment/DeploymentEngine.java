@@ -214,8 +214,10 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public AxisConfiguration loadClient(String clientHome) throws DeploymentException {
         InputStream in = null;
+        boolean isRepositoryExist = false;
         if (clientHome != null) {
             checkClientHome(clientHome);
+            isRepositoryExist = true;
             try {
                 File tempfile = new File(engineConfigName);
                 in = new FileInputStream(tempfile);
@@ -233,14 +235,16 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
-        hotDeployment = false;
-        hotUpdate = false;
-        new RepositoryListenerImpl(folderName, this);
-        try {
-            engagdeModules();
-        } catch (AxisFault axisFault) {
-            log.info("Module validation failed" + axisFault.getMessage());
-            throw new DeploymentException(axisFault.getMessage());
+        if (isRepositoryExist) {
+            hotDeployment = false;
+            hotUpdate = false;
+            new RepositoryListenerImpl(folderName, this);
+            try {
+                engagdeModules();
+            } catch (AxisFault axisFault) {
+                log.info("Module validation failed" + axisFault.getMessage());
+                throw new DeploymentException(axisFault.getMessage());
+            }
         }
         return axisConfig;
     }

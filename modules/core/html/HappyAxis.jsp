@@ -12,39 +12,47 @@
                  org.apache.axis.om.*,
                  org.apache.axis.soap.SOAPBody,
                  org.apache.axis.soap.SOAPEnvelope,
-                 org.apache.axis.soap.SOAPFactory"
+                 org.apache.axis.soap.SOAPFactory,
+                 org.apache.axis.Constants,
+                 javax.xml.stream.XMLOutputFactory,
+                 org.apache.axis.engine.AxisFault,
+                 javax.xml.stream.XMLStreamException,
+                 org.apache.commons.logging.Log,
+                 org.apache.commons.logging.LogFactory,
+                 javax.xml.namespace.QName,
+                 java.io.StringWriter"
    session="false" %>
  <%
-    /*
- * Copyright 2002,2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-%>
+     /*
+     * Copyright 2002,2004 The Apache Software Foundation.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *      http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+ %>
 <head>
 <title>Axis2 Happiness Page</title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+<link href="css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
    <jsp:include page="include/header.inc"></jsp:include>
 <%port =request.getServerPort();%>
 <%!
     /*
-     * Happiness tests for axis. These look at the classpath and warn if things
-     * are missing. Normally addng this much code in a JSP page is mad
-     * but here we want to validate JSP compilation too, and have a drop-in
-     * page for easy re-use
-     */
+    * Happiness tests for axis. These look at the classpath and warn if things
+    * are missing. Normally addng this much code in a JSP page is mad
+    * but here we want to validate JSP compilation too, and have a drop-in
+    * page for easy re-use
+    */
     int port = 0;
     /**
      * Get a string providing install information.
@@ -53,9 +61,9 @@
     public String getInstallHints(HttpServletRequest request) {
 
         String hint=
-            "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
-            +"java.* or javax.* packages into CATALINA_HOME/common/lib"
-            +"<br>jaxrpc.jar and saaj.jar are two such libraries.";
+                "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
+                +"java.* or javax.* packages into CATALINA_HOME/common/lib"
+                +"<br>jaxrpc.jar and saaj.jar are two such libraries.";
         return hint;
     }
 
@@ -111,25 +119,25 @@
         try {
             Class clazz = classExists(classname);
             if(clazz == null)  {
-               String url="";
-               if(homePage!=null) {
-                  url="<br>  See <a href="+homePage+">"+homePage+"</a>";
-               }
-               out.write("<p>"+category+": could not find class "+classname
-                   +" from file <b>"+jarFile
-                   +"</b><br>  "+errorText
-                   +url
-                   +"<p>");
-               return 1;
+                String url="";
+                if(homePage!=null) {
+                    url="<br>  See <a href="+homePage+">"+homePage+"</a>";
+                }
+                out.write("<p>"+category+": could not find class "+classname
+                        +" from file <b>"+jarFile
+                        +"</b><br>  "+errorText
+                        +url
+                        +"<p>");
+                return 1;
             } else {
-               String location = getLocation(out, clazz);
-               if(location == null) {
-                  out.write("Found "+ description + " (" + classname + ")<br>");
-               }
-               else {
-                  out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
-               }
-               return 0;
+                String location = getLocation(out, clazz);
+                if(location == null) {
+                    out.write("Found "+ description + " (" + classname + ")<br>");
+                }
+                else {
+                    out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
+                }
+                return 0;
             }
         } catch(NoClassDefFoundError ncdfe) {
             String url="";
@@ -189,11 +197,11 @@
      * @return the number of missing libraries (0 or 1)
      */
     int needClass(JspWriter out,
-                   String classname,
-                   String jarFile,
-                   String description,
-                   String errorText,
-                   String homePage) throws IOException {
+                  String classname,
+                  String jarFile,
+                  String description,
+                  String errorText,
+                  String homePage) throws IOException {
         return probeClass(out,
                 "<b>Error</b>",
                 classname,
@@ -214,11 +222,11 @@
      * @return the number of missing libraries (0 or 1)
      */
     int wantClass(JspWriter out,
-                   String classname,
-                   String jarFile,
-                   String description,
-                   String errorText,
-                   String homePage) throws IOException {
+                  String classname,
+                  String jarFile,
+                  String description,
+                  String errorText,
+                  String homePage) throws IOException {
         return probeClass(out,
                 "<b>Warning</b>",
                 classname,
@@ -236,12 +244,12 @@
      * @throws Exception
      */
     int wantResource(JspWriter out,
-                      String resource,
-                      String errorText) throws Exception {
+                     String resource,
+                     String errorText) throws Exception {
         if(!resourceExists(resource)) {
             out.write("<p><b>Warning</b>: could not find resource "+resource
-                        +"<br>"
-                        +errorText);
+                    +"<br>"
+                    +errorText);
             return 0;
         } else {
             out.write("found "+resource+"<br>");
@@ -310,80 +318,46 @@
         return location;
     }
 
-    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-    OMNamespace ns =
-        fac.createOMNamespace("http://apache.ws.apache.org/samples", "samples");
-    private SOAPEnvelope createRawMessage(
-            String method,
-            OMElement parameters) {
-            SOAPEnvelope envelope = fac.getDefaultEnvelope();
+    private String value;
+     private EndpointReference targetEPR =
+            new EndpointReference(AddressingConstants.WSA_TO,
+                    "http://127.0.0.1:"
+            + (port)
+            + "/axis2/services/echo/echoOMElement");
+    private QName operationName = new QName("echoOMElement");
+    private OMElement createEnvelope() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.addChild(fac.createText(value, "Hello I am Axis2 Echo service !! "));
+        method.addChild(value);
 
-            OMElement responseMethodName = fac.createOMElement(method, ns);
-            envelope.getBody().addChild(responseMethodName);
-            responseMethodName.addChild(parameters);
-            return envelope;
+        return method;
+    }
+    public boolean inVokeTheService() {
+        try {
+            OMElement payload = createEnvelope();
+            Call call = new Call();
+            call.setTo(targetEPR);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
-        }
-
-    private boolean validateService(String error){
-        try{
-            OMNamespace arrayNs =
-                    fac.createOMNamespace(
-                            OMConstants.ARRAY_ITEM_NSURI,
-                            OMConstants.ARRAY_ITEM_NS_PREFIX);
-            String message = "Hello testing";
-
-            OMElement returnelement = fac.createOMElement("param1", ns);
-            returnelement.setBuilder(
-                    new ObjectToOMBuilder(
-                            returnelement,
-                            new SimpleTypeEncoder(message)));
-            returnelement.declareNamespace(arrayNs);
-            SOAPEnvelope envelope = createRawMessage("echoString", returnelement);
-            XMLStreamReader xpp = invokeTheService(envelope);
-            String value = SimpleTypeEncodingUtils.deserializeString(xpp);
-            error = value;
+            OMElement result =
+                    (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+            StringWriter writer = new StringWriter();
+            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            writer.flush();
+            value = writer.toString();
             return true;
-        }catch(Exception e){
-            error = e.getMessage();
+        } catch (AxisFault axisFault) {
+            value = axisFault.getMessage();
+            return false;
+        } catch (XMLStreamException e) {
+            value = e.getMessage();
             return false;
         }
     }
-
-    private XMLStreamReader invokeTheService(SOAPEnvelope envelope)
-            throws Exception {
-            EndpointReference targetEPR =
-                new EndpointReference(
-                    AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-                        + (port)
-                        + "/axis2/services/echo");    //listServices       /axis2/services/service1
-            Call call = new Call();
-            call.setTo(targetEPR);
-            SOAPEnvelope responseEnv = call.sendReceive(envelope);
-
-            SOAPBody body = responseEnv.getBody();
-            if(body.hasFault()){
-                throw body.getFault().getException();
-            }
-            XMLStreamReader xpp = body.getXMLStreamReader(true);
-
-            int event = xpp.next();
-            while (event != XMLStreamConstants.START_ELEMENT) {
-                event = xpp.next();
-            }
-            event = xpp.next();
-            while (event != XMLStreamConstants.START_ELEMENT) {
-                event = xpp.next();
-            }
-            event = xpp.next();
-            while (event != XMLStreamConstants.START_ELEMENT) {
-                event = xpp.next();
-            }
-            return xpp;
-        }
-
-    %>
+%>
 <html><head><title>Axis2 Happiness Page</title></head>
 <body>
 <h1>Axis2 Happiness Page</h1>
@@ -397,7 +371,7 @@
     /**
      * the essentials, without these Axis is not going to work
      */
-     needed=needClass(out, "org.apache.axis.transport.http.AxisServlet",
+    needed=needClass(out, "org.apache.axis.transport.http.AxisServlet",
             "axis2-M1.jar",
             "Apache-Axis",
             "Axis2 will not work",
@@ -418,7 +392,7 @@
             "Streaming API for XML",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
-     needed+=needClass(out, "com.bea.xml.stream.MXParser",
+    needed+=needClass(out, "com.bea.xml.stream.MXParser",
             "stax-1.1.1-dev.jar",
             "Streaming API for XML implementation",
             "Axis2 will not work",
@@ -428,19 +402,19 @@
 
 <%
     /*
-     * resources on the classpath path
-     */
+    * resources on the classpath path
+    */
     /* broken; this is a file, not a resource
     wantResource(out,"/server-config.wsdd",
-            "There is no server configuration file;"
-            +"run AdminClient to create one");
+    "There is no server configuration file;"
+    +"run AdminClient to create one");
     */
     /* add more libraries here */
 
     out.write("<h3>");
     //is everythng we need here
     if(needed==0) {
-       //yes, be happy
+        //yes, be happy
         out.write("<i>The core axis libraries are present. </i>");
     } else {
         //no, be very unhappy
@@ -454,44 +428,43 @@
     //now look at wanted stuff
 
     out.write("</h3>");
+%>
+<p>
+<B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee your
+web service will work, because there are many configuration options that we do
+not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
+<hr>
+<h2>Examining echo service</h2>
+    <%
+        boolean serviceStatus = inVokeTheService();
+        if(serviceStatus){
     %>
     <p>
-    <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee your
-    web service will work, because there are many configuration options that we do
-    not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
-    <hr>
-    <h2>Examining echo service</h2>
-    <%
-    String error ="";
-    boolean serviceStatus = validateService(error);
-        if(serviceStatus){
-   %>
-       <p>
-       <font color="blue" >
-       Found the echo service and Axis2 is working properly, and now you can drop any web service in
-       to axis2/WEB-INF/service and check it is working.and got the following result
-       <br>
-       <%= error%> </font>
+    <font color="blue" >
+    Found the echo service and Axis2 is working properly, and now you can drop any web service in
+    to axis2/WEB-INF/service and check it is working.and got the following result
+    <br>
+       <%= value%> </font>
        </p>
        <hr>
    <%
         }   else {
-    %>
-     <p>
-      <font color="brown" >
-    You can test the deployement functionality by uploading the echo service jar, which can be found in the
-    samples directory of the axis distribution.
-      <br>
-     <%= error%></font>
+   %>
+   <p>
+   <font color="brown" >
+   You can test the deployement functionality by uploading the echo service jar, which can be found in the
+   samples directory of the axis distribution.
+   <br>
+     </font>
      </p>
      <hr>
     <%
         }
     %>
     <h2>Examining Application Server</h2>
-     <table>
-        <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
-        <tr><td>Platform</td><td><%=getServletConfig().getServletContext().getServerInfo()%></td></tr>
+    <table>
+    <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
+    <tr><td>Platform</td><td><%=getServletConfig().getServletContext().getServerInfo()%></td></tr>
     </table>
 
     <h2>Examining System Properties</h2>
