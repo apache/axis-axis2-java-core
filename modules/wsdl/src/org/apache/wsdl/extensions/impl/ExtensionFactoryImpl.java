@@ -36,6 +36,8 @@ public class ExtensionFactoryImpl implements ExtensionFactory , ExtensionConstan
 	 public WSDLExtensibilityElement getExtensionElement(QName qName){
 	 	if(qName.equals(SOAP_ADDRESS))
 	 		return new SOAPAddressImpl();
+	 	if(qName.equals(SCHEMA))
+	 		return new SchemaImpl();
 	 	
 	 	
 	 	return new DefaultExtensibilityElementImpl();

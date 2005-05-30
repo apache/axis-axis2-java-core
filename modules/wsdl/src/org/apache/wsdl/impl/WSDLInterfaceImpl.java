@@ -70,7 +70,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      * @return
      */
     public HashMap getAllOperations() {
-        HashMap all = (HashMap) this.operations;
+        HashMap all =  this.operations;
         if (this.superInterfaces.size() == 0) {
             return all;
         } else {
@@ -94,8 +94,8 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
                         thisOperation = (WSDLOperation) thisIterator.next();
                         if ((thisOperation.getName() == superInterfaceOperation.getName())
                                 && !tobeAdded) {
-                            if (thisOperation.getTargetnemespace().equals(
-                                    superInterfaceOperation.getTargetnemespace())) {
+                            if (thisOperation.getTargetnamespace().equals(
+                                    superInterfaceOperation.getTargetnamespace())) {
 
                                 // Both are the same Operation; the one inherited and
                                 // the one that is already in the map(may or maynot be inherited)
@@ -113,7 +113,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
                     if (tobeAdded) {
 
                         // This one is not in the list already developped
-                        all.put(superInterfaceOperation.getName(),
+                        all.put(superInterfaceOperation.getName().getLocalPart(),
                                 superInterfaceOperation);
                     }
                 }
@@ -220,7 +220,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
             throw new WSDLProcessingException(
                     "The Operation name cannot be null (required)");
         }
-        this.operations.put(operation.getName(), operation);
+        this.operations.put(operation.getName().getLocalPart(), operation);
     }
 
     /**

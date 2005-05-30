@@ -132,4 +132,6 @@ public interface WSDLInterface extends ExtensibleComponent {
      * @param styleDefault
      */
     public void setStyleDefault(String styleDefault);
+    
+   
 }

@@ -47,12 +47,12 @@ public class WOMBuilderTest extends AbstractTestCase {
     private void initialize() throws Exception {
 
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(this.getTestResourceFile("SeismicService.wsdl"));
+            InputStream in = new FileInputStream(getTestResourceFile("InteropTest.wsdl"));
             this.womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
         }
         if (null == wsdl4jDefinition) {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-            Document doc = Utils.newDocument(new FileInputStream(this.getTestResourceFile("SeismicService.wsdl")));
+            Document doc = Utils.newDocument(new FileInputStream(getTestResourceFile("InteropTest.wsdl")));
             this.wsdl4jDefinition = reader.readWSDL(null, doc);
         }
     }
@@ -80,8 +80,13 @@ public class WOMBuilderTest extends AbstractTestCase {
             Iterator womOperationIterator = wsdlInterface.getAllOperations().values().iterator();
             Iterator wsdl4jOprationIterator = porttype.getOperations().iterator();
             //Will only work if the order is retained in the iteration
-            while (womOperationIterator.hasNext() & wsdl4jOprationIterator.hasNext()) {
-                this.operationsWaliking((WSDLOperation) womOperationIterator.next(), (Operation) wsdl4jOprationIterator.next());
+            while (wsdl4jOprationIterator.hasNext()) {
+                Operation wsdl4jOperation = (Operation) wsdl4jOprationIterator.next();
+				this.operationsWaliking(wsdlInterface.getOperation(wsdl4jOperation.getName()), wsdl4jOperation);
+            }
+            while(womOperationIterator.hasNext() ){
+            	WSDLOperation womOperation = (WSDLOperation)womOperationIterator.next();
+            	this.operationsWaliking(womOperation, porttype.getOperation(womOperation.getName().getLocalPart(), null,null));
             }
 
         }

@@ -29,24 +29,17 @@ public interface WSDLConstants {
 	 */
 	public static final String WSDL1_1_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
 
-//	/**
-//	 * Field WSDL_NAMESPACES
-//	 */
-//	public static final String[] WSDL_NAMESPACES = { WSDL2_0_NAMESPACE,
-//			WSDL1_1_NAMESPACE };
-//
-//
+
 	/**
 	 * Field WSDL_MESSAGE_DIRECTION_IN
 	 */
-	public static final String WSDL_MESSAGE_DIRECTION_IN = "In";
+	public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
 
-	// TODO Verify weather the value is right with the spec.
-
+	
 	/**
 	 * Field WSDL_MESSAGE_DIRECTION_OUT
 	 */
-	public static final String WSDL_MESSAGE_DIRECTION_OUT = "Out";
+	public static final String WSDL_MESSAGE_DIRECTION_OUT = "out";
 
 	// ////////////////////////////////////////////////////////////////
 	// /////////////Message Exchange Pattern Constants/////////////////
@@ -122,6 +115,8 @@ public interface WSDLConstants {
 	 * In-Optional-Out, Out-In, Out-Optional-In.
 	 */
 	public static final int MESSAGE_LABEL_IN = 0;
+	
+	public static final String MESSAGE_LABEL_IN_VALUE = "In";
 
 	/**
 	 * Constant to represent the message label "Out" which is used by the
@@ -130,5 +125,7 @@ public interface WSDLConstants {
 	 *  
 	 */
 	public static final int MESSAGE_LABEL_OUT = 1;
+	
+	public static final String MESSAGE_LABEL_OUT_VALUE = "Out";
 	
 }

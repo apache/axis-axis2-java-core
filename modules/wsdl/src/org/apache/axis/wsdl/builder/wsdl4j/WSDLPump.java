@@ -16,6 +16,7 @@
 package org.apache.axis.wsdl.builder.wsdl4j;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
@@ -34,10 +36,12 @@ import javax.wsdl.Service;
 import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
@@ -47,13 +51,17 @@ import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.DefaultExtensibilityElement;
+import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.impl.WSDLProcessingException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
@@ -67,6 +75,9 @@ public class WSDLPump {
 	private Definition wsdl4jParsedDefinition;
 
 	private WSDLComponentFactory wsdlComponenetFactory;
+	
+	
+	private List resolvedMultipartMessageList = new LinkedList();
 
 	public WSDLPump(WSDLDescription womDefinition,
 			Definition wsdl4jParsedDefinition) {
@@ -116,9 +127,12 @@ public class WSDLPump {
 		Types wsdl4jTypes = wsdl4JDefinition.getTypes();
 		if (null != wsdl4jTypes) {
 			WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
-			Iterator wsdl4jelmentsIterator = wsdl4jTypes
-					.getExtensibilityElements().iterator();
-			this.copyExtensibleElements(wsdlTypes.getExtensibilityElements(),
+			
+//			Schema schema = (Schema)wsdlTypes.getExtensibilityElements();
+//			Element element = schema.getElement();
+			
+			
+			this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
 					wsdlTypes);
 
 			this.womDefinition.setTypes(wsdlTypes);
@@ -237,6 +251,9 @@ public class WSDLPump {
 			this.populateBindingOperation(wsdlBindingOperation,
 								wsdl4jBindingOperation,
 								wsdl4JBinding.getQName().getNamespaceURI());
+			wsdlBindingOperation.setOperation(
+					wsdlInterface.getOperation(wsdl4jBindingOperation.getOperation().getName())
+					);
 			this.copyExtensibleElements(
 					wsdl4jBindingOperation.getExtensibilityElements(), 
 					wsdlBindingOperation);
@@ -267,7 +284,7 @@ public class WSDLPump {
 
 	/////////////////////////////////////////////////////////////////////////////
 	//////////////////////////// Internal Component Copying ///////////////////
-	//TODO Faults ??
+	//TODO Faults 
 	public void populateOperations(WSDLOperation wsdlOperation,
 			Operation wsdl4jOperation, String nameSpaceOfTheOperation) {
 		//Copy Name Attrebute
@@ -281,50 +298,129 @@ public class WSDLPump {
 		MessageReference wsdlInputMessage = this.wsdlComponenetFactory
 				.createMessageReference();
 		wsdlInputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-
-		//Get all the in parts and create a new Element out of it and add it to
-		// the Types.
-		//TODO
-
-		if (wsdl4jInputMessage.getMessage().getParts().size() > 1)
-			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator inputIterator = wsdl4jInputMessage.getMessage().getParts()
-				.values().iterator();
-		if (inputIterator.hasNext()) {
-			Part part = ((Part) inputIterator.next());
-			QName element;
-			if (null != (element = part.getTypeName())) {
-				wsdlInputMessage.setElement(element);
-			} else {
-				wsdlInputMessage.setElement(part.getElementName());
-			}
-		}
+		wsdlInputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+		this.populateMessageReference(wsdlInputMessage, wsdl4jInputMessage.getMessage());			
+		this.copyExtensibleElements(
+				(wsdl4jInputMessage.getMessage()).getExtensibilityElements(), 
+				wsdlInputMessage
+				);
 		wsdlOperation.setInputMessage(wsdlInputMessage);
+		
 
 		//Create an output message and add
 		Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
 		MessageReference wsdlOutputMessage = 
 			this.wsdlComponenetFactory.createMessageReference();
 		wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+		wsdlOutputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-		if (wsdl4jOutputMessage.getMessage().getParts().size() > 1)
-			throw new WSDLProcessingException("Multipart Parsing not Supported");
-		Iterator outputIterator = 
-			wsdl4jOutputMessage.getMessage().getParts().values().iterator();
-		if (outputIterator.hasNext()) {
-			Part outPart = ((Part) outputIterator.next());
-			QName typeName;
-			if (null != (typeName = outPart.getTypeName())) {
-				wsdlOutputMessage.setElement(typeName);
-			} else {
-				wsdlOutputMessage.setElement(outPart.getElementName());
-			}
-		}
+		this.populateMessageReference(wsdlOutputMessage, wsdl4jOutputMessage.getMessage());
+		this.copyExtensibleElements(
+				(wsdl4jOutputMessage.getMessage()).getExtensibilityElements(),
+				wsdlOutputMessage
+				);
 		wsdlOperation.setOutputMessage(wsdlOutputMessage);
+		
+		
 		//Set the MEP
 		wsdlOperation.setMessageExchangePattern(WSDL11MEPFinder
 				.getMEP(wsdl4jOperation));
 
+	}
+	private void populateMessageReference(MessageReference womMessage, Message wsdl4jMessage){
+		if (wsdl4jMessage.getParts().size() > 1){
+			// Multipart Message
+			
+			// Check whether this message parts have been made to a type			
+			Iterator multipartListIterator = this.resolvedMultipartMessageList.iterator();
+			boolean multipartAlreadyResolved = false;
+			while(multipartListIterator.hasNext() && !multipartAlreadyResolved){
+				QName temp = (QName)multipartListIterator.next();
+				multipartAlreadyResolved = wsdl4jMessage.getQName().equals(temp);
+			}
+			if(multipartAlreadyResolved){
+				//This message with multiple parts has resolved and a new type has been 
+				//made out of it earlier.
+				//FIXME Actual element name should it be xs:, if yes change the qname added to the 
+				//resolvedmessage list too.
+				womMessage.setElement(wsdl4jMessage.getQName());
+			}else{
+				//Get the list of multiparts of the message and create a new Element 
+				//out of it and add it to the schema.
+				Map parts = wsdl4jMessage.getParts();
+				Element element = null;
+				WSDLTypes types = womDefinition.getTypes();
+				if(null == types){
+					XmlDocument newDoc = new XmlDocument();
+					
+					Element schemaElement = newDoc.createElement("schema");//http://www.w3.org/2001/XMLSchema
+					types =wsdlComponenetFactory.createTypes();
+					ExtensionFactory extensionFactory = wsdlComponenetFactory.createExtensionFactory();
+					org.apache.wsdl.extensions.Schema typesElement = (org.apache.wsdl.extensions.Schema)extensionFactory.getExtensionElement(ExtensionConstants.SCHEMA);
+					typesElement.setElelment(schemaElement);
+					types.addExtensibilityElement(typesElement);
+					this.womDefinition.setTypes(types);
+				}
+				Iterator schemaEIIterator = types.getExtensibilityElements().iterator();
+				while(schemaEIIterator.hasNext()){
+					WSDLExtensibilityElement temp = (WSDLExtensibilityElement)schemaEIIterator.next();
+					if(ExtensionConstants.SCHEMA.equals(temp.getType())){
+						element = ((org.apache.wsdl.extensions.Schema)temp).getElelment();
+						break;
+					}
+				}				
+				
+				Document doc = element.getOwnerDocument();
+				String name = wsdl4jMessage.getQName().getLocalPart();
+				Element newElement = doc.createElement("complexType");
+				newElement.setAttribute("name", name);
+				
+				Element cmplxContent = doc.createElement("complexContent");
+				Element child;
+				Iterator iterator = parts.keySet().iterator();
+				while(iterator.hasNext()){
+					Part part = (Part)parts.get(iterator.next());
+					QName elementName = part.getElementName();
+					if(null == elementName){
+						elementName = part.getTypeName();
+					}
+					
+					
+					child = doc.createElement("element");
+					child.setAttribute("name", "var"+elementName.getLocalPart());
+					child.setAttribute("type", elementName.getNamespaceURI()+":"+elementName.getLocalPart());
+					cmplxContent.appendChild(child);
+				}
+				
+				
+				newElement.appendChild(cmplxContent);
+				
+				element.appendChild(newElement);
+				//Now since  a new type is created augmenting the parts add the QName
+				//of the newly created type as the messageReference's name.				
+				womMessage.setElement(wsdl4jMessage.getQName());
+				//Add this message as a resolved message, so that incase some other
+				//operation refer to the same message the if above will take a hit 
+				//and the cashed QName can be used instead of crating another type 
+				//for the same message.
+				
+				this.resolvedMultipartMessageList.add(wsdl4jMessage.getQName());
+				
+			}			
+		}else{
+			//Only one part so copy the QName of the referenced type.
+			Iterator outputIterator = 
+				wsdl4jMessage.getParts().values().iterator();
+			if (outputIterator.hasNext()) {
+				Part outPart = ((Part) outputIterator.next());
+				QName typeName;
+				if (null != (typeName = outPart.getTypeName())) {
+					womMessage.setElement(typeName);
+				} else {
+					womMessage.setElement(outPart.getElementName());
+				}
+			}
+		}
 	}
 
 	private void populateBindingOperation(
@@ -334,17 +430,16 @@ public class WSDLPump {
 		
 		wsdlBindingOperation.setName(new QName(nameSpaceOfTheBindingOperation,
 									wsdl4jBindingOperation.getName()));
-
 		BindingInput wsdl4jInputBinding = 
 			wsdl4jBindingOperation.getBindingInput();
 		WSDLBindingMessageReference wsdlInputBinding = 
 			this.wsdlComponenetFactory.createWSDLBindingMessageReference();
-
 		wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 		//TODO Faults
 		this.copyExtensibleElements(wsdl4jInputBinding.getExtensibilityElements(), 
 								wsdlInputBinding);
 		wsdlBindingOperation.setInput(wsdlInputBinding);
+		
 
 		BindingOutput wsdl4jOutputBinding = wsdl4jBindingOperation
 				.getBindingOutput();
@@ -355,7 +450,7 @@ public class WSDLPump {
 		//TODO Faults
 		this.copyExtensibleElements(wsdl4jOutputBinding.getExtensibilityElements(), 
 								wsdlOutputBinding);
-		wsdlBindingOperation.setInput(wsdlOutputBinding);
+		wsdlBindingOperation.setOutput(wsdlOutputBinding);
 
 	}
 
@@ -454,7 +549,16 @@ public class WSDLPump {
 					extensibilityElement.setRequired(required.booleanValue());
 				}
 				component.addExtensibilityElement(extensibilityElement);
-			} else {
+			}else if(wsdl4jElement instanceof Schema) {
+				Schema schema = (Schema)wsdl4jElement;
+				org.apache.wsdl.extensions.Schema extensibilityElement = (org.apache.wsdl.extensions.Schema)extensionFactory.getExtensionElement(schema.getElementType());
+				extensibilityElement.setElelment(schema.getElement());
+				Boolean required = schema.getRequired();
+				if(null != required){
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			}else {
 //				throw new AxisError(
 //						"An Extensible item "+wsdl4jElement.getElementType()+" went unparsed during WSDL Parsing");
 			}

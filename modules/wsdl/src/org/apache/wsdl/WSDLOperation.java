@@ -128,5 +128,5 @@ public interface WSDLOperation extends ExtensibleComponent {
      *
      * @return
      */
-    public String getTargetnemespace();
+    public String getTargetnamespace();
 }

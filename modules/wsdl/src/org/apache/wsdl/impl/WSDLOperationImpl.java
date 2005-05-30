@@ -209,7 +209,7 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
      *
      * @return
      */
-    public String getTargetnemespace() {
+    public String getTargetnamespace() {
         if (null != this.name) {
             return this.name.getNamespaceURI();
         }
