@@ -44,51 +44,69 @@
      -->
  
 <project default="multiproject:install" xmlns:m="jelly:maven" xmlns:ant="jelly:ant" xmlns:j="jelly:core">
-  			<j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
-			<j:set var="dist.dir" value="target/dist"/>
+    <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
+    <j:set var="dist.dir" value="target/dist"/>
+    
+    <goal name="init">        <ant:mkdir dir="target"/>
+        <ant:mkdir dir="${dist.dir}"/>
+   	<ant:mkdir dir="target/lib"/>
 
-		 <goal name="init">
-		        <ant:mkdir dir="target"/>
-		        <ant:mkdir dir="${dist.dir}"/>
-   		        <ant:mkdir dir="target/lib"/>
-		</goal>	
+        <uptodate property="jars.uptodate" targetfile="target/axis2.war">
+	   <srcfiles dir="modules">
+	       <include name="**/*.java"/>
+	       <include name="**/*.xml"/>
+	       <include name="**/*.wsdl"/>
+	       <exclude name="**/traget/**"/>
+	   </srcfiles>
+	</uptodate>
+	<echo message="the files are up to date = ${jars.uptodate}"></echo>
+    </goal>	
 				
-		 <goal name="clean">
-			<attainGoal name="multiproject:clean"/>
-			<ant:delete dir="target"/>
-		</goal>
+    <goal name="clean">
+	<attainGoal name="multiproject:clean"/>
+	<ant:delete dir="target"/>
+    </goal>
 
-		 <goal name="clean-repo">
-			<ant:delete >
-				<ant:fileset dir="${maven.repo.local}">
-					<ant:include name="axis/jars/axis2*.jar"/>
-				</ant:fileset>
-			</ant:delete>
-		</goal>
+    <goal name="clean-repo">
+	<ant:delete >
+	    <ant:fileset dir="${maven.repo.local}">
+                <ant:include name="axis/jars/axis2*.jar"/>
+	    </ant:fileset>
+        </ant:delete>
+    </goal>
+
+    <goal name="create-jar" prereqs="init">
+	<jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
+            <fileset dir="modules/core/target/classes"/>
+            <fileset dir="modules/xml/target/classes"/>
+            <fileset dir="modules/wsdl/target/classes"/>
+        </jar>
+    </goal>
+
 		
-		<goal name="create-lib" prereqs="init">
-				<ant:copy todir="target/lib" flatten="true">
-					<ant:fileset dir="${maven.repo.local}">
-					<ant:include name="stax/jars/stax-api-1.0.jar"/>
-					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-					<ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-					<ant:include name="log4j/jars/log4j-1.2.8.jar"/>
-					<ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-					<ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
-				</ant:fileset> 
-				<ant:fileset dir="modules">
-					<ant:include name="**/target/axis2*.jar"/>
-				</ant:fileset> 
-		</ant:copy> 
-				
-		</goal>		
+    <goal name="create-lib" prereqs="create-jar">
+	<ant:copy todir="target/lib" flatten="true">
+	<ant:fileset dir="${maven.repo.local}">
+	    <ant:include name="stax/jars/stax-api-1.0.jar"/>
+	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+	    <ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+	    <ant:include name="log4j/jars/log4j-1.2.8.jar"/>
+	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
+	    <ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
+            <ant:include name="axis/jars/axis-wsdl4j-1.2-RC3.jar"/>
+	</ant:fileset> 
+	</ant:copy> 
+    </goal>		
 		
 
-    <goal name="war" prereqs="multiproject:install,init,create-lib"> 
+    <goal name="war" prereqs="init"> 
+         <j:if test="${jars.uptodate != 'yes'}">
+                <attainGoal name="multiproject:install"/>
+                <attainGoal name="create-lib"/>
+         </j:if> 
         <!-- jar the test classes -->
 		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
 		  	<ant:fileset dir="modules/core/html"/>
-    		<ant:fileset dir="modules/samples/jsp"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
 		  	</ant:lib>  
@@ -97,9 +115,8 @@
 			</ant:classes>
 		</ant:war>
     </goal>
-    
+<!--    
     <goal name="war-withsamples" prereqs="multiproject:install,init,create-lib"> 
-        <!-- jar the test classes -->
         <ant:mkdir dir="target"/>
                <ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
                   <ant:fileset dir="modules/core/html"/>
@@ -113,20 +130,21 @@
 				</ant:classes>
                 </ant:war>
     </goal>
-
+-->
 	<!-- to transforme htmls to xdocs -->
   <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>
   </preGoal>
   
   <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
-		<ant:mkdir dir="target/dist-bin"/>
-		<ant:mkdir dir="target/dist-bin/docs"/>
-		<ant:mkdir dir="target/dist-bin/bin"/>
-		<ant:mkdir dir="target/dist-bin/lib"/>
-		<ant:mkdir dir="target/dist-bin/samples"/>
-		<ant:mkdir dir="target/dist-bin/webapps"/> 
-	    <ant:mkdir dir="target/dist-bin/docs/api"/> 
+        <ant:mkdir dir="target/dist-bin"/>
+	<ant:mkdir dir="target/dist-bin/docs"/>
+	<ant:mkdir dir="target/dist-bin/bin"/>
+	<ant:mkdir dir="target/dist-bin/lib"/>
+	<ant:mkdir dir="target/dist-bin/samples"/>
+	<ant:mkdir dir="target/dist-bin/webapps"/> 
+        <ant:mkdir dir="target/dist-bin/docs/api"/> 
+
 		<ant:copy todir="target/dist-bin/docs/api">
 			<ant:fileset dir="target/apidocs/">
 				<ant:include name="**"/>
@@ -200,12 +218,11 @@
            version="true"
            use="true"
            windowtitle="Axis2 API">
-           		<ant:sourcepath>
-	           		<ant:pathelement location="modules/core/src"/>
-	           		<ant:pathelement location="modules/deployment/src"/>	           		
-	           		<ant:pathelement location="modules/wsdl/src"/>
-	           		<ant:pathelement location="modules/om/src"/>
-           </ant:sourcepath>
+       <ant:sourcepath>
+	    <ant:pathelement location="modules/core/src"/>
+	    <ant:pathelement location="modules/wsdl/src"/>
+	    <ant:pathelement location="modules/xml/src"/>
+       </ant:sourcepath>
   </ant:javadoc>
   </goal>
   
