@@ -92,7 +92,7 @@ public class ServiceDescription
         collectionModule.add(moduleref);
     }
 
-    public void addToEngagModuleList(QName moduleName){
+    public void addToEngagModuleList(ModuleDescription moduleName){
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleName);
     }

@@ -135,7 +135,7 @@ public class PhaseResolver {
                             break;
                         }
                 }
-                axisService.addToEngagModuleList(modulename);
+                axisService.addToEngagModuleList(module);
             } else {
                 throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml");
             }
@@ -329,7 +329,7 @@ public class PhaseResolver {
         for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
             ServiceDescription serviceDescription = (ServiceDescription) iterator.next();
             engageModuleToServiceFromGlobal(serviceDescription, module);
-            serviceDescription.addToEngagModuleList(module.getName());
+            serviceDescription.addToEngagModuleList(module);
         }
     }
 
@@ -343,8 +343,20 @@ public class PhaseResolver {
     public void engageModuleToServiceFromGlobal(ServiceDescription service, ModuleDescription module) throws PhaseException {
         HashMap opeartions = service.getOperations();
         Collection opCol = opeartions.values();
+        boolean engaged = false;
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
+            Collection modules =  opDesc.getModules();
+            for (Iterator iterator1 = modules.iterator(); iterator1.hasNext();) {
+                ModuleDescription description = (ModuleDescription) iterator1.next();
+                if(description.getName().equals(module.getName())){
+                    engaged = true;
+                    break;
+                }
+            }
+            if (engaged) {
+               continue;
+            }
             Flow flow = null;
             for (int type = 1; type < 5; type++) {
                 switch (type) {
@@ -405,7 +417,7 @@ public class PhaseResolver {
                     }
                 }
             }
-            opDesc.addToEngageModuleList(module.getName());
+            opDesc.addToEngageModuleList(module);
         }
     }
 
@@ -483,10 +495,21 @@ public class PhaseResolver {
     public void engageModuleToService(ServiceDescription service, ModuleDescription module) throws PhaseException {
         HashMap opeartions = service.getOperations();
         Collection opCol = opeartions.values();
+        boolean engaged = false;
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
-            engageModuleToOperation(opDesc,module);
-            opDesc.addToEngageModuleList(module.getName());
+           Collection modules =  opDesc.getModules();
+            for (Iterator iterator1 = modules.iterator(); iterator1.hasNext();) {
+                ModuleDescription description = (ModuleDescription) iterator1.next();
+                if(description.getName().equals(module.getName())){
+                    engaged = true;
+                    break;
+                }
+            }
+            if (!engaged) {
+                engageModuleToOperation(opDesc,module);
+                opDesc.addToEngageModuleList(module);
+            }
         }
     }
 

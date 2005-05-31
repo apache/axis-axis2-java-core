@@ -103,6 +103,7 @@ public class Constants {
     public static final String LIST_PHASES = "listPhases";
 
     public static final String ENGAGE_GLOBAL_MODULE = "engagingglobally";
+    public static final String ENGAGE_MODULE_TO_SERVICE = "engageToService";
 
     /**
      * Field SERVICE_MAP

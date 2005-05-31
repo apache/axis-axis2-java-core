@@ -18,7 +18,7 @@
             */
         %>
         <head>
-<title>Axis2cAdministrations Page</title>
+<title>Axis2 :: Administrations Page</title>
 </head>
 
 <frameset rows="80,*" cols="*" frameborder="NO" border="0" framespacing="0">

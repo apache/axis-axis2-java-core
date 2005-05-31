@@ -82,7 +82,7 @@ public class OperationDescription extends WSDLOperationImpl implements
         collectionModule.add(moduleref);
     }
 
-    public void addToEngageModuleList(QName moduleName){
+    public void addToEngageModuleList(ModuleDescription moduleName){
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleName);
     }

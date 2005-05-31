@@ -87,11 +87,15 @@ public class AxisServlet extends HttpServlet {
     private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME =
             "engagingglobally.jsp";
 
+    private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME =
+            "engagingtoaservice.jsp";
+
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
      */
     private static final String LIST_SINGLE_SERVICE_JSP_NAME =
             "listSingleService.jsp";
+
 
     /**
      * Field allowListServices
@@ -153,6 +157,11 @@ public class AxisServlet extends HttpServlet {
         }else if ((filePart != null)
                 && filePart.endsWith(Constants.ENGAGE_GLOBAL_MODULE)){
             engageModulesGlobally(httpServletRequest, httpServletResponse);
+            return;
+        }
+        else if ((filePart != null)
+                && filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)){
+            engageModulesToService(httpServletRequest, httpServletResponse);
             return;
         }
 
@@ -304,6 +313,32 @@ public class AxisServlet extends HttpServlet {
         }
         req.getSession().setAttribute("modules",null);
         res.sendRedirect(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
+    }
+
+    private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+        req.getSession().setAttribute(Constants.MODULE_MAP, modules);
+         HashMap services = engineContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        String moduleName =(String)req.getParameter("modules");
+        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+        req.getSession().setAttribute("modules",null);
+        String serviceName =(String)req.getParameter("service");
+        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+        if(serviceName !=null && moduleName !=null){
+            try {
+
+                engineContext.getAxisConfiguration().getService(new QName(serviceName)).engageModule(
+                        engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS, moduleName +
+                        " module engaged to the service Successfully");
+            } catch (AxisFault axisFault) {
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
+            }
+        }
+        req.getSession().setAttribute("service",null);
+        res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
     }
 
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)

@@ -48,16 +48,18 @@
                  String moduleName = "";
                  if(engagdeModules.size() >0){
            %>
-           <i>Engaged Modules</i>
+           <i>Engaged Modules for the service</i>
                 <%
-                     for (Iterator iterator1 = engagdeModules.iterator(); iterator1.hasNext();) {
-                         ModuleDescription description = (ModuleDescription) iterator1.next();
+                     for (Iterator iteratorm = engagdeModules.iterator(); iteratorm.hasNext();) {
+                         ModuleDescription description = (ModuleDescription) iteratorm.next();
                          moduleName = description.getName().getLocalPart();
-                %><li><%=moduleName%></li><%
+                %><li><%=moduleName%></li>
+                         <br>
+                         <%
                      }
                  }
                  if (operationsList.size() > 0) {
-                %><i>Available operations</i><%
+                %><br><i>Available operations</i><%
                  } else {
                 %><i> There are no any opeartions specified</i><%
                  }
@@ -65,17 +67,19 @@
                  for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
                      OperationDescription axisOperation = (OperationDescription) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li><%
-                     engagdeModules = axisService.getEngagedModules();
+                     engagdeModules = null;
+                     engagdeModules = axisOperation.getModules();
                      moduleName = "";
                      if(engagdeModules.size() >0){
                 %>
-                <i>Engaged Modules</i>
+                <br><i>Engaged Modules for the opeartion</i><ul>
                 <%
-                         for (Iterator iterator2 = engagdeModules.iterator(); iterator1.hasNext();) {
+                         for (Iterator iterator2 = engagdeModules.iterator(); iterator2.hasNext();) {
                              ModuleDescription description = (ModuleDescription) iterator2.next();
                              moduleName = description.getName().getLocalPart();
-                %><li><%=moduleName%></li><%
+                %><li><%=moduleName%></li><br><%
                          }
+                         %></ul><%
                      }
 
                  }
