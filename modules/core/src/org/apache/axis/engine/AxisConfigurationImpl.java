@@ -328,7 +328,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if(moduleref.equals(qName)){
-                    throw new AxisFault(moduleref.getLocalPart()+ " module alredy engaged globally" +
+                    throw new AxisFault(moduleref.getLocalPart()+ " module has alredy engaged globally" +
                             "  operation terminated !!!");
                 }
             }

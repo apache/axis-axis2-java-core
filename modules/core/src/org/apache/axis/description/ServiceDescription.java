@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.description;
 
 import org.apache.axis.context.MessageContext;
@@ -26,13 +26,14 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Class ServiceDescription
  */
 public class ServiceDescription
-    extends WSDLServiceImpl
-    implements WSDLService, ParameterInclude, FlowInclude, DescriptionConstants {
+        extends WSDLServiceImpl
+        implements WSDLService, ParameterInclude, FlowInclude, DescriptionConstants {
     /**
      * TODO this should be in the WSDLInterface, yet we want it to have in the
      * the Services, so we put this here for M1 until we foud better way to do
@@ -61,30 +62,46 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#addModule(javax.xml.namespace.QName)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#addModule(javax.xml.namespace.QName)
+    */
 
     /**
      * To ebgage a module it is reuired to use this method
      * @param moduleref
      * @throws AxisFault
      */
-     public void engageModule(ModuleDescription moduleref) throws AxisFault {
+    public void engageModule(ModuleDescription moduleref) throws AxisFault {
         if (moduleref == null) {
             return;
+        }
+        if (moduleref != null) {
+            Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+            for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+                ModuleDescription   modu = (ModuleDescription) iterator.next();
+                if(modu.getName().equals(moduleref.getName())){
+                    throw new AxisFault(moduleref.getName().getLocalPart()+ " module has alredy engaged to the seevice" +
+                            "  operation terminated !!!");
+                }
+
+            }
         }
         new PhaseResolver().engageModuleToService(this,moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleref);
     }
 
+    public void addToEngagModuleList(QName moduleName){
+        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        collectionModule.add(moduleName);
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
+    */
 
     /**
      * Method getEngadgedModules
@@ -110,10 +127,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#addOperation(org.apache.axis.description.OperationDescription)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#addOperation(org.apache.axis.description.OperationDescription)
+    */
 
     /**
      * Method addOperation
@@ -131,10 +148,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#setClassLoader(java.lang.ClassLoader)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#setClassLoader(java.lang.ClassLoader)
+    */
 
     /**
      * Method setClassLoader
@@ -148,10 +165,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#getClassLoader()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#getClassLoader()
+    */
 
     /**
      * Method getClassLoader
@@ -163,10 +180,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#setContextPath(java.lang.String)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#setContextPath(java.lang.String)
+    */
 
     /**
      * Method setContextPath
@@ -180,10 +197,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#getContextPath()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#getContextPath()
+    */
 
     /**
      * Method getContextPath
@@ -195,10 +212,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#setStyle(javax.swing.text.Style)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#setStyle(javax.swing.text.Style)
+    */
 
     /**
      * Method setStyle
@@ -212,10 +229,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ServiceDescription#getStyle()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#getStyle()
+    */
 
     /**
      * Method getStyle
@@ -227,17 +244,17 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.PhasesInclude#getPhases(java.util.ArrayList,
-     *      int)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.PhasesInclude#getPhases(java.util.ArrayList,
+    *      int)
+    */
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ParameterInclude#addParameter(org.apache.axis.description.Parameter)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ParameterInclude#addParameter(org.apache.axis.description.Parameter)
+    */
 
     /**
      * Method addParameter
@@ -249,15 +266,15 @@ public class ServiceDescription
             return;
         }
         ParameterIncludeImpl paramInclude =
-            (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
         paramInclude.addParameter(param);
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.ParameterInclude#getParameter(java.lang.String)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ParameterInclude#getParameter(java.lang.String)
+    */
 
     /**
      * Method getParameter
@@ -267,15 +284,15 @@ public class ServiceDescription
      */
     public Parameter getParameter(String name) {
         ParameterIncludeImpl paramInclude =
-            (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
         return (Parameter) paramInclude.getParameter(name);
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#getInFlow()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#getInFlow()
+    */
 
     /**
      * Method getInFlow
@@ -287,10 +304,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#setInFlow(org.apache.axis.description.Flow)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#setInFlow(org.apache.axis.description.Flow)
+    */
 
     /**
      * Method setInFlow
@@ -304,10 +321,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#getOutFlow()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#getOutFlow()
+    */
 
     /**
      * Method getOutFlow
@@ -319,10 +336,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#setOutFlow(org.apache.axis.description.Flow)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#setOutFlow(org.apache.axis.description.Flow)
+    */
 
     /**
      * Method setOutFlow
@@ -336,10 +353,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#getFaultInFlow()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#getFaultInFlow()
+    */
 
     /**
      * Method getFaultInFlow
@@ -351,10 +368,10 @@ public class ServiceDescription
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis.description.FlowInclude#setFaultInFlow(org.apache.axis.description.Flow)
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.FlowInclude#setFaultInFlow(org.apache.axis.description.Flow)
+    */
 
     /**
      * Method setFaultInFlow
@@ -403,8 +420,8 @@ public class ServiceDescription
             // serviceContext);
         } else {
             serviceContext =
-                (ServiceContext) msgContext.getSystemContext().getServiceContext(
-                    msgContext.getServiceInstanceID());
+                    (ServiceContext) msgContext.getSystemContext().getServiceContext(
+                            msgContext.getServiceInstanceID());
         }
 
         return serviceContext;

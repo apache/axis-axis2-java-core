@@ -17,8 +17,6 @@
                  javax.xml.stream.XMLOutputFactory,
                  org.apache.axis.engine.AxisFault,
                  javax.xml.stream.XMLStreamException,
-                 org.apache.commons.logging.Log,
-                 org.apache.commons.logging.LogFactory,
                  javax.xml.namespace.QName,
                  java.io.StringWriter"
    session="false" %>
@@ -46,6 +44,12 @@
 <body>
    <jsp:include page="include/header.inc"></jsp:include>
 <%port =request.getServerPort();%>
+<%IP=request.getRequestURL().toString();
+    int lastindex = IP.lastIndexOf('/');
+    IP = IP.substring(0,lastindex);
+    targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
+                    IP + "/axis2/services/echo/echoOMElement");
+%>
 <%!
     /*
     * Happiness tests for axis. These look at the classpath and warn if things
@@ -54,6 +58,8 @@
     * page for easy re-use
     */
     int port = 0;
+    String IP;
+    EndpointReference targetEPR ;
     /**
      * Get a string providing install information.
      * TODO: make this platform aware and give specific hints
@@ -319,11 +325,6 @@
     }
 
     private String value;
-     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (port)
-            + "/axis2/services/echo/echoOMElement");
     private QName operationName = new QName("echoOMElement");
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();

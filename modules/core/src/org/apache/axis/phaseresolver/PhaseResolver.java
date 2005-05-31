@@ -135,6 +135,7 @@ public class PhaseResolver {
                             break;
                         }
                 }
+                axisService.addToEngagModuleList(modulename);
             } else {
                 throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml");
             }
@@ -328,6 +329,7 @@ public class PhaseResolver {
         for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
             ServiceDescription serviceDescription = (ServiceDescription) iterator.next();
             engageModuleToServiceFromGlobal(serviceDescription, module);
+            serviceDescription.addToEngagModuleList(module.getName());
         }
     }
 
@@ -403,6 +405,7 @@ public class PhaseResolver {
                     }
                 }
             }
+            opDesc.addToEngageModuleList(module.getName());
         }
     }
 
@@ -483,6 +486,7 @@ public class PhaseResolver {
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
             engageModuleToOperation(opDesc,module);
+            opDesc.addToEngageModuleList(module.getName());
         }
     }
 

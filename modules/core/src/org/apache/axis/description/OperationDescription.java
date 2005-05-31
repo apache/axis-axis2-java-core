@@ -14,6 +14,7 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
@@ -65,19 +66,35 @@ public class OperationDescription extends WSDLOperationImpl implements
         if (moduleref == null) {
             return;
         }
+        if (moduleref != null) {
+            Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+            for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+                ModuleDescription   modu = (ModuleDescription) iterator.next();
+                if(modu.getName().equals(moduleref.getName())){
+                    throw new AxisFault(moduleref.getName().getLocalPart()+ " module has alredy engaged to the operation" +
+                            "  operation terminated !!!");
+                }
+
+            }
+        }
+        new PhaseResolver().engageModuleToOperation(this, moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleref);
-        new PhaseResolver().engageModuleToOperation(this, moduleref);
+    }
+
+    public void addToEngageModuleList(QName moduleName){
+        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        collectionModule.add(moduleName);
     }
 
 
 
 
     /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
-     */
+    * (non-Javadoc)
+    *
+    * @see org.apache.axis.description.ServiceDescription#getEngadgedModules()
+    */
 
     /**
      * Method getEngadgedModules
