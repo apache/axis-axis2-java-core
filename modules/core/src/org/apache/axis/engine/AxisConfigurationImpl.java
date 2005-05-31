@@ -325,6 +325,13 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             module =  new DeploymentEngine().buildModule(file);
         }
         if (module != null) {
+            for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
+                QName qName = (QName) iterator.next();
+                if(moduleref.equals(qName)){
+                    throw new AxisFault(moduleref.getLocalPart()+ " module alredy engaged globally" +
+                            "  operation terminated !!!");
+                }
+            }
             new PhaseResolver(this).engageModuleGlobally(module);
         } else {
              throw new AxisFault(this + " Refer to invalid module "

@@ -102,6 +102,8 @@ public class Constants {
 
     public static final String LIST_PHASES = "listPhases";
 
+    public static final String ENGAGE_GLOBAL_MODULE = "engagingglobally";
+
     /**
      * Field SERVICE_MAP
      */
@@ -112,6 +114,8 @@ public class Constants {
     public static final String MODULE_MAP = "modulemap";
 
     public static final String PHASE_LIST = "phaseList";
+
+    public static final String ENGAGE_STATUS = "engagestatus";
 
     /**
      * Errorness servcie

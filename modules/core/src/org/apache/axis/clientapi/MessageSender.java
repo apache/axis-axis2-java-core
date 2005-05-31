@@ -34,7 +34,7 @@ public class MessageSender extends InOnlyMEPClient {
     public MessageSender(ServiceContext service) {
         super(service);
     }
-    public void send(String opName, OMElement toSend, Callback callback) throws AxisFault {
+    public void send(String opName, OMElement toSend) throws AxisFault {
         OperationDescription axisOp = new OperationDescription(new QName(opName));
         serviceContext.getServiceConfig().addOperation(axisOp);
         super.send(axisOp,prepareTheSystem(toSend));

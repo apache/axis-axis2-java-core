@@ -33,7 +33,7 @@ body {
 <p><a href="globalModules" target="mainFrame">List Globally Engaged Modules</a></p>
 <p>Enage Module</p>
 <blockquote>
-  <p><a href="engagingglobally.jsp" target="mainFrame">Gloabally</a></p>
+  <p><a href="engagingglobally" target="mainFrame">Gloabally</a></p>
   <p><a href="engagingtoaservice.jsp" target="mainFrame">To A service</a></p>
   <p><a href="enaggingtoanopeartion.jsp" target="mainFrame">To an Operation</a></p>
   <p>&nbsp;</p>

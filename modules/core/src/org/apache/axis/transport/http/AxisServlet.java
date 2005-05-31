@@ -84,6 +84,9 @@ public class AxisServlet extends HttpServlet {
     private static final String LIST_PHASES_JSP_NAME =
             "viewphases.jsp";
 
+    private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME =
+            "engagingglobally.jsp";
+
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
      */
@@ -146,6 +149,10 @@ public class AxisServlet extends HttpServlet {
         }  else if ((filePart != null)
                 && filePart.endsWith(Constants.LIST_PHASES)){
             listPhases(httpServletRequest, httpServletResponse);
+            return;
+        }else if ((filePart != null)
+                && filePart.endsWith(Constants.ENGAGE_GLOBAL_MODULE)){
+            engageModulesGlobally(httpServletRequest, httpServletResponse);
             return;
         }
 
@@ -279,6 +286,24 @@ public class AxisServlet extends HttpServlet {
         HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
+    }
+
+    private void engageModulesGlobally(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+        req.getSession().setAttribute(Constants.MODULE_MAP, modules);
+        String moduleName =(String)req.getParameter("modules");
+        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+        if(moduleName !=null){
+            try {
+                engineContext.getAxisConfiguration().engageModule(new QName(moduleName));
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS, moduleName + " module engaged globally Successfully");
+            } catch (AxisFault axisFault) {
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
+            }
+        }
+        req.getSession().setAttribute("modules",null);
+        res.sendRedirect(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
     }
 
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)
