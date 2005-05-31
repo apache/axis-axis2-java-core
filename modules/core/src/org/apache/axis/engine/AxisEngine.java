@@ -96,9 +96,11 @@ public class AxisEngine {
             ConfigurationContext sysCtx = context.getSystemContext();
             ArrayList phases = sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
             invokePhases(phases, context);
+            verifyContextBuilt(context);
             
             OperationContext operationContext = context.getOperationContext();
-            phases = operationContext.getAxisOperation().getRemainingPhasesInFlow();
+            OperationDescription operationDescription = operationContext.getAxisOperation();
+            phases = operationDescription.getRemainingPhasesInFlow();
             invokePhases(phases, context);
             if (context.isServerSide()) {
                 // add invoke Phase

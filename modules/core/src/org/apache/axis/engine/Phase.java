@@ -45,9 +45,6 @@ public class Phase {
      */
     private Log log = LogFactory.getLog(getClass());
 
-    private int indexOfHandlerToExecute = 0;
-
-
     /**
      * to keet info about phase first handler
      */
@@ -146,6 +143,7 @@ public class Phase {
             }
         }
         //Invoking the rest of handler except phaseFirst and phaseLast
+        int indexOfHandlerToExecute = 0;
         while (indexOfHandlerToExecute < handlers.size()) {
             if (msgctx.isPaused()) {
                 break;
@@ -157,7 +155,6 @@ public class Phase {
                     handler.invoke(msgctx);
                     //This line should be after the invoke as if the invocation failed this handlers is takn care of and
                     //no need to revoke agien
-                    //         executionStack.push(handler);
                     indexOfHandlerToExecute++;
                 }
             }

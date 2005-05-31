@@ -63,7 +63,7 @@ public class ConfigurationContext extends AbstractContext{
 
     }
 
-    public void removeService(QName name) {
+    public synchronized void removeService(QName name) {
         serviceContextMap.remove(name);
     }
 
@@ -81,7 +81,7 @@ public class ConfigurationContext extends AbstractContext{
         axisConfiguration = configuration;
     }
 
-     public void registerOperationContext(String messageID, OperationContext mepContext) {
+     public synchronized void registerOperationContext(String messageID, OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
 
@@ -93,7 +93,7 @@ public class ConfigurationContext extends AbstractContext{
         return this.operationContextMap;
     }
 
-    public void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext) {
+    public synchronized void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext) {
         this.serviceContextMap.put(serviceInstanceID, serviceContext);
     }
 

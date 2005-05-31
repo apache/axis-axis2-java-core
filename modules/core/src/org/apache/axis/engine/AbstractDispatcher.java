@@ -17,6 +17,7 @@ package org.apache.axis.engine;
 
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
@@ -61,7 +62,8 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
         if (msgctx.getServiceContext() != null && msgctx.getOperationContext() == null) {
             OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
             if(axisOperation != null){
-                msgctx.setOperationContext(axisOperation.findOperationContext(msgctx,msgctx.getServiceContext(),msgctx.isServerSide()));
+                OperationContext operationContext = axisOperation.findOperationContext(msgctx,msgctx.getServiceContext(),msgctx.isServerSide());
+                msgctx.setOperationContext(operationContext);
             }
         }
 

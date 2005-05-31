@@ -105,7 +105,7 @@ public class OperationContext extends AbstractContext {
      *
      * @param msgContext
      */
-    public void addMessageContext(MessageContext msgContext) throws AxisFault {
+    public synchronized void addMessageContext(MessageContext msgContext) throws AxisFault {
         // this needs to store the msgContext in either inMessageContext or
         // outMessageContext depending on the MEP of the OperationDescription
         // and on the current state of the operation.

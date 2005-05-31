@@ -172,6 +172,7 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude> 
 		<exclude>**/*PhaseResolvingTest.java</exclude>
+		<exclude>**/*EnginePausingTest.java</exclude>
   
    
       </excludes>
