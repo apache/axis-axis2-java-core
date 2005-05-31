@@ -1,4 +1,4 @@
-        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="org.apache.axis.Constants"%>        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
         <html>
         <%
             /*
@@ -29,5 +29,12 @@
 </frameset>
 </frameset>
 <noframes><body>
+  <%
+      String status = (String)request.getSession().getAttribute(Constants.LOGGED);
+      if(status == null || (! status.equals("Yes"))) {
+          throw new Exception("Invalid logging");
+      }
+  %>
+
 </body></noframes>
 </html>

@@ -105,6 +105,8 @@ public class Constants {
     public static final String ENGAGE_GLOBAL_MODULE = "engagingglobally";
     public static final String ENGAGE_MODULE_TO_SERVICE = "engageToService";
 
+    public static final String ADMIN_LOGGING = "adminloging";
+
     /**
      * Field SERVICE_MAP
      */
@@ -131,6 +133,9 @@ public class Constants {
 
     public static final String MODULE_ADDRESSING = "addressing";
 
+    public static final String USER_NAME = "userName";
+    public static final String PASSWORD = "password";
+
 
     /**
      * Field SINGLE_SERVICE
@@ -141,4 +146,6 @@ public class Constants {
      * Field METHOD_NAME_ESCAPE_CHARACTOR
      */
     public static final char METHOD_NAME_ESCAPE_CHARACTOR = '?';
+
+    public static final String LOGGED = "Logged";
 }

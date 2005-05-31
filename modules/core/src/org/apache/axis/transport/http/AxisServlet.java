@@ -74,6 +74,10 @@ public class AxisServlet extends HttpServlet {
     private static final String LIST_SRVICES_JSP_NAME =
             "listService.jsp";
 
+    private static final String ADMIN_JSP_NAME =
+            "admin.jsp";
+
+
 
     private static final String LIST_AVAILABLE_MODULES_JSP_NAME =
             "listModules.jsp";
@@ -163,7 +167,12 @@ public class AxisServlet extends HttpServlet {
                 && filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)){
             engageModulesToService(httpServletRequest, httpServletResponse);
             return;
+        } else if ((filePart != null)
+                && filePart.endsWith(Constants.ADMIN_LOGGING)){
+            adminLogging(httpServletRequest, httpServletResponse);
+            return;
         }
+
 
         if (allowListServices
                 && (filePart != null)
@@ -289,6 +298,25 @@ public class AxisServlet extends HttpServlet {
                 engineContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
+    private void adminLogging(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        String username = req.getParameter("userName");
+        String password = req.getParameter("password");
+        if(username == null || password == null || username.trim().equals("") || password.trim().equals("")){
+            throw new AxisFault("invalid user name");
+        }
+        String adminUserName =(String)((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+                .getParameter(Constants.USER_NAME).getValue();
+        String adminPassword =(String)((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+                .getParameter(Constants.PASSWORD).getValue();
+        if(username!= null && password !=null && username.equals(adminUserName) &&
+                password.equals(adminPassword)){
+            req.getSession().setAttribute(Constants.LOGGED, "Yes");
+            res.sendRedirect(ADMIN_JSP_NAME);
+        } else {
+            throw new AxisFault("invalid user name");
+        }
+    }
 
     private void listModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
@@ -319,7 +347,7 @@ public class AxisServlet extends HttpServlet {
             throws IOException {
         HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-         HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         String moduleName =(String)req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);

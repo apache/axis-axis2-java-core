@@ -46,7 +46,7 @@
         <br/>
         You can run Interoperability tests here
         </li>
-        <li><a href="admin.jsp">Axis2 Administration</a>
+        <li><a href="Loging.jsp">Axis2 Administration</a>
         <br/>
         </li>
         </ul>
