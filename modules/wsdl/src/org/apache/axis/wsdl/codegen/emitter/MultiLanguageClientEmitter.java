@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
@@ -28,9 +29,13 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.extensions.ExtensionConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -105,7 +110,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             HashMap services = wom.getServices();
             if (!services.isEmpty()) {
                 if (services.size()==1){
-                     axisService = (WSDLService)services.values().toArray()[0];
+                    axisService = (WSDLService)services.values().toArray()[0];
                 }else{
                     throw new UnsupportedOperationException("Single service WSDL files only");
                 }
@@ -119,6 +124,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             //write the test classes
             writeTestClasses(axisBinding);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
@@ -192,12 +198,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()){
-        //Note -  One can generate the service xml using the interface XML
-        XmlDocument skeletonModel = createDOMDocuementForInterface(axisBinding);
-        ClassWriter serviceXmlWriter = new ServiceXMLWriter(this.configuration.getOutputLocation(),
-                this.configuration.getOutputLanguage()
-        );
-        writeClass(skeletonModel,serviceXmlWriter);
+            //Note -  One can generate the service xml using the interface XML
+            XmlDocument skeletonModel = createDOMDocuementForInterface(axisBinding);
+            ClassWriter serviceXmlWriter = new ServiceXMLWriter(this.configuration.getOutputLocation(),
+                    this.configuration.getOutputLanguage()
+            );
+            writeClass(skeletonModel,serviceXmlWriter);
         }
     }
 
@@ -222,7 +228,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @throws Exception
      */
     protected void writeBeans(WSDLTypes wsdlType) throws Exception {
-    	Collection collection= wsdlType.getExtensibilityElements();
+        Collection collection= wsdlType.getExtensibilityElements();
         if (collection != null){
             for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
                 XmlDocument interfaceModel = createDOMDocuementForBean();
@@ -441,7 +447,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         for (int i = 0; i < endpoints.length; i++) {
             endpoint = (WSDLEndpoint)endpoints[i];
             endpointElement = doc.createElement("endpoint");
-            text = doc.createTextNode(endpoint.toString());     //todo How to get the end point address
+            org.apache.wsdl.extensions.SOAPAddress address = null;
+            Iterator iterator = endpoint.getExtensibilityElements().iterator();
+            while(iterator.hasNext())  {
+                WSDLExtensibilityElement element = (WSDLExtensibilityElement)iterator.next();
+                if (element.getType().equals(ExtensionConstants.SOAP_ADDRESS)){
+                   address = (org.apache.wsdl.extensions.SOAPAddress)element;
+                }
+            }
+            text = doc.createTextNode(address.getLocationURI());     //todo How to get the end point address
             endpointElement.appendChild(text);
             rootElement.appendChild(endpointElement);
         }

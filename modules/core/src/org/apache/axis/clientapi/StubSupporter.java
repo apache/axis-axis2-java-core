@@ -36,7 +36,7 @@ class StubSupporter {
             returnElement.addChild(fac.createText(returnElement,String.valueOf(((Float)value).floatValue())));
        }else if (inputParamClass.equals(Double.class)){
             returnElement.addChild(fac.createText(returnElement,String.valueOf(((Double)value).doubleValue())));
-       //todo this seems to be a long list... needs to complete this
+       //todo this seems to be a long list... need to complete this
        }else if (inputParamClass.equals(OMElement.class)){
            returnElement.addChild((OMElement)value);
        }else{
@@ -56,7 +56,7 @@ class StubSupporter {
        }else if (outputTypeClass.equals(Double.class)){
             outputObj = new Double(elt.getText());
 
-       //todo this seems to be a long list... needs to complete this
+       //todo this seems to be a long list... need to complete this
 
        }else if (outputTypeClass.equals(OMElement.class)){
            outputObj = elt;
