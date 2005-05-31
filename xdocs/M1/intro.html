@@ -1,0 +1,39 @@
+<h1 align="center">WebServices - Axis 2.0</h1>
+<h2 align="left">Introduction</h2>
+<p>
+Axis2 is an effort to re-design and totally re-implement both Axis/Java and
+(eventually) Axis/C++ on a new architecture. Evolving from the now standard
+"handler chain" model which Axis1 pioneered, Axis2 is developing a more
+flexible pipeline architecture which can yet be managed and packaged in a
+more organized manner. This new design acknowledges the maturing of the Web
+services space – in terms of new protocols such as WS-ReliableMessaging,
+WS-Security and WS-Addressing that are built on top of the base SOAP system.
+At the time Axis1 was designed, while it was fully expected that other protocols
+such as WS-ReliableMessaging would be built on top of it, there was not a
+proper extension architecture defined to enable clean composition of
+such layers.</p>
+<p>Thus, one of the key motivations for Axis2 is to provide a clean and simple
+environment for like Apache Sandesha [4] and Apache WSS4J [5] to layer on
+top of the base SOAP system.
+Another driving force for Axis2 as well as the move away from RPC oriented
+Web services towards more document-oriented, message style asynchronous
+service interactions. The Axis2 project is centered on a new representation
+for SOAP messages called AXIOM (AXIs Object Model). AXIOM consists of two
+parts: a complete XML Infoset representation and a SOAP Infoset representation
+on top of that. The XML Infoset representation provides a JDOM-like simple
+API but is built on a deferred model via a StAX-based (Streaming API for XML)
+pull parsing API. A key feature of AXIOM is that it allows one to stop
+building the XML tree and just access the pull stream directly; thus enabling
+both maximum flexibility and maximum performance. This approach allows us to
+support multiple levels of abstraction for consuming and offering Web
+services: using plain AXIOM, using generated code and statically data-bound
+data types and so on.</p>
+<p>At the time of Axis1's design, RPC-style, synchronous, request-response
+interactions were the order of the day for Web services. Today service
+interactions are much more message-oriented and exploit many different
+message exchange patterns. The Axis2 engine architecture is careful to
+not build in any assumptions of request-response patterns to ensure that
+it can be used easily to support arbitrary message exchange patterns.
+</p>
+<h2 align="left">Credits</h2>
+<p align="left">Axis 2.0 development team</p>
