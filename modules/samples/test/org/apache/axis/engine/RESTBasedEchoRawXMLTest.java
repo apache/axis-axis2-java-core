@@ -18,6 +18,13 @@ package org.apache.axis.engine;
 
 //todo
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 
@@ -60,6 +67,11 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     private ServiceDescription service;
 
     private boolean finish = false;
+    
+   
+    private Thread thread;
+    
+    private final MessageInformation messageInfo = new MessageInformation();
 
     public RESTBasedEchoRawXMLTest() {
         super(RESTBasedEchoRawXMLTest.class.getName());
@@ -71,7 +83,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        Parameter parameter = new ParameterImpl(Constants.DO_REST,"true");
+        Parameter parameter = new ParameterImpl(Constants.Configuration.ENABLE_REST,"true");
         ((AxisConfigurationImpl)UtilServer.getConfigurationContext().getAxisConfiguration()).addParameter(parameter);
         service =
                 Utils.createSimpleService(serviceName,
@@ -80,6 +92,47 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
+//                
+//         Runnable runnable = new Runnable() {
+//            public void run() {
+//                try {
+//                    ServerSocket socket = new ServerSocket(UtilServer.TESTING_PORT+345);
+//                    Socket clientSocket = socket.accept();
+//                    
+//                    InputStream in = clientSocket.getInputStream();
+//                    OutputStream out = clientSocket.getOutputStream();
+//                    
+//                    
+//                    byte[] byteBuff = new byte[in.available()];
+//                    in.read(byteBuff);
+//                    messageInfo.requestMessage = new String(byteBuff);
+//                    
+//                    Socket toServer = new Socket();
+//                    toServer.connect(new InetSocketAddress(UtilServer.TESTING_PORT));
+//                    OutputStream toServerOut = toServer.getOutputStream();
+//                    toServerOut.write(messageInfo.requestMessage.getBytes());
+//                    toServerOut.flush();
+//                    
+//                    InputStream fromServerIn = toServer.getInputStream();
+//                    byteBuff = new byte[fromServerIn.available()];
+//                    fromServerIn.read(byteBuff);
+//                    messageInfo.responseMessage = new String(byteBuff);
+//                    out.write(messageInfo.responseMessage.getBytes());
+//                    Thread.sleep(30000);
+//                    out.flush();
+//                    
+//                    toServer.close();
+//                    clientSocket.close();
+//                    socket.close();
+//                } catch (Exception e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        };
+//        thread = new Thread(runnable);
+//        thread.start();
                 
 
     }
@@ -148,9 +201,17 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        call.set(Constants.DO_REST,"true");
+        call.set(Constants.Configuration.DO_REST,"true");
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        
+        System.out.println(messageInfo.requestMessage);
+        System.out.println(messageInfo.responseMessage);
+    }
+    
+    public class MessageInformation{
+        private String requestMessage = null;
+           private String responseMessage = null;
     }
 }

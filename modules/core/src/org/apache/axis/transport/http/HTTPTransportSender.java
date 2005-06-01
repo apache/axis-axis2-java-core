@@ -83,7 +83,10 @@ public class HTTPTransportSender extends AbstractTransportSender {
         buf.append("Cache-Control: no-cache\n");
         buf.append("Pragma: no-cache\n");
         buf.append("Content-Length: " + contentLength + "\n");
-        buf.append("SOAPAction: \"" + soapActionString + "\"\n\n");
+        if(!this.doREST){
+            buf.append("SOAPAction: \"" + soapActionString + "\"\n");
+        }
+        buf.append("\n");
         out.write(buf.toString());
     }
 

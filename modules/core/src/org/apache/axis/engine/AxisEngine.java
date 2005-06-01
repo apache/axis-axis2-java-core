@@ -68,8 +68,12 @@ public class AxisEngine {
             OperationContext operationContext = msgContext.getOperationContext();
 
             ArrayList phases = operationContext.getAxisOperation().getPhasesOutFlow();
-            invokePhases(phases, msgContext);
-            
+            if (msgContext.isPaused()) {
+                resumeInvocationPhases(phases, msgContext);
+            } else {
+                invokePhases(phases, msgContext);
+            }
+
             TransportOutDescription transportOut = msgContext.getTransportOut();
 
             TransportSender sender = transportOut.getSender();
@@ -91,25 +95,36 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void receive(MessageContext context) throws AxisFault {
+    public void receive(MessageContext msgContext) throws AxisFault {
+        boolean paused = msgContext.isPaused();
         try {
-            ConfigurationContext sysCtx = context.getSystemContext();
-            ArrayList phases = sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
-            invokePhases(phases, context);
-            verifyContextBuilt(context);
-            
-            OperationContext operationContext = context.getOperationContext();
+            ConfigurationContext sysCtx = msgContext.getSystemContext();
+            ArrayList phases =
+                sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+
+            if (paused) {
+                resumeInvocationPhases(phases, msgContext);
+            } else {
+                invokePhases(phases, msgContext);
+            }
+            verifyContextBuilt(msgContext);
+
+            OperationContext operationContext = msgContext.getOperationContext();
             OperationDescription operationDescription = operationContext.getAxisOperation();
             phases = operationDescription.getRemainingPhasesInFlow();
-            invokePhases(phases, context);
-            if (context.isServerSide()) {
+            if (paused) {
+                resumeInvocationPhases(phases, msgContext);
+            } else {
+                invokePhases(phases, msgContext);
+            }
+            if (msgContext.isServerSide()) {
                 // add invoke Phase
                 MessageReceiver reciver =
-                    context.getOperationContext().getAxisOperation().getMessageReciever();
-                reciver.recieve(context);
+                    msgContext.getOperationContext().getAxisOperation().getMessageReciever();
+                reciver.recieve(msgContext);
             }
         } catch (Throwable e) {
-            handleFault(context, e);
+            handleFault(msgContext, e);
         }
     }
 
@@ -131,25 +146,25 @@ public class AxisEngine {
 
             // create a SOAP envelope with the Fault
             MessageContext faultContext =
-                new MessageContext(engineContext,
+                new MessageContext(
+                    engineContext,
                     context.getSessionContext(),
                     context.getTransportIn(),
                     context.getTransportOut());
-            
-            if(context.getFaultTo() != null){
+
+            if (context.getFaultTo() != null) {
                 faultContext.setFaultTo(context.getFaultTo());
-            } else{
+            } else {
                 Object writer = context.getProperty(MessageContext.TRANSPORT_WRITER);
-                if(writer != null){
-                    faultContext.setProperty(MessageContext.TRANSPORT_WRITER,writer);
-                }else{
+                if (writer != null) {
+                    faultContext.setProperty(MessageContext.TRANSPORT_WRITER, writer);
+                } else {
                     //TODO Opps there are no place to send this, we will log and should we throw the exception? 
                     log.error("Error in fault flow", e);
                     e.printStackTrace();
                 }
-            }       
-                    
-                    
+            }
+
             faultContext.setOperationContext(context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
@@ -161,8 +176,8 @@ public class AxisEngine {
             body.addFault(new AxisFault(e.getMessage(), e));
             faultContext.setEnvelope(envelope);
 
-            OperationContext opContext  = context.getOperationContext();
-            if(opContext != null){
+            OperationContext opContext = context.getOperationContext();
+            if (opContext != null) {
                 OperationDescription axisOperation = opContext.getAxisOperation();
                 ArrayList phases = axisOperation.getPhasesOutFaultFlow();
                 invokePhases(phases, context);
@@ -193,9 +208,28 @@ public class AxisEngine {
 
     private void invokePhases(ArrayList phases, MessageContext msgctx) throws AxisFault {
         int count = phases.size();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; (i < count && !msgctx.isPaused()); i++) {
             Phase phase = (Phase) phases.get(i);
             phase.invoke(msgctx);
+        }
+    }
+
+    public void resumeInvocationPhases(ArrayList phases, MessageContext msgctx) throws AxisFault {
+        msgctx.setPausedFalse();
+        int count = phases.size();
+        boolean foudMatch = false;
+
+        for (int i = 0; i < count && !msgctx.isPaused(); i++) {
+            Phase phase = (Phase) phases.get(i);
+            if (phase.getPhaseName().equals(msgctx.getPausedPhaseName())) {
+                foudMatch = true;
+                phase.invokeStartFromHandler(msgctx.getPausedHandlerName(), msgctx);
+            } else {
+                if (foudMatch) {
+                    phase.invoke(msgctx);
+                }
+
+            }
         }
     }
 

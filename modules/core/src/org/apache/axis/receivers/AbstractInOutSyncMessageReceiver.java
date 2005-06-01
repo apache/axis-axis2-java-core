@@ -15,6 +15,7 @@
  */
 package org.apache.axis.receivers;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -55,6 +56,8 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_WRITER,messgeCtx.getProperty(MessageContext.TRANSPORT_WRITER));
+        newmsgCtx.setProperty(Constants.Configuration.DO_REST,messgeCtx.getProperty((Constants.Configuration.DO_REST)));
+        newmsgCtx.setProperty(Constants.Configuration.DO_MTOM,messgeCtx.getProperty(Constants.Configuration.DO_MTOM));
         
         invokeBusinessLogic(messgeCtx,newmsgCtx);
 

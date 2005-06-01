@@ -16,6 +16,8 @@
  
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.PhaseRule;
@@ -23,8 +25,6 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class SpeakingHandler1 extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());

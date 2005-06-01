@@ -35,6 +35,7 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.util.Utils;
 
 /**
  * Class HTTPTransportReceiver
@@ -105,6 +106,7 @@ public class HTTPTransportReceiver {
             if (serverSide) {
                 msgContext.setWSAAction(
                     (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+                Utils.configureMessageContextForHTTP((String)map.get(HTTPConstants.HEADER_CONTENT_TYPE),msgContext.getWSAAction(),msgContext);
 
                 String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
                 msgContext.setTo(
@@ -131,7 +133,7 @@ public class HTTPTransportReceiver {
             try {
                 //Check for the REST behaviour, if you desire rest beahaviour
                 //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-                Object doREST = msgContext.getProperty(Constants.DO_REST);
+                Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
                 XMLStreamReader xmlreader =
                     XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = null;

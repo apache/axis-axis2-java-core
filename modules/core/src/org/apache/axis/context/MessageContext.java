@@ -15,6 +15,8 @@
  */
 package org.apache.axis.context;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -115,6 +117,10 @@ public class MessageContext extends AbstractContext {
     public boolean outPutWritten = false;
 
     private String serviceInstanceID;
+    
+    private String pausedPhaseName;
+    
+    private QName pausedHandlerName;
     
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -373,9 +379,14 @@ public class MessageContext extends AbstractContext {
     /**
      * @param b
      */
-    public void setPaused(boolean b) {
-        paused = b;
+    public void setPausedTrue(QName handlerName) {
+        paused = true;
+        this.pausedHandlerName = handlerName;
     }
+    
+    public void setPausedFalse() {
+          paused = false;
+      }
 
     /**
      * @return
@@ -519,4 +530,25 @@ public class MessageContext extends AbstractContext {
         }
         return obj;
     }
+    /**
+     * @return
+     */
+    public QName getPausedHandlerName() {
+        return pausedHandlerName;
+    }
+
+    /**
+     * @return
+     */
+    public String getPausedPhaseName() {
+        return pausedPhaseName;
+    }
+
+    /**
+     * @param name
+     */
+    public void setPausedPhaseName(String name) {
+        pausedPhaseName = name;
+    }
+
 }

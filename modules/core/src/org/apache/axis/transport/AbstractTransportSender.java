@@ -38,19 +38,17 @@ import org.apache.commons.logging.LogFactory;
  * TRANSPORT_WRITER property set in the message Context with a Writer. This Class would write the 
  * SOAPMessage using either of the methods in the order To then Writer.
  */
-public abstract class AbstractTransportSender
-    extends AbstractHandler
-    implements TransportSender {
+public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
     /**
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
+    protected boolean doREST = false;
 
     /**
      * Field NAME
      */
-    public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "TransportSender");
+    public static final QName NAME = new QName("http://axis.ws.apache.org", "TransportSender");
 
     /**
      * Constructor AbstractTransportSender
@@ -66,13 +64,19 @@ public abstract class AbstractTransportSender
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        //Check for the REST behaviour, if you desire rest beahaviour
+        //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+        Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
+        if (doREST != null && Constants.VALUE_TRUE.equals(doREST)) {
+            this.doREST = true;
+        }
+
         Writer out = null;
 
         EndpointReference epr = null;
 
         if (msgContext.getTo() != null
-            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(
-                msgContext.getTo().getAddress())) {
+            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
             epr = msgContext.getTo();
         }
 
@@ -82,43 +86,29 @@ public abstract class AbstractTransportSender
             writeMessage(msgContext, out);
             finalizeSendWithToAddress(msgContext, out);
         } else {
-            out =
-                (Writer) msgContext.getProperty(
-                    MessageContext.TRANSPORT_WRITER);
+            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
             if (out != null) {
-                startSendWithOutputStreamFromIncomingConnection(
-                    msgContext,
-                    out);
+                startSendWithOutputStreamFromIncomingConnection(msgContext, out);
                 writeMessage(msgContext, out);
-                finalizeSendWithOutputStreamFromIncomingConnection(
-                    msgContext,
-                    out);
+                finalizeSendWithOutputStreamFromIncomingConnection(msgContext, out);
             } else {
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
         }
     }
 
-    public void writeMessage(MessageContext msgContext, Writer out)
-        throws AxisFault {
+    public void writeMessage(MessageContext msgContext, Writer out) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         OMElement outputMessage = envelope;
 
-        //Check for the REST behaviour, if you desire rest beahaviour
-        //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-
-        Object doREST = msgContext.getProperty(Constants.DO_REST);
-        if (envelope != null
-            && doREST != null
-            && "true".equals(doREST)) {
+        if (envelope != null && this.doREST) {
             outputMessage = envelope.getBody().getFirstElement();
         }
 
         if (outputMessage != null) {
             XMLStreamWriter outputWriter = null;
             try {
-                outputWriter =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+                outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
                 outputMessage.serialize(outputWriter);
                 outputWriter.flush();
                 out.flush();
@@ -131,13 +121,9 @@ public abstract class AbstractTransportSender
         }
     }
 
-    public abstract void startSendWithToAddress(
-        MessageContext msgContext,
-        Writer writer)
+    public abstract void startSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault;
-    public abstract void finalizeSendWithToAddress(
-        MessageContext msgContext,
-        Writer writer)
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
         throws AxisFault;
 
     public abstract void startSendWithOutputStreamFromIncomingConnection(
@@ -149,6 +135,5 @@ public abstract class AbstractTransportSender
         Writer writer)
         throws AxisFault;
 
-    protected abstract Writer openTheConnection(EndpointReference epr)
-        throws AxisFault;
+    protected abstract Writer openTheConnection(EndpointReference epr) throws AxisFault;
 }

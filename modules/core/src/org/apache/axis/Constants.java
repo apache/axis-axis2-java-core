@@ -83,7 +83,7 @@ public class Constants {
      * Field TRANSPORT_SMTP
      */
     public static final String TRANSPORT_MAIL = "mail";
-    
+
     public static final String TRANSPORT_JMS = "jms";
 
     /**
@@ -126,16 +126,11 @@ public class Constants {
     public static final String ERROR_SERVICE_MAP = "errprservicemap";
 
     public static final String IS_FAULTY = "Fault";
-    
-    public static final String DO_REST = "doREST";
-
-
 
     public static final String MODULE_ADDRESSING = "addressing";
 
     public static final String USER_NAME = "userName";
     public static final String PASSWORD = "password";
-
 
     /**
      * Field SINGLE_SERVICE
@@ -148,4 +143,20 @@ public class Constants {
     public static final char METHOD_NAME_ESCAPE_CHARACTOR = '?';
 
     public static final String LOGGED = "Logged";
+
+    public static interface SOAP {
+        public static final String SOAP_12_CONTENT_TYPE = "application/soap+xml";
+        public static final String SOAP_11_CONTENT_TYPE = "text/xml";
+        public static final String MTOM_CONTENT_TYPE = "text/xml";
+    }
+
+    public static interface Configuration {
+        public static final String DO_REST = "doREST";
+        public static final String ENABLE_REST = "eanbleREST";
+        public static final String ENABLE_MTOM = "eanbleMTOM";
+        public static final String DO_MTOM = "doMTOM";
+    }
+    public static final String VALUE_TRUE = "true";
+    public static final String VALUE_FALSE = "false";
+
 }

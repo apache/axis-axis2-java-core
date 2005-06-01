@@ -32,7 +32,7 @@ public abstract class AbstractHandler implements Handler {
      * Field EMPTY_HANDLER_METADATA
      */
     private static HandlerDescription EMPTY_HANDLER_METADATA =
-            new HandlerDescription();
+            new HandlerDescription(new QName("deafult Handler"));
 
     /**
      * Field handlerDesc
@@ -99,4 +99,12 @@ public abstract class AbstractHandler implements Handler {
     public HandlerDescription getHandlerDesc() {
         return handlerDesc;
     }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        QName name = this.getName();
+        return (name!=null)?name.toString():null;
+    }
+
 }

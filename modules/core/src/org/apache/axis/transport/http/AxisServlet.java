@@ -19,10 +19,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -37,23 +36,23 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
-import org.apache.axis.deployment.util.DeploymentData;
-import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
+import org.apache.axis.deployment.util.DeploymentData;
+import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.util.Utils;
 
 /**
  * Class AxisServlet
@@ -234,10 +233,11 @@ public class AxisServlet extends HttpServlet {
                     XMLInputFactory.newInstance().createXMLStreamReader(
                             new BufferedReader(
                                     new InputStreamReader(req.getInputStream())));
+            Utils.configureMessageContextForHTTP(req.getContentType(),soapActionString,msgContext);                                  
 
             //Check for the REST behaviour, if you desire rest beahaviour
             //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-            Object doREST = msgContext.getProperty(Constants.DO_REST);
+            Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
             if (doREST != null && "true".equals(doREST)) {

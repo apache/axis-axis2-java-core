@@ -191,8 +191,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
                 log.debug("An error occured when running the mail listner." + e.getMessage(), e);
-                System.out.println(
-                    "An error occured when running the mail listner." + e.getMessage());
+                e.printStackTrace();
                 break;
             }
             try {
