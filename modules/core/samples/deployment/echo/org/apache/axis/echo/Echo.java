@@ -30,7 +30,8 @@ public class Echo {
     public Echo() {
     }
     public OMElement echoOMElement(OMElement omEle) {
-        omEle.setLocalName(omEle.getLocalName() + "Response");
+        omEle.getNextSibling();
+        omEle.detach();
         return omEle;
     }
     public String echoString(String in) {

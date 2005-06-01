@@ -5,14 +5,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Axis2 Administration </title>
 <style type="text/css">
-<!--
-body {
-	background-color: #FFCC99;
-}
--->
 </style></head>
 
 <body>
-No yet Implemented
 </body>
 </html>

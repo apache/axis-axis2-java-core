@@ -8,11 +8,6 @@
 <head>
 <title>Engaging Module Globally</title>
 <style type="text/css">
-<!--
-body {
-background-color: #FFCCCC;
-}
--->
 </style></head>
 
 <body>

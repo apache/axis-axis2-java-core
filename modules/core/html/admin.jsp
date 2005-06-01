@@ -21,11 +21,11 @@
 <title>Axis2 :: Administrations Page</title>
 </head>
 
-<frameset rows="80,*" cols="*" frameborder="NO" border="0" framespacing="0">
-<frame src="TopFrame.jsp" name="topFrame" scrolling="NO" noresize >
+<frameset rows="200,*" frameborder="NO" border="0" framespacing="0">
+<frame src="TopFrame.jsp" name="topFrame" scrolling="NO"  >
 <frameset rows="*" cols="245,*" framespacing="0" frameborder="NO" border="0">
-<frame src="LeftFrame.jsp" name="leftFrame" scrolling="NO" noresize>
-<frame src="MainFrame.jsp" name="mainFrame">
+<frame src="LeftFrame.jsp" name="leftFrame"  border="0" scrolling="NO"  noresize>
+<frame src="MainFrame.jsp"  border="0" name="mainFrame">
 </frameset>
 </frameset>
 <noframes><body>
@@ -35,6 +35,5 @@
           throw new Exception("Invalid logging");
       }
   %>
-
 </body></noframes>
 </html>

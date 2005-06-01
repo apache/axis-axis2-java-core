@@ -14,6 +14,7 @@
 <html>
   <head><title>Loging to Axis2:: Administartion page</title></head>
   <body>
+  <jsp:include page="include/header.inc"></jsp:include>
     <form method="get" name="LogingForm" action="adminloging">
         <table border="0" width="100%" cellspacing="1" cellpadding="1">
             <tr>
@@ -38,6 +39,7 @@
              </tr>
          </table>
        </form>
+       <jsp:include page="include/footer.inc"></jsp:include>
      </body>
   </html>
 

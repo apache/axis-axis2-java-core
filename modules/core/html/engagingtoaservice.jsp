@@ -11,11 +11,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Engaging Module to a Service</title>
 <style type="text/css">
-<!--
-body {
-	background-color: #FFCCCC;
-}
--->
+
 </style></head>
 
 <body>

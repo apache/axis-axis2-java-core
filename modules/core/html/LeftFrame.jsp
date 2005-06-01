@@ -20,11 +20,6 @@
 <head>
 <title>Untitled Document</title>
 <style type="text/css">
-<!--
-body {
-	background-color: #FFFFCC;
-}
--->
 </style></head>
 
 <body>

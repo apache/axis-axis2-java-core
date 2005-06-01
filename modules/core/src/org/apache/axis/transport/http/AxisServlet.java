@@ -123,6 +123,7 @@ public class AxisServlet extends HttpServlet {
             ConfigurationContextFactory erfac =
                     new ConfigurationContextFactory();
             engineContext = erfac.buildEngineContext(repoDir);
+            engineContext.setProperty(Constants.CONTAINER_MANAGED,Constants.VALUE_TRUE);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -221,7 +222,7 @@ public class AxisServlet extends HttpServlet {
                             engineContext.getAxisConfiguration().getTransportOut(
                                     new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
-            msgContext.setProperty(Constants.CONTAINER_MANAGED,Constants.VALUE_TRUE);
+
             
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(
