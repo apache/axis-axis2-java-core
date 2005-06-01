@@ -15,6 +15,7 @@
 */
 package org.apache.axis.transport.http;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
@@ -83,7 +84,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         buf.append("Cache-Control: no-cache\n");
         buf.append("Pragma: no-cache\n");
         buf.append("Content-Length: " + contentLength + "\n");
-        if(!this.doREST){
+        if (!this.doREST) {
             buf.append("SOAPAction: \"" + soapActionString + "\"\n");
         }
         buf.append("\n");
@@ -142,12 +143,15 @@ public class HTTPTransportSender extends AbstractTransportSender {
         MessageContext msgContext,
         Writer writer)
         throws AxisFault {
-        try {
-            writer.write(new String(HTTPConstants.HTTP).toCharArray());
-            writer.write(new String(HTTPConstants.OK).toCharArray());
-            writer.write("\n\n".toCharArray());
-        } catch (IOException e) {
-            throw new AxisFault(e);
+        Object contianerManaged = msgContext.getProperty(Constants.CONTAINER_MANAGED);
+        if (contianerManaged == null || !Constants.VALUE_TRUE.equals(contianerManaged)) {
+            try {
+                writer.write(new String(HTTPConstants.HTTP).toCharArray());
+                writer.write(new String(HTTPConstants.OK).toCharArray());
+                writer.write("\n\n".toCharArray());
+            } catch (IOException e) {
+                throw new AxisFault(e);
+            }
         }
     }
 

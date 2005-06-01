@@ -158,5 +158,6 @@ public class Constants {
     }
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
+    public static final String CONTAINER_MANAGED = "ContainerManaged";
 
 }

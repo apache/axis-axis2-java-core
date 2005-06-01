@@ -221,6 +221,8 @@ public class AxisServlet extends HttpServlet {
                             engineContext.getAxisConfiguration().getTransportOut(
                                     new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
+            msgContext.setProperty(Constants.CONTAINER_MANAGED,Constants.VALUE_TRUE);
+            
             String filePart = req.getRequestURL().toString();
             msgContext.setTo(
                     new EndpointReference(AddressingConstants.WSA_TO, filePart));
