@@ -175,6 +175,11 @@ Policy Determination Phase -  This Phase does nothing for the time being, this i
 
 <p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a server.xml or a client.xml file and build the global configuration. Then the Model check for the Module archives  and then for the service archives, the corresponding services and Modules are added to the Axis Configuration.  System will built a Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.  
 </p>
+
+<h2>AXIOM</h2>
+<p>Please refer to the OM tutorial</p>
+
+
 <h2>WSDL and code generation</h2>
 <p>Axis2 uses the XSLT transforms for the code generation, first the parsing code would read the WSDL using the WSDL Object Model and generate a XML file that has the necessary informations to generate the Stubs and Skeletons. 
 Currently Axis2 does not supports the full data binding support, the generated code handle the eight data types and all the complex types are treated as OMElements. </p>
