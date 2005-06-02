@@ -19,6 +19,7 @@ package org.apache.axis.clientapi;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -41,6 +42,7 @@ public class InOnlyMEPClient extends MEPClient {
     
     public InOnlyMEPClient(ServiceContext service) {
         super(service,WSDLConstants.MEP_URI_IN_ONLY);
+        messageInformationHeaders = new MessageInformationHeadersCollection();
     }
 
     public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
@@ -75,12 +77,14 @@ public class InOnlyMEPClient extends MEPClient {
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
 
-        //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-        HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-        receiver.checkForMessage(response, sysContext);
-        SOAPEnvelope resenvelope = response.getEnvelope();
-        if (response!= null && resenvelope.getBody().hasFault()) {
-            throw new AxisFault(resenvelope.getBody().getFault().getException());
+        if(Constants.TRANSPORT_HTTP.equals(senderTransport.getName().getLocalPart())){
+            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
+            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
+            receiver.checkForMessage(response, sysContext);
+            SOAPEnvelope resenvelope = response.getEnvelope();
+            if (response!= null && resenvelope.getBody().hasFault()) {
+                throw new AxisFault(resenvelope.getBody().getFault().getException());
+            }
         }
     }
 
@@ -137,6 +141,7 @@ public class InOnlyMEPClient extends MEPClient {
         serviceContext.getEngineContext().getAxisConfiguration().engageModule(name);
     }
     
- 
-
-}
+    public void setSenderTransport(String senderTransport) throws AxisFault{
+        this.senderTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(new QName(senderTransport));
+    }
+ }

@@ -21,7 +21,7 @@
     </transportReceiver>
 
     <transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
-
+<!--
     <transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
         <parameter name="transport.mail.pop3.host" locked="xsd:false">mail.itambalama.com</parameter>
         <parameter name="transport.mail.pop3.user" locked="xsd:false">axis2.mail.test@itambalama.com</parameter>
@@ -35,6 +35,24 @@
         <parameter name="transport.mail.smtp.password" locked="xsd:false">2sixa.mail</parameter>
         <parameter name="transport.mail.smtp.port" locked="xsd:false">25</parameter>
     </transportSender>
+    
+    
+  <transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
+        <parameter name="transport.mail.pop3.host" locked="xsd:false">127.0.0.1</parameter>
+        <parameter name="transport.mail.pop3.user" locked="xsd:false">axis2</parameter>
+        <parameter name="transport.mail.pop3.password" locked="xsd:false">axis2</parameter>
+        <parameter name="transport.mail.pop3.port" locked="xsd:false">110</parameter>
+        <parameter name="transport.mail.replyToAddress" locked="xsd:false">axis2@127.0.0.1</parameter>
+    </transportReceiver>
+    <transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender">
+        <parameter name="transport.mail.smtp.host" locked="xsd:false">127.0.0.1</parameter>
+        <parameter name="transport.mail.smtp.user" locked="xsd:false">axis2</parameter>
+        <parameter name="transport.mail.smtp.password" locked="xsd:false">axis2</parameter>
+        <parameter name="transport.mail.smtp.port" locked="xsd:false">25</parameter>
+    </transportSender>  
+    
+    -->
+    
 
     <!--   <module ref="addressing"/> -->
     <phaseOrder type="inflow">

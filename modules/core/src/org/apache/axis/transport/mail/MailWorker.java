@@ -84,9 +84,9 @@ public class MailWorker implements Runnable {
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
             msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION));
 
-            String to = mimeMessage.getSubject();
-            if (to != null) {
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, to));
+            String serviceURL = mimeMessage.getSubject();
+            if (serviceURL == null) {
+                serviceURL = "";
             }
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
@@ -94,15 +94,21 @@ public class MailWorker implements Runnable {
                 msgContext.setReplyTo(
                     new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
+            
+             
 
-            String sendFrom = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
-            if (sendFrom != null) {
-                msgContext.setFrom(new EndpointReference(AddressingConstants.WSA_FROM, sendFrom));
+            String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
+            
+            
+            if (recepainets != null) {
+                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets+ "/"+serviceURL));
             }
 
             // add the SOAPEnvelope
+            String message = mimeMessage.getContent().toString();
+            System.out.println("message["+message+"]");
             ByteArrayInputStream bais =
-                new ByteArrayInputStream(mimeMessage.getContent().toString().getBytes());
+                new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());

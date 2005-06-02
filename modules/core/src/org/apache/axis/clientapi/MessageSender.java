@@ -19,8 +19,11 @@ package org.apache.axis.clientapi;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 
@@ -34,9 +37,30 @@ public class MessageSender extends InOnlyMEPClient {
     public MessageSender(ServiceContext service) {
         super(service);
     }
+
+    public MessageSender() throws AxisFault {
+        super(assumeServiceContext());
+    }
     public void send(String opName, OMElement toSend) throws AxisFault {
         OperationDescription axisOp = new OperationDescription(new QName(opName));
         serviceContext.getServiceConfig().addOperation(axisOp);
-        super.send(axisOp,prepareTheSystem(toSend));
+        super.send(axisOp, prepareTheSystem(toSend));
+    }
+
+    private static ServiceContext assumeServiceContext() throws AxisFault {
+        ConfigurationContext sysContext = null;
+        if (ListenerManager.configurationContext == null) {
+            ConfigurationContextFactory efac = new ConfigurationContextFactory();
+            sysContext = efac.buildClientEngineContext(null);
+        } else {
+            sysContext = ListenerManager.configurationContext;
+        }
+
+        //create new service
+        QName assumedServiceName = new QName("AnonnoymousService");
+        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        sysContext.getAxisConfiguration().addService(axisService);
+        ServiceContext service = sysContext.createServiceContext(assumedServiceName);
+        return service;
     }
 }

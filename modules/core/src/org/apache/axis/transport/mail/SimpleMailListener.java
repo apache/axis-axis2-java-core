@@ -16,15 +16,8 @@
 
 package org.apache.axis.transport.mail;
 
-import java.util.Properties;
-
-import javax.mail.Authenticator;
 import javax.mail.Flags;
-import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.axis.addressing.AddressingConstants;
@@ -33,6 +26,7 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.EmailReceiver;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -74,7 +68,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
     private String replyTo;
 
-    public SimpleMailListener() {
+    public SimpleMailListener() throws AxisFault{
     }
 
     public SimpleMailListener(
@@ -150,62 +144,32 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         }
         while (!stopped) {
             try {
-                final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
-                Properties props = new Properties();
-                props.put("mail.user", user);
-                props.put("mail.host", host);
-                props.put("mail.store.protocol", "pop3");
-                props.put("mail.transport.protocol", "smtp");
-                Session session = Session.getInstance(props,new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return authentication;
-                    }
-                });
-                Store store = session.getStore();
-                store.connect();
-                Folder root = store.getDefaultFolder();
-                Folder inbox = root.getFolder("inbox");
-                inbox.open(Folder.READ_WRITE);
-                Message[] msgs = inbox.getMessages();
-                int numMessages = msgs.length;
-                if (msgs.length == 0) {
-                    System.out.println("No messages in inbox");
-                }
-                for (int i = 0; i < msgs.length; i++) {
-                    MimeMessage msg = (MimeMessage) msgs[i];
-                    if (msg != null) {
-                        MailWorker worker = new MailWorker(msg, configurationContext);
-                        if (doThreads) {
-                            Thread thread = new Thread(worker);
-                            thread.setDaemon(true);
-                            thread.start();
-                        } else {
+                
+                EmailReceiver receiver = new EmailReceiver(user, host, port, password);
+                receiver.connect();
+                Message[] msgs = receiver.receive();
+
+                if (msgs != null && msgs.length>0) {
+                    System.out.println(msgs.length + " Message Found");
+                    for (int i = 0; i < msgs.length; i++) {
+                        MimeMessage msg = (MimeMessage) msgs[i];
+                        if (msg != null) {
+                            MailWorker worker = new MailWorker(msg, configurationContext);
                             worker.run();
                         }
+                        msg.setFlag(Flags.Flag.DELETED, true);
                     }
-                    msg.setFlag(Flags.Flag.DELETED, true);
+
                 }
-                inbox.close(true);
-                store.close();
+                
+                receiver.disconnect();
+               
             } catch (Exception e) {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
                 log.debug("An error occured when running the mail listner." + e.getMessage(), e);
                 e.printStackTrace();
                 break;
-            }
-            try {
-                pop3.logout();
-                pop3.disconnect();
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                //log.error(Messages.getMessage("exception00"), e); TODO Issue
-                // #1 CT 07-Feb-2005.
-                log.debug(
-                    "An error occured when trying to disconnect from the Server." + e.getMessage(),
-                    e);
-                System.out.println(
-                    "An error occured when trying to disconnect from the Server." + e.getMessage());
             }
         }
 
@@ -216,28 +180,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
     }
 
-    /**
-     * POP3 connection
-     */
-    private POP3Client pop3;
-
-    /**
-     * Obtain the serverSocket that that SimpleMailListner is listening on.
-     */
-    public POP3Client getPOP3() {
-        return pop3;
-    }
-
-    /**
-     * Set the serverSocket this server should listen on. (note : changing this
-     * will not affect a running server, but if you stop() and then start() the
-     * server, the new socket will be used).
-     */
-    public void setPOP3(POP3Client pop3) {
-        this.pop3 = pop3;
-    }
-
-    //CT 03-Feb-2005 I think it should be POP instead of HTTP
     /**
      * Start this server.
      * 
@@ -306,7 +248,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             POP3Client pop3 = new POP3Client();
             SimpleMailListener sas =
                 new SimpleMailListener(host, port, optUserName, optPassword, optDir);
-            sas.setPOP3(pop3);
             sas.start();
         } catch (Exception e) {
             // log.error(Messages.getMessage("exception00"), e); TODO Issue #1
@@ -342,8 +283,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     + (port == null));
         }
 
-        POP3Client pop3 = new POP3Client();
-        this.setPOP3(pop3);
     }
 
     /* (non-Javadoc)

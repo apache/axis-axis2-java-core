@@ -93,7 +93,7 @@
 	    <ant:include name="log4j/jars/log4j-1.2.8.jar"/>
 	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
 	    <ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
-            <ant:include name="axis/jars/axis-wsdl4j-1.2-RC3.jar"/>
+            <ant:include name="axis/jars/axis-wsdl4j-1.2.jar"/>
 	</ant:fileset> 
 	</ant:copy> 
     </goal>		

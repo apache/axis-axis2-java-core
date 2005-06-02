@@ -88,7 +88,7 @@
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
-            <version>1.2-RC3</version>
+            <version>1.2</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -124,6 +124,8 @@
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
 		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
+		<exclude>**/*OneWayRawXMLTest.java</exclude> 
+		
       </excludes>
      <includes>
         <include>**/*Test.java</include>
