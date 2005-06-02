@@ -660,12 +660,12 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public ServiceDescription buildService(ServiceDescription axisService, InputStream serviceInputStream, ClassLoader classLoader) throws DeploymentException {
         try {
+            currentArchiveFile = new ArchiveFileData(SERVICE, "");
+            currentArchiveFile.setClassLoader(classLoader);
             DeploymentParser schme = new DeploymentParser(serviceInputStream, this);
             schme.parseServiceXML(axisService);
-            axisService.setClassLoader(classLoader);
             loadServiceProperties(axisService);
             axisConfig.addService(axisService);
-
         } catch (XMLStreamException e) {
             throw new DeploymentException("XMLStreamException" + e.getMessage());
         } catch (DeploymentException e) {
