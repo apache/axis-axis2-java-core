@@ -2,7 +2,7 @@
 <html>
 <%
 /*
-* Copyright 2002,2004 The Apache Software Foundation.
+* Copyright 2004,2005 The Apache Software Foundation.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
+*
+*
 */
+
+/**
+ * Author : Deepal Jayasinghe
+ * Date: May 26, 2005
+ * Time: 7:14:26 PM
+ */
 %>
 <head>
 <title>Axis 2 - Home</title>
@@ -42,10 +50,10 @@
         <br/>
         You can upload a properly packaged service here. Note : Security constraints may affect this operation.
         </li>
-        <li><a href="interop.jsp">Do an interop test</a>
+        <%--<li><a href="interop.jsp">Do an interop test</a>
         <br/>
         You can run Interoperability tests here
-        </li>
+        </li>--%>
         <li><a href="Loging.jsp">Axis2 Administration</a>
         <br/>
         </li>

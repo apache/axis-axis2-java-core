@@ -107,6 +107,10 @@ public class Constants {
 
     public static final String ADMIN_LOGGING = "adminloging";
 
+    public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
+    public static final String SELECT_SERVICE = "selectService";
+    public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
+
     /**
      * Field SERVICE_MAP
      */
@@ -115,6 +119,9 @@ public class Constants {
      * Field Available modules
      */
     public static final String MODULE_MAP = "modulemap";
+
+    public static final String GLOBAL_HANDLERS = "axisconfig";
+    public static final String SERVICE_HANDLERS = "serviceHandlers";
 
     public static final String PHASE_LIST = "phaseList";
 

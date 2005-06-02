@@ -73,6 +73,9 @@ public class AxisServlet extends HttpServlet {
     private static final String LIST_SRVICES_JSP_NAME =
             "listService.jsp";
 
+     private static final String SELECT_SERVICE_JSP_NAME =
+            "SelectService.jsp";
+
     private static final String ADMIN_JSP_NAME =
             "admin.jsp";
 
@@ -98,7 +101,10 @@ public class AxisServlet extends HttpServlet {
      */
     private static final String LIST_SINGLE_SERVICE_JSP_NAME =
             "listSingleService.jsp";
-
+    private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME =
+            "ViewGlobalHandlers.jsp";
+     private static final String VIEW_SERVICE_HANDLERS_JSP_NAME =
+            "ViewServiceHandlers.jsp";
 
     /**
      * Field allowListServices
@@ -170,6 +176,18 @@ public class AxisServlet extends HttpServlet {
         } else if ((filePart != null)
                 && filePart.endsWith(Constants.ADMIN_LOGGING)){
             adminLogging(httpServletRequest, httpServletResponse);
+            return;
+        } else if ((filePart != null)
+                && filePart.endsWith(Constants.VIEW_GLOBAL_HANDLERS)){
+            viewGlobalHandlers(httpServletRequest, httpServletResponse);
+            return;
+        } else if ((filePart != null)
+                && filePart.endsWith(Constants.SELECT_SERVICE)){
+            selectService(httpServletRequest, httpServletResponse);
+            return;
+        }  else if ((filePart != null)
+                && filePart.endsWith(Constants.VIEW_SERVICE_HANDLERS)){
+            viewServiceHandlers(httpServletRequest, httpServletResponse);
             return;
         }
 
@@ -301,6 +319,13 @@ public class AxisServlet extends HttpServlet {
                 engineContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
+
+     private void selectService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        HashMap services = engineContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+    }
     private void adminLogging(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
         String username = req.getParameter("userName");
@@ -378,6 +403,25 @@ public class AxisServlet extends HttpServlet {
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
+
+
+    private void viewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
+        req.getSession().setAttribute(Constants.GLOBAL_HANDLERS, engineContext.getAxisConfiguration());
+        res.sendRedirect(VIEW_GLOBAL_HANDLERS_JSP_NAME);
+    }
+
+    private void viewServiceHandlers(HttpServletRequest req, HttpServletResponse res)
+               throws IOException {
+           String service = (String)req.getParameter("service");
+        if (service!= null) {
+            req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
+                    engineContext.getAxisConfiguration().getService(new QName(service)) );
+        }
+        res.sendRedirect(VIEW_SERVICE_HANDLERS_JSP_NAME);
+       }
+
+
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res)
             throws IOException {

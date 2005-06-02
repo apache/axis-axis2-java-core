@@ -50,13 +50,25 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/engagingglobally</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/engageToService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/adminloging</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/viewGlobalHandlers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/selectService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/viewServiceHandlers</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>

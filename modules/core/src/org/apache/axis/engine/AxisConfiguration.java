@@ -108,7 +108,7 @@ public interface AxisConfiguration extends ParameterInclude{
      */
     public ArrayList getInPhasesUptoAndIncludingPostDispatch();
 
-    public ArrayList getPhasesInOutFaultFlow();
+    public ArrayList getInFaultFlow();
     /**
      * Method getServices
      *

@@ -62,7 +62,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private ArrayList outFaultPhases;
 
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
-    private ArrayList faultPhases;
 
 
 
@@ -217,10 +216,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return transportsOut;
     }
 
-    public ArrayList getFaultPhases() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     /**
      * Method getTransports
      *
@@ -242,10 +237,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
         return inPhasesUptoAndIncludingPostDispatch;
-    }
-
-    public ArrayList getPhasesInOutFaultFlow() {
-        return faultPhases;
     }
 
     public ArrayList getOutFlow() {
