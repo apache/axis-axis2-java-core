@@ -8,12 +8,73 @@
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
+    
+	import java.io.InputStream;
+	import java.net.ServerSocket;
+	
+	import org.apache.axis.context.ConfigurationContext;
+	import org.apache.axis.deployment.DeploymentEngine;
+	import org.apache.axis.description.ServiceDescription;
+	import org.apache.axis.engine.AxisConfiguration;
+	import org.apache.axis.integration.Constants;
+	import org.apache.axis.transport.http.SimpleHTTPServer;
+
 
     /*
      *  Auto generated Junit test case by the Axis code generator
     */
 
     public class <xsl:value-of select="@name"/> extends junit.framework.TestCase{
+    
+    
+    private static int count = 0;
+	private static SimpleHTTPServer server;
+	
+	public void setUp() throws Exception {
+		if (count == 0) {
+			DeploymentEngine deploymentEngine = new DeploymentEngine(System
+					.getProperty("user.dir"));
+			AxisConfiguration axisConfig = deploymentEngine.load();
+			ClassLoader classLoader = this.getClass().getClassLoader();
+			classLoader.getResource("com.datatransferhsbc.HSBCServices");
+			classLoader.getResource("com.datatransferhsbc.HSBCServicesStub");
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			InputStream in = cl
+					.getResourceAsStream("com/datatransferhsbc/service.xml");
+			//InputStream in = new FileInputStream(new
+			// File("/src/com/datatransferhsbc/service.xml"));
+			ServiceDescription service = new ServiceDescription();
+			deploymentEngine.buildService(service, in, classLoader);
+			
+			ConfigurationContext configurationContext = new ConfigurationContext(
+					axisConfig);
+			ServerSocket serverSoc = null;
+			serverSoc = new ServerSocket(Constants.TESTING_PORT);
+			server = new SimpleHTTPServer(
+					configurationContext, serverSoc);
+			Thread thread = new Thread(server);
+			thread.setDaemon(true);
+
+			try {
+				thread.start();
+				System.out.print("Server started on port "
+						+ Constants.TESTING_PORT + ".....");
+			} finally {
+
+			}
+		}
+		count++;
+	}
+
+	 protected void tearDown() throws Exception {
+	 	 if (count == 1) {
+            server.stop();
+            count = 0;
+            System.out.print("Server stopped .....");
+        } else {
+            count--;
+        }
+    }
 
 
      <xsl:for-each select="method">

@@ -37,6 +37,7 @@ public class WSDL2WS {
 		System.out.println("-s : Generate sync style code only. Default if off. takes precedence over -a");
 		System.out.println("-p <package name> : set custom package name");
 		System.out.println("-l <language> : valid languages are java and csharp. Default is java");
+		System.out.println("-t : Generate TestCase to test the generated code");
 		System.out.println("-ss : Generate server side code (i.e. skeletons).Default is off");
 		System.out.println("-sd : Generate service descriptor (i.e. server.xml).Default is off.Valid with -ss ");
 		System.exit(0);
