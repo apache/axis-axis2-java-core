@@ -33,7 +33,19 @@
 <html>
   <head><title>Simple jsp page</title></head>
   <body>
-<form method="get" name="engaginModule" action="viewServiceHandlers">
+  <%
+      String action ="";
+      String buttonName="" ;
+      String status = (String)request.getSession().getAttribute(Constants.MODULE_ENGAMENT);
+      if(status != null && status.equals("Yes")) {
+          action = "listOperations";
+          buttonName = " View Operations";
+      } else {
+          buttonName = " View ";
+          action = "viewServiceHandlers";
+      }
+  %>
+<form method="get" name="engaginModule" action="<%=action%>">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
         <td>
@@ -73,7 +85,7 @@
          </tr>
          <tr>
              <td>
-                <input name="submit" type="submit" value=" View " >
+                <input name="submit" type="submit" value="<%=buttonName%>" >
              </td>
          </tr>
          <tr>

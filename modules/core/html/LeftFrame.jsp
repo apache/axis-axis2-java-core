@@ -128,7 +128,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="enaggingtoanopeartion.jsp" target="mainFrame">To an Operation</a>
+         <a href="listoperation" target="mainFrame">To an Operation</a>
        </td>
     </tr>
 </table>

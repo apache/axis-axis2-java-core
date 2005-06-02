@@ -91,6 +91,8 @@ public class Constants {
      */
     public static final String LISTSERVICES = "listServices";
 
+    public static final String LIST_SERVICE_FOR_MODULE_ENGAMNET = "listoperation";
+
     /**
      * List service for adminpagse
      */
@@ -115,15 +117,21 @@ public class Constants {
      * Field SERVICE_MAP
      */
     public static final String SERVICE_MAP = "servicemap";
+
+    public static final String OPEARTION_MAP = "operationmap";
     /**
      * Field Available modules
      */
     public static final String MODULE_MAP = "modulemap";
 
+    public static final String MODULE_ENGAMENT = "module_engaging";
+
     public static final String GLOBAL_HANDLERS = "axisconfig";
     public static final String SERVICE_HANDLERS = "serviceHandlers";
 
     public static final String PHASE_LIST = "phaseList";
+
+    public static final String LIST_OPERATIONS_FOR_THE_SERVICE = "listOperations";
 
     public static final String ENGAGE_STATUS = "engagestatus";
 
