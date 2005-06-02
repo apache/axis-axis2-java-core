@@ -52,7 +52,7 @@
            </td>
          </tr>
          <tr>
-        <td>Select a Service :</td>
+        <td>Select an Operation :</td>
     </tr>
     <tr>
         <td>
