@@ -1,32 +1,47 @@
 <h1>Working with SubVersion</h1>
 <h2>Setting up the initial environment</h2>
+<h3>Linux</h3>
 <ol type="1">
-	<li>Get the latest copy from SVN -
-	<a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java/src">
-	https://svn.apache.org/repos/asf/webservices/axis/trunk/java</a> . <br><b>
-	Note for committers</b> : If it's your first time for Apache SVN, you need 
-	to activate your account for SVN. Please log on svn.apache.org with your 
-	Apache ID and run svnpasswd once. </li>
-	<li>Install Maven (you can download that from
-	<a href="http://maven.apache.org/">http://maven.apache.org/</a>) </li>
-	<li>Go to the prototype2 folder in the command prompt and type &quot;maven&quot;. This 
+  <li>Create a directory for the project. (say Axis2).</li>
+	<li>Check whether you have svn rpm installed with your linux distribution. Else get the svn rpm and run it.</li>
+	<li>run <strong>svn co &lt;repository URL&gt;, </strong>where repositoty URL is one of the following 
+	<br>Committers -
+	  <a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java">
+  https://svn.apache.org/repos/asf/webservices/axis/trunk/java</a><br>
+  Others - <a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java">http://svn.apache.org/repos/asf/webservices/axis/trunk/java</a><br>
+      <b><br>
+      Note for committers</b> : If it's your first time for Apache SVN, you need 
+	      to activate your account for SVN. Please log on svn.apache.org with your 
+  Apache ID and run svnpasswd once. And you have to check out from </li><br>
+	<li>Install <a href="http://maven.apache.org/">Maven</a>. See <a href="http://maven.apache.org/start/install.html">here</a> for instructions. </li>
+	<li>Go to the Axis2 folder in the command prompt and type &quot;maven&quot;. This 
 	will automatically download all the jars, compile, test and build the 
 	system. </li>
-	<li>If you want to set up this in your favorite IDE: 
-	<ol type="1">
-		<li>For IntellijIDEA type &quot;maven idea&quot; (without quotes). This will 
-		generate IDEA .ipr, .iml and .iws project files </li>
-		<li>For eclipse type &quot;maven eclipse&quot; (without quotes). This will 
-		generate project files for eclipse. </li>
-		<li>To find support for other IDE's (or the list of goals) type &quot;maven 
-		-g&quot;. </li>
-	</ol>
-	</li>
 </ol>
+<h3>Windows</h3>
+<ol type="1">
+  <li>Create a folder for the project. (say Axis2).</li>
+  <li>Install your favourite SVN client or select one from <a href="#svn_clients">here</a> </li>
+  <li>Do a checkout from one of the URLs. <br>
+    Committers - <a href="https://svn.apache.org/repos/asf/webservices/axis/trunk/java"> https://svn.apache.org/repos/asf/webservices/axis/trunk/java</a><br>
+    Others - <a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java">http://svn.apache.org/repos/asf/webservices/axis/trunk/java</a><br>
+    <b><br>
+    Note for committers</b> : If it's your first time for Apache SVN, you need to activate your account for SVN. Please log on svn.apache.org with your Apache ID and run svnpasswd once. And you have to check out from </li>
+  <br>
+  <li>Install <a href="http://maven.apache.org/">Maven</a>. See <a href="http://maven.apache.org/start/install.html">here</a> for instructions. </li>
+  <li>Go to the Axis2 folder in the command prompt and type &quot;maven&quot;. This will automatically download all the jars, compile, test and build the system. </li>
+</ol>
+<h2>Setting up in your IDE </h2>
+<ul>
+  <li><strong>Intellij IDEA </strong>- type <strong>maven idea:multiproject</strong>  This will 
+  generate IDEA .ipr, .iml and .iws project files </li>
+  <li><strong>Eclipse and others</strong>- Maven doesn't contain multiproject support for eclipse. You have to manually setup the project. If you have run &quot;maven&quot; earlier, all the required jars must have been downloaded to {USER_HOME}\.maven\repository folder. </li>
+</ul>
 <p>To learn more about svn, go
 <a href="http://svnbook.red-bean.com/en/1.1/svn-book.html">here</a>.</p>
-<h2>Some SVN Clients</h2>
+<h2><a name="svn_clients"></a>Some SVN Clients</h2>
 <ul>
 	<li><a href="http://tortoisesvn.tigris.org/">Tortoise SVN</a></li>
+    <li><a href="http://subclipse.tigris.org/">Subclipse</a> - Eclipse SVN plugin </li>
 </ul>
 <p>&nbsp;</p>
