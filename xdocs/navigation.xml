@@ -5,9 +5,9 @@
      
     <menu name="Axis 2.0">
        <item name="Home" href="index.html"/>    
-      <item name="Get Invloved">
+      <item name="Get Invloved" href="svn.html">
       	<item name="Overview" href="overview.html"/>
-      	<item name="SVN Repository" href="svn.html"/>
+      	<item name="Setting Up" href="svn.html"/>
       	<item name="Guide Lines" href="guidelines.html"/>
       	<item name="Reference Library" href="refLib.html"/>
       	<item name="Mailing Lists" href="mail-lists.html"/>
@@ -19,21 +19,19 @@
         <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
       	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
       	<item name="User Guide" href="userguide.html" />
-      	<item name="AXIOM Tutorial" href="OMTutorial.html" /> 
-      	<item name="Client API Tutorial" href="ClientAPI.html" />
-      	<item name="Complete API" href="api/index.html" />      	     	
+      	<item name="AXIOM Tutorial" href="OMTutorial.html" />
+      	<item name="M1 Documents" href="m1.html" />  
       </item>
       
       <item name="Downloads">
       	<item name="Releases" href="releases.html" /> 
-      	<item name="Interim Drops" href="interim.html" />
-      	<item name="Source Code" href="cvs-usage.html" />  
+      	<item name="Source Code" href="http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN" />  
       </item>
       <item name="Modules">
       	<item name="Core" href="multiproject/axis2-core/index.html" /> 
-      	<item name="Deployment" href="multiproject/axis2-deployment/index.html" />
-      	<item name="OM" href="multiproject/axis2-om/index.html" /> 
+      	<item name="XML" href="multiproject/axis2-xml/index.html" /> 
       	<item name="WSDL" href="multiproject/axis2-wsdl/index.html" />
+      	<item name="Tools" href="multiproject/axis2-tools/index.html" />
       	<item name="Samples" href="multiproject/axis2-samples/index.html" /> 
       </item> 
       <item name="Project Information">
