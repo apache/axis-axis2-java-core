@@ -1,0 +1,12 @@
+<service name="MyService">
+    <description>
+        This is a sample Web Service with two operations,echo and ping.
+    </description>
+    <parameter name="ServiceClass" locked="xsd:false">userguide.example1.MyService</parameter>
+    <operation name="echo">
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+    </operation>
+     <operation name="ping">
+        <messageReceiver class="org.apache.axis.receivers..RawXMLINOutMessageRecevier"/>
+    </operation>
+ </service>
