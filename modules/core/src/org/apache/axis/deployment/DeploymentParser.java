@@ -474,7 +474,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException("Module referece error , module dosenoot exist !!");
+            throw new DeploymentException(axisFault);
         }
     }
 
