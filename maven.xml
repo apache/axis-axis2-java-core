@@ -80,6 +80,9 @@
             <fileset dir="modules/core/target/classes"/>
             <fileset dir="modules/xml/target/classes"/>
             <fileset dir="modules/wsdl/target/classes"/>
+            <fileset dir="modules/addressing/target/">
+                <include name="modules/addressing.mar"/>
+            </fileset>
         </jar>
     </goal>
 

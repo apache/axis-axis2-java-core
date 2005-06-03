@@ -58,7 +58,7 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),operationName);
         
         
         service.setInFlow(new MockFlow("service inflow", 4));

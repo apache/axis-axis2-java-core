@@ -85,6 +85,8 @@ public class Constants {
     public static final String TRANSPORT_MAIL = "mail";
 
     public static final String TRANSPORT_JMS = "jms";
+    
+    public static final String TRANSPORT_LOCAL = "local";
 
     /**
      * Field LISTSERVICES

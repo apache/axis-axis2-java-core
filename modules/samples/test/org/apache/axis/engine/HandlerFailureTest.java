@@ -85,7 +85,7 @@ public class HandlerFailureTest extends TestCase {
         Utils.addHandler(flow, culprit,PhaseMetadata.PHASE_POLICY_DETERMINATION);
         Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
         
-        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.Echo.class.getName(),operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),operationName);
         service.setInFlow(flow);
         
         UtilServer.start();

@@ -35,8 +35,8 @@ import org.apache.wsdl.WSDLService;
 /**
  * This is a Simple java Provider.
  */
-public class RawXMLINOutMessageRecevier
-    extends AbstractInOutSyncMessageReceiver
+public class RawXMLINOnlyMessageRecevier
+    extends AbstractInMessageReceiver
     implements MessageReceiver {
     /**
      * Field log
@@ -61,11 +61,11 @@ public class RawXMLINOutMessageRecevier
     /**
      * Constructor RawXMLProvider
      */
-    public RawXMLINOutMessageRecevier() {
+    public RawXMLINOnlyMessageRecevier() {
         scope = Constants.APPLICATION_SCOPE;
     }
 
-    public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
+    public void invokeBusinessLogic(MessageContext msgContext)
         throws AxisFault {
         try {
 
@@ -124,7 +124,6 @@ public class RawXMLINOutMessageRecevier
                 } else {
                     throw new AxisFault("Unknown style ");
                 }
-                newmsgContext.setEnvelope(envelope);
             } else {
                 throw new AxisFault(
                     "Raw Xml provider supports only the methods bearing the signature public OMElement "

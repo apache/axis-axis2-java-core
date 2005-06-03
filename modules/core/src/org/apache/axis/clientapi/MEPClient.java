@@ -82,8 +82,14 @@ public abstract class MEPClient {
                 transport = toURL.substring(0, index);
             }
         }
-        return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
-                            new QName(transport));
+        
+        if(transport  != null){
+            return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
+                                new QName(transport));
+            
+        }else{
+            throw new AxisFault("Cannot Infer transport from the URL");
+        }
          
     }
 

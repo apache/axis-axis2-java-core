@@ -19,6 +19,11 @@
         <parameter name="port" locked="xsd:false">6060</parameter>
     </transportReceiver>
     <transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
+    
+    <transportReceiver name="local">
+        <parameter name="port" locked="xsd:false">6060</parameter>
+    </transportReceiver>
+    <transportSender name="local" class="org.apache.axis.transport.local.LocalTransportSender"/>
 
 <!--
     <transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">

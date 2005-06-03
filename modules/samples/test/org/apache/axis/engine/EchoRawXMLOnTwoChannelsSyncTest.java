@@ -75,7 +75,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
-                org.apache.axis.engine.Echo.class.getName(),
+                org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
                 operationName);
         UtilServer.deployService(service);
         serviceContext =
@@ -105,7 +105,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
-                org.apache.axis.engine.Echo.class.getName(),
+                org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
                 operationName);
 
         ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(service);
