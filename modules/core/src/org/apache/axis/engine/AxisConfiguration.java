@@ -87,6 +87,8 @@ public interface AxisConfiguration extends ParameterInclude{
      * @throws AxisFault
      */
     public void addMdoule(ModuleDescription module) throws AxisFault;
+    
+    public boolean isEngaged(QName moduleName);
 
      /**
       * To engae a module at the run time it can be used this method

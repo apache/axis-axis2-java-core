@@ -321,9 +321,9 @@ public class InOutMEPClient extends MEPClient {
         this.listenerTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(new QName(listenerTransport));
 
         if (useSeparateListener == true) {
-//            listener = this.listenerTransport.getReciever();
-//            listener.init(serviceContext.getEngineContext(),this.listenerTransport);
-//            listener.start();
+            if(!serviceContext.getEngineContext().getAxisConfiguration().isEngaged(new QName(Constants.MODULE_ADDRESSING))){
+                throw new AxisFault("to do two Transport Channels the Addressing Modules must be engeged");
+            }
             ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
         }
     }

@@ -7,6 +7,7 @@
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
+    <j:set var="samples.dir" value="target/samples"/>
     <postGoal name="test:compile">
         <mkdir dir="target/test-resources/samples/modules"/>
         <mkdir dir="target/test-resources/repository-client/modules"/>
@@ -18,4 +19,107 @@
         <copy file="../core/target/echo/echo.aar"
 		tofile="target/echo/echo.aar"/>
     </postGoal>
+
+    <postGoal name="test:test">
+        <attainGoal name="create-samples"/>
+    </postGoal>
+
+    <goal name="create-samples">
+	<mkdir dir="target/samples"/>
+        <mkdir dir="${samples.dir}/userguide"/>
+        <attainGoal name="userguide"/>
+        <attainGoal name="amazonQS"/>
+        <attainGoal name="googleSearch"/>
+        <attainGoal name="googleSpellcheck"/>
+    </goal>
+    <goal name="userguide">
+	<mkdir dir="target/samples"/>
+        <mkdir dir="${samples.dir}/userguide"/>
+        <mkdir dir="${samples.dir}/userguide/src"/>
+        <ant:copy todir="${samples.dir}/userguide/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="userguide/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+        <jar destfile="${samples.dir}/userguide/sample.jar">
+            <fileset dir="target/classes">
+                <include name="userguide/**"/>
+            </fileset>           
+        </jar>
+        <jar destfile="${samples.dir}/userguide/MyService.jar">
+            <fileset dir="src/userguide/example1/">
+                <include name="META-INF/**"/>
+            </fileset>           
+            <fileset dir="target/classes">
+                <include name="userguide/example1/**/*.class"/>
+            </fileset>           
+        </jar>
+        <jar destfile="${samples.dir}/userguide/MyServiceWithHandler.jar">
+            <fileset dir="src/userguide/example1/">
+                <include name="META-INF/**"/>
+            </fileset>           
+            <fileset dir="target/classes">
+                <include name="userguide/example2/**/*.class"/>
+            </fileset>           
+        </jar>
+
+    </goal>
+        
+    <goal name="amazonQS">
+        <mkdir dir="${samples.dir}/amazonQS"/>
+        <mkdir dir="${samples.dir}/amazonQS/src"/>
+        <ant:copy todir="${samples.dir}/amazonQS/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="sample/amazon/amazonSimpleQueueService/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+        <mkdir dir="${samples.dir}/amazonQS/docs"/>
+        <ant:copy todir="${samples.dir}/amazonQS/docs">
+        	<ant:fileset dir="xdocs/amazonQS"/>
+	</ant:copy> 
+        <jar destfile="${samples.dir}/amazonQS/amazonQS.jar">
+            <fileset dir="target/classes">
+                <include name="sample/amazon/amazonSimpleQueueService/**"/>
+            </fileset>           
+        </jar>
+    </goal>
+
+    <goal name="googleSearch">
+        <mkdir dir="${samples.dir}/googleSearch"/>
+        <mkdir dir="${samples.dir}/googleSearch/src"/>
+        <ant:copy todir="${samples.dir}/googleSearch/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="sample/google/search/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+        <mkdir dir="${samples.dir}/googleSearch/docs"/>
+        <ant:copy todir="${samples.dir}/googleSearch/docs">
+        	<ant:fileset dir="xdocs/googleSearch"/>
+	</ant:copy> 
+        <jar destfile="${samples.dir}/googleSearch/googleSearch.jar">
+            <fileset dir="target/classes">
+                <include name="sample/google/search/**"/>
+            </fileset>           
+        </jar>
+    </goal>
+    <goal name="googleSpellcheck">
+        <mkdir dir="${samples.dir}/googleSpellcheck"/>
+        <mkdir dir="${samples.dir}/googleSpellcheck/src"/>
+        <ant:copy todir="${samples.dir}/googleSpellcheck/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="sample/google/spellcheck/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+        <mkdir dir="${samples.dir}/googleSpellcheck/docs"/>
+        <ant:copy todir="${samples.dir}/googleSpellcheck/docs">
+        	<ant:fileset dir="xdocs/googleSpellcheck"/>
+	</ant:copy> 
+        <jar destfile="${samples.dir}/googleSpellcheck/googleSpellcheck.jar">
+            <fileset dir="target/classes">
+                <include name="sample/google/spellcheck/**"/>
+            </fileset>           
+        </jar>
+    </goal>
+
+
  </project>

@@ -330,5 +330,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         }
         engagedModules.add(moduleref);
     }
+    
+    public boolean isEngaged(QName moduleName){
+        return engagedModules.contains(moduleName);
+    }
 
 }
