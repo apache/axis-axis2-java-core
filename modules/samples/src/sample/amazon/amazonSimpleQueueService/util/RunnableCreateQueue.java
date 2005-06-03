@@ -1,0 +1,89 @@
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package sample.amazon.amazonSimpleQueueService.util;
+
+import org.apache.axis.om.OMElement;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.clientapi.Callback;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.Constants;
+
+import javax.swing.*;
+
+import sample.amazon.amazonSimpleQueueService.CreateQueue;
+import sample.amazon.amazonSimpleQueueService.Enqueue;
+import sample.amazon.amazonSimpleQueueService.CreateQueue;
+
+import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+
+/**
+ * This will create the Excutable code which runs seperately of GUI interations
+ *
+ * @author Saminda Abeyruwan <saminda@opensource.lk>
+ */
+public class RunnableCreateQueue extends QueueManager implements Runnable {
+    JTextField createQueue;
+    JTextArea result;
+    JTextField queueCode;
+    JTextField enqueue;
+
+    public RunnableCreateQueue(JTextField createQueue, JTextField queueCode, JTextField enqueue,
+                               JTextArea result) {
+        this.createQueue = createQueue;
+        this.queueCode = queueCode;
+        this.enqueue = enqueue;
+        this.result = result;
+    }
+
+    public void run() {
+        if (this.createQueue.isEditable()) {
+            OMElement createQueueElement = CreateQueue.creatQueueElement(
+                    this.createQueue.getText(),getKeyFromPropertyFile());
+            this.axis2EngineRuns("CreateQueue", createQueueElement,
+                    new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,
+                            this.enqueue, this.result));
+        }
+        if (this.enqueue.isEditable()) {
+            OMElement enqueueElement = Enqueue.enqueueElement(this.enqueue.getText(),
+                    this.queueCode.getText(),getKeyFromPropertyFile());
+            this.axis2EngineRuns("Enqueue", enqueueElement, new SimpleQueueEnqueueCallbackHandler(
+                    this.createQueue, this.queueCode, this.enqueue, this.result));
+        }
+    }
+
+    private void axis2EngineRuns(String operation, OMElement element,
+                                 Callback specificCallbackObject) {
+        //endpoint uri is hard coded....
+        String url = "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
+        try {
+            Call call = new Call();
+            call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url));
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.invokeNonBlocking(operation, element, specificCallbackObject);
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
