@@ -74,6 +74,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
+    private static final String SERVICE_CLASS_SUFFIX ="Skeleton";
 
     protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
@@ -353,8 +354,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
         XmlDocument doc = new XmlDocument();
         Element rootElement = doc.createElement("interface");
-        addAttribute(doc,"package",configuration.getPackageName(),rootElement);
-        addAttribute(doc,"name",boundInterface.getName().getLocalPart(),rootElement);
+        addAttribute(doc,"package",configuration.getPackageName(), rootElement);
+        if(this.configuration.isServerSide()){
+        	addAttribute(doc,"name",boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX,rootElement);
+        }else{
+        	addAttribute(doc,"name",boundInterface.getName().getLocalPart(),rootElement);
+        }
         addAttribute(doc,"callbackname",boundInterface.getName().getLocalPart() + CALL_BACK_HANDLER_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
@@ -399,12 +404,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc,"name",localPart+TEST_SUFFIX,rootElement);
         addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
         addAttribute(doc,"interfaceName",localPart,rootElement);
+        addAttribute(doc, "servicename", boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX, rootElement);
         addAttribute(doc,"callbackname",localPart + CALL_BACK_HANDLER_SUFFIX,rootElement);
         addAttribute(doc,"stubname",localPart + STUB_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
-
         return doc;
 
     }

@@ -7,6 +7,7 @@
     <xsl:variable name="stubname"><xsl:value-of select="@stubname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
+    <xsl:variable name="servicename"><xsl:value-of select="@servicename"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
     
 	import java.io.InputStream;
@@ -41,8 +42,6 @@
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			InputStream in = cl
 					.getResourceAsStream("com/datatransferhsbc/service.xml");
-			//InputStream in = new FileInputStream(new
-			// File("/src/com/datatransferhsbc/service.xml"));
 			ServiceDescription service = new ServiceDescription();
 			deploymentEngine.buildService(service, in, classLoader);
 			
@@ -88,7 +87,7 @@
          */
         public  void test<xsl:value-of select="@name"/>() throws java.lang.Exception{
 
-        <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();
+        <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>(".","http://localhost:5050/services/<xsl:value-of select="$servicename"/>/<xsl:value-of select="@name"/>");
            <xsl:choose>
              <xsl:when test="$inputtype!=''">
                assertNotNull(stub.<xsl:value-of select="@name"/>(
