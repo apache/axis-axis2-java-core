@@ -104,8 +104,10 @@
 <p>To check the successful installation of a service <strong><em>available services link </em></strong> is provided. The services and the operations of successfully installed services will be displayed in the available services page. </p>
 <p align="center"><img  src="images/clip_image012.jpg"></p>
 <p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. However whether the service is
-present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;port&gt;/axis2/services/&lt;service name&gt;</b>.
-<!-- This should provide a page similar to the following -->
+present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;port&gt;/axis2/services/&lt;service name&gt;</b>.</p>
+<p>&nbsp;</p>
+<p>
+  <!-- This should provide a page similar to the following -->
 </p>
 <!-- Image goes here -->
 
@@ -128,7 +130,27 @@ the server script can be used. The sever script however needs two parameters, th
  Note - the directory entered as the repository loacation needs to have a services directory inside. This is
  absolutely required and AXIS will not create it automatically in the case of the simple axis server. 
  </b></p> -->
-<h2><a name="_Toc96697863"></a>Samples </h2>
+<h2><a name="_Toc96697863"></a>Samples</h2>
+<p>In this section of the userguide we will look at how to write and deploy Web Services and how to write Web Service Clients using Axis2. All the userguide samples are located at the &quot;modules/samples&quot; directory. So let's  explore the samples.</p>
+<h3> Web Services Using Axis2</h3>
+<p>MyService</p>
+<p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations with the following description.</p>
+<pre class="style1 style2 style3">public void ping(OMElement element){} //sample IN-ONLY operatoin, just accept the OMElement and do some processing.
+public OMElement echo(OMElement element){}//sample IN-OUT operation, accept an OMElement and respond with another OMElement after processing</pre>
+<p>You can find our first example Web Service(MyService) in the &quot;modules/samples&quot; directory under userguide/example1 package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment desciptors for the service and depoly it.</p>
+<p>Axis2 uses &quot;service.xml&quot; to locate configurations for a Web Service. Each Web Service deployed under Axis2 needs a &quot;service.xml&quot; contining the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
+<pre class="style1 style2 style3">&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations,echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre>
+<p>This is used to inform Axis2 engine (once deployed) what is the service class and the operations that it contains. In addition user should specify the meand other relavent parameters (here we don't have any other). </p>
+<p>MyService with a Logging Module </p>
+<h3>Utilize Web Services Using Axis2 </h3>
+<p>Blocking</p>
+<p>Non-Blocking</p>
+<p>With Two Transports</p>
+<h3>Other Samples //Links to Google Samples </h3>
+<h2> Modules</h2>
+<h2>Tools</h2>
+<p>&nbsp;</p>
+<p>&nbsp; </p>
 <p>There are three sample programs, which are listed below, that will be explained in this user guide and the relevant code can be found in the source directory under ../modules/samples/src/java/userguide/sample1. </p>
 <ol>
   <li>Case1: Echo Synchronous call. </li>
