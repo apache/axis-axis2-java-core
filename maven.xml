@@ -63,8 +63,15 @@
     </goal>	
 				
     <goal name="clean">
-	<attainGoal name="multiproject:clean"/>
-	<ant:delete dir="target"/>
+		<attainGoal name="multiproject:clean"/>
+		<delete dir="target"/>
+		<ant:delete >
+	    	<ant:fileset dir=".">
+                <ant:include name="**/axis.log"/>
+                <ant:include name="**/junit*.properties"/>
+                <ant:include name="**/temp.properties"/>
+	    	</ant:fileset>
+        </ant:delete>
     </goal>
 
     <goal name="clean-repo">
