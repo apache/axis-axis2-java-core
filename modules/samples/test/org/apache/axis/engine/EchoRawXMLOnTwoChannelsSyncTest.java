@@ -73,10 +73,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
             new QName("addressing"));
 
         ServiceDescription service =
-            Utils.createSimpleService(
-                serviceName,
-                org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
-                operationName);
+            Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
         UtilServer.deployService(service);
         serviceContext =
             UtilServer.getConfigurationContext().createServiceContext(service.getName());
@@ -99,13 +96,11 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         return reqEnv;
     }
 
-
-
     public void testEchoXMLCompleteSync() throws Exception {
         ServiceDescription service =
             Utils.createSimpleService(
                 serviceName,
-                org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
+        Echo.class.getName(),
                 operationName);
 
         ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(service);
@@ -126,7 +121,5 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
 
     }
-    
-    
 
 }

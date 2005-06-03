@@ -28,20 +28,19 @@ public class DependancyManager {
         throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
-            Method method =
-                classToLoad.getMethod(
-                    MESSAGE_CONTEXT_INJECTION_METHOD,
-                    new Class[] { MessageContext.class });
-            if (method != null) {
-                method.invoke(obj, new Object[] { msgctx });
+            Method[] methods = classToLoad.getMethods(); 
+            
+            for(int i = 0;i< methods.length ; i++){
+                if(MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName()) && methods[i].getParameterTypes().length == 1 &&
+                methods[i].getParameterTypes()[0] == MessageContext.class){
+                    methods[i].invoke(obj, new Object[] { msgctx });
+                }
             }
         } catch (SecurityException e) {
             throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
             throw new AxisFault(e);
-        } catch (NoSuchMethodException e) {
-            throw new AxisFault(e);
-        } catch (IllegalAccessException e) {
+        }catch (IllegalAccessException e) {
             throw new AxisFault(e);
         } catch (InvocationTargetException e) {
             throw new AxisFault(e);

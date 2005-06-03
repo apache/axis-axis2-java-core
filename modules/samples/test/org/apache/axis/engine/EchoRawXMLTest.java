@@ -74,7 +74,7 @@ public class EchoRawXMLTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                        org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
+        Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
         serviceContext =

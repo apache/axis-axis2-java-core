@@ -74,14 +74,14 @@ public class TCPEchoRawXMLTest extends TestCase {
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
-                        org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
+        Echo.class.getName(),
                         operationName);
         UtilsTCPServer.deployService(service);
         
         ServiceDescription service =
                    Utils.createSimpleService(
                        serviceName,
-                       org.apache.axis.engine.MessageContextEnabledEcho.class.getName(),
+                       org.apache.axis.engine.Echo.class.getName(),
                        operationName);
                serviceContext = UtilServer.createAdressedEnabledClientSide(service);
     }

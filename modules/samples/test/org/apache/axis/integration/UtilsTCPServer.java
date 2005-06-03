@@ -52,7 +52,7 @@ public class UtilsTCPServer {
 
             ConfigurationContextFactory erfac =
                 new ConfigurationContextFactory();
-            File file = new File(UtilServer.TESTING_REPOSITORY);
+            File file = new File(org.apache.axis.Constants.TESTING_REPOSITORY);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("repository directory does not exists");

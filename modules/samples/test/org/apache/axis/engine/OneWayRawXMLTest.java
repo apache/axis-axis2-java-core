@@ -74,7 +74,7 @@ public class OneWayRawXMLTest extends TestCase {
         SimpleMailListener ml = new SimpleMailListener();
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildEngineContext(UtilServer.TESTING_REPOSITORY);
+            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
         ml.init(
             configContext,
             configContext.getAxisConfiguration().getTransportIn(

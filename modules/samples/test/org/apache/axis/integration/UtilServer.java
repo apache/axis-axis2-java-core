@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ServiceContext;
@@ -38,8 +39,6 @@ public class UtilServer {
     private static SimpleHTTPServer reciver;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
-   public static final String TESTING_REPOSITORY = "target/test-resources/samples";
-    //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         reciver.getSystemContext().getAxisConfiguration().addService(service);
@@ -53,7 +52,7 @@ public class UtilServer {
     public static synchronized void start() throws Exception {
         if (count == 0) {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            File file = new File(TESTING_REPOSITORY);
+            File file = new File(org.apache.axis.Constants.TESTING_REPOSITORY);
             if (!file.exists()) {
                 throw new Exception("repository directory does not exists");
             }
@@ -97,7 +96,7 @@ public class UtilServer {
     public static ServiceContext createAdressedEnabledClientSide(ServiceDescription service)
         throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(UtilServer.TESTING_REPOSITORY + "/modules/addressing.mar");
+        File file = new File(org.apache.axis.Constants.TESTING_REPOSITORY + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
