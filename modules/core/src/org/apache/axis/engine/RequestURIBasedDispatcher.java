@@ -69,7 +69,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
                 int index = filePart.lastIndexOf(URI_ID_STRING);
                 String serviceStr = null;
-                if (index > 0) {
+                if (-1 != index) {
                     serviceStr =
                         filePart.substring(index + URI_ID_STRING.length() + 1);
 
