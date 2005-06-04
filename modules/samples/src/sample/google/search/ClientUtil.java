@@ -42,21 +42,21 @@ public class ClientUtil {
      * @return msgContext
      */
     public static MessageContext getMessageContext() throws DeploymentException {
-        OMNamespace namespace,defNs;
-        OMElement operation,part1,part2,part3,part4,part5,part6,part7,part8,part9,part10;
+        OMNamespace defNs;
+        OMElement operation;
 
         String str_ST_index = Integer.toString(AsynchronousClient.StartIndex);
 
         defNs = OMAbstractFactory.getSOAP11Factory().createOMNamespace("", "");
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope envelope = omFactory.getDefaultEnvelope();
-        namespace = envelope.declareNamespace(
+        envelope.declareNamespace(
                 "http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        namespace = envelope.declareNamespace(
+        envelope.declareNamespace(
                 "http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        namespace = envelope.declareNamespace(
+        envelope.declareNamespace(
                 "http://www.w3.org/1999/XMLSchema-instance/", "xsi");
-        namespace = envelope.declareNamespace("http://www.w3.org/1999/XMLSchema",
+        envelope.declareNamespace("http://www.w3.org/1999/XMLSchema",
                 "xsd");
 
         operation = omFactory.createOMElement("doGoogleSearch", "urn:GoogleSearch", "ns1");
@@ -64,55 +64,16 @@ public class ClientUtil {
         operation.addAttribute("SOAP-ENV:encordingStyle",
                 "http://schemas.xmlsoap.org/soap/encoding/", null);
 
-        part1 = omFactory.createOMElement("key", defNs);
-        part1.addAttribute("xsi:type", "xsd:string", null);
-        part1.addChild(omFactory.createText(AsynchronousClient.key));
-        //a sample valid key "F0wt5EFQFHKxTs+rl3P+27o6D112BTWd"));
-
-        part2 = omFactory.createOMElement("q", defNs);
-        part2.addAttribute("xsi:type", "xsd:string", null);
-        part2.addChild(omFactory.createText(AsynchronousClient.search));
-
-        part3 = omFactory.createOMElement("start", defNs);
-        part3.addAttribute("xsi:type", "xsd:int", null);
-        part3.addChild(omFactory.createText(str_ST_index));
-
-        part4 = omFactory.createOMElement("maxResults", defNs);
-        part4.addAttribute("xsi:type", "xsd:int", null);
-        part4.addChild(omFactory.createText(AsynchronousClient.maxResults));
-
-        part5 = omFactory.createOMElement("filter", defNs);
-        part5.addAttribute("xsi:type", "xsd:boolean", null);
-        part5.addChild(omFactory.createText("true"));
-
-        part6 = omFactory.createOMElement("restrict", defNs);
-        part6.addAttribute("xsi:type", "xsd:string", null);
-
-        part7 = omFactory.createOMElement("safeSearch", defNs);
-        part7.addAttribute("xsi:type", "xsd:boolean", null);
-        part7.addChild(omFactory.createText("false"));
-
-        part8 = omFactory.createOMElement("lr", defNs);
-        part8.addAttribute("xsi:type", "xsd:string", null);
-
-        part9 = omFactory.createOMElement("ie", defNs);
-        part9.addAttribute("xsi:type", "xsd:string", null);
-        part9.addChild(omFactory.createText("latin1"));
-
-        part10 = omFactory.createOMElement("oe", defNs);
-        part10.addAttribute("xsi:type", "xsd:string", null);
-        part10.addChild(omFactory.createText("latin1"));
-
-        operation.addChild(part10);
-        operation.addChild(part9);
-        operation.addChild(part8);
-        operation.addChild(part7);
-        operation.addChild(part6);
-        operation.addChild(part5);
-        operation.addChild(part4);
-        operation.addChild(part3);
-        operation.addChild(part2);
-        operation.addChild(part1);
+        operation.addChild(getOMElement(omFactory,defNs,"oe","xsd:string","latin1"));
+        operation.addChild(getOMElement(omFactory,defNs,"ie","xsd:string","latin1"));
+        operation.addChild(getOMElement(omFactory,defNs,"lr","xsd:string",""));
+        operation.addChild(getOMElement(omFactory,defNs,"safeSearch","xsd:boolean","false"));
+        operation.addChild(getOMElement(omFactory,defNs,"restrict","xsd:string",""));
+        operation.addChild(getOMElement(omFactory,defNs,"filter","xsd:boolean","true"));
+        operation.addChild(getOMElement(omFactory,defNs,"maxResults","xsd:int",AsynchronousClient.maxResults));
+        operation.addChild(getOMElement(omFactory,defNs,"start","xsd:int",str_ST_index));
+        operation.addChild(getOMElement(omFactory,defNs,"q","xsd:string",AsynchronousClient.search));
+        operation.addChild(getOMElement(omFactory,defNs,"key","xsd:string",AsynchronousClient.key));
 
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = fac.buildClientEngineContext("doGoogleSearch");
@@ -123,6 +84,13 @@ public class ClientUtil {
         }
         msgContext.setEnvelope(envelope);
         return msgContext;
+    }
+
+    private static OMElement getOMElement(OMFactory factory,OMNamespace ns,String elementName,String type,String text){
+        OMElement part = factory.createOMElement(elementName, ns);
+        part.addAttribute("xsi:type", type, null);
+        part.addChild(factory.createText(text));
+        return part;
     }
 }
 

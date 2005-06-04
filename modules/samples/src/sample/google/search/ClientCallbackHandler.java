@@ -70,7 +70,6 @@ public class ClientCallbackHandler extends Callback {
      * @param result
      */
     public void onComplete(AsyncResult result) {
-        //System.out.println("Responce message received to the ClientCallbackHandler ...");
         AsyncResult myResult = result;
         extractDetails(myResult);
     }
@@ -89,20 +88,21 @@ public class ClientCallbackHandler extends Callback {
         OMElement body, operation, elem;
         SOAPEnvelope resEnvelope;
 
-        try {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(
-                    System.out);
-            result.getResponseEnvelope().serialize(writer);
-            //part.serialize(writer,false);
-            writer.flush();
+//        try {
+//            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(
+//                    System.out);
+//            result.getResponseEnvelope().serialize(writer);
+//            //part.serialize(writer,false);
+//            writer.flush();
+//
+//        } catch (XMLStreamException e) {
+//           // System.out.println("Error occured after responce is received");
+//            e.printStackTrace();
+//        } catch (FactoryConfigurationError e) {
+//            //System.out.println("Error occured after responce is received");
+//            e.printStackTrace();
+//        }
 
-        } catch (XMLStreamException e) {
-           // System.out.println("Error occured after responce is received");
-            e.printStackTrace();
-        } catch (FactoryConfigurationError e) {
-            //System.out.println("Error occured after responce is received");
-            e.printStackTrace();
-        }
         resEnvelope = result.getResponseEnvelope();
         body = resEnvelope.getBody();
         operation = body.getFirstElement();
@@ -163,13 +163,10 @@ public class ClientCallbackHandler extends Callback {
             }
         }
         snippet = snippet + endHTML;
-        //System.out.println(snippet);
-
         GUIHandler.showResults(snippet);
     }
 
     public void reportError(Exception e) {
-        //System.out.println("Error occured after responce is received3");
         e.printStackTrace();
     }
 }

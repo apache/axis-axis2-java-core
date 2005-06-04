@@ -18,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import sample.google.common.util.PropertyLoader;
+
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -78,23 +80,7 @@ public class AsynchronousClient {
 
         GUIHandler gui = new GUIHandler();
         System.out.println(search);
-        prop = new Properties();
-
-        Class clazz = new Object().getClass();
-        InputStream stream = clazz.getResourceAsStream("/sample/google/search/key.properties");
-
-
-
-
-        try {
-            prop.load(stream);
-            key = prop.getProperty("Key");
-            if (key==null) {
-                gui.setKey();
-            }
-        } catch (IOException e) {
-           e.printStackTrace();
-        }
+        key = PropertyLoader.getGoogleKey();
 
         gui.buildFrame();
         Thread linkThread = new Thread(page);

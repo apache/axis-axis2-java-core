@@ -15,22 +15,16 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import javax.swing.*;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.clientapi.Callback;
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.Constants;
-import sample.amazon.amazonSimpleQueueService.ListMyQueues;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.clientapi.Callback;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.ListMyQueues;
 
-import java.io.File;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.Properties;
+import javax.swing.*;
 
 /**
  * This will create the Excutable code which runs seperately of GUI interations
@@ -75,5 +69,5 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
             e.printStackTrace();
         }
     }
-  
+
 }

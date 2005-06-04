@@ -24,49 +24,73 @@ import java.awt.*;
  */
 public class AsyncPanel extends javax.swing.JPanel implements Observer,KeyListener{
     FormModel formModel;
-    javax.swing.JTextArea textAreaget;
-    javax.swing.JTextArea textAreaset;
+    JTextArea writingTextArea;
+    JTextArea displayTextArea;
+    JTextField errorMessageField;
     public AsyncPanel()
     {
+        GridBagLayout gbLayout = new GridBagLayout();
+        GridBagConstraints constraint = new GridBagConstraints();
+        this.setLayout(gbLayout);
+
         formModel  = new FormModel(this);
-        textAreaget  = new javax.swing.JTextArea(15,10);
-        textAreaset = new javax.swing.JTextArea(15,10);
-        JScrollPane scrollPaneGet = new JScrollPane(textAreaget);
-        JScrollPane scrollPaneSet = new JScrollPane(textAreaset);
-        setPreferredSize(new Dimension(450, 460));
 
-        textAreaget.setText("Enter a String");
-        textAreaget.addKeyListener(this);
+        writingTextArea  = new JTextArea();
+        writingTextArea.setLineWrap(true);
 
+        displayTextArea = new JTextArea();
+        displayTextArea.setEditable(false);
+        displayTextArea.setLineWrap(true);
 
-        this.add(scrollPaneGet,BorderLayout.NORTH);
-        this.add(scrollPaneSet,BorderLayout.SOUTH);
+        errorMessageField = new JTextField();
+        errorMessageField.setEditable(false);
+        errorMessageField.setBackground(Color.LIGHT_GRAY);
+        errorMessageField.setForeground(Color.RED);
+
+        JScrollPane scrollPaneGet = new JScrollPane(writingTextArea);
+        JScrollPane scrollPaneSet = new JScrollPane(displayTextArea);
+
+        writingTextArea.setText("Enter a String");
+        writingTextArea.addKeyListener(this);
+
+        constraint.fill = GridBagConstraints.BOTH;
+        constraint.gridx=0;
+        constraint.weightx=1;
+        constraint.weighty=8;
+        gbLayout.setConstraints(scrollPaneGet,constraint);
+        this.add(scrollPaneGet);
+        gbLayout.setConstraints(scrollPaneSet,constraint);
+        this.add(scrollPaneSet);
+        constraint.weighty=1;
+        gbLayout.setConstraints(errorMessageField,constraint);
+        this.add(errorMessageField);
 
 
     }
-    public void update(String suggestion)
-    {
-        textAreaset.setText(suggestion);
 
-        // put the suggestion string in the reaponse box along with the misspelt word
+    public void update(String message)
+    {
+        displayTextArea.setText(displayTextArea.getText() + " " + message);
+    }
+
+    //updates the error message to the error message display area
+    public void updateError(String message) {
+        errorMessageField.setText(message);
     }
 
 
     public void keyPressed(KeyEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
         int key=e.getKeyChar();
-        if((key==32)||(key==10)){
-            String suggesion=textAreaget.getText().trim();
-            //suggesion.trim();
-            formModel.doAsyncSpellingSuggestion(suggesion);
+        if((key==KeyEvent.VK_SPACE)||(key==KeyEvent.VK_ENTER)){
+            String[] words=writingTextArea.getText().split("\\s");
+            if (words.length > 0)
+            formModel.doAsyncSpellingSuggestion(words[words.length-1]);
         }
     }
 
     public void keyReleased(KeyEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void keyTyped(KeyEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

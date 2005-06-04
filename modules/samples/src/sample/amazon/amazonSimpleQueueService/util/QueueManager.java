@@ -23,18 +23,9 @@ import java.util.Properties;
 public class QueueManager {
 
     protected String getKeyFromPropertyFile() {
-
-
-
         Class clazz = new Object().getClass();
         InputStream stream = clazz.getResourceAsStream("/sample/amazon/amazonSimpleQueueService/key.properties");
         String key = null;
-
-//        String userDir = System.getProperty("user.dir");
-
-//        String keyPathName = userDir + File.separator + "modules" + File.separator + "sample"
-//                + File.separator
-//                + "properties";
         Properties properties = new Properties();
         try {
             properties.load(stream);

@@ -15,23 +15,16 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.clientapi.Callback;
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.Call;
+import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMElement;
+import sample.amazon.amazonSimpleQueueService.DeleteQueue;
 
 import javax.swing.*;
-
-import sample.amazon.amazonSimpleQueueService.DeleteQueue;
-import sample.amazon.amazonSimpleQueueService.DeleteQueue;
-
-import java.io.File;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.Properties;
 
 /**
  * This will create the Excutable code which runs seperately of GUI interations
@@ -75,5 +68,5 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
             e.printStackTrace();
         }
     }
-  
+
 }

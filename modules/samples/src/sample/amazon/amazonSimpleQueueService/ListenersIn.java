@@ -16,11 +16,10 @@
 package sample.amazon.amazonSimpleQueueService;
 
 import sample.amazon.amazonSimpleQueueService.util.RunnableCreateQueue;
-import sample.amazon.amazonSimpleQueueService.util.RunnableCreateQueue;
 
 import javax.swing.*;
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Listeners for relevent Components in the IN operation

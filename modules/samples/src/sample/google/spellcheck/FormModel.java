@@ -2,6 +2,7 @@ package sample.google.spellcheck;
 
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMElement;
@@ -19,15 +20,19 @@ import javax.xml.namespace.QName;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import sample.google.common.util.PropertyLoader;
+
 /**
  *  class sample.google.spellcheck.FormModel
  * This is the Impementation of the Asynchronous Client
  * @author Nadana Gunarathna
  *
  */
-public class FormModel extends Callback {
+public class FormModel {
 
     Observer observer;
+    private static final String PROTOCOL = "http";
+
     public FormModel(Observer observer)
     {
         this.observer = observer;
@@ -39,133 +44,122 @@ public class FormModel extends Callback {
         OMNamespace emptyNs=omfactory.createOMNamespace("", null);
 
         OMElement method = omfactory.createOMElement("doSpellingSuggestion", opN);
-       //reqEnv.getBody().addChild(method);
+        method.declareNamespace("http://www.w3.org/1999/XMLSchema-instance","xsi");
+        method.declareNamespace("http://www.w3.org/1999/XMLSchema","xsd");
+
+        //reqEnv.getBody().addChild(method);
         method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
         OMElement value1 = omfactory.createOMElement("key",emptyNs);
         OMElement value2=omfactory.createOMElement("phrase",emptyNs);
         value1.addAttribute("xsi:type","xsd:string",null);
         value2.addAttribute("xsi:type","xsd:string",null);
-        value1.addChild(omfactory.createText(value1, "wzdxGcZQFHJ71w7IgCj5ddQGLmODsP9g"));
+        value1.addChild(omfactory.createText(value1,PropertyLoader.getGoogleKey() ));
         value2.addChild(omfactory.createText(value2,word));
         method.addChild(value2);
         method.addChild(value1);
         return method;
     }
 
-    private SOAPEnvelope getEnvelope(String word)
-    {
-        SOAPFactory omfactory=OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv=omfactory.getDefaultEnvelope();
-        OMNamespace emptyNs=omfactory.createOMNamespace("", null);
-        OMNamespace xsi = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance","xsi");
-        OMNamespace xsd = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema","xsd");
-        OMNamespace opN = reqEnv.declareNamespace("urn:GoogleSearch","ns1");
-        OMElement method = omfactory.createOMElement("doSpellingSuggestion", opN);
-        reqEnv.getBody().addChild(method);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
-        OMElement value1 = omfactory.createOMElement("key",emptyNs);
-        OMElement value2=omfactory.createOMElement("phrase",emptyNs);
-        value1.addAttribute("xsi:type","xsd:string",null);
-        value2.addAttribute("xsi:type","xsd:string",null);
-        value1.addChild(omfactory.createText(value1, "wzdxGcZQFHJ71w7IgCj5ddQGLmODsP9g"));
-        value2.addChild(omfactory.createText(value2,word));
-        method.addChild(value2);
-        method.addChild(value1);
-        return reqEnv;
 
-    }
     public void doAsyncSpellingSuggestion(String word)
     {
         OMElement requestElement = getElement(word);
-        System.out.println("Initializing the Client Call....");
         Call call = null;
         try {
             call = new Call();
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            observer.updateError(axisFault.getMessage());
         }
-        System.out.println("Setting the Endpointreference ");
         URL url = null;
         try {
-//            url = new URL("http","127.0.0.1",8080,"/search/beta2");
-            url = new URL("http","api.google.com","/search/beta2");
+            url = new URL(PROTOCOL,PropertyLoader.getGoogleEndpointURL(),PropertyLoader.getGoogleEndpointServiceName());
         } catch (MalformedURLException e) {
-
-            e.printStackTrace();
-            System.exit(0);
+            observer.updateError(e.getMessage());;
         }
 
         call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-        //call.invokeNonBlocking("doGoogleSpellingSugg",requestEnvelop, new ClientCallbackHandler(parent));
         try {
-            call.invokeNonBlocking("doGoogleSpellingSugg",requestElement,this);
+            call.invokeNonBlocking("doGoogleSpellingSugg",requestElement,new GoogleCallBack(word));
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            observer.updateError(axisFault.getMessage());
         }
 
     }
     public void doSyncSpellingSuggestion(String word)
     {
-        SOAPEnvelope response=null;
-        SOAPEnvelope requestEnvelope = getEnvelope(word);
-        System.out.println("Initializing the Client Call....");
+        OMElement responseElement=null;
+        OMElement requestElement = getElement(word);
         Call call = null;
         try {
             call = new Call();
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            observer.updateError(axisFault.getMessage());
         }
-        System.out.println("Setting the Endpointreference ");
         URL url = null;
         try {
-            url = new URL("http","api.google.com","/search/beta2");
+            url = new URL(PROTOCOL,PropertyLoader.getGoogleEndpointURL(),PropertyLoader.getGoogleEndpointServiceName());
         } catch (MalformedURLException e) {
-
-            e.printStackTrace();
-            System.exit(0);
+            observer.updateError(e.getMessage());
         }
 
         call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
         try {
-            response=(SOAPEnvelope)call.invokeBlocking("doGoogleSpellingSugg",requestEnvelope);
+            responseElement=(OMElement)call.invokeBlocking("doGoogleSpellingSugg",requestElement);
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            observer.updateError(axisFault.getMessage());
         }
 
 
-            this.getResponse(response);
+        this.getResponseFromElement(responseElement);
     }
-    public String getResponse(SOAPEnvelope responseEnvelope){
-        ////////////////////////////////////////////
-        try {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-            responseEnvelope.serialize(writer);
-            writer.flush();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
-        ////////////////////////////////////////////
-        QName qName1 = new QName("urn:GoogleSearch", "doSpellingSuggestionResponse");
-        QName qName2 = new QName("urn:GoogleSearch", "return");
-        OMElement returnvalue1 = responseEnvelope.getBody().getFirstChildWithName(qName1);
-        OMElement val = returnvalue1.getFirstChildWithName(qName2);
-        org.apache.axis.om.OMNode omtext = val.getFirstChild();
-        String sugession = null;
-        sugession = ((org.apache.axis.om.OMText) omtext).getText();
+    public String getResponseFromElement(OMElement responseElement){
+
+        OMElement val = responseElement.getFirstElement();
+        String sugession = val.getText();
         this.observer.update(sugession);
-
         return sugession;
     }
 
-    public void onComplete(AsyncResult asyncResult) {
-        String sugession = getResponse(asyncResult.getResponseEnvelope());
-        this.observer.update(sugession);
-        //To change body of implemented methods use File | Settings | File Templates.
 
+    public String getResponse(SOAPEnvelope responseEnvelope){
+        QName qName1 = new QName("urn:GoogleSearch", "doSpellingSuggestionResponse");
+        QName qName2 = new QName("urn:GoogleSearch", "return");
+        SOAPBody body = responseEnvelope.getBody();
+        if (body.hasFault()) {
+            observer.updateError(body.getFault().getException().getMessage());
+            return  null;
+        } else{
+            OMElement val = body.getFirstChildWithName(qName1).getFirstChildWithName(qName2);
+            String sugession = val.getText();
+            if ((sugession==null) ||(sugession.trim().equals(""))){
+                return null;
+            }else{
+                return sugession;
+            }
+
+        }
     }
 
-    public void reportError(Exception e) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    private class GoogleCallBack extends Callback{
+        private String originalWord;
+        public GoogleCallBack(String originalWord) {
+            this.originalWord = originalWord;
+        }
+
+        public void onComplete(AsyncResult result) {
+            String suggestion = getResponse(result.getResponseEnvelope());
+            if (suggestion==null){
+                observer.update(originalWord);
+                observer.updateError("No suggestions found!");
+            }else{
+                observer.update(suggestion);
+            }
+        }
+
+        public void reportError(Exception e) {
+            observer.updateError(e.getMessage());
+        }
     }
+
 }

@@ -1,18 +1,18 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2001-2004 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package sample.google.search;
 
@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.io.*;
 
+import sample.google.common.util.PropertyLoader;
+
 /**
  * Build and desplay the GUI
  * implements both KeyListner and ActionListner
@@ -35,27 +37,27 @@ import java.io.*;
  *
  * @author Gayan Asanka  (gayan@opensource.lk)
  */
-public class GUIHandler implements KeyListener, ActionListener, Runnable {
+public class GUIHandler implements Runnable {
 
     /**
      * Results are desplayed here
      */
-    private static JEditorPane text;
+    private static JEditorPane textEditorPane;
 
     /**
-     * Query parameters typed here
+     * Query parameters typed here                          b
      */
     private static JTextField textBox;
 
     /**
-     * Buttons clicked to view more results and back
+     * Buttons clicked to view more results and backButton
      */
-    private static JButton next, back;
+    private static JButton nextButton, backButton;
 
     /**
      * Menu commands to set the key and maximum no of results per page
      */
-    private static JMenuItem mnuKey, mnuMaxResults;
+    private static JMenuItem keyMenuItem, maxResultsMenuItem;
 
     /**
      * Build the GUI using awt and swing components
@@ -64,7 +66,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         JFrame frame;
         SpringLayout layout;
         JMenuBar menuBar;
-        JMenu setMenu;
+        JMenu settingsMenu;
         Spring xSpring, ySpring, hSpring, wSpring;
 
         frame = new JFrame("Google Search");
@@ -75,17 +77,25 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
 
         menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
-        setMenu = new JMenu("Set"); // Create Set menu
-        menuBar.add(setMenu);
-        setMenu.addActionListener(this);
-        mnuKey = new JMenuItem("Key");
-        mnuMaxResults = new JMenuItem("Result per page");
+        settingsMenu = new JMenu("Settings"); // Create Set menu
+        menuBar.add(settingsMenu);
 
-        setMenu.add(mnuKey);
-        setMenu.add(mnuMaxResults);
+        keyMenuItem = new JMenuItem("Key");
+        keyMenuItem.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setKey();
+            }
+        });
+        settingsMenu.add(keyMenuItem);
 
-        mnuKey.addActionListener(this);
-        mnuMaxResults.addActionListener(this);
+        maxResultsMenuItem = new JMenuItem("Result per page");
+        maxResultsMenuItem.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setMaxResults();
+            }
+        });
+        settingsMenu.add(maxResultsMenuItem);
+
 
         Toolkit theKit = frame.getToolkit(); // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
@@ -95,23 +105,42 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
                 wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        next = new JButton("More Results");
-        back = new JButton("Previous Page");
-        back.setVisible(false);
-        text = new JEditorPane();
-        text.setEditable(false);
-        text.setContentType("text/html");
-        text.addHyperlinkListener(new LinkFollower());
+        nextButton = new JButton("More Results");
+        pane.add(nextButton);
+        nextButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                processNextButton();
+            }
+        });
 
-        JScrollPane scroll = new JScrollPane(text, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        backButton = new JButton("Previous Page");
+        backButton.setVisible(false);
+        pane.add(backButton);
+        backButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                processBackButton();
+            }
+        });
+
+        textEditorPane = new JEditorPane();
+        textEditorPane.setEditable(false);
+        textEditorPane.setContentType("text/html");
+        textEditorPane.addHyperlinkListener(new LinkFollower());
+        JScrollPane scroll = new JScrollPane(textEditorPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         pane.add(scroll);
-        pane.add(next);
-        pane.add(back);
-        next.addActionListener(this);
-        back.addActionListener(this);
+
+
+
+
         textBox = new JTextField();
-        textBox.addKeyListener(this);
+        textBox.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {
+               processKeyEvent(e.getKeyChar());
+            }
+        });
 
         pane.add(textBox);
 
@@ -135,7 +164,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         scrollConstraints.setX(xSpring); // Set the WEST edge constraint
         scrollConstraints.setY(ySpring); // Set the NORTH edge constraint
 
-        SpringLayout.Constraints backBtnConstraints = layout.getConstraints(back);
+        SpringLayout.Constraints backBtnConstraints = layout.getConstraints(backButton);
         xSpring = Spring.constant(50); // Spring we値l use for X
         ySpring = Spring.constant(480); // Spring we値l use for Y
         wSpring = Spring.constant(200); // Spring we値l use for width
@@ -145,7 +174,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         backBtnConstraints.setX(xSpring); // Set the WEST edge constraint
         backBtnConstraints.setY(ySpring);
 
-        SpringLayout.Constraints nextBtnConstraints = layout.getConstraints(next);
+        SpringLayout.Constraints nextBtnConstraints = layout.getConstraints(nextButton);
         xSpring = Spring.constant(250); // Spring we値l use for X
         ySpring = Spring.constant(480); // Spring we値l use for Y
         wSpring = Spring.constant(200); // Spring we値l use for width
@@ -164,7 +193,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
      * @param results
      */
     protected static void showResults(String results) {
-        text.setText(results);
+        textEditorPane.setText(results);
     }
 
     /**
@@ -173,41 +202,30 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
      * store it in the properties file
      */
     protected void setKey() {
-        File propertyFile;
-
-        AsynchronousClient.key = JOptionPane.showInputDialog(null, "Enter the license Key");
-        if (AsynchronousClient.key == null) {
-            setKey();
-        }
-        OutputStream propOut;
-        try {
-            String workingDir = System.getProperty("user.dir");
-            propertyFile =
-                    new File(
-                            workingDir + File.separator + "samples" + File.separator +
-                    "/key.properties");
-            propOut = new FileOutputStream(propertyFile);
-
-            AsynchronousClient.prop.setProperty("gglKey", AsynchronousClient.key);
-            AsynchronousClient.prop.store(propOut, "License Key");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        String key = JOptionPane.showInputDialog(null,"Set the Google Key",PropertyLoader.getGoogleKey());
+        if (key!=null && !key.trim().equals("")){
+            PropertyLoader.setGoogleKey(key);
         }
     }
 
+    private void processBackButton(){
+        if (AsynchronousClient.StartIndex != 0) {
+            int i = Integer.parseInt(AsynchronousClient.maxResults);
+            AsynchronousClient.StartIndex = AsynchronousClient.StartIndex - i;
+            if (AsynchronousClient.StartIndex == 0) {
+                backButton.setVisible(false);
+            }
+            AsynchronousClient.doSearch = true;
+        }
+    }
     /**
      * method keyTyped
      * fires when user typing in TextField textBox
      * act when detects space and Enter key only
      *
-     * @param e
+     * @param event
      */
-    public void keyTyped(KeyEvent e) {
-        System.out.println("inside");
-        int event = e.getKeyChar();
-
+       private void processKeyEvent(int event) {
         if (event == KeyEvent.VK_SPACE || event == KeyEvent.VK_ENTER) {
             AsynchronousClient.search = textBox.getText().trim();
             AsynchronousClient.search.trim();
@@ -218,52 +236,28 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         }
     }
 
-    public void keyPressed(KeyEvent e) {
 
-    }
 
-    public void keyReleased(KeyEvent s) {
-
-    }
-
-    /**
-     * method actionPerformed
-     * Detects menu click events and btn click events
-     * set flags
-     * @param e
-     */
-    public void actionPerformed(ActionEvent e) {
+    private void processNextButton() {
         int i;
+        i = Integer.parseInt(AsynchronousClient.maxResults);
+        AsynchronousClient.StartIndex = AsynchronousClient.StartIndex + i;
+        backButton.setVisible(true);
+        AsynchronousClient.doSearch = true;
+    }
 
-        System.out.println("action is " + e.getSource());
-        if (e.getSource() == next) {
-            i = Integer.parseInt(AsynchronousClient.maxResults);
-            AsynchronousClient.StartIndex = AsynchronousClient.StartIndex + i;
-            back.setVisible(true);
-            AsynchronousClient.doSearch = true;
-        }
-        if (e.getSource() == back) {
-            if (AsynchronousClient.StartIndex != 0) {
-                i = Integer.parseInt(AsynchronousClient.maxResults);
-                AsynchronousClient.StartIndex = AsynchronousClient.StartIndex - i;
-                if (AsynchronousClient.StartIndex == 0) {
-                    back.setVisible(false);
-                }
-                AsynchronousClient.doSearch = true;
+    private void setMaxResults() {
+        do {
+            String maxResults =
+                    JOptionPane.showInputDialog(null,
+                            "Enter the number of maximum results per page (Maximum allowed is 10)",AsynchronousClient.maxResults);
+            if (maxResults==null){
+                break;
+            }else{
+                AsynchronousClient.maxResults=maxResults;
             }
-        }
-        if (e.getSource() == mnuMaxResults) {
-            do {
-                System.out.println("come to the place");
-                AsynchronousClient.maxResults =
-                        JOptionPane.showInputDialog(null,
-                            "Enter the number of maximum results per page (Maximum allowed is 10)");
-            } while (Integer.parseInt(AsynchronousClient.maxResults) > 10 ||
-                    Integer.parseInt(AsynchronousClient.maxResults) < 0);
-        }
-        if (e.getSource() == mnuKey) {
-            setKey();
-        }
+        } while (Integer.parseInt(AsynchronousClient.maxResults) > 10 ||
+                Integer.parseInt(AsynchronousClient.maxResults) < 0);
     }
 
     /**

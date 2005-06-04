@@ -17,41 +17,69 @@ import java.awt.event.ActionEvent;
  */
 public class SyncPanel extends javax.swing.JPanel implements Observer, ActionListener{
     FormModel formModel;
-    javax.swing.JTextField tFieldget;
-    javax.swing.JTextField tFieldset;
-    javax.swing.JButton button;
+    JTextArea writingTextArea;
+    JTextArea displayTextArea;
+    JTextField errorMessageField;
+    JButton sendButton;
+
     public SyncPanel()
     {
+        GridBagLayout gbLayout = new GridBagLayout();
+        GridBagConstraints constraint = new GridBagConstraints();
+
+//        GridLayout layout = new GridLayout();
+//        layout.setColumns(1);
+//        layout.setRows(3);
+        this.setLayout(gbLayout);
+
         formModel  = new FormModel(this);
-        tFieldget = new javax.swing.JTextField(10);
-        tFieldset = new javax.swing.JTextField(10);
-        button=new javax.swing.JButton("Send");
-        JScrollPane scrollPaneget = new JScrollPane(tFieldget);
-        JScrollPane scrollPaneset = new JScrollPane(tFieldset);
+        writingTextArea = new javax.swing.JTextArea();
+        writingTextArea.setLineWrap(true);
 
-        setPreferredSize(new Dimension(150, 150));
+        displayTextArea = new javax.swing.JTextArea();
+        displayTextArea.setLineWrap(true);
+        displayTextArea.setEditable(false);
 
-        tFieldget.setText("Enter a String");
+        errorMessageField = new JTextField();
+        errorMessageField.setEditable(false);
+        errorMessageField.setBackground(Color.LIGHT_GRAY);
+        errorMessageField.setForeground(Color.RED);
 
-        this.add(tFieldget,BorderLayout.CENTER );
-        this.add(scrollPaneget,BorderLayout.CENTER);
-        this.add(button);
-        this.add(tFieldset ,BorderLayout.CENTER);
-        this.add(scrollPaneset,BorderLayout.CENTER);
-        //this.setLayout(new GridLayout(0,1));
-        button.addActionListener(this);
+        sendButton=new javax.swing.JButton("Send");
+        JScrollPane scrollPaneget = new JScrollPane(writingTextArea);
+        JScrollPane scrollPaneset = new JScrollPane(displayTextArea);
+        writingTextArea.setText("Enter a String");
+
+        constraint.fill = GridBagConstraints.BOTH;
+        constraint.gridx=0;
+        constraint.weightx=1;
+        constraint.weighty=8;
+        gbLayout.setConstraints(scrollPaneget,constraint);
+        this.add(scrollPaneget);
+        gbLayout.setConstraints(scrollPaneset,constraint);
+        this.add(scrollPaneset);
+        constraint.weighty=1;
+        gbLayout.setConstraints(sendButton,constraint);
+        this.add(sendButton);
+        gbLayout.setConstraints(errorMessageField,constraint);
+        this.add(errorMessageField);
+
+        sendButton.addActionListener(this);
 
     }
     public void update(String suggestion)
     {
-        tFieldset.setText(suggestion);             // put the suggestion string in the reaponse box along with the misspelt word
+        displayTextArea.setText(suggestion);
     }
 
+    //updates the error message to the error message display area
+    public void updateError(String message) {
+       errorMessageField.setText(message);
+    }
 
     public void actionPerformed(ActionEvent e) {
-        String str=tFieldget.getText().trim();
+        String str=writingTextArea.getText().trim();
         formModel.doSyncSpellingSuggestion(str);
-        //formModel.getResponse();
     }
 
 

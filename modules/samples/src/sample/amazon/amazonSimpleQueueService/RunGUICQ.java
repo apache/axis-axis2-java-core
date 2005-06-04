@@ -15,7 +15,7 @@
 */
 package sample.amazon.amazonSimpleQueueService;
 
-import sample.amazon.amazonSimpleQueueService.AmazonSimpleQueueServiceIn;
+
 
 /**
  * @author Saminda Abeyruwan <saminda@opensource.lk>

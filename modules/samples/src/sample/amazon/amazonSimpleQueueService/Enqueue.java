@@ -15,7 +15,9 @@
 */
 package sample.amazon.amazonSimpleQueueService;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPFactory;
 
 /**

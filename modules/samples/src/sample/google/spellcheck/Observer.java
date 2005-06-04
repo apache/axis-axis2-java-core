@@ -10,5 +10,9 @@ import java.awt.event.ActionEvent;
  *
  */
 public interface Observer {
-    public void update(String suggestion);
-    }
+    // updates the message to the main test display area
+    public void update(String message);
+
+    //updates the error message to the error message display area
+    public void updateError(String message);
+}

@@ -15,8 +15,8 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import org.apache.axis.clientapi.Callback;
 import org.apache.axis.clientapi.AsyncResult;
+import org.apache.axis.clientapi.Callback;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.soap.SOAPBody;

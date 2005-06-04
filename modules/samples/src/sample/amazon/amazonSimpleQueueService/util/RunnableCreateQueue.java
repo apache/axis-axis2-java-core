@@ -15,25 +15,17 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import org.apache.axis.om.OMElement;
+import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.Constants;
-
-import javax.swing.*;
-
+import org.apache.axis.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.CreateQueue;
 import sample.amazon.amazonSimpleQueueService.Enqueue;
-import sample.amazon.amazonSimpleQueueService.CreateQueue;
 
-import java.io.File;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Properties;
+import javax.swing.*;
 
 /**
  * This will create the Excutable code which runs seperately of GUI interations
