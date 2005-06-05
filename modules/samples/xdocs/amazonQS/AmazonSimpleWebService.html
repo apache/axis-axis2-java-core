@@ -30,8 +30,8 @@
 <p>  In these operations user will be given the autonomy to create a new queue or use an existing queue to enqueue the selected queue. Only one queue is subjected to manipulate at a given instance. </p>
 <h4><em>  OUT operations</em></h4>
 <p>  In these operations user will be given the autonomy to list the queues that once possess for a given subscription Id and read the entries of a particular queue or if the queue is empty the queue can deliberately be deleted. If the queue is not empty, the delete operation will not work. The queue must empty before it has to be deleted. It is expected that the user to implement the de-queue operation in order to get the full understanding of the code. Necessary steps will be provided at the end of this documentation. </p>
-<p>  On the perimeters of this example, I have generated a key (0HPJJ4GJDSG2TZ2C8X02) which is the subscription Id and hard coded to the key.properties file and OMElement objects obtained the value through Properties API, for each operation invocation. The service end point also hard coded,<br>
-  (http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService). Thus, when a user reads the queues available, queues pertaining to this key will be displayed. </p>
+<p>  On the perimeters of this example, I have generated a key (0HPJJ4GJDSG2TZ2C8X02) which is the subscription Id and hard coded to the key.properties file and OMElement objects obtained the value through Properties API, for each operation invocation. The service end point also hard coded,
+  (<a href="http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService">http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService</a> ). Thus, when a user reads the queues available, queues pertaining to this key will be displayed. </p>
 <h2>  Section 2 - Architecture and Advanced Operations</h2>
 <h3>  Architecture of the Code</h3>
 <p>  The structure of the code has been divided in to three sections for the simplicity of understanding.</p>

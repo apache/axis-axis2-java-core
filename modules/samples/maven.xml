@@ -71,6 +71,7 @@
         <ant:copy todir="${samples.dir}/amazonQS/src">
         	<ant:fileset dir="src">
         		<ant:include name="sample/amazon/amazonSimpleQueueService/**"/>
+        		<ant:include name="sample/amazon/common/**"/>
         	</ant:fileset> 
 	</ant:copy> 
         <mkdir dir="${samples.dir}/amazonQS/docs"/>
@@ -83,6 +84,7 @@
         <jar destfile="${samples.dir}/amazonQS/amazonQS.jar">
             <fileset dir="target/classes">
                 <include name="sample/amazon/amazonSimpleQueueService/**"/>
+                <include name="sample/amazon/common/**"/>
             </fileset>           
         </jar>
     </goal>
@@ -93,6 +95,7 @@
         <ant:copy todir="${samples.dir}/googleSearch/src">
         	<ant:fileset dir="src">
         		<ant:include name="sample/google/search/**"/>
+        		<ant:include name="sample/google/common/**"/>
         	</ant:fileset> 
 	</ant:copy> 
         <mkdir dir="${samples.dir}/googleSearch/docs"/>
@@ -116,6 +119,7 @@
         <ant:copy todir="${samples.dir}/googleSpellcheck/src">
         	<ant:fileset dir="src">
         		<ant:include name="sample/google/spellcheck/**"/>
+        		<ant:include name="sample/google/common/**"/>
         	</ant:fileset> 
 	</ant:copy> 
         <mkdir dir="${samples.dir}/googleSpellcheck/docs"/>
