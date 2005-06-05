@@ -1,6 +1,6 @@
-package org.apache.axis.tool.codegen.eclipse.pages;
+package org.apache.axis.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.CodegenWizardPlugin;
+import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -32,11 +32,11 @@ public class WSDLFileSelectionPage extends WizardPage {
 	 * @param pageName
 	 */
 	public WSDLFileSelectionPage(ISelection selection) {
-		super(CodegenWizardPlugin.getResourceString("page1.name"));
+		super(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page1.name"));
 		setTitle(CodegenWizardPlugin.getResourceString("page1.title"));
-		setDescription(CodegenWizardPlugin.getResourceString("page1.desc"));
+		setDescription(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page1.desc"));
 		this.selection = selection;
-		setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
+		setImageDescriptor(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getWizardImageDescriptor());
 		//set the page complete status to false at initiation 
 		setPageComplete(false);
 	}
@@ -88,7 +88,7 @@ public class WSDLFileSelectionPage extends WizardPage {
 		}
 	    
 		if (!fileName.matches(".*\\.wsdl")){
-				updateStatus(CodegenWizardPlugin.getResourceString("page1.error.wrongextension"));
+				updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page1.error.wrongextension"));
 				return;
 		 }
 		 

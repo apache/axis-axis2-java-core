@@ -1,4 +1,4 @@
-package org.apache.axis.tool.codegen.eclipse;
+package org.apache.axis.tool.codegen.eclipse.plugin;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.*;
@@ -22,7 +22,7 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.codegen.resources.Codegen");
+			resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.codegen.resource.Codegen");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

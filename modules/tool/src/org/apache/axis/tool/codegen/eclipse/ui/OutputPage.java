@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.axis.tool.codegen.eclipse.pages;
+package org.apache.axis.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.CodegenWizardPlugin;
+import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.WizardPage;
@@ -44,8 +44,8 @@ public class OutputPage extends WizardPage {
     public OutputPage() {
         super(CodegenWizardPlugin.getResourceString("page3.name"));
         setTitle(CodegenWizardPlugin.getResourceString("page3.title"));
-        setDescription(CodegenWizardPlugin.getResourceString("page3.desc"));
-        setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
+        setDescription(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page3.desc"));
+        setImageDescriptor(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getWizardImageDescriptor());
         //set the page complete status to false at initilaization
         setPageComplete(false);
 
@@ -64,7 +64,7 @@ public class OutputPage extends WizardPage {
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin
+        label.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                 .getResourceString("page3.output.caption"));
 
         outputLocation = new Text(container, SWT.BORDER);
@@ -76,7 +76,7 @@ public class OutputPage extends WizardPage {
         });
 
         browseButton = new Button(container, SWT.PUSH);
-        browseButton.setText(CodegenWizardPlugin
+        browseButton.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                 .getResourceString("page3.outselection.browse"));
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -108,7 +108,7 @@ public class OutputPage extends WizardPage {
     private void handleModifyEvent() {
         String text = this.outputLocation.getText();
         if ((text == null) || (text.trim().equals(""))) {
-            updateStatus(CodegenWizardPlugin
+            updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                     .getResourceString("page3.error.nolocation"));
             return;
         }
@@ -142,7 +142,7 @@ public class OutputPage extends WizardPage {
     				getShell(),
     				ResourcesPlugin.getWorkspace().getRoot(),
     				false,
-    				CodegenWizardPlugin.getResourceString("page3.containerbox.title"));
+    				org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page3.containerbox.title"));
     		if (dialog.open() == ContainerSelectionDialog.OK) {
     			Object[] result = dialog.getResult();
     			if (result.length == 1) {

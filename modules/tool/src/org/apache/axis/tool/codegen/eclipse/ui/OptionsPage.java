@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.axis.tool.codegen.eclipse.pages;
+package org.apache.axis.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.CodegenWizardPlugin;
+import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis.wsdl.util.URLProcessor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -53,7 +53,7 @@ public class OptionsPage extends WizardPage implements UIConstants {
      */
     public OptionsPage() {
         super(CodegenWizardPlugin.getResourceString("page2.name"));
-        setTitle(CodegenWizardPlugin.getResourceString("page2.title"));
+        setTitle(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page2.title"));
         setDescription(CodegenWizardPlugin.getResourceString("page2.desc"));
         setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
 
@@ -95,7 +95,7 @@ public class OptionsPage extends WizardPage implements UIConstants {
                 .getResourceString("page2.sync.caption"));
 
         asyncOnlyRadioButton = new Button(container, SWT.RADIO);
-        asyncOnlyRadioButton.setText(CodegenWizardPlugin
+        asyncOnlyRadioButton.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                 .getResourceString("page2.async.caption"));
 
         label = new Label(container, SWT.NULL);
@@ -114,7 +114,7 @@ public class OptionsPage extends WizardPage implements UIConstants {
         gd.horizontalSpan = 3;
         testCaseCheckBoxButton = new Button(container, SWT.CHECK);
         testCaseCheckBoxButton.setLayoutData(gd);
-        testCaseCheckBoxButton.setText(CodegenWizardPlugin
+        testCaseCheckBoxButton.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                 .getResourceString("page2.testcase.caption"));
         
         

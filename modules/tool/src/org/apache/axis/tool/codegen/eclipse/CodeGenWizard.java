@@ -9,10 +9,12 @@ import java.util.Map;
 
 import javax.wsdl.WSDLException;
 
-import org.apache.axis.tool.codegen.eclipse.pages.OptionsPage;
-import org.apache.axis.tool.codegen.eclipse.pages.OutputPage;
-import org.apache.axis.tool.codegen.eclipse.pages.WSDLFileSelectionPage;
+import org.apache.axis.tool.codegen.eclipse.ui.OptionsPage;
+import org.apache.axis.tool.codegen.eclipse.ui.OutputPage;
+import org.apache.axis.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis.tool.codegen.eclipse.plugin.*;
+import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
@@ -48,7 +50,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
     public CodeGenWizard() {
         super();
         setNeedsProgressMonitor(true);
-        this.setWindowTitle(CodegenWizardPlugin
+        this.setWindowTitle(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                 .getResourceString("general.name"));
     }
 
