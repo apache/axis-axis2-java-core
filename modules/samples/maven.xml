@@ -64,7 +64,7 @@
         </jar>
 
     </goal>
-        
+     <!-- ********************************************************************************************************-->   
     <goal name="amazonQS">
         <mkdir dir="${samples.dir}/amazonQS"/>
         <mkdir dir="${samples.dir}/amazonQS/src"/>
@@ -77,13 +77,16 @@
         <ant:copy todir="${samples.dir}/amazonQS/docs">
         	<ant:fileset dir="xdocs/amazonQS"/>
 	</ant:copy> 
+	<ant:copy todir="${samples.dir}/amazonQS">
+        	<ant:fileset dir="script/amazonQS"/>
+	</ant:copy>
         <jar destfile="${samples.dir}/amazonQS/amazonQS.jar">
             <fileset dir="target/classes">
                 <include name="sample/amazon/amazonSimpleQueueService/**"/>
             </fileset>           
         </jar>
     </goal>
-
+     <!-- ********************************************************************************************************-->   
     <goal name="googleSearch">
         <mkdir dir="${samples.dir}/googleSearch"/>
         <mkdir dir="${samples.dir}/googleSearch/src"/>
@@ -96,12 +99,17 @@
         <ant:copy todir="${samples.dir}/googleSearch/docs">
         	<ant:fileset dir="xdocs/googleSearch"/>
 	</ant:copy> 
+	<ant:copy todir="${samples.dir}/googleSearch">
+        	<ant:fileset dir="script/googleSearch"/>
+	</ant:copy> 
         <jar destfile="${samples.dir}/googleSearch/googleSearch.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/search/**"/>
+                <include name="sample/google/common/**"/>
             </fileset>           
         </jar>
     </goal>
+         <!-- ********************************************************************************************************-->   
     <goal name="googleSpellcheck">
         <mkdir dir="${samples.dir}/googleSpellcheck"/>
         <mkdir dir="${samples.dir}/googleSpellcheck/src"/>
@@ -114,9 +122,13 @@
         <ant:copy todir="${samples.dir}/googleSpellcheck/docs">
         	<ant:fileset dir="xdocs/googleSpellcheck"/>
 	</ant:copy> 
+    <ant:copy todir="${samples.dir}/googleSpellcheck">
+        	<ant:fileset dir="script/googleSpellcheck"/>
+	</ant:copy> 
         <jar destfile="${samples.dir}/googleSpellcheck/googleSpellcheck.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/spellcheck/**"/>
+                <include name="sample/google/common/**"/>
             </fileset>           
         </jar>
     </goal>

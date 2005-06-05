@@ -16,14 +16,17 @@
 
 package sample.google.search;
 
-import org.apache.axis.om.*;
-import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 /**
  * Builds the MessageContext as called by AsynchronousClient
@@ -35,17 +38,18 @@ import org.apache.axis.deployment.DeploymentException;
 public class ClientUtil {
 
     /** Soap request is included to this and pass it to sendMsg() in AsynchronousClient */
-    static MessageContext msgContext;
+    //static MessageContext msgContext;
 
     /**
      * method getMessageContext
      * @return msgContext
      */
-    public static MessageContext getMessageContext() throws DeploymentException {
+    public static MessageContext getMessageContext(AsynchronousClient asyncClient) throws DeploymentException {
         OMNamespace defNs;
         OMElement operation;
+        MessageContext msgContext = null;
 
-        String str_ST_index = Integer.toString(AsynchronousClient.StartIndex);
+        String str_ST_index = Integer.toString(asyncClient.getStartIndex());
 
         defNs = OMAbstractFactory.getSOAP11Factory().createOMNamespace("", "");
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
@@ -70,10 +74,10 @@ public class ClientUtil {
         operation.addChild(getOMElement(omFactory,defNs,"safeSearch","xsd:boolean","false"));
         operation.addChild(getOMElement(omFactory,defNs,"restrict","xsd:string",""));
         operation.addChild(getOMElement(omFactory,defNs,"filter","xsd:boolean","true"));
-        operation.addChild(getOMElement(omFactory,defNs,"maxResults","xsd:int",AsynchronousClient.maxResults));
+        operation.addChild(getOMElement(omFactory,defNs,"maxResults","xsd:int",asyncClient.getMaxResults()));
         operation.addChild(getOMElement(omFactory,defNs,"start","xsd:int",str_ST_index));
-        operation.addChild(getOMElement(omFactory,defNs,"q","xsd:string",AsynchronousClient.search));
-        operation.addChild(getOMElement(omFactory,defNs,"key","xsd:string",AsynchronousClient.key));
+        operation.addChild(getOMElement(omFactory,defNs,"q","xsd:string",asyncClient.getSearch()));
+        operation.addChild(getOMElement(omFactory,defNs,"key","xsd:string",asyncClient.getKey()));
 
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = fac.buildClientEngineContext("doGoogleSearch");

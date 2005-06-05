@@ -151,7 +151,7 @@ public class FormModel {
             String suggestion = getResponse(result.getResponseEnvelope());
             if (suggestion==null){
                 observer.update(originalWord);
-                observer.updateError("No suggestions found!");
+                observer.updateError("No suggestions found for "+originalWord);
             }else{
                 observer.update(suggestion);
             }

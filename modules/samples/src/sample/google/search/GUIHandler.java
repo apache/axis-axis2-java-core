@@ -17,16 +17,16 @@
 package sample.google.search;
 
 import org.apache.axis.engine.AxisFault;
+import sample.google.common.util.PropertyLoader;
 
 import javax.swing.*;
-import java.awt.event.KeyListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
-import java.awt.*;
-import java.io.*;
-
-import sample.google.common.util.PropertyLoader;
+import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Build and desplay the GUI
@@ -37,31 +37,38 @@ import sample.google.common.util.PropertyLoader;
  *
  * @author Gayan Asanka  (gayan@opensource.lk)
  */
-public class GUIHandler implements Runnable {
-
+public class GUIHandler {
+    private static final String HELP_FILE_NAME = "/docs/GoogleSearchHelp.html";
     /**
      * Results are desplayed here
      */
-    private static JEditorPane textEditorPane;
+    private JEditorPane textEditorPane;
 
     /**
-     * Query parameters typed here                          b
-     */
-    private static JTextField textBox;
+     * Query parameters typed here
+     *      */
+    private JTextField textBox;
 
     /**
      * Buttons clicked to view more results and backButton
      */
-    private static JButton nextButton, backButton;
+    private JButton nextButton, backButton;
 
     /**
      * Menu commands to set the key and maximum no of results per page
      */
-    private static JMenuItem keyMenuItem, maxResultsMenuItem;
+    private JMenuItem keyMenuItem, maxResultsMenuItem;
+    private AsynchronousClient asyncClient ;
+
+    public GUIHandler(AsynchronousClient asyncClient) {
+        this.asyncClient = asyncClient;
+    }
 
     /**
      * Build the GUI using awt and swing components
      */
+
+
     public void buildFrame() {
         JFrame frame;
         SpringLayout layout;
@@ -95,11 +102,21 @@ public class GUIHandler implements Runnable {
             }
         });
         settingsMenu.add(maxResultsMenuItem);
+        maxResultsMenuItem.setEnabled(false);
+        maxResultsMenuItem.setToolTipText("This feature is currently disabled!");
 
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem mnuItemHelp = new JMenuItem("Show Help");
+        helpMenu.add(mnuItemHelp);
+        mnuItemHelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showHelp();
+            }
+        });
+        menuBar.add(helpMenu);
 
         Toolkit theKit = frame.getToolkit(); // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
-
         // Set the position to screen center & size to half screen size
         frame.setBounds(wndSize.width / 6, wndSize.height / 10, // Position
                 wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
@@ -138,7 +155,7 @@ public class GUIHandler implements Runnable {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {}
             public void keyTyped(KeyEvent e) {
-               processKeyEvent(e.getKeyChar());
+                processKeyEvent(e.getKeyChar());
             }
         });
 
@@ -147,7 +164,7 @@ public class GUIHandler implements Runnable {
         SpringLayout.Constraints textBoxConstraints = layout.getConstraints(textBox);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(0); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
+        wSpring = Spring.constant(frame.getBounds().width-8); // Spring we値l use for width
         hSpring = Spring.constant(30); // Strut we値l use for height
         textBoxConstraints.setWidth(wSpring); // Set component width constraint
         textBoxConstraints.setHeight(hSpring);
@@ -155,9 +172,10 @@ public class GUIHandler implements Runnable {
         textBoxConstraints.setY(ySpring);
 
         SpringLayout.Constraints scrollConstraints = layout.getConstraints(scroll);
+//        SpringLayout.Constraints scrollConstraints = layout.getConstraints(textEditorPane);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(30); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
+        wSpring = Spring.constant(frame.getBounds().width-8); // Spring we値l use for width
         hSpring = Spring.constant(450); // Strut we値l use for height
         scrollConstraints.setWidth(wSpring); // Set component width constraint
         scrollConstraints.setHeight(hSpring);
@@ -192,7 +210,7 @@ public class GUIHandler implements Runnable {
      *
      * @param results
      */
-    protected static void showResults(String results) {
+    protected void showResults(String results) {
         textEditorPane.setText(results);
     }
 
@@ -209,13 +227,13 @@ public class GUIHandler implements Runnable {
     }
 
     private void processBackButton(){
-        if (AsynchronousClient.StartIndex != 0) {
-            int i = Integer.parseInt(AsynchronousClient.maxResults);
-            AsynchronousClient.StartIndex = AsynchronousClient.StartIndex - i;
-            if (AsynchronousClient.StartIndex == 0) {
+        if (asyncClient.getStartIndex() != 0) {
+            int i = Integer.parseInt(asyncClient.getMaxResults());
+            asyncClient.setStartIndex(asyncClient.getStartIndex() - i);
+            if (asyncClient.getStartIndex() == 0) {
                 backButton.setVisible(false);
             }
-            AsynchronousClient.doSearch = true;
+            doSearch();
         }
     }
     /**
@@ -225,64 +243,98 @@ public class GUIHandler implements Runnable {
      *
      * @param event
      */
-       private void processKeyEvent(int event) {
+    private void processKeyEvent(int event) {
         if (event == KeyEvent.VK_SPACE || event == KeyEvent.VK_ENTER) {
-            AsynchronousClient.search = textBox.getText().trim();
-            AsynchronousClient.search.trim();
-            System.out.println(textBox.getText());
-            if (!AsynchronousClient.prevSearch.equals(AsynchronousClient.search)) {
-                AsynchronousClient.doSearch = true;
+            asyncClient.setSearch(textBox.getText().trim());
+            if (!asyncClient.getPrevSearch().equals(asyncClient.getSearch())) {
+                doSearch();
             }
         }
     }
 
+    /**
+     * method showHelp
+     */
+    private void showHelp() {
+
+        JFrame frame= new JFrame();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(screenSize.width/5,
+                screenSize.height/5);
+        frame.setSize(screenSize.width/2,screenSize.height/2);
+
+        BorderLayout layout = new BorderLayout();
+
+        JScrollPane jsp ;
+        JEditorPane jep;
+
+        jep = new JEditorPane();
+        //jep.addHyperlinkListener(new LinkFollower());
+        jep.setEditable(false);
+        jep.setContentType("text/html");
+
+        jsp = new JScrollPane(jep);
+
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(layout);
+        contentPane.add(jsp, BorderLayout.CENTER);
+        String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+
+        try {
+            jep.setPage(new File(helpDoc).toURL());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        frame.setVisible(true);
+    }
 
 
     private void processNextButton() {
-        int i;
-        i = Integer.parseInt(AsynchronousClient.maxResults);
-        AsynchronousClient.StartIndex = AsynchronousClient.StartIndex + i;
+        int i = Integer.parseInt(asyncClient.getMaxResults());
+        asyncClient.setStartIndex(asyncClient.getStartIndex() + i);
         backButton.setVisible(true);
-        AsynchronousClient.doSearch = true;
+        doSearch();
     }
 
     private void setMaxResults() {
-        do {
-            String maxResults =
-                    JOptionPane.showInputDialog(null,
-                            "Enter the number of maximum results per page (Maximum allowed is 10)",AsynchronousClient.maxResults);
-            if (maxResults==null){
-                break;
-            }else{
-                AsynchronousClient.maxResults=maxResults;
+        String maxResults =
+                JOptionPane.showInputDialog(null,
+                        "Enter the number of maximum results per page (Maximum allowed is 10)",asyncClient.getMaxResults());
+        if (maxResults==null){
+            return;
+        }else{
+            try {
+                asyncClient.setMaxResults(Integer.parseInt(maxResults) +"");
+            } catch (NumberFormatException e) {
+                return;
             }
-        } while (Integer.parseInt(AsynchronousClient.maxResults) > 10 ||
-                Integer.parseInt(AsynchronousClient.maxResults) < 0);
+
+        }
+
     }
 
-    /**
-     * method run
-     * check the flag doSearch
-     * if it's set, call sendMsg method
-     */
-    public void run() {
-        while (true) {
-            AsynchronousClient.search.toString().trim();
-            if (AsynchronousClient.doSearch == true) {
-                if (!AsynchronousClient.search.equals(AsynchronousClient.prevSearch)) {
-                    AsynchronousClient.StartIndex = 0;
-                }
-                try {
-                    AsynchronousClient.doSearch = false;
-                    AsynchronousClient.sendMsg();
-                } catch (AxisFault axisFault) {
-                    axisFault.printStackTrace();
-                }
+
+    private void doSearch(){
+        new ClientThread().run();
+
+    }
+
+    private class ClientThread implements Runnable{
+        /**
+         * method run
+         * check the flag doSearch
+         * if it's set, call sendMsg method
+         */
+        public void run() {
+            if (asyncClient.getSearch().equals(asyncClient.getPrevSearch())) {
+                asyncClient.setStartIndex(0);
+                return;
             }
             try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                asyncClient.sendMsg();
+            } catch (AxisFault axisFault) {
+                axisFault.printStackTrace();
             }
         }
     }

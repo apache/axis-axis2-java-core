@@ -15,4 +15,6 @@ public interface Observer {
 
     //updates the error message to the error message display area
     public void updateError(String message);
+
+    public void clear();
 }

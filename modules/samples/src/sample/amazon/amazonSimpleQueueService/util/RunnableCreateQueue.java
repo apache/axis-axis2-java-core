@@ -49,14 +49,14 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
     public void run() {
         if (this.createQueue.isEditable()) {
             OMElement createQueueElement = CreateQueue.creatQueueElement(
-                    this.createQueue.getText(),getKeyFromPropertyFile());
+                    this.createQueue.getText(),getKey());
             this.axis2EngineRuns("CreateQueue", createQueueElement,
                     new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,
                             this.enqueue, this.result));
         }
         if (this.enqueue.isEditable()) {
             OMElement enqueueElement = Enqueue.enqueueElement(this.enqueue.getText(),
-                    this.queueCode.getText(),getKeyFromPropertyFile());
+                    this.queueCode.getText(),getKey());
             this.axis2EngineRuns("Enqueue", enqueueElement, new SimpleQueueEnqueueCallbackHandler(
                     this.createQueue, this.queueCode, this.enqueue, this.result));
         }

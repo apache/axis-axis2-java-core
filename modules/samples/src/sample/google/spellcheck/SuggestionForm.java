@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * class sample.google.spellcheck.SuggestionForm
@@ -21,6 +23,7 @@ public class SuggestionForm extends javax.swing.JFrame {
 
     private JMenuItem syncMenuItem;
     private JMenuItem asyncMenuItem;
+    private static final String HELP_FILE_NAME = "/docs/GoogleSpellCheck.html";
 
 
     public SuggestionForm() throws HeadlessException {
@@ -52,7 +55,7 @@ public class SuggestionForm extends javax.swing.JFrame {
 
         JMenu settingsMenu =  new JMenu("Settings");
         settingsMenu.setMnemonic(KeyEvent.VK_S);
-        JMenuItem googleKeyMenu = new JMenuItem("Google Key",KeyEvent.VK_G);
+        JMenuItem googleKeyMenu = new JMenuItem("Set Google Key",KeyEvent.VK_G);
         googleKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
         googleKeyMenu.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -61,8 +64,32 @@ public class SuggestionForm extends javax.swing.JFrame {
         });
         settingsMenu.add(googleKeyMenu);
 
+        JMenu clearMenu = new JMenu("Clear");
+        clearMenu.setMnemonic(KeyEvent.VK_C);
+        JMenuItem clearMenuItem = new JMenuItem("Clear text boxes");
+        clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+        clearMenuItem.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                asyncPanel.clear();
+                syncPanel.clear();
+            }
+        });
+        clearMenu.add(clearMenuItem);
+
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem mnuItemHelp = new JMenuItem("Show Help");
+        helpMenu.add(mnuItemHelp);
+
+        mnuItemHelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showHelp();
+            }
+        });
+
         menuBar.add(modeMenu);
         menuBar.add(settingsMenu);
+        menuBar.add(clearMenu);
+        menuBar.add(helpMenu);
 
         this.setJMenuBar(menuBar);
 
@@ -112,5 +139,43 @@ public class SuggestionForm extends javax.swing.JFrame {
             PropertyLoader.setGoogleKey(key);
         }
     }
+
+    /**
+     * method showHelp
+     */
+    private void showHelp() {
+
+        JFrame frame= new JFrame();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(screenSize.width/5,
+                screenSize.height/5);
+        frame.setSize(screenSize.width/2,screenSize.height/2);
+
+        BorderLayout layout = new BorderLayout();
+
+        JScrollPane jsp ;
+        JEditorPane jep;
+
+        jep = new JEditorPane();
+        //jep.addHyperlinkListener(new LinkFollower());
+        jep.setEditable(false);
+        jep.setContentType("text/html");
+
+        jsp = new JScrollPane(jep);
+
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(layout);
+        contentPane.add(jsp, BorderLayout.CENTER);
+        String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+
+        try {
+            jep.setPage(new File(helpDoc).toURL());
+        } catch (IOException e) {
+           JOptionPane.showMessageDialog(this,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        frame.setVisible(true);
+    }
+
 
 }

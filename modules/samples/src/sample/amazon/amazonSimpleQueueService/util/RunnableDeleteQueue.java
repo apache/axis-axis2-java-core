@@ -48,7 +48,7 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement deleteQueueElement = DeleteQueue.deleteQueueElement(this.createQueue.getText(),getKeyFromPropertyFile());
+        OMElement deleteQueueElement = DeleteQueue.deleteQueueElement(this.createQueue.getText(),getKey());
         this.axis2EngineRuns("DeleteQueue", deleteQueueElement,
                 new SimpleQueueDeleteQueueCallbackHandler(this.result, this.button));
     }

@@ -48,7 +48,7 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement listMyQueuesElement = ListMyQueues.queueListElement(getKeyFromPropertyFile());
+        OMElement listMyQueuesElement = ListMyQueues.queueListElement(getKey());
         this.axis2EngineRuns("ListMyQueues", listMyQueuesElement,
                 new SimpleQueueListMyQueuesCallbackHandler(this.createQueue, this.queueCode,
                         this.read, this.result, this.button));

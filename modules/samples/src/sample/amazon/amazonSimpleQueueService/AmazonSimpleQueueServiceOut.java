@@ -15,8 +15,15 @@
 */
 package sample.amazon.amazonSimpleQueueService;
 
+import sample.amazon.amazonSimpleQueueService.util.QueueManager;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * GUI class which handles the OUT operations of the queue
@@ -24,6 +31,7 @@ import java.awt.*;
  * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class AmazonSimpleQueueServiceOut extends JFrame {
+    private static final String HELP_FILE_NAME = "/docs/AmazonSimpleWebService.html";
     JTextField createQueue;
     JTextField queueCode;
     JTextField read;
@@ -84,6 +92,8 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
                 this.read, this.resuts, this.loadButton, this.deleteButton));
         this.deleteButton.addActionListener(new ListenersOut(this.createQueue, this.queueCode,
                 this.read, this.resuts, this.loadButton, this.deleteButton));
+
+        AddMenuItems();
     }
 
     private void add(Component c, GridBagConstraints cons, int x, int y, int w, int h) {
@@ -93,4 +103,78 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         cons.gridwidth = w;
         this.getContentPane().add(c, cons);
     }
+
+    private void AddMenuItems() {
+            //add the menus
+            JMenuBar menuBar = new JMenuBar();
+            JMenu settingsMenu =  new JMenu("Settings");
+            settingsMenu.setMnemonic(KeyEvent.VK_S);
+            JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key",KeyEvent.VK_G);
+            amazonKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+            amazonKeyMenu.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    setKey();
+                }
+            });
+            settingsMenu.add(amazonKeyMenu);
+
+            JMenu helpMenu = new JMenu("Help");
+            JMenuItem mnuItemHelp = new JMenuItem("Show Help");
+            helpMenu.add(mnuItemHelp);
+
+            mnuItemHelp.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    showHelp();
+                }
+            });
+
+            menuBar.add(settingsMenu);
+            menuBar.add(helpMenu);
+            setJMenuBar(menuBar);
+        }
+
+        private void setKey(){
+            String key = JOptionPane.showInputDialog(this,"Set the Amazon Key",QueueManager.getKey());
+            if (key!=null && !key.trim().equals("")){
+                QueueManager.setKey(key);
+            }
+        }
+
+        /**
+         * method showHelp
+         */
+        private void showHelp() {
+
+            JFrame frame= new JFrame();
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            frame.setLocation(screenSize.width/5,
+                    screenSize.height/5);
+            frame.setSize(screenSize.width/2,screenSize.height/2);
+
+            BorderLayout layout = new BorderLayout();
+
+            JScrollPane jsp ;
+            JEditorPane jep;
+
+            jep = new JEditorPane();
+            //jep.addHyperlinkListener(new LinkFollower());
+            jep.setEditable(false);
+            jep.setContentType("text/html");
+
+            jsp = new JScrollPane(jep);
+
+            Container contentPane = frame.getContentPane();
+            contentPane.setLayout(layout);
+            contentPane.add(jsp, BorderLayout.CENTER);
+            String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+
+            try {
+                jep.setPage(new File(helpDoc).toURL());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            frame.setVisible(true);
+        }
+
 }

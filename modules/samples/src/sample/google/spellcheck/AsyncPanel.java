@@ -93,4 +93,10 @@ public class AsyncPanel extends javax.swing.JPanel implements Observer,KeyListen
 
     public void keyTyped(KeyEvent e) {
     }
+
+    public void clear() {
+        displayTextArea.setText("");
+        writingTextArea.setText("");
+        errorMessageField.setText("");
+    }
 }

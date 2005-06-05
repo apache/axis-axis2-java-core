@@ -46,7 +46,7 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement readQueueElement = Read.read(this.createQueue.getText(),getKeyFromPropertyFile());
+        OMElement readQueueElement = Read.read(this.createQueue.getText(),getKey());
         this.axis2EngineRuns("Read", readQueueElement,
                 new SimpleQueueReadCallbackHandler(this.queueCode, this.result));
     }

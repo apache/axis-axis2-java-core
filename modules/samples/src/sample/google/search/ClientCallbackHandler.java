@@ -19,14 +19,10 @@ package sample.google.search;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
 
 /**
@@ -64,11 +60,19 @@ public class ClientCallbackHandler extends Callback {
      */
     private String tempStr;
 
+
+    private GUIHandler handler;
+
+    public ClientCallbackHandler(GUIHandler handler) {
+        this.handler = handler;
+    }
+    
     /**
-     * method onComplete
-     *
-     * @param result
-     */
+         * method onComplete
+         *
+         * @param result
+         */
+
     public void onComplete(AsyncResult result) {
         AsyncResult myResult = result;
         extractDetails(myResult);
@@ -85,13 +89,14 @@ public class ClientCallbackHandler extends Callback {
     private void extractDetails(AsyncResult result) {
         Iterator iterator,iterator2;
         OMNode node;
-        OMElement body, operation, elem;
+        SOAPBody body;
+        OMElement operation, elem;
         SOAPEnvelope resEnvelope;
-
+//        /////////////////////////////////////////
 //        try {
 //            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(
 //                    System.out);
-//            result.getResponseEnvelope().serialize(writer);
+//            result.getResponseEnvelope().serializeWithCache(writer);
 //            //part.serialize(writer,false);
 //            writer.flush();
 //
@@ -102,14 +107,11 @@ public class ClientCallbackHandler extends Callback {
 //            //System.out.println("Error occured after responce is received");
 //            e.printStackTrace();
 //        }
-
+//        ////////////////////////////////////////////////
         resEnvelope = result.getResponseEnvelope();
         body = resEnvelope.getBody();
         operation = body.getFirstElement();
-
-        String opLocalName = operation.getLocalName();
-        if (opLocalName.equals("Fault")) {
-            //System.out.println("A Fault message recieved, Check your Licence key");
+        if (body.hasFault()){
             snippet =
                     snippet +
                     "A Fault message recieved, Check your Licence key. Else you have reached the" +
@@ -163,7 +165,7 @@ public class ClientCallbackHandler extends Callback {
             }
         }
         snippet = snippet + endHTML;
-        GUIHandler.showResults(snippet);
+        this.handler.showResults(snippet);
     }
 
     public void reportError(Exception e) {

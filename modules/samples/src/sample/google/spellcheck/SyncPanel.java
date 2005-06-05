@@ -82,7 +82,11 @@ public class SyncPanel extends javax.swing.JPanel implements Observer, ActionLis
         formModel.doSyncSpellingSuggestion(str);
     }
 
-
+    public void clear() {
+        writingTextArea.setText("");
+        displayTextArea.setText("");
+        errorMessageField.setText("");
+    }
 
 }
 
