@@ -19,7 +19,7 @@ import org.apache.axis.wsdl.codegen.CommandLineOptionParser;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class WSDL2WS {
+public class WSDL2Code {
 	
 	
 	public static void main(String[] args) throws Exception{
@@ -30,7 +30,7 @@ public class WSDL2WS {
 	}
 	
 	private static void printUsage(){
-		System.out.println("Usage WSDL2WS -uri <Location of WSDL> :WSDL file location ");
+		System.out.println("Usage WSDL2Code -uri <Location of WSDL> :WSDL file location ");
 		System.out.println("-o <output Location> : output file location ");
 		System.out.println("-x : Switch to advanced mode. Default is off");
 		System.out.println("-a : Generate async style code only. Default if off");
