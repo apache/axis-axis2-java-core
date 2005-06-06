@@ -4,12 +4,18 @@ rem Start script for running the Google Search tool
 rem
 rem ---------------------------------------------------------------------------
 
+rem store the current directory
+set CURRENT_DIR=%cd%
+
 rem check the AXIS_HOME environment variable
 if not "%AXIS_HOME%" == "" goto gotHome
-echo The AXIS_HOME environment variable is not defined correctly
-echo This environment variable is needed to run this program
-pause
-exit
+
+rem guess the home. Jump two directories up nad take that as the home
+cd ..
+cd ..
+set AXIS_HOME=%cd%
+
+echo using Axis Home %AXIS_HOME%
 
 :gotHome
 if EXIST "%AXIS_HOME%\lib\axis2-M2.jar" goto okHome
@@ -20,8 +26,9 @@ exit
 
 :okHome
 rem set the classes
+cd %CURRENT_DIR%
 set AXIS2_CLASS_PATH="%AXIS_HOME%";"%AXIS_HOME%\lib\axis2-M2.jar";"%AXIS_HOME%\lib\axis-wsdl4j-1.2.jar";"%AXIS_HOME%\lib\commons-logging-1.0.3.jar";"%AXIS_HOME%\lib\log4j-1.2.8.jar";"%AXIS_HOME%\lib\stax-1.1.1-dev.jar";"%AXIS_HOME%\lib\stax-api-1.0.jar"
-set AXIS2_CLASS_PATH=%AXIS2_CLASS_PATH%;.\googleSearch.jar
-javaw -cp %AXIS2_CLASS_PATH% sample.google.search.AsynchronousClient
+set AXIS2_CLASS_PATH=%AXIS2_CLASS_PATH%;"%CURRENT_DIR%\googleSearch.jar"
+start javaw -cp %AXIS2_CLASS_PATH% sample.google.search.AsynchronousClient
 
 :end
