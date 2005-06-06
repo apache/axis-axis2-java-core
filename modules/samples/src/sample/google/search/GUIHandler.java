@@ -327,9 +327,9 @@ public class GUIHandler {
          * if it's set, call sendMsg method
          */
         public void run() {
-            if (asyncClient.getSearch().equals(asyncClient.getPrevSearch())) {
+            if (!asyncClient.getSearch().equals(asyncClient.getPrevSearch())) {
                 asyncClient.setStartIndex(0);
-                return;
+               // return;
             }
             try {
                 asyncClient.sendMsg();
