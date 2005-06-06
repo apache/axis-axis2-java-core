@@ -273,8 +273,8 @@ available once the system comes up.</p>
 <h3>Module Archive</h3> 
 <p>Module archive must have a <em>META-INF/module.xml</em> file and dependent classes the <em>module.xml</em> file has Module parameters and the Operations defined in  the module.</p>
 
-<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a server.xml or a client.xml file and build the global configuration. Then the Model check for the Module archives  and then for the service archives, the corresponding services and Modules are added to the Axis Configuration.  System will built a Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.  
-</p>
+<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a <em>server.xml</em> or a <em>client.xml</em> file and build the global configuration. Then the Deployment check for the Module archives and then for the service archives, the corresponding services and Modules are added to the Axis Configuration. System will built a Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.
+    </p>
 
 
 <h2>WSDL and code generation</h2>
@@ -313,10 +313,10 @@ two most widely used Message Exchange Patterns.</p>
 	Client API, the implementation is based on a class called <code>MEPClient</code> and there are extentions for each Message Exchange Pattern that Axis2 Client API supports.</p>
 
 <h3>One Way Messaging Support</h3>
-	<p>The One-Way support is provided by the <code>InOnlyMEPClient</code> and Axis2 provides a class called Call that provides a much simpler interface for the user. The Axis2 supports HTTP/SMTP and TCP transports, in the case of the HTTP transport the return channel is not used and the HTTP 202 OK is returned in the
-	return Channel.</p>
+	<p>The One-Way support is provided by the <code>InOnlyMEPClient</code> and Axis2 provides a class called <code>Call</code> that provides a much simpler interface for the user. The Axis2 supports HTTP/SMTP and TCP transports, in the case of the HTTP transport the return channel is not used and the HTTP 202 OK is returned in the return Channel.
+    </p>
 <h3>Request Response Messaging Support</h3>	
-       <p>The Request-Response support is provided by the <code>InOutMEPClient</code> and Axis2 provides a class called MessageSender that provides a much simpler interface for the user. The Client API has four ways to configure a given Message Exchange</p>
+       <p>The Request-Response support is provided by the <code>InOutMEPClient</code> and Axis2 provides a class called <code>MessageSender</code> that provides a much simpler interface for the user. The Client API has four ways to configure a given Message Exchange</p>
        <ol>
           <LI>Blocking or Non-Blocking nature - this can be decided by using <code>invokeBlocking()</code> or <code>invokeNonBlocking()</code> methods</LI>
           <LI>Sender transport - transport use to send the SOAP Message</LI>

@@ -17,7 +17,7 @@
 		tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
         <copy file="../core/target/echo/echo.aar"
-		tofile="target/toWar/services/echo.aar"/>
+		tofile="target/toWar/services/version.aar"/>
     </postGoal>
 
     <postGoal name="test:test">
