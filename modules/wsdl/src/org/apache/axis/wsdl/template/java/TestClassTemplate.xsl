@@ -3,11 +3,13 @@
     <xsl:template match="/class">
     <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>
     <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
+    <xsl:variable name="implpackage"><xsl:value-of select="@implpackage"/></xsl:variable>
     <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
     <xsl:variable name="stubname"><xsl:value-of select="@stubname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
-    <xsl:variable name="servicename"><xsl:value-of select="@servicename"/></xsl:variable>
+    <xsl:variable name="address"><xsl:value-of select="@address"/></xsl:variable>
+    <xsl:variable name="servicexmlpath"><xsl:value-of select="@servicexmlpath"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
     
 	import java.io.InputStream;
@@ -17,7 +19,7 @@
 	import org.apache.axis.deployment.DeploymentEngine;
 	import org.apache.axis.description.ServiceDescription;
 	import org.apache.axis.engine.AxisConfiguration;
-	import org.apache.axis.integration.Constants;
+	import org.apache.axis.wsdl.codegen.Constants;
 	import org.apache.axis.transport.http.SimpleHTTPServer;
 
 
@@ -37,18 +39,18 @@
 					.getProperty("user.dir"));
 			AxisConfiguration axisConfig = deploymentEngine.load();
 			ClassLoader classLoader = this.getClass().getClassLoader();
-			classLoader.getResource("com.datatransferhsbc.HSBCServices");
-			classLoader.getResource("com.datatransferhsbc.HSBCServicesStub");
+			classLoader.getResource("<xsl:value-of select="$implpackage"/>.<xsl:value-of select="$interfaceName"/>");
+			classLoader.getResource("<xsl:value-of select="$implpackage"/>.<xsl:value-of select="$stubname"/>");
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			InputStream in = cl
-					.getResourceAsStream("com/datatransferhsbc/service.xml");
+					.getResourceAsStream("<xsl:value-of select="$servicexmlpath"/>");
 			ServiceDescription service = new ServiceDescription();
 			deploymentEngine.buildService(service, in, classLoader);
 			
 			ConfigurationContext configurationContext = new ConfigurationContext(
 					axisConfig);
 			ServerSocket serverSoc = null;
-			serverSoc = new ServerSocket(Constants.TESTING_PORT);
+			serverSoc = new ServerSocket(Constants.TEST_PORT);
 			server = new SimpleHTTPServer(
 					configurationContext, serverSoc);
 			Thread thread = new Thread(server);
@@ -57,7 +59,7 @@
 			try {
 				thread.start();
 				System.out.print("Server started on port "
-						+ Constants.TESTING_PORT + ".....");
+						+ Constants.TEST_PORT + ".....");
 			} finally {
 
 			}
@@ -87,7 +89,7 @@
          */
         public  void test<xsl:value-of select="@name"/>() throws java.lang.Exception{
 
-        <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>(".","http://localhost:5050/services/<xsl:value-of select="$servicename"/>/<xsl:value-of select="@name"/>");
+        <xsl:value-of select="$implpackage"/>.<xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$implpackage"/>.<xsl:value-of select="$stubname"/>(".","<xsl:value-of select="$address"/>/<xsl:value-of select="@name"/>");
            <xsl:choose>
              <xsl:when test="$inputtype!=''">
                assertNotNull(stub.<xsl:value-of select="@name"/>(
@@ -108,7 +110,7 @@
          * Auto generated test method
          */
         public  void testStart<xsl:value-of select="@name"/>() throws java.lang.Exception{
-            <xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();
+            <xsl:value-of select="$implpackage"/>.<xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$implpackage"/>.<xsl:value-of select="$stubname"/>();
              <xsl:choose>
              <xsl:when test="$inputtype!=''">
                 stub.start<xsl:value-of select="@name"/>(
@@ -126,11 +128,11 @@
 
         }
 
-        private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>{
+        private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$implpackage"/>.<xsl:value-of select="$callbackname"/>{
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
             public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis.clientapi.AsyncResult result) {
-			    assertNotNull(result);
+			    assertNotNull(result.getResponseEnvelope().getBody().getFirstChild());
             }
 
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {

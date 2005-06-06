@@ -125,7 +125,39 @@ public class RawXMLINOutMessageRecevier
                     throw new AxisFault("Unknown style ");
                 }
                 newmsgContext.setEnvelope(envelope);
-            } else {
+            } else if((parameters != null)
+                    && (parameters.length == 0)){
+            	SOAPEnvelope envelope = null;
+
+                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
+
+                if (WSDLService.STYLE_DOC.equals(style)) {
+                    
+                    Object[] parms = new Object[0];
+
+                    // invoke the WebService
+                    OMElement result = (OMElement) method.invoke(obj, parms);
+                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+                    envelope.getBody().setFirstChild(result);
+
+                } else if (WSDLService.STYLE_RPC.equals(style)) {
+                    
+                    Object[] parms = new Object[0];
+
+                    // invoke the WebService
+                    OMElement result = (OMElement) method.invoke(obj, parms);
+                    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+                    envelope = fac.getDefaultEnvelope();
+
+                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
+                    OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
+                    responseMethodName.addChild(result);
+                    envelope.getBody().addChild(responseMethodName);
+                } else {
+                    throw new AxisFault("Unknown style ");
+                }
+                newmsgContext.setEnvelope(envelope);
+            }else {
                 throw new AxisFault(
                     "Raw Xml provider supports only the methods bearing the signature public OMElement "
                         + "&lt;method-name&gt;(OMElement) where the method name is anything");

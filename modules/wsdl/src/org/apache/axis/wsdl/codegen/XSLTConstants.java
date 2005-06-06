@@ -77,6 +77,10 @@ public interface XSLTConstants {
     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestClassTemplate.xsl";
     	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/TestClassTemplate.xsl";
     }
+    
+    public interface XSLTTestSkeltonImplTemplates{
+    	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestSkeletonImplTemplate.xsl";
+    }
 
      public interface XSLTServiceXMLTemplates{
     	public static final String GENERAL_SERVICE_TEMPLATE = "/org/apache/axis/wsdl/template/general/ServiceXMLTemplate.xsl";

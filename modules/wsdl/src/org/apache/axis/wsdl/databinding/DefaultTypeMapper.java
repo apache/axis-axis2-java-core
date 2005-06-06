@@ -16,8 +16,6 @@
 
 package org.apache.axis.wsdl.databinding;
 
-import org.apache.axis.om.OMElement;
-
 import javax.xml.namespace.QName;
 
 /**
@@ -39,8 +37,7 @@ import javax.xml.namespace.QName;
  */
 public class DefaultTypeMapper extends TypeMappingAdapter {
 	
-	public Class getTypeMapping(QName qname) {
-		return OMElement.class;
+	public DefaultTypeMapper(){		
 	}
 	
 	public String getParameterName(QName qname){

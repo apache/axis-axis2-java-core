@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
+import org.apache.axis.wsdl.codegen.Constants;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.writer.BeanWriter;
 import org.apache.axis.wsdl.codegen.writer.CallbackHandlerWriter;
@@ -20,16 +20,18 @@ import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
 import org.apache.axis.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis.wsdl.codegen.writer.TestClassWriter;
+import org.apache.axis.wsdl.codegen.writer.TestServiceXMLWriter;
+import org.apache.axis.wsdl.codegen.writer.TestSkeltonImplWriter;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -75,6 +77,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
     private static final String SERVICE_CLASS_SUFFIX ="Skeleton";
+    private static final String TEST_PACKAGE_NAME_SUFFIX =".test";
+    private static final String TEST_SERVICE_CLASS_NAME_SUFFIX ="SkeletonTest";
+    
 
     protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
@@ -124,12 +129,28 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             writeCallBackHandlers(axisBinding);
             //write the test classes
             writeTestClasses(axisBinding);
+            //write a dummy implementation call for the tests to run.
+            writeTestSkeletonImpl(axisBinding);
+            //write a testservice.xml that will load the dummy skeleton impl for testing
+            writeTestServiceXML(axisBinding);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
-
+    
+    
+    protected void writeTestSkeletonImpl(WSDLBinding binding)throws Exception{
+    	if (configuration.isWriteTestCase()){
+            XmlDocument classModel = createDocumentForTestSkeltonImpl(binding);
+            TestSkeltonImplWriter callbackWriter =
+                    new TestSkeltonImplWriter(this.configuration.getOutputLocation(),
+                            this.configuration.getOutputLanguage()
+                    );
+            writeClass(classModel,callbackWriter);
+        }
+    }
+    
     /**
      *
      */
@@ -191,6 +212,19 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
 
     }
+    
+    
+	
+    protected void writeTestServiceXML(WSDLBinding axisBinding) throws Exception {
+        if (this.configuration.isWriteTestCase()){
+            //Note -  One can generate the service xml using the interface XML
+            XmlDocument skeletonModel = createDOMDocuementForServiceXML(axisBinding, true);
+            TestServiceXMLWriter testServiceXmlWriter = new TestServiceXMLWriter(this.configuration.getOutputLocation(),
+                    this.configuration.getOutputLanguage()
+            );
+            writeClass(skeletonModel,testServiceXmlWriter);
+        }
+    }
 
     /**
      * Writes the skeleton
@@ -200,7 +234,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()){
             //Note -  One can generate the service xml using the interface XML
-            XmlDocument skeletonModel = createDOMDocuementForInterface(axisBinding);
+            XmlDocument skeletonModel = createDOMDocuementForServiceXML(axisBinding, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(this.configuration.getOutputLocation(),
                     this.configuration.getOutputLanguage()
             );
@@ -257,6 +291,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                 model.getDocumentElement().getAttribute("name"));
         writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
     }
+    
+    
 
     /**
      * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitSkeleton()
@@ -269,12 +305,36 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             writeSkeleton(axisBinding);
             //write interface implementations
             writeServiceXml(axisBinding);
+            //write the test classes
+            writeTestClasses(axisBinding);
+            //write a dummy implementation call for the tests to run.
+            writeTestSkeletonImpl(axisBinding);
+            //write a testservice.xml that will load the dummy skeleton impl for testing
+            writeTestServiceXML(axisBinding);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
 
+    
+    protected XmlDocument createDocumentForTestSkeltonImpl(WSDLBinding binding){
+    	WSDLInterface boundInterface = binding.getBoundInterface();
+
+        XmlDocument doc = new XmlDocument();
+        Element rootElement = doc.createElement("class");
+        addAttribute(doc,"package",configuration.getPackageName()+TEST_PACKAGE_NAME_SUFFIX, rootElement);
+        addAttribute(doc,"servicename",boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX,rootElement);
+        addAttribute(doc, "implpackage", configuration.getPackageName(), rootElement);
+        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        addAttribute(doc, "namespace", boundInterface.getName().getNamespaceURI(), rootElement);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement);
+        doc.appendChild(rootElement);
+
+        return doc;
+    }
+    
     /**
      * Generating the callbacks
      * @param binding
@@ -344,6 +404,25 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         return null;
     }
 
+    protected XmlDocument createDOMDocuementForServiceXML(WSDLBinding binding, boolean forTesting) {
+    	WSDLInterface boundInterface = binding.getBoundInterface();
+
+        XmlDocument doc = new XmlDocument();
+        Element rootElement = doc.createElement("interface");
+        if(forTesting){
+        	addAttribute(doc,"package",configuration.getPackageName()+TEST_PACKAGE_NAME_SUFFIX, rootElement);
+	        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        }else{        
+	        addAttribute(doc,"package",configuration.getPackageName(), rootElement);
+	        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX,rootElement);
+        }
+        addAttribute(doc,"servicename",boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement);
+        doc.appendChild(rootElement);
+
+        return doc;
+    }
     /**
      * Creates the DOM tree for the interface creation
      * @param binding
@@ -399,14 +478,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
         XmlDocument doc = new XmlDocument();
         Element rootElement = doc.createElement("class");
-        addAttribute(doc,"package",configuration.getPackageName(),rootElement);
+        String serviceXMLPath = configuration.getPackageName().replace('.','/')+TEST_PACKAGE_NAME_SUFFIX.replace('.','/')+"/testservice.xml";
+        addAttribute(doc,"package",configuration.getPackageName()+TEST_PACKAGE_NAME_SUFFIX,rootElement);
+        addAttribute(doc, "servicexmlpath", serviceXMLPath, rootElement);
+        addAttribute(doc, "implpackage", configuration.getPackageName(), rootElement);
         String localPart = boundInterface.getName().getLocalPart();
         addAttribute(doc,"name",localPart+TEST_SUFFIX,rootElement);
         addAttribute(doc,"namespace",boundInterface.getName().getNamespaceURI(),rootElement);
         addAttribute(doc,"interfaceName",localPart,rootElement);
-        addAttribute(doc, "servicename", boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX, rootElement);
         addAttribute(doc,"callbackname",localPart + CALL_BACK_HANDLER_SUFFIX,rootElement);
         addAttribute(doc,"stubname",localPart + STUB_SUFFIX,rootElement);
+        addAttribute(doc, "address", "http://localhost:"+Constants.TEST_PORT+"/services/"+boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX, rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
