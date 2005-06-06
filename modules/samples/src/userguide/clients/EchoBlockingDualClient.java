@@ -3,16 +3,11 @@ package userguide.clients;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Call;
-import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,34 +31,8 @@ public class EchoBlockingDualClient {
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
-            //Callback to handle the response
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
-                    try {
-                        StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(
-                                XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
-                        writer.flush();
-
-                        System.out.println(writer.toString());
-
-                    } catch (XMLStreamException e) {
-                        reportError(e);
-                    }
-                }
-
-                public void reportError(Exception e) {
-                    e.printStackTrace();
-                }
-            };
-
             //Non-Blocking Invocation
-            call.invokeNonBlocking("echo", payload, callback);
-
-            //Wait till the callback receives the response.
-            while (!callback.isComplete()) {
-                Thread.sleep(1000);
-            }
+            call.invokeBlocking("echo", payload);
 
             //Need to close the Client Side Listener.
             call.close();

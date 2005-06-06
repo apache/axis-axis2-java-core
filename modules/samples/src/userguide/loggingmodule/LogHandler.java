@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package userguide.loggingmodule;
 
 import org.apache.axis.context.MessageContext;
@@ -27,21 +27,18 @@ import javax.xml.namespace.QName;
 
 public class LogHandler extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
-    private String message;
     private QName name;
-    public LogHandler() {
-       this.message = "Inside Log Handler";
-    }
+
     public QName getName() {
         return name;
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.info("I am " + message + " Handler Running ");
+        log.info(msgContext.getEnvelope().toString());
     }
 
     public void revoke(MessageContext msgContext) {
-        log.info("I am " + message + " Handler Running ");
+        log.info(msgContext.getEnvelope().toString());
     }
 
     public void setName(QName name) {
