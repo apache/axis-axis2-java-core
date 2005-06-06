@@ -96,6 +96,7 @@
             <fileset dir="modules/core/target/classes"/>
             <fileset dir="modules/xml/target/classes"/>
             <fileset dir="modules/wsdl/target/classes"/>
+            <fileset dir="modules/saaj/target/classes"/>
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing.mar"/>
             </fileset>
@@ -113,6 +114,7 @@
 	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
 	    <ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
             <ant:include name="axis/jars/axis-wsdl4j-1.2.jar"/>
+            <ant:include name="geronimo-spec/jars/geronimo-spec-activation-1.0.2-rc3.jar"/>
 	</ant:fileset> 
 	</ant:copy> 
     </goal>		

@@ -125,11 +125,11 @@
         </dependency>
         
        <dependency>
-	    <groupId>j2ee</groupId>
-	    <artifactId>activation</artifactId>
-	    <jar>activation.jar</jar>
+	    <groupId>geronimo-spec</groupId>
+	    <artifactId>geronimo-spec-activation</artifactId>
+	    <version>1.0.2-rc3</version>
 	    <properties>
-	           <module>false</module>
+	           <module>true</module>
 	    </properties>
         </dependency>
         
