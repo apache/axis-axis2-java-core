@@ -215,7 +215,10 @@ public class InOutMEPClient extends MEPClient {
                             SOAPEnvelope resenvelope = response.getEnvelope();
                             AsyncResult asyncResult = new AsyncResult();
                             asyncResult.setResult(resenvelope);
+                            synchronized(callback){
                             callback.onComplete(asyncResult);
+                            callback.setComplete(true);
+                            }
                         } catch (AxisFault e) {
                             callback.reportError(e);
                         }
