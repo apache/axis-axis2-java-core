@@ -15,6 +15,10 @@
 	font-size: 14px;
 	color: #990000;
 }
+.style9 {color: #FF0066}
+.style10 {color: #33CC00}
+.style13 {color: #00CC00}
+.style15 {color: #0000FF}
 -->
 </style>
 </head>
@@ -131,21 +135,138 @@ the server script can be used. The sever script however needs two parameters, th
  absolutely required and AXIS will not create it automatically in the case of the simple axis server. 
  </b></p> -->
 <h2><a name="_Toc96697863"></a>Samples</h2>
-<p>In this section of the userguide we will look at how to write and deploy Web Services and how to write Web Service Clients using Axis2. All the userguide samples are located at the &quot;modules/samples&quot; directory. So let's  explore the samples.</p>
+<p>In this section of the userguide we will look at how to write and deploy Web Services and how to write Web Service Clients using Axis2. All the userguide samples are located at the <span class="style9">&quot;modules/samples&quot;</span> directory. So let's  explore the samples.</p>
+<p>Note: Please note that the rest of this userguide assumes that the user has downloaded the binary distribution of Axis2. If you have already downloaded the source tree of Axis2 then please create the binary distribution by simply using the maven command <strong>maven dist-bin </strong>This will create the &quot;axis2-M2-bin.zip&quot; and &quot;axis2-M2-bin.tar&quot;  in the &quot;target/dist&quot; directory. Extract the zip or the tar ball to any diretory in your machine and for the explantions purposes we will name this as &quot;Axis2Home&quot;. </p>
 <h3> Web Services Using Axis2</h3>
+<p>Before starting, please check wither you have deployed the &quot;axis2.war&quot; in your servlet container and it is working properly.</p>
 <p>MyService</p>
-<p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations with the following description.</p>
-<pre class="style1 style2 style3">public void ping(OMElement element){} //sample IN-ONLY operatoin, just accept the OMElement and do some processing.
+<p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
+<pre class="style1 style2 style3">public void ping(OMElement element){} //sample IN-ONLY operation, just accept the OMElement and do some processing.
 public OMElement echo(OMElement element){}//sample IN-OUT operation, accept an OMElement and respond with another OMElement after processing</pre>
-<p>You can find our first example Web Service(MyService) in the &quot;modules/samples&quot; directory under userguide/example1 package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment desciptors for the service and depoly it.</p>
-<p>Axis2 uses &quot;service.xml&quot; to locate configurations for a Web Service. Each Web Service deployed under Axis2 needs a &quot;service.xml&quot; contining the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
-<pre class="style1 style2 style3">&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations,echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre>
-<p>This is used to inform Axis2 engine (once deployed) what is the service class and the operations that it contains. In addition user should specify the meand other relavent parameters (here we don't have any other). </p>
-<p>MyService with a Logging Module </p>
-<h3>Utilize Web Services Using Axis2 </h3>
-<p>Blocking</p>
-<p>Non-Blocking</p>
-<p>With Two Transports</p>
+<p>You can find our first example Web Service(MyService) in the &quot;Axis2Home/samples/userguide/src&quot; directory under userguide/example1 package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
+<p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed under Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
+<pre class="style1 style2 style3">&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations,echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre>
+<p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageRecevier</strong> since it is an InOut operation. For one way operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageRecevier</strong> as the message receiver. </p>
+<p>Axis2 use &quot;.aar&quot; file as the deployemnt package for Web Services. So for the MyService we will use &quot;MyService.aar&quot; with the &quot;service.xml&quot; packaged under META-INF as shown in the following picture.</p>
+<p><img src="images/userguide/ServiceItems.JPG" width="176" height="91"></p>
+<p>To create  &quot;MyService.aar&quot;  user can first create a jar file containing all the files necessary for the service and then rename the &quot;jar&quot; to &quot;aar&quot; so that Axis2 understands it as a service archive. For this explanation we can use the &quot;MyService.aar&quot; that is in  the Axis2Home/samples/userguide directory. </p>
+<p>Since this is our firts service we need once more steps before we depoly the service. That is to create a directory named &quot;services&quot; under &quot;webapps/axis2/WEB-INF&quot; of you servlet container. Deploying is just a matter of droping the &quot;.aar&quot; in to this drectory and hence please copy the &quot;MyService.aar&quot; into the service directory. Once these steps are completed, please start the servlet container (if you have not already started) and check the link &quot;List Available services&quot; in the page http://localhost:8080/axis2/index.jsp and see whether the MyService is deployed properly. If eveyting is ok, you will see the following out put.. </p>
+<p align="center"><img src="images/userguide/MyServiceDeployed.JPG" width="797" height="654"> </p>
+<p>If you can see the above out put then you have successfully deployed MyService on Axis2. Now let's see how we can write Web Service client to use this services.</p>
+<h3> Web Service Clients Using Axis2 </h3>
+<h4>EchoBlockingClient</h4>
+<p>Axis2 provides the user with various invocation patterns for Web Services, ranging from pure blocking single channel invocations to a non blocking dual channel invocations. First let's see how we can write a client to invoke &quot;echo&quot; operation of &quot;MyService&quot; using the simplest good old blocking invocation. The client code that you need to write will be as follows.</p>
+<pre class="style1 style2 style3">  try {
+            OMElement payload = ClientUtil.getEchoOMElement();
+            <span class="style10">Call call = new Call();
+            call.setTo(targetEPR);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+
+            OMElement result = (OMElement) call.invokeBlocking("echo", payload);
+</span>
+            StringWriter writer = new StringWriter();
+            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            writer.flush();
+
+            System.out.println(writer.toString());
+
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+}
+</pre></p>
+<p>The green lines shows the set of operations that you need to perform in-order to invoke a web service while the rest is used to create the OMElement that needs to be sent and to display the response OMElement. To test this clent you can use the &quot;TestEchoBlockingClient.bat&quot; that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. The bat or .sh files show the required jars for one to write Web Service clients using Axis2. So if you can see the response OMElement printed in your command line (as shown below)  then you have successfully tested the client as well. </p>
+<p><img src="images/userguide/TestClient.JPG" width="951" height="132"></p>
+<h4>PingClient</h4>
+<p>In the Web Service &quot;MyService&quot; we had a IN-ONLY operation with the name &quot;ping&quot; (see Web Services Using Axis2). So let's write a client to invoke this operation as well. As earlier the client code will be as follows.</p>
+<pre class="style1 style2 style3"> try {
+       OMElement payload = ClientUtil.getPingOMElement();
+
+
+       MessageSender msgSender = new MessageSender();
+       msgSender.setTo(targetEPR);
+       msgSender.setSenderTransport(Constants.TRANSPORT_HTTP);
+       msgSender.send("ping", payload);
+
+     } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+     }
+</pre>
+</p> 
+<p>Since we are accessing a one way operation we can directly use the &quot;MessageSender&quot; to invoke this operation. As it can be seen in the above code , it is very straight forward to invoke this type of operation. MessageSender will not block the invockation, hence it will return the control immediately back to the client. You can find the &quot;TestPingClient.bat&quot; in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory and give it a try.</p>
+<p>Ok, we have invoked the two operations in our service, Are we done? No!, there are lot more to explore, Let's see some other ways to invoke same operations.</p>
+<h4>EchoNonBlockingClient</h4>
+<p>In the EchoBlockingClient once the &quot;call.invokeBlocking("echo", payload);&quot; is called, the client is blocked till the operation is completed. This behavior is not desireable when there are many Web Service invocations to be done in a single client application. A solution, would be to use a Non-Blocking API to invoke web services. Axis2 provides a callback based non-blocking API for users. </p>
+<p>A sample client for this can be found under &quot;Axis2Home/samples/userguide/src/userguide/clients&quot; with the name EchoNonBlockingClient. If we consider the changes that the user may have to do with respect to the &quot;EchoBlockingClient&quot; that we have already seen, it will be as follows.</p>
+<pre class="style1 style2 style3">call.invokeNonBlocking(&quot;echo&quot;, payload, callback);</pre>
+<p>The invocaton  accepts a callback object as a parameter. Axis2 client API provides an abastract Callback with the following methods.</p>
+<p><pre class="style1 style2 style3">public abstract void onComplete(AsyncResult result);
+public abstract void reportError(Exception e);
+public boolean isComplete() {}</pre></p>
+<p>The user is expected to implement the &quot;onComplete &quot; and &quot;reportError &quot; methods of their extended call back class. Axis2 engine calls the onComplete method once the Web Service respones is received by the Axis2 Client API (Call). This will elimenate the blocking nature of the Web Service invocations and provides the user with the flexibility to use Non Blocking API for Web Service Cleints.</p>
+<p>To run the sample client ( EchoNonBlockingClient) you can simply use the &quot;TestEchoNonBlockingClient.bat&quot; or &quot;TestEchoNonBlockingClient.sh&quot; files that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. </p>
+<h4>EchoNonBlockingDualClient </h4>
+<p>The solution provided by the Non-Blocking API, for the Web Service invocations which takes long time to complete, has one limitation. That is limitation due to the use of single transport connection to invoke the Web Service and to retrieve the response. In otherwords, client API provides a non blocking invocation mechanism for the users, but the request and the response comes in a single  transport connection (needs two way transport like HTTP). Long runnig Web Service invocations or Web Service invocations using One-Way transports (like SMTP) cannot be utilized by simply using a non blocking invocation. </p>
+<p>The trivial solution is to use separate transport connections (either One-Way or Two-Way) for the request and response. The next problem that needs to be sloved is the correlation (correlating the request and the response). WS-Addressing provides a neat solution to above using &lt;wsa:MessageID&gt; and &lt;wsa:RelatesTo&gt; headers. Axis2 provides support for  addressing based correlation mechanism and a complying Client API to invoke Web Services with two transport connections. </p>
+<p>Users can select between Blocking or Non-Blocking APIs for the Web Service client. By simply using a boolean flag, this same API can be used to invoke web services(IN-OUT operations) using two separate transport connections. Let's see how we can do it using an example. Following code fragement shows how to invoket the same &quot;echo&quot; operation, using Non-Blocking API with two transport connections<strong>.The ultimate asynchronoy!!</strong></p>
+<pre class="style1 style2 style3">
+  try {
+            OMElement payload = ClientUtil.getEchoOMElement();
+
+            Call call = new Call();
+            call.setTo(targetEPR);
+
+            //The boolean flag informs the axis2 engine to use two separate transport connection
+            //to retrieve the response.
+            <span class="style13">call.engageModule(new QName("addressing"));</span>
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, <span class="style13">true</span>);
+
+            //Callback to handle the response
+            Callback callback = new Callback() {
+                public void onComplete(AsyncResult result) {
+                    try {
+                        StringWriter writer = new StringWriter();
+                        result.getResponseEnvelope().serializeWithCache(
+                                XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+                        writer.flush();
+
+                        System.out.println(writer.toString());
+
+                    } catch (XMLStreamException e) {
+                        reportError(e);
+                    }
+                }
+
+                public void reportError(Exception e) {
+                    e.printStackTrace();
+                }
+            };
+
+            //Non-Blocking Invocation
+            call.invokeNonBlocking("echo", payload, callback);
+
+            //Wait till the callback receives the response.
+            while (!callback.isComplete()) {
+                Thread.sleep(1000);
+            }
+
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+</pre>
+<p>The two changes that we need at the client side are shown in the &quot;green&quot; color. Since our correlation mechanism is based on addressing we need to first &quot;<strong>engage</strong>&quot; the addressing module.<span class="style15"> Inorder to do that ... </span></p>
+<p>Before we run the sample cleint we need one more step to perform. As mentioned earlier Axis2 uses addressing based correlation mechanim and hence we need to &quot;engage&quot; addressing moduel in the server side as well. According to the Axis2 architecture addressing module is deployed in the &quot;<strong>pre-dispatch</strong>&quot; pahse and hance &quot;engaging&quot; means simply adding module reference in the &quot;server.xml&quot; (NOT the &quot;service.xml&quot;). Please add the following line to the &quot;server.xml&quot; that you can find in the &quot;/webapps/axis2WEB-INF&quot; directory under servlet container.</p>
+<pre class="style1 style2 style3"> &lt;module ref=&quot;addressing&quot;/&gt;</pre>
+<p>This will enable the addressing in the server side and now you can test the &quot;TestEchoNonBlockingDualClient&quot; using the &quot;TestEchoNonBlockingDualClient.bat&quot; or &quot;TestEchoNonBlockingDualClient.sh&quot; provided under &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory.</p>
+<p>Note: Please note th<span class="style15">at once you change the &quot;server.xml&quot; you need to restart the servelet container and make sure that marr </span></p>
+<p>&nbsp;</p>
+<p>MyService with a Logging Module 
+</p>
+<h3>&nbsp;</h3>
 <h3>Other Samples //Links to Google Samples </h3>
 <h2> Modules</h2>
 <h2>Tools</h2>
