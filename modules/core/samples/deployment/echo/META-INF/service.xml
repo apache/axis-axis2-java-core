@@ -1,4 +1,4 @@
-<service name="">
+<service name="axisversion">
         <description>
            This service echo the given input , and this was developed to text the axis system working
             correctly

@@ -48,7 +48,7 @@
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0,lastindex);
     targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                    IP + "/services/echo/echoOMElement");
+                    IP + "/services/axisversion/echoOMElement");
 %>
 <%!
     /*
@@ -331,7 +331,7 @@
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Hello I am Axis2 Echo service !! "));
+        value.addChild(fac.createText(value, "Hello I am Axis2 versionning service , My version is Axis2 M2 !! "));
         method.addChild(value);
 
         return method;
