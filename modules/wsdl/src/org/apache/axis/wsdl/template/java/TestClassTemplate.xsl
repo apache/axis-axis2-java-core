@@ -102,7 +102,7 @@
                                 (<xsl:value-of select="$inputtype"/>)createTestInput(<xsl:value-of select="$inputtype"/>.class)));//this should come as a type
               </xsl:when>
               <xsl:otherwise>
-                assertNotNull(stub.<xsl:value-of select="@name"/>());
+               // assertNotNull(stub.<xsl:value-of select="@name"/>());
              </xsl:otherwise>
             </xsl:choose>
 

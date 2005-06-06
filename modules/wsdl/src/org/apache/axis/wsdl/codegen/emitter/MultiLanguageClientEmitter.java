@@ -331,7 +331,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
-
         return doc;
     }
     
