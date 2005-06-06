@@ -6,8 +6,8 @@
     <parameter name="hotupdate" locked="xsd:false">true</parameter>
     <!-- Uncomment this to enable REST support -->
     <parameter name="eanbleREST" locked="xsd:false">true</parameter>
-    <parameter name="userName" locked="xsd:false">Axis2admin</parameter>
-    <parameter name="password" locked="xsd:false">changeMe</parameter>
+    <parameter name="userName" locked="xsd:false">admin</parameter>
+    <parameter name="password" locked="xsd:false">axis2</parameter>
 
    <!-- ================================================= -->
    <!-- Message Receivers -->
