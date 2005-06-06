@@ -62,6 +62,8 @@ public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
     private static Scheduler scheduler;
 
+    public static String axis2repository = null;
+
 
     private boolean hotDeployment = true;   //to do hot deployment or not
     private boolean hotUpdate = true;  // to do hot update or not
@@ -121,6 +123,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
         this.folderName = RepositaryName;
+        axis2repository = RepositaryName;
         File repository = new File(RepositaryName);
         if (!repository.exists()) {
             repository.mkdirs();
@@ -227,6 +230,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public AxisConfiguration loadClient(String clientHome) throws DeploymentException {
         InputStream in = null;
+        axis2repository = clientHome;
         boolean isRepositoryExist = false;
         if (clientHome != null) {
             checkClientHome(clientHome);

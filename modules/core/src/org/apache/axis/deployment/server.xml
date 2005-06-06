@@ -55,7 +55,7 @@
    <!-- ================================================= -->
    <!-- Global Modules  -->
    <!-- ================================================= -->
-    <!-- Uncomment this to enable Addressing   
+    <!-- Uncomment this to enable Addressing
     <module ref="addressing"/> -->
 
    <!-- ================================================= -->

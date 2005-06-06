@@ -128,16 +128,24 @@ public class ArchiveReader implements DeploymentConstants {
      */
     public File creatModuleArchivefromResource(String moduleName) throws DeploymentException {
         File modulearchiveFile = null;
+        File modules = null;
         try {
             int BUFFER = 2048;
-            String userHome = System.getProperty("user.home");
-            File userHomedir = new File(userHome);
-            File modules = null;
-            File repository = new File(userHomedir, "Axis2Home");
-            if (!repository.exists()) {
-                repository.mkdirs();
-                modules = new File(repository, "modules");
-                modules.mkdirs();
+            if(DeploymentEngine.axis2repository == null ){
+                String userHome = System.getProperty("user.home");
+                File userHomedir = new File(userHome);
+                File repository = new File(userHomedir, "Axis2Home");
+                if (!repository.exists()) {
+                    repository.mkdirs();
+                    modules = new File(repository, "modules");
+                    modules.mkdirs();
+                }
+            } else {
+                modules = new File(DeploymentEngine.axis2repository , "modules");
+                if(!modules.exists()){
+                    modules = new File(DeploymentEngine.axis2repository, "modules");
+                    modules.mkdirs();
+                }
             }
             String modulearchiveName =moduleName + ".mar";
             modulearchiveFile = new File(modules,modulearchiveName);
@@ -166,7 +174,6 @@ public class ArchiveReader implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 ZipEntry zip = new ZipEntry(entry);
                 out.putNextEntry(zip);
-                System.out.println("entry = " + entry.getName());
                 int count;
                 while ((count = zin.read(data, 0, BUFFER)) != -1) {
                     out.write(data, 0, count);
