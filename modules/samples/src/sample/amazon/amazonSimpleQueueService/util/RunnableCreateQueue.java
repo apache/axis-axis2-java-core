@@ -22,7 +22,7 @@ import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-import sample.amazon.amazonSimpleQueueService.Enqueue;
+
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;
@@ -55,7 +55,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
                             this.enqueue, this.result));
         }
         if (this.enqueue.isEditable()) {
-            OMElement enqueueElement = Enqueue.enqueueElement(this.enqueue.getText(),
+            OMElement enqueueElement = OMElementCreator.enqueueElement(this.enqueue.getText(),
                     this.queueCode.getText(),getKey());
             this.axis2EngineRuns("Enqueue", enqueueElement, new SimpleQueueEnqueueCallbackHandler(
                     this.createQueue, this.queueCode, this.enqueue, this.result));
