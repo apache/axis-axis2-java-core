@@ -134,24 +134,9 @@
 			<ant:classes dir="modules/core/conf">
       		    	<ant:include name="*.properties"/>
 			</ant:classes>
+                        <ant:webinf dir="modules/samples/target/toWar/"/>
 		</ant:war>
     </goal>
-<!--    
-    <goal name="war-withsamples" prereqs="multiproject:install,init,create-lib"> 
-        <ant:mkdir dir="target"/>
-               <ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
-                  <ant:fileset dir="modules/core/html"/>
-		  		  <ant:fileset dir="modules/samples/jsp"/>
-                  <ant:webinf dir="modules/samples/target/test-resources/samples"/>
-			  	<ant:lib dir="target/lib">
-				    	<ant:include name="*.jar"/>
-			  	</ant:lib>  
-				<ant:classes dir="modules/core/conf">
-		      		    <ant:include name="*.properties"/>
-				</ant:classes>
-                </ant:war>
-    </goal>
--->
 	<!-- to transforme htmls to xdocs -->
   <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>

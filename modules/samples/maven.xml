@@ -15,9 +15,9 @@
 		tofile="target/test-resources/samples/modules/addressing.mar"/>
         <copy file="../addressing/target/addressing.mar" 
 		tofile="target/test-resources/repository-client/modules/addressing.mar"/>
-        <mkdir dir="target/echo"/>
+        <mkdir dir="target/toWar/services/"/>
         <copy file="../core/target/echo/echo.aar"
-		tofile="target/echo/echo.aar"/>
+		tofile="target/toWar/services/echo.aar"/>
     </postGoal>
 
     <postGoal name="test:test">
