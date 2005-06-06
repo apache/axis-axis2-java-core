@@ -99,8 +99,8 @@
 <p>Once maven is properly installed it's all that is needed to start building Axis2. </p>
 <h4><a name="_Toc96698085"></a>The Axis source distribution </h4>
 <p>The <a href="releases.html">source distribution </a> is available as a zipped archive or a tar ball. All the necessary build scripts are included with the source distribution. Once the source archive is expanded into a directory of choice, moving to the particular directory and typing maven will build the axis jar file. </p>
-<p align="center"><img width="540" height="292" src="images/clip_image004.jpg"></p>
-<p>Once the command completes, the binaries (jar files in this case) can be found at a newly created “target” directory. </p>
+<p align="center"><img src="images/clip_image004.jpg" width="655" height="286"></p>
+<p>Once the command completes, the binaries (jar files in this case) can be found at a newly created “target\lib” directory. </p>
 <p><strong>Note – For the first Maven build (if the maven repository is not built first) it will take a while since required jars need to be downloaded. However this is a once only process and will not affect any successive builds. </strong></p>
 <p><strong> </strong>The default maven build will however build only the Axis2 jar file. To obtain a WAR (Web Archive), “maven war” command should be issued. This will create a complete WAR with the name axis2.war inside the target directory. </p>
 <p>Once this build step is complete, the binaries are ready to be deployed. </p>

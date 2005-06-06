@@ -78,12 +78,6 @@
       <organization>Indiana University Extreme! Computing Lab</organization>
     </developer>
     <developer>
-      <name>Farhaan Mohideen</name>
-      <id>farhaan</id>
-      <email>farhaan@opensource.lk</email>
-      <organization>Lanka Software Foundation</organization>
-    </developer>
-    <developer>
       <name>Srinath Perera</name>
       <id>hemapani</id>
       <email>hemapani@apache.org</email>
@@ -134,18 +128,64 @@
 
     </developer>
     <developer>
+      <name>Venkat Reddy</name>
+      <id>venkat</id>
+      <email>vreddyp@gmail.com</email>
+      <organization>Computer Associates</organization>
+     </developer>
+     <developer>
+      <name>Shahi, Ashutosh</name>
+      <id>ashu</id>
+      <email>Ashutosh.Shahi@ca.com</email>
+      <organization>Computer Associates</organization>
+     </developer>
+     <developer>
+      <name>Jayachandra Sekhara Rao Sunkara</name>
+      <id>jaya</id>
+      <email>jayachandra@gmail.com</email>
+      <organization>Computer Associates</organization>
+     </developer>
+     <developer>
+      <name>Thilina Gunarathne</name>
+      <id>yhilina</id>
+      <email>thilina@opensource.lk</email>
+      <organization>Lanka Software Foundation / Virtusa</organization>
+     </developer>
+     
+    
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Farhaan Mohideen</name>
+      <email>fmohideen@valista.com</email>
+      <organization>Lanka Software Foundation</organization>
+    </contributor>
+    <contributor>
       <name>Changshin Lee</name>
-      <id>ias</id>
       <email>iasandcb@hotmail.com</email>
       <organization>Tmax Soft, Korea</organization>
-    </developer>
-    <developer>
-      <name>Rajith Priyanga</name>
-      <id>priyanga</id>
-      <email>priyanga@opensource.lk</email>
+    </contributor>
+    <contributor>
+      <name>Chamil Thanthrimudalige</name>
+      <email>chamil@opensource.lk</email>
       <organization>Lanka Software Foundation</organization>
-    </developer>
-  </developers>
+    </contributor>
+    <contributor>
+      <name>Nadana Gunarathna</name>
+      <email>nadana@opensource.lk</email>
+      <organization>Lanka Software Foundation</organization>
+    </contributor>
+    <contributor>
+      <name>Saminda Abeyruwan</name>
+      <email>saminda@opensource.lk</email>
+      <organization>Lanka Software Foundation</organization>
+    </contributor>
+    <contributor>
+      <name>Gayan Asanka</name>
+      <email>gayan@opensource.lk</email>
+      <organization>Lanka Software Foundation</organization>
+    </contributor>
+    </contributors>
 
   
   
