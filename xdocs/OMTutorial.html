@@ -322,22 +322,7 @@ The getPullparser() method is very useful when the events need to be handled in 
 </p>
 <!-- End of special section -->
 
-<h3>Building OM from Objects - Use of ObjectToOMBuilder</h3>
-<p>
-There is a requirement to build an OM with a given object structure. A Typical scenario will be to build OM from an object structure that is returned from a data binding tool. So when the need arises to generate an OM from an object, a special builder class is to be used. The ObjectToOMBuilder class implements the XMLParserWrapper  (which is effectively the builder interface), but unlike the other builders such a conversion cannot be pull based. It is “push based&quot; which means that the builder should have access to a content handler in order to push events. Hence the ObjectToOmBuilder implements the registerContentHandler method which accepts an instance of the SAX ContentHandler.interface.
-In serializing however the user need not worry whether the inner parts of the OM tree consists of Object builders which are push based. The serializing mechanism automatically registers a StreamToContentHandlerConverter which effectively redirects all the ContentHandler events into the relevant XMLStreamWriter. 
-The ObjectToOMBuilder expects an org.apache.axis.om.OutObject interface from the third party for registering a SAX ContentHandler. The ObjctToOMBuilder should also be supplied with the parent element which the supplied object should be serialized under. When the ObjectToOMBuilder is asked to proceed the call is in turn passed to the OutObject to fire SAX events. The ObjectToOMBuilder will take care of building the structure (if needed).</p>
-
-<p>The following code segment explains this scenario.</p>
-<pre class="code">
-// create the parent element
-OMFactory omFactory = OMAbstractFactory.getOMFactory();
-OMNamespace ns = omFactory.createOMNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);<br>element = omFactory.createOMElement("Body", ns);
-
-OutObject outObject = // get the third party object here
-new ObjectToOMBuilder(element,outObject).next();
-</pre>
-<div align="left"><b>Code listing 3.2</b></div>
+<h3>&nbsp;</h3>
 <h2>Section 4 - Known Limitations of OM</h2>
 <h3>Incomplete XML Info set support</h3>
 <p>The OM deliberately dropped the support for XML info set items such as DTDs and  Processing Instructions (PI's). Hence the OM cannot be called a complete info set representation. The initial reason for this was because the design goal of the OM was not to be "yet-another-object-model" but to be a SOAP specific Object model. Since DTD's and PI's are not supposed to be present in SOAP messages.</p>
