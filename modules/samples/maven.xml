@@ -32,6 +32,9 @@
         <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
     </goal>
+
+    <!--- User Guide Samples  -->
+
     <goal name="userguide">
 	<mkdir dir="target/samples"/>
         <mkdir dir="${samples.dir}/userguide"/>
@@ -46,7 +49,7 @@
                 <include name="userguide/**"/>
             </fileset>           
         </jar>
-        <jar destfile="${samples.dir}/userguide/MyService.jar">
+        <jar destfile="${samples.dir}/userguide/MyService.aar">
             <fileset dir="src/userguide/example1/">
                 <include name="META-INF/**"/>
             </fileset>           
@@ -54,15 +57,22 @@
                 <include name="userguide/example1/**/*.class"/>
             </fileset>           
         </jar>
-        <jar destfile="${samples.dir}/userguide/MyServiceWithHandler.jar">
-            <fileset dir="src/userguide/example1/">
+        <jar destfile="${samples.dir}/userguide/MyServiceWithModule.aar">
+            <fileset dir="src/userguide/example2/">
                 <include name="META-INF/**"/>
             </fileset>           
             <fileset dir="target/classes">
                 <include name="userguide/example2/**/*.class"/>
             </fileset>           
         </jar>
-
+        <jar destfile="${samples.dir}/userguide/LoggingModule.mar">
+            <fileset dir="src/userguide/loggingmodule/">
+                <include name="META-INF/**"/>
+            </fileset>           
+            <fileset dir="target/classes">
+                <include name="userguide/loggingmodule/**/*.class"/>
+            </fileset>           
+        </jar>
     </goal>
      <!-- ********************************************************************************************************-->   
     <goal name="amazonQS">
