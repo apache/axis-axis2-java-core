@@ -261,7 +261,7 @@ public class AxisServlet extends HttpServlet {
 
             Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
             if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                res.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
         } catch (AxisFault e) {
             throw new ServletException(e);
