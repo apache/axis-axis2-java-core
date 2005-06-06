@@ -48,7 +48,7 @@
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0,lastindex);
     targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                    IP + "/axis2/services/echo/echoOMElement");
+                    IP + "/services/echo/echoOMElement");
 %>
 <%!
     /*
