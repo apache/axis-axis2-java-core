@@ -5,7 +5,6 @@ import java.util.HashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNode;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
