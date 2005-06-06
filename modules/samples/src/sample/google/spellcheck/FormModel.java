@@ -125,12 +125,22 @@ public class FormModel {
     public String getResponse(SOAPEnvelope responseEnvelope){
         QName qName1 = new QName("urn:GoogleSearch", "doSpellingSuggestionResponse");
         QName qName2 = new QName("urn:GoogleSearch", "return");
+              
+
         SOAPBody body = responseEnvelope.getBody();
         if (body.hasFault()) {
             observer.updateError(body.getFault().getException().getMessage());
             return  null;
         } else{
-            OMElement val = body.getFirstChildWithName(qName1).getFirstChildWithName(qName2);
+            OMElement root = body.getFirstChildWithName(qName1);
+            OMElement val =null;
+            if (root!=null){
+                 val = root.getFirstChildWithName(qName2);
+            }else{
+                observer.updateError("Correct response not received!");
+                return  null;
+            }
+
             String sugession = val.getText();
             if ((sugession==null) ||(sugession.trim().equals(""))){
                 return null;

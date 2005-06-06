@@ -56,7 +56,8 @@
   </goal>
 
 
-    <goal name="init">        <ant:mkdir dir="target"/>
+    <goal name="init">
+        <ant:mkdir dir="target"/>
         <ant:mkdir dir="${dist.dir}"/>
    	<ant:mkdir dir="target/lib"/>
 
@@ -180,7 +181,11 @@
 				<ant:include name="*.html"/>
 				<ant:include name="*.txt"/>				
 			</ant:fileset> 
+		</ant:copy>
+	<ant:copy todir="target/dist-bin/bin">
+			<ant:fileset dir="modules/tool/script"/>
 		</ant:copy> 
+  
 		<ant:zip file="${dist.dir}/${dist.name}-bin.zip" basedir="target/dist-bin"/>
 		<ant:tar tarfile="target/${dist.name}-bin.tar" basedir="target/dist-bin"/> 
 		<gzip src="target/${dist.name}-bin.tar" zipfile="${dist.dir}/${dist.name}-bin.tar.gz"/>
