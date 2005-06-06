@@ -104,7 +104,7 @@ public class UtilServer {
         ConfigurationContext sysContext = efac.buildClientEngineContext(null);
         
         sysContext.getAxisConfiguration().addMdoule(moduleDesc);
-        sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
+        //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         sysContext.getAxisConfiguration().addService(service);
         //Utils.resolvePhases(sysContext.getEngineConfig(), service);

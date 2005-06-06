@@ -109,6 +109,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
 
         call.setTo(targetEPR);
+        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
 
         Callback callback = new Callback() {
@@ -147,6 +148,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
 
         call.setTo(targetEPR);
+        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
 
         OMElement result =
@@ -171,6 +173,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
           org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
           call.setTo(targetEPR);
+          call.engageModule(new QName(Constants.MODULE_ADDRESSING));
           call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, true);
 
           OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);

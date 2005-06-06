@@ -120,7 +120,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         method.addChild(value);
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
-        // call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
         try {
             call.setTo(targetEPR);

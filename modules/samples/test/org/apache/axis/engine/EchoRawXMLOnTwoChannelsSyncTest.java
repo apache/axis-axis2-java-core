@@ -115,6 +115,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
         call.setTo(targetEPR);
+        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
