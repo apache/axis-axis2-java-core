@@ -443,7 +443,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
-
         return doc;
 
     }
@@ -491,7 +490,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc, "address", "http://localhost:"+Constants.TEST_PORT+"/services/"+boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX, rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
-        doc.appendChild(rootElement);
+        doc.appendChild(rootElement);        
         return doc;
 
     }

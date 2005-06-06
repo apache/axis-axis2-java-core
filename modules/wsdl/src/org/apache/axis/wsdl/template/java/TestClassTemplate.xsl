@@ -14,12 +14,18 @@
     
 	import java.io.InputStream;
 	import java.net.ServerSocket;
+
+	import javax.xml.namespace.QName;
 	
 	import org.apache.axis.context.ConfigurationContext;
 	import org.apache.axis.deployment.DeploymentEngine;
 	import org.apache.axis.description.ServiceDescription;
 	import org.apache.axis.engine.AxisConfiguration;
 	import org.apache.axis.wsdl.codegen.Constants;
+	import org.apache.axis.om.OMAbstractFactory;
+	import org.apache.axis.om.OMElement;
+	import org.apache.axis.om.OMFactory;
+	import org.apache.axis.om.impl.llom.OMTextImpl;
 	import org.apache.axis.transport.http.SimpleHTTPServer;
 
 
@@ -146,21 +152,13 @@
 
      public static Object createTestInput(Class paramClass){
 
-       if (paramClass.equals(String.class)){
-           return new String("Test");
-       }else if (paramClass.equals(Integer.class)){
-            return new Integer(1);
-       }else if (paramClass.equals(Float.class)){
-           return new Float(2);
-       }else if (paramClass.equals(Double.class)){
-           return new Double(3);
-       //todo this seems to be a long list... needs to complete this
-       //}else if (paramClass.equals(OMElement.class)){
-       //  return null;
-       }else{
-         return new Object();
-       }
-
+      OMFactory factory = OMAbstractFactory.getOMFactory();
+		OMElement element = factory.createOMElement(new QName("http://soapinterop.org/", "<xsl:value-of select="generate-id()"/>"), null);
+		OMElement element1 = factory.createOMElement(new QName("http://soapinterop.org/","<xsl:value-of select="generate-id()"/>"), element);
+		element.addChild(element1);
+    	OMTextImpl text = new OMTextImpl("<xsl:value-of select="generate-id()"/>");
+    	element1.addChild(text);
+    	return element;
     }
     }
     </xsl:template>
