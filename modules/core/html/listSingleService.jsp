@@ -19,7 +19,7 @@
         <link href="css/axis-style.css" rel="stylesheet" type="text/css">
         </head>
   <body>
-        <jsp:include page="include/header.inc"></jsp:include>
+<%--        <jsp:include page="include/header.inc"></jsp:include>--%>
 
         <%
             ServiceDescription service = (ServiceDescription)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
@@ -72,7 +72,7 @@
        %>
 
 
-        <jsp:include page="include/link-footer.inc"></jsp:include>
-        <jsp:include page="include/footer.inc"></jsp:include>
+<%--        <jsp:include page="include/link-footer.inc"></jsp:include>--%>
+<%--        <jsp:include page="include/footer.inc"></jsp:include>--%>
 </body>
 </html>

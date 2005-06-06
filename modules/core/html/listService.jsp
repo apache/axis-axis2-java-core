@@ -2,7 +2,9 @@
                  java.util.*,
                  org.apache.axis.description.ServiceDescription,
                  org.apache.axis.description.OperationDescription,
-                 org.apache.axis.description.ModuleDescription"%>
+                 org.apache.axis.description.ModuleDescription,
+                 org.apache.axis.addressing.EndpointReference,
+                 org.apache.axis.addressing.AddressingConstants"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -35,6 +37,11 @@
   </head>
   <body>
   <h1>Available services</h1>
+    <%String IP=request.getRequestURL().toString();
+        int lastindex = IP.lastIndexOf('/');
+        IP = IP.substring(0,lastindex);
+        String prifix = IP + "/services/";
+    %>
      <%
          HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
          Hashtable errornessservice =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
@@ -74,7 +81,10 @@
                 %><ul><%
                  for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
                      OperationDescription axisOperation = (OperationDescription) iterator1.next();
-                %><li><%=axisOperation.getName().getLocalPart()%></li><%
+                %><li><%=axisOperation.getName().getLocalPart()%></li>
+                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"
+                         + axisOperation.getName().getLocalPart()%>
+                 <%
                      engagdeModules = null;
                      engagdeModules = axisOperation.getModules();
                      moduleName = "";
