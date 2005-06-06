@@ -26,9 +26,9 @@
 <body>
 <h1 align="center"><a name="_Toc96697849">Axis 2.0 User's Guide </a></h1>
 <p>&nbsp; </p>
-<h3><a name="_Toc96698076"></a>Introduction </h3>
+<h2><a name="_Toc96698076"></a>Introduction </h2>
 <p>Welcome to Axis 2.0, the next generation of Apache Axis !!! This User Guide will help you to understand what you will get from Axis 2.0 and how to get started. We hope you will benefit from the power of Axis 2.0. </p>
-<h3><a name="_Toc96698077"></a>What is Axis 2.0 ? </h3>
+<h2><a name="_Toc96698077"></a>What is Axis 2.0 ? </h2>
 <p>Before we start, its highly recommended to read <a href="http://ws.apache.org/axis/java/user-guide.html">Axis 1.x User's guide </a>, if you are new to Axis. </p>
 <p>Axis 2.0 is the next generation of Apache Axis. In late August 2004, during the Axis Summit held in Colombo, Sri Lanka, a new architecture was introduced to have a much more flexible, efficient and configurable Axis. Even though the architecture is new, some of the well established concepts from Axis 1.x, like handlers are preserved in Axis 2.0 also. Axis 2.0 comes with lots of new features, enhancements and new industry specification implementations. </p>
 <p>After months of continued discussion and coding effort in this direction, Axis 2.0 now delivers the following key features: </p>
@@ -48,7 +48,7 @@
 <p>We hope you enjoy using Axis. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation . </p>
 <p>Let us know what you think! </p>
 <p>Please send feedback about the package to &quot; <a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org </a>&quot; and make sure to prefix the subject of the mail with “[Axis2]”. </p>
-<h3><a name="_Toc96698078"></a>What's in this release? </h3>
+<h2><a name="_Toc96698078"></a>What's in this release? </h2>
 <p>This release includes the following features:</p>
 <ul>
   <li>AXIOM, a SOAP specific streaming XML infoset model for SOAP 1.1/1.2 Messages</li>
@@ -71,7 +71,7 @@
   <li>SMTP transport Support</li>
   <li>TCP transport Support</li>
 </ul>
-<h3><a name="_Toc96698079"></a>What's still to do? </h3>
+<h2><a name="_Toc96698079"></a>What's still to do? </h2>
 <p>Please see a list of what we think needs doing - and please consider helping out if you're interested & able!</p>
 <ul>
   <li>Encoding/data binding</li>
@@ -81,11 +81,6 @@
   <li> Complete XML infoset support for AXIOM</li>
   <li> Implementation of other transports. e.g. JMS..</li>
 </ul>
-<p align="center">&nbsp;</p>
-<p>&nbsp; </p>
-<p align="center">&nbsp;</p>
-<p>To test run an uploaded service, instructions are provided in the samples guide about running the sample clients. However whether the service is
-present can be checked by pointing the browser to <b>http://&lt;host&gt;:&lt;port&gt;/axis2/services/&lt;service name&gt;</b>.</p>
 <p>
   <!-- This should provide a page similar to the following -->
 </p>
@@ -117,10 +112,10 @@ user guide samples are located at the <b> <span class="style9">
 of the binary distribution. So.. let's  explore the samples.</p>
 <p>Note: Please note that the rest of this user guide assumes that the user has downloaded the binary distribution of Axis2. If you have already downloaded the source tree of Axis2 then please create the binary distribution by simply using the maven command <strong>maven dist-bin </strong>This will create the &quot;axis2-M2-bin.zip&quot; and &quot;axis2-M2-bin.tar&quot;  in the &quot;target/dist&quot; directory. Extract the zip or the tar ball to any 
 directory in your machine and for the explanations purposes we will name this as &quot;Axis2Home&quot;. </p>
-<h3> Web Services Using Axis2</h3>
+<h2> Web Services Using Axis2</h2>
 <p>Before starting, please check wither you have deployed the &quot;axis2.war&quot; in your servlet container and it is working properly.(See;
 <font color="#00FFFF">installation guide</font>)</p>
-<h4>MyService</h4>
+<h3>MyService</h3>
 <p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
 <pre class="style1 style2 style3">public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
 public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and responds with another OMElement after processing.</pre>
@@ -147,8 +142,8 @@ everything is ok, you will see the following out put.. </p>
 <p>If you can see the above out put then you have successfully deployed MyService on Axis2. Now let's see how we can write Web Service client to use this services. 
 Axis2 provides an easy way to deploy a Web Services using, index.jsp. (See the 
 installation guide for more information on this)</p>
-<h3> Web Service Clients Using Axis2 </h3>
-<h4>EchoBlockingClient</h4>
+<h2> Web Service Clients Using Axis2 </h2>
+<h3>EchoBlockingClient</h3>
 <p>Axis2 provides the user with several invocation patterns for Web Services, ranging from pure blocking single channel invocations to a non-blocking dual channel invocations. First let's see how we can write a client to invoke &quot;echo&quot; operation of &quot;MyService&quot; using the simplest good old blocking invocation. The client code that you need to write will be as follows.</p>
 <pre class="style1 style2 style3">  try {
             OMElement payload = ClientUtil.getEchoOMElement();
@@ -175,7 +170,7 @@ installation guide for more information on this)</p>
 client you can use the &quot;TestEchoBlockingClient.bat&quot; that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. The 
 .bat or .sh files show the required jars that needs to be there in the classpath for one to write Web Service clients using Axis2. So if you can see the response OMElement printed in your command line (as shown below)  then you have successfully tested the client as well. </p>
 <p><img src="images/userguide/TestClient.JPG" width="951" height="132"></p>
-<h4>PingClient</h4>
+<h3>PingClient</h3>
 <p>In the Web Service &quot;MyService&quot; we had a IN-ONLY operation with the name &quot;ping&quot; (see Web Services Using Axis2). So let's write a client to invoke this operation as well. 
 The client code will be as follows.</p>
 <pre class="style1 style2 style3"> try {
@@ -196,7 +191,7 @@ invocation, hence it will return the control immediately back to the client. You
 test this client using the &quot;TestPingClient.bat&quot; that is in &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot;.</p>
 <p>Ok, we have invoked the two operations in our service, Are we done? No!, there are lot more to explore, Let's see some other ways to invoke 
 the same operations.</p>
-<h4>EchoNonBlockingClient</h4>
+<h3>EchoNonBlockingClient</h3>
 <p>In the EchoBlockingClient once the &quot;call.invokeBlocking("echo", payload);&quot; is called, the client is blocked till the operation is completed. This behavior is not 
 desirable when there are many Web Service invocations to be done in a single client application. A solution, would be to use a Non-Blocking API to invoke web services. Axis2 provides a callback based non-blocking API for users. </p>
 <p>A sample client for this can be found under &quot;Axis2Home/samples/userguide/src/userguide/clients&quot; with the name EchoNonBlockingClient. If we consider the changes that the user may have to do with respect to the &quot;EchoBlockingClient&quot; that we have already seen, it will be as follows.</p>
@@ -210,7 +205,7 @@ public boolean isComplete() {}</pre></p>
 response is received by the Axis2 Client API (Call). This will eliminate the blocking nature of the Web Service invocations and provides the user with the flexibility to use Non Blocking API for Web Service 
 Clients.</p>
 <p>To run the sample client ( EchoNonBlockingClient) you can simply use the &quot;TestEchoNonBlockingClient.bat&quot; or &quot;TestEchoNonBlockingClient.sh&quot; files that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. </p>
-<h4>EchoNonBlockingDualClient </h4>
+<h3>EchoNonBlockingDualClient </h3>
 <p>The solution provided by the Non-Blocking API has one limitation when it 
 comes to&nbsp; Web Service invocations which takes long time to complete. The limitation 
 is due to the use of single transport connection to invoke the Web Service and to retrieve the response. In 
@@ -294,7 +289,7 @@ directory in the servlet container. </p>
 If you can see the response OMElement printed in the client side, that means you 
 have successfully tested the Non Blocking API with two transport channels at the 
 client side.</p>
-<h4>EchoBlockingDualClient </h4>
+<h3>EchoBlockingDualClient </h3>
 <p>This is again a two transport request/response client, but this time, we use 
 a Blocking API in the client code. Sample code for this can be found in the 
 &quot;Axis2Home/samples/userguide/src/userguide/clients/&quot; directory and the 
@@ -302,13 +297,104 @@ explanation is similar to the EchoNonBlockingDualClient, except that here we do
 not use a callback object to handle response. This is a very useful mechanism 
 when the service invocation is IN-OUT in nature and the transports are One-Way 
 (e.g. SMTP). For the sample client we use two HTTP connections for request and 
-response.</p>
+response. User can test this client using the &quot;EchoBlockingDualClient.bat&quot; or &quot;EchoBlockingDualClient.sh&quot; 
+found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory.</p>
+<h2>Modules</h2>
+<p>Axis2 provides an extended support for modules (See
+<a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more details 
+about modules in axis2). Let's see how we can create a custom module and deploy 
+it to the MyService that we have created earlier. Creating and deploying a 
+custom moduel for a service in Axis2 can be described using the following steps.</p>
+<ol>
+  <li>Create the Module Implementation</li>
+  <li>Create the Handlers</li>
+  <li>Create the moduel.xml</li>
+  <li>Package in a &quot;.mar&quot; (Module Archive)</li>
+  <li>Deploy in Axis2</li>
+</ol>
+<h3>MyService with a Logging Module 
+</h3>
+<p>First let's write the LoggingModule (We will write a simple logging module 
+that will simply log the messages). The module&nbsp; has a similar file 
+hierarchy as shown below.</p>
+<p>
+<img border="0" src="images/userguide/ModuleView.JPG" width="185" height="120"></p>
+<h4>
+Step1</h4>
+<p>LoggingModule is the implementation class of the Axis2 module. Axis2 modules 
+should implement the &quot;org.apache.axis.modules.Module&quot; interface with the 
+following methods.</p>
+<pre class="style1 style2 style3">public void init(AxisConfiguration axisSystem) throws AxisFault;//Initialize the module
+public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
+</pre>
+<p>These methods can be used to control the module initialization and the 
+termination. With the input parameter AxisConfiguration, the user is provided 
+with the complete configuration hierarchy and this can be used to fine tune the 
+module behavior by the module writers. For the simple logging service that we 
+are going to write we can keep these methods blank in our implementation class.</p>
+<h4>Step2</h4>
+<p>A module in axis2 can contain, one or more handlers that performs various 
+SOAP header processing at different phases. (See<a href="Axis2ArchitectureGuide.html"> 
+Architecture Guide</a> for more information about phases). For the logging 
+module we will write a handle with the following methods.</p>
+<pre class="style1 style2 style3">public class LogHandler extends AbstractHandler implements Handler {
+    private Log log = LogFactory.getLog(getClass());
+    private QName name;
+
+    public QName getName() {
+        return name;
+    }
+
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        log.info(msgContext.getEnvelope().toString());
+    }
+
+    public void revoke(MessageContext msgContext) {
+        log.info(msgContext.getEnvelope().toString());
+    }
+
+    public void setName(QName name) {
+        this.name = name;
+    }
+}
+</pre>
+<h4>Step3</h4>
+<p>&quot;module.xml&quot; contains the deployment configurations for a particular module. 
+It contains details such as Implementation class of the module (in this example 
+it is the &quot;LoggingModuel&quot; class and the various handlers that will run in 
+different phases. &quot;module.xml&quot; for the logging module will be as follows.</p>
+<p>
+<pre  class="style1 style2 style3">&lt;module name=&quot;logging&quot; class=&quot;userguide.loggingmodule.LoggingModule &quot;&gt;
+&lt;inflow&gt;
+&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+&lt;order phase=&quot;loggingPhase&quot; /&gt;
+&lt;/handler&gt;
+&lt;/inflow&gt;
+
+&lt;outflow&gt;
+&lt;handler name=&quot;OutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+&lt;order phase=&quot;loggingPhase&quot;/&gt;
+&lt;/handler&gt;
+&lt;/outflow&gt;
+
+&lt;Outfaultflow&gt;
+&lt;handler name=&quot;FaultOutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+&lt;order phase=&quot;loggingPhase&quot;/&gt;
+&lt;/handler&gt;
+&lt;/Outfaultflow&gt;
+
+&lt;INfaultflow&gt;
+&lt;handler name=&quot;FaultInFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+&lt;order phase=&quot;loggingPhase&quot;/&gt;
+&lt;/handler&gt;
+&lt;/INfaultflow&gt;
+&lt;/module&gt;</pre></p>
+
 <h3>&nbsp;</h3>
-<h3>Modules</h3>
-<h4>MyService with a Logging Module 
-</h4>
+
 <h3>&nbsp;</h3>
-<h3>Other Samples //Links to Google Samples </h3>
+
+<h3>Other Samples //Links to Google Samples&nbsp;&nbsp;&nbsp;&nbsp; </h3>
 <h2>Tools</h2>
 </body>
 </html>
