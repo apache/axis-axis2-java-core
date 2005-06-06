@@ -4,22 +4,26 @@ import sample.google.spellcheck.AsyncPanel;
 import sample.google.common.util.PropertyLoader;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * class sample.google.spellcheck.SuggestionForm
  * This is the implementation of the GUI
- * @author Nadana Gunarathna
  *
+ * @author Nadana Gunarathna
  */
-public class SuggestionForm extends javax.swing.JFrame {
+public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListener {
     private AsyncPanel asyncPanel;
     private SyncPanel syncPanel;
+    private JEditorPane helpDisplayPane;
 
     private JMenuItem syncMenuItem;
     private JMenuItem asyncMenuItem;
@@ -38,14 +42,14 @@ public class SuggestionForm extends javax.swing.JFrame {
         modeMenu.setMnemonic(KeyEvent.VK_M);
         syncMenuItem = new JMenuItem("Sync Mode", KeyEvent.VK_S);
         syncMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-        syncMenuItem.addActionListener(new ActionListener(){
+        syncMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setSyncPanel();
             }
         });
         asyncMenuItem = new JMenuItem("ASync Mode", KeyEvent.VK_A);
         asyncMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-        asyncMenuItem.addActionListener(new ActionListener(){
+        asyncMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setAsyncPanel();
             }
@@ -53,11 +57,11 @@ public class SuggestionForm extends javax.swing.JFrame {
         modeMenu.add(syncMenuItem);
         modeMenu.add(asyncMenuItem);
 
-        JMenu settingsMenu =  new JMenu("Settings");
+        JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.setMnemonic(KeyEvent.VK_S);
-        JMenuItem googleKeyMenu = new JMenuItem("Set Google Key",KeyEvent.VK_G);
+        JMenuItem googleKeyMenu = new JMenuItem("Set Google Key", KeyEvent.VK_G);
         googleKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-        googleKeyMenu.addActionListener(new ActionListener(){
+        googleKeyMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setKey();
             }
@@ -68,7 +72,7 @@ public class SuggestionForm extends javax.swing.JFrame {
         clearMenu.setMnemonic(KeyEvent.VK_C);
         JMenuItem clearMenuItem = new JMenuItem("Clear text boxes");
         clearMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-        clearMenuItem.addActionListener(new ActionListener(){
+        clearMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 asyncPanel.clear();
                 syncPanel.clear();
@@ -93,9 +97,8 @@ public class SuggestionForm extends javax.swing.JFrame {
 
         this.setJMenuBar(menuBar);
 
-        this.getContentPane().setLayout(new GridLayout(1,1));
+        this.getContentPane().setLayout(new GridLayout(1, 1));
         setAsyncPanel();
-
 
 
     }
@@ -103,16 +106,16 @@ public class SuggestionForm extends javax.swing.JFrame {
     public static void main(String[] args) {
         SuggestionForm form = new SuggestionForm();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        form.setLocation(screenSize.width/4,
-                screenSize.height/4);
-        form.setSize(screenSize.width/2,screenSize.height/2);
+        form.setLocation(screenSize.width / 4,
+                screenSize.height / 4);
+        form.setSize(screenSize.width / 2, screenSize.height / 2);
         form.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //form.setResizable(false);
         //form.pack();
         form.show();
     }
 
-    private void setAsyncPanel(){
+    private void setAsyncPanel() {
         this.getContentPane().removeAll();
         this.getContentPane().add(asyncPanel);
         this.syncMenuItem.setEnabled(true);
@@ -123,7 +126,7 @@ public class SuggestionForm extends javax.swing.JFrame {
 
     }
 
-    private void setSyncPanel(){
+    private void setSyncPanel() {
         this.getContentPane().removeAll();
         this.getContentPane().add(syncPanel);
         this.syncMenuItem.setEnabled(false);
@@ -133,9 +136,10 @@ public class SuggestionForm extends javax.swing.JFrame {
         this.show();
     }
 
-    private void setKey(){
-        String key = JOptionPane.showInputDialog(this,"Set the Google Key",PropertyLoader.getGoogleKey());
-        if (key!=null && !key.trim().equals("")){
+    private void setKey() {
+        String key = JOptionPane.showInputDialog(this, "Set the Google Key",
+                PropertyLoader.getGoogleKey());
+        if (key != null && !key.trim().equals("")) {
             PropertyLoader.setGoogleKey(key);
         }
     }
@@ -145,37 +149,52 @@ public class SuggestionForm extends javax.swing.JFrame {
      */
     private void showHelp() {
 
-        JFrame frame= new JFrame();
+        JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(screenSize.width/5,
-                screenSize.height/5);
-        frame.setSize(screenSize.width/2,screenSize.height/2);
+        frame.setLocation(screenSize.width / 5,
+                screenSize.height / 5);
+        frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
 
-        JScrollPane jsp ;
-        JEditorPane jep;
+        JScrollPane jsp;
 
-        jep = new JEditorPane();
-        //jep.addHyperlinkListener(new LinkFollower());
-        jep.setEditable(false);
-        jep.setContentType("text/html");
 
-        jsp = new JScrollPane(jep);
+        helpDisplayPane = new JEditorPane();
+        helpDisplayPane.addHyperlinkListener(this);
+        helpDisplayPane.setEditable(false);
+        helpDisplayPane.setContentType("text/html");
+
+        jsp = new JScrollPane(helpDisplayPane);
 
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(layout);
         contentPane.add(jsp, BorderLayout.CENTER);
-        String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+        String helpDoc = System.getProperty("user.dir") + HELP_FILE_NAME;
 
         try {
-            jep.setPage(new File(helpDoc).toURL());
+            helpDisplayPane.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
-           JOptionPane.showMessageDialog(this,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Help file not detected", "Help file error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);
     }
 
 
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            try {
+                String url = e.getURL().toString();
+                helpDisplayPane.setPage(url);
+//                
+            } catch (Exception err) {
+                JOptionPane.showMessageDialog(this, "Help file not detected", err.getMessage(),
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+        }
+    }
 }

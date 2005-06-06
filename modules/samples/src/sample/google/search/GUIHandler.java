@@ -269,7 +269,7 @@ public class GUIHandler {
         JEditorPane jep;
 
         jep = new JEditorPane();
-        //jep.addHyperlinkListener(new LinkFollower());
+        jep.addHyperlinkListener(new LinkFollower());
         jep.setEditable(false);
         jep.setContentType("text/html");
 
