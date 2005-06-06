@@ -10,8 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.apache.axis.tool.bean.Page3Bean;
-import org.apache.axis.tool.bean.WizardBean;
+import org.apache.axis.tool.service.bean.Page3Bean;
+import org.apache.axis.tool.service.bean.WizardBean;
 import org.apache.axis.tool.util.Constants;
 
 /*

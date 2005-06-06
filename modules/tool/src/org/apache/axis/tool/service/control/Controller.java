@@ -1,13 +1,14 @@
-package org.apache.axis.tool.control;
+package org.apache.axis.tool.service.control;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.axis.tool.bean.Page1Bean;
-import org.apache.axis.tool.bean.Page2Bean;
-import org.apache.axis.tool.bean.Page3Bean;
-import org.apache.axis.tool.bean.WizardBean;
+
+import org.apache.axis.tool.service.bean.Page1Bean;
+import org.apache.axis.tool.service.bean.Page2Bean;
+import org.apache.axis.tool.service.bean.Page3Bean;
+import org.apache.axis.tool.service.bean.WizardBean;
 import org.apache.axis.tool.core.ClassFileHandler;
 import org.apache.axis.tool.core.FileCopier;
 import org.apache.axis.tool.core.JarFileWriter;

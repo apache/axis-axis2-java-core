@@ -10,9 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.axis.tool.bean.WizardBean;
-import org.apache.axis.tool.control.Controller;
-import org.apache.axis.tool.control.ProcessException;
+import org.apache.axis.tool.service.bean.WizardBean;
+import org.apache.axis.tool.service.control.Controller;
+import org.apache.axis.tool.service.control.ProcessException;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

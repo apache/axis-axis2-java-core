@@ -5,16 +5,16 @@
    name="Axis2 Codegen Wizard Plug-in"
    version="1.0.0"
    provider-name="Apache Software Foundation"
-   class="org.apache.axis.tool.codegen.eclipse.CodegenWizardPlugin">
+   class="org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin">
 
    <runtime>
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/Axis2-WSDL.jar">
+      <library name="lib/axis2-wsdl-M1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/Axis2-XML.jar">
+      <library name="lib/axis2-xml-M1.jar">
          <export name="*"/>
       </library>
       <library name="lib/axis-wsdl4j-1.2-RC3.jar">

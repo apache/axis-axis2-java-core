@@ -38,7 +38,7 @@ public class ServiceArchiver extends AbstractUIPlugin {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.resource.ServiceResources");
+			resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.service.resource.ServiceResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

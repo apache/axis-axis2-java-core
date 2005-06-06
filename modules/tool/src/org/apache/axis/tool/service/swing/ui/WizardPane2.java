@@ -17,10 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.apache.axis.tool.bean.Page2Bean;
-import org.apache.axis.tool.bean.WizardBean;
-import org.apache.axis.tool.control.Controller;
-import org.apache.axis.tool.control.ProcessException;
+import org.apache.axis.tool.service.bean.Page2Bean;
+import org.apache.axis.tool.service.bean.WizardBean;
+import org.apache.axis.tool.service.control.Controller;
+import org.apache.axis.tool.service.control.ProcessException;
 import org.apache.axis.tool.util.Constants;
 
 /*

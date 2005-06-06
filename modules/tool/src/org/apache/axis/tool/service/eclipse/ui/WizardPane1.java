@@ -16,7 +16,8 @@
 package org.apache.axis.tool.service.eclipse.ui;
 
 
-import org.apache.axis.tool.eclipse.plugin.ServiceArchiver;
+import org.apache.axis.tool.service.bean.Page1Bean;
+import org.apache.axis.tool.service.eclipse.plugin.ServiceArchiver;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -76,7 +77,7 @@ public class WizardPane1 extends WizardPage {
 		});
 		
 		setControl(container);
-
+		setPageComplete(false);
     }
     
     
@@ -93,17 +94,20 @@ public class WizardPane1 extends WizardPage {
         String classLocationText = this.classFileLocationText.getText().trim();
         if (classLocationText.equals("")){
             updateMessage("Filename should not be empty");
-//        }else if (classLocationText.matches("[\\w\\W]*")){
-//            updateMessage("Filename should be valid");
-        }else{
+            return;
+        }else{    
             updateMessage(null);
         }
     }
     
     private void updateMessage(String str){
         this.setErrorMessage(str);
-        this.pageComplete = (str==null);
+        setPageComplete(str==null);
     }
     
-   
+    public Page1Bean getBean(){
+        Page1Bean pageBean = new Page1Bean();
+        pageBean.setFileLocation(this.classFileLocationText.getText());
+        return pageBean;
+    }
 }

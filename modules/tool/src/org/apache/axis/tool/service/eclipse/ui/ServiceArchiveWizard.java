@@ -16,7 +16,11 @@
 package org.apache.axis.tool.service.eclipse.ui;
 
 
-import org.apache.axis.tool.eclipse.plugin.ServiceArchiver;
+import org.apache.axis.tool.service.bean.WizardBean;
+import org.apache.axis.tool.service.control.Controller;
+import org.apache.axis.tool.service.control.ProcessException;
+import org.apache.axis.tool.service.eclipse.plugin.ServiceArchiver;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -61,12 +65,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
        }
        return pageout;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizard#canFinish()
-     */
-    public boolean canFinish() {
-         return false;
-    }
+   
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#addPages()
      */
@@ -84,7 +83,25 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
     public boolean performFinish() {
-        return true;
+        //create a wizard bean
+        WizardBean wizBean = new WizardBean();
+        wizBean.setPage1bean(wizardPane1.getBean());
+        wizBean.setPage2bean(wizardPane2.getBean());
+        wizBean.setPage3bean(wizardPane4.getBean());
+        try {
+            new Controller().process(wizBean);
+            showSuccessMessage(" jar file creation successful! ");
+            return true;
+        } catch (ProcessException e) {
+            showErrorMessage(e.getMessage());
+            return false;
+        } catch (Exception e) {
+            showErrorMessage("Unknown Error! " +e.getMessage() );
+            return false;
+        }
+    
+        
+        
     }
     
     
@@ -94,5 +111,13 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         // TODO Auto-generated method stub
 
+    }
+    
+    private void showErrorMessage(String message){
+        MessageDialog.openError(this.getShell(),"Error",message);
+    }
+    
+    private void showSuccessMessage(String message){
+        MessageDialog.openInformation(this.getShell(),"Success",message);
     }
 }

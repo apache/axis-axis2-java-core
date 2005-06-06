@@ -15,6 +15,7 @@
  */
 package org.apache.axis.tool.service.eclipse.ui;
 
+import org.apache.axis.tool.service.bean.Page2Bean;
 import org.apache.axis.tool.service.eclipse.plugin.ServiceArchiver;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -59,7 +60,7 @@ public class WizardPane2 extends WizardPage {
         container.setLayout(layout);
                
         manualSelectionLabel = new Label(container,SWT.NULL);
-        manualSelectionLabel.setText("Set the service XML file");
+        manualSelectionLabel.setText(ServiceArchiver.getResourceString("page2.selectservicexml.caption"));
 		
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		serviceXMLText = new Text(container,SWT.BORDER);
@@ -71,7 +72,7 @@ public class WizardPane2 extends WizardPage {
 		});
 		
 		browseButton = new Button(container,SWT.PUSH);
-		browseButton.setText("Browse...");
+		browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
 		browseButton.addMouseListener(new MouseAdapter(){
 		    public void mouseUp(MouseEvent e) {
 		        handleBrowse();
@@ -82,15 +83,19 @@ public class WizardPane2 extends WizardPage {
 		gd.horizontalSpan = 2;
 		selectAutoFileGenerationCheckBox = new Button(container,SWT.CHECK);
 		selectAutoFileGenerationCheckBox.setLayoutData(gd);
-		selectAutoFileGenerationCheckBox.setText("Generate the service xml automatically");
+		selectAutoFileGenerationCheckBox.setText(ServiceArchiver.getResourceString("page2.generateauto.caption"));
 		selectAutoFileGenerationCheckBox.addSelectionListener(new SelectionListener(){
 		    public void widgetSelected(SelectionEvent e){
 		        handleSelection();
 		    }
 		    public void widgetDefaultSelected(SelectionEvent e){}
 		});
+		/////////////////////////////////////////
+		//disable the selection combo for now
+		selectAutoFileGenerationCheckBox.setEnabled(false);
+		////////////////////////////////////////////
 		setControl(container);
-
+		setPageComplete(false);
     }
     
     private void handleBrowse(){
@@ -124,9 +129,9 @@ public class WizardPane2 extends WizardPage {
     private void handleModify(){
         String serviceXMLString =serviceXMLText.getText().trim().toLowerCase(); 
         if (serviceXMLString.equals("")){
-           this.updateMessage("Service XML should not be empty"); 
+           this.updateMessage(ServiceArchiver.getResourceString("page2.error.servicenameempty")); 
         }else if(!serviceXMLString.endsWith("service.xml")){
-            this.updateMessage("Please select a file named service.xml");  
+            this.updateMessage(ServiceArchiver.getResourceString("page2.error.servicenamewrong"));  
         }else{
             this.updateMessage(null);
         }
@@ -134,7 +139,7 @@ public class WizardPane2 extends WizardPage {
     
     private void updateMessage(String str){
         this.setErrorMessage(str);
-        this.pageComplete = (str==null);
+        setPageComplete(str==null);
     }
     
     /**
@@ -142,5 +147,12 @@ public class WizardPane2 extends WizardPage {
      */
     public boolean isSkipNextPage() {
         return skipNextPage;
+    }
+    
+    public Page2Bean getBean(){
+        Page2Bean pageBean = new Page2Bean();
+        pageBean.setManual(true);
+        pageBean.setManualFileName(this.serviceXMLText.getText());
+        return pageBean;
     }
 }

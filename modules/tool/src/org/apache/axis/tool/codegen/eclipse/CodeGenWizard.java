@@ -13,7 +13,6 @@ import org.apache.axis.tool.codegen.eclipse.ui.OptionsPage;
 import org.apache.axis.tool.codegen.eclipse.ui.OutputPage;
 import org.apache.axis.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis.tool.codegen.eclipse.plugin.*;
 import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;

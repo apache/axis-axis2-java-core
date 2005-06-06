@@ -15,7 +15,7 @@
  */
 package org.apache.axis.tool.service.eclipse.ui;
 
-import org.apache.axis.tool.eclipse.plugin.ServiceArchiver;
+import org.apache.axis.tool.service.eclipse.plugin.ServiceArchiver;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
