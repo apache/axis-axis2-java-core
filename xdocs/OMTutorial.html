@@ -90,33 +90,25 @@ To <a href="http://www.w3schools.com/SOAP/soap_intro.asp">learn more on SOAP</a>
 It is possible to obtain a "OM only" jar. 
 <p>
 The easiest way to obtain the OM binary is to download the Axis2 binary distribution. The lib directory will
-contain the axis2-om-M1.jar. However more adventures users can build the OM from source. The next section describes how
-to build OM from source.
-</p>
-Axis build is based on Maven. For further information on Maven (and the binary download) please visit <a href="http://maven.apache.org.">the Maven site</a></p>
-<p>Once Maven is properly installed the source should be downloaded from the <a href="http://svn.apache.org/repos/asf/webservices/axis/trunk/java/modules/om">Axis2 SVN repository</a>. (For further information on SVN and client programs for both windows and Linux please visit <a href="http://svn.tigris.org">svn.tigris.org</a></p>
+contain the axis2-xml-M2.jar. However more adventures users can build the OM from source. The next section describes how
+to build OM from source.</p>
+<p>Detailed information on getting source from Axis2 SVN repository can be found <a href="svn.html" target="_blank">here</a>.</p>
 <p>After the source download OM-binary can be built. 
-For both Windows and Linux move to the project directory and execute the command "maven jar". All other necessary jars will be automatically downloaded.
-When the build finishes successfully, the axis2-om-M1.jar can be found in the newly created "targets" directory</p>
-<p>Once the OM-binary is obtained by any of the mentioned means,it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-M1.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
-</p><h3>Creation</h3>
+  For both Windows and Linux move to the project directory and execute the command "maven jar". All other necessary jars will be automatically downloaded.
+  When the build finishes successfully, the axis2-xml-M2.jar can be found in the newly created "targets" directory</p>
+<p>Once the OM-binary is obtained by any of the mentioned means,it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-M2.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
+</p>
+<h3>Creation</h3>
 <p>Creation is the first and foremost action in using an Object representation. This part explains how OM can be built from an existing document or just programmatically.
 OM provides a notion of a factory and a builder to create objects. The factory helps to keep the code at the interface level and the implementations separately (Figure 2). Since OM is tightly bound to StAX, a StAX compliant reader should be created first with the desired input stream. Then the reader should be fed into the OMXMLBuilderFactory to instantiate a suitable builder.
 The interface provided by the builder is identical though the internal implementations vary. However, the types of the returned objects depend on the implementation of the builder. For example the SOAPModelBuilder returns SOAP specific objects (such as the SOAPEnvelope, which are sub classes of the OMElement) through its builder methods.
 The following piece of code shows the correct method of creating an OM document from an input stream. Note that the SOAP builder is used in this example.</p>
 
-<pre class="code">
-//create the parser 
-XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-//create the builder 
-OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),parser); 
-//get the root element (in this case the envelope) 
-SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
-
-</pre>
+<pre class="code">//create the parser<br>        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));<br>//create the builder<br>        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser); 
+//get the root element (in this case the envelope)<br>        SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();</pre>
 <div align="left"><b>Code listing 2.1</b></div>
 <p>As the example shows, creating an OM from an input stream is pretty straightforward. However elements and nodes can be created programmatically to modify the structure as well.
-The recommended way to create OM objects programmatically is to use the factory. OMFactory.newInstance() will return the proper factory and the creator methods for each type should be called. Currently OM has two builders, namely the OM builder and the SOAP model builder. These builders provide the necessary information to the XML info set model to build itself.  </p>
+The recommended way to create OM objects programmatically is to use the factory. OMAbstractFactory.getOMFactory() will return the proper factory and the creator methods for each type should be called. Currently OM has two builders, namely the OM builder and the SOAP model builder. These builders provide the necessary information to the XML info set model to build itself.  </p>
 <!-- Image -->
 <p class="img">
 <img src="images/archi007.jpg" alt="OM Structure 2" class="img"/>
@@ -127,7 +119,7 @@ The recommended way to create OM objects programmatically is to use the factory.
 <p>A simple example is shown below.</p>
 <pre class="code">
 //create a factory
-OMFactory factory = OMFactory.newInstance();
+OMFactory factory = OMAbstractFactory.getOMFactory();
 //use the factory to create two namespace objects
 OMNamespace ns1 = factory.createOMNamespace("bar","x");
 OMNamespace ns2 = factory.createOMNamespace("bar1","y");
@@ -149,7 +141,7 @@ Need an image here -->
 <p>Addition and removal methods are primarily defined in the OMElement interface. The following are the most important in adding nodes.</p>
 <pre class="code">
 public void addChild(OMNode omNode);
-public void insertAttribute(OMAttribute attr);
+public void addAttribute(OMAttribute attr);
 </pre>
 <div align="left"><b>Code listing 2.3</b></div>
 <p>This code segment shows how the addition takes place. Note that it is related to the code segment shown in the creation section.</p>
@@ -173,12 +165,11 @@ Almost all the namespace related methods are included in the OMNamedNode abstrac
 <pre class="code">
 public OMNamespace declareNamespace(String uri, String prefix);
 public OMNamespace declareNamespace(OMNamespace namespace);
-public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMException;
-public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException;
+public OMNamespace findNamespace(String uri, String prefix) throws OMException;
 </pre>
 <div align="left"><b>Code listing 2.5</b></div>
-<p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. These namespace declarations will serialize into â€œxmlns:prefix=â€uriâ€â€ type string inside an element.
-FindInscopeNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if itâ€™s not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
+<p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. 
+FindNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if it's not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
 
 <!-- Special section -->
 <p class="special">
@@ -191,11 +182,10 @@ FindInscopeNamespaces is a very handy method to locate a namespace object higher
 </p>
 <!-- End of specila section -->
 
-<p>findDeclaredNamespace is similar to the FindInscopeNamespace method except that it searches for the namespace only in its own declarations section.
-During the serialization a directly created namespace from the factory will only be added to the declarations when that prefix is encountered by the serializer. More of the serialization matters will be discussed in the serializer section.</p>
+<p>During the serialization a directly created namespace from the factory will only be added to the declarations when that prefix is encountered by the serializer. More of the serialization matters will be discussed in the serializer section.</p>
 <p>The following simple code segment shows how the namespaces are dealt with in OM</p>
 <pre class="code" >
-OMFactory factory = OMFactory.newInstance();
+OMFactory factory = OMAbstractFactory.getOMFactory();
 OMNamespace ns1 = factory.createOMNamespace("bar","x");
 OMElement root = factory.createOMElement("root",ns1);
 OMNamespace ns2 = root.declareNamespace("bar1","y");
@@ -256,8 +246,8 @@ Because of this behavior, if a fragment of the XML is serialized, it will also b
 <pre class="code">
 XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 //dump the output to console with caching
-envelope.serialize(writer,true);
-</pre>
+envelope.serialize(writer);
+envelope.serializeWithCache(writer);</pre>
 <div align="left"><b>Code listing 2.8</b></div>
 <p>The above mentioned features of the serializer forces a correct serialization even if only a part of the OM tree is serialized. The following serializations show how the serialization mechanism takes the trouble to accurately figure out the namespaces.
 The example is from code listing 2.6 which creates a small OM programmatically.
@@ -288,13 +278,13 @@ The following code segment shows how to use the OM for completely building a doc
 //create the parser
 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
 //create the builder
-OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(),parser);
+OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getOMFactory(),parser);
 //get the root element (in this case the envelope)
 SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
 //get the writer
 XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 //dump the out put to console with caching
-envelope.serialize(writer,true);
+envelope.serialize(writer);
 </pre>
 <div align="left"><b>Code listing 2.9</b></div>
 <h2>Section 3 - Advanced Operations with OM</h2>
@@ -341,9 +331,8 @@ The ObjectToOMBuilder expects an org.apache.axis.om.OutObject interface from the
 <p>The following code segment explains this scenario.</p>
 <pre class="code">
 // create the parent element
-OMFactory omFactory = OMFactory.newInstance();
-OMNamespace ns = omFactory.createOMNamespace(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI, OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-        element = omFactory.createOMElement("Body", ns);
+OMFactory omFactory = OMAbstractFactory.getOMFactory();
+OMNamespace ns = omFactory.createOMNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);<br>element = omFactory.createOMElement("Body", ns);
 
 OutObject outObject = // get the third party object here
 new ObjectToOMBuilder(element,outObject).next();
@@ -355,7 +344,7 @@ new ObjectToOMBuilder(element,outObject).next();
 <h3>Inefficient Namespace serialization</h3>
 <p>Although the serializer acts correctly in every situation, the code that it produces may not be efficient all the time. Take the following case where a similar code listing to 1.6 is used but with two elements having the same namespace. Note that the newly added items are in bold.</p>
 <pre class="code">
-OMFactory factory = OMFactory.newInstance();
+OMFactory factory = OMAbstractFactory.getOMFactory();
 OMNamespace ns1 = factory.createOMNamespace("bar","x");
 OMElement root = factory.createOMElement("root",ns1);
 OMNamespace ns2 = root.declareNamespace("bar1","y");
@@ -416,13 +405,13 @@ public class TestOMBuilder {
             //create the parser
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(args[0]));
             //create the builder
-            OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMFactory.newInstance(), parser);
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getOMFactory(), parser);
             //get the root element (in this case the envelope)
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             //get the writer
             XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
             //dump the out put to console with caching
-            envelope.serialize(writer, true);
+            envelope.serialize(writer);
 writer.flush();
 
         } catch (XMLStreamException e) {
