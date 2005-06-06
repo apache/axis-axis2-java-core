@@ -1,0 +1,219 @@
+<h1>Code Generator Wizard - Eclipse Plug-in</h1>
+<h2>Introduction</h2>
+<p>The Axis2 code generator comes built-in with an
+<a href="http://www.eclipse.org">Eclipse</a> plug-in. This document explains the 
+installation and usage of the Axis2 code generator plug-in.</p>
+<h2>Installation</h2>
+<p>The easiest way to obtain the plug-in would be the binary distribution. The 
+full Axis binary distribution contains the compiled version of this plug-in 
+under the tools directory. </p>
+<p>If one needs to build the plugin from source it is not as trivial as running 
+the Maven build. The reason is that the plug-in depends heavily on the Eclipse 
+classes, which are only available in an Eclipse environment. The recommended 
+procedure is to run the create-project.xml build file which will create two 
+folders (the other one for the Service Archiver tool) and copy the necessary 
+files to relevant folders. Then Eclipse should be configured to open the 
+contents in a PDE project. Please go through the Eclipse documentation to learn 
+how to open projects in the PDE format.</p>
+<p>Once you've obtained the plug-in just unzip the content of the plug-in 
+archive to the eclipse plug-in directory (if it is the zipped-binary version) or 
+copy the necessary folders to the eclipse plug-in directory and restart Eclipse.</p>
+<p><i>Note - This plug-in works on Eclipse version 3.0 and upwards</i></p>
+<h2>Operation</h2>
+<p>If the plug-in is properly installed you should see a new wizard under the 
+&quot;New&quot; section.(use the File -&gt; New -&gt; Other or Ctrl + N ) </p>
+<p>
+<img border="0" src="images/tools/wizardSelectionPage.JPG" width="500" height="500"></p>
+<p>Selecting the wizard and pressing the next button will start the code 
+generator wizard. Following is the first wizard page.</p>
+<p>
+<img border="0" src="images/tools/WSDLSelectionPage.JPG" width="518" height="500"></p>
+<p>To move on to the next page the WSDL file location must be given. The browse 
+button can be used to easily browse for a file rather than typing the whole 
+path.</p>
+<p>Once the WSDL file is selected, codegen options are to be selected. By far 
+this is the most important page in this wizard, which determines the 
+characteristics of the code being generated. Novices need not worry about these 
+options since the most common options are defaulted, But advanced users will 
+find it very easy to &quot;turn the knobs&quot; using these options.</p>
+<p><img border="0" src="images/tools/OptionsPage.JPG" width="518" height="500"></p>
+<p>Once the options are taken care of, only the final step of the code 
+generation is left. it is the selection of the output file location.</p>
+<p><img border="0" src="images/tools/OutputPage.JPG" width="518" height="500"></p>
+<p>When the output file location is selected, the Finish button will be enabled. 
+Pressing the finish button will generate the code and a message box will pop up 
+acknowledging the success. Well Done! </p>
+<h1>Code Generator Wizard - Command Line Tool</h1>
+<h2>Introduction</h2>
+<p>Just as old times there will be users who wish to use the command line 
+version of the tool. This basic tool is implemented by the WSDL2Code class and 
+just for the convenience in the java case (which would be the majority) there is 
+another WSDL2Java class. One can choose to run the main classes directly or use 
+one of the scripts to run the WSDL2Code and WSDL2Java appropriately. (the 
+scripts are found in the bin directory of the binary distribution)</p>
+<h2>Option Reference</h2>
+<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber1">
+  <tr>
+    <td width="50%">-uri &lt;Location of WSDL&gt;</td>
+    <td width="50%">WSDL file location. This should point to a WSDL file in the 
+    local file system</td>
+  </tr>
+  <tr>
+    <td width="50%">-o &lt;output Location&gt; : </td>
+    <td width="50%">output file location. This is where the files would be 
+    copied once the code generation is done. If this option is omitted the 
+    generated files would be copied to the working directory. </td>
+  </tr>
+  <tr>
+    <td width="50%">-l &lt;language&gt;</td>
+    <td width="50%">Output language. Currently the code generator can generate 
+    code in Java and CSharp. (CSharp support is limited) When omitted defaults 
+    to Java.<p>Allowed options are</p>
+    <ul>
+      <li>java</li>
+      <li>cs</li>
+    </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">-p &lt;package name&gt; </td>
+    <td width="50%">The target package name. If omitted, a default package 
+    (formed using the target&nbsp; namespace of the WSDL) will be used.</td>
+  </tr>
+  <tr>
+    <td width="50%">-a</td>
+    <td width="50%">Generate code only for async style . when this option is 
+    used the generated stubs will have only the asynchronous invocation methods. 
+    Switched off by default.</td>
+  </tr>
+  <tr>
+    <td width="50%">-s</td>
+    <td width="50%">Generate code only for sync style . when this option is 
+    used the generated stubs will have only the  synchronous invocation methods. 
+    Switched off by default. When used with the -a option, this takes 
+    precedence.</td>
+  </tr>
+  <tr>
+    <td width="50%">-t</td>
+    <td width="50%">Generates a test case. In the case of Java it would be a 
+    junit test case.</td>
+  </tr>
+  <tr>
+    <td width="50%">-ss</td>
+    <td width="50%">Generates server side code (i.e. skeletons). Default is off</td>
+  </tr>
+  <tr>
+    <td width="50%">-sd</td>
+    <td width="50%">Generates the service descriptor (i.e. server.xml). Default is off. 
+    only valid with -ss</td>
+  </tr>
+</table>
+<h1>Code Generator Wizard - Ant Task</h1>
+<p>The code generator also comes bundled with an Ant task. The ant task is 
+implemented by the org.apache.axis.tool.ant.AntCodegenTask class. Following are 
+the ant task attributes.</p>
+<h2>Ant Task Reference</h2>
+<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber2" height="458">
+  <tr>
+    <td width="50%" height="19">wsdlfilename</td>
+    <td width="50%" height="19">WSDL file location. Maps to the uri option of 
+    the command line tool</td>
+  </tr>
+  <tr>
+    <td width="50%" height="76">output</td>
+    <td width="50%" height="76">output file location. This is where the files would be 
+    copied once the code generation is done. If this option is omitted the 
+    generated files would be copied to the working directory. . Maps to the -o 
+    option of the command line tool</td>
+  </tr>
+  <tr>
+    <td width="50%" height="171">language</td>
+    <td width="50%" height="171">Output language. Currently the code generator can generate 
+    code in Java and CSharp. (CSharp support is limited) When omitted defaults 
+    to Java.<p>Allowed options are</p>
+    <ul>
+      <li>java</li>
+      <li>cs</li>
+    </ul>
+    <p>Maps to the -l option of the command line tool</td>
+  </tr>
+  <tr>
+    <td width="50%" height="57">packagename</td>
+    <td width="50%" height="57">The target package name. If omitted, a default package 
+    (formed using the target&nbsp; namespace of the WSDL) will be used.&nbsp; 
+    Maps to the -p option of the command line tool.</td>
+  </tr>
+  <tr>
+    <td width="50%" height="75">asynconly</td>
+    <td width="50%" height="75">Generate code only for async style . when this option is 
+    used the generated stubs will have only the asynchronous invocation methods. 
+    Defaults to false if omitted Only true and false are applicable as values. 
+    Maps to the -a option of the command line tool.</td>
+  </tr>
+  <tr>
+    <td width="50%" height="16">testcase</td>
+    <td width="50%" height="16">Generates a test case </td>
+  </tr>
+  <tr>
+    <td width="50%" height="19">synconly</td>
+    <td width="50%" height="19">Generate code only for sync style . when this option is 
+    used the generated stubs will have only the  synchronous invocation methods. 
+    Defaults to false if omitted. Only true and false are applicable as values. 
+    Maps to the -s option of the command line tool.</td>
+  </tr>
+  <tr>
+    <td width="50%" height="19">serverside</td>
+    <td width="50%" height="19">Generates server side code (i.e. skeletons). 
+    Only true and false are applicable as values. Default is false. Maps to the 
+    -ss option of the command line tool</td>
+  </tr>
+  <tr>
+    <td width="50%" height="18">generateserverxml</td>
+    <td width="50%" height="18">Generates server side code (i.e. skeletons). 
+    Only true and false are applicable as values. Default is false. Maps to the 
+    -sd option of the command line tool.</td>
+  </tr>
+</table>
+<h2>Example build file using the custom Ant task</h2>
+<p>Following is an example ant build file that uses the custom Ant task.</p>
+<p><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;project name=&quot;CodegenExample&quot; default=&quot;main&quot; basedir=&quot;.&quot;&gt;
+&lt;target name=&quot;declare&quot; &gt;
+&lt;taskdef name=&quot;codegen&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classname=&quot;org.apache.axis.tool.ant.AntCodegenTask&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classpath=&quot;classes&quot;/&gt;
+&lt;/target&gt;
+&lt;target name=&quot;main&quot; depends=&quot;declare&quot;&gt;
+&lt;codegen 
+&nbsp;&nbsp;&nbsp; wsdlfilename=&quot;C:\test\wsdl\CombinedService.wsdl&quot;
+&nbsp;&nbsp;&nbsp; output=&quot;C:\&quot;
+&nbsp;&nbsp;&nbsp; serverside=&quot;true&quot;
+&nbsp;&nbsp;&nbsp; generateserverxml=&quot;true&quot;
+/&gt;
+&lt;/target&gt;
+&lt;/project&gt;</pre></p>
+<p>Notice the taskdef that declares the codegen Ant task.</p>
+<p>For this Ant task to work the following jars need to be in the class path.</p>
+<ul>
+  <li>axis-wsdl-M2.jar (from the Axis2 distribution)</li>
+  <li>axis-wsdl4j-1.2.jar (The WSDL4J implementation jar. Bundled with the Axis2 
+  distribution)</li>
+  <li>stax-api-1.0.jar (The StAX API's that contain the 
+  javax.xml.namespace.QName class. This jar may be replaced by any other jar 
+  that contains the javax.xml.namespace.QName implementation. However Axis2 uses 
+  this class from the stax-api-1.0.jar which comes bundled with the Axis2 
+  distribution)</li>
+</ul>
+<h1>Appendix</h1>
+<ul>
+  <li>Eclipse reference - <a href="http://www.eclipse.org/">
+  http://www.eclipse.org/</a></li>
+  <li>Custom Ant Tasks&nbsp; -
+  <a href="http://ant.apache.org/manual/develop.html">
+  http://ant.apache.org/manual/develop.html</a></li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
