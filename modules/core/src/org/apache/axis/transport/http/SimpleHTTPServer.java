@@ -163,12 +163,14 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         AxisEngine engine = new AxisEngine(configurationContext);
                         engine.receive(msgContext);
 
-                        if (msgContext.getReplyTo() != null
-                            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(
-                                msgContext.getReplyTo().getAddress())) {
+                        Object contextWritten =
+                            msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+                        if (contextWritten == null
+                            || !Constants.VALUE_TRUE.equals(contextWritten)) {
                             out.write(new String(HTTPConstants.NOCONTENT).toCharArray());
                             out.close();
                         }
+
                         log.info("status written");
 
                     }
@@ -300,11 +302,12 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
             "http://127.0.0.1:" + (serverSocket.getLocalPort()) + "/axis/services/" + serviceName);
     }
 
-    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) throws AxisFault {
+    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+        throws AxisFault {
         this.configurationContext = axisConf;
         Parameter param = transprtIn.getParameter(PARAM_PORT);
-        if(param!= null){
-            int port = Integer.parseInt((String)param.getValue());
+        if (param != null) {
+            int port = Integer.parseInt((String) param.getValue());
             serverSocket = ListenerManager.openSocket(port);
         }
     }

@@ -176,6 +176,7 @@ public class Constants {
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
     public static final String CONTAINER_MANAGED = "ContainerManaged";
+    public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     
     public static final String TESTING_REPOSITORY = "target/test-resources/samples";
     //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
+package org.apache.axis.tcp;
 
 
 
@@ -32,6 +32,8 @@ import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.integration.UtilsTCPServer;
 import org.apache.axis.om.OMAbstractFactory;
@@ -45,7 +47,7 @@ import org.apache.axis.util.Utils;
 public class TCPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
+                    "tcp://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
@@ -151,4 +153,30 @@ public class TCPEchoRawXMLTest extends TestCase {
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
     }
+    
+    public void testEchoXMLCompleteSync() throws Exception {
+          ServiceDescription service =
+              Utils.createSimpleService(
+                  serviceName,
+          Echo.class.getName(),
+                  operationName);
+
+          OMFactory fac = OMAbstractFactory.getOMFactory();
+
+          OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+          OMElement method = fac.createOMElement("echoOMElement", omNs);
+          OMElement value = fac.createOMElement("myValue", omNs);
+          value.setText("Isaac Assimov, the foundation Sega");
+          method.addChild(value);
+
+          org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
+          call.setTo(targetEPR);
+          call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, true);
+
+          OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
+          result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+
+      }
+      
+  
 }

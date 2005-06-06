@@ -119,8 +119,7 @@ public class AxisEngine {
             }
             if (msgContext.isServerSide()) {
                 // add invoke Phase
-                MessageReceiver reciver =
-                    msgContext.getOperationContext().getAxisOperation().getMessageReciever();
+                MessageReceiver reciver = operationDescription.getMessageReciever();
                 reciver.recieve(msgContext);
             }
         } catch (Throwable e) {

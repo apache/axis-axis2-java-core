@@ -19,7 +19,6 @@ package org.apache.axis.engine;
 //todo
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 
 import junit.framework.TestCase;
 
@@ -27,10 +26,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.MessageSender;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.integration.UtilServer;
@@ -40,16 +36,15 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.transport.mail.SimpleMailListener;
-import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class OneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "axis2@127.0.0.1" + "/axis/services/EchoXMLService/echoOMElement");
+             new EndpointReference(AddressingConstants.WSA_TO,
+                     "http://127.0.0.1:"
+             + (UtilServer.TESTING_PORT)
+             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -71,15 +66,7 @@ public class OneWayRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        SimpleMailListener ml = new SimpleMailListener();
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContext =
-            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
-        ml.init(
-            configContext,
-            configContext.getAxisConfiguration().getTransportIn(
-                new QName(Constants.TRANSPORT_MAIL)));
-        ml.start();
+        UtilServer.start();
 
         ServiceDescription service = new ServiceDescription(serviceName);
         OperationDescription operation = new OperationDescription(operationName);
@@ -88,12 +75,14 @@ public class OneWayRawXMLTest extends TestCase {
                 envelope = messgeCtx.getEnvelope();
             }
         });
+        service.addOperation(operation);
+        UtilServer.deployService(service);
+      }
 
-        configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-    }
-
+   
     protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
+        UtilServer.stop();
     }
 
     private OMElement createEnvelope() {
@@ -115,11 +104,16 @@ public class OneWayRawXMLTest extends TestCase {
         MessageSender sender = new MessageSender();
 
         sender.setTo(targetEPR);
-        sender.setSenderTransport(Constants.TRANSPORT_MAIL);
+        sender.setSenderTransport(Constants.TRANSPORT_HTTP);
 
         sender.send(operationName.getLocalPart(), payload);
-        while(envelope != null){
+        int index = 0;
+        while(envelope == null){
             Thread.sleep(4000);
+            index ++;
+            if(index == 5){
+                throw new AxisFault("error Occured");
+            }
         }
     }
 

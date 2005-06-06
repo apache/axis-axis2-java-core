@@ -98,48 +98,36 @@ public class HTTPTransportReceiver {
         throws AxisFault {
         SOAPEnvelope soapEnvelope = null;
 
-        Reader in =
-            (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
+        Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
             Map map = parseTheHeaders(in, serverSide);
-            if (serverSide) {
-                msgContext.setWSAAction(
-                    (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
-                Utils.configureMessageContextForHTTP((String)map.get(HTTPConstants.HEADER_CONTENT_TYPE),msgContext.getWSAAction(),msgContext);
-
-                String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-                msgContext.setTo(
-                    new EndpointReference(
-                        AddressingConstants.WSA_TO,
-                        requestURI));
-                //getServiceLookUp(requestURI)));
-
-                // TODO see is it a Service request e.g. WSDL, list ....
-                // TODO take care of the other HTTPHeaders
-            } else {
-                if (HTTPConstants
-                    .RESPONSE_ACK_CODE_VAL
-                    .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
-                    msgContext.setProperty(
-                        MessageContext.TRANSPORT_SUCCEED,
-                        HTTPConstants.RESPONSE_ACK_CODE_VAL);
-                    return soapEnvelope;
-                }
-
-                // TODO take care of other HTTP Headers
+            if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(map.get(HTTPConstants.RESPONSE_CODE))) {
+                msgContext.setProperty(
+                    MessageContext.TRANSPORT_SUCCEED,
+                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
+                return soapEnvelope;
             }
+            msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+            Utils.configureMessageContextForHTTP(
+                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                msgContext.getWSAAction(),
+                msgContext);
 
+            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            //getServiceLookUp(requestURI)));
+
+            // TODO see is it a Service request e.g. WSDL, list ....
+            // TODO take care of the other HTTPHeaders
             try {
                 //Check for the REST behaviour, if you desire rest beahaviour
                 //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
                 Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-                XMLStreamReader xmlreader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(in);
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = null;
                 SOAPEnvelope envelope = null;
-                if (doREST != null
-                    && "true".equals(doREST)) {
+                if (doREST != null && "true".equals(doREST)) {
                     SOAPFactory soapFactory = new SOAP11Factory();
                     builder = new StAXOMBuilder(xmlreader);
                     builder.setOmbuilderFactory(soapFactory);
@@ -181,8 +169,7 @@ public class HTTPTransportReceiver {
      * @return
      * @throws AxisFault
      */
-    public HashMap parseTheHeaders(Reader reader, boolean serverSide)
-        throws AxisFault {
+    public HashMap parseTheHeaders(Reader reader, boolean serverSide) throws AxisFault {
         HashMap map = new HashMap();
         try {
             StringBuffer str = new StringBuffer();
@@ -192,10 +179,7 @@ public class HTTPTransportReceiver {
             int start = 0;
             length = readLine(reader, buf);
             if (serverSide) {
-                if ((buf[0] == 'P')
-                    && (buf[1] == 'O')
-                    && (buf[2] == 'S')
-                    && (buf[3] == 'T')) {
+                if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S') && (buf[3] == 'T')) {
                     index = 5;
                     value = readFirstLineArg(' ');
                     map.put(HTTPConstants.REQUEST_URI, value);
@@ -207,9 +191,14 @@ public class HTTPTransportReceiver {
             } else {
                 index = 0;
                 value = readFirstLineArg(' ');
-                map.put(HTTPConstants.PROTOCOL_VERSION, value);
-                value = readFirstLineArg(' ');
-                map.put(HTTPConstants.RESPONSE_CODE, value);
+                if(value != null && value.indexOf("HTTP") >= 0){
+                    map.put(HTTPConstants.PROTOCOL_VERSION, value);
+                    value = readFirstLineArg(' ');
+                    map.put(HTTPConstants.RESPONSE_CODE, value);
+                }else{
+                    map.put(HTTPConstants.RESPONSE_CODE, value);
+                }
+                
                 value = readFirstLineArg('\n');
                 map.put(HTTPConstants.RESPONSE_WORD, value);
             }
@@ -256,8 +245,7 @@ public class HTTPTransportReceiver {
                             // case END:
                             // break;
                         default :
-                            throw new AxisFault(
-                                "Error Occured Unknown state " + state);
+                            throw new AxisFault("Error Occured Unknown state " + state);
                     }
                 }
                 state = BEFORE_SEPERATOR;

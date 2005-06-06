@@ -8,6 +8,16 @@
 	<p>Any architecture is a result of what that architecture should yield, the success of a architecture should be evaluated bases on the requirements the architecture should meet. Let us start our journey in to Axis2 looking at the requirements that are expected from Axis2.</p>
 
 	<h3>Requirement from Axis2</h3>
+	<p>According to SOAP, participant took part is a Web Service interaction is known as a SOAP Node. Delivery of a single SOAP Message is defined based on two participants, SOAP Sender and SOAP Receiver. Each SOAP Message is sent by SOAP Sender and received by SOAP Receiver, and single SOAP delivery is the most basic unit that build the Web Service interactions.</p>
+	
+	<p>Each SOAP Node is written in specific programming language, may it be Java, C++, .NET or Perl, the Web Services allow them to inter operate. This is possible because at the wire each web service interaction is done via SOAP, which is common to every SOAP Node. </p>
+	<IMG src="images/archi-guide/soap.gif" width="691" height="319" border="0">
+	
+	<p>It is the duty of the Web Service Middle-ware for each programing language to let the users to work in the programing language they are accustomed to and hide the complexity of the SOAP Messaging. Axis2 being one, let the java users to invoke the Web Services using java representations and handles the SOAP Messaging behind the curtain.</p>
+	
+	<p>Axis2 handle the SOAP processing Model, together with dozen services that make the life of the Web Service Developer simpler, following are the identified requirements.</p>
+	
+	
 	<ol><li>Provide a framework to process the SOAP messages, the framework should be extensible and the users should be able to extend the SOAP Processing in the Service or Operations basis. Further more it should be able to model different Message Exchange Patterns using the processing framework.</li>
 	<li>Ability to deploy the Web Services with or without WSDL</li>
 	<li>Provide a Client API that can be used to invoke the Web Services, the API should supports both the Synchronous and Asynchronous programming models.</li>
@@ -87,8 +97,15 @@ Description</td>
 
 
 <h2>SOAP Processing Model</h2>
+<p>Axis2 SOAP processing Model is based on two basic operation a SOAP Message can be undergone, sending and receiving. </p>
+<IMG src="images/archi-guide/soap-processing.gif" width="755" height="348" border="0">
 
-<p>The Architecture identified a two basic actions a SOAP Processor should do, sending and receiving SOAP Messages. The Architecture provides two Pipes (also named as Flows), to do this basic actions, Axis Engine or the Driver of Axis2 define two methods send() and receive() to implement these two Pipes. The two pipes are named as In Pipe and Out Pipe, the complex Message Exchange Patterns are constructed by combining these two Pipes.</p>
+<p>The Architecture identified two basic actions a SOAP Processor should perform, sending and receiving SOAP Messages. The Architecture provides two Pipes (also named as Flows), to do this basic actions, Axis Engine or the Driver of Axis2 define two methods send() and receive() to implement these two Pipes. The two pipes are named as <i>In Pipe</i> and <i>Out Pipe</i>, the complex Message Exchange Patterns are constructed by combining these two Pipes.</p>
+
+<p>When a SOAP Message is send from the Client API, a <i>Out Pipe</i> would begun, the out pipe invoke the Handlers and ends with a Transport Sender that send the SOAP Message to the target endpoint. The SOAP Message is received by a Transport Receiver at the target endpoint, which read the SOAP Message and start  the <i>In Pipe</i>. The In pipe consists of Handler and end with a Message Receiver, which consumed the Message.</p>
+
+<p>The Processing take place for each and every SOAP Message exchanged. Processing that follows the such SOAP Message exchange may decide to give birth for the other SOAP Message in which case the more complex Patterns emerge. But Axis2 always view the SOAP Message in terms of processing of a Single Message where as the combination of the Messages are layered on top of that base.</p>
+
 <p>The two Pipes does not differentiate between the Server and the Client, the SOAP Processing Model Handles the Complexity and provide two abstract pipes to the User.  Each pipes is set of Handlers, the different areas of the Pipes are given names, and according to the Axis2 slang those are named Phases. The Handler is always run inside a Phase, and the Phase provide mechanisum to state the ordering of the Handler. Both Pipes has built in Phases, and both define the areas for User Phases which can be defined by the User.</p>
 
 <p>Following Picture shows the the two Pipes with their pre-defined Phases, the user defined Phases would be fit in to the User Phases.</p>
@@ -107,7 +124,7 @@ Description</td>
 </ol>
 
 <h3>Processing an Incoming SOAP Message</h3>
-<p>Incoming SOAP Message is always received by a Transport Receiver waiting for the SOAP Messages, once the SOAP Message is arrived the transport Headers are parsed and a Message Context is created for the incoming SOAP Message. The the In Pipe is executed with the Message Context. Let us see what would happen at the each Phase of the execution,  this process my happen in either in the server or the Client, there is a special case of using the two way transport where the first four phases in the In-Phase most likely to do nothing.</p>
+<p>Incoming SOAP Message is always received by a Transport Receiver waiting for the SOAP Messages, once the SOAP Message is arrived the transport Headers are parsed and a Message Context is created for the incoming SOAP Message. The the <i>In Pipe</i> is executed with the Message Context. Let us see what would happen at the each Phase of the execution,  this process my happen in either in the server or the Client, there is a special case of using the two way transport where the first four phases in the In-Phase most likely to do nothing.</p>
 
 <ol>
 <li>Transport Phase - The Handlers in the transport Phase are taken from the transport configuration associated, they are executed according to the Phase rules. </li>
@@ -206,6 +223,16 @@ Currently Axis2 does not supports the full data binding support, the generated c
 <li>Transport Handlers</li>
 </ol>
 
+Transport Sender send the SOAP Message over a given transport, each and every transport Out Configuration should define a transport Sender that send the transport. 
+
+Transport Receiver waits for the SOAP Messages and for each SOAP Message that arrives, uses the <l>In Pipe</i> to process the SOAP Message. 
+
+Axis2 Presently support the following transports
+
+<ol><LI>HTTP - The HTTP transport, the transport Listener is a Servelet or a Simple HTTP server provided by Axis2. The transport Sender uses sockets to connect and send the SOAP Message. Current Transport Sender is minimal and does not supports all the options HTTP support.</LI>
+<li>TCP - This is the most simplest transport, but needed the addressing support to be funtional. </li>
+<li>SMTP - This work off a single email account, Transport Receiver is a tread that checks for emails in fixed time intervals.</li>
+</ol>
 
 
 </body>

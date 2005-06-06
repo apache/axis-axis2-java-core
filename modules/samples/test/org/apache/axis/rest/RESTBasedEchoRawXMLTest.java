@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis.engine;
+package org.apache.axis.rest;
 
 //todo
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -38,6 +31,9 @@ import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.AxisConfiguration;
+import org.apache.axis.engine.AxisConfigurationImpl;
+import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -207,7 +203,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
         
         System.out.println(messageInfo.requestMessage);
-        System.out.println(messageInfo.responseMessage);
     }
     
     public class MessageInformation{

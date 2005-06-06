@@ -95,6 +95,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
         }
+        msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,Constants.VALUE_TRUE);
     }
 
     public void writeMessage(MessageContext msgContext, Writer out) throws AxisFault {

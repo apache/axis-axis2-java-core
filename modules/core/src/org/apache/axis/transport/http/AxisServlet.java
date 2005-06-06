@@ -68,47 +68,32 @@ public class AxisServlet extends HttpServlet {
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
      */
-    private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
-            "listServices.jsp";
+    private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
 
-    private static final String LIST_SRVICES_JSP_NAME =
-            "listService.jsp";
+    private static final String LIST_SRVICES_JSP_NAME = "listService.jsp";
 
-    private static final String SELECT_SERVICE_JSP_NAME =
-            "SelectService.jsp";
+    private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
 
-    private static final String ADMIN_JSP_NAME =
-            "admin.jsp";
+    private static final String ADMIN_JSP_NAME = "admin.jsp";
 
+    private static final String LIST_AVAILABLE_MODULES_JSP_NAME = "listModules.jsp";
 
+    private static final String LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME = "globalModules.jsp";
 
-    private static final String LIST_AVAILABLE_MODULES_JSP_NAME =
-            "listModules.jsp";
+    private static final String LIST_PHASES_JSP_NAME = "viewphases.jsp";
 
-    private static final String LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME =
-            "globalModules.jsp";
+    private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME = "engagingglobally.jsp";
 
-    private static final String LIST_PHASES_JSP_NAME =
-            "viewphases.jsp";
-
-    private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME =
-            "engagingglobally.jsp";
-
-    private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME =
-            "engagingtoaservice.jsp";
+    private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME = "engagingtoaservice.jsp";
 
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
      */
-    private static final String LIST_SINGLE_SERVICE_JSP_NAME =
-            "listSingleService.jsp";
-    private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME =
-            "ViewGlobalHandlers.jsp";
-    private static final String VIEW_SERVICE_HANDLERS_JSP_NAME =
-            "ViewServiceHandlers.jsp";
+    private static final String LIST_SINGLE_SERVICE_JSP_NAME = "listSingleService.jsp";
+    private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME = "ViewGlobalHandlers.jsp";
+    private static final String VIEW_SERVICE_HANDLERS_JSP_NAME = "ViewServiceHandlers.jsp";
 
-    private static final String ENGAGE_TO_OPERATION_JSP_NAME =
-            "enaggingtoanopeartion.jsp";
+    private static final String ENGAGE_TO_OPERATION_JSP_NAME = "enaggingtoanopeartion.jsp";
 
     /**
      * Field allowListServices
@@ -130,10 +115,9 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            ConfigurationContextFactory erfac =
-                    new ConfigurationContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             engineContext = erfac.buildEngineContext(repoDir);
-            engineContext.setProperty(Constants.CONTAINER_MANAGED,Constants.VALUE_TRUE);
+            engineContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -148,64 +132,52 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse)
-            throws ServletException, IOException {
+        HttpServletRequest httpServletRequest,
+        HttpServletResponse httpServletResponse)
+        throws ServletException, IOException {
         String filePart = httpServletRequest.getRequestURL().toString();
-        if((filePart != null)
-                && filePart.endsWith(Constants.ADMIN_LISTSERVICES)){
+        if ((filePart != null) && filePart.endsWith(Constants.ADMIN_LISTSERVICES)) {
             listAdminServices(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.LIST_MODULES)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.LIST_MODULES)) {
             listModules(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.LIST_GLOABLLY_ENGAGED_MODULES)){
+        } else if (
+            (filePart != null) && filePart.endsWith(Constants.LIST_GLOABLLY_ENGAGED_MODULES)) {
             listGloballyModules(httpServletRequest, httpServletResponse);
             return;
-        }  else if ((filePart != null)
-                && filePart.endsWith(Constants.LIST_PHASES)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.LIST_PHASES)) {
             listPhases(httpServletRequest, httpServletResponse);
             return;
-        }else if ((filePart != null)
-                && filePart.endsWith(Constants.ENGAGE_GLOBAL_MODULE)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.ENGAGE_GLOBAL_MODULE)) {
             engageModulesGlobally(httpServletRequest, httpServletResponse);
             return;
-        }
-        else if ((filePart != null)
-                && filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)) {
             engageModulesToService(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.ADMIN_LOGGING)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.ADMIN_LOGGING)) {
             adminLogging(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.VIEW_GLOBAL_HANDLERS)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.VIEW_GLOBAL_HANDLERS)) {
             viewGlobalHandlers(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.SELECT_SERVICE)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.SELECT_SERVICE)) {
             selectService(httpServletRequest, httpServletResponse);
             return;
-        }  else if ((filePart != null)
-                && filePart.endsWith(Constants.VIEW_SERVICE_HANDLERS)){
+        } else if ((filePart != null) && filePart.endsWith(Constants.VIEW_SERVICE_HANDLERS)) {
             viewServiceHandlers(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAMNET)){
+        } else if (
+            (filePart != null) && filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAMNET)) {
             lsitServiceformodules(httpServletRequest, httpServletResponse);
             return;
-        } else if ((filePart != null)
-                && filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)){
+        } else if (
+            (filePart != null) && filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)) {
             engageModulesToOpeartion(httpServletRequest, httpServletResponse);
             return;
         }
 
-        if (allowListServices
-                && (filePart != null)
-                && filePart.endsWith(Constants.LISTSERVICES)) {
+        if (allowListServices && (filePart != null) && filePart.endsWith(Constants.LISTSERVICES)) {
             listServices(httpServletRequest, httpServletResponse);
             return;
         } else {
@@ -230,42 +202,39 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         try {
             res.setContentType("text/xml; charset=utf-8");
             AxisEngine engine = new AxisEngine(engineContext);
             Object sessionContext =
-                    req.getSession().getAttribute(
-                            Constants.SESSION_CONTEXT_PROPERTY);
+                req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
-                req.getSession().setAttribute(
-                        Constants.SESSION_CONTEXT_PROPERTY,
-                        sessionContext);
+                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }
             MessageContext msgContext =
-                    new MessageContext(engineContext,
-                            (SessionContext) sessionContext,
-                            engineContext.getAxisConfiguration().getTransportIn(
-                                    new QName(Constants.TRANSPORT_HTTP)),
-                            engineContext.getAxisConfiguration().getTransportOut(
-                                    new QName(Constants.TRANSPORT_HTTP)));
+                new MessageContext(
+                    engineContext,
+                    (SessionContext) sessionContext,
+                    engineContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_HTTP)),
+                    engineContext.getAxisConfiguration().getTransportOut(
+                        new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setServerSide(true);
 
-
             String filePart = req.getRequestURL().toString();
-            msgContext.setTo(
-                    new EndpointReference(AddressingConstants.WSA_TO, filePart));
-            String soapActionString =
-                    req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, filePart));
+            String soapActionString = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             if (soapActionString != null) {
                 msgContext.setWSAAction(soapActionString);
             }
             XMLStreamReader reader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(
-                            new BufferedReader(
-                                    new InputStreamReader(req.getInputStream())));
-            Utils.configureMessageContextForHTTP(req.getContentType(),soapActionString,msgContext);
+                XMLInputFactory.newInstance().createXMLStreamReader(
+                    new BufferedReader(new InputStreamReader(req.getInputStream())));
+            Utils.configureMessageContextForHTTP(
+                req.getContentType(),
+                soapActionString,
+                msgContext);
 
             //Check for the REST behaviour, if you desire rest beahaviour
             //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
@@ -286,9 +255,14 @@ public class AxisServlet extends HttpServlet {
             msgContext.setEnvelope(envelope);
 
             msgContext.setProperty(
-                    MessageContext.TRANSPORT_WRITER,
-                    new BufferedWriter(res.getWriter()));
+                MessageContext.TRANSPORT_WRITER,
+                new BufferedWriter(res.getWriter()));
             engine.receive(msgContext);
+
+            Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+            if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                res.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
         } catch (AxisFault e) {
             throw new ServletException(e);
         } catch (XMLStreamException e) {
@@ -305,13 +279,12 @@ public class AxisServlet extends HttpServlet {
      * @param res
      * @throws IOException
      */
-    private void listServices(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+    private void listServices(HttpServletRequest req, HttpServletResponse res) throws IOException {
         HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(
-                Constants.ERROR_SERVICE_MAP,
-                engineContext.getAxisConfiguration().getFaulytServices());
+            Constants.ERROR_SERVICE_MAP,
+            engineContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -322,35 +295,43 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     private void listAdminServices(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+        throws IOException {
         HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(
-                Constants.ERROR_SERVICE_MAP,
-                engineContext.getAxisConfiguration().getFaulytServices());
+            Constants.ERROR_SERVICE_MAP,
+            engineContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
 
     private void selectService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+        throws IOException {
         HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.MODULE_ENGAMENT, null);
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
-    private void adminLogging(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+    private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
-        if(username == null || password == null || username.trim().equals("") || password.trim().equals("")){
+        if (username == null
+            || password == null
+            || username.trim().equals("")
+            || password.trim().equals("")) {
             throw new AxisFault("invalid user name");
         }
-        String adminUserName =(String)((AxisConfigurationImpl) engineContext.getAxisConfiguration())
-                .getParameter(Constants.USER_NAME).getValue();
-        String adminPassword =(String)((AxisConfigurationImpl) engineContext.getAxisConfiguration())
-                .getParameter(Constants.PASSWORD).getValue();
-        if(username!= null && password !=null && username.equals(adminUserName) &&
-                password.equals(adminPassword)){
+        String adminUserName =
+            (String) ((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+                .getParameter(Constants.USER_NAME)
+                .getValue();
+        String adminPassword =
+            (String) ((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+                .getParameter(Constants.PASSWORD)
+                .getValue();
+        if (username != null
+            && password != null
+            && username.equals(adminUserName)
+            && password.equals(adminPassword)) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
         } else {
@@ -358,126 +339,141 @@ public class AxisServlet extends HttpServlet {
         }
     }
 
-    private void listModules(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+    private void listModules(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        HashMap modules =
+            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 
     private void engageModulesGlobally(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+        throws IOException {
+        HashMap modules =
+            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        String moduleName =(String)req.getParameter("modules");
+        String moduleName = (String) req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        if(moduleName !=null){
+        if (moduleName != null) {
             try {
                 engineContext.getAxisConfiguration().engageModule(new QName(moduleName));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, moduleName + " module engaged globally Successfully");
+                req.getSession().setAttribute(
+                    Constants.ENGAGE_STATUS,
+                    moduleName + " module engaged globally Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
         }
-        req.getSession().setAttribute("modules",null);
+        req.getSession().setAttribute("modules", null);
         res.sendRedirect(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
     }
 
     private void engageModulesToOpeartion(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+        throws IOException {
+        HashMap modules =
+            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        String moduleName =(String)req.getParameter("modules");
+        String moduleName = (String) req.getParameter("modules");
 
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        req.getSession().setAttribute("modules",null);
+        req.getSession().setAttribute("modules", null);
 
-        String serviceName =(String)req.getParameter("service");
-        if(serviceName != null){
-           req.getSession().setAttribute("service",serviceName);
-        }  else {
-            serviceName = (String)req.getSession().getAttribute("service"); 
+        String serviceName = (String) req.getParameter("service");
+        if (serviceName != null) {
+            req.getSession().setAttribute("service", serviceName);
+        } else {
+            serviceName = (String) req.getSession().getAttribute("service");
         }
-        req.getSession().setAttribute(Constants.OPEARTION_MAP,engineContext.getAxisConfiguration().
-                getService(new QName(serviceName)).getOperations());
+        req.getSession().setAttribute(
+            Constants.OPEARTION_MAP,
+            engineContext
+                .getAxisConfiguration()
+                .getService(new QName(serviceName))
+                .getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        String operationName =(String)req.getParameter("operation");
-        if(serviceName !=null && moduleName !=null && operationName != null){
+        String operationName = (String) req.getParameter("operation");
+        if (serviceName != null && moduleName != null && operationName != null) {
             try {
-                OperationDescription od = engineContext.getAxisConfiguration().getService(
-                        new QName(serviceName)).getOperation(new QName(operationName));
-                od.engageModule(engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, moduleName +
-                        " module engaged to the operation Successfully");
+                OperationDescription od =
+                    engineContext.getAxisConfiguration().getService(
+                        new QName(serviceName)).getOperation(
+                        new QName(operationName));
+                od.engageModule(
+                    engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                req.getSession().setAttribute(
+                    Constants.ENGAGE_STATUS,
+                    moduleName + " module engaged to the operation Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
         }
-        req.getSession().setAttribute("operation",null);
+        req.getSession().setAttribute("operation", null);
         res.sendRedirect(ENGAGE_TO_OPERATION_JSP_NAME);
     }
     private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        HashMap modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+        throws IOException {
+        HashMap modules =
+            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        String moduleName =(String)req.getParameter("modules");
+        String moduleName = (String) req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        req.getSession().setAttribute("modules",null);
-        String serviceName =(String)req.getParameter("service");
+        req.getSession().setAttribute("modules", null);
+        String serviceName = (String) req.getParameter("service");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        if(serviceName !=null && moduleName !=null){
+        if (serviceName != null && moduleName != null) {
             try {
 
-                engineContext.getAxisConfiguration().getService(new QName(serviceName)).engageModule(
-                        engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, moduleName +
-                        " module engaged to the service Successfully");
+                engineContext.getAxisConfiguration().getService(
+                    new QName(serviceName)).engageModule(
+                    engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                req.getSession().setAttribute(
+                    Constants.ENGAGE_STATUS,
+                    moduleName + " module engaged to the service Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
         }
-        req.getSession().setAttribute("service",null);
+        req.getSession().setAttribute("service", null);
         res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
     }
 
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        Collection modules =((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getEngadgedModules();
+        throws IOException {
+        Collection modules =
+            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getEngadgedModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
 
     private void lsitServiceformodules(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+        throws IOException {
         HashMap services = engineContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.MODULE_ENGAMENT, "Yes");
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
-
     private void viewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        req.getSession().setAttribute(Constants.GLOBAL_HANDLERS, engineContext.getAxisConfiguration());
+        throws IOException {
+        req.getSession().setAttribute(
+            Constants.GLOBAL_HANDLERS,
+            engineContext.getAxisConfiguration());
         res.sendRedirect(VIEW_GLOBAL_HANDLERS_JSP_NAME);
     }
 
     private void viewServiceHandlers(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
-        String service = (String)req.getParameter("service");
-        if (service!= null) {
-            req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
-                    engineContext.getAxisConfiguration().getService(new QName(service)) );
+        throws IOException {
+        String service = (String) req.getParameter("service");
+        if (service != null) {
+            req.getSession().setAttribute(
+                Constants.SERVICE_HANDLERS,
+                engineContext.getAxisConfiguration().getService(new QName(service)));
         }
         res.sendRedirect(VIEW_SERVICE_HANDLERS_JSP_NAME);
     }
 
-
-
-    private void listPhases(HttpServletRequest req, HttpServletResponse res)
-            throws IOException {
+    private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
         DeploymentData depdata = DeploymentData.getInstance();
         phaselist.add(depdata.getINPhases());
@@ -494,7 +490,6 @@ public class AxisServlet extends HttpServlet {
         res.sendRedirect(LIST_PHASES_JSP_NAME);
     }
 
-
     /**
      * Method listService
      *
@@ -503,22 +498,14 @@ public class AxisServlet extends HttpServlet {
      * @param filePart
      * @throws IOException
      */
-    private void listService(
-            HttpServletRequest req,
-            HttpServletResponse res,
-            String filePart)
-            throws IOException {
-        String serviceName =
-                filePart.substring(
-                        filePart.lastIndexOf("/") + 1,
-                        filePart.length());
+    private void listService(HttpServletRequest req, HttpServletResponse res, String filePart)
+        throws IOException {
+        String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
         HashMap services = engineContext.getAxisConfiguration().getServices();
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
-                req.getSession().setAttribute(
-                        Constants.SINGLE_SERVICE,
-                        serviceObj);
+                req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
             }
         }
         String URI = req.getRequestURI();

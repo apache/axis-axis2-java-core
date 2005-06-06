@@ -58,6 +58,7 @@ public class TCPServer extends TransportListener implements Runnable {
     private ConfigurationContext configContext;
 
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+    public TCPServer(){}
 
     public TCPServer(int port, String dir) throws AxisFault {
         try {
@@ -151,7 +152,7 @@ public class TCPServer extends TransportListener implements Runnable {
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         return new EndpointReference(
             AddressingConstants.WSA_REPLY_TO,
-            "http://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
+            "tcp://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
     }
 
     /* (non-Javadoc)

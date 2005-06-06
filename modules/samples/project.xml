@@ -124,7 +124,7 @@
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
 		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
-		<exclude>**/*OneWayRawXMLTest.java</exclude> 
+		<exclude>**/*MailOneWayRawXMLTest.java</exclude> 
 		
       </excludes>
      <includes>

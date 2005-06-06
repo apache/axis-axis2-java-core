@@ -19,11 +19,7 @@ package org.apache.axis.transport.http;
  * HTTP protocol and message context constants.
  */
 public class HTTPConstants {
-    /**
-     * The MessageContext transport ID of HTTP.
-     * (Maybe this should be more specific, like "http_servlet",
-     * whaddya think? - todo by Jacek)
-     */
+ 
     public static final String PROTOCOL_VERSION = "PROTOCOL";
 
     /**

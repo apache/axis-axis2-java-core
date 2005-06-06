@@ -82,7 +82,7 @@ public class InOnlyMEPClient extends MEPClient {
             HTTPTransportReceiver receiver = new HTTPTransportReceiver();
             receiver.checkForMessage(response, sysContext);
             SOAPEnvelope resenvelope = response.getEnvelope();
-            if (response!= null && resenvelope.getBody().hasFault()) {
+            if (resenvelope!= null && resenvelope.getBody().hasFault()) {
                 throw new AxisFault(resenvelope.getBody().getFault().getException());
             }
         }
