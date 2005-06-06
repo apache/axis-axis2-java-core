@@ -1,12 +1,13 @@
-<service name="MyService">
+<service name="MyServiceWithModule">
     <description>
-        This is a sample Web Service with two operations,echo and ping.
+        This is a sample Web Service with a logging module engaged.
     </description>
-    <parameter name="ServiceClass" locked="xsd:false">userguide.example1.MyService</parameter>
+    <module ref="logging"/>
+    <parameter name="ServiceClass" locked="xsd:false">userguide.example2.MyService</parameter>
     <operation name="echo">
         <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
     </operation>
-     <operation name="ping">
+    <operation name="ping">
         <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
     </operation>
- </service>
+</service>

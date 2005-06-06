@@ -7,6 +7,6 @@
         <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
     </operation>
      <operation name="ping">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOnlyMessageRecevier"/>
     </operation>
- </service>
+  </service>

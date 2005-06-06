@@ -26,7 +26,11 @@ public class MyService {
         return element;
     }
 
-    public void ping(OMElement element) {
-        //Do the ping
+    public void ping(OMElement element) throws XMLStreamException {
+        StringWriter writer = new StringWriter();
+        element.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+        writer.flush();
+
+        System.out.println(writer.toString());
     }
 }

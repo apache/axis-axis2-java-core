@@ -22,7 +22,7 @@ import java.io.StringWriter;
  */
 public class EchoBlockingDualClient {
     private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/SimpleService/echo");
+            "http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {
@@ -33,7 +33,7 @@ public class EchoBlockingDualClient {
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
-            call.engageModule(new QName("addressing"));
+            call.engageModule(new QName(Constants.MODULE_ADDRESSING));
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
             //Callback to handle the response
@@ -64,6 +64,9 @@ public class EchoBlockingDualClient {
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
+
+            //Need to close the Client Side Listener.
+            call.close();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

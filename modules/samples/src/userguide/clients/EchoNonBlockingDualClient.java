@@ -9,10 +9,9 @@ import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 
-
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 /**
@@ -23,7 +22,7 @@ import java.io.StringWriter;
  */
 public class EchoNonBlockingDualClient {
     private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8070/axis2/services/SimpleService/echo");
+            "http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {
@@ -34,7 +33,7 @@ public class EchoNonBlockingDualClient {
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
-            call.engageModule(new QName("addressing"));
+            call.engageModule(new QName(Constants.MODULE_ADDRESSING));
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
             //Callback to handle the response
@@ -65,6 +64,8 @@ public class EchoNonBlockingDualClient {
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
+            //Need to close the Client Side Listener.
+            call.close();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
