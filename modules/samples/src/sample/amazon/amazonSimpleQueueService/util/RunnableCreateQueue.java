@@ -22,8 +22,8 @@ import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-import sample.amazon.amazonSimpleQueueService.CreateQueue;
 import sample.amazon.amazonSimpleQueueService.Enqueue;
+import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;
 
@@ -48,7 +48,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
 
     public void run() {
         if (this.createQueue.isEditable()) {
-            OMElement createQueueElement = CreateQueue.creatQueueElement(
+            OMElement createQueueElement = OMElementCreator.creatQueueElement(
                     this.createQueue.getText(),getKey());
             this.axis2EngineRuns("CreateQueue", createQueueElement,
                     new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,

@@ -22,7 +22,7 @@ import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-import sample.amazon.amazonSimpleQueueService.Read;
+import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;
 
@@ -46,7 +46,7 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement readQueueElement = Read.read(this.createQueue.getText(),getKey());
+        OMElement readQueueElement = OMElementCreator.read(this.createQueue.getText(),getKey());
         this.axis2EngineRuns("Read", readQueueElement,
                 new SimpleQueueReadCallbackHandler(this.queueCode, this.result));
     }
