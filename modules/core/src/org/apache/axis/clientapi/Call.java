@@ -36,6 +36,7 @@ import org.apache.axis.soap.SOAPEnvelope;
  */
 public class Call extends InOutMEPClient {
     private HashMap properties;
+    private static OperationDescription opreationTemplate;
 
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
@@ -91,6 +92,10 @@ public class Call extends InOutMEPClient {
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
+            axisConfig.setRemainingPhasesInFlow(opreationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(opreationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(opreationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(opreationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
         MessageContext msgctx = prepareTheSystem(toSend);
@@ -115,6 +120,8 @@ public class Call extends InOutMEPClient {
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        opreationTemplate = new OperationDescription(new QName("TemplateOperatin"));
+        axisService.addOperation(opreationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;
