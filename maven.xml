@@ -71,6 +71,10 @@
 	</uptodate>
 	<echo message="the files are up to date = ${jars.uptodate}"></echo>
     </goal>	
+
+  <!-- ================================================================ -->
+  <!--- Clean the Repository -->
+  <!-- ================================================================ -->
 				
     <goal name="clean">
 		<attainGoal name="multiproject:clean"/>
@@ -119,6 +123,10 @@
 	</ant:fileset> 
 	</ant:copy> 
     </goal>		
+
+  <!-- ================================================================ -->
+  <!--- Create the War -->
+  <!-- ================================================================ -->
 		
 
     <goal name="war" prereqs="init"> 
@@ -142,6 +150,10 @@
   <preGoal name="xdoc:jelly-transform">
     <attainGoal name="html2xdoc"/>
   </preGoal>
+
+  <!-- ================================================================ -->
+  <!--- Create the Binary Distribution -->
+  <!-- ================================================================ -->
   
   <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
         <ant:mkdir dir="target/dist-bin"/>
@@ -204,7 +216,10 @@
 		<ant:delete file="target/${dist.name}-bin.tar"/>
   </goal>
   
-  
+  <!-- ================================================================ -->
+  <!--- Create the Source Distribution -->
+  <!-- ================================================================ -->
+
   <goal name="dist-src" prereqs="init">
 		<ant:zip file="${dist.dir}/${dist.name}-src.zip" >
 			<ant:fileset dir=".">
@@ -230,6 +245,10 @@
             <ant:delete file="target/${dist.name}-src.tar"/>
   </goal>
   
+  <!-- ================================================================ -->
+  <!--- Create the Java Docs -->
+  <!-- ================================================================ -->
+
   <goal name="javadoc-gen" prereqs="init">
 	  <ant:javadoc packagenames="org.apache.axis.*"
            defaultexcludes="yes"
@@ -245,17 +264,5 @@
        </ant:sourcepath>
   </ant:javadoc>
   </goal>
-  
-  <!-- preGoal name="multiproject:site">
-    
-    <attainGoal name="war"/>
-    <attainGoal name="javadoc-gen"/>
-    
-    <copy todir="target/docs/api">
-		<fileset dir="target/apidocs" />
-	</copy>
-	<copy file="target/axis2.war" tofile="target/docs/dist/axis2.war"/>
-	
-  </preGoal -->
-</project>
+ </project>
 
