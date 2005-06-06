@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>Axis2 administartion guide</title>
+</head>
+<body>
+<p><h3><a name="_Toc96698076"></a>Introduction </h3>
+<p>Axis2 web administration module provide a way to configure axis2 dynamically
+ but those dynamic configuration wont be persistence, i.e. if the servlet 
+ container restart then all the dynamic configuration changes will be lost.  </p>
+ 
+ <p><h4><a name="_Toc96698076"></a>Loging into Administartion </h4>
+<p>From axis2 index page you can go to administration page by following 
+Axis2 Administration link, then logging page will be appeared asking user 
+name and password , the default username = admin and default password = axis2 .
+ You can change those two values by changing following two parameters in 
+ server.xml as you required.  
+<p align="left"><strong><img src="images/parameters.jpg"></strong></p>
+<p align="left"><strong><img src="images/adminloging.jpg"></strong></p>
+</p>
+<p>If the login succeed you will be see a page like below , where you can use 
+that to
+ view the running system and dynamically configure the system. </p>
+ <p align="left"><strong><img src="images/adminmain.jpg"></strong></p>
+ 
+ <p>The list service in axis2 index page and here are almost the same but only 
+ additional feature provide with admin module list service is, if there is any
+  module engaged globally, to the service or to the operation those details
+	 will be displayed here. </p>
+	 
+	 <p>To view the available modules in the "repository/modules" you just have
+	  to click the view modules then it will show you all the available modules 
+		in the system and only those modules can be dynamically engaged. </p>
+		
+		<p align="left"><strong><img src="images/modules.jpg"></strong></p>
+		<p>&nbsp;</p>
+		<p>From the globally engaged modules you can see the globally engaged 
+		modules if there is any , if a modules has engaged globally then the 
+		handlers belong to that module will be executed irrespective of the service. 
+		</p>
+		<p>&nbsp;</p>
+		<p>In axis2 there are two levels of phases, system predefined phases 
+		(not allowed to change) and user defined phases. The main difference 
+		between those two levels of phases is irrespective of the service all
+		 the system pre defined phases will be executed, if the dispatcher find
+		  the corresponding operation then user defined phase list will be executed. 
+			 And for the module developers and service writers are really required to 
+			 have understanding about phases and their orders.   </p>
+		<p align="left"><strong><img src="images/viewphases.jpg"></strong></p>
+		<p>&nbsp;</p>	
+		<p>The most interesting of axis2 web admin module is it provide a very basic 
+		way of viewing the global phase list and handler inside the phases considering 
+		both phase and handler orders. This kind of information is very valuable to 
+		debug the system, because there is no way to list out the handlers in the 
+		global chains except this. And if you engage a new module the new handlers 
+		will be added to the global chains and those will be displayed in this view 
+		phase page. </p> 
+		
+		<p align="left"><strong><img src="images/globalchain.jpg"></strong></p>
+		<p>&nbsp;</p>	
+		<p>From the View Service phase and Handlers can view the handlers corresponding
+		to a given service in the same order as there in the real execution chain. </p>
+		
+		<p align="left"><strong><img src="images/serviceHandlers.jpg"></strong></p>
+		<p>&nbsp;</p>	
+		
+		
+<p>Modules can be engage either globally, to a service or to an operation 
+depending on the module implementation. If the module has implemented to 
+engage globally then handlers in the module can be refers to any phase in 
+the system, that is it can be either system predefined or user defined phase.</P>  
+<p>In there other hand if the module has implemented in such a way that is going
+ to be deployed to a service or to an operation then the module can NOT refers
+  to any of system predefined phases. So that it can only refers to user defined phases. </p>
+<p>Immediately after engaging the module you can see the status of the engagement 
+, whether it is engaged properly or not.  </p> 
+
+<p align="left"><strong><img src="images/moduleengage.jpg"></strong></p>
+		<p>&nbsp;</p>	
+
+</body>
+</html>
