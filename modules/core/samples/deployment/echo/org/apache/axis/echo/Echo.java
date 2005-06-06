@@ -29,13 +29,10 @@ public class Echo {
 
     public Echo() {
     }
-    public OMElement echoOMElement(OMElement omEle) {
+    public OMElement viewVersion(OMElement omEle) {
         omEle.getNextSibling();
         omEle.detach();
         return omEle;
-    }
-    public String echoString(String in) {
-        return in;
     }
 
 }

@@ -311,9 +311,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
+        boolean isNewmodule = false;
         if(module == null ) {
             File file =  new  ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart());
             module =  new DeploymentEngine().buildModule(file);
+            isNewmodule = true;
         }
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
@@ -329,6 +331,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                      + moduleref.getLocalPart() + " has not bean deployed yet !");
         }
         engagedModules.add(moduleref);
+        if(isNewmodule){
+            addMdoule(module);
+        }  
     }
     
     public boolean isEngaged(QName moduleName){

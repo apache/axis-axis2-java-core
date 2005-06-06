@@ -4,6 +4,5 @@
             correctly
         </description>
         <parameter name="ServiceClass" locked="xsd:false">org.apache.axis.echo.Echo</parameter>
-        <operation name="echoOMElement"/>
-        <operation name="echoString"/>
+        <operation name="viewVersion"/>
 </service>

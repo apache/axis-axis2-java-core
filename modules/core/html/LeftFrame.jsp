@@ -92,7 +92,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectService" target="mainFrame">View Service Phases and Hnadlers</a>
+         <a href="selectService" target="mainFrame">View Service Phases and Handlers</a>
        </td>
     </tr>
     <tr>
