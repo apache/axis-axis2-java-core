@@ -155,7 +155,7 @@ public class ArchiveReader implements DeploymentConstants {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
             if(in == null ){
-                cl.getResourceAsStream("modules/" + moduleName + ".jar");
+                in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
             }
             if(in == null){
                 throw new DeploymentException( moduleName + " dose not found");
