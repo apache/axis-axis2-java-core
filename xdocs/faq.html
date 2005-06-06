@@ -1,0 +1,43 @@
+<html>
+<head><TITLE>Axis2 FAQ</TITLE></head>
+<body>
+	<h1>General</h1>
+	<ol>
+	<LI><strong>I see OMElements in all the signatures, in the stubs, Client API and in skeltons. Where is data binding?</strong><br>
+	<p>Axis2 does not have Databinding burns in to it, and it is a Problem that is already tackled by things like XML Beans and JAXB. Axis2 do not do data binding at this stage (M2) and work on pure XML. But the future relases (M3) will have support to plug in the databinding tool.If you want to to RPC over XML Axis2 is not there yet(soo it will be .. not yet), but if you are intersting in a SOAP Messaging Axis2 is the tool for that.</p> 
+	</p>
+	</LI>
+	
+	<LI><strong>What is OMElement, What does it represents?</strong><br>
+	<p>OMElement is Axis2 representation of XML, it provide a tree model like DOM. If you are familer with DOM or JDOM you can soon get familerize with OM quickly. For more information read<a href="OMTutorial.html"> Axiom Tutorial</a> </p> 
+	</p>
+	</LI>
+	</ol>
+	
+	<h1>Client API</h1>
+	<ol>
+	
+	<LI><strong>I want to do request response Messaging, Where should I look?</strong><br>
+	<p>Look at the <a href="../modules/core/src/org/apache/axis/clientapi/Call.java">Call</a> class, for more information please read the <a href="userguide.html">user guide</a> </p> 
+	</p>
+	</LI>
+
+	<LI><strong>I want to do One Way Messaging, Where should I look?</strong><br>
+	<p>Look at the <a href="../modules/core/src/org/apache/axis/clientapi/MessageSender.java">MessageSender</a> class, for more information please read the <a href="userguide.html">user guide</a> </p> 
+	</p>
+	</LI>
+	<LI><strong>Why can not I set the Addressing properties in the Call?</strong><br>
+	<p>Only in the case of the Message Sender the user allowed to edit the Message Properties, In the case of Call the Message correlation is taken care by the Client API and the Addressing Headers are under the Control of Axis2.</p> 
+	</p>
+	</LI>
+	
+	<LI><strong>When I try to do a non blocking call with use Seperate Listener true I get the error <i>to do two Transport Channels the Addressing Modules must be engeged</i>, Why is this?</strong><br>
+	<p>To do the two transport Channel invocation you need addressing module engage. enable it by uncommenting the entry in the client.xml file or Call.engageModule(QName).</p> 
+	</p>
+	</LI>
+	
+	
+	</ol>	
+	
+</body>
+</html>
