@@ -181,7 +181,18 @@
 				<ant:include name="*.html"/>
 				<ant:include name="*.txt"/>				
 			</ant:fileset> 
-		</ant:copy>
+		</ant:copy> 
+
+                <ant:mkdir dir="target/dist-bin/repository"/>
+                <ant:mkdir dir="target/dist-bin/repository/services"/>
+                <ant:mkdir dir="target/dist-bin/repository/modules"/>
+                <ant:copy todir="target/dist-bin/repository">
+			<ant:fileset dir="modules/samples/target/toWar/">
+				<ant:include name="**"/>
+			</ant:fileset> 
+		</ant:copy> 
+                        
+
 	<ant:copy todir="target/dist-bin/bin">
 			<ant:fileset dir="modules/tool/script"/>
 		</ant:copy> 
