@@ -134,7 +134,7 @@ IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>R
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
 for MyService we will use &quot;MyService.aar&quot; with the &quot;service.xml&quot; packaged 
 in the META-INF as shown in the following picture.</p>
-<p><img src="images/userguide/ServiceItems.JPG" width="176" height="91"></p>
+<p><img src="images/userguide/ServiceItems.jpg" width="176" height="91"></p>
 <p>To create  &quot;MyService.aar&quot;  user can first create a jar file containing all the files necessary for the service and then rename the &quot;jar&quot; to &quot;aar&quot; so that Axis2 understands it as a service archive. 
 This has already been created in the &quot;Axis2Home/samples/userguide&quot; directory, 
 and let's use it.. </p>
@@ -143,7 +143,7 @@ dropping the &quot;.aar&quot; in to &quot;services&quot; directory that can be f
 the &quot;\webapps\axis2\WEB-INF&quot; of your servlet container and hence please copy the &quot;MyService.aar&quot; into the 
 &quot;<b>services</b>&quot; directory. Once these steps are completed, please start the servlet container (if you have not already started) and check the link &quot;List Available services&quot; in the page http://localhost:8080/axis2/index.jsp and see whether the MyService is deployed properly. If 
 everything is ok, you will see the following out put.. </p>
-<p align="center"><img src="images/userguide/MyServiceDeployed.JPG" width="797" height="654"> </p>
+<p align="center"><img src="images/userguide/MyServiceDeployed.jpg" width="797" height="654"> </p>
 <p>If you can see the above out put then you have successfully deployed MyService on Axis2. Now let's see how we can write Web Service client to use this services. 
 Axis2 provides an easy way to deploy a Web Services using, index.jsp. (See the 
 installation guide for more information on this)</p>
@@ -247,7 +247,7 @@ Services&nbsp; and let's see how to use them Now!</b></p>
 <p>The green lines shows the set of operations that you need to perform in-order to invoke a web service while the rest is used to create the OMElement that needs to be sent and to display the response OMElement. To test this 
 client you can use the &quot;TestEchoBlockingClient.bat&quot; that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. The 
 .bat or .sh files show the required jars that needs to be there in the classpath for one to write Web Service clients using Axis2. So if you can see the response OMElement printed in your command line (as shown below)  then you have successfully tested the client as well. </p>
-<p><img src="images/userguide/TestClient.JPG" width="951" height="132"></p>
+<p><img src="images/userguide/TestClient.jpg" width="951" height="132"></p>
 <h3>PingClient</h3>
 <p>In the Web Service &quot;MyService&quot; we had a IN-ONLY operation with the name &quot;ping&quot; (see Web Services Using Axis2). So let's write a client to invoke this operation as well. 
 The client code will be as follows.</p>
@@ -401,7 +401,7 @@ handler that just logs the message that is passed though it. Axis2 uses .&quot;m
 structure inside that needs to be there in the &quot;.mar&quot; archive. Let's create all 
 these and see how it works.</p>
 <p>
-<img border="0" src="images/userguide/ModuleView.JPG" width="185" height="120"></p>
+<img border="0" src="images/userguide/ModuleView.jpg" width="185" height="120"></p>
 <h4>
 Step1 : LoggingModule Class</h4>
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2 modules 

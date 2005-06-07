@@ -43,6 +43,9 @@
         	<ant:fileset dir="src">
         		<ant:include name="sample/axisversion/**"/>
         	</ant:fileset> 
+                <fileset dir="src/sample/axisversion/">
+                     <include name="META-INF/**"/>
+                </fileset> 
 	</ant:copy> 
         <jar destfile="${samples.dir}/version/version.jar">
             <fileset dir="target/classes">
