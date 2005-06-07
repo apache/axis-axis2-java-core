@@ -134,7 +134,7 @@ public class ArchiveReader implements DeploymentConstants {
             if(DeploymentEngine.axis2repository == null ){
                 String userHome = System.getProperty("user.home");
                 File userHomedir = new File(userHome);
-                File repository = new File(userHomedir, "Axis2Home");
+                File repository = new File(userHomedir, ".axis2home");
                 if (!repository.exists()) {
                     repository.mkdirs();
                     modules = new File(repository, "modules");
