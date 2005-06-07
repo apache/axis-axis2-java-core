@@ -52,7 +52,7 @@
 <p>This release includes the following features:</p>
 <ul>
   <li>AXIOM, a SOAP specific streaming XML infoset model for SOAP 1.1/1.2 Messages</li>
-  <li>Modules, mechnisum to extend the SOAP Processing Model</li>
+  <li>Modules, mechanism to extend the SOAP Processing Model</li>
   <li>Support for WS-Addressing</li>
   <li>Client API</li>
   <li>Support for One-Way Messaging</li>
@@ -61,7 +61,7 @@
         <LI>Synchronous, Using a two way transport</LI>
         <LI>Asynchronous, Using a two way transport</LI>
         <LI>Synchronous, Using a one way transport</LI>
-        <LI>Aynchronous, Using a two way transport</LI>
+        <LI>Asynchronous, Using a two way transport</LI>
       </ol>
   </li>
   <li>Hot deployment of Web Services and Module deployment based on the archived modules </li>
@@ -133,9 +133,9 @@ in the META-INF as shown in the following picture.</p>
 <p>To create  &quot;MyService.aar&quot;  user can first create a jar file containing all the files necessary for the service and then rename the &quot;jar&quot; to &quot;aar&quot; so that Axis2 understands it as a service archive. 
 This has already been created in the &quot;Axis2Home/samples/userguide&quot; directory, 
 and let's use it.. </p>
-<p>Since this is our first Web Service&nbsp; we need one more step before we 
-deploy the service. That is to create a directory named &quot;<b>services</b>&quot; under &quot;webapps/axis2/WEB-INF&quot; of you servlet container. Deploying is just a matter of 
-dropping the &quot;.aar&quot; in to this directory and hence please copy the &quot;MyService.aar&quot; into the 
+<p>Deploying the service&nbsp; is just a matter of 
+dropping the &quot;.aar&quot; in to &quot;services&quot; directory that can be found in 
+the &quot;\webapps\axis2\WEB-INF&quot; of your servlet container and hence please copy the &quot;MyService.aar&quot; into the 
 &quot;<b>services</b>&quot; directory. Once these steps are completed, please start the servlet container (if you have not already started) and check the link &quot;List Available services&quot; in the page http://localhost:8080/axis2/index.jsp and see whether the MyService is deployed properly. If 
 everything is ok, you will see the following out put.. </p>
 <p align="center"><img src="images/userguide/MyServiceDeployed.JPG" width="797" height="654"> </p>
@@ -143,6 +143,79 @@ everything is ok, you will see the following out put.. </p>
 Axis2 provides an easy way to deploy a Web Services using, index.jsp. (See the 
 installation guide for more information on this)</p>
 <h2> Web Service Clients Using Axis2 </h2>
+<p> Web services can be used to provide wide range of functionality to the users 
+ranging from simple less time consuming&nbsp; operations such as &quot;getStockQuote&quot;&nbsp; 
+to time consuming business data processing. When we utilize (write client 
+applications) these Web Service we cannot use some simple generic invocation 
+paradigm that suites all the timing complexities involved in the service 
+operations. For example, if we use a single transport channel (such as HTTP) to 
+invoke a Web Service with and IN-OUT operation, that take long time to complete, 
+then in most of the time we may end up with &quot;connection time outs&quot;. On the other 
+hand, if there are simultaneous service invocations that&nbsp; we need to 
+perform from a single client application, then the use of a &quot;blocking&quot; client 
+API will degrade the performance of the client application. Similarly there are 
+various other consequences such as One-Way transports come in to play when we 
+need to invoke Web Services. So let's try to analyze some common service 
+invocation paradigms.</p>
+<p> Many web service engines provide the users with a Blocking and Non-Blocking 
+client APIs. </p>
+<ul>
+  <li><b>Blocking API</b> -Once the service invocation is called, the client 
+  application hangs and gets the control back only when the operation completes 
+  and the client receives a response or a fault. This is the simplest way of 
+  invoking Web Services and suites many business situations.</li>
+  <li><b>Non-Blocking API </b>- A callback or polling based API and hence once a 
+  service invocation is called, the client application immediately gets the 
+  control back and the response is retrieved using the callback object provided. 
+  This approach provides the flexibility to the client application to invoke 
+  several Web Services simultaneously with out blocking on the operation already 
+  invoked.</li>
+</ul>
+<p> Both these mechanism works in the API level and let's name the&nbsp; 
+asynchronous behavior that we can get using the Non-Blocking API as <b>API Level 
+Asynchrony.</b></p>
+<p> Both these mechanisms use single transport connection to send the request 
+and to receive the response. They severely lags the capability of using two 
+transport connections for the request and the response (either One-Way of 
+Two-Way). So both of these mechanisms fail to address the problem of long 
+running transactions (the transport connection may times-out before the 
+operation completes). A possible solution would be to use two separate transport 
+connections for request and response. The asynchronous behavior that we gain 
+using can be called, <b>Transport Level Asynchrony</b>.</p>
+<p> By combining the two we can obtain four differtn invocation patterns for web 
+services as shown in the follwing table.</p>
+<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" height="99">
+  <tr>
+    <td width="33%" height="19">API (Blocking/Non-Blocking)</td>
+    <td width="33%" height="19">&nbsp;Dual Transports (Yes/No)</td>
+    <td width="33%" height="19">Description</td>
+  </tr>
+  <tr>
+    <td width="33%" height="19">Blocking</td>
+    <td width="33%" height="19">No</td>
+    <td width="33%" height="19">Simplest and the familiar invocation pattern</td>
+  </tr>
+  <tr>
+    <td width="33%" height="19">Non-Blocking</td>
+    <td width="33%" height="19">No</td>
+    <td width="33%" height="19">Using callbacks or polling</td>
+  </tr>
+  <tr>
+    <td width="33%" height="19">Blocking</td>
+    <td width="33%" height="19">Yes</td>
+    <td width="33%" height="19">This is useful when the service operation is 
+    IN-OUT in nature but the transport used is One-Way (e.g. SMTP)</td>
+  </tr>
+  <tr>
+    <td width="33%" height="19">Non-Blocking</td>
+    <td width="33%" height="19">Yes</td>
+    <td width="33%" height="19">This is can be used to gain the maximum 
+    asynchronous behavior. No blocking in the API level and also in the 
+    transport level</td>
+  </tr>
+</table>
+<p><b>Axis2 provides the user with all these possibilities to invoke Web 
+Services&nbsp; and let's see how to use them Now!</b></p>
 <h3>EchoBlockingClient</h3>
 <p>Axis2 provides the user with several invocation patterns for Web Services, ranging from pure blocking single channel invocations to a non-blocking dual channel invocations. First let's see how we can write a client to invoke &quot;echo&quot; operation of &quot;MyService&quot; using the simplest good old blocking invocation. The client code that you need to write will be as follows.</p>
 <pre class="style1 style2 style3">  try {
@@ -303,24 +376,29 @@ found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; d
 <p>Axis2 provides an extended support for modules (See
 <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more details 
 about modules in axis2). Let's see how we can create a custom module and deploy 
-it to the MyService that we have created earlier. Creating and deploying a 
-custom moduel for a service in Axis2 can be described using the following steps.</p>
+it to the MyService that we have created earlier. Following steps shows the 
+actions that needs to be performed to deploy a custom module for a given Web 
+Service.</p>
 <ol>
   <li>Create the Module Implementation</li>
   <li>Create the Handlers</li>
   <li>Create the moduel.xml</li>
+  <li>Modify the &quot;server.xml&quot; (if you need custom phases)</li>
+  <li>Modify the &quot;service.xml&quot; to engage modules at the deployment time.</li>
   <li>Package in a &quot;.mar&quot; (Module Archive)</li>
-  <li>Deploy in Axis2</li>
+  <li>Deploy the module in Axis2</li>
 </ol>
 <h3>MyService with a Logging Module 
 </h3>
-<p>First let's write the LoggingModule (We will write a simple logging module 
-that will simply log the messages). The module&nbsp; has a similar file 
-hierarchy as shown below.</p>
+<p>Let's write a simple logging module for our sample. This module contains one 
+handler that just logs the message that is passed though it. Axis2 uses .&quot;mar&quot; 
+(Module Archive) to deploy modules in Axis2. Following diagram shows the file 
+structure inside that needs to be there in the &quot;.mar&quot; archive. Let's create all 
+these and see how it works.</p>
 <p>
 <img border="0" src="images/userguide/ModuleView.JPG" width="185" height="120"></p>
 <h4>
-Step1</h4>
+Step1 : LoggingModule Class</h4>
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2 modules 
 should implement the &quot;org.apache.axis.modules.Module&quot; interface with the 
 following methods.</p>
@@ -330,13 +408,15 @@ public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of mod
 <p>These methods can be used to control the module initialization and the 
 termination. With the input parameter AxisConfiguration, the user is provided 
 with the complete configuration hierarchy and this can be used to fine tune the 
-module behavior by the module writers. For the simple logging service that we 
-are going to write we can keep these methods blank in our implementation class.</p>
-<h4>Step2</h4>
-<p>A module in axis2 can contain, one or more handlers that performs various 
+module behavior by the module writers. For the simple logging service, we can keep these methods blank in our implementation class.</p>
+<h4>Step2 : LogHandler</h4>
+<p>A module in axis2 can contain, one or more handlers that perform various 
 SOAP header processing at different phases. (See<a href="Axis2ArchitectureGuide.html"> 
 Architecture Guide</a> for more information about phases). For the logging 
-module we will write a handle with the following methods.</p>
+module we will write a handle with the following methods. &quot;public void 
+invoke(MessageContext ctx);&quot; is the method that is called by the Axis2 engine 
+when the control is passed to the handler. &quot;public void revoke(MessageContext 
+ctx);&quot; is called when the handlers are revoked by the Axis2 engine. </p>
 <pre class="style1 style2 style3">public class LogHandler extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private QName name;
@@ -358,41 +438,192 @@ module we will write a handle with the following methods.</p>
     }
 }
 </pre>
-<h4>Step3</h4>
+<h4>Step3 : module.xml</h4>
 <p>&quot;module.xml&quot; contains the deployment configurations for a particular module. 
 It contains details such as Implementation class of the module (in this example 
-it is the &quot;LoggingModuel&quot; class and the various handlers that will run in 
+it is the &quot;LoggingModule&quot; class and the various handlers that will run in 
 different phases. &quot;module.xml&quot; for the logging module will be as follows.</p>
 <p>
 <pre  class="style1 style2 style3">&lt;module name=&quot;logging&quot; class=&quot;userguide.loggingmodule.LoggingModule &quot;&gt;
 &lt;inflow&gt;
-&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
-&lt;order phase=&quot;loggingPhase&quot; /&gt;
-&lt;/handler&gt;
+	&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+	&lt;order phase=&quot;loggingPhase&quot; /&gt;
+	&lt;/handler&gt;
 &lt;/inflow&gt;
 
 &lt;outflow&gt;
-&lt;handler name=&quot;OutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
-&lt;order phase=&quot;loggingPhase&quot;/&gt;
-&lt;/handler&gt;
+	&lt;handler name=&quot;OutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+	&lt;order phase=&quot;loggingPhase&quot;/&gt;
+	&lt;/handler&gt;
 &lt;/outflow&gt;
 
 &lt;Outfaultflow&gt;
-&lt;handler name=&quot;FaultOutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
-&lt;order phase=&quot;loggingPhase&quot;/&gt;
-&lt;/handler&gt;
+	&lt;handler name=&quot;FaultOutFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+	&lt;order phase=&quot;loggingPhase&quot;/&gt;
+	&lt;/handler&gt;
 &lt;/Outfaultflow&gt;
 
 &lt;INfaultflow&gt;
-&lt;handler name=&quot;FaultInFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
-&lt;order phase=&quot;loggingPhase&quot;/&gt;
-&lt;/handler&gt;
+	&lt;handler name=&quot;FaultInFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+	&lt;order phase=&quot;loggingPhase&quot;/&gt;
+	&lt;/handler&gt;
 &lt;/INfaultflow&gt;
 &lt;/module&gt;</pre></p>
 
-<h3>&nbsp;</h3>
+<p>As it can be seen there are four phases defined in this &quot;module.xml&quot;</p>
+<ol>
+  <li>inflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  - Represents the handler chain that will run when a message is coming in.</li>
+  <li>outflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  - Represents the handler chain that will run when the message is going out.</li>
+  <li>Outfaultflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Represents the handler chain 
+  that will run when there is a fault and the the fault is going out</li>
+  <li>INfaultflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Represents the handler 
+  chain that will run when there is a fault and the the fault is coming in</li>
+</ol>
 
-<h3>&nbsp;</h3>
+<p>
+<p>Following set of tags describe the name of the handler, handler class and the 
+phase in which this handler going to run.&quot;InFlowLogHandler&quot; is the name given 
+for the particular instance of this handler. The property, class is the actual 
+implementation class for this handler. Since we are writing logging handler, we 
+can reuse the same handler in all these phases, however this may not be the same 
+for all the modules. &quot;&lt;order phase=&quot;loggingPhase&quot; /&gt;&quot; describes the phase in 
+which this handler runs. </p>
+<pre  class="style1 style2 style3">&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+&lt;order phase=&quot;loggingPhase&quot; /&gt;
+&lt;/handler&gt;
+</pre></p>
+
+<h4>Step 4: Modify the &quot;server.xml&quot;</h4>
+
+
+<p>In this handler the phase &quot;loggingPhase&quot; is defined by the module writer. It 
+is not a pre-defined handler phase and hence the module writer should introduce 
+it to the &quot;server.xml&quot; (NOT the service.xml) so that Axis2 engine knows where to 
+place the handler in different &quot;flows&quot; (<br>
+InFlow, OutFlow, etc...). Following xml lines shows the respective changes to 
+the &quot;server.xml&quot; in order for us to deploy this logging module in Axis2 engine. 
+This is an extract of the phase section of the &quot;server.xml&quot;.</p>
+
+
+<pre  class="style1 style2 style3">&lt;!-- ================================================= --&gt;
+&lt;!-- Phases --&gt;
+&lt;!-- ================================================= --&gt;
+&lt;phaseOrder type=&quot;inflow&quot;&gt;
+&lt;!-- System pre defined phases --&gt;
+	&lt;phase name=&quot;TransportIn&quot;/&gt;
+	&lt;phase name=&quot;PreDispatch&quot;/&gt;
+	&lt;phase name=&quot;Dispatch&quot;/&gt;
+	&lt;phase name=&quot;PostDispatch&quot;/&gt;
+&lt;!-- System pre defined phases --&gt;
+</pre>
+
+
+<pre  class="style1 style2 style3">&lt;!-- After Postdispatch phase module author or or service author can add any phase he want --&gt;
+&lt;phase name=&quot;<font color="#33CC00">loggingPhase</font>&quot;/&gt;
+&lt;/phaseOrder&gt;</pre>
+
+
+<pre  class="style1 style2 style3">&lt;phaseOrder type=&quot;outflow&quot;&gt;
+&lt;!-- user can add his own phases to this area --&gt;
+&lt;phase name=&quot;<font color="#33CC00">loggingPhase</font>&quot;/&gt;
+&lt;/phaseOrder&gt;</pre>
+
+
+<pre  class="style1 style2 style3">&lt;phaseOrder type=&quot;INfaultflow&quot;&gt;
+&lt;!-- user can add his own phases to this area --&gt;
+&lt;phase name=&quot;<font color="#33CC00">loggingPhase</font>&quot;/&gt;
+&lt;/phaseOrder&gt;</pre>
+
+
+<pre  class="style1 style2 style3">&lt;phaseOrder type=&quot;Outfaultflow&quot;&gt;
+&lt;!-- user can add his own phases to this area --&gt;
+&lt;phase name=&quot;<font color="#33CC00">loggingPhase</font>&quot;/&gt;
+&lt;/phaseOrder&gt;
+</pre>
+
+
+<p>Shown in green, the custom phase &quot;loggingPhase&quot; is placed in all the flows, 
+and hence that phase will be called in all the message flows in the engine. 
+Since our module is associated with this phase, the LogHandler is now have a 
+phase for it to get executed.
+</p>
+
+
+<h4>Step5 : Modify the &quot;service.xml&quot;</h4>
+
+
+<p>Up to this point we have created the required classes and the configuration 
+descriptions for the logging module and by changing the &quot;server.xml&quot; we have 
+created the required phases for the logging module. Now the next step is to &quot;<b>engage</b>&quot; 
+(use) this module in one of our services. For this, let's use the same Web 
+Service that we have used throughout the user guide, the MyService. However, 
+since we need to modify the &quot;service.xml&quot; of the MyService in order for us 
+engage this module, we use a separate Web Service, but with the similar 
+operations. The code for this service can be found in the &quot;Axis2Home/samples/userguide/src/userguide/example2&quot; 
+directory. The simple changes that we have done to he &quot;service.xml' are shown in 
+the green color in the following lines of xml.</p>
+
+<p><pre  class="style1 style2 style3">&lt;service name=&quot;<font color="#33CC00">MyServiceWithModule</font>&quot;&gt;
+&lt;description&gt;
+This is a sample Web Service with a logging module engaged.
+&lt;/description&gt;
+<font color="#33CC00">&lt;module ref=&quot;logging&quot;/&gt;</font>
+&lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example2.MyService&lt;/parameter&gt;
+&lt;operation name=&quot;echo&quot;&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;
+&lt;/operation&gt;
+&lt;operation name=&quot;ping&quot;&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;
+&lt;/operation&gt;
+&lt;/service&gt;
+</pre></p>
+
+
+<p>In this example we have changed the service name (the implementatoin class is 
+very similar to what we have used ealier although it is in a different package). 
+In addition we have added the line <b>&quot;&lt;module ref=&quot;logging&quot;/&gt;&quot;</b> to the &quot;service.xml&quot;. 
+This informs the Axis2 engine that the module &quot;logging&quot; should be engaged for 
+this service. The handler in side the module will be executed in their 
+respective phases as described by the &quot;module.xml&quot;.</p>
+
+
+<p><b>Step6 : Packaging</b></p>
+
+
+<p>Before deploying the module we need to create the &quot;.mar&quot; file for this 
+module. This can be done, using the &quot;jar&quot; command and then renaming the created 
+jar file, or you can find the &quot;Logging.mar&quot; that is already created for you in 
+the &quot;Axis2Home/samples/userguide&quot; directory.</p>
+
+
+<h4>Step7 : Deploy the module in Axis2</h4>
+
+
+<p>Deploying a module in Axis2 require the user to create a directory with the 
+name &quot;modules&quot; in the &quot;webapps/axis2/WEB-INF&quot; directory of their servlet 
+container and then copying the &quot;.mar&quot; file to that directory. So let's first 
+create the &quot;modules&quot; directory and drop the &quot;LoggingModule.mar&quot; in to this 
+directory.</p>
+
+
+<p>Although the required changes to the &quot;service.xml&quot; is very little, we have 
+created a separate service archive (MyServiceWithModule.aar) for users to just 
+deploy and see. Please deploy this service using the same steps that you use to 
+deploy &quot;MyService&quot; and copy the &quot;LoggingModule.mar&quot; file to the &quot;modules&quot; 
+directory. Then by
+</p>
+
+
+<p>NO NEED TO CREATE SEVICES DIRECTORY NOW</p>
+
+
+<p>THIS IS A TEMPORARY SOLUTION IN THE SERVER.XML</p>
+
+
+<p><br>
+</p>
 
 <h3>Other Samples //Links to Google Samples&nbsp;&nbsp;&nbsp;&nbsp; </h3>
 <h2>Tools</h2>
