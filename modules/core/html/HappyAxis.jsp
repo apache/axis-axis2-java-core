@@ -48,7 +48,7 @@
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0,lastindex);
     targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                    IP + "/services/axisversion/viewVersion");
+                    IP + "/services/Version/getVersion");
 %>
 <%!
     /*
@@ -325,15 +325,13 @@
     }
 
     private String value;
-    private QName operationName = new QName("viewVersion");
+    private QName operationName = new QName("getVersion");
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("viewVersion", omNs);
+        OMElement method = fac.createOMElement("Version", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Hello I am Axis2 versionning service , My version is Axis2 M2 !! "));
         method.addChild(value);
-
         return method;
     }
     public boolean inVokeTheService() {
