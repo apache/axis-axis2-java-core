@@ -116,7 +116,7 @@
         <ant:copy todir="${samples.dir}/amazonQS/docs">
         	<ant:fileset dir="xdocs/amazonQS"/>
 	</ant:copy> 
-	<ant:copy file="xdocs/readme.txt" tofile="{samples.dir}/amazonQS/readme.txt" />
+	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/amazonQS/readme.txt" />
      	<ant:copy todir="${samples.dir}/amazonQS">
         	<ant:fileset dir="script/amazonQS"/>
 	</ant:copy>
@@ -144,7 +144,7 @@
         <ant:copy todir="${samples.dir}/googleSearch/docs">
         	<ant:fileset dir="xdocs/googleSearch"/>
 	</ant:copy> 
-	<ant:copy file="xdocs/readme.txt" tofile="{samples.dir}/googleSearch/readme.txt" />
+	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSearch/readme.txt" />
 	<ant:copy todir="${samples.dir}/googleSearch">
         	<ant:fileset dir="script/googleSearch"/>
 	</ant:copy> 
@@ -172,7 +172,7 @@
         <ant:copy todir="${samples.dir}/googleSpellcheck/docs">
         	<ant:fileset dir="xdocs/googleSpellcheck"/>
 	</ant:copy> 
-    	<ant:copy file="xdocs/readme.txt" tofile="{samples.dir}/googleSpellcheck/readme.txt" />
+    	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSpellcheck/readme.txt" />
     <ant:copy todir="${samples.dir}/googleSpellcheck">
         	<ant:fileset dir="script/googleSpellcheck"/>
 	</ant:copy> 
