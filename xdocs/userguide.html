@@ -246,8 +246,8 @@ Services&nbsp; and let's see how to use them Now!</b></p>
 }
 </code></pre></p>
 <p>The green lines shows the set of operations that you need to perform in-order to invoke a web service while the rest is used to create the OMElement that needs to be sent and to display the response OMElement. To test this 
-client you can use the &quot;TestEchoBlockingClient.bat&quot; that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. The 
-.bat or .sh files show the required jars that needs to be there in the classpath for one to write Web Service clients using Axis2. So if you can see the response OMElement printed in your command line (as shown below)  then you have successfully tested the client as well. </p>
+client you can use the provided ant build file that can be found in the 
+&quot;Axis2Home/samples&quot; directory. Run the &quot;testEchoBlockingClient&quot; target . if you can see the response OMElement printed in your command line&nbsp;  then you have successfully tested the client as well. </p>
 <p><img src="images/userguide/TestClient.jpg" width="951" height="132"></p>
 <h3>PingClient</h3>
 <p>In the Web Service &quot;MyService&quot; we had a IN-ONLY operation with the name &quot;ping&quot; (see Web Services Using Axis2). So let's write a client to invoke this operation as well. 
@@ -267,7 +267,8 @@ The client code will be as follows.</p>
 </p> 
 <p>Since we are accessing a IN-ONLY operation we can directly use the &quot;MessageSender&quot; to invoke this operation. As it can be seen in the above code , it is very straight forward to invoke this type of operation. MessageSender will not block the 
 invocation, hence it will return the control immediately back to the client. You can 
-test this client using the &quot;TestPingClient.bat&quot; that is in &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot;.</p>
+test this client by running the target &quot;testPingClient&quot; of the ant build 
+file at &quot;Axis2Home/samples&quot;.</p>
 <p>Ok, we have invoked the two operations in our service, Are we done? No!, there are lot more to explore, Let's see some other ways to invoke 
 the same operations.</p>
 <h3>EchoNonBlockingClient</h3>
@@ -283,7 +284,8 @@ public boolean isComplete() {}</code></pre></p>
 <p>The user is expected to implement the &quot;onComplete &quot; and &quot;reportError &quot; methods of their extended call back class. Axis2 engine calls the onComplete method once the Web Service 
 response is received by the Axis2 Client API (Call). This will eliminate the blocking nature of the Web Service invocations and provides the user with the flexibility to use Non Blocking API for Web Service 
 Clients.</p>
-<p>To run the sample client ( EchoNonBlockingClient) you can simply use the &quot;TestEchoNonBlockingClient.bat&quot; or &quot;TestEchoNonBlockingClient.sh&quot; files that can be found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. </p>
+<p>To run the sample client ( EchoNonBlockingClient) you can simply use the &quot;testEchoNonBlockingClient&quot; 
+target of the ant file found at the &quot;Axis2Home/samples&quot; directory. </p>
 <h3>EchoNonBlockingDualClient </h3>
 <p>The solution provided by the Non-Blocking API has one limitation when it 
 comes to&nbsp; Web Service invocations which takes long time to complete. The limitation 
@@ -364,7 +366,8 @@ details about phases)&nbsp; and hence &quot;engaging&quot; means simply adding m
 directory in the servlet container. </p>
 <source><pre> &lt;module ref=&quot;addressing&quot;/&gt;</code></pre>
 <p>Note: Please note that<span class="style15"><font color="#000000"> once you change the &quot;server.xml&quot; you need to restart the servlet container.</font></span></p>
-<p>This will enable the addressing in the server side and now you can test the &quot;TestEchoNonBlockingDualClient&quot; using the &quot;TestEchoNonBlockingDualClient.bat&quot; or &quot;TestEchoNonBlockingDualClient.sh&quot; provided under &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory. 
+<p>This will enable the addressing in the server side and now you can test the &quot;TestEchoNonBlockingDualClient&quot; using the &quot;testEchoNonBlockingDualClient&quot; 
+target of the ant file found at &quot;Axis2Home/samples&quot; directory. 
 If you can see the response OMElement printed in the client side, that means you 
 have successfully tested the Non Blocking API with two transport channels at the 
 client side.</p>
@@ -376,8 +379,9 @@ explanation is similar to the EchoNonBlockingDualClient, except that here we do
 not use a callback object to handle response. This is a very useful mechanism 
 when the service invocation is IN-OUT in nature and the transports are One-Way 
 (e.g. SMTP). For the sample client we use two HTTP connections for request and 
-response. User can test this client using the &quot;EchoBlockingDualClient.bat&quot; or &quot;EchoBlockingDualClient.sh&quot; 
-found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory.</p>
+response. User can test this client using the &quot;echoBlockingDualClient&quot; 
+target of the ant build file 
+found in the &quot;Axis2Home/samples&quot; directory.</p>
 <p>See <a href="#configTransport">Configuring Transports</a> for use different transports.</p>
 <h2>Modules</h2>
 <p>Axis2 provides an extended support for modules (See
@@ -777,10 +781,9 @@ Connection closed by foreign host.
   
   <p>Now the James is up and running with the accounts</p>
   
-  <h2>Enable REST support</h2>
-  <h3>Enable the REST support for the Server side</h3>
-  <p>Add the following parameter in the server.xml file</p>
-  <code>&lt;parameter name="eanbleREST" locked="xsd:false"&gt;true&lt;/parameter&gt;</code>
+  <hr>  
+  
+  <p>&nbsp;</p>
   
   <!--
   <h3>Enable the REST support for the Client side</h3>
