@@ -39,16 +39,12 @@ public class AddressingModuleTest extends TestCase {
     }
 
     public void testExtractAddressingInformationFromHeaders() throws AxisFault {
-//            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-//            AxisConfiguration er = builder.buildEngineContext("target").getEngineConfig();
-//
-//            //DeploymentEngine deploymentEngine = new DeploymentEngine();
-//            //File file = new File("target/addressing.mar");
-//            //assertTrue(file.exists());
-//            ModuleDescription moduleDesc = er.getModule(new QName("addressing"));//deploymentEngine.buildModule(file);
-//            assertNotNull(moduleDesc);
-        //TODO Fix me Deepal
-
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
+            AxisConfiguration er = builder.buildEngineContext("target").getAxisConfiguration();
+            File file = new File("target/addressing.mar");
+            assertTrue(file.exists());
+            ModuleDescription moduleDesc = er.getModule(new QName("addressing"));
+            assertNotNull(moduleDesc);
     }
 
 }
