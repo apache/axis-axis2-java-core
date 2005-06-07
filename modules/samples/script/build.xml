@@ -1,0 +1,28 @@
+<project name="samples" default="alltests">
+<path id="axis.classpath">
+		<fileset dir="../lib">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="userguide/sample.jar"/>
+</path>
+
+<target name="alltests" depends="testEchoBlockingClient,testEchoBlockingDualClient,testEchoNonBlockingDualClient,testPingClient,testWebServiceWithModuleClient">
+</target>
+
+<target name="testEchoBlockingClient">
+		<java classname="userguide.clients.EchoBlockingClient" classpathref="axis.classpath"/>
+</target>
+<target name="testEchoBlockingDualClient">
+		<java classname="userguide.clients.EchoBlockingDualClient" classpathref="axis.classpath"/>
+</target>
+<target name="testEchoNonBlockingDualClient">
+		<java classname="userguide.clients.EchoNonBlockingDualClient" classpathref="axis.classpath"/>
+</target>
+<target name="testPingClient">
+		<java classname="userguide.clients.PingClient" classpathref="axis.classpath"/>
+</target>
+<target name="testWebServiceWithModuleClient">
+		<java classname="userguide.clients.ClientForWebServiceWithModule" classpathref="axis.classpath"/>
+</target>
+
+</project>

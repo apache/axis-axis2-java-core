@@ -144,6 +144,7 @@
       		    	<ant:include name="*.properties"/>
 			</ant:classes>
                         <ant:webinf dir="modules/samples/target/toWar/"/>
+                        <ant:webinf dir="modules/core/src/org/apache/axis/deployment"/>
 		</ant:war>
     </goal>
 	<!-- to transforme htmls to xdocs -->
