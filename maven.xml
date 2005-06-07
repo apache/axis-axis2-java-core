@@ -61,7 +61,7 @@
         <ant:mkdir dir="${dist.dir}"/>
    	<ant:mkdir dir="target/lib"/>
 
-        <uptodate property="jars.uptodate" targetfile="target/axis2-${pom.currentVersion}.war">
+        <uptodate property="jars.uptodate" targetfile="target/axis2.war">
 	   <srcfiles dir="modules">
 	       <include name="**/*.java"/>
 	       <include name="**/*.xml"/>
@@ -135,7 +135,7 @@
                 <attainGoal name="create-lib"/>
          </j:if> 
         <!-- jar the test classes -->
-		<ant:war destfile="target/axis2-${pom.currentVersion}.war" webxml="modules/core/conf/web.xml">
+		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
 		  	<ant:fileset dir="modules/core/html"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
@@ -180,7 +180,7 @@
 				<ant:include name="*.jar"/>
 			</ant:fileset> 
 		</ant:copy> 
-		<ant:copy file="target/axis2-${pom.currentVersion}.war" tofile="${bin.dist.dir}/webapps/axis2-${pom.currentVersion}.war"/>
+		<ant:copy file="target/axis2.war" tofile="${bin.dist.dir}/webapps/axis2.war"/>
 		<ant:copy todir="${bin.dist.dir}/samples">
 			<ant:fileset dir="modules/samples/conf/">
 				<ant:include name="*.xml"/>
