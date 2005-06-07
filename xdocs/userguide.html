@@ -632,7 +632,73 @@ your servlet container. Change the line &quot;log4j.rootCategory= ERROR, LOGFILE
 
 
 <h2>Other Samples</h2>
+
+
+<p>To show the power and usage of Axis2, three standard samples are shipped with 
+the binary distribution. These are meant to interact with outside web services 
+and prove the capabilities of the Axis2 system.</p>
+
+
+<p>The included samples are</p>
+<ul>
+  <li>Google spell checker sample</li>
+  <li>Google search sample</li>
+  <li>Amazon queuing sample</li>
+</ul>
+
+
+<p>Following is a simple introduction to each of the samples. Each sample 
+contains it's own help document that says about&nbsp; the usage and the advanced 
+operations of that particular sample.</p>
+
+
+<h4>Google spell checker sample</h4>
+
+
+<p>This includes a spell checker program that uses the Google spell checking 
+service. It demonstrates the blocking and non-blocking modes of calling the 
+service. This sample can be found at the samples\googleSpellcheck folder and can 
+be easily started using either the batch file or the shell script.</p>
+
+
+<h4>Google search sample</h4>
+
+
+<p>This includes a search program that uses the familiar Google search over the 
+SOAP API. It utilizes the non-blocking mode of the client API. This sample can 
+be found at the samples\googleSearch folder and can be easily started using 
+either the batch file or the shell script.</p>
+
+
+<h4>Amazon queuing service</h4>
+
+
+<p>Amazon queuing service sample shows how to use the Amazon queuing service. it 
+has two user interfaces , one to enqueue and the other dequeue. This sample is 
+included in the samples\amazonQS and also contains the batch/shell scripts to 
+run.</p>
+
+
+<h3>Where are these samples ?</h3>
+
+
+<p>The most obvious place to look for the samples are the binary distribution. 
+all these samples are included in the samples directory in the binary 
+distribution. The shell scripts and the batch files are in fact written to use 
+the binary distributions root directory as the home to find the libraries.</p>
+
+
+<p>The other way is to build the samples from source. Moving to the 
+modules/samples and running maven will create the samples in the target/samples 
+directory. However if the samples need to be started using the shell scripts (or 
+the batch files) then the AXIS_HOME environment need to be set.( the &quot;guessed&quot; 
+AXIS_HOME would not be correct in this case)</p>
 <h2>Tools</h2>
+<p>Axis2 is shipped with two standard tools. Both the tools are Eclipse 
+plug-ins, the Codegen tool even has the accompanying Ant task and the command 
+line tool. Documentation for the code generator tool is available at the
+<a href="CodegenToolReference.html">Codegen wizard guide</a>.</p>
+<hr/>
 <p>&nbsp;</p>
 <h2>Configuring Transports</h2>
 <h3>Configuring HTTP transports</h3>
