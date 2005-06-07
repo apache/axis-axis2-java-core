@@ -190,7 +190,10 @@
 			</ant:fileset> 
 		</ant:copy>
 		<ant:copy todir="${bin.dist.dir}/samples">
-			<ant:fileset dir="modules/samples/target/samples"/>
+			<ant:fileset dir="modules/samples/target/samples">
+                                <include name="**"/>
+                                <exclude name="googleSearch"/>
+                        </ant:fileset>
 		</ant:copy> 
 		<ant:copy todir="${bin.dist.dir}/">
 			<ant:fileset dir=".">
