@@ -43,14 +43,14 @@
         	<ant:fileset dir="src">
         		<ant:include name="sample/axisversion/**"/>
         	</ant:fileset> 
-                <fileset dir="src/sample/axisversion/">
-                     <include name="META-INF/**"/>
-                </fileset> 
 	</ant:copy> 
         <jar destfile="${samples.dir}/version/version.jar">
             <fileset dir="target/classes">
                 <include name="sample/axisversion/**"/>
             </fileset>           
+           <fileset dir="src/sample/axisversion/">
+               <include name="META-INF/**"/>
+           </fileset> 
         </jar>
         <copy file="${samples.dir}/version/version.jar"
 		tofile="target/toWar/services/version.aar"/>
