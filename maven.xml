@@ -61,7 +61,7 @@
         <ant:mkdir dir="${dist.dir}"/>
    	<ant:mkdir dir="target/lib"/>
 
-        <uptodate property="jars.uptodate" targetfile="target/axis2.war">
+        <uptodate property="jars.uptodate" targetfile="target/axis2-${pom.currentVersion}.war">
 	   <srcfiles dir="modules">
 	       <include name="**/*.java"/>
 	       <include name="**/*.xml"/>
@@ -135,7 +135,7 @@
                 <attainGoal name="create-lib"/>
          </j:if> 
         <!-- jar the test classes -->
-		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
+		<ant:war destfile="target/axis2-${pom.currentVersion}.war" webxml="modules/core/conf/web.xml">
 		  	<ant:fileset dir="modules/core/html"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
@@ -156,56 +156,57 @@
   <!-- ================================================================ -->
   
   <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
-        <ant:mkdir dir="target/dist-bin"/>
-	<ant:mkdir dir="target/dist-bin/docs"/>
-	<ant:mkdir dir="target/dist-bin/bin"/>
-	<ant:mkdir dir="target/dist-bin/lib"/>
-	<ant:mkdir dir="target/dist-bin/samples"/>
-	<ant:mkdir dir="target/dist-bin/webapps"/> 
-        <ant:mkdir dir="target/dist-bin/docs/api"/> 
+        <property name="bin.dist.dir" value="target/dist-bin/axis2-${pom.currentVersion}-bin"/>
+        <ant:mkdir dir="${bin.dist.dir}"/>
+	<ant:mkdir dir="${bin.dist.dir}/docs"/>
+	<ant:mkdir dir="${bin.dist.dir}/bin"/>
+	<ant:mkdir dir="${bin.dist.dir}/lib"/>
+	<ant:mkdir dir="${bin.dist.dir}/samples"/>
+	<ant:mkdir dir="${bin.dist.dir}/webapps"/> 
+        <ant:mkdir dir="${bin.dist.dir}/docs/api"/> 
 
-		<ant:copy todir="target/dist-bin/docs/api">
+		<ant:copy todir="${bin.dist.dir}/docs/api">
 			<ant:fileset dir="target/apidocs/">
 				<ant:include name="**"/>
 			</ant:fileset> 
 		</ant:copy> 
-		<ant:copy todir="target/dist-bin/docs">
+		<ant:copy todir="${bin.dist.dir}/docs">
 			<ant:fileset dir="xdocs">
 				<ant:include name="**"/>
 			</ant:fileset> 
 		</ant:copy> 
-		<ant:copy todir="target/dist-bin/lib" flatten="true">
+		<ant:copy todir="${bin.dist.dir}/lib" flatten="true">
 			<ant:fileset dir="target/lib">
 				<ant:include name="*.jar"/>
 			</ant:fileset> 
 		</ant:copy> 
-		<ant:copy file="target/axis2.war" tofile="target/dist-bin/webapps/axis2.war"/>
-		<ant:copy todir="target/dist-bin/samples">
+		<ant:copy file="target/axis2-${pom.currentVersion}.war" tofile="${bin.dist.dir}/webapps/axis2-${pom.currentVersion}.war"/>
+		<ant:copy todir="${bin.dist.dir}/samples">
 			<ant:fileset dir="modules/samples/conf/">
 				<ant:include name="*.xml"/>
 			</ant:fileset> 
 		</ant:copy>
-		<ant:copy todir="target/dist-bin/samples">
+		<ant:copy todir="${bin.dist.dir}/samples">
 			<ant:fileset dir="modules/samples/target/samples"/>
 		</ant:copy> 
-		<ant:copy todir="target/dist-bin/">
+		<ant:copy todir="${bin.dist.dir}/">
 			<ant:fileset dir=".">
 				<ant:include name="*.html"/>
 				<ant:include name="*.txt"/>				
 			</ant:fileset> 
 		</ant:copy> 
 
-                <ant:mkdir dir="target/dist-bin/repository"/>
-                <ant:mkdir dir="target/dist-bin/repository/services"/>
-                <ant:mkdir dir="target/dist-bin/repository/modules"/>
-                <ant:copy todir="target/dist-bin/repository">
+                <ant:mkdir dir="${bin.dist.dir}/repository"/>
+                <ant:mkdir dir="${bin.dist.dir}/repository/services"/>
+                <ant:mkdir dir="${bin.dist.dir}/repository/modules"/>
+                <ant:copy todir="${bin.dist.dir}/repository">
 			<ant:fileset dir="modules/samples/target/toWar/">
 				<ant:include name="**"/>
 			</ant:fileset> 
 		</ant:copy> 
                         
 
-	<ant:copy todir="target/dist-bin/bin">
+	<ant:copy todir="${bin.dist.dir}/bin">
 			<ant:fileset dir="modules/tool/script"/>
 		</ant:copy> 
   
