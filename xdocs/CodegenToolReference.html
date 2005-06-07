@@ -10,7 +10,7 @@ under the tools directory. </p>
 <p>If one needs to build the plugin from source it is not as trivial as running 
 the Maven build. The reason is that the plug-in depends heavily on the Eclipse 
 classes, which are only available in an Eclipse environment. The recommended 
-procedure is to run the create-project.xml build file which will create two 
+procedure is to run the create-project.xml (in the "modules\tool" directory of the source distribution) build file which will create two 
 folders (the other one for the Service Archiver tool) and copy the necessary 
 files to relevant folders. Then Eclipse should be configured to open the 
 contents in a PDE project. Please go through the Eclipse documentation to learn 
@@ -42,7 +42,7 @@ generation is left. it is the selection of the output file location.</p>
 <p><img border="0" src="images/tools/OutputPage.JPG" width="518" height="500"></p>
 <p>When the output file location is selected, the Finish button will be enabled. 
 Pressing the finish button will generate the code and a message box will pop up 
-acknowledging the success. Well Done! </p>
+acknowledging the success. Well Done! Now you are ready for Axis2 Code generation.</p>
 <h1>Code Generator Wizard - Command Line Tool</h1>
 <h2>Introduction</h2>
 <p>Just as old times there will be users who wish to use the command line 
@@ -88,7 +88,7 @@ scripts are found in the bin directory of the binary distribution)</p>
   </tr>
   <tr>
     <td width="50%">-s</td>
-    <td width="50%">Generate code only for sync style . when this option is 
+    <td width="50%">Generate code only for sync style . When this option is 
     used the generated stubs will have only the  synchronous invocation methods. 
     Switched off by default. When used with the -a option, this takes 
     precedence.</td>
@@ -96,7 +96,7 @@ scripts are found in the bin directory of the binary distribution)</p>
   <tr>
     <td width="50%">-t</td>
     <td width="50%">Generates a test case. In the case of Java it would be a 
-    junit test case.</td>
+    junit test case. This test case will generate a dummy implementation of the service and a relevant service.xml and will deploy this particular service in a SimpleHttpServer. Then looking at the WSDL it will generate test methods that will do web service invocation both synchronously and asynchronously and test the deployed service.</td>
   </tr>
   <tr>
     <td width="50%">-ss</td>
@@ -192,10 +192,12 @@ the ant task attributes.</p>
 /&gt;
 &lt;/target&gt;
 &lt;/project&gt;</pre></p>
-<p>Notice the taskdef that declares the codegen Ant task.</p>
+<p>Notice the main target that uses the "codegen" task which will use the org.apache.axis.tool.ant.AntCodegenTask class and run the code generation tool internally while passing the relevant arguments and do the proper generation. If a user types</p>
+<p>>ant or >ant main</p>
+<p>it will generate the serverside code and service.xml for the given WSDL file(C:\test\wsdl\CombinedService.wsdl) and the generated code will be written to C:\ directory.</p>
 <p>For this Ant task to work the following jars need to be in the class path.</p>
 <ul>
-  <li>axis-wsdl-M2.jar (from the Axis2 distribution)</li>
+  <li>axis-M2.jar (from the Axis2 distribution)</li>
   <li>axis-wsdl4j-1.2.jar (The WSDL4J implementation jar. Bundled with the Axis2 
   distribution)</li>
   <li>stax-api-1.0.jar (The StAX API's that contain the 
