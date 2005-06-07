@@ -136,7 +136,7 @@
          </j:if> 
         <!-- jar the test classes -->
 		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
-		  	<ant:fileset dir="modules/core/html"/>
+		  	<ant:fileset dir="modules/core/webapp"/>
 		  	<ant:lib dir="target/lib">
 			    	<ant:include name="*.jar"/>
 		  	</ant:lib>  

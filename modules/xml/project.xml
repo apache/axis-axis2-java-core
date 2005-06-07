@@ -131,16 +131,5 @@
             </properties>
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>j2ee</groupId>
-            <artifactId>activation</artifactId>
-            <jar>activation.jar</jar>
-            <properties>
-                <module>flase</module>
-            </properties>
-        </dependency>
-		-->        
     </dependencies>
 </project>
