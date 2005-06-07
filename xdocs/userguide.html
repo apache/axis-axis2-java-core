@@ -123,13 +123,13 @@ directory as &quot;Axis2Home&quot;. </p>
 properly. (See <a href="installationguide.htm">Installation Guide</a>)</p>
 <h3>MyService</h3>
 <p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
-<pre><code>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
-public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and responds with another OMElement after processing.</code></pre>
+<source><pre>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
+public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and responds with another OMElement after processing.</pre></source>
 <p>Complete code for this example Web Service (MyService) can be found in the &quot;Axis2Home/samples/userguide/src&quot; directory under 
 &quot;userguide/example1&quot; package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
 <p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed 
 in Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
-<pre><code>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</code></pre>
+<source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
 <p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageRecevier</strong> since it is an 
 IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageRecevier</strong> as the message receiver. </p>
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
@@ -224,7 +224,7 @@ services as shown in the following table.</p>
 Services&nbsp; and let's see how to use them Now!</b></p>
 <h3>EchoBlockingClient</h3>
 <p>Axis2 provides the user with several invocation patterns for Web Services, ranging from pure blocking single channel invocations to a non-blocking dual channel invocations. First let's see how we can write a client to invoke &quot;echo&quot; operation of &quot;MyService&quot; using the simplest good old blocking invocation. The client code that you need to write will be as follows.</p>
-<pre><code>  try {
+<source><pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
             <span class="style10">Call call = new Call();
             call.setTo(targetEPR);
@@ -244,14 +244,14 @@ Services&nbsp; and let's see how to use them Now!</b></p>
             e.printStackTrace();
         }
 }
-</code></pre></p>
+</pre></source></p>
 <p>The green lines shows the set of operations that you need to perform in-order to invoke a web service while the rest is used to create the OMElement that needs to be sent and to display the response OMElement. To test this 
 client you can use the provided ant build file that can be found in the 
 &quot;Axis2Home/samples&quot; directory. Run the &quot;testEchoBlockingClient&quot; target . if you can see the response OMElement printed in your command line&nbsp;  then you have successfully tested the client as well. </p>
 <h3>PingClient</h3>
 <p>In the Web Service &quot;MyService&quot; we had a IN-ONLY operation with the name &quot;ping&quot; (see Web Services Using Axis2). So let's write a client to invoke this operation as well. 
 The client code will be as follows.</p>
-<pre><code> try {
+<source><pre> try {
        OMElement payload = ClientUtil.getPingOMElement();
 
        MessageSender msgSender = new MessageSender();
@@ -262,7 +262,7 @@ The client code will be as follows.</p>
      } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
      }
-</code></pre>
+</pre></source>
 </p> 
 <p>Since we are accessing a IN-ONLY operation we can directly use the &quot;MessageSender&quot; to invoke this operation. As it can be seen in the above code , it is very straight forward to invoke this type of operation. MessageSender will not block the 
 invocation, hence it will return the control immediately back to the client. You can 
@@ -274,12 +274,12 @@ the same operations.</p>
 <p>In the EchoBlockingClient once the &quot;call.invokeBlocking("echo", payload);&quot; is called, the client is blocked till the operation is completed. This behavior is not 
 desirable when there are many Web Service invocations to be done in a single client application. A solution, would be to use a Non-Blocking API to invoke web services. Axis2 provides a callback based non-blocking API for users. </p>
 <p>A sample client for this can be found under &quot;Axis2Home/samples/userguide/src/userguide/clients&quot; with the name EchoNonBlockingClient. If we consider the changes that the user may have to do with respect to the &quot;EchoBlockingClient&quot; that we have already seen, it will be as follows.</p>
-<pre><code>call.invokeNonBlocking(&quot;echo&quot;, payload, callback);</code></pre>
+<source><pre>call.invokeNonBlocking(&quot;echo&quot;, payload, callback);</pre></source>
 <p>The invocation  accepts a callback object as a parameter. Axis2 client API provides an 
 abstract Callback with the following methods.</p>
-<p><pre><code>public abstract void onComplete(AsyncResult result);
+<p><source><pre>public abstract void onComplete(AsyncResult result);
 public abstract void reportError(Exception e);
-public boolean isComplete() {}</code></pre></p>
+public boolean isComplete() {}</pre></source></p>
 <p>The user is expected to implement the &quot;onComplete &quot; and &quot;reportError &quot; methods of their extended call back class. Axis2 engine calls the onComplete method once the Web Service 
 response is received by the Axis2 Client API (Call). This will eliminate the blocking nature of the Web Service invocations and provides the user with the flexibility to use Non Blocking API for Web Service 
 Clients.</p>
@@ -302,7 +302,7 @@ with two transport connections. By simply using a boolean flag, the same API can
 services (IN-OUT operations) using two separate transport connections. Let's see how we can do it using an example. Following code 
 fragment shows how to invoke the same &quot;echo&quot; operation, using Non-Blocking API with two transport 
 connections<strong>. The ultimate asynchrony!!</strong></p>
-<pre><code>  try {
+<source><pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
 
             Call call = new Call();
@@ -340,15 +340,15 @@ connections<strong>. The ultimate asynchrony!!</strong></p>
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
-            }</code></pre>
-<pre><code>	  <font color="#33CC00">call.close();</font>
+            }</pre></source>
+<source><pre>	  <font color="#33CC00">call.close();</font>
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-</code></pre>
+</pre></source>
 <p>The three changes that we need do to the EchoNonBlockingClient are shown in the &quot;green&quot; color. Since our correlation mechanism is based on addressing we need 
 to first &quot;<strong>engage</strong>&quot; the addressing module.<span class="style15">
 <font color="#000000"><b>&quot;call.engageModule(new 
@@ -363,7 +363,7 @@ mechanism and hence we need to &quot;engage&quot; addressing module in the serve
 phase (See <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more 
 details about phases)&nbsp; and hence &quot;engaging&quot; means simply adding module reference in the &quot;server.xml&quot; (NOT the &quot;service.xml&quot;). Please add the following line to the &quot;server.xml&quot; that you can find in the &quot;/webapps/axis2/WEB-INF&quot; 
 directory in the servlet container. </p>
-<pre><code> &lt;module ref=&quot;addressing&quot;/&gt;</code></pre>
+<source><pre> &lt;module ref=&quot;addressing&quot;/&gt;</pre></source>
 <p>Note: Please note that<span class="style15"><font color="#000000"> once you change the &quot;server.xml&quot; you need to restart the servlet container.</font></span></p>
 <p>This will enable the addressing in the server side and now you can test the &quot;TestEchoNonBlockingDualClient&quot; using the &quot;testEchoNonBlockingDualClient&quot; 
 target of the ant file found at &quot;Axis2Home/samples&quot; directory. 
@@ -412,9 +412,9 @@ Step1 : LoggingModule Class</h4>
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2 modules 
 should implement the &quot;org.apache.axis.modules.Module&quot; interface with the 
 following methods.</p>
-<pre><code>public void init(AxisConfiguration axisSystem) throws AxisFault;//Initialize the module
+<source><pre>public void init(AxisConfiguration axisSystem) throws AxisFault;//Initialize the module
 public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
-</code></pre>
+</pre></source>
 <p>These methods can be used to control the module initialization and the 
 termination. With the input parameter AxisConfiguration, the user is provided 
 with the complete configuration hierarchy and this can be used to fine tune the 
@@ -427,7 +427,7 @@ module we will write a handle with the following methods. &quot;public void
 invoke(MessageContext ctx);&quot; is the method that is called by the Axis2 engine 
 when the control is passed to the handler. &quot;public void revoke(MessageContext 
 ctx);&quot; is called when the handlers are revoked by the Axis2 engine. </p>
-<pre><code>public class LogHandler extends AbstractHandler implements Handler {
+<source><pre>public class LogHandler extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private QName name;
 
@@ -447,14 +447,14 @@ ctx);&quot; is called when the handlers are revoked by the Axis2 engine. </p>
         this.name = name;
     }
 }
-</code></pre>
+</pre></source>
 <h4>Step3 : module.xml</h4>
 <p>&quot;module.xml&quot; contains the deployment configurations for a particular module. 
 It contains details such as Implementation class of the module (in this example 
 it is the &quot;LoggingModule&quot; class and the various handlers that will run in 
 different phases. &quot;module.xml&quot; for the logging module will be as follows.</p>
 <p>
-<pre><code>&lt;module name=&quot;logging&quot; class=&quot;userguide.loggingmodule.LoggingModule &quot;&gt;
+<source><pre>&lt;module name=&quot;logging&quot; class=&quot;userguide.loggingmodule.LoggingModule &quot;&gt;
 &lt;inflow&gt;
 	&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
 	&lt;order phase=&quot;loggingPhase&quot; /&gt;
@@ -478,7 +478,7 @@ different phases. &quot;module.xml&quot; for the logging module will be as follo
 	&lt;order phase=&quot;loggingPhase&quot;/&gt;
 	&lt;/handler&gt;
 &lt;/INfaultflow&gt;
-&lt;/module&gt;</code></pre></p>
+&lt;/module&gt;</pre></source></p>
 
 <p>As it can be seen there are four phases defined in this &quot;module.xml&quot;</p>
 <ol>
@@ -500,10 +500,10 @@ implementation class for this handler. Since we are writing logging handler, we
 can reuse the same handler in all these phases, however this may not be the same 
 for all the modules. &quot;&lt;order phase=&quot;loggingPhase&quot; /&gt;&quot; describes the phase in 
 which this handler runs. </p>
-<pre><code>&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
+<source><pre>&lt;handler name=&quot;InFlowLogHandler&quot; class=&quot;userguide.loggingmodule.LogHandler&quot;&gt;
 &lt;order phase=&quot;loggingPhase&quot; /&gt;
 &lt;/handler&gt;
-</code></pre></p>
+</pre></source></p>
 
 <h4>Step 4: Modify the &quot;server.xml&quot;</h4>
 
@@ -517,7 +517,7 @@ the &quot;server.xml&quot; in order for us to deploy this logging module in Axis
 This is an extract of the phase section of the &quot;server.xml&quot;.</p>
 
 
-<pre><code>
+<source><pre>
 &lt;!-- ================================================= --&gt;
 &lt;!-- Phases --&gt;
 &lt;!-- ================================================= --&gt;
@@ -547,7 +547,7 @@ This is an extract of the phase section of the &quot;server.xml&quot;.</p>
 &lt;!-- user can add his own phases to this area --&gt;
 &lt;phase name=&quot;<font color="#33CC00">loggingPhase</font>&quot;/&gt;
 &lt;/phaseOrder&gt;
-</code></pre>
+</pre></source>
 
 
 <p>Shown in green, the custom phase &quot;loggingPhase&quot; is placed in all the flows, 
