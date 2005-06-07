@@ -20,6 +20,8 @@
         <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
       	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
       	<item name="User Guide" href="userguide.html" />
+      	<item name="Installation Guide" href="installationguide.htm" />
+      	<item name="Web Administration Guide" href="webadminguide.htm" />
       	<item name="AXIOM Tutorial" href="OMTutorial.html" />
       	<item name="Code Generation Tutorial" href="CodegenToolReference.html" />
       	<item name="M1 Documents" href="m1.html" />  
@@ -28,6 +30,7 @@
       <item name="Downloads">
       	<item name="Releases" href="releases.html" /> 
       	<item name="Source Code" href="http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN" />  
+      	<item name="Tools" href="axis2tools.html" />
       </item>
       <item name="Modules">
       	<item name="Core" href="multiproject/axis2-core/index.html" /> 
