@@ -8,6 +8,8 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import java.io.StringWriter;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,8 +33,14 @@ public class EchoBlockingDualClient {
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
-            //Non-Blocking Invocation
-            call.invokeBlocking("echo", payload);
+            //Blocking Invocation
+            OMElement result = (OMElement) call.invokeBlocking("echo", payload);
+
+            StringWriter writer = new StringWriter();
+            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            writer.flush();
+
+            System.out.println(writer.toString());
 
             //Need to close the Client Side Listener.
             call.close();

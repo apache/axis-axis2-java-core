@@ -120,7 +120,7 @@ public class InOutMEPClient extends MEPClient {
             SyncCallBack callback = new SyncCallBack();
             invokeNonBlocking(axisop, msgctx, callback);
             int index = 0;
-            while (!callback.hasResult()) {
+            while (!callback.isComplete()) {
                 if (index < 20) {
                     try {
                         Thread.sleep(100);
@@ -385,9 +385,9 @@ public class InOutMEPClient extends MEPClient {
         public void reportError(Exception e) {
             error = e;
         }
-        public boolean hasResult() {
-            return envelope != null || error != null;
-        }
+//        public boolean hasResult() {
+//            return envelope != null || error != null;
+//        }
     }
 
     public void engageModule(QName moduleName) throws AxisFault {

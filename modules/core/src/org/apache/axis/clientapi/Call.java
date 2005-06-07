@@ -67,10 +67,19 @@ public class Call extends InOutMEPClient {
 
         OperationDescription axisConfig =
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        if (axisConfig == null) {
+         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
+            axisConfig.setRemainingPhasesInFlow(opreationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(opreationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(opreationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(opreationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
+
+//        if (axisConfig == null) {
+//            axisConfig = new OperationDescription(new QName(axisop));
+//            serviceContext.getServiceConfig().addOperation(axisConfig);
+//        }
         MessageContext msgctx = prepareTheSystem(toSend);
 
         MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
