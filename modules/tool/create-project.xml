@@ -9,8 +9,8 @@
     <property name="lib.dir.name" value="lib"></property>
     <property name="bin.dir.name" value="bin"></property>
 
-    <property name="codegen.resource.dir" value="./resources/codegen"></property>
-    <property name="service.resource.dir" value="./resources/service"></property>
+    <property name="codegen.resource.dir" value="./conf/codegen"></property>
+    <property name="service.resource.dir" value="./conf/service"></property>
 
 
 
