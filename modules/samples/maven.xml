@@ -16,8 +16,6 @@
         <copy file="../addressing/target/addressing.mar" 
 		tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
-        <copy file="../core/target/echo/echo.aar"
-		tofile="target/toWar/services/version.aar"/>
     </postGoal>
 
     <postGoal name="test:test">
@@ -31,8 +29,29 @@
         <attainGoal name="amazonQS"/>
         <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
+        <attainGoal name="version"/>
     </goal>
 
+  <!-- ================================================================ -->
+   <!--- Version Sample -->
+  <!-- ================================================================ -->
+  <goal name="version">
+	<mkdir dir="target/samples"/>
+        <mkdir dir="${samples.dir}/version"/>
+        <mkdir dir="${samples.dir}/version/src"/>
+        <ant:copy todir="${samples.dir}/version/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="sample/axisversion/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+        <jar destfile="${samples.dir}/version/version.jar">
+            <fileset dir="target/classes">
+                <include name="sample/axisversion/**"/>
+            </fileset>           
+        </jar>
+        <copy file="${samples.dir}/version/version.jar"
+		tofile="target/toWar/services/version.aar"/>
+    </goal>
   <!-- ================================================================ -->
    <!--- User Guide Sample -->
   <!-- ================================================================ -->
