@@ -173,6 +173,7 @@
 		<ant:copy todir="${bin.dist.dir}/docs">
 			<ant:fileset dir="xdocs">
 				<ant:include name="**"/>
+                                <ant:exclude name="*M1*/**"/>
 			</ant:fileset> 
 		</ant:copy> 
 		<ant:copy todir="${bin.dist.dir}/lib" flatten="true">
