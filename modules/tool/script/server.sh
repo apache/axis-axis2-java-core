@@ -6,7 +6,7 @@
 #   echo $AXIS_HOME
 #fi
 
-cd ../..
+cd ..
 AXIS2_CLASSPATH=./lib/axis2-M2.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:./lib/axis-wsdl4j-1.2.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:./lib/commons-logging-1.0.3.jar
