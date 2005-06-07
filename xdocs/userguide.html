@@ -116,9 +116,10 @@ user guide samples are located at the <b> <span class="style9">
 <font color="#000000">&quot;samples/userguide/src&quot;</font></span></b> directory 
 of the binary distribution. So.. let's  explore the samples.</p>
 <p>Note: Please note that the rest of this user guide assumes that the user has downloaded the binary distribution of Axis2. If you have already downloaded the source tree of Axis2 then please create the binary distribution by simply using the maven command <strong>maven dist-bin </strong>This will create the &quot;axis2-M2-bin.zip&quot; and &quot;axis2-M2-bin.tar&quot;  in the &quot;target/dist&quot; directory. Extract the zip or the tar ball to any 
-directory in your machine and for the explanations purposes we will name this as &quot;Axis2Home&quot;. </p>
+directory in your machine and for the explanations purposes we will name this 
+directory as &quot;Axis2Home&quot;. </p>
 <h2> Web Services Using Axis2</h2>
-<p>Before starting, please check wither you have deployed the &quot;axis2.war&quot; in your servlet container and it is working 
+<p>Before starting, please check whether you have deployed the &quot;axis2.war&quot; in your servlet container and it is working 
 properly. (See <a href="installationguide.htm">Installation Guide</a>)</p>
 <h3>MyService</h3>
 <p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
@@ -150,7 +151,7 @@ installation guide for more information on this)</p>
 <h2> Web Service Clients Using Axis2 </h2>
 <p> Web services can be used to provide wide range of functionality to the users 
 ranging from simple less time consuming&nbsp; operations such as &quot;getStockQuote&quot;&nbsp; 
-to time consuming business data processing. When we utilize (write client 
+to time consuming business services. When we utilize (invoke using client 
 applications) these Web Service we cannot use some simple generic invocation 
 paradigm that suites all the timing complexities involved in the service 
 operations. For example, if we use a single transport channel (such as HTTP) to 
@@ -159,7 +160,7 @@ then in most of the time we may end up with &quot;connection time outs&quot;. On
 hand, if there are simultaneous service invocations that&nbsp; we need to 
 perform from a single client application, then the use of a &quot;blocking&quot; client 
 API will degrade the performance of the client application. Similarly there are 
-various other consequences such as One-Way transports come in to play when we 
+various other consequences such as One-Way transports that come in to play when we 
 need to invoke Web Services. So let's try to analyze some common service 
 invocation paradigms.</p>
 <p> Many web service engines provide the users with a Blocking and Non-Blocking 
@@ -377,6 +378,7 @@ when the service invocation is IN-OUT in nature and the transports are One-Way
 (e.g. SMTP). For the sample client we use two HTTP connections for request and 
 response. User can test this client using the &quot;EchoBlockingDualClient.bat&quot; or &quot;EchoBlockingDualClient.sh&quot; 
 found in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory.</p>
+<p>See <a href="#configTransport">Configuring Transports</a> for use different transports.</p>
 <h2>Modules</h2>
 <p>Axis2 provides an extended support for modules (See
 <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more details 
@@ -597,7 +599,7 @@ jar file, or you can find the &quot;Logging.mar&quot; that is already created fo
 the &quot;Axis2Home/samples/userguide&quot; directory.</p>
 
 
-<h4>Step7 : Deploy the module in Axis2</h4>
+<h4>Step7 : Deploy the Module in Axis2</h4>
 
 
 <p>Deploying a module in Axis2 require the user to create a directory with the 
@@ -696,7 +698,7 @@ line tool.  </p>
 <a href="CodegenToolReference.html">Service Archiver</a>.</p>
 <hr/>
 <p>&nbsp;</p>
-<h2>Configuring Transports</h2>
+<h2><a name="#configTransport">Configuring Transports</a></h2>
 <h3>Configuring HTTP transports</h3>
 <p>The HTTP is configured by default, the server can be started by following </p>
 <code>Java org.apache.axis.transport.http.SimpleHTTPServer repository port</code>
