@@ -34,7 +34,7 @@
 <table width="100%">
   <tr>
      <td colspan="2" >
-      <b> View System Components</b>
+      <b> System Components</b>
      </td>
   </tr>
  <tr>
@@ -42,7 +42,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listService" target="mainFrame">List Available Services</a>
+      <a href="listService" target="mainFrame">Available Services</a>
     </td>
  </tr>
  <tr>
@@ -50,7 +50,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listModules" target="mainFrame">List Available Modules</a>
+      <a href="listModules" target="mainFrame">Available Modules</a>
     </td>
  </tr>
  <tr>
@@ -58,7 +58,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td>
-      <a href="globalModules" target="mainFrame">List Globally Engaged Modules</a>
+      <a href="globalModules" target="mainFrame">Globally Engaged Modules</a>
     </td>
  </tr>
  <tr>
@@ -66,7 +66,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listPhases" target="mainFrame">View Available Phases</a>
+      <a href="listPhases" target="mainFrame">Available Phases</a>
     </td>
  </tr>
  <tr>
@@ -76,7 +76,7 @@
  </tr>
   <tr>
      <td colspan="2" >
-       <b>View Phases and Handlers</b>
+       <b>Execution Chains</b>
      </td>
   </tr>
    <tr>
@@ -84,7 +84,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="viewGlobalHandlers" target="mainFrame">Gloabal Phases and Handlers </a>
+         <a href="viewGlobalHandlers" target="mainFrame">Global Chains</a>
        </td>
     </tr>
     <tr>
@@ -92,7 +92,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectService" target="mainFrame">View Service Phases and Handlers</a>
+         <a href="selectService" target="mainFrame">Operation's Chains</a>
        </td>
     </tr>
     <tr>
@@ -102,7 +102,7 @@
    </tr>
     <tr>
      <td colspan="2" >
-       <b>Enage Module</b>
+       <b>Engage Module</b>
      </td>
   </tr>
    <tr>
@@ -119,7 +119,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="engageToService" target="mainFrame">To A service</a>
+         <a href="engageToService" target="mainFrame">To a Service</a>
        </td>
     </tr>
 
@@ -132,25 +132,5 @@
        </td>
     </tr>
 </table>
-
-<%--
-
-<p><a href="listService" target="mainFrame">List Available Services</a></p>
-<p><a href="listModules" target="mainFrame">List Available Modules</a></p>
-<p><a href="globalModules" target="mainFrame">List Globally Engaged Modules</a></p>
-<p>View Phases and Handlers</p>
-<blockquote>
-  <p><a href="viewGlobalHandlers" target="mainFrame">Gloabal Phases and Handlers </a></p>
-  <p><a href="selectService" target="mainFrame">View Service Phases and Hnadlers</a></p>
-  <p>&nbsp;</p>
-</blockquote>
-<p>Enage Module</p>
-<blockquote>
-  <p><a href="engagingglobally" target="mainFrame">Gloabally</a></p>
-  <p><a href="engageToService" target="mainFrame">To A service</a></p>
-  <p><a href="enaggingtoanopeartion.jsp" target="mainFrame">To an Operation</a></p>
-  <p>&nbsp;</p>
-</blockquote>
-<p><a href="listPhases" target="mainFrame">View Available Phases</a> </p>--%>
 </body>
 </html>
