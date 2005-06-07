@@ -119,6 +119,7 @@ public interface AxisConfiguration extends ParameterInclude{
     public HashMap getServices();
 
     public Hashtable getFaulytServices();
+    public Hashtable getFaulytModules();
 
     public TransportInDescription getTransportIn(QName name) throws AxisFault;
     public void addTransportIn(TransportInDescription transport) throws AxisFault;

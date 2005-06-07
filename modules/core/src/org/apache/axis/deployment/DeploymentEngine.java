@@ -565,6 +565,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         }
                         break;
                     case MODULE:
+                        String moduleStatus = "";
                         try {
                             ModuleDescription metaData = new ModuleDescription();
                             archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, metaData);
@@ -573,10 +574,15 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException e) {
                             log.info("Invalid module" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + e);
+                            moduleStatus = "Error:\n" + e.getMessage();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid module" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
+                            moduleStatus = "Error:\n" + axisFault.getMessage();
                         } finally {
+                             if (moduleStatus.startsWith("Error:")) {
+                                axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()), moduleStatus);
+                            }
                             currentArchiveFile = null;
                         }
                         break;

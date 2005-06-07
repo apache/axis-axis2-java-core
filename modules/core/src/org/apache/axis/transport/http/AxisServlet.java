@@ -343,6 +343,9 @@ public class AxisServlet extends HttpServlet {
         HashMap modules =
             ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
+        req.getSession().setAttribute(
+            Constants.ERROR_MODULE_MAP,
+            engineContext.getAxisConfiguration().getFaulytModules());
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 

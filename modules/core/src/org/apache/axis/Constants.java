@@ -141,6 +141,7 @@ public class Constants {
      * Errorness servcie
      */
     public static final String ERROR_SERVICE_MAP = "errprservicemap";
+    public static final String ERROR_MODULE_MAP = "errormodulesmap";
 
     public static final String IS_FAULTY = "Fault";
 

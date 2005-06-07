@@ -34,6 +34,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     private Hashtable errornesServices;
 
+    private Hashtable errornesModules;
+
     /**
      * Field modules
      */
@@ -91,6 +93,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
         errornesServices = new Hashtable();
+        errornesModules = new Hashtable();
 
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
@@ -113,6 +116,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public Hashtable getFaulytServices() {
         return errornesServices;
+    }
+
+    public Hashtable getFaulytModules() {
+        return errornesModules;  
     }
 
     /**
@@ -333,7 +340,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         engagedModules.add(moduleref);
         if(isNewmodule){
             addMdoule(module);
-        }  
+        }
     }
     
     public boolean isEngaged(QName moduleName){

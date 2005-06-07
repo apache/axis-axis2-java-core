@@ -37,24 +37,37 @@
   <body>
   <h1>Available Modules</h1>
      <%
+         boolean foundModules = false;
          HashMap moduleMap = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
+         Hashtable errornesModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
          if (moduleMap!=null && !moduleMap.isEmpty()){
              String modulename = "";
              Collection moduleNames = moduleMap.values();
-             boolean foundModules = false;
              for (Iterator iterator = moduleNames.iterator(); iterator.hasNext();) {
                  foundModules = true;
                  ModuleDescription  moduleQName = (ModuleDescription) iterator.next();
                  modulename = moduleQName.getName().getLocalPart();
      %><hr><h2><font color="blue"><%=modulename%></font></h2>
-     <br> <%
+     <br>
+      <%
+             }
+        }
+      %>
+      <hr><h3><font color="blue">Faulty Modules</font></h3>
+             <%
+             Enumeration faultyModules = errornesModules.keys();
+             while (faultyModules.hasMoreElements()) {
+                 foundModules = true;
+                 String faultyModuleName = (String) faultyModules.nextElement();
+             %><h3><font color="blue"><a href="errorModule.jsp?moduleName=<%=faultyModuleName%>">
+                    <%=faultyModuleName%></a></font></h3>
+                    <%
              }
              if(! foundModules) {
                  %>
                  <h2><font color="blue">There is no module deployed in the system</font></h2>
                  <%
              }
-         }
      %>
   </body>
 </html>
