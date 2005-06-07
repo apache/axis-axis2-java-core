@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import org.apache.axis.addressing.EndpointReference;
@@ -35,7 +36,7 @@ public class MailTransportSender extends AbstractTransportSender {
     private String password;
     private String smtpPort = "25";
 
-    private PipedInputStream in;
+    private StringWriter w; 
 
     public MailTransportSender() {
 
@@ -56,22 +57,23 @@ public class MailTransportSender extends AbstractTransportSender {
                     //TODO this is just a temporary hack, fix this to use input streams
                     
                 
-                    byte[] message = new byte[in.available()];
-                    in.read(message);
+                    
                 
                     String eprAddress = msgContext.getTo().getAddress();
                     int index = eprAddress.indexOf('/');
                     String subject = "";
                     String email = null;
-                    if(index > 0){
+                    if(index >= 0){
                         subject = eprAddress.substring(index+1);
                         email = eprAddress.substring(0,index);
+                    }else{
+                        email = eprAddress;
                     }
                 
                     System.out.println(subject);
                     System.out.println(email);
 
-                    sender.send(subject, email, new String(message));
+                    sender.send(subject, email, w.getBuffer().toString());
                 } else {
                     throw new AxisFault(
                         "user, port, host or password not set, "
@@ -96,17 +98,8 @@ public class MailTransportSender extends AbstractTransportSender {
     }
 
     protected Writer openTheConnection(EndpointReference epr) throws AxisFault {
-
-        try {
-
-            in = new PipedInputStream();
-            PipedOutputStream out = new PipedOutputStream(in);
-
-            return new OutputStreamWriter(out);
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
-
+            w = new StringWriter();
+            return w;
     }
 
     //Output Stream based cases are not supported 

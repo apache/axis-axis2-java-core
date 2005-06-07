@@ -16,10 +16,14 @@
 
 package org.apache.axis.transport.mail;
 
+import java.io.File;
+
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
@@ -31,7 +35,6 @@ import org.apache.axis.transport.TransportListener;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.pop3.POP3Client;
 
 /**
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
@@ -68,7 +71,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
     private String replyTo;
 
-    public SimpleMailListener() throws AxisFault{
+    public SimpleMailListener() {
     }
 
     public SimpleMailListener(
@@ -144,12 +147,12 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         }
         while (!stopped) {
             try {
-                
+
                 EmailReceiver receiver = new EmailReceiver(user, host, port, password);
                 receiver.connect();
                 Message[] msgs = receiver.receive();
 
-                if (msgs != null && msgs.length>0) {
+                if (msgs != null && msgs.length > 0) {
                     System.out.println(msgs.length + " Message Found");
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
@@ -161,9 +164,9 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     }
 
                 }
-                
+
                 receiver.disconnect();
-               
+
             } catch (Exception e) {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
@@ -224,39 +227,27 @@ public class SimpleMailListener extends TransportListener implements Runnable {
     /**
      * Server process.
      */
-    public static void main(String args[]) {
-        boolean optDoThreads = true;
-        String optHostName = "localhost";
-        boolean optUseCustomPort = false;
-        int optCustomPortToUse = 0;
-        String optDir = "/home/chamil/temp";
-        String optUserName = "server";
-        String optPassword = "server";
-        System.out.println("Starting the mail listner");
-        // Options object is not used for now. Hard coded values will be used.
-        // TODO have to meke this a bit more generic. CT 07-Feb-2005.
-        //Options opts = null;
-
-        /*
-         * try { opts = new Options(args); } catch (MalformedURLException e) {
-         * log.error(Messages.getMessage("malformedURLException00"), e); return; }
-         */
-        try {
-            doThreads = optDoThreads; //(opts.isFlagSet('t') > 0);
-            String host = optHostName; //opts.getHost();
-            String port = String.valueOf(((optUseCustomPort) ? optCustomPortToUse : 110));
-            POP3Client pop3 = new POP3Client();
-            SimpleMailListener sas =
-                new SimpleMailListener(host, port, optUserName, optPassword, optDir);
-            sas.start();
-        } catch (Exception e) {
-            // log.error(Messages.getMessage("exception00"), e); TODO Issue #1
-            // CT 07-Feb-2005.
-            log.error(
-                "An error occured in the main method of SimpleMailListner. TODO Detailed error message needs to be inserted here.");
-            return;
+    public static void main(String args[]) throws AxisFault {
+        if (args.length != 1) {
+            System.out.println("java SimpleMailListener <repository>");
+        } else {
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
+            ConfigurationContext configurationContext = builder.buildEngineContext(args[0]);
+            SimpleMailListener sas = new SimpleMailListener();
+            TransportInDescription transportIn =
+                configurationContext.getAxisConfiguration().getTransportIn(
+                    new QName(Constants.TRANSPORT_MAIL));
+            if (transportIn != null) {
+                sas.init(configurationContext, transportIn);
+                System.out.println(
+                    "Starting the SimpleMailListener with repository "
+                        + new File(args[0]).getAbsolutePath());
+                sas.start();
+            } else {
+                System.out.println(
+                    "Startup failed, mail transport not configured, Configure the mail trnasport in the server.xml file");
+            }
         }
-
     }
     /* (non-Javadoc)
      * @see org.apache.axis.transport.TransportListener#init(org.apache.axis.context.ConfigurationContext, org.apache.axis.description.TransportInDescription)
@@ -290,7 +281,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         // TODO Auto-generated method stub
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo);
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo+"/services/"+serviceName);
     }
 
 }
