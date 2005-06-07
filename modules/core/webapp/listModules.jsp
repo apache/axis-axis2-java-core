@@ -53,6 +53,8 @@
              }
         }
       %>
+      <%if(errornesModules.size()>0){
+          %>
       <hr><h3><font color="blue">Faulty Modules</font></h3>
              <%
              Enumeration faultyModules = errornesModules.keys();
@@ -63,6 +65,7 @@
                     <%=faultyModuleName%></a></font></h3>
                     <%
              }
+      }
              if(! foundModules) {
                  %>
                  <h2><font color="blue">There is no module deployed in the system</font></h2>
