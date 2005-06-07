@@ -61,7 +61,7 @@ public class DeploymentParser implements DeploymentConstants {
      * @param engine
      */
     public DeploymentParser(InputStream inputStream, DeploymentEngine engine)
-        throws XMLStreamException {
+            throws XMLStreamException {
         this.dpengine = engine;
         pullparser = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
     }
@@ -92,7 +92,7 @@ public class DeploymentParser implements DeploymentConstants {
      * To process server.xml
      */
     public void processGlobalConfig(AxisConfigurationImpl axisGlobal, String starttag)
-        throws DeploymentException {
+            throws DeploymentException {
         String START_TAG = starttag;
         try {
             boolean END_DOCUMENT = false;
@@ -130,31 +130,31 @@ public class DeploymentParser implements DeploymentConstants {
                                     try {
                                         Class messageReceiver = null;
                                         ClassLoader loader1 =
-                                            Thread.currentThread().getContextClassLoader();
+                                                Thread.currentThread().getContextClassLoader();
                                         if (attvalue != null && !"".equals(attvalue)) {
                                             messageReceiver =
-                                                Class.forName(attvalue, true, loader1);
+                                                    Class.forName(attvalue, true, loader1);
                                             axisGlobal.addMessageReceiver(
-                                                name,
-                                                (MessageReceiver) messageReceiver.newInstance());
+                                                    name,
+                                                    (MessageReceiver) messageReceiver.newInstance());
                                         }
                                     } catch (ClassNotFoundException e) {
                                         throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " + e.getMessage());
                                     } catch (IllegalAccessException e) {
                                         throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " + e.getMessage());
                                     } catch (InstantiationException e) {
                                         throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " + e.getMessage());
                                     }
                                 } else
                                     throw new UnsupportedOperationException(
-                                        "invalid attributes in server.xml (messageReceiver elemet) "
+                                            "invalid attributes in server.xml (messageReceiver elemet) "
                                             + attname);
                             } else
                                 throw new UnsupportedOperationException(
-                                    "invalid attributes in server.xml (messageReceiver elemet) "
+                                        "invalid attributes in server.xml (messageReceiver elemet) "
                                         + attname);
                         } else
                             throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet)");
@@ -188,17 +188,17 @@ public class DeploymentParser implements DeploymentConstants {
                                         tempdata.setOUT_FaultPhases(processPhaseOrder());
                                     } else {
                                         throw new DeploymentException(
-                                            "un defined flow type  " + ST);
+                                                "un defined flow type  " + ST);
                                     }
                                 }
                             }
                         } else {
                             throw new DeploymentException(
-                                "Flow type is a required attribute in " + ST);
+                                    "Flow type is a required attribute in " + ST);
                         }
                     } else {
                         throw new UnsupportedOperationException(
-                            ST + " element is not allowed in the server.xml");
+                                ST + " element is not allowed in the server.xml");
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -230,10 +230,10 @@ public class DeploymentParser implements DeploymentConstants {
                 Class reciever = null;
                 try {
                     reciever =
-                        Class.forName(
-                            attvalue,
-                            true,
-                            Thread.currentThread().getContextClassLoader());
+                            Class.forName(
+                                    attvalue,
+                                    true,
+                                    Thread.currentThread().getContextClassLoader());
                     TransportListener trnsrecievr = (TransportListener) reciever.newInstance();
                     transportin.setReciver(trnsrecievr);
                 } catch (ClassNotFoundException e) {
@@ -261,7 +261,7 @@ public class DeploymentParser implements DeploymentConstants {
                         transportin.setInFlow(inFlow);
                     } else if (transportin != null && OUTFLOWST.equals(tagnae)) {
                         throw new DeploymentException(
-                            "OUTFlow dose not support in AxisTransportIN " + tagnae);
+                                "OUTFlow dose not support in AxisTransportIN " + tagnae);
                     } else if (transportin != null && IN_FAILTFLOW.equals(tagnae)) {
                         Flow faultFlow = processInFaultFlow();
                         transportin.setFaultFlow(faultFlow);
@@ -298,10 +298,10 @@ public class DeploymentParser implements DeploymentConstants {
                 Class sender = null;
                 try {
                     sender =
-                        Class.forName(
-                            attvalue,
-                            true,
-                            Thread.currentThread().getContextClassLoader());
+                            Class.forName(
+                                    attvalue,
+                                    true,
+                                    Thread.currentThread().getContextClassLoader());
                     TransportSender transportSender = (TransportSender) sender.newInstance();
                     transportout.setSender(transportSender);
                 } catch (ClassNotFoundException e) {
@@ -326,7 +326,7 @@ public class DeploymentParser implements DeploymentConstants {
                         transportout.addParameter(parameter);
                     } else if (transportout != null && INFLOWST.equals(tagnae)) {
                         throw new DeploymentException(
-                            "InFlow dose not support in TransportOutDescription  " + tagnae);
+                                "InFlow dose not support in TransportOutDescription  " + tagnae);
                     } else if (transportout != null && OUTFLOWST.equals(tagnae)) {
                         Flow outFlow = processOutFlow();
                         transportout.setOutFlow(outFlow);
@@ -364,15 +364,15 @@ public class DeploymentParser implements DeploymentConstants {
                 if (ATQNAME.equals(attname)) {
                     if (attvalue == null || attvalue.trim().equals("")) {
                         axisService.setName(
-                            new QName(
-                                getAxisServiceName(
-                                    dpengine.getCurrentFileItem().getServiceName())));
+                                new QName(
+                                        getAxisServiceName(
+                                                dpengine.getCurrentFileItem().getServiceName())));
                     } else {
                         axisService.setName(new QName(attvalue));
                     }
                 } else {
                     throw new DeploymentException(
-                        attname
+                            attname
                             + " Bad arguments for the service"
                             + getAxisServiceName(dpengine.getCurrentFileItem().getServiceName()));
                 }
@@ -380,7 +380,7 @@ public class DeploymentParser implements DeploymentConstants {
         } else {
             //if user dose not specify the service name then the default name will be the archive name
             axisService.setName(
-                new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
+                    new QName(getAxisServiceName(dpengine.getCurrentFileItem().getServiceName())));
         }
         boolean END_DOCUMENT = false;
         try {
@@ -414,23 +414,23 @@ public class DeploymentParser implements DeploymentConstants {
                                  * Setting default Message Recive as Message Reciever
                                  */
                                 ClassLoader loader1 =
-                                    Thread.currentThread().getContextClassLoader();
+                                        Thread.currentThread().getContextClassLoader();
                                 Class messageReceiver =
-                                    Class.forName(
-                                        "org.apache.axis.receivers.RawXMLINOutMessageRecevier",
-                                        true,
-                                        loader1);
+                                        Class.forName(
+                                                "org.apache.axis.receivers.RawXMLINOutMessageRecevier",
+                                                true,
+                                                loader1);
                                 operation.setMessageReciever(
-                                    (MessageReceiver) messageReceiver.newInstance());
+                                        (MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(
-                                    "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " + e.getMessage());
                             } catch (IllegalAccessException e) {
                                 throw new DeploymentException(
-                                    "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " + e.getMessage());
                             } catch (InstantiationException e) {
                                 throw new DeploymentException(
-                                    "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " + e.getMessage());
                             }
                         }
                         axisService.addOperation(operation);
@@ -455,11 +455,11 @@ public class DeploymentParser implements DeploymentConstants {
                                 if (REF.equals(attname)) {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(
-                                            ST
+                                                ST
                                                 + " module is invalid or dose not have bean deployed");
                                     } else {
                                         dpengine.getCurrentFileItem().addModule(
-                                            new QName(attvalue));
+                                                new QName(attvalue));
                                     }
                                 }
                             }
@@ -467,7 +467,7 @@ public class DeploymentParser implements DeploymentConstants {
 
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + ST);
+                                "parser Exception : un supported element" + ST);
                     }
                 }
             }
@@ -579,7 +579,7 @@ public class DeploymentParser implements DeploymentConstants {
             } else if (ATTNAME.equals(attname)) {
                 if (ref_name) {
                     throw new DeploymentException(
-                        "Hanlder canot have both name and ref  " + attvalue);
+                            "Hanlder canot have both name and ref  " + attvalue);
                 } else {
                     handler.setName(new QName(attvalue));
                     ref_name = true;
@@ -587,7 +587,7 @@ public class DeploymentParser implements DeploymentConstants {
             } else if (REF.equals(attname)) {
                 if (ref_name) {
                     throw new DeploymentException(
-                        "Hanlder canot have both name and ref  " + attvalue);
+                            "Hanlder canot have both name and ref  " + attvalue);
                 } else {
                     ref_name = true;
                     throw new UnsupportedOperationException("This should be implmented");
@@ -639,7 +639,7 @@ public class DeploymentParser implements DeploymentConstants {
                         handler.addParameter(parameter);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -720,7 +720,7 @@ public class DeploymentParser implements DeploymentConstants {
                                 if (REF.equals(attname)) {
                                     if (dpengine.getModule(new QName(attvalue)) == null) {
                                         throw new DeploymentException(
-                                            ST
+                                                ST
                                                 + " module is invalid or dose not have bean deployed");
                                     } else {
                                         operation.addModule(new QName(attvalue));
@@ -743,25 +743,25 @@ public class DeploymentParser implements DeploymentConstants {
                                 try {
                                     Class messageReceiver = null;
                                     ClassLoader loader1 =
-                                        Thread.currentThread().getContextClassLoader();
+                                            Thread.currentThread().getContextClassLoader();
                                     if (attvalue != null && !"".equals(attvalue)) {
                                         messageReceiver = Class.forName(attvalue, true, loader1);
                                         operation.setMessageReciever(
-                                            (MessageReceiver) messageReceiver.newInstance());
+                                                (MessageReceiver) messageReceiver.newInstance());
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e.getMessage());
                                 } catch (IllegalAccessException e) {
                                     throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e.getMessage());
                                 } catch (InstantiationException e) {
                                     throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e.getMessage());
                                 }
                             } else {
                                 throw new UnsupportedOperationException(
-                                    attname + " is not allowed in messageRecievr element");
+                                        attname + " is not allowed in messageRecievr element");
                             }
                         }
                     }
@@ -814,7 +814,7 @@ public class DeploymentParser implements DeploymentConstants {
     public void processModule(ModuleDescription module) throws DeploymentException {
         int attribCount = pullparser.getAttributeCount();
         boolean ref_name = false;
-        boolean foundClass = false;
+        //boolean foundClass = false;
         if (attribCount > 0) {
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
@@ -823,18 +823,18 @@ public class DeploymentParser implements DeploymentConstants {
                 if (ATTNAME.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException(
-                            "Module canot have both name and ref  " + attvalue);
+                                "Module canot have both name and ref  " + attvalue);
                     } else {
                         module.setName(new QName(attvalue));
                         ref_name = true;
                     }
                 } else if (CLASSNAME.equals(attname)) {
-                    foundClass = true;
+                    //          foundClass = true;
                     dpengine.getCurrentFileItem().setModuleClass(attvalue);
                 } else if (REF.equals(attname)) {
                     if (ref_name) {
                         throw new DeploymentException(
-                            "Module canot have both name and ref  " + attvalue);
+                                "Module canot have both name and ref  " + attvalue);
                     } else {
                         //  module.setRef(attvalue);
                         ref_name = true;
@@ -842,10 +842,10 @@ public class DeploymentParser implements DeploymentConstants {
                     }
                 }
             }
-        }
-        if (!foundClass) {
-            throw new DeploymentException("Module Implemantation class dose not found");
-        }
+        }                                                          
+        /*if (!foundClass) {
+        throw new DeploymentException("Module Implemantation class dose not found");
+        }*/
         boolean END_MODULE = false;
         try {
             while (!END_MODULE) {
@@ -873,7 +873,7 @@ public class DeploymentParser implements DeploymentConstants {
                         module.setOutFlow(outFlow);
                     } else {
                         throw new UnsupportedOperationException(
-                            ST + "elment is not allowed in module.xml");
+                                ST + "elment is not allowed in module.xml");
                     }
                     // complete implenatation
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
@@ -910,7 +910,7 @@ public class DeploymentParser implements DeploymentConstants {
                         inFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -945,7 +945,7 @@ public class DeploymentParser implements DeploymentConstants {
                         outFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -981,7 +981,7 @@ public class DeploymentParser implements DeploymentConstants {
                         faultFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -1016,7 +1016,7 @@ public class DeploymentParser implements DeploymentConstants {
                         faultFlow.addHandler(handler);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -1052,7 +1052,7 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + tagnae);
+                                "parser Exception : un supported element" + tagnae);
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -1124,7 +1124,7 @@ public class DeploymentParser implements DeploymentConstants {
                         // module.setName(archiveName);
                     } else {
                         throw new DeploymentException(
-                            "parser Exception : un supported element" + ST);
+                                "parser Exception : un supported element" + ST);
                     }
                     //processStartElement();
                     break;

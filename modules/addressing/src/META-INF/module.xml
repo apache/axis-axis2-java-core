@@ -1,4 +1,4 @@
-<module name="addressing" class="org.apache.axis.AddressingModule">
+<module name="addressing">
     <inflow>
         <handler name="AddressingInHandler" class="org.apache.axis.handlers.addressing.AddressingInHandler">
             <order phase="PreDispatch"/>

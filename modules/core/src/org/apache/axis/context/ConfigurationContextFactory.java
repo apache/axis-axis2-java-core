@@ -32,7 +32,6 @@ public class ConfigurationContextFactory {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            //TODO have to do smt Deepal
             configurationContext = new ConfigurationContext(configuration) ;
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
@@ -47,7 +46,6 @@ public class ConfigurationContextFactory {
         try {
             AxisConfiguration configuration = new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-               //TODO have to do smt Deepal
             engineContext = new ConfigurationContext(configuration) ;
             phaseResolver.buildTranspotsChains();
             initModules(engineContext);
@@ -65,8 +63,7 @@ public class ConfigurationContextFactory {
      * @throws DeploymentException
      */
 
-
-    private void initModules(ConfigurationContext context) throws DeploymentException {
+   private void initModules(ConfigurationContext context) throws DeploymentException {
         try {
             HashMap modules = ((AxisConfigurationImpl) context.getAxisConfiguration()).getModules();
             Collection col = modules.values();
