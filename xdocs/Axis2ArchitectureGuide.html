@@ -4,22 +4,22 @@
 </head>
 <body>
 	<h1>Axis2 Architecture Guide</h1>
-	<h2>Big Picture</h2>
-	<p>Any architecture is a result of what that architecture should yield, the success of a architecture should be evaluated bases on the requirements the architecture should meet. Let us start our journey in to Axis2 looking at the requirements that are expected from Axis2.</p>
+	<h2>The Big Picture</h2>
+	<p>Any architecture is a result of what that architecture should yield, the success of an architecture should be evaluated bases on the requirements the architecture should meet. Let us start our journey in to Axis2 looking at the requirements that are expected from Axis2.</p>
 
 	<h3>Requirement from Axis2</h3>
-	<p>In the SOAP terminolgy a participant took part in a Web Service interaction is known as a SOAP Node. Delivery of a single SOAP Message is defined based on two participants, SOAP Sender and SOAP Receiver. Each SOAP Message is sent by SOAP Sender and received by SOAP Receiver, and single SOAP delivery is the most basic unit that build the Web Service interactions.</p>
+	<p>In the SOAP terminology, a participant who is taking part in a Web Service interaction is known as a SOAP Node. Delivery of a single SOAP Message is defined based on two participants, SOAP Sender and SOAP Receiver. Each SOAP Message is sent by SOAP Sender and received by SOAP Receiver, and single SOAP delivery is the most basic unit that builds the Web Service interactions.</p>
 	
-	<p>Each SOAP Node is written in specific programming language, may it be Java, C++, .NET or Perl, the Web Services allow them to inter operate. This is possible because at the wire each Web service interaction is done via SOAP, which is common to every SOAP Node. </p>
+	<p>Each SOAP Node is written in specific programming language, may it be Java, C++, .NET or Perl, the Web Services allow them to inter operate. This is possible because at the wire each Web Service interaction is done via SOAP, which is common to every SOAP Node. </p>
 	
 	<IMG src="images/archi-guide/soap.gif" width="691" height="319" border="0">
 	
 	<p>
-      Web Service Middle-ware handle the complexity SOAP Messaging and let the users to work with the programing language they are accustomed to. Axis2 allow the java users to invoke the Web Services using java representations and handles the SOAP Messaging behind the curtain.
+      Web Service Middle-ware handles the complexity SOAP Messaging and let the users to work with the programming language they are accustomed to. Axis2 allows the java users to invoke the Web Services using java representations and handles the SOAP Messaging behind the curtain.
     </p>
 	
 	<p>
-      Axis2 handle the SOAP processing, together with dozen services that make the life of the Web Service Developer simpler, following are the identified requirements.
+      Axis2 handles the SOAP processing, along with numerous other functionalities that make the life of the Web Service Developer convenient. Following are the identified requirements.
     </p>
 	
 	
@@ -35,7 +35,7 @@
       Apart from the above functionalities the performance, both in the terms of memory and speed, is a major consideration for Axis2.
       
       <br>
-       Axis2 Core Architecture is build on the three specifications, WSDL, SOAP and WS-Addressing. Other specifications like JAX-RPC and the SAAJ ect are alyered on top of the Core Architecture. The WS-Policy might join the core specifications in the near future.
+       Axis2 Core Architecture is built on the three specifications, WSDL, SOAP and WS-Addressing. Other specifications like JAX-RPC and the SAAJ etc are layered on top of the Core Architecture. The WS-Policy might join the core specifications in the near future.
     </p>
 	
 	<h3>Axis2, the Architecture</h3> 
@@ -45,18 +45,15 @@
     </p>
  
 <p>
-      Axis2 architecture lay out few Principals to preserve the Uniformaity of the architecture, they are as follows.
+      Axis2 architecture lay out few Principals to preserve the uniformity of the architecture, they are as follows.
     </p>
 <ul>
 <LI>Axis2 Architecture separates the logic and the states, the code that process the logic is usually stateless. This allows the code to be executed freely by the parallel threads.</LI>
 <LI>All the information is kept in a one Information model, this allows the system to be stored and resumed</LI>
-<li>
-        Extend this list ..
-      </li>
 </ul>
 
 <p>
-      Axis2 Aarchitecture is Moduler, the architecture broke the Axis2 in to Seven modules.
+      Axis2 architecture is modular, the architecture broke the Axis2 in to Seven modules.
     </p>
 <ol><li>Information Model</li>
 <li>XML processing Model</li>
@@ -74,20 +71,20 @@
       Let us look in to the rationale for each Module, and what each does?
     </p>
 
-<p>Axis2 define a Model to handle the information and all the states are kept in this Model. The Model has a hierarchy for the information and the system manges the life cycle of the objects in that hierarchy. </p>
+<p>Axis2 define a Model to handle the information and all the states are kept in this Model. The Model has a hierarchy for the information and the system manages the life cycle of the objects in that hierarchy. </p>
 	<p>
-      Handling the SOAP Message is the most important and the most complex task, the efficiency of the this is the single most important factor that decides the performance. It make sense to delegate this task to a separate module, and that module, AXIOM provide a simple API for SOAP and XML info-set and while hiding the complexities of the efficient XML processing with in the implementation.
+      Handling the SOAP Message is the most important and the most complex task, the efficiency of this is the single most important factor that decides the performance. It make sense to delegate this task to a separate module, and that module, AXIOM provide a simple API for SOAP and XML info-set and while hiding the complexities of the efficient XML processing with in the implementation.
     </p>
 	
 	<p>
       SOAP Processing Model controls the execution of the processing, the Model defines different phases the execution would walk though, and the user can extend the Processing Model at some specific places.
     </p> 
 
-	<p>Axis2 define a transport framework, that enable user to use different transports, the transports match in to the specific places in the SOAP processing model. The implementation provide few common transports and user may write new ones if he wishes. </p>
+	<p>Axis2 define a transport framework that enable user to use different transports, the transports match in to the specific places in the SOAP processing model. The implementation provide few common transports and user may write new ones if he wishes. </p>
 	<p>
-      Axis2 deployment Model allow the user to deploy services, configure the transports, extend the SOAP Processing model per system basis, per service basis, and per operation basis.
+      Axis2 deployment model allows the user to deploy services, configure the transports, extend the SOAP Processing model per system basis, per service basis, and per operation basis.
     </p>
-	<p>Finally Axis2 provides a Code generation tool,  the generated code would simplify the Service deployment and the service invocation. This would make the Axis2 more easier to use. </p>
+	<p>Finally Axis2 provides a Code generation tool that will generate server side and client side code along a test case. The generated code would simplify the Service deployment and the service invocation. This would make the Axis2 easier to use. </p>
 
 <h2>Information Model</h2>
 
@@ -98,14 +95,14 @@
 
 
 <p>
-      The two hierarchies are connected as shown by the picture, the Description hierarchy represents more data that exists though out the lifetime of the Axis2. Few examples for such data areDeployed Web Services, and or Operations. On the other hand, the Context hierarchy hold more dynamic information about things that has more than one instances like this Message Context.
+      The two hierarchies are connected as shown in the above figure. The Description hierarchy represents more data that exists through out the lifetime of the Axis2. Examples for such data would Deployed Web Services, Operations, etc. On the other hand, the Context hierarchy holds more dynamic information about things that has more than one instances (e.g.Message Context).
     </p>
 
-<p>This two hierarchies created a model that provide ability to search
+<p>These two hierarchies created a model that provide ability to search
 for the key value pairs, when the
 values are search at a given level, they are searched while moving up
 in the level until a match is found. In the resulting model the lower
-levels overide the values in the upper levels. For and example when a
+levels overrides the values in the upper levels. For and example when a
 value is looked up at the message context and it is not found, it would
 be looked up at the Operation Context etc, up the hierarchy. The Search
 is first done up the hierarchy, and if starting point is a Context then
@@ -121,12 +118,12 @@ would serve better in this instants and opt for the flexibility. </p>
 <TABLE border="1">
   <tr> <td>Configuration
 Context</td>
-<td>hold the current state of execution, deep copy of this would essentially make a copy of the Axis.</td>
+<td>Holds the current state of execution, deep copy of this would essentially make a copy of the Axis.</td>
 <td>Axis
 Configuration
 </td>
 <td>
-          Hold the all global configurations. Transports, global modules and parameters and Services.
+          Holds the all global configurations. Transports, global modules and parameters and Services.
         </td>
 </tr>
 <tr><td>Service Context</td>
@@ -137,19 +134,19 @@ Description</td>
 
 <tr><td>Operation
 Context
-</td><td>this hold the information about the current MEP instance, maintain the Messages in the current MEP etc.</td>
+</td><td>Holds the information about the current MEP instance, maintain the Messages in the current MEP etc.</td>
 <td>Operation
 Description</td>
-<td>Hold the operation level configurations</td>
+<td>Holds the operation level configurations</td>
 </tr>
 <tr><td><a name="messageContext">Message
 Context</a></td>
 <td>
-          hold all the information about the current Message that being executed.
+          Holds all the information about the current Message that being executed.
         </td>
 <td>Message
 Description</td>
-<td>do not hold any information yet, but can be used as future extension point.</td></tr>
+<td>Do not hold any information as yet, but can be used as future extension point.</td></tr>
 
 </TABLE>
 
@@ -162,21 +159,21 @@ Description</td>
 
 
 <p>
-      The Architecture identified two basic actions a SOAP Processor should perform, sending and receiving SOAP Messages. The Architecture provides two Pipes (also named as Flows), to peform these two basic actions. Axis Engine or the Driver of Axis2 define two methods send() and receive() to implement these two Pipes. The two pipes are named as<i><i>In Pipe</i></i> and <i><i>Out Pipe</i></i>, the complex Message Exchange Patterns are constructed by combining these two Pipes.</p>
-<p>Extensibility of the SOAP processing Model is provided though the Handlers, when a SOAP Message is being processed the Handlers that are registered would be executed. The Hanlders can be registered in global, service, or operation scopes and the final handler chain is calculated combining the Handlers from all the scopes.</p>
+      The Architecture identified two basic actions a SOAP Processor should perform, sending and receiving SOAP Messages. The Architecture provides two Pipes (also named as Flows), to perform these two basic actions. Axis Engine or the Driver of Axis2 define two methods send() and receive() to implement these two Pipes. The two pipes are named as <i><i>In Pipe</i></i> and <i><i>Out Pipe</i></i>, the complex Message Exchange Patterns are constructed by combining these two Pipes.</p>
+<p>Extensibility of the SOAP processing Model is provided through the Handlers, when a SOAP Message is being processed the Handlers that are registered would be executed. The Handlers can be registered in global, service, or operation scopes and the final handler chain is calculated combining the Handlers from all the scopes.</p>
 <p>The Handlers act as interceptors and they process the parts of the SOAP Message and provide add on Services. 
-Usually Handlers work on the SOAP Headers yet they may accsess or change the SOAP Body as well.</p>
+Usually Handlers work on the SOAP Headers yet they may access or change the SOAP Body as well.</p>
 
 
-<p>When a SOAP Message is send from the Client API, a <i><i>Out Pipe</i></i> would begun, the <i><i>Out Pipe</i></i> invoke the Handlers and ends with a Transport Sender that send the SOAP Message to the target endpoint. The SOAP Message is received by a Transport Receiver at the target endpoint, which read the SOAP Message and start  the <i><i>In Pipe</i></i>. The In pipe consists of Handler and end with a <a href="#mr">Message Receiver</a>, which consumed the Message.</p>
+<p>When a SOAP Message is send from the Client API, a <i><i>Out Pipe</i></i> would begun, the <i><i>Out Pipe</i></i> invoke the Handlers and ends with a Transport Sender that send the SOAP Message to the target endpoint. The SOAP Message is received by a Transport Receiver at the target endpoint, which read the SOAP Message and starts  the <i><i>In Pipe</i></i>. The In pipe consists of Handler and end with a <a href="#mr">Message Receiver</a>, which consumed the Message.</p>
 
 <p>
       Above explained processing happens for each and every SOAP Message exchanged. Processing that follows may decide to give birth for the other SOAP Message, in which case the more complex Patterns emerge. But Axis2 always view the SOAP Message in terms of processing of a Single Message where as the combination of the Messages are layered on top of that basic framework.
     </p>
 
-<p>The two Pipes does not differentiate between the Server and the Client, the SOAP Processing Model Handles the Complexity and provide two abstract pipes to the User.  Each pipes is set of Handlers, the different areas of the Pipes are given names, and according to the Axis2 slang those are named Phases. The Handler always runs inside a Phase, and the Phase provide a mechanisum to specify the ordering of Handlers. Both Pipes has built in Phases, and both define the areas for User Phases which can be defined by the User.</p>
+<p>The two Pipes does not differentiate between the Server and the Client, the SOAP Processing Model Handles the Complexity and provide two abstract pipes to the User.  Each pipes is set of Handlers, the different areas of the Pipes are given names, and according to the Axis2 slang those are named Phases. The Handler always runs inside a Phase, and the Phase provides a mechanism to specify the ordering of Handlers. Both Pipes has built in Phases, and both define the areas for User Phases which can be defined by the User.</p>
 
-<p>Following Picture shows the the two Pipes with their pre-defined Phases, the user defined Phases would be fit in to the User Phases.</p>
+<p>Following Picture shows the two Pipes with their pre-defined Phases, the user defined Phases would be fit in to the User Phases.</p>
 <IMG src="images/archi-guide/phases.png" width="525" height="226" border="0">
 
 <h3>Axis2 Default Processing Model</h3>
@@ -205,7 +202,7 @@ Policy Determination Phase -  This Phase does nothing for the time being, this i
 </li>
 </ol>
 
-<p>There may be other handlers in the any of the these Phases, users may employ custom Handlers to override the mechanics in the each of these Phases. If there is a response message, that would  be initiated by the <a href="#mr"> Message Receiver</a>, yet the Architecture does not aware of the the response Message and merely invoke the <a href="#mr"> Message Receiver</a>.</p>
+<p>There may be other handlers in the any of the these Phases, users may employ custom Handlers to override the mechanics in the each of these Phases. If there is a response message, that would  be initiated by the <a href="#mr"> Message Receiver</a>, yet the Architecture does not aware of the response Message and merely invoke the <a href="#mr"> Message Receiver</a>.</p>
 
 <h3>Processing of the Outgoing Message</h3>
 
@@ -218,11 +215,11 @@ Policy Determination Phase -  This Phase does nothing for the time being, this i
 </ol>
 
 <h3>Extending SOAP Processing Model</h3>
-	<p>We discussed the default Processing Model of the Axis2, ability to extend the Model has been the whole point of spending the energy on the SOAP Processing Model. We shall discuss the extension mechanisum for the SOAP Processing Model now.</p>
-	<p>Idea behind making the each step of the SOAP processing in to Handlers (inbuilt ones we discuss eariler) and placing them in the Phases is to allow Handlers to be placed between those Handlers and  to override or affect the default mechanics. There is a two ways the to extend the SOAP Processing Model.</p> 
+	<p>We discussed the default Processing Model of the Axis2, ability to extend the Model has been the whole point of spending the energy on the SOAP Processing Model. We shall discuss the extension mechanism for the SOAP Processing Model now.</p>
+	<p>Idea behind making the each step of the SOAP processing in to Handlers (inbuilt ones we discuss earlier) and placing them in the Phases is to allow Handlers to be placed between those Handlers and  to override or affect the default mechanics. There is a two ways the to extend the SOAP Processing Model.</p> 
 	
 	<h4>Extending the SOAP Processing Model with Handlers</h4>
-	<p>Handlers to the SOAP Processing Model. The Handlers can specify the the Phase they need to be run, further more they can specify the there location inside a phase via the following information.</p>
+	<p>The Handlers can specify the Phase they need to be run, further more they can specify the there location inside a phase via the following information.</p>
 <ol>
 <li>Handler should run as the  first in the phases</li>
 <li>Handler should run as the  last in the Phases</li>
@@ -231,7 +228,7 @@ Policy Determination Phase -  This Phase does nothing for the time being, this i
 </ol>
 <h4>Extending the SOAP Processing Model with Modules</h4>
 	<p>SOAP processing Model defines a
-logical entity called a module that encapsulate two entities, Handlers and Web Service Operations.
+logical entity called a module that encapsulates two entities, Handlers and Web Service Operations.
 The Handlers will act in the same way as explained in the first method.</p>
 <p>Apart from the extension mechanism based on the Handlers, the WS-*
 specifications suggest a requirement for add new Operations using modules. For an example once a
@@ -241,16 +238,15 @@ This can be implemented by letting the Modules define the operations and
 once the module is engaged to a service the operations will be added to
 that service. </p>
 
-       <p>The service, operations and system may engaged
+       <p>A service, operations or the system may engage
 a module, once the module is engaged the handlers and the operations
 defined in the module are added to the entity that engages them.
-Modules can not be added while the Axis2 is running, each module is
-available once the system comes up.</p>
+Modules can not be added while the Axis2 is running but rater it ll be available once the system is restarted.</p>
 
 	
 	<h2>Deployment</h2> 
 
-<p>There deployment Model provides a concrete mechanisum to configure Axis2. Deployment Model has four entities that provide the configuration. </p>
+<p>There deployment Model provides a concrete mechanism to configure Axis2. Deployment Model has four entities that provide the configuration. </p>
 
 
 <h3>The <em>server.xml</em> file and <em>client.xml</em> files </h3>
@@ -265,7 +261,7 @@ available once the system comes up.</p>
 
 
 <h3>Service Archive</h3> 
-<p>Service archive must have a <em>META-INF/service.xml</em> file and may contains the dependent classes. the <em>service.xml</em> file has following information.</p>
+<p>Service archive must have a <em>META-INF/service.xml</em> file and may contain the dependent classes. the <em>service.xml</em> file has following information.</p>
 <ol><li>Service level parameters</li>
 <li>Modules that are engaged Service level</li>
 <li>Operations inside the Service</li></ol>
@@ -273,13 +269,13 @@ available once the system comes up.</p>
 <h3>Module Archive</h3> 
 <p>Module archive must have a <em>META-INF/module.xml</em> file and dependent classes the <em>module.xml</em> file has Module parameters and the Operations defined in  the module.</p>
 
-<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a <em>server.xml</em> or a <em>client.xml</em> file and build the global configuration. Then the Deployment check for the Module archives and then for the service archives, the corresponding services and Modules are added to the Axis Configuration. System will built a Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.
+<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a <em>server.xml</em> or a <em>client.xml</em> file and build the global configuration. Then the Deployment check for the Module archives and then for the service archives, the corresponding services and Modules are added to the Axis Configuration. System will build Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.
     </p>
 
 
 <h2>WSDL and code generation</h2>
 
-<p>Although the basic objective of the codegen tool has not changed, the Code 
+<p>Although the basic objective of the code generation tool has not changed, the Code 
 generation module of Axis2 has taken a different approach to generate code. 
 Primarily the change is in the use of templates, namely XSL templates which 
 gives the code generator the  flexibility to generate code in multiple 
@@ -287,7 +283,7 @@ languages. </p>
 <p>The basic approach is to set the code generator to generate an XML and parse 
 it with a template to generate the code file. The following figure shows how 
 this shows up in the architecture of the tool.</p>
-<p><img border="0" src="images/archi-guide/CodegenArchitecture.jpg" width="478" height="218"></p>
+<p><img border="0" src="images/archi-guide/CodegenArchitecture.JPG" width="478" height="218"></p>
 
 <p>The fact here is that it is the same information that is extracted from the 
 WSDL no matter what code is generated. Code generator uses the WOM (WSDL Object 
@@ -299,18 +295,18 @@ for the template that is being used.h</p>
 
 
 <h2>Client API</h2>
-	<p>There are three parameters that decides the nature of the Web Service interaction.</p>
+	<p>There are three parameters that decide the nature of the Web Service interaction.</p>
 <ol>
 <li>Message Exchange Pattern</li>
-<li>The Behavior of the transport. does it acting like a one-way or two way transport?</li>
+<li>The Behavior of the transport. Does it act one-way or two way</li>
 <li>Synchronous/ Asynchronous behavior of the Client API</li>
 </ol>
  <p>Variations of the three parameters can result in indefinite
 number of scenarios, even though Axis2 is built on a core that support
 any messaging interaction, the developers were compelled to support only
 two most widely used Message Exchange Patterns.</p>
-	<p>Two supported transports are One-Way and the Request-Response Senarios in the 
-	Client API, the implementation is based on a class called <code>MEPClient</code> and there are extentions for each Message Exchange Pattern that Axis2 Client API supports.</p>
+	<p>Two supported transports are One-Way and the Request-Response scenarios in the 
+	Client API, the implementation is based on a class called <code>MEPClient</code> and there are extensions for each Message Exchange Pattern that Axis2 Client API supports.</p>
 
 <h3>One Way Messaging Support</h3>
 	<p>The One-Way support is provided by the <code>InOnlyMEPClient</code> and Axis2 provides a class called <code>Call</code> that provides a much simpler interface for the user. The Axis2 supports HTTP/SMTP and TCP transports, in the case of the HTTP transport the return channel is not used and the HTTP 202 OK is returned in the return Channel.
@@ -320,8 +316,8 @@ two most widely used Message Exchange Patterns.</p>
        <ol>
           <LI>Blocking or Non-Blocking nature - this can be decided by using <code>invokeBlocking()</code> or <code>invokeNonBlocking()</code> methods</LI>
           <LI>Sender transport - transport use to send the SOAP Message</LI>
-          <LI>Listener transport - transport the Response is recevied</LI>
-          <LI>Use Sperate Channel - does the response is send over a seperate transport connection or not, this can be false only when sender an listener transport is same and is a two way transport.</LI>
+          <LI>Listener transport - transport the Response is received</LI>
+          <LI>Use Separate Channel - does the response is send over a separate transport connection or not, this can be false only when sender an listener transport is same and is a two way transport.</LI>
        </ol>
        <p>Depend on the values for the above four parameter, Axis2 behave differently</p>
 
@@ -330,11 +326,11 @@ two most widely used Message Exchange Patterns.</p>
 
 <h2>Transports</h2>
 <p>Axis2 has two basic constructs for transports, named as Transport In Configuration and Transport Out Configuration. The <a href="#messageContext">Message Context</a> has two fields to put the input and the out put transport to be used. 
-Axis behave according to the transport that is specified in each of the fields. 
+Axis behaves according to the transport that is specified in each of the fields. 
 </p>
 
-<p>SOAP Message is arrived at the Server side, the incoming transport is decided by the Transport Listener that accept the SOAP Message comes in. The transports for the subsequent SOAP Messages that are related to the first, are decided based on the addressing parameter.</p>
-<p>At the Client Side the user is free to specify the trnapsort to be used, as in the Server side the transport for the subsequent SOAP Messages are decided by the addressing.</p>
+<p>SOAP Message is arrived at the Server side, the incoming transport is decided by the Transport Listener that accepts the incoming  SOAP Message. The transports for the subsequent SOAP Messages that are related to the first message, are decided based on the addressing parameters.</p>
+<p>At the Client Side the user is free to specify the transport to be used, as in the Server side the transport for the subsequent SOAP Messages are decided by the addressing.</p>
 
 <p>
 There Transport In Configuration and the Transport Out Configuration contains following information.
@@ -354,7 +350,7 @@ There Transport In Configuration and the Transport Out Configuration contains fo
 <p>Axis2 Presently support the following transports</p>
 
 <ol><LI>HTTP - The HTTP transport, the transport Listener is a Servelet or a Simple HTTP server provided by Axis2. The transport Sender uses sockets to connect and send the SOAP Message. Current Transport Sender is minimal and does not supports all the options HTTP support.</LI>
-<li>TCP - This is the most simplest transport, but needed the addressing support to be funtional. </li>
+<li>TCP - This is the most simplest transport, but needed the addressing support to be functional. </li>
 <li>SMTP - This work off a single email account, Transport Receiver is a tread that checks for emails in fixed time intervals.</li>
 </ol>
 
