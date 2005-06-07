@@ -147,7 +147,7 @@
      </developer>
      <developer>
       <name>Thilina Gunarathne</name>
-      <id>yhilina</id>
+      <id>thilina</id>
       <email>thilina@opensource.lk</email>
       <organization>Lanka Software Foundation / Virtusa</organization>
      </developer>
@@ -168,6 +168,11 @@
     <contributor>
       <name>Chamil Thanthrimudalige</name>
       <email>chamil@opensource.lk</email>
+      <organization>Lanka Software Foundation</organization>
+    </contributor>
+    <contributor>
+      <name>Ruchith Fernando</name>
+      <email>ruchithf@apache.lk</email>
       <organization>Lanka Software Foundation</organization>
     </contributor>
     <contributor>
