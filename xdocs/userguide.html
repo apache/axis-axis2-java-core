@@ -47,7 +47,7 @@
 </ul>
 <p>We hope you enjoy using Axis. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation . </p>
 <p>Let us know what you think! </p>
-<p>Please send feedback about the package to &quot; <a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org </a>&quot; and make sure to prefix the subject of the mail with [Axis2]. </p>
+<p>Please send feedback about the package to &quot; <a href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org </a>&quot; and make sure to prefix the subject of the mail with “[Axis2]”. </p>
 <h2><a name="_Toc96698078"></a>What's in this release? </h2>
 <p>This release includes the following features:</p>
 <ul>
@@ -113,8 +113,8 @@ of the binary distribution. So.. let's  explore the samples.</p>
 <p>Note: Please note that the rest of this user guide assumes that the user has downloaded the binary distribution of Axis2. If you have already downloaded the source tree of Axis2 then please create the binary distribution by simply using the maven command <strong>maven dist-bin </strong>This will create the &quot;axis2-M2-bin.zip&quot; and &quot;axis2-M2-bin.tar&quot;  in the &quot;target/dist&quot; directory. Extract the zip or the tar ball to any 
 directory in your machine and for the explanations purposes we will name this as &quot;Axis2Home&quot;. </p>
 <h2> Web Services Using Axis2</h2>
-<p>Before starting, please check wither you have deployed the &quot;axis2.war&quot; in your servlet container and it is working properly.(See;
-<font color="#00FFFF">installation guide</font>)</p>
+<p>Before starting, please check wither you have deployed the &quot;axis2.war&quot; in your servlet container and it is working 
+properly. (See <a href="installationguide.htm">Installation Guide</a>)</p>
 <h3>MyService</h3>
 <p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
 <pre class="style1 style2 style3">public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
@@ -123,7 +123,7 @@ public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMEleme
 &quot;userguide/example1&quot; package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
 <p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed 
 in Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
-<pre class="style1 style2 style3">&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations,echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre>
+<pre class="style1 style2 style3">&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre>
 <p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageRecevier</strong> since it is an 
 IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageRecevier</strong> as the message receiver. </p>
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
@@ -182,8 +182,8 @@ running transactions (the transport connection may times-out before the
 operation completes). A possible solution would be to use two separate transport 
 connections for request and response. The asynchronous behavior that we gain 
 using can be called, <b>Transport Level Asynchrony</b>.</p>
-<p> By combining the two we can obtain four differtn invocation patterns for web 
-services as shown in the follwing table.</p>
+<p> By combining the two we can obtain four different invocation patterns for web 
+services as shown in the following table.</p>
 <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" height="99">
   <tr>
     <td width="33%" height="19">API (Blocking/Non-Blocking)</td>
@@ -477,9 +477,9 @@ different phases. &quot;module.xml&quot; for the logging module will be as follo
   <li>outflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   - Represents the handler chain that will run when the message is going out.</li>
   <li>Outfaultflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Represents the handler chain 
-  that will run when there is a fault and the the fault is going out</li>
+  that will run when there is a fault and the  fault is going out</li>
   <li>INfaultflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Represents the handler 
-  chain that will run when there is a fault and the the fault is coming in</li>
+  chain that will run when there is a fault and the  fault is coming in</li>
 </ol>
 
 <p>
@@ -612,110 +612,22 @@ directory.</p>
 created a separate service archive (MyServiceWithModule.aar) for users to just 
 deploy and see. Please deploy this service using the same steps that you use to 
 deploy &quot;MyService&quot; and copy the &quot;LoggingModule.mar&quot; file to the &quot;modules&quot; 
-directory. Then by
+directory. Then by using the &quot;TestWebServiceWithModuleClient.bat&quot; and &quot;TestWebServiceWithModuleClient.sh&quot; 
+in the &quot;Axis2Home/samples/userguide/src/userguide/clients/bin&quot; directory.
 </p>
+
+
+<p>Note: To see the logs, the user needs to modify the &quot;log4j.properties&quot; to log 
+INFO as well. The property file is located in &quot;webapps\axis2\WEB-INF\classes&quot; of 
+your servlet container. Change the line &quot;log4j.rootCategory= ERROR, LOGFILE&quot; to 
+&quot;log4j.rootCategory=INFO, ERROR, LOGFILE&quot;.</p>
+
+
+<h2>&nbsp;</h2>
 
 
 <h2>Other Samples</h2>
 <h2>Tools</h2>
 <p>&nbsp;</p>
-
-<h2>Configuring Transports</h2>
-<h3>Configuring HTTP transports</h3>
-<p>The HTTP is configured by default, the server can be started by following </p>
-<code>Java org.apache.axis.transport.http.SimpleHTTPServer repository port</code>
-<h3>Configuring TCP transports</h3>
-<p>The TCP transport is configured by default</p>
-
-
-<h3>Configuring Mail transport</h3>
-<p>Mail transport has two parts, transport Sender and transport Listener. </p>
-
- <a>First you need following additional jar dependencies in the classpath, they can be found by downloading the <a href="http://java.sun.com/products/javamail/">JavaMail API</a></p>
-  <ol>
-  <LI>pop3.jar</LI>
-  <LI>smtp.jar</LI>
-  <LI>mailapi.jar</LI>
-  <LI>activation.jar</LI>
-  </ol>
-  
-  
-<h4>Transport Sender</h4>
-<p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the server.xml file or client.xml file or in both.
-  </p>
-  
-  <code>
-  <pre>
-   &lt;transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.port" locked="xsd:false"&gt;25&lt;/parameter&gt;
-   &lt;/transportSender&gt;
-  </pre>
-  </code>
-  
-  <h4>Transport Receiver</h4>
- 
-  
-  <p>You need a mail address that has pop access, the mail Listener can be activated by adding following entry to the server.xml file or client.xml file or in both.</p>
-  
-  <code><pre>
-  &lt;transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
-        &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.port" locked="xsd:false"&gt;110&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="xsd:false"&gt;email address&lt;/parameter&gt;
-  &lt;/transportReceiver&gt;
-  </pre></code>
-  
-  <p>At the Client side if the Mail Listener is needed it is automatically started by Axis2. If the Mail Listener is need to be started as the server it can be done with following command with the all the axis2 jars and the mail dependency jars in the classpath.</p>
-  
-  <code>Java org.apache.axis.transport.mail.SimpleMailListener repository-directory</code>
-  
-  <h4>Configure James as SMTP and POP server</h4>
-  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start the James, connect to the James via telnet for administrator James with following code
-</p>
-  <code>
-  <pre>
-  $telnet 127.0.0.1 4555
-  Trying 127.0.0.1...
-Connected to localhost.localdomain (127.0.0.1).
-Escape character is '^]'.
-JAMES Remote Administration Tool 2.2.0
-Please enter your login and password
-Login id:
-root
-Password:
-root
-Welcome root. HELP for a list of commands
-  </pre>
-  </code>
-
-  <p>add users to the James</p>
-  <code>
-  <pre>
-adduser axis2-server axis2
-User axis2-server added
-adduser axis2-client axis2
-User axis2-client added
-Connection closed by foreign host.
-  </pre>
-  </code>  
-  
-  <p>Now the James is up and running with the accounts</p>
-  
-  <h2>Enable REST support</h2>
-  <h3>Enable the REST support for the Server side</h3>
-  <p>Add the following parameter in the server.xml file</p>
-  <code>&lt;parameter name="eanbleREST" locked="xsd:false"&gt;true&lt;/parameter&gt;</code>
-  
-  
-  <h3>Enable the REST support for the Client side</h3>
-  <p>There are two ways to enable REST at the client side, first is to do the same thing done at the 
-  Server side in the client.xml file or do the following in the Call.</p>
-  <code>call.set(Constants.Configuration.DO_REST,"true");</code>
-
 </body>
 </html>
