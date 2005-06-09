@@ -28,13 +28,7 @@
 			<soap:operation/>
 			<input>
 				<soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
-			</input>
-			<output>
-				<soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
-			</output>
-			<fault name="InvalidIsbnFault">
-				<soap:fault name="InvalidIsbnFault" use="literal"/>
-			</fault>
+			</input>			
 		</operation>
 	</binding>
 	<service name="BookQuoteService">
