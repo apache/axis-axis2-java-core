@@ -432,25 +432,28 @@ public class WSDLPump {
 									wsdl4jBindingOperation.getName()));
 		BindingInput wsdl4jInputBinding = 
 			wsdl4jBindingOperation.getBindingInput();
-		WSDLBindingMessageReference wsdlInputBinding = 
-			this.wsdlComponenetFactory.createWSDLBindingMessageReference();
-		wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-		//TODO Faults
-		this.copyExtensibleElements(wsdl4jInputBinding.getExtensibilityElements(), 
-								wsdlInputBinding);
-		wsdlBindingOperation.setInput(wsdlInputBinding);
-		
+		if(null != wsdl4jInputBinding){
+			WSDLBindingMessageReference wsdlInputBinding = 
+				this.wsdlComponenetFactory.createWSDLBindingMessageReference();
+			wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+			//TODO Faults
+			this.copyExtensibleElements(wsdl4jInputBinding.getExtensibilityElements(), 
+									wsdlInputBinding);
+			wsdlBindingOperation.setInput(wsdlInputBinding);
+		}
 
 		BindingOutput wsdl4jOutputBinding = wsdl4jBindingOperation
 				.getBindingOutput();
-		WSDLBindingMessageReference wsdlOutputBinding = this.wsdlComponenetFactory
-				.createWSDLBindingMessageReference();
-
-		wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-		//TODO Faults
-		this.copyExtensibleElements(wsdl4jOutputBinding.getExtensibilityElements(), 
-								wsdlOutputBinding);
-		wsdlBindingOperation.setOutput(wsdlOutputBinding);
+		if(null != wsdl4jOutputBinding){
+			WSDLBindingMessageReference wsdlOutputBinding = this.wsdlComponenetFactory
+					.createWSDLBindingMessageReference();
+	
+			wsdlOutputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+			//TODO Faults
+			this.copyExtensibleElements(wsdl4jOutputBinding.getExtensibilityElements(), 
+									wsdlOutputBinding);
+			wsdlBindingOperation.setOutput(wsdlOutputBinding);
+		}
 
 	}
 
