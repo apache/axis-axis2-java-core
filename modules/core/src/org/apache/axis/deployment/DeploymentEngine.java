@@ -370,7 +370,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addnewService(ServiceDescription serviceMetaData) throws AxisFault {
         try {
-            currentArchiveFile.setClassLoader();
             loadServiceProperties(serviceMetaData);
             axisConfig.addService(serviceMetaData);
 
@@ -493,7 +492,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addNewModule(ModuleDescription moduelmetada) throws AxisFault {
-        currentArchiveFile.setClassLoader();
+       // currentArchiveFile.setClassLoader();
         Flow inflow = moduelmetada.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -536,6 +535,11 @@ public class DeploymentEngine implements DeploymentConstants {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
                 int type = currentArchiveFile.getType();
+                try {
+                    currentArchiveFile.setClassLoader();
+                } catch (AxisFault axisFault) {
+                    log.info("Setting Class Loader  " +axisFault);
+                }
                 ArchiveReader archiveReader = new ArchiveReader();
                 String serviceStatus = "";
                 switch (type) {
@@ -548,10 +552,12 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException de) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + de);
+                            de.printStackTrace();
                             serviceStatus = "Error:\n" + de.getMessage();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
+                            axisFault.printStackTrace();
                             serviceStatus = "Error:\n" + axisFault.getMessage();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentArchiveFile.getName());

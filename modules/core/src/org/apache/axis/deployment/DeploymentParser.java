@@ -742,8 +742,9 @@ public class DeploymentParser implements DeploymentConstants {
                             if (CLASSNAME.equals(attname)) {
                                 try {
                                     Class messageReceiver = null;
-                                    ClassLoader loader1 =
-                                            Thread.currentThread().getContextClassLoader();
+                                    ClassLoader loader1= dpengine.getCurrentFileItem().getClassLoader();
+                                   // ClassLoader loader1 =
+                                     //       Thread.currentThread().getContextClassLoader();
                                     if (attvalue != null && !"".equals(attvalue)) {
                                         messageReceiver = Class.forName(attvalue, true, loader1);
                                         operation.setMessageReciever(
@@ -751,13 +752,13 @@ public class DeploymentParser implements DeploymentConstants {
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e);
                                 } catch (IllegalAccessException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e);
                                 } catch (InstantiationException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e.getMessage());
+                                            "Error in loading messageRecivers " + e);
                                 }
                             } else {
                                 throw new UnsupportedOperationException(
