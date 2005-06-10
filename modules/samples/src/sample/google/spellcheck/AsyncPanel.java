@@ -1,20 +1,14 @@
 package sample.google.spellcheck;
 
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.soap.SOAPEnvelope;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamException;
-import javax.swing.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.awt.event.KeyListener;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
-import java.awt.*;
+import java.awt.event.KeyListener;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  *  class sample.google.spellcheck.AsyncPanel

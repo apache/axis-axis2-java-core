@@ -1,24 +1,22 @@
 package sample.google.spellcheck;
 
-import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPBody;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMElement;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.AddressingConstants;
-
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.namespace.QName;
-import java.net.URL;
-import java.net.MalformedURLException;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.soap.SOAPBody;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 import sample.google.common.util.PropertyLoader;
 

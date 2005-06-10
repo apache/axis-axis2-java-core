@@ -1,10 +1,8 @@
 package userguide.example2;
 
-import org.apache.axis.om.OMElement;
-
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
+
+import org.apache.axis.om.OMElement;
 
 /**
  * Created by IntelliJ IDEA.
