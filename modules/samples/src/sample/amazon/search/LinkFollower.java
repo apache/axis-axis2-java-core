@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package samples.amazon.search;
+package sample.amazon.search;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;

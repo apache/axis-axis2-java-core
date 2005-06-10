@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package samples.amazon.search;
+package sample.amazon.search;
 
 import org.apache.axis.engine.AxisFault;
 

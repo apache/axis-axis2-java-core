@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package samples.amazon.search;
+package sample.amazon.search;
 
 import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
