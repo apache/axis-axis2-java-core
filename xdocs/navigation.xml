@@ -5,8 +5,7 @@
      
     <menu name="Axis 2.0">
        <item name="Home" href="index.html"/> 
-       <item name="News" href="news.html"/>   
-      <item name="Get Invloved" href="svn.html">
+       <item name="Get Invloved" href="svn.html">
       	<item name="Overview" href="overview.html"/>
       	<item name="Setting Up" href="svn.html"/>
       	<item name="Guide Lines" href="guidelines.html"/>
