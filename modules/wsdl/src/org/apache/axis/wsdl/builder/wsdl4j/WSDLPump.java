@@ -108,6 +108,7 @@ public class WSDLPump {
 		wsdlDefinition.setWSDL1DefinitionName(wsdl4JDefinition.getQName());
 		wsdlDefinition
 				.setTargetNameSpace(wsdl4JDefinition.getTargetNamespace());
+		this.copyExtensibleElements(wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition);		
 
 		/////////////////////////////////////////////////////////////////////
 		// Order of the following items shouldn't be changed unless you //
@@ -133,7 +134,7 @@ public class WSDLPump {
 			
 			
 			this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
-					wsdlTypes);
+					wsdlTypes);			
 
 			this.womDefinition.setTypes(wsdlTypes);
 		}
@@ -151,6 +152,8 @@ public class WSDLPump {
 			wsdlInterface = this.wsdlComponenetFactory.createInterface();
 			portType = (PortType) portTypeIterator.next();
 			this.populateInterfaces(wsdlInterface, portType);
+			this.copyExtensibilityAttribute(portType.getExtensionAttributes(), 
+					wsdlInterface);
 			wsdlDefinition.addInterface(wsdlInterface);
 		}
 
@@ -168,7 +171,7 @@ public class WSDLPump {
 			wsdl4jBinding = (Binding) bindingIterator.next();
 			this.populateBindings(wsdlBinding, wsdl4jBinding);
 			this.copyExtensibleElements(wsdl4jBinding.getExtensibilityElements(), 
-										wsdlBinding);
+										wsdlBinding);			
 			wsdlDefinition.addBinding(wsdlBinding);
 
 		}
@@ -219,7 +222,8 @@ public class WSDLPump {
 			this.populateOperations(wsdloperation,
 								wsdl4jOperation, 
 								wsdl4jPortType.getQName().getNamespaceURI());
-			wsdlInterface.setOperation(wsdloperation);
+			this.copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(), wsdloperation);			
+			wsdlInterface.setOperation(wsdloperation);			
 		}
 	}
 
@@ -304,6 +308,8 @@ public class WSDLPump {
 				(wsdl4jInputMessage.getMessage()).getExtensibilityElements(), 
 				wsdlInputMessage
 				);
+		this.copyExtensibilityAttribute(wsdl4jInputMessage.getExtensionAttributes(), 
+				wsdlInputMessage);
 		wsdlOperation.setInputMessage(wsdlInputMessage);
 		
 
@@ -319,6 +325,8 @@ public class WSDLPump {
 				(wsdl4jOutputMessage.getMessage()).getExtensibilityElements(),
 				wsdlOutputMessage
 				);
+		this.copyExtensibilityAttribute(wsdl4jOutputMessage.getExtensionAttributes(), 
+				wsdlOutputMessage);
 		wsdlOperation.setOutputMessage(wsdlOutputMessage);
 		
 		
@@ -460,7 +468,7 @@ public class WSDLPump {
 	public void populatePorts(WSDLEndpoint wsdlEndpoint, Port wsdl4jPort,
 			String targetNamspace) {
 		wsdlEndpoint.setName(new QName(targetNamspace, wsdl4jPort.getName()));
-
+		
 		wsdlEndpoint.setBinding(this.womDefinition.getBinding(wsdl4jPort
 				.getBinding().getQName()));
 	
