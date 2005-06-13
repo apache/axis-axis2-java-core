@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
@@ -52,6 +54,7 @@ import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
 import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLFaultReference;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
@@ -299,43 +302,63 @@ public class WSDLPump {
 		//defined in the WSDL 2.0. eg like #any, #none
 		// Create the Input Message and add
 		Input wsdl4jInputMessage = wsdl4jOperation.getInput();
-		MessageReference wsdlInputMessage = this.wsdlComponenetFactory
-				.createMessageReference();
-		wsdlInputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-		wsdlInputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-		this.populateMessageReference(wsdlInputMessage, wsdl4jInputMessage.getMessage());			
-		this.copyExtensibleElements(
-				(wsdl4jInputMessage.getMessage()).getExtensibilityElements(), 
-				wsdlInputMessage
-				);
-		this.copyExtensibilityAttribute(wsdl4jInputMessage.getExtensionAttributes(), 
-				wsdlInputMessage);
-		wsdlOperation.setInputMessage(wsdlInputMessage);
 		
+		if(null != wsdl4jInputMessage){
+			MessageReference wsdlInputMessage = this.wsdlComponenetFactory
+			.createMessageReference();
+			wsdlInputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+			wsdlInputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+			wsdlInputMessage.setElement(this.generateReferenceQname(wsdl4jInputMessage.getMessage()));			
+			this.copyExtensibleElements(
+					(wsdl4jInputMessage.getMessage()).getExtensibilityElements(), 
+					wsdlInputMessage
+					);
+			this.copyExtensibilityAttribute(wsdl4jInputMessage.getExtensionAttributes(), 
+					wsdlInputMessage);
+			wsdlOperation.setInputMessage(wsdlInputMessage);
+		}
 
 		//Create an output message and add
 		Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
-		MessageReference wsdlOutputMessage = 
-			this.wsdlComponenetFactory.createMessageReference();
-		wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-		wsdlOutputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-		this.populateMessageReference(wsdlOutputMessage, wsdl4jOutputMessage.getMessage());
-		this.copyExtensibleElements(
-				(wsdl4jOutputMessage.getMessage()).getExtensibilityElements(),
-				wsdlOutputMessage
-				);
-		this.copyExtensibilityAttribute(wsdl4jOutputMessage.getExtensionAttributes(), 
-				wsdlOutputMessage);
-		wsdlOperation.setOutputMessage(wsdlOutputMessage);
+		if(null != wsdl4jOutputMessage){
+			MessageReference wsdlOutputMessage = 
+				this.wsdlComponenetFactory.createMessageReference();
+			wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+			wsdlOutputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+	
+			wsdlOutputMessage.setElement(this.generateReferenceQname(wsdl4jOutputMessage.getMessage()));
+			this.copyExtensibleElements(
+					(wsdl4jOutputMessage.getMessage()).getExtensibilityElements(),
+					wsdlOutputMessage
+					);
+			this.copyExtensibilityAttribute(wsdl4jOutputMessage.getExtensionAttributes(), 
+					wsdlOutputMessage);
+			wsdlOperation.setOutputMessage(wsdlOutputMessage);
+		}
 		
+		Map faults = wsdl4jOperation.getFaults();
+		Iterator faultKeyIterator = faults.keySet().iterator();
+		WSDLFaultReference faultReference = null;
+		
+		while(faultKeyIterator.hasNext()){
+		
+			Fault fault = (Fault)faults.get(faultKeyIterator.next());
+			faultReference = wsdlComponenetFactory.createFaultReference();
+			faultReference.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+			faultReference.setRef(this.generateReferenceQname(fault.getMessage()));
+			wsdlOperation.addOutFault(faultReference);
+			this.copyExtensibilityAttribute(fault.getExtensionAttributes(), faultReference);
+			//TODO Fault Message lable
+            
+		}
 		
 		//Set the MEP
 		wsdlOperation.setMessageExchangePattern(WSDL11MEPFinder
 				.getMEP(wsdl4jOperation));
 
 	}
-	private void populateMessageReference(MessageReference womMessage, Message wsdl4jMessage){
+	private QName generateReferenceQname(Message wsdl4jMessage){
+		QName referenceQName = null;
 		if (wsdl4jMessage.getParts().size() > 1){
 			// Multipart Message
 			
@@ -351,7 +374,7 @@ public class WSDLPump {
 				//made out of it earlier.
 				//FIXME Actual element name should it be xs:, if yes change the qname added to the 
 				//resolvedmessage list too.
-				womMessage.setElement(wsdl4jMessage.getQName());
+				referenceQName = wsdl4jMessage.getQName();
 			}else{
 				//Get the list of multiparts of the message and create a new Element 
 				//out of it and add it to the schema.
@@ -406,7 +429,7 @@ public class WSDLPump {
 				element.appendChild(newElement);
 				//Now since  a new type is created augmenting the parts add the QName
 				//of the newly created type as the messageReference's name.				
-				womMessage.setElement(wsdl4jMessage.getQName());
+				referenceQName = wsdl4jMessage.getQName();
 				//Add this message as a resolved message, so that incase some other
 				//operation refer to the same message the if above will take a hit 
 				//and the cashed QName can be used instead of crating another type 
@@ -423,12 +446,13 @@ public class WSDLPump {
 				Part outPart = ((Part) outputIterator.next());
 				QName typeName;
 				if (null != (typeName = outPart.getTypeName())) {
-					womMessage.setElement(typeName);
+					referenceQName = typeName;
 				} else {
-					womMessage.setElement(outPart.getElementName());
+					referenceQName = outPart.getElementName();
 				}
 			}
 		}
+		return referenceQName;
 	}
 
 	private void populateBindingOperation(
@@ -462,6 +486,15 @@ public class WSDLPump {
 									wsdlOutputBinding);
 			wsdlBindingOperation.setOutput(wsdlOutputBinding);
 		}
+		
+		
+//		Map bindingFaults = wsdl4jBindingOperation.getBindingFaults();
+//		Iterator keyIterator = bindingFaults.keySet().iterator();
+//		while(keyIterator.hasNext()){
+//			BindingFault bindingFault = (BindingFault)bindingFaults.get(keyIterator.next());
+//			bindingFault.getName()
+//			
+//		}
 
 	}
 

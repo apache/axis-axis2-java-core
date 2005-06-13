@@ -16,6 +16,7 @@
 package org.apache.wsdl.impl;
 
 import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLFaultReference;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 
@@ -214,5 +215,21 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
             return this.name.getNamespaceURI();
         }
         return null;
+    }
+    
+    /**
+     * Add the InFault to the Components InFaults
+     * @param inFault
+     */
+    public void addInFault(WSDLFaultReference inFault){
+    	this.infaults.add(inFault);
+    }
+    
+    /**
+     * Add the OutFault to the Component OutFaults
+     * @param outFault
+     */
+    public void addOutFault(WSDLFaultReference outFault){
+    	this.outfaults.add(outFault);
     }
 }

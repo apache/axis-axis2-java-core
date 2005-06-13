@@ -129,4 +129,16 @@ public interface WSDLOperation extends ExtensibleComponent {
      * @return
      */
     public String getTargetnamespace();
+    
+    /**
+     * Add the InFault to the Components InFaults
+     * @param inFault
+     */
+    public void addInFault(WSDLFaultReference inFault);
+    
+    /**
+     * Add the OutFault to the Component OutFaults
+     * @param outFault
+     */
+    public void addOutFault(WSDLFaultReference outFault);
 }

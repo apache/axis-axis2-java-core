@@ -7,7 +7,7 @@ import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLFault;
+import org.apache.wsdl.WSDLFaultReference;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLImport;
 import org.apache.wsdl.WSDLInclude;
@@ -62,7 +62,7 @@ public interface WSDLComponentFactory {
 	/**
 	 * @return A new instance of type <code>WSDLFault</code>
 	 */
-	public WSDLFault createFault();
+	public WSDLFaultReference createFaultReference();
 
 	/**
 	 * @return A new instance of type <code>WSDLFeature</code>

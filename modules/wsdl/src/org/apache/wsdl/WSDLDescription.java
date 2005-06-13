@@ -15,11 +15,12 @@
  */
 package org.apache.wsdl;
 
-import org.apache.axis.wsdl.builder.WSDLComponentFactory;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 
 /**
  * @author chathura@opensource.lk
@@ -267,11 +268,6 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      * @return A new instance of type <code>WSDLEndpoint</code>
      */
     public WSDLEndpoint createEndpoint();
-
-    /**
-     * @return A new instance of type <code>WSDLFault</code>
-     */
-    public WSDLFault createFault();
 
     /**
      * @return A new instance of type <code>WSDLFeature</code>
