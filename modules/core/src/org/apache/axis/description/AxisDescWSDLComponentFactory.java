@@ -8,7 +8,7 @@ import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLFault;
+import org.apache.wsdl.WSDLFaultReference;
 import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLImport;
 import org.apache.wsdl.WSDLInclude;
@@ -26,7 +26,7 @@ import org.apache.wsdl.impl.WSDLBindingOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.impl.WSDLEndpointImpl;
 import org.apache.wsdl.impl.WSDLExtensibilityAttributeImpl;
-import org.apache.wsdl.impl.WSDLFaultImpl;
+import org.apache.wsdl.impl.WSDLFaultReferenceImpl;
 import org.apache.wsdl.impl.WSDLFeatureImpl;
 import org.apache.wsdl.impl.WSDLImportImpl;
 import org.apache.wsdl.impl.WSDLIncludeImpl;
@@ -76,11 +76,6 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 	}
 
 	
-	public WSDLFault createFault() {
-		return new WSDLFaultImpl();
-	}
-
-	
 	public WSDLFeature createFeature() {
 		return new WSDLFeatureImpl();
 	}
@@ -124,6 +119,10 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 	 */
 	public ExtensionFactory createExtensionFactory(){
 		return new ExtensionFactoryImpl();
+	}
+	
+	public WSDLFaultReference createFaultReference(){
+		return new WSDLFaultReferenceImpl();
 	}
 
 }
