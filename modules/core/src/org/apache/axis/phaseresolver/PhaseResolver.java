@@ -320,7 +320,7 @@ public class PhaseResolver {
             }
         }
     }
-
+    
 
     public void engageModuleGlobally(ModuleDescription module) throws AxisFault {
         enageToGlobalChain(module);
@@ -328,6 +328,7 @@ public class PhaseResolver {
         Collection serviceCol = services.values();
         for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
             ServiceDescription serviceDescription = (ServiceDescription) iterator.next();
+            serviceDescription.addModuleOperations(module);
             engageModuleToServiceFromGlobal(serviceDescription, module);
             serviceDescription.addToEngagModuleList(module);
         }
@@ -355,7 +356,7 @@ public class PhaseResolver {
                 }
             }
             if (engaged) {
-               continue;
+                continue;
             }
             Flow flow = null;
             for (int type = 1; type < 5; type++) {
@@ -498,7 +499,7 @@ public class PhaseResolver {
         boolean engaged = false;
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
-           Collection modules =  opDesc.getModules();
+            Collection modules =  opDesc.getModules();
             for (Iterator iterator1 = modules.iterator(); iterator1.hasNext();) {
                 ModuleDescription description = (ModuleDescription) iterator1.next();
                 if(description.getName().equals(module.getName())){
@@ -511,6 +512,7 @@ public class PhaseResolver {
                 opDesc.addToEngageModuleList(module);
             }
         }
+        service.addModuleOperations(module);
     }
 
 

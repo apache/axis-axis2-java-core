@@ -25,4 +25,9 @@
              <order phase="userphase1"/>
         </handler>
     </INfaultflow>
+
+    <operation name="creatSeq" mep="MEP_URI_IN_OUT">
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <parameter name="para1" locked="xsd:true">10</parameter>
+    </operation>
 </module>

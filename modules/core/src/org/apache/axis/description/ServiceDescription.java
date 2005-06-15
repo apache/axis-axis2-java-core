@@ -92,6 +92,19 @@ public class ServiceDescription
         collectionModule.add(moduleref);
     }
 
+    /**
+     * To add a opeartion to a service if a module requird to do so
+     * @param module
+     */
+    public void addModuleOperations(ModuleDescription module){
+        HashMap map = module.getOperations();
+        Collection col =  map.values();
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            OperationDescription operation = (OperationDescription) iterator.next();
+            this.addOperation(operation);
+        }
+    }
+
     public void addToEngagModuleList(ModuleDescription moduleName){
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleName);

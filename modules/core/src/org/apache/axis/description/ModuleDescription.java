@@ -1,23 +1,24 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.description;
 
 import org.apache.axis.modules.Module;
 
 import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 /**
  * <p>This holds the information about a Module. </p>
@@ -29,7 +30,7 @@ import javax.xml.namespace.QName;
  * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
 public class ModuleDescription implements FlowInclude, ParameterInclude {
-    
+
     private Module module;
     /**
      * Field name
@@ -41,6 +42,9 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      */
     private final FlowInclude flowInclude = new FlowIncludeImpl();
 
+    //to store module opeartions , which are suppose to be added to a service if it is engaged to a service
+    private HashMap opeartions ;
+
     /**
      * Field parameters
      */
@@ -50,6 +54,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      * Constructor ModuleDescription
      */
     public ModuleDescription() {
+        opeartions = new HashMap();
     }
 
     /**
@@ -58,6 +63,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      * @param name
      */
     public ModuleDescription(QName name) {
+        this();
         this.name = name;
     }
 
@@ -93,7 +99,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
         flowInclude.setFaultInFlow(faultFlow);
     }
 
-     /**
+    /**
      * @param faultFlow
      */
     public void setFaultOutFlow(Flow faultFlow) {
@@ -154,6 +160,14 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      */
     public void setModule(Module module) {
         this.module = module;
+    }
+
+    public void addOperation(OperationDescription operation){
+        opeartions.put(operation.getName(),operation);
+    }
+    
+    public HashMap getOperations(){
+        return opeartions;
     }
 
 }

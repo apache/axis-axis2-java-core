@@ -699,7 +699,9 @@ public class DeploymentParser implements DeploymentConstants {
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATTNAME.equals(attname)) {
                     operation.setName(new QName(attvalue));
-                } else
+                } else if(MEP.equals(attname)){
+                    operation.setMessageExchangePattern(attvalue);
+                }else
                     throw new DeploymentException("bad attribute in operation " + attname);
             }
         }
@@ -728,7 +730,10 @@ public class DeploymentParser implements DeploymentConstants {
                                 }
                             }
                         }
-                    } else if (IN_FAILTFLOW.equals(ST)) {
+                    }else if(PARAMETERST.equals(ST)){
+                        Parameter parameter = processParameter();
+                        operation.addParameter(parameter);
+                    }else if (IN_FAILTFLOW.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
                     } else if (INFLOWST.equals(ST)) {
                         throw new UnsupportedOperationException("nexted elements are not allowed for M1");
@@ -743,8 +748,8 @@ public class DeploymentParser implements DeploymentConstants {
                                 try {
                                     Class messageReceiver = null;
                                     ClassLoader loader1= dpengine.getCurrentFileItem().getClassLoader();
-                                   // ClassLoader loader1 =
-                                     //       Thread.currentThread().getContextClassLoader();
+                                    // ClassLoader loader1 =
+                                    //       Thread.currentThread().getContextClassLoader();
                                     if (attvalue != null && !"".equals(attvalue)) {
                                         messageReceiver = Class.forName(attvalue, true, loader1);
                                         operation.setMessageReciever(
@@ -778,7 +783,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (AxisFault e) {
-            throw new DeploymentException("Axis fault , loading module", e);
+            throw new DeploymentException("Axis fault", e);
         }
         return operation;
     }
@@ -872,6 +877,35 @@ public class DeploymentParser implements DeploymentConstants {
                     } else if (OUTFLOWST.equals(ST)) {
                         Flow outFlow = processOutFlow();
                         module.setOutFlow(outFlow);
+                    } else if (OPRATIONST.equals(ST)) {
+                        OperationDescription operation = processOperation();
+                        DeploymentData.getInstance().setOperationPhases(operation);
+                        if (operation.getMessageReciever() == null) {
+                            try {
+                                /**
+                                 * Setting default Message Recive as Message Reciever
+                                 */
+                                ClassLoader loader1 =
+                                        Thread.currentThread().getContextClassLoader();
+                                Class messageReceiver =
+                                        Class.forName(
+                                                "org.apache.axis.receivers.RawXMLINOutMessageRecevier",
+                                                true,
+                                                loader1);
+                                operation.setMessageReciever(
+                                        (MessageReceiver) messageReceiver.newInstance());
+                            } catch (ClassNotFoundException e) {
+                                throw new DeploymentException(
+                                        "Error in loading messageRecivers " + e.getMessage());
+                            } catch (IllegalAccessException e) {
+                                throw new DeploymentException(
+                                        "Error in loading messageRecivers " + e.getMessage());
+                            } catch (InstantiationException e) {
+                                throw new DeploymentException(
+                                        "Error in loading messageRecivers " + e.getMessage());
+                            }
+                        }
+                        module.addOperation(operation);
                     } else {
                         throw new UnsupportedOperationException(
                                 ST + "elment is not allowed in module.xml");
