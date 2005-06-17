@@ -197,8 +197,6 @@ public class InOutMEPClient extends MEPClient {
                     axisop.findOperationContext(msgctx, serviceContext, false));
                 msgctx.setServiceContext(serviceContext);
                 engine.send(msgctx);
-                msgctx.getTransportOut().getSender().cleanUp();
-
             } else {
                 Thread thread = new Thread(new Runnable() {
                     public void run() {
