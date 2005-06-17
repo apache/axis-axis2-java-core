@@ -395,9 +395,7 @@ public class InOutMEPClient extends MEPClient {
     }
     
     public void close() throws AxisFault{
-//        if(listener != null){
-//            listener.stop();
-//        }
+        senderTransport.getSender().cleanUp();
         ListenerManager.stop(listenerTransport.getName().getLocalPart());
      }
 

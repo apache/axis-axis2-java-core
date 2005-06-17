@@ -120,6 +120,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
 
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        call.close();
 
     }
 

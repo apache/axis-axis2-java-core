@@ -88,7 +88,6 @@ public class TwoChannelBasedSender {
         } else {
             throw new AxisFault("Blocking invocation always expect a response");
         }
-        response.getTransportOut().getSender().cleanUp();
         return response;
     }
 }

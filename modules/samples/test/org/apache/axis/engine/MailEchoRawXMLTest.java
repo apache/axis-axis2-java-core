@@ -146,6 +146,7 @@ public class MailEchoRawXMLTest extends TestCase {
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        call.close();
     }
     
     

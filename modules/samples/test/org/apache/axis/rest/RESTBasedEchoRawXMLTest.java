@@ -203,6 +203,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
         
         System.out.println(messageInfo.requestMessage);
+        call.close();
     }
     
     public class MessageInformation{

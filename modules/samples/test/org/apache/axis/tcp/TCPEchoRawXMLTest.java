@@ -138,6 +138,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 throw new AxisFault("Server is shutdown as the Async response take too longs time");
             }
         }
+        call.close();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -154,6 +155,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        call.close();
     }
     
     public void testEchoXMLCompleteSync() throws Exception {
@@ -178,6 +180,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
           OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
           result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+          call.close();
 
       }
       

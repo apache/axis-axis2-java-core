@@ -153,6 +153,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
                 }
             }
             log.info("send the reqest");
+            call.close();
         } finally {
             call.close();
         }

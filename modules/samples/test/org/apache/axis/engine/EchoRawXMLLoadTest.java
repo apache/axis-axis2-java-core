@@ -151,5 +151,6 @@ public class EchoRawXMLLoadTest extends TestCase {
                         (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        call.close();
     }
 }

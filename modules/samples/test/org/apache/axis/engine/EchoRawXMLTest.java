@@ -132,6 +132,7 @@ public class EchoRawXMLTest extends TestCase {
                 throw new AxisFault("Server is shutdown as the Async response take too longs time");
             }
         }
+        call.close();
 
 
         log.info("send the reqest");
@@ -150,5 +151,6 @@ public class EchoRawXMLTest extends TestCase {
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        call.close();
     }
 }
