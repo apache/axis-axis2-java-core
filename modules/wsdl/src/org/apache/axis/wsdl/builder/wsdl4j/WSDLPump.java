@@ -40,6 +40,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
@@ -47,6 +48,7 @@ import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLConstants;
@@ -65,6 +67,8 @@ import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
 
 /**
  * @author chathura@opensource.lk
@@ -488,13 +492,14 @@ public class WSDLPump {
 		}
 		
 		
-//		Map bindingFaults = wsdl4jBindingOperation.getBindingFaults();
-//		Iterator keyIterator = bindingFaults.keySet().iterator();
-//		while(keyIterator.hasNext()){
-//			BindingFault bindingFault = (BindingFault)bindingFaults.get(keyIterator.next());
-//			bindingFault.getName()
-//			
-//		}
+		Map bindingFaults = wsdl4jBindingOperation.getBindingFaults();
+		Iterator keyIterator = bindingFaults.keySet().iterator();
+		while(keyIterator.hasNext()){
+			BindingFault bindingFault = (BindingFault)bindingFaults.get(keyIterator.next());
+			WSDLBindingFault womBindingFault = this.wsdlComponenetFactory.createBindingFault();
+			this.copyExtensibleElements(bindingFault.getExtensibilityElements(), womBindingFault);
+			wsdlBindingOperation.addOutFault(womBindingFault);
+		}
 
 	}
 
@@ -598,6 +603,16 @@ public class WSDLPump {
 				org.apache.wsdl.extensions.Schema extensibilityElement = (org.apache.wsdl.extensions.Schema)extensionFactory.getExtensionElement(schema.getElementType());
 				extensibilityElement.setElelment(schema.getElement());
 				Boolean required = schema.getRequired();
+				if(null != required){
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			}else if(SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement.getElementType())){
+				SOAPOperation soapOperation = (SOAPOperation)wsdl4jElement;
+				org.apache.wsdl.extensions.SOAPOperation extensibilityElement = (org.apache.wsdl.extensions.SOAPOperation)extensionFactory.getExtensionElement(soapOperation.getElementType());
+				extensibilityElement.setSoapAction(soapOperation.getSoapActionURI());
+				extensibilityElement.setStyle(soapOperation.getStyle());
+				Boolean required = soapOperation.getRequired();
 				if(null != required){
 					extensibilityElement.setRequired(required.booleanValue());
 				}

@@ -38,6 +38,8 @@ public class ExtensionFactoryImpl implements ExtensionFactory , ExtensionConstan
 	 		return new SOAPAddressImpl();
 	 	if(qName.equals(SCHEMA))
 	 		return new SchemaImpl();
+	 	if(qName.equals(SOAP_OPERATION))
+	 		return new SOAPOperationImpl();
 	 	
 	 	
 	 	return new DefaultExtensibilityElementImpl();

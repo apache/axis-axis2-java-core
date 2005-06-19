@@ -1,7 +1,7 @@
 package org.apache.axis.wsdl.util;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

@@ -2,6 +2,7 @@ package org.apache.axis.wsdl.builder;
 
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
@@ -110,6 +111,12 @@ public interface WSDLComponentFactory {
 	 * @return A new instance of <code>WSDLExtensibilityAttribute</code>
 	 */
 	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute();
+	
+	/**
+	 * 
+	 * @return A new instance of <code>WSDLBindingFault</code>
+	 */
+	public WSDLBindingFault createBindingFault();
 	
 	/**
 	 * 

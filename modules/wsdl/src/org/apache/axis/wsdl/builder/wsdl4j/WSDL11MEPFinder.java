@@ -15,11 +15,11 @@
  */
 package org.apache.axis.wsdl.builder.wsdl4j;
 
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.impl.WSDLProcessingException;
-
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
+
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.impl.WSDLProcessingException;
 
 /**
  * @author chathura@opensource.lk

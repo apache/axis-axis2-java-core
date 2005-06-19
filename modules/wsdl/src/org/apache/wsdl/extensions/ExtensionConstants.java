@@ -29,6 +29,9 @@ public interface ExtensionConstants {
 	 */
 	public static final QName SOAP_ADDRESS =  new QName("http://schemas.xmlsoap.org/wsdl/soap/", "address");
 	
+	public static final QName SOAP_OPERATION = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "operation");
+	
 	public static final QName SCHEMA = new QName("http://www.w3.org/2001/XMLSchema", "schema");
+	
 
 }

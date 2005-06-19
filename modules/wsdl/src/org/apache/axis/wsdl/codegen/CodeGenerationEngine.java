@@ -16,6 +16,15 @@
 
 package org.apache.axis.wsdl.codegen;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.wsdl.WSDLException;
+
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis.wsdl.codegen.emitter.Emitter;
@@ -24,14 +33,6 @@ import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
 import org.apache.axis.wsdl.codegen.extension.PackageFinder;
 import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author chathura@opensource.lk

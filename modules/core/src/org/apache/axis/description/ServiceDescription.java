@@ -15,18 +15,25 @@
 */
 package org.apache.axis.description;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.ServiceContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.phaseresolver.PhaseResolver;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.impl.WSDLServiceImpl;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.ServiceContext;
+import org.apache.axis.engine.AxisFault;
+import org.apache.axis.phaseresolver.PhaseResolver;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.extensions.ExtensionConstants;
+import org.apache.wsdl.extensions.SOAPOperation;
+import org.apache.wsdl.impl.WSDLInterfaceImpl;
+import org.apache.wsdl.impl.WSDLServiceImpl;
 
 /**
  * Class ServiceDescription
@@ -39,7 +46,7 @@ public class ServiceDescription
      * the Services, so we put this here for M1 until we foud better way to do
      * that
      */
-    protected final HashMap operationsMap = new HashMap();
+//    protected final HashMap operationsMap = new HashMap();
 
     private String serviceDescription = "Not Specified";
 
@@ -49,6 +56,7 @@ public class ServiceDescription
     public ServiceDescription() {
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
+        this.setServiceInterface( new WSDLInterfaceImpl());
     }
 
     /**
@@ -133,10 +141,7 @@ public class ServiceDescription
      */
     public OperationDescription getOperation(QName operationName) {
 
-        // todo The key has been changed from the qname to the local name
-        // because
-        // todo when comparing the namespace will not be available
-        return (OperationDescription) this.operationsMap.get(operationName.getLocalPart());
+       return (OperationDescription) this.getServiceInterface().getAllOperations().get(operationName.getLocalPart());
     }
 
     /*
@@ -152,12 +157,7 @@ public class ServiceDescription
      */
     public void addOperation(OperationDescription operation) {
 
-        // todo The key has been changed from the qname to the local name
-        // because
-        // todo when comparing the namespace will not be available
-        if (operation != null) {
-            this.operationsMap.put(operation.getName().getLocalPart(), operation);
-        }
+        this.getServiceInterface().setOperation(operation);
     }
 
     /*
@@ -413,9 +413,73 @@ public class ServiceDescription
      * @return
      */
     public HashMap getOperations() {
-        return operationsMap;
+    	return this.getServiceInterface().getOperations();
+    }
+    
+    public OperationDescription getOperation(String ncName){
+    	return (OperationDescription)this.getServiceInterface().getOperations().get(ncName);
+    }
+    
+    /**
+     * This method will return the operation given particular SOAP Action. 
+     * This method should only be called if there is only one Endpoint is defined
+     * for this Service. If more than one Endpoint exists one of them will be picked.
+     * If more than one Operation is found with the given 
+     * SOAP Action; null will be ruturned. If no particular Operation is found with 
+     * the given SOAP Action; null will be returned.
+     * @param soapAction SOAP Action defined for the particular Operation 
+     * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
+     * otherwise will return null.
+     */
+    public OperationDescription getOperationBySOAPAction(String soapAction){
+    	Iterator iterator = this.getEndpoints().keySet().iterator();
+    	if(iterator.hasNext()){
+    		WSDLEndpoint endpoint = (WSDLEndpoint)iterator.next();
+    		return this.getOperationBySOAPAction(soapAction, endpoint.getName());
+    	}
+    	
+    	return null;
+		
+		
+    }
+    
+    
+    /**
+     * This method will return the operation given the particular endpoing and the 
+     * particular SOAP Action. If more than one Operation is found with the given 
+     * SOAP Action; null will be ruturned. If no particular Operation is found with 
+     * the given SOAP Action; null will be returned
+     * @param endpoint Particular Enpoint in which the bining is defined with the particular SOAP
+     * Action.
+     * @param soapAction SOAP Action defined for the particular Operation 
+     * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
+     * otherwise will return null.
+     */
+    public OperationDescription getOperationBySOAPAction(String soapAction, QName endpoint){
+    	HashMap bindingOperations = this.getEndpoint(endpoint).getBinding().getBindingOperations();
+    	Iterator operationKeySetIterator = bindingOperations.keySet().iterator();
+    	OperationDescription operation = null;
+    	int count = 0;
+    	while(operationKeySetIterator.hasNext()){
+    		WSDLBindingOperation bindingOperation = (WSDLBindingOperation)bindingOperations.get(operationKeySetIterator.next());
+    		Iterator extIterator = bindingOperation.getExtensibilityElements().iterator();
+    		while(extIterator.hasNext()){
+    			ExtensibilityElement element = (ExtensibilityElement)extIterator.next();
+    			if(element.getElementType().equals(ExtensionConstants.SOAP_OPERATION)){
+    				if(((SOAPOperation)element).getSoapAction().equals(soapAction)){
+    					operation = (OperationDescription)bindingOperation.getOperation();
+    					count++;
+    				}
+    			}
+    		}
+    	}
+    	if(1 == count){
+    		return operation;
+    	}
+    	return null;
     }
 
+   
     /**
      * This finds the ServiceContext provided that the incomming message that
      * has have some serviceInstanceID. Currently this will not be added to the

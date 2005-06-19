@@ -15,9 +15,9 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.WSDLBindingFault;
-
 import javax.xml.namespace.QName;
+
+import org.apache.wsdl.WSDLBindingFault;
 
 /**
  * @author chathura@opensource.lk

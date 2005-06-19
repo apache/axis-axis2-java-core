@@ -16,10 +16,10 @@
 
 package org.apache.axis.wsdl.codegen;
 
-import org.apache.wsdl.WSDLDescription;
-
 import java.io.File;
 import java.util.Map;
+
+import org.apache.wsdl.WSDLDescription;
 
 /**
  * @author chathura@opensource.lk

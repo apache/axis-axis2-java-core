@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wsdl.Component;
-import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Document;
 
 /**

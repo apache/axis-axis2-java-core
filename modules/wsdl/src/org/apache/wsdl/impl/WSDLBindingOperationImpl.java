@@ -15,11 +15,15 @@
  */
 package org.apache.wsdl.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLOperation;
-
-import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
@@ -30,6 +34,17 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
      * Field name
      */
     private QName name;
+    
+    
+    /**
+     * Field infaults
+     */
+    private List infaults = new LinkedList();
+
+    /**
+     * Field outfaults
+     */
+    private List outfaults = new LinkedList();
 
     /**
      * Field operation
@@ -117,4 +132,34 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     public void setName(QName name) {
         this.name = name;
     }
+    
+    /**
+     * Add the InFault to the Components InFaults
+     * @param inFault
+     */
+    public void addInFault(WSDLBindingFault inFault){
+    	this.infaults.add(inFault);
+    }
+    
+    /**
+     * Add the OutFault to the Component OutFaults
+     * @param outFault
+     */
+    public void addOutFault(WSDLBindingFault outFault){
+    	this.outfaults.add(outFault);
+    }
+    
+    
+	public List getInfaults() {
+		return infaults;
+	}
+	public void setInfaults(List infaults) {
+		this.infaults = infaults;
+	}
+	public List getOutfaults() {
+		return outfaults;
+	}
+	public void setOutfaults(List outfaults) {
+		this.outfaults = outfaults;
+	}
 }

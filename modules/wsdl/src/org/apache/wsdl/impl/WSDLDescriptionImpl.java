@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
@@ -506,5 +507,9 @@ public class WSDLDescriptionImpl extends ComponentImpl
 	
 	public WSDLFaultReference createFaultReference(){
 		return  new WSDLFaultReferenceImpl();
+	}
+	
+	public WSDLBindingFault createBindingFault(){
+		return new WSDLBindingFaultImpl();
 	}
 }

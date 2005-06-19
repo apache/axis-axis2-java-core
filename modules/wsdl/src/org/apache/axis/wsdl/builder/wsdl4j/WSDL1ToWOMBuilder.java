@@ -15,6 +15,15 @@
  */
 package org.apache.axis.wsdl.builder.wsdl4j;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axis.wsdl.builder.WOMBuilder;
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -22,14 +31,6 @@ import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.util.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk

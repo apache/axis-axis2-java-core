@@ -3,6 +3,7 @@ package org.apache.axis.description;
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
@@ -20,6 +21,7 @@ import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.MessageReferenceImpl;
+import org.apache.wsdl.impl.WSDLBindingFaultImpl;
 import org.apache.wsdl.impl.WSDLBindingImpl;
 import org.apache.wsdl.impl.WSDLBindingMessageReferenceImpl;
 import org.apache.wsdl.impl.WSDLBindingOperationImpl;
@@ -123,6 +125,10 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 	
 	public WSDLFaultReference createFaultReference(){
 		return new WSDLFaultReferenceImpl();
+	}
+	
+	public WSDLBindingFault createBindingFault(){
+		return new WSDLBindingFaultImpl();
 	}
 
 }
