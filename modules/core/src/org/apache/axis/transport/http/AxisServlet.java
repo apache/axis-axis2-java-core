@@ -62,7 +62,9 @@ public class AxisServlet extends HttpServlet {
      * Field engineRegistry
      */
 
-    private ConfigurationContext engineContext;
+    private ConfigurationContext configContext;
+
+    private ListingAgent lister ;
 
     /**
      * Method init
@@ -75,8 +77,9 @@ public class AxisServlet extends HttpServlet {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            engineContext = erfac.buildEngineContext(repoDir);
-            engineContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
+            configContext = erfac.buildEngineContext(repoDir);
+            configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
+            lister = new ListingAgent(configContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -141,11 +144,11 @@ public class AxisServlet extends HttpServlet {
                 }
                 MessageContext msgContext =
                     new MessageContext(
-                        engineContext,
+                        configContext,
                         (SessionContext) sessionContext,
-                        engineContext.getAxisConfiguration().getTransportIn(
+                        configContext.getAxisConfiguration().getTransportIn(
                             new QName(Constants.TRANSPORT_HTTP)),
-                        engineContext.getAxisConfiguration().getTransportOut(
+                        configContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_HTTP)));
                 msgContext.setProperty(Constants.Configuration.DO_REST,Constants.VALUE_TRUE);
 
@@ -153,7 +156,6 @@ public class AxisServlet extends HttpServlet {
                 processSOAPMessage(msgContext, httpServletRequest, httpServletResponse);
 
             } else {
-                ListingAgent lister = new ListingAgent(engineContext);
                 lister.handle(httpServletRequest, httpServletResponse);
             }
         } catch (OMException e) {
@@ -192,11 +194,11 @@ public class AxisServlet extends HttpServlet {
             }
             MessageContext msgContext =
                 new MessageContext(
-                    engineContext,
+                    configContext,
                     (SessionContext) sessionContext,
-                    engineContext.getAxisConfiguration().getTransportIn(
+                    configContext.getAxisConfiguration().getTransportIn(
                         new QName(Constants.TRANSPORT_HTTP)),
-                    engineContext.getAxisConfiguration().getTransportOut(
+                    configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)));
 
             XMLStreamReader reader =
@@ -237,7 +239,7 @@ public class AxisServlet extends HttpServlet {
         throws AxisFault {
         try {
             res.setContentType("text/xml; charset=utf-8");
-            AxisEngine engine = new AxisEngine(engineContext);
+            AxisEngine engine = new AxisEngine(configContext);
             msgContext.setServerSide(true);
 
             String filePart = req.getRequestURL().toString();

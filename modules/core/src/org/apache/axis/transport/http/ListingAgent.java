@@ -65,11 +65,11 @@ public class ListingAgent {
 
     private static final String ENGAGE_TO_OPERATION_JSP_NAME = "enaggingtoanopeartion.jsp";
 
-    public ListingAgent(ConfigurationContext engineContext) {
-        this.engineContext = engineContext;
+    public ListingAgent(ConfigurationContext configContext) {
+        this.configContext = configContext;
     }
 
-    private ConfigurationContext engineContext;
+    private ConfigurationContext configContext;
     /**
        * Field allowListServices
        */
@@ -145,11 +145,11 @@ public class ListingAgent {
      * @throws IOException
      */
     private void listServices(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(
             Constants.ERROR_SERVICE_MAP,
-            engineContext.getAxisConfiguration().getFaulytServices());
+            configContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -161,17 +161,17 @@ public class ListingAgent {
      */
     private void listAdminServices(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(
             Constants.ERROR_SERVICE_MAP,
-            engineContext.getAxisConfiguration().getFaulytServices());
+            configContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
 
     private void selectService(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.MODULE_ENGAMENT, null);
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
@@ -186,11 +186,11 @@ public class ListingAgent {
             throw new AxisFault("invalid user name");
         }
         String adminUserName =
-            (String) ((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+            (String) ((AxisConfigurationImpl) configContext.getAxisConfiguration())
                 .getParameter(Constants.USER_NAME)
                 .getValue();
         String adminPassword =
-            (String) ((AxisConfigurationImpl) engineContext.getAxisConfiguration())
+            (String) ((AxisConfigurationImpl) configContext.getAxisConfiguration())
                 .getParameter(Constants.PASSWORD)
                 .getValue();
         if (username != null
@@ -206,24 +206,24 @@ public class ListingAgent {
 
     private void listModules(HttpServletRequest req, HttpServletResponse res) throws IOException {
         HashMap modules =
-            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+            ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(
             Constants.ERROR_MODULE_MAP,
-            engineContext.getAxisConfiguration().getFaulytModules());
+            configContext.getAxisConfiguration().getFaulytModules());
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 
     private void engageModulesGlobally(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
         HashMap modules =
-            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+            ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         String moduleName = (String) req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         if (moduleName != null) {
             try {
-                engineContext.getAxisConfiguration().engageModule(new QName(moduleName));
+                configContext.getAxisConfiguration().engageModule(new QName(moduleName));
                 req.getSession().setAttribute(
                     Constants.ENGAGE_STATUS,
                     moduleName + " module engaged globally Successfully");
@@ -238,7 +238,7 @@ public class ListingAgent {
     private void engageModulesToOpeartion(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
         HashMap modules =
-            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+            ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         String moduleName = (String) req.getParameter("modules");
 
@@ -253,7 +253,7 @@ public class ListingAgent {
         }
         req.getSession().setAttribute(
             Constants.OPEARTION_MAP,
-            engineContext
+            configContext
                 .getAxisConfiguration()
                 .getService(new QName(serviceName))
                 .getOperations());
@@ -262,11 +262,11 @@ public class ListingAgent {
         if (serviceName != null && moduleName != null && operationName != null) {
             try {
                 OperationDescription od =
-                    engineContext.getAxisConfiguration().getService(
+                    configContext.getAxisConfiguration().getService(
                         new QName(serviceName)).getOperation(
                         new QName(operationName));
                 od.engageModule(
-                    engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                    configContext.getAxisConfiguration().getModule(new QName(moduleName)));
                 req.getSession().setAttribute(
                     Constants.ENGAGE_STATUS,
                     moduleName + " module engaged to the operation Successfully");
@@ -280,9 +280,9 @@ public class ListingAgent {
     private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
         HashMap modules =
-            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getModules();
+            ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         String moduleName = (String) req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
@@ -292,9 +292,9 @@ public class ListingAgent {
         if (serviceName != null && moduleName != null) {
             try {
 
-                engineContext.getAxisConfiguration().getService(
+                configContext.getAxisConfiguration().getService(
                     new QName(serviceName)).engageModule(
-                    engineContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                    configContext.getAxisConfiguration().getModule(new QName(moduleName)));
                 req.getSession().setAttribute(
                     Constants.ENGAGE_STATUS,
                     moduleName + " module engaged to the service Successfully");
@@ -309,14 +309,14 @@ public class ListingAgent {
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
         Collection modules =
-            ((AxisConfigurationImpl) engineContext.getAxisConfiguration()).getEngadgedModules();
+            ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getEngadgedModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
 
     private void lsitServiceformodules(HttpServletRequest req, HttpServletResponse res)
         throws IOException {
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.MODULE_ENGAMENT, "Yes");
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
@@ -326,7 +326,7 @@ public class ListingAgent {
         throws IOException {
         req.getSession().setAttribute(
             Constants.GLOBAL_HANDLERS,
-            engineContext.getAxisConfiguration());
+            configContext.getAxisConfiguration());
         res.sendRedirect(VIEW_GLOBAL_HANDLERS_JSP_NAME);
     }
 
@@ -336,7 +336,7 @@ public class ListingAgent {
         if (service != null) {
             req.getSession().setAttribute(
                 Constants.SERVICE_HANDLERS,
-                engineContext.getAxisConfiguration().getService(new QName(service)));
+                configContext.getAxisConfiguration().getService(new QName(service)));
         }
         res.sendRedirect(VIEW_SERVICE_HANDLERS_JSP_NAME);
     }
@@ -369,7 +369,7 @@ public class ListingAgent {
     private void listService(HttpServletRequest req, HttpServletResponse res, String filePart)
         throws IOException {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
-        HashMap services = engineContext.getAxisConfiguration().getServices();
+        HashMap services = configContext.getAxisConfiguration().getServices();
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
