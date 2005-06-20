@@ -61,7 +61,7 @@ public class InOnlyMEPClient extends MEPClient {
         AxisConfiguration registry = sysContext.getAxisConfiguration();
 
         AxisEngine engine = new AxisEngine(sysContext);
-        msgctx.setOperationContext(axisop.findOperationContext(msgctx,serviceContext,false));
+        msgctx.setOperationContext(axisop.findOperationContext(msgctx,serviceContext));
 
         engine.send(msgctx);
 

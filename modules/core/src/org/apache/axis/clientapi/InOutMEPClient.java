@@ -156,7 +156,7 @@ public class InOutMEPClient extends MEPClient {
             msgctx.setOperationContext(
                 OperationContextFactory.createMEPContext(
                     WSDLConstants.MEP_CONSTANT_IN_OUT,
-                    false,
+                    
                     axisop,
                     serviceContext));
             MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
@@ -194,7 +194,7 @@ public class InOutMEPClient extends MEPClient {
                             + "/"
                             + axisop.getName().getLocalPart(),listenerTransport.getName().getLocalPart()));
                 msgctx.setOperationContext(
-                    axisop.findOperationContext(msgctx, serviceContext, false));
+                    axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
                 engine.send(msgctx);
             } else {
@@ -204,7 +204,6 @@ public class InOutMEPClient extends MEPClient {
                             msgctx.setOperationContext(
                                 OperationContextFactory.createMEPContext(
                                     WSDLConstants.MEP_CONSTANT_IN_OUT,
-                                    false,
                                     axisop,
                                     serviceContext));
                             msgctx.setServiceContext(serviceContext);

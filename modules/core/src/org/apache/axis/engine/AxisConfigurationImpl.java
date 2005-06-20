@@ -98,11 +98,16 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
+        
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
-        dispatch.addHandler(new RequestURIBasedDispatcher(), 0);
-        dispatch.addHandler(new AddressingBasedDispatcher(), 1);
+        dispatch.addHandler(new AddressingBasedDispatcher(), 0);
+        dispatch.addHandler(new RequestURIBasedDispatcher(), 1);
+        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(),2);
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
-        inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_POST_DISPATCH));
+        
+        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
+        postDispatch.addHandler(new DispatchPostConditionsEvaluater());
+        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
     /**

@@ -56,22 +56,21 @@ public class TCPTransportSender extends AbstractTransportSender {
         //TCP no headers   :)
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        Writer writer) {
+    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
-        throws AxisFault {
+    public void finalizeSendWithToAddress(MessageContext msgContext) throws AxisFault {
         try {
             socket.shutdownOutput();
-            msgContext.setProperty(MessageContext.TRANSPORT_READER, new InputStreamReader(socket.getInputStream()));
+            msgContext.setProperty(
+                MessageContext.TRANSPORT_READER,
+                new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             throw new AxisFault(e);
         }
     }
 
-    protected Writer openTheConnection(EndpointReference toURL) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference toURL) throws AxisFault {
         if (toURL != null) {
             try {
                 URL url = new URL(toURL.getAddress());
@@ -79,7 +78,7 @@ public class TCPTransportSender extends AbstractTransportSender {
                     new InetSocketAddress(url.getHost(), url.getPort() == -1 ? 80 : url.getPort());
                 socket = new Socket();
                 socket.connect(add);
-                return new OutputStreamWriter(socket.getOutputStream());
+                return socket.getOutputStream();
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage(), e);
             } catch (IOException e) {
@@ -92,20 +91,20 @@ public class TCPTransportSender extends AbstractTransportSender {
 
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)
+        OutputStream out)
         throws AxisFault {
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, Writer writer) {
+    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) {
     }
 
     public void cleanUp() throws AxisFault {
         try {
-            if(socket != null){
+            if (socket != null) {
                 socket.close();
                 socket = null;
             }
-            
+
         } catch (IOException e) {
         }
 

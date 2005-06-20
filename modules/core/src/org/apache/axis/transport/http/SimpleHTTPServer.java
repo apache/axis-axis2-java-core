@@ -18,9 +18,8 @@ package org.apache.axis.transport.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.Reader;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -140,7 +139,6 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         if (configurationContext == null) {
                             throw new AxisFault("Engine Must be null");
                         }
-                        Writer out = new OutputStreamWriter(socket.getOutputStream());
                         Reader in = new InputStreamReader(socket.getInputStream());
                         TransportOutDescription transportOut =
                             configurationContext.getAxisConfiguration().getTransportOut(
@@ -155,7 +153,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
 
                         // We do not have any Addressing Headers to put
                         // let us put the information about incoming transport
-                        msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
+                        OutputStream out = socket.getOutputStream();
+                        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
                         msgContext.setEnvelope(
@@ -168,7 +167,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                             msgContext.getProperty(Constants.RESPONSE_WRITTEN);
                         if (contextWritten == null
                             || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                            out.write(new String(HTTPConstants.NOCONTENT).toCharArray());
+                            out.write(new String(HTTPConstants.NOCONTENT).getBytes());
                             out.close();
                         }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis.engine;
 
 //todo
@@ -38,11 +38,11 @@ import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class CallUnregisteredServiceTest extends TestCase{
+public class CallUnregisteredServiceTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
     private QName operationName = new QName("http://localhost/my", "echoOMElement");
-    
+
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
     private Thread thisThread;
@@ -64,25 +64,29 @@ public class CallUnregisteredServiceTest extends TestCase{
         UtilServer.stop();
     }
 
-
     public void testEchoXMLSync() throws Exception {
         try {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
 
             SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
-            value.addChild(fac.createText(value,"Isaac Assimov, the foundation Sega"));
+            value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
             method.addChild(value);
             reqEnv.getBody().addChild(method);
 
             Call call = new Call();
-            EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis/services/EchoXMLService1");
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+            EndpointReference targetEPR =
+                new EndpointReference(
+                    AddressingConstants.WSA_TO,
+                    "http://127.0.0.1:"
+                        + (UtilServer.TESTING_PORT)
+                        + "/axis/services/EchoXMLService1");
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
             call.setTo(targetEPR);
-            SOAPEnvelope resEnv = (SOAPEnvelope)call.invokeBlocking(operationName.getLocalPart(),reqEnv);
+            SOAPEnvelope resEnv =
+                (SOAPEnvelope) call.invokeBlocking(operationName.getLocalPart(), reqEnv);
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
@@ -91,6 +95,7 @@ public class CallUnregisteredServiceTest extends TestCase{
             fail("The test must fail due to wrong service Name");
 
         } catch (AxisFault e) {
+            assertTrue(e.getMessage().indexOf("Service Not found") > 0);
             tearDown();
             return;
         }

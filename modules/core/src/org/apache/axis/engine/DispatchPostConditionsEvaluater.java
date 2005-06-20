@@ -15,32 +15,30 @@
 */
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.handlers.AbstractHandler;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher
  */
-public abstract class AbstractDispatcher extends AbstractHandler implements Handler {
+public class DispatchPostConditionsEvaluater extends AbstractHandler implements Handler {
     /**
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
+        new QName("http://axis.ws.apache.org", "DispatchPostConditionsEvaluater");
 
     /**
      * Constructor Dispatcher
      */
     private ConfigurationContext engineContext;
-    
-    public AbstractDispatcher() {
+
+    public DispatchPostConditionsEvaluater() {
         init(new HandlerDescription(NAME));
     }
 
@@ -51,25 +49,15 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
      * @throws AxisFault
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
-  
-        if(msgctx.getServiceContext() == null){
-            ServiceDescription axisService = findService(msgctx);
-            if(axisService != null){
-                msgctx.setServiceContext(axisService.findServiceContext(msgctx));
-            }
+        EndpointReference toEPR = msgctx.getTo();
+        if (msgctx.getServiceContext() == null) {
+            throw new AxisFault("Service Not found EPR is " + ((toEPR!= null)?toEPR.getAddress():""));
         }
 
         if (msgctx.getServiceContext() != null && msgctx.getOperationContext() == null) {
-            OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
-            if(axisOperation != null){
-                OperationContext operationContext = axisOperation.findOperationContext(msgctx,msgctx.getServiceContext());
-                msgctx.setOperationContext(operationContext);
-            }
+            throw new AxisFault("Operation Not found EPR is " + ((toEPR!= null)?toEPR.getAddress():"") + " and WSA Action = "+ msgctx.getWSAAction());
         }
 
     }
-    
-    public abstract ServiceDescription findService(MessageContext messageContext)throws AxisFault;
-    public abstract OperationDescription findOperation(ServiceDescription service,MessageContext messageContext)throws AxisFault;
-    
+
 }

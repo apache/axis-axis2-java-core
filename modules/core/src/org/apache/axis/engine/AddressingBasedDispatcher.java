@@ -37,24 +37,19 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-  
-    public OperationDescription findOperation(ServiceDescription service, MessageContext messageContext)
+    public OperationDescription findOperation(
+        ServiceDescription service,
+        MessageContext messageContext)
         throws AxisFault {
 
         String action = (String) messageContext.getWSAAction();
         if (action != null) {
             QName operationName = new QName(action);
             OperationDescription op = service.getOperation(operationName);
-            if (op != null) {
-                return op;
-            } else {
-                throw new AxisFault("No Operation named " + operationName + " Not found");
-            }
-            //if no operation found let it go, this is for a handler may be. e.g. Create Sequance in RM
-        } else {
-            throw new AxisFault("Operation not found, WSA Action is Null");
-        }
 
+            return op;
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -63,16 +58,12 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         ServiceDescription service = null;
-        if(toEPR != null){
+        if (toEPR != null) {
             QName serviceName = new QName(toEPR.getAddress());
-            service = messageContext.getSystemContext().getAxisConfiguration().getService(serviceName);
+            service =
+                messageContext.getSystemContext().getAxisConfiguration().getService(serviceName);
         }
-
-        if (service != null) {
-            return service;
-        } else {
-            throw new AxisFault("No service found under the Service " + ((toEPR!= null)?toEPR.getAddress():""));
-        }
+        return service;
     }
 
 }

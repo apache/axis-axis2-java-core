@@ -21,25 +21,27 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
 
 import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher
  */
-public class RequestURIBasedDispatcher extends AbstractDispatcher {
+public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     /**
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
+        new QName("http://axis.ws.apache.org", "SOAPMessageBodyBasedDispatcher");
     QName serviceName = null;
     QName operatoinName = null;
 
     /**
      * Constructor Dispatcher
      */
-    public RequestURIBasedDispatcher() {
+    public SOAPMessageBodyBasedDispatcher() {
         init(new HandlerDescription(NAME));
     }
 
@@ -47,37 +49,33 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         ServiceDescription service,
         MessageContext messageContext)
         throws AxisFault {
-        if (operatoinName != null) {
-            OperationDescription axisOp = service.getOperation(operatoinName);
-            return axisOp;
-        }
-        return null;
+        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        operatoinName = new QName(bodyFirstChild.getLocalName());
 
+        OperationDescription axisOp = service.getOperation(operatoinName);
+        return axisOp;
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public ServiceDescription findService(MessageContext messageContext)
-        throws AxisFault {
+    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         final String URI_ID_STRING = "/services";
-            EndpointReference toEPR = messageContext.getTo();
-            if (toEPR != null) {
-                String filePart = toEPR.getAddress();
+            OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+            OMNamespace ns = bodyFirstChild.getNamespace();
+            if (ns != null) {
+                String filePart = ns.getName();
 
                 int index = filePart.lastIndexOf(URI_ID_STRING);
                 String serviceStr = null;
                 if (-1 != index) {
-                    serviceStr =
-                        filePart.substring(index + URI_ID_STRING.length() + 1);
+                    serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
 
-                    ConfigurationContext engineContext =
-                        messageContext.getSystemContext();
+                    ConfigurationContext engineContext = messageContext.getSystemContext();
 
                     if ((index = serviceStr.indexOf('/')) > 0) {
                         serviceName = new QName(serviceStr.substring(0, index));
-                        operatoinName =
-                            new QName(serviceStr.substring(index + 1));
+                        operatoinName = new QName(serviceStr.substring(index + 1));
                     } else {
                         serviceName = new QName(serviceStr);
                     }

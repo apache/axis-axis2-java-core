@@ -38,36 +38,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     private Socket socket;
     private ByteArrayOutputStream outputStream;
-    //    /**
-    //     * Method obtainOutputStream
-    //     *
-    //     * @param msgContext
-    //     * @return
-    //     * @throws AxisFault
-    //     */
-    //    protected Writer obtainWriter(MessageContext msgContext) throws AxisFault {
-    //        if (!msgContext.isServerSide()) {
-    //            //create a new byte buffer output stream
-    //            outputStream = new ByteArrayOutputStream();
-    //            out = new OutputStreamWriter(outputStream);
-    //        } else {
-    //            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
-    //        }
-    //        if (out == null) {
-    //            throw new AxisFault("can not find the suffient information to find endpoint");
-    //        } else {
-    //            return out;
-    //        }
-    //    }
-
-    /**
-     * Method writeTransportHeaders
-     *
-     * @param out
-     * @param url
-     * @param msgContext
-     * @throws IOException
-     */
+ 
     protected void writeTransportHeaders(
         Writer out,
         URL url,
@@ -92,11 +63,10 @@ public class HTTPTransportSender extends AbstractTransportSender {
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        Writer writer) {
+        MessageContext msgContext) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
+    public void finalizeSendWithToAddress(MessageContext msgContext)
         throws AxisFault {
         EndpointReference toURL = msgContext.getTo();
         if (toURL != null) {
@@ -134,28 +104,28 @@ public class HTTPTransportSender extends AbstractTransportSender {
         }
     }
 
-    protected Writer openTheConnection(EndpointReference epr) {
+    protected OutputStream openTheConnection(EndpointReference epr) {
         outputStream = new ByteArrayOutputStream();
-        return new OutputStreamWriter(outputStream);
+        return outputStream;
     }
 
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)
+    OutputStream out)
         throws AxisFault {
         Object contianerManaged = msgContext.getProperty(Constants.CONTAINER_MANAGED);
         if (contianerManaged == null || !Constants.VALUE_TRUE.equals(contianerManaged)) {
             try {
-                writer.write(new String(HTTPConstants.HTTP).toCharArray());
-                writer.write(new String(HTTPConstants.OK).toCharArray());
-                writer.write("\n\n".toCharArray());
+                out.write(new String(HTTPConstants.HTTP).getBytes());
+                out.write(new String(HTTPConstants.OK).getBytes());
+                out.write("\n\n".getBytes());
             } catch (IOException e) {
                 throw new AxisFault(e);
             }
         }
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, Writer writer) {
+    public void startSendWithToAddress(MessageContext msgContext,OutputStream out) {
     }
 
     /* (non-Javadoc)

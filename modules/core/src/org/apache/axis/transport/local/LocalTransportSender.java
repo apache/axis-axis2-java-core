@@ -21,8 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.OutputStream;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -36,15 +35,17 @@ public class LocalTransportSender extends AbstractTransportSender {
 
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, Writer writer) throws AxisFault {
+    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
+    public void finalizeSendWithToAddress(MessageContext msgContext)
         throws AxisFault {
         try {
             InputStream in = new ByteArrayInputStream(out.toByteArray());
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver();
             localTransportReceiver.processMessage(in, msgContext.getTo());
+            in.close();
+            out.close();
         } catch (IOException e) {
             throw new AxisFault(e);
         }
@@ -53,10 +54,10 @@ public class LocalTransportSender extends AbstractTransportSender {
     /* (non-Javadoc)
      * @see org.apache.axis.transport.AbstractTransportSender#openTheConnection(org.apache.axis.addressing.EndpointReference)
      */
-    protected Writer openTheConnection(EndpointReference epr) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference epr) throws AxisFault {
         //out = new PipedOutputStream();
         out = new ByteArrayOutputStream();
-        return new OutputStreamWriter(out);
+        return out;
     }
 
     /* (non-Javadoc)
@@ -64,15 +65,14 @@ public class LocalTransportSender extends AbstractTransportSender {
      */
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)
+    OutputStream out)
         throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        Writer writer)
+        MessageContext msgContext)
         throws AxisFault {
         throw new UnsupportedOperationException();
 

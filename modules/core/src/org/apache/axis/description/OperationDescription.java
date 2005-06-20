@@ -154,13 +154,13 @@ public class OperationDescription extends WSDLOperationImpl implements
      * @return
      */
     public OperationContext findOperationContext(MessageContext msgContext,
-                                                 ServiceContext serviceContext, boolean serverside) throws AxisFault {
+                                                 ServiceContext serviceContext) throws AxisFault {
         OperationContext operationContext = null;
 
         if (null == msgContext.getRelatesTo()) {
             //Its a new incomming message so get the factory to create a new
             // one
-            operationContext = OperationContextFactory.createMEPContext(getAxisSpecifMEPConstant(), serverside, this,
+            operationContext = OperationContextFactory.createMEPContext(getAxisSpecifMEPConstant(),  this,
                     serviceContext);
 
         } else {

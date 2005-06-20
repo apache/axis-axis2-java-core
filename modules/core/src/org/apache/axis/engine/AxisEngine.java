@@ -154,9 +154,9 @@ public class AxisEngine {
             if (context.getFaultTo() != null) {
                 faultContext.setFaultTo(context.getFaultTo());
             } else {
-                Object writer = context.getProperty(MessageContext.TRANSPORT_WRITER);
+                Object writer = context.getProperty(MessageContext.TRANSPORT_OUT);
                 if (writer != null) {
-                    faultContext.setProperty(MessageContext.TRANSPORT_WRITER, writer);
+                    faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
                 } else {
                     //TODO Opps there are no place to send this, we will log and should we throw the exception? 
                     log.error("Error in fault flow", e);

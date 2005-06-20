@@ -60,8 +60,7 @@ public class ContextHireachyTest extends TestCase {
         OperationContext opContext =
             operationDescription.findOperationContext(
                 msgctx,
-                serviceCOntext,
-                true);
+                serviceCOntext);
         msgctx.setServiceContext(serviceCOntext);
 
         //test the complte Hisracy built

@@ -17,6 +17,7 @@ package org.apache.axis.transport.tcp;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -95,7 +96,7 @@ public class TCPServer extends TransportListener implements Runnable {
                     break;
                 }
 
-                Writer out = new OutputStreamWriter(socket.getOutputStream());
+                
                 Reader in = new InputStreamReader(socket.getInputStream());
                 TransportOutDescription transportOut =
                     configContext.getAxisConfiguration().getTransportOut(
@@ -107,7 +108,8 @@ public class TCPServer extends TransportListener implements Runnable {
                             new QName(Constants.TRANSPORT_TCP)),
                         transportOut);
                 msgContext.setServerSide(true);
-                msgContext.setProperty(MessageContext.TRANSPORT_WRITER, out);
+                OutputStream out = socket.getOutputStream();
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                 msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
 
                 AxisEngine engine = new AxisEngine(configContext);

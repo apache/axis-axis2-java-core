@@ -77,7 +77,7 @@ public class EnginePausingTest extends TestCase {
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
-        mc.setProperty(MessageContext.TRANSPORT_WRITER, new OutputStreamWriter(System.out));
+        mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
 

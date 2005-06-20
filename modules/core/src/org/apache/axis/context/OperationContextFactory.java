@@ -23,7 +23,7 @@ import org.apache.wsdl.WSDLConstants;
 
 public class OperationContextFactory implements WSDLConstants {
 
-    public static OperationContext createMEPContext(int mepURI, boolean serverSide,
+    public static OperationContext createMEPContext(int mepURI,
                                                     OperationDescription axisOp, ServiceContext serviceContext)
             throws AxisFault {
         if (MEP_CONSTANT_IN_OUT == mepURI || MEP_CONSTANT_IN_ONLY == mepURI

@@ -55,7 +55,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);                
         newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
-        newmsgCtx.setProperty(MessageContext.TRANSPORT_WRITER,messgeCtx.getProperty(MessageContext.TRANSPORT_WRITER));
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
         newmsgCtx.setProperty(Constants.Configuration.DO_REST,messgeCtx.getProperty((Constants.Configuration.DO_REST)));
         newmsgCtx.setProperty(Constants.Configuration.DO_MTOM,messgeCtx.getProperty(Constants.Configuration.DO_MTOM));
         

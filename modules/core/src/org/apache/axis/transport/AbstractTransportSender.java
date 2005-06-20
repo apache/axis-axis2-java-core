@@ -15,7 +15,7 @@
  */
 package org.apache.axis.transport;
 
-import java.io.Writer;
+import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -71,7 +71,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             this.doREST = true;
         }
 
-        Writer out = null;
+        OutputStream out = null;
 
         EndpointReference epr = null;
 
@@ -84,13 +84,13 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             out = openTheConnection(epr);
             startSendWithToAddress(msgContext, out);
             writeMessage(msgContext, out);
-            finalizeSendWithToAddress(msgContext, out);
+            finalizeSendWithToAddress(msgContext);
         } else {
-            out = (Writer) msgContext.getProperty(MessageContext.TRANSPORT_WRITER);
+            out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
             if (out != null) {
                 startSendWithOutputStreamFromIncomingConnection(msgContext, out);
                 writeMessage(msgContext, out);
-                finalizeSendWithOutputStreamFromIncomingConnection(msgContext, out);
+                finalizeSendWithOutputStreamFromIncomingConnection(msgContext);
             } else {
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
@@ -98,7 +98,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,Constants.VALUE_TRUE);
     }
 
-    public void writeMessage(MessageContext msgContext, Writer out) throws AxisFault {
+    public void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         OMElement outputMessage = envelope;
 
@@ -122,19 +122,18 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
     }
 
-    public abstract void startSendWithToAddress(MessageContext msgContext, Writer writer)
+    public abstract void startSendWithToAddress(MessageContext msgContext, OutputStream out)
         throws AxisFault;
-    public abstract void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext)
         throws AxisFault;
 
     public abstract void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)
+    OutputStream out)
         throws AxisFault;
     public abstract void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        Writer writer)
+        MessageContext msgContext)
         throws AxisFault;
 
-    protected abstract Writer openTheConnection(EndpointReference epr) throws AxisFault;
+    protected abstract OutputStream openTheConnection(EndpointReference epr) throws AxisFault;
 }

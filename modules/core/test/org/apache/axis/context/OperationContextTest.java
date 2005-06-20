@@ -45,12 +45,12 @@ public class OperationContextTest extends AbstractTestCase {
     	
     	messageContext1.setMessageID(new Long(System.currentTimeMillis()).toString());
     	OperationDescription axisOperation = new OperationDescription(new QName("test"));
-    	OperationContext operationContext1 = axisOperation.findOperationContext(messageContext1, sessionContext, true);
+    	OperationContext operationContext1 = axisOperation.findOperationContext(messageContext1, sessionContext);
     	
     	MessageContext messageContext2 = this.getBasicMessageContext();
     	messageContext2.setMessageID(new Long(System.currentTimeMillis()).toString());
     	messageContext2.getMessageInformationHeaders().setRelatesTo(new RelatesTo(messageContext1.getMessageID()));
-    	OperationContext operationContext2 = axisOperation.findOperationContext(messageContext2, sessionContext,  true);
+    	OperationContext operationContext2 = axisOperation.findOperationContext(messageContext2, sessionContext);
     	assertEquals(operationContext1, operationContext2);
     }
     

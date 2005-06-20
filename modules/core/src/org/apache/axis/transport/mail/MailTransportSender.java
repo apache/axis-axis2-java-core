@@ -16,12 +16,9 @@
 
 package org.apache.axis.transport.mail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.OutputStream;
 
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
@@ -36,13 +33,13 @@ public class MailTransportSender extends AbstractTransportSender {
     private String password;
     private String smtpPort = "25";
 
-    private StringWriter w; 
+    private ByteArrayOutputStream byteArrayOutputStream; 
 
     public MailTransportSender() {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, Writer writer)
+    public void finalizeSendWithToAddress(MessageContext msgContext)
         throws AxisFault {
             try {
                 TransportOutDescription transportOut = msgContext.getTransportOut();
@@ -73,7 +70,7 @@ public class MailTransportSender extends AbstractTransportSender {
                     System.out.println(subject);
                     System.out.println(email);
 
-                    sender.send(subject, email, w.getBuffer().toString());
+                    sender.send(subject, email,new String(byteArrayOutputStream.toByteArray()));
                 } else {
                     throw new AxisFault(
                         "user, port, host or password not set, "
@@ -94,25 +91,24 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, Writer writer) throws AxisFault {
+    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
     }
 
-    protected Writer openTheConnection(EndpointReference epr) throws AxisFault {
-            w = new StringWriter();
-            return w;
+    protected OutputStream openTheConnection(EndpointReference epr) throws AxisFault {
+        byteArrayOutputStream = new ByteArrayOutputStream();
+            return byteArrayOutputStream;
     }
 
     //Output Stream based cases are not supported 
     public void startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
-        Writer writer)
+    OutputStream out)
         throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        Writer writer)
+        MessageContext msgContext)
         throws AxisFault {
     }
     /* (non-Javadoc)

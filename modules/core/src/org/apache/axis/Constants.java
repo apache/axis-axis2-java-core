@@ -180,7 +180,14 @@ public class Constants {
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     
     public static final String TESTING_REPOSITORY = "target/test-resources/samples";
-    //public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
+   // public static final String TESTING_REPOSITORY = "modules/samples/target/test-resources/samples";
+    
+    
+    public static interface REST_WITH_GET{
+        public static final String GET_PARAMETER_OPERATION = "operation";
+        public static final String GET_PARAMETER_URL = "http://ws.apache.org/goGetWithREST";
+    
+    }
 
 
 }

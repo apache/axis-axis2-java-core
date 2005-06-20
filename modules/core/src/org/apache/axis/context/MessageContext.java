@@ -39,7 +39,7 @@ public class MessageContext extends AbstractContext {
     /**
      * Field TRANSPORT_WRITER
      */
-    public static final String TRANSPORT_WRITER = "TRANSPORT_WRITER";
+    public static final String TRANSPORT_OUT = "TRANSPORT_OUT";
 
     /**
      * Field TRANSPORT_READER
