@@ -24,6 +24,8 @@ import org.apache.axis.description.AxisDescWSDLComponentFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -32,6 +34,8 @@ import java.util.zip.ZipOutputStream;
 import java.util.jar.JarInputStream;
 
 public class ArchiveReader implements DeploymentConstants {
+
+    private Log log = LogFactory.getLog(getClass());
 
     public ServiceDescription createService(String filename) throws DeploymentException {
         WSDL1ToWOMBuilder builder = new WSDL1ToWOMBuilder();
@@ -52,9 +56,10 @@ public class ArchiveReader implements DeploymentConstants {
             zin.close();
             if (!foundwsdl) {
                 service = new ServiceDescription();
+                log.info("WSDL file not found for the service :  " + filename);
             }
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return service;
     }

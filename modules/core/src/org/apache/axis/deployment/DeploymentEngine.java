@@ -539,6 +539,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     currentArchiveFile.setClassLoader();
                 } catch (AxisFault axisFault) {
                     log.info("Setting Class Loader  " +axisFault);
+                    continue;
                 }
                 ArchiveReader archiveReader = new ArchiveReader();
                 String serviceStatus = "";

@@ -23,6 +23,8 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.TransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -42,6 +44,8 @@ import java.util.ArrayList;
  * parse a given document
  */
 public class DeploymentParser implements DeploymentConstants {
+
+    private Log log = LogFactory.getLog(getClass());
     //module.xml strating tag
     private static final String MODULEXMLST = "module";
     // service.xml strating tag
@@ -406,7 +410,7 @@ public class DeploymentParser implements DeploymentConstants {
                         throw new UnsupportedOperationException("Bean mapping dose not implemented yet ");
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
-                        OperationDescription operation = processOperation();
+                        OperationDescription operation = processOperation(axisService);
                         DeploymentData.getInstance().setOperationPhases(operation);
                         if (operation.getMessageReciever() == null) {
                             try {
@@ -689,16 +693,24 @@ public class DeploymentParser implements DeploymentConstants {
         }
     }
 
-    private OperationDescription processOperation() throws DeploymentException {
+    private OperationDescription processOperation(ServiceDescription axisService) throws DeploymentException {
         //  String name = pullparser.getLocalName();
-        OperationDescription operation = new OperationDescription();
+        OperationDescription operation = null; //= new OperationDescription();
         int attribCount = pullparser.getAttributeCount();
         if (attribCount > 0) { // there should be two attributes
             for (int i = 0; i < attribCount; i++) {
                 String attname = pullparser.getAttributeLocalName(i);
                 String attvalue = pullparser.getAttributeValue(i);
                 if (ATTNAME.equals(attname)) {
-                    operation.setName(new QName(attvalue));
+                    if(axisService !=null){
+                        operation = axisService.getOperation(attvalue);
+                    }
+                    if(operation == null){
+                        operation = new OperationDescription();
+                        operation.setName(new QName(attvalue));
+                        log.info(attvalue + "  Operation Name not found in WSDL");
+                    }
+
                 } else if(MEP.equals(attname)){
                     operation.setMessageExchangePattern(attvalue);
                 }else
@@ -878,7 +890,7 @@ public class DeploymentParser implements DeploymentConstants {
                         Flow outFlow = processOutFlow();
                         module.setOutFlow(outFlow);
                     } else if (OPRATIONST.equals(ST)) {
-                        OperationDescription operation = processOperation();
+                        OperationDescription operation = processOperation(null);
                         DeploymentData.getInstance().setOperationPhases(operation);
                         if (operation.getMessageReciever() == null) {
                             try {

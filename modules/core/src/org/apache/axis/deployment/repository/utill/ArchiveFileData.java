@@ -17,13 +17,20 @@
 package org.apache.axis.deployment.repository.utill;
 
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.deployment.DeploymentParser;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
 
 /**
  * ArchiveFileData = Hot Deployment File Item , to store infromation of the module or servise
@@ -108,7 +115,28 @@ public class ArchiveFileData {
                 }
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 classLoader = new URLClassLoader(urlsToLoadFrom, parent);
-
+                try {
+                    ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+                    ZipEntry entry;
+                    String entryName = "";
+                    while ((entry = in.getNextEntry()) != null) {
+                        entryName = entry.getName();
+                        if(entryName != null && entryName.startsWith("lib/") && entryName.endsWith(".jar")){
+                            ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
+                            URL uuuu = classLoader.getResource(entryName);
+                            parent =
+                                    URLClassLoader.newInstance(new URL[]{uuuu}, prevCl);
+                            try {
+                                //Thread.currentThread().setContextClassLoader(urlCl);
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage(), e);
             } catch (Exception e) {
@@ -116,7 +144,7 @@ public class ArchiveFileData {
             }
         } 
     }
-    
+
     public void addModule(QName moduleName){
         modules.add(moduleName);
     }
