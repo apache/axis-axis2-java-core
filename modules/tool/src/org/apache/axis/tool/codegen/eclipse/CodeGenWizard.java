@@ -1,32 +1,30 @@
 
 package org.apache.axis.tool.codegen.eclipse;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.wsdl.WSDLException;
-
+import org.apache.axis.tool.codegen.Java2WSDLGenerator;
+import org.apache.axis.tool.codegen.WSDL2JavaGenerator;
+import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage;
+import org.apache.axis.tool.codegen.eclipse.ui.JavaSourceSelectionPage;
+import org.apache.axis.tool.codegen.eclipse.ui.JavaWSDLOptionsPage;
+import org.apache.axis.tool.codegen.eclipse.ui.JavaWSDLOutputLocationPage;
 import org.apache.axis.tool.codegen.eclipse.ui.OptionsPage;
 import org.apache.axis.tool.codegen.eclipse.ui.OutputPage;
+import org.apache.axis.tool.codegen.eclipse.ui.ToolSelectionPage;
 import org.apache.axis.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
-import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis.wsdl.codegen.CommandLineOption;
-import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -39,14 +37,16 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CodeGenWizard extends Wizard implements INewWizard
 {
-   private WSDLFileSelectionPage page1;
-
-   private OptionsPage page2;
-
-   private OutputPage page3;
-
+   private ToolSelectionPage toolSelectionPage;  
+   private WSDLFileSelectionPage wsdlSelectionPage;
+   private OptionsPage optionsPage;
+   private OutputPage outputPage;
+   private JavaWSDLOptionsPage java2wsdlOptionsPage;
+   private JavaSourceSelectionPage javaSourceSelectionPage;
+   private JavaWSDLOutputLocationPage java2wsdlOutputLocationPage;
+   
+   private int selectedWizardType=SettingsConstants.WSDL_2_JAVA_TYPE;//TODO change this
    private ISelection selection;
-
    private boolean canFinish = false;
 
    /**
@@ -66,15 +66,59 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
    public void addPages()
    {
-      page1 = new WSDLFileSelectionPage(selection);
-      addPage(page1);
-      page2 = new OptionsPage();
-      addPage(page2);
-      page3 = new OutputPage();
-      addPage(page3);
+      toolSelectionPage = new ToolSelectionPage();
+      addPage(toolSelectionPage);
+      
+      //add the wsdl2java wizard pages
+      wsdlSelectionPage = new WSDLFileSelectionPage();
+      addPage(wsdlSelectionPage);
+      optionsPage = new OptionsPage();
+      addPage(optionsPage);
+      outputPage = new OutputPage();
+      addPage(outputPage);
+      
+      //add java2wsdl wizard pages
+      javaSourceSelectionPage = new JavaSourceSelectionPage();
+      addPage(javaSourceSelectionPage);
+      java2wsdlOptionsPage = new JavaWSDLOptionsPage();
+      addPage(java2wsdlOptionsPage);
+      java2wsdlOutputLocationPage = new JavaWSDLOutputLocationPage();
+      addPage(java2wsdlOutputLocationPage);
+      
+
+      
 
    }
 
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizard#canFinish()
+     */
+    public boolean canFinish() {
+       IWizardPage[] pages = getPages();
+       AbstractWizardPage wizardPage = null;
+		for (int i = 0; i < pages.length; i++) {
+		    wizardPage = (AbstractWizardPage)pages[i];
+		    if (wizardPage.getPageType()==this.selectedWizardType){
+		        if (!(wizardPage.isPageComplete()))
+		            return false;
+		    	}
+		}
+		return true;
+    }
+   public IWizardPage getNextPage(IWizardPage page) {
+       AbstractWizardPage currentPage=(AbstractWizardPage)page;
+       AbstractWizardPage pageout = (AbstractWizardPage)super.getNextPage(page);
+       
+       while (pageout!=null && selectedWizardType!=pageout.getPageType()){
+           AbstractWizardPage temp = pageout;
+           pageout = (AbstractWizardPage)super.getNextPage(currentPage);
+           currentPage = temp;
+           
+       }
+       return pageout;
+    }
+  
    /**
     * This method is called when 'Finish' button is pressed in the wizard. We will create an operation and run it using
     * wizard as execution context.
@@ -83,12 +127,15 @@ public class CodeGenWizard extends Wizard implements INewWizard
    {
       try
       {
-         // getContainer().run(true, false, op);
-         doFinish();
+        switch (selectedWizardType){
+         case SettingsConstants.WSDL_2_JAVA_TYPE:doFinishWSDL2Java();break;
+         case SettingsConstants.JAVA_2_WSDL_TYPE:doFinishJava2WSDL();break;
+         case SettingsConstants.UNSPECIFIED_TYPE:break; //Do nothing
+         default:throw new RuntimeException("Invalid state!");
+        }
       }
       catch (Exception e)
       {
-         e.printStackTrace();
          MessageDialog.openError(getShell(), CodegenWizardPlugin.getResourceString("general.Error"), e.getMessage());
          return false;
       }
@@ -100,7 +147,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
    /**
     * The worker method, generates the code itself.
     */
-   private void doFinish()
+   private void doFinishWSDL2Java()
    {
 
       WorkspaceModifyOperation op = new WorkspaceModifyOperation()
@@ -124,12 +171,23 @@ public class CodeGenWizard extends Wizard implements INewWizard
                 * or give a (custom) progress monitor to the generate() method, so
                 * we will be informed by Axis2 about the progress of code generation.  
                 */
+               WSDL2JavaGenerator generator = new WSDL2JavaGenerator(); 
                monitor.subTask(CodegenWizardPlugin.getResourceString("generator.readingWOM"));
-               WSDLDescription wom = getWOM(page1.getFileName());
+               WSDLDescription wom = generator.getWOM(wsdlSelectionPage.getFileName());
                monitor.worked(1);
-               Map optionsMap = fillOptionMap();
+               
+               Map optionsMap = generator.fillOptionMap(optionsPage.isAsyncOnlyOn(),
+                       									optionsPage.isSyncOnlyOn(),
+                       									optionsPage.isServerside(),
+                       									optionsPage.isServerXML(),
+                       									optionsPage.isGenerateTestCase(),
+                       									wsdlSelectionPage.getFileName(),
+                       									optionsPage.getPackageName(),
+                       									optionsPage.getSelectedLanguage(),
+                       									outputPage.getOutputLocation());
                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(wom, optionsMap);
                monitor.worked(1);
+               
                monitor.subTask(CodegenWizardPlugin.getResourceString("generator.generating"));
                new CodeGenerationEngine(codegenConfig).generate();
                monitor.worked(1);
@@ -154,96 +212,78 @@ public class CodeGenWizard extends Wizard implements INewWizard
       }
       catch (InvocationTargetException e1)
       {
-         e1.printStackTrace();
+          throw new RuntimeException(e1);
       }
       catch (InterruptedException e1)
       {
-         /*
-          * Thrown when the user aborts the progress
-          */
-         e1.printStackTrace();
+         throw new RuntimeException("User Aborted!");
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
       }
    }
+   
+   private void doFinishJava2WSDL() throws Exception{
+           
+           WorkspaceModifyOperation op = new WorkspaceModifyOperation()
+           {
+              protected void execute(IProgressMonitor monitor)
+              {
+                 if (monitor == null)
+                    monitor = new NullProgressMonitor();
 
-   /**
-    * Creates a list of parameters for the code generator based on the decisions made by the user on the OptionsPage
-    * (page2). For each setting, there is a Command-Line option for the Axis2 code generator.
-    * 
-    * @return a Map with keys from CommandLineOptionConstants with the values entered by the user on the Options Page.
-    */
-   private Map fillOptionMap()
-   {
-      Map optionMap = new HashMap();
+                 /*
+                  * "2" is the total amount of steps, see below monitor.worked(amount)
+                  */
+                 monitor.beginTask(CodegenWizardPlugin.getResourceString("generator.generating"), 2);
 
-      optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
-         CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, getStringArray(page1.getFileName())));
+                 try
+                 {
+                     monitor.worked(1);
+                     
+                     new Java2WSDLGenerator().emit(
+                             javaSourceSelectionPage.getClassLocation(),
+                             javaSourceSelectionPage.getClassName(),
+                             java2wsdlOptionsPage.getLocationURL(),
+                             java2wsdlOptionsPage.getInputWSDLName(),
+                             java2wsdlOptionsPage.getBindingName(),
+                             java2wsdlOptionsPage.getPortypeName(),
+                             java2wsdlOptionsPage.getStyle(),
+                             java2wsdlOutputLocationPage.getFullFileName(),
+                             java2wsdlOptionsPage.getMode()
+                     );
+                     monitor.worked(1);
+                 }
+                 catch (Throwable e)
+                 {
+                    throw new RuntimeException(e);
+                 }
 
-      if (page2.isAsyncOnlyOn())
-      {
-         optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new CommandLineOption(
-            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new String[0]));
-      }
-      if (page2.isSyncOnlyOn())
-      {
-         optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new CommandLineOption(
-            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new String[0]));
-      }
-      optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION, new CommandLineOption(
-         CommandLineOptionConstants.PACKAGE_OPTION, getStringArray(page2.getPackageName())));
-      optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION, new CommandLineOption(
-         CommandLineOptionConstants.STUB_LANGUAGE_OPTION, getStringArray(mapLanguagesWithCombo(page2
-            .getSelectedLanguage()))));
-      optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
-         CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, getStringArray(page3.getOutputLocation())));
-      if (page2.isServerside())
-      {
-         optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new CommandLineOption(
-            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new String[0]));
-
-         if (page2.isServerXML())
-         {
-            optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
-               CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
-         }
-      }
-      if (page2.isGenerateTestCase())
-      {
-         optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new CommandLineOption(
-            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new String[0]));
-      }
-      // System.out.println(page3.getOutputLocation());
-      return optionMap;
+                 monitor.done();
+              }
+           };
+         
+           try
+           {
+              getContainer().run(false, true, op);
+           }
+           catch (InvocationTargetException e1)
+           {
+               throw new RuntimeException(e1);
+           }
+           catch (InterruptedException e1)
+           {
+              throw new RuntimeException("User Aborted!");
+           }
+           catch (Exception e)
+           {
+              throw new RuntimeException(e);
+           } 
+   
    }
 
-   /**
-    * Maps a string containing the name of a language to a constant defined in CommandLineOptionConstants.LanguageNames
-    * 
-    * @param UILangValue a string containg a language, e.g. "java", "cs", "cpp" or "vb"
-    * @return a normalized string constant
-    */
-   private String mapLanguagesWithCombo(String UILangValue)
-   {
-      if (UIConstants.JAVA.equals(UILangValue))
-      {
-         return CommandLineOptionConstants.LanguageNames.JAVA;
-      }
-      else if (UIConstants.C_SHARP.equals(UILangValue))
-      {
-         return CommandLineOptionConstants.LanguageNames.C_SHARP;
-      }
-      else if (UIConstants.C_PLUS_PLUS.equals(UILangValue))
-      {
-         return CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS;
-      }
-      else
-      {
-         return null;
-      }
-   }
+  
 
    /**
     * We will accept the selection in the workbench to see if we can initialize from it.
@@ -255,30 +295,19 @@ public class CodeGenWizard extends Wizard implements INewWizard
       this.selection = selection;
    }
 
-   /**
-    * Reads the WSDL Object Model from the given location.
-    * 
-    * @param wsdlLocation the filesystem location (full path) of the WSDL file to read in.
-    * @return the WSDLDescription object containing the WSDL Object Model of the given WSDL file
-    * @throws WSDLException when WSDL File is invalid
-    * @throws IOException on errors reading the WSDL file
-    */
-   private WSDLDescription getWOM(String wsdlLocation) throws WSDLException, IOException
-   {
-      InputStream in = new FileInputStream(new File(wsdlLocation));
-      return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
-   }
-
-   /**
-    * Converts a single String into a String Array
-    * 
-    * @param value a single string
-    * @return an array containing only one element
-    */
-   private String[] getStringArray(String value)
-   {
-      String[] values = new String[1];
-      values[0] = value;
-      return values;
-   }
+   
+   
+   
+/**
+ * @return Returns the selectedWizardType.
+ */
+public int getSelectedWizardType() {
+    return selectedWizardType;
+}
+/**
+ * @param selectedWizardType The selectedWizardType to set.
+ */
+public void setSelectedWizardType(int selectedWizardType) {
+    this.selectedWizardType = selectedWizardType;
+}
 }

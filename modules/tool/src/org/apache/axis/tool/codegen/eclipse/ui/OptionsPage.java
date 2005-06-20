@@ -16,8 +16,6 @@ package org.apache.axis.tool.codegen.eclipse.ui;
 import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis.wsdl.util.URLProcessor;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,48 +34,9 @@ import org.eclipse.swt.widgets.Text;
  * CodeGenWizard.
  * 
  */
-public class OptionsPage extends WizardPage implements UIConstants
+public class OptionsPage extends AbstractWizardPage implements UIConstants
 {
-   /**
-    * Position in the combox for choosing the target programming language. Default is 0
-    */
-   private static final String PREF_LANGUAGE_INDEX = "PREF_LANGUAGE_INDEX";
-
-   /**
-    * Three radio buttons: Generate Code for Sync calls, Async and Both. Both is default.
-    */
-   private static final String PREF_RADIO_SYNC_AND_ASYNC = "PREF_RADIO_SYNC_AND_ASYNC";
-
-   /**
-    * Three radio buttons: Generate Code for Sync calls, Async and Both. Both is default.
-    */
-   private static final String PREF_RADIO_SYNC_ONLY = "PREF_RADIO_SYNC_ONLY";
-
-   /**
-    * Three radio buttons: Generate Code for Sync calls, Async and Both. Both is default.
-    */
-   private static final String PREF_RADIO_ASYNC_ONLY = "PREF_RADIO_ASYNC_ONLY";
-
-   /**
-    * Specifies the full qualified package name for the generated source code.
-    */
-   private static final String PREF_PACKAGE_NAME = "PREF_PACKAGE_NAME";
-
-   /**
-    * A boolean value whether JUnit test classes are generated or not.
-    */
-   private static final String PREF_CHECK_GENERATE_TESTCASE = "PREF_CHECK_GENERATE_TESTCASE";
-
-   /**
-    * A boolean value whether the server-side skeletons are generated or not
-    */
-   private static final String PREF_CHECK_GENERATE_SERVERSIDE = "PREF_CHECK_GENERATE_SERVERSIDE";
-
-   /**
-    * A boolean value whether the server-side configuration file for Axis2 (server.xml) will be generated or not.
-    */
-   private static final String PREF_CHECK_GENERATE_SERVERCONFIG = "PREF_CHECK_GENERATE_SERVERCONFIG";
-
+  
    /**
     * Selection list for target languages
     */
@@ -119,37 +78,14 @@ public class OptionsPage extends WizardPage implements UIConstants
     */
    private Button serverXMLCheckBoxButton;
 
-   /**
-    * Saves the settings in the plugin's default store, so the user doesn't have to type them in all over again next
-    * time he uses the wizard
-    */
-   private IDialogSettings settings;
-
+  
    /**
     * Creates the page and initialize some settings
     */
    public OptionsPage()
    {
-      super(CodegenWizardPlugin.getResourceString("page2.name"));
-      setTitle(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin.getResourceString("page2.title"));
-      setDescription(CodegenWizardPlugin.getResourceString("page2.desc"));
-      setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
-
-      /*
-       * Get the settings for this page. If there is no section in the Plugin's settings for this OptionsPage, create a
-       * new section
-       */
-      IDialogSettings rootSettings = CodegenWizardPlugin.getDefault().getDialogSettings();
-      IDialogSettings section = rootSettings.getSection(this.getClass().getName());
-      if (section == null)
-      {
-         settings = rootSettings.addNewSection(this.getClass().getName());
-         initializeDefaultSettings();
-      }
-      else
-      {
-         settings = section;
-      }
+      super("page2");
+      
    }
 
    /**
@@ -157,16 +93,16 @@ public class OptionsPage extends WizardPage implements UIConstants
     * 
     * @param settings2 the settings store to save the values to
     */
-   private void initializeDefaultSettings()
+   protected void initializeDefaultSettings()
    {
-      settings.put(OptionsPage.PREF_CHECK_GENERATE_SERVERCONFIG, false);
-      settings.put(OptionsPage.PREF_CHECK_GENERATE_SERVERSIDE, false);
-      settings.put(OptionsPage.PREF_CHECK_GENERATE_TESTCASE, false);
-      settings.put(OptionsPage.PREF_LANGUAGE_INDEX, 0);
-      settings.put(OptionsPage.PREF_PACKAGE_NAME, "org.example.webservice");
-      settings.put(OptionsPage.PREF_RADIO_ASYNC_ONLY, false);
-      settings.put(OptionsPage.PREF_RADIO_SYNC_AND_ASYNC, true);
-      settings.put(OptionsPage.PREF_RADIO_SYNC_ONLY, false);
+      settings.put(PREF_CHECK_GENERATE_SERVERCONFIG, false);
+      settings.put(PREF_CHECK_GENERATE_SERVERSIDE, false);
+      settings.put(PREF_CHECK_GENERATE_TESTCASE, false);
+      settings.put(PREF_LANGUAGE_INDEX, 0);
+      settings.put(PREF_PACKAGE_NAME, "org.example.webservice");
+      settings.put(PREF_RADIO_ASYNC_ONLY, false);
+      settings.put(PREF_RADIO_SYNC_AND_ASYNC, true);
+      settings.put(PREF_RADIO_SYNC_ONLY, false);
    }
 
    /*
@@ -442,4 +378,12 @@ public class OptionsPage extends WizardPage implements UIConstants
    {
       return this.testCaseCheckBoxButton.getSelection();
    }
+   
+   
+    /* (non-Javadoc)
+     * @see org.apache.axis.tool.codegen.eclipse.ui.CodegenPage#getPageType()
+     */
+    public int getPageType() {
+          return WSDL_2_JAVA_TYPE;
+    }
 }
