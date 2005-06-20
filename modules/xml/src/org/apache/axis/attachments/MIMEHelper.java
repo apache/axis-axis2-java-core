@@ -42,7 +42,7 @@ public class MIMEHelper {
 	/**
 	 * If the message is Soap with Attachments <code>SwA_TYPE</code>
 	 */
-	public static final String SWA_TYPE = "application/soap+xml";
+	public static final String SWA_TYPE = "text/xml";
 	
 	/**
 	 * <code>rootPart</code> is used as the key for the root BodyPart in the
@@ -151,22 +151,23 @@ public class MIMEHelper {
 	
 	/**
 	 * @return the InputStream which includes the SOAP Envelope
+	 * We assumes that the root mime part is always pointed by "start" parameter in content-type
 	 */
 	public InputStream getSOAPPartInputStream() throws OMException{
-		//TODO Assumes that the First Mime part is the root part and it
-		// contains the SOAP Envelope. Check the start tag of the contant type
-		// when it comes to SWA
-		MimeBodyPart mimeBodyPart = getRootMimeBodyPart();
-		DataHandler dh;
+	    String rootContentID = contentType.getParameter("start");
+	    rootContentID.substring(1, (rootContentID.length()-1));
+	    rootContentID.trim();
+	    DataHandler dh;
 		try {
-			dh = mimeBodyPart.getDataHandler();
+			dh = getDataHandler(rootContentID);
+			if (dh==null)
+			{
+			   throw new OMException("Mandatory Root MIME part containing the SOAP Envelope is missing");
+			}
 			return dh.getInputStream();
 		} catch (IOException e) {
 			throw new OMException("Problem with DataHandler of the Root Mime Part. "+e);
-		} catch (MessagingException e) {
-			throw new OMException("Problem with getting DataHandler from the Root Mime Part. "+e);
-		}				
-		
+		}
 	}
 	
 	/**
@@ -177,11 +178,10 @@ public class MIMEHelper {
 	 *             checking the parts HashMap. If it is not parsed yet then call
 	 *             the getNextPart() till we find the required part.
 	 */
-	//TODO change parts list to a Hash Map
 	public DataHandler getDataHandler(String blobContentID) throws OMException {
 		
 		Part bodyPart;
-		
+		blobContentID = "<"+blobContentID+">";
 		boolean attachmentFound = false;
 		
 		if (bodyPartsMap.containsKey(blobContentID)) {
