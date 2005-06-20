@@ -53,7 +53,7 @@ public class AddressingOutHandler
     private boolean overrideINMessageInformation = false;
 
     OMNamespace addressingNamespace =
-            OMAbstractFactory.getSOAP11Factory().createOMNamespace(WSA_NAMESPACE, "wsa");
+            OMAbstractFactory.getSOAP11Factory().createOMNamespace(Submission.WSA_NAMESPACE, "wsa");
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 
@@ -68,7 +68,7 @@ public class AddressingOutHandler
 
         EndpointReference epr = messageInformationHeaders.getTo();
         if (epr != null) {
-            addToSOAPHeader(epr, AddressingConstants.WSA_TO, soapHeader);
+            processStringInfo(epr.getAddress(), AddressingConstants.WSA_TO, soapHeader);
         }
 
         String action = messageInformationHeaders.getAction();
@@ -105,7 +105,7 @@ public class AddressingOutHandler
         if (relatesToHeader != null)
             if ("".equals(relatesTo.getRelationshipType())) {
                 relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                        WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
+                        Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
                         addressingNamespace);
             } else {
                 relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
@@ -147,10 +147,10 @@ public class AddressingOutHandler
 
         }
 
-        QName portType = epr.getPortType();
+        QName portType = epr.getInterfaceName();
         if (portType != null) {
             SOAPHeaderBlock soapHeaderBlock =
-                    soapHeader.addHeaderBlock(EPR_PORT_TYPE, addressingNamespace);
+                    soapHeader.addHeaderBlock(Submission.EPR_PORT_TYPE, addressingNamespace);
             soapHeaderBlock.addChild(OMAbstractFactory.getSOAP11Factory().createText(portType.getPrefix() + ":" + portType.getLocalPart()));
         }
 
@@ -159,8 +159,8 @@ public class AddressingOutHandler
             SOAPHeaderBlock soapHeaderBlock =
                     soapHeader.addHeaderBlock(EPR_SERVICE_NAME,
                             addressingNamespace);
-            soapHeaderBlock.addAttribute(EPR_SERVICE_NAME_PORT_NAME,
-                    serviceName.getPortName(),
+            soapHeaderBlock.addAttribute(Submission.EPR_SERVICE_NAME_PORT_NAME,
+                    serviceName.getEndpointName(),
                     addressingNamespace);
             soapHeaderBlock.addChild(OMAbstractFactory.getSOAP11Factory().createText(serviceName.getName().getPrefix()
                     + ":"

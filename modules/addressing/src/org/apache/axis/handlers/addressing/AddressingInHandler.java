@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -40,13 +41,14 @@ import java.util.Iterator;
  * Date: May 10, 2005
  * Time: 11:53:20 AM
  */
-public class AddressingInHandler extends AbstractHandler {
+public class AddressingInHandler extends AbstractHandler implements AddressingConstants {
     /**
      * Eran Chinthaka (chinthaka@apache.org) Date : 03-04-2005 Time : 14:42
      */
 
     // this parameter has to be set by the module deployer.
     private boolean isAddressingOptional = true;
+    private String addressingNamespace = null;
 
     private Log logger = LogFactory.getLog(getClass());
 
@@ -54,25 +56,68 @@ public class AddressingInHandler extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         logger.debug("Starting Addressing IN Handler .........");
         SOAPHeader header = msgContext.getEnvelope().getHeader();
-        if(header == null){
+        if (header == null) {
             return;
         }
 
-        ArrayList addressingHeaders = header.getHeaderBolcksWithNSURI(AddressingConstants.WSA_NAMESPACE);
-        if (addressingHeaders != null) {
-            extractAddressingInformationFromHeaders(header, msgContext.getMessageInformationHeaders(),addressingHeaders);
-        } else {
-            // no addressing headers present
-            if(!isAddressingOptional){
-                throw new AxisFault("Addressing Handlers should present, but doesn't present in the incoming message !!");
+        ArrayList addressingHeaders = null;
+        try {
+            addressingHeaders = header.getHeaderBolcksWithNSURI(Submission.WSA_NAMESPACE);
+            if (addressingHeaders != null) {
+                addressingNamespace = Submission.WSA_NAMESPACE;
+                extractAddressingSubmissionInformationFromHeaders(header, msgContext.getMessageInformationHeaders(), addressingHeaders);
+            } else {
+                addressingHeaders = header.getHeaderBolcksWithNSURI(Final.WSA_NAMESPACE);
+                if (addressingHeaders != null) {
+                    addressingNamespace = Final.WSA_NAMESPACE;
+                    extractAddressingFinalInformationFromHeaders(header, msgContext.getMessageInformationHeaders(), addressingHeaders);
+                    extractReferenceParameters(header, msgContext.getMessageInformationHeaders());
+
+                } else {
+                    // Addressing headers are not present in the SOAP message
+                    if (!isAddressingOptional) {
+                        throw new AxisFault("Addressing Handlers should present, but doesn't present in the incoming message !!");
+                    }
+                    logger.debug("No Addressing Headers present in the IN message. Addressing In Handler does nothing.");
+                }
             }
-            logger.debug("No Addressing Headers present in the IN message. Addressing In Handler does nothing.");
+        } catch (AddressingException e) {
+            logger.info("Exception occurred in Addressing Module");
+            throw new AxisFault(e);
+        }
+
+    }
+
+    /**
+     * WSA 1.0 specification mandates all the reference parameters to have a attribute as wsa:Type=’parameter’. So
+     * here this will check for header blocks with the above attribute and will put them in message information header collection
+     *
+     * @param header
+     * @param messageInformationHeaders
+     */
+    private void extractReferenceParameters(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeaders) {
+        Iterator headerBlocks = header.getChildren();
+        while (headerBlocks.hasNext()) {
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
+            if (Final.WSA_TYPE_ATTRIBUTE_VALUE.equals(soapHeaderBlock.getFirstAttribute(new QName(Final.WSA_NAMESPACE, Final.WSA_TYPE_ATTRIBUTE)).getValue())) {
+                messageInformationHeaders.addReferenceParameter(soapHeaderBlock);
+            }
         }
     }
 
-    public MessageInformationHeadersCollection extractAddressingInformationFromHeaders(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeadersCollection,ArrayList addressingHeaders) {
-        if(messageInformationHeadersCollection == null){
-             messageInformationHeadersCollection = new MessageInformationHeadersCollection();
+    private void extractAddressingFinalInformationFromHeaders(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeaders, ArrayList addressingHeaders) throws AddressingException {
+        extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Final.WSA_NAMESPACE);
+
+    }
+
+    private void extractAddressingSubmissionInformationFromHeaders(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeaders, ArrayList addressingHeaders) throws AddressingException {
+        extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Submission.WSA_NAMESPACE);
+
+    }
+
+    public MessageInformationHeadersCollection extractCommonAddressingParameters(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeadersCollection, ArrayList addressingHeaders, String addressingNamespace) {
+        if (messageInformationHeadersCollection == null) {
+            messageInformationHeadersCollection = new MessageInformationHeadersCollection();
         }
 
         Iterator addressingHeadersIt = addressingHeaders.iterator();
@@ -81,40 +126,40 @@ public class AddressingInHandler extends AbstractHandler {
             EndpointReference epr = null;
             if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeadersCollection.getTo();
-                if(epr == null){
-                    epr = new EndpointReference(AddressingConstants.WSA_TO, "");
+                if (epr == null) {
+                    epr = new EndpointReference(AddressingConstants.WSA_TO, soapHeaderBlock.getText());
                     messageInformationHeadersCollection.setTo(epr);
                 }
-                extractEPRInformation(soapHeaderBlock, epr);
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeadersCollection.getFrom();
-                if(epr == null){
+                if (epr == null) {
                     epr = new EndpointReference(AddressingConstants.WSA_FROM, "");
                     messageInformationHeadersCollection.setFrom(epr);
                 }
-                extractEPRInformation(soapHeaderBlock, epr);
+                extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeadersCollection.getReplyTo();
-                if( epr == null){
+                if (epr == null) {
                     epr = new EndpointReference(AddressingConstants.WSA_REPLY_TO, "");
                     messageInformationHeadersCollection.setReplyTo(epr);
                 }
-                extractEPRInformation(soapHeaderBlock, epr);
+                extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeadersCollection.getFaultTo();
-                if( epr == null){
+                if (epr == null) {
                     epr = new EndpointReference(AddressingConstants.WSA_FAULT_TO, "");
                     messageInformationHeadersCollection.setTo(epr);
                 }
-                extractEPRInformation(soapHeaderBlock, epr);
+                extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
                 messageInformationHeadersCollection.setMessageId(soapHeaderBlock.getText());
             } else if (AddressingConstants.WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
                 messageInformationHeadersCollection.setAction(soapHeaderBlock.getText());
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
-                OMAttribute relationshipType = soapHeaderBlock.getFirstAttribute(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
-                RelatesTo relatesTo = new RelatesTo(address, relationshipType == null ? "wsa:Reply" : relationshipType.getValue());
+                OMAttribute relationshipType = soapHeaderBlock.getFirstAttribute(new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
+                String relationshipTypeDefaultValue = Submission.WSA_NAMESPACE.equals(addressingNamespace) ? Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE : Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
+                RelatesTo relatesTo = new RelatesTo(address, relationshipType == null ? relationshipTypeDefaultValue : relationshipType.getValue());
                 messageInformationHeadersCollection.setRelatesTo(relatesTo);
             }
         }
@@ -123,8 +168,8 @@ public class AddressingInHandler extends AbstractHandler {
     }
 
 
-    private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr) {
-        OMElement address =  headerBlock.getFirstChildWithName(new QName(AddressingConstants.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
+    private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace) {
+        OMElement address = headerBlock.getFirstChildWithName(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS));
         if (address != null) {
             epr.setAddress(address.getText());
         }

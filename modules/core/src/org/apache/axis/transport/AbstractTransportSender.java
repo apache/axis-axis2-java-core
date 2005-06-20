@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.transport;
 
 import java.io.OutputStream;
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * By the time this Class is invoked either the To EPR on the MessageContext should be set or
- * TRANSPORT_WRITER property set in the message Context with a Writer. This Class would write the 
+ * TRANSPORT_WRITER property set in the message Context with a Writer. This Class would write the
  * SOAPMessage using either of the methods in the order To then Writer.
  */
 public abstract class AbstractTransportSender extends AbstractHandler implements TransportSender {
@@ -76,7 +76,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         EndpointReference epr = null;
 
         if (msgContext.getTo() != null
-            && !AddressingConstants.EPR_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
+                && !AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())
+                && !AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
             epr = msgContext.getTo();
         }
 
@@ -95,7 +96,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
         }
-        msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,Constants.VALUE_TRUE);
+        msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
     }
 
     public void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
@@ -123,17 +124,19 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
     }
 
     public abstract void startSendWithToAddress(MessageContext msgContext, OutputStream out)
-        throws AxisFault;
-    public abstract void finalizeSendWithToAddress(MessageContext msgContext)
-        throws AxisFault;
+            throws AxisFault;
 
-    public abstract void startSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-    OutputStream out)
-        throws AxisFault;
-    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext)
-        throws AxisFault;
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext)
+            throws AxisFault;
+
+
+    public abstract void startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+                                                                         OutputStream out)
+            throws AxisFault;
+
+    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext)
+            throws AxisFault;
+
 
     protected abstract OutputStream openTheConnection(EndpointReference epr) throws AxisFault;
 }

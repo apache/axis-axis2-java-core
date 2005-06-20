@@ -3,9 +3,7 @@
         <wsa:From>
             <wsa:Address>http://www.from.org/service/</wsa:Address>
         </wsa:From>
-        <wsa:To>
-            <wsa:Address>http://www.to.org/service/</wsa:Address>
-        </wsa:To>
+        <wsa:To>http://www.to.org/service/</wsa:To>
         <wsa:MessageID>123456-7890</wsa:MessageID>
         <soapenv:Reference4>Value 400</soapenv:Reference4>
         <soapenv:Reference1>Value 100</soapenv:Reference1>

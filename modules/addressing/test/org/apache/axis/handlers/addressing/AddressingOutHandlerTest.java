@@ -54,7 +54,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     public void testAddToSOAPHeader() throws Exception {
         EndpointReference epr = new EndpointReference(WSA_FROM, "http://www.from.org/service/");
-        epr.setPortType(new QName("http://www.from.org/service/port/", "Port", "portNS"));
+        epr.setInterfaceName(new QName("http://www.from.org/service/port/", "Port", "portNS"));
         epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
 
         AnyContentType anyContentType = new AnyContentType();
@@ -67,7 +67,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         SOAPEnvelope defaultEnvelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
 
-        defaultEnvelope.getHeader().declareNamespace(WSA_NAMESPACE, "wsa");
+        defaultEnvelope.getHeader().declareNamespace(Submission.WSA_NAMESPACE, "wsa");
         outHandler.addToSOAPHeader(epr, WSA_FROM, defaultEnvelope.getHeader());
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
@@ -86,16 +86,15 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         mIHeaders.setFrom(epr);
 
         epr = new EndpointReference(WSA_TO, "http://www.to.org/service/");
-        referenceValues = new AnyContentType();
-        referenceValues.addReferenceValue(new QName("Reference1"), "Value 100");
-        epr.setReferenceProperties(referenceValues);
-        epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
         mIHeaders.setTo(epr);
 
         epr = new EndpointReference(WSA_REPLY_TO, "http://www.replyTo.org/service/");
         referenceValues = new AnyContentType();
+        referenceValues.addReferenceValue(new QName("Reference1"), "Value 100");
+        epr.setReferenceProperties(referenceValues);
+        epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
         referenceValues.addReferenceValue(new QName("Reference3"), "Value 300");
-        epr.setPortType(new QName("http://www.from.org/service/port/", "Port", "portNS"));
+        epr.setInterfaceName(new QName("http://www.from.org/service/port/", "Port", "portNS"));
         epr.setReferenceProperties(referenceValues);
 
         referenceValues = new AnyContentType();

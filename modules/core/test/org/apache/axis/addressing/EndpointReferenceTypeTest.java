@@ -56,8 +56,8 @@ public class EndpointReferenceTypeTest extends TestCase {
 
     public void testGetAndSetPortType() {
         QName portType = new QName("www.someport.com", "port");
-        endpointReference.setPortType(portType);
-        assertEquals("PortType not set/get properly", portType, endpointReference.getPortType());
+        endpointReference.setInterfaceName(portType);
+        assertEquals("PortType not set/get properly", portType, endpointReference.getInterfaceName());
     }
 
     public void testGetAndSetReferenceProperties() {
@@ -99,7 +99,7 @@ public class EndpointReferenceTypeTest extends TestCase {
         endpointReference.setServiceName(serviceName);
         retrievedServiceName = endpointReference.getServiceName();
         assertEquals("ServiceName name has not been get/set properly", serviceName.getName(), retrievedServiceName.getName());
-        assertEquals("ServiceName portName has not been get/set properly", serviceName.getPortName(), retrievedServiceName.getPortName());
+        assertEquals("ServiceName portName has not been get/set properly", serviceName.getEndpointName(), retrievedServiceName.getEndpointName());
     }
 
 }

@@ -27,9 +27,9 @@ public class ServiceName {
     private QName name;
 
     /**
-     * Field portName
+     * Field endpointName
      */
-    private String portName;
+    private String endpointName;
 
     /**
      * @param name
@@ -44,7 +44,7 @@ public class ServiceName {
      */
     public ServiceName(QName name, String portName) {
         this.name = name;
-        this.portName = portName;
+        this.endpointName = portName;
     }
 
     /**
@@ -66,20 +66,20 @@ public class ServiceName {
     }
 
     /**
-     * Method getPortName
+     * Method getEndpointName
      *
      * @return
      */
-    public String getPortName() {
-        return portName;
+    public String getEndpointName() {
+        return endpointName;
     }
 
     /**
-     * Method setPortName
+     * Method setEndpointName
      *
-     * @param portName
+     * @param endpointName
      */
-    public void setPortName(String portName) {
-        this.portName = portName;
+    public void setEndpointName(String endpointName) {
+        this.endpointName = endpointName;
     }
 }

@@ -17,6 +17,9 @@ package org.apache.axis.addressing;
 
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.soap.SOAPHeader;
+import org.apache.axis.om.OMElement;
+
+import java.util.ArrayList;
 
 /**
  * This holds the WSA Message Information Headers
@@ -57,6 +60,8 @@ public class MessageInformationHeadersCollection {
      * Field messageId
      */
     private String messageId;
+
+    private ArrayList referenceParameters;
 
 
     /**
@@ -213,6 +218,21 @@ public class MessageInformationHeadersCollection {
     public void setRelatesTo(RelatesTo relatesTo) {
 
         this.relatesTo = relatesTo;
+    }
+
+    public ArrayList getReferenceParameters() {
+        return referenceParameters;
+    }
+
+    public void setReferenceParameters(ArrayList referenceParameters) {
+        this.referenceParameters = referenceParameters;
+    }
+
+    public void addReferenceParameter(OMElement referenceParameter){
+        if(referenceParameters == null){
+            referenceParameters = new ArrayList(5);
+        }
+        referenceParameters.add(referenceParameter);
     }
 
     // --------------------------------------------------------------------------------------------

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.addressing;
 
+import org.apache.axis.om.OMElement;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -36,9 +38,9 @@ public class EndpointReference {
     private String address;
 
     /**
-     * Field portType
+     * Field interfaceName
      */
-    private QName portType;
+    private QName interfaceName;
 
     /**
      * Field referenceProperties
@@ -54,6 +56,8 @@ public class EndpointReference {
      * Field serviceName
      */
     private ServiceName serviceName;
+
+    private OMElement policies;
 
     /**
      * @param messageInformationHeaderType this can be one of the followings
@@ -106,21 +110,21 @@ public class EndpointReference {
     }
 
     /**
-     * Method getPortType
+     * Method getInterfaceName
      *
      * @return
      */
-    public QName getPortType() {
-        return portType;
+    public QName getInterfaceName() {
+        return interfaceName;
     }
 
     /**
-     * Method setPortType
+     * Method setInterfaceName
      *
-     * @param portType
+     * @param interfaceName
      */
-    public void setPortType(QName portType) {
-        this.portType = portType;
+    public void setInterfaceName(QName interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
     /**
@@ -176,4 +180,14 @@ public class EndpointReference {
     public void setServiceName(ServiceName serviceName) {
         this.serviceName = serviceName;
     }
+
+    public OMElement getPolicies() {
+        return policies;
+    }
+
+    public void setPolicies(OMElement policies) {
+        this.policies = policies;
+    }
+
+    
 }

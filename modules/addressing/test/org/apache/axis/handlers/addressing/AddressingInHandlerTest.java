@@ -58,7 +58,7 @@ public class AddressingInHandlerTest extends TestCase {
             
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             MessageInformationHeadersCollection messageInformationHeadersCollection =
-                    inHandler.extractAddressingInformationFromHeaders(header, null,header.getHeaderBolcksWithNSURI(AddressingConstants.WSA_NAMESPACE));
+                    inHandler.extractCommonAddressingParameters(header, null,header.getHeaderBolcksWithNSURI(AddressingConstants.Submission.WSA_NAMESPACE), AddressingConstants.Submission.WSA_NAMESPACE);
 
             if(messageInformationHeadersCollection == null){
                 fail("Addressing Information Headers have not been retrieved properly");

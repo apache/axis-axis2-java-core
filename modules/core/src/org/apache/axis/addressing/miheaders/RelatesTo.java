@@ -27,7 +27,7 @@ public class RelatesTo {
     /**
      * Field relationshipType
      */
-    private String relationshipType = "wsa:Reply";
+    private String relationshipType;
 
     /**
      * Constructor RelatesTo

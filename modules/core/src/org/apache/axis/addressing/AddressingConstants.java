@@ -15,63 +15,58 @@
  */
 package org.apache.axis.addressing;
 
+import javax.xml.namespace.QName;
+
 /**
  * Interface AddressingConstants
  */
 public interface AddressingConstants {
 
-    public static final String WSA_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
-    
-    /**
-     * Field WSA_MESSAGE_ID
-     */
+    // ====================== Common Message Addressing Properties ===================
     public static final String WSA_MESSAGE_ID = "MessageID";
-
-    /**
-     * Field WSA_RELATES_TO
-     */
     public static final String WSA_RELATES_TO = "RelatesTo";
-
-    /**
-     * Field WSA_RELATES_TO_RELATIONSHIP_TYPE
-     */
-    public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE =
-            "RelationshipType";
-
-    public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE =
-            "wsa:Reply";
-
-    /**
-     * Field WSA_TO
-     */
+    public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE = "RelationshipType";
     public static final String WSA_TO = "To";
-
-    /**
-     * Field WSA_ACTION
-     */
+    public static final String WSA_FROM = "From";
+    public static final String WSA_REPLY_TO = "ReplyTo";
+    public static final String WSA_FAULT_TO = "FaultTo";
     public static final String WSA_ACTION = "Action";
 
-    /**
-     * Field WSA_FROM
-     */
-    public static final String WSA_FROM = "From";
-
-    /**
-     * Field WSA_REPLY_TO
-     */
-    public static final String WSA_REPLY_TO = "ReplyTo";
-
-    /**
-     * Field WSA_FAULT_TO
-     */
-    public static final String WSA_FAULT_TO = "FaultTo";
-
+    // ====================== Common EPR Elements ============================
     public static final String EPR_ADDRESS = "Address";
-    public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
     public static final String EPR_REFERENCE_PARAMETERS = "ReferenceParameters";
-    public static final String EPR_PORT_TYPE = "PortType";
     public static final String EPR_SERVICE_NAME = "ServiceName";
-    public static final String EPR_SERVICE_NAME_PORT_NAME = "PortName";
-    
-    public static final String EPR_ANONYMOUS_URL = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
+
+    // ======================================================================
+
+    public interface Submission {
+        // ====================== Addressing Submission Version Constants ===================
+        public static final String WSA_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+        public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE = "wsa:Reply";
+        public static final String WSA_ANONYMOUS_URL = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
+
+        public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
+        public static final String EPR_PORT_TYPE = "PortType";
+        public static final String EPR_SERVICE_NAME_PORT_NAME = "PortName";
+        // ==================================================================================
+
+    }
+
+    public interface Final {
+        // ====================== Addressing 1.0 Final Version Constants ====================
+        public static final String WSA_NAMESPACE = "http://www.w3.org/2005/02/addressing";
+        public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE = "http://www.w3.org/2005/02/addressing/reply";
+        public static final String WSA_ANONYMOUS_URL = "http://www.w3.org/2005/02/addressing/role/anonymous";
+
+        public static final String WSA_TYPE_ATTRIBUTE = "Type";
+        public static final String WSA_TYPE_ATTRIBUTE_VALUE = "parameter";
+
+        public static final String WSA_INTERFACE_NAME = "InterfaceName";
+        public static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
+        public static final String WSA_POLICIES = "Policies";
+        // ==================================================================================
+
+    }
+
+
 }
