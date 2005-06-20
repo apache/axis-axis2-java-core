@@ -22,11 +22,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -37,13 +32,12 @@ import org.apache.axis.clientapi.ListenerManager;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -164,34 +158,33 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                         msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        
+
                         /*
                          * If the request is a GET request then  
                          * process the request and send out HTML
                          * if not get the soap message and process it
-                         */                
-                        Map map = reciver.parseTheHeaders(in,msgContext.isServerSide());
-                        if(map.get(HTTPConstants.HTTP_REQ_TYPE).equals(HTTPConstants.HEADER_POST)) {
-                        	//Handle POST Request
-                            msgContext.setEnvelope(
-                                    reciver.checkForMessage(msgContext, configurationContext, map));
+                         */
 
-                                AxisEngine engine = new AxisEngine(configurationContext);
-                                engine.receive(msgContext);
+                        //Handle POST Request
+                        SOAPEnvelope envelope =
+                            reciver.checkForMessage(msgContext, configurationContext);
 
-                                Object contextWritten =
-                                    msgContext.getProperty(Constants.RESPONSE_WRITTEN);
-                                if (contextWritten == null
-                                    || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                                    out.write(new String(HTTPConstants.NOCONTENT).getBytes());
-                                    out.close();
-                                }
+                        if (envelope != null) {
+                            msgContext.setEnvelope(envelope);
 
-                                log.info("status written");
-                        } else if(map.get(HTTPConstants.HTTP_REQ_TYPE).equals(HTTPConstants.HEADER_GET)) {
-                        	this.handleGETRequest((String)map.get(HTTPConstants.REQUEST_URI), out);
+                            AxisEngine engine = new AxisEngine(configurationContext);
+                            engine.receive(msgContext);
+
+                            Object contextWritten =
+                                msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+                            if (contextWritten == null
+                                || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                                out.write(new String(HTTPConstants.NOCONTENT).getBytes());
+                                out.close();
+                            }
+
                         }
-                        
+
                     }
                 } catch (Throwable e) {
                     log.error(e);
@@ -301,7 +294,11 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
         SimpleHTTPServer reciver = new SimpleHTTPServer(args[0], serverSoc);
-        System.out.println("starting SimpleHTTPServer in port "+args[1]+ " using the repository "+ new File(args[0]).getAbsolutePath());
+        System.out.println(
+            "starting SimpleHTTPServer in port "
+                + args[1]
+                + " using the repository "
+                + new File(args[0]).getAbsolutePath());
         reciver.setServerSocket(serverSoc);
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);
@@ -331,73 +328,4 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         }
     }
 
-    private void handleGETRequest(String reqUri, OutputStream out) {
-    	
-    	try {
-			out.write(this.getServicesHTML().getBytes());
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-    
-    
-    /**
-     * Returns the HTML text for the list of services deployed
-     * This can be delegated to another Class as well
-     * where it will handle more options of GET messages :-?
-     * @return
-     */
-    private String getServicesHTML() {
-    	String temp = "";
-    	Map services = this.configurationContext.getAxisConfiguration().getServices();
-    	Hashtable erroneousServices = this.configurationContext.getAxisConfiguration().getFaulytServices();
-    	boolean status = false;
-    	
-    	if(services!= null && !services.isEmpty()) {
-    		status = true;
-    		Collection serviceCollection = services.values();
-    		for(Iterator it = serviceCollection.iterator(); it.hasNext();) {
-    			Map operations;
-    			Collection operationsList;
-                ServiceDescription axisService = (ServiceDescription) it.next();
-                operations = axisService.getOperations();
-                operationsList = operations.values();
-                temp += "<h2>" + "Deployed services" + "</h2>";
-                temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
-                if(operationsList.size() > 0) {
-                	temp += "Available operations <ul>";
-                    for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                        OperationDescription axisOperation = (OperationDescription) iterator1.next();
-                        temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
-                    }
-                    temp += "</ul>";
-                } else {
-                	temp += "No operations speficied for this service";
-                }
-    		}
-    	}
-    	
-    	if(erroneousServices != null && !erroneousServices.isEmpty()) {
-            
-           temp += "<hr><h2><font color=\"blue\">Faulty Services</font></h2>";
-           status = true;
-           Enumeration faultyservices = erroneousServices.keys();
-           while (faultyservices.hasMoreElements()) {
-               String faultyserviceName = (String) faultyservices.nextElement();
-               temp += "<h3><font color=\"blue\">" + faultyserviceName + "</font></h3>";
-           }
-    	}
-
-    	if(!status) {
-        		temp = "<h2>There are no services deployed</h2>";
-        }
-    	
-    	temp = "<html><head><title>Axis2: Services</title></head>" +
-		  "<body>" + temp + "</body></html>";
-    	
-    	return temp;
-    }
-    
 }

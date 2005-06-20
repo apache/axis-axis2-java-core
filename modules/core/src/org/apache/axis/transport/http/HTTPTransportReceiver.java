@@ -16,8 +16,13 @@
 package org.apache.axis.transport.http;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
@@ -28,6 +33,8 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
@@ -106,40 +113,47 @@ public class HTTPTransportReceiver {
                 msgContext.setProperty(
                     MessageContext.TRANSPORT_SUCCEED,
                     HTTPConstants.RESPONSE_ACK_CODE_VAL);
-                return soapEnvelope;
-            }
-            msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
-            Utils.configureMessageContextForHTTP(
-                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                msgContext.getWSAAction(),
-                msgContext);
+                return null;
+            }else if(HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+                this.handleGETRequest((String)map.get(HTTPConstants.REQUEST_URI), 
+                    (OutputStream)map.get(MessageContext.TRANSPORT_OUT),
+                    msgContext.getSystemContext());
+                    return null;
+            }else{
+                msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+                Utils.configureMessageContextForHTTP(
+                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                    msgContext.getWSAAction(),
+                    msgContext);
 
-            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
-            //getServiceLookUp(requestURI)));
+                String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
+                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+                //getServiceLookUp(requestURI)));
 
-            // TODO see is it a Service request e.g. WSDL, list ....
-            // TODO take care of the other HTTPHeaders
-            try {
-                //Check for the REST behaviour, if you desire rest beahaviour
-                //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-                Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder = null;
-                SOAPEnvelope envelope = null;
-                if (doREST != null && "true".equals(doREST)) {
-                    SOAPFactory soapFactory = new SOAP11Factory();
-                    builder = new StAXOMBuilder(xmlreader);
-                    builder.setOmbuilderFactory(soapFactory);
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(builder.getDocumentElement());
-                } else {
-                    builder = new StAXSOAPModelBuilder(xmlreader);
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
+                // TODO see is it a Service request e.g. WSDL, list ....
+                // TODO take care of the other HTTPHeaders
+                try {
+                    //Check for the REST behaviour, if you desire rest beahaviour
+                    //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+                    Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
+                    XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                    StAXBuilder builder = null;
+                    SOAPEnvelope envelope = null;
+                    if (doREST != null && "true".equals(doREST)) {
+                        SOAPFactory soapFactory = new SOAP11Factory();
+                        builder = new StAXOMBuilder(xmlreader);
+                        builder.setOmbuilderFactory(soapFactory);
+                        envelope = soapFactory.getDefaultEnvelope();
+                        envelope.getBody().addChild(builder.getDocumentElement());
+                    } else {
+                        builder = new StAXSOAPModelBuilder(xmlreader);
+                        envelope = (SOAPEnvelope) builder.getDocumentElement();
+                    }
+                    return envelope;
+                } catch (Exception e) {
+                    throw new AxisFault(e.getMessage(), e);
                 }
-                return envelope;
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage(), e);
+            
             }
         } else {
             throw new AxisFault("Input reader not found");
@@ -500,18 +514,73 @@ public class HTTPTransportReceiver {
         }
     }
 
-    //    private String getServiceLookUp(String requestURI) throws AxisFault {
-    //        final String URI_ID_STRING = "/services";
-    //              String filePart = requestURI;
-    //
-    //              int index = filePart.lastIndexOf(URI_ID_STRING);
-    //              String serviceStr = null;
-    //              if (index > 0) {
-    //                  serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-    //                  return serviceStr;
-    //
-    //              } else {
-    //                  throw new AxisFault("Both the URI and SOAP_ACTION are Null");
-    //              }
-    //    }
+    private void handleGETRequest(String reqUri, OutputStream out,ConfigurationContext configurationContext) {
+        
+    try {
+        out.write(this.getServicesHTML(configurationContext).getBytes());
+        out.flush();
+        out.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+    
+    
+/**
+ * Returns the HTML text for the list of services deployed
+ * This can be delegated to another Class as well
+ * where it will handle more options of GET messages :-?
+ * @return
+ */
+private String getServicesHTML(ConfigurationContext configurationContext) {
+    String temp = "";
+    Map services = configurationContext.getAxisConfiguration().getServices();
+    Hashtable erroneousServices = configurationContext.getAxisConfiguration().getFaulytServices();
+    boolean status = false;
+        
+    if(services!= null && !services.isEmpty()) {
+        status = true;
+        Collection serviceCollection = services.values();
+        for(Iterator it = serviceCollection.iterator(); it.hasNext();) {
+            Map operations;
+            Collection operationsList;
+            ServiceDescription axisService = (ServiceDescription) it.next();
+            operations = axisService.getOperations();
+            operationsList = operations.values();
+            temp += "<h2>" + "Deployed services" + "</h2>";
+            temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
+            if(operationsList.size() > 0) {
+                temp += "Available operations <ul>";
+                for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
+                    OperationDescription axisOperation = (OperationDescription) iterator1.next();
+                    temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                }
+                temp += "</ul>";
+            } else {
+                temp += "No operations speficied for this service";
+            }
+        }
+    }
+        
+    if(erroneousServices != null && !erroneousServices.isEmpty()) {
+            
+       temp += "<hr><h2><font color=\"blue\">Faulty Services</font></h2>";
+       status = true;
+       Enumeration faultyservices = erroneousServices.keys();
+       while (faultyservices.hasMoreElements()) {
+           String faultyserviceName = (String) faultyservices.nextElement();
+           temp += "<h3><font color=\"blue\">" + faultyserviceName + "</font></h3>";
+       }
+    }
+
+    if(!status) {
+            temp = "<h2>There are no services deployed</h2>";
+    }
+        
+    temp = "<html><head><title>Axis2: Services</title></head>" +
+      "<body>" + temp + "</body></html>";
+        
+    return temp;
+}
+
 }
