@@ -1,6 +1,7 @@
 package org.apache.axis.soap;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,17 +27,17 @@ public interface SOAPFaultCode extends OMElement{
     /**
      * @param value
      */
-    public void addValue(SOAPFaultCodeValue value);
+    public void setValue(SOAPFaultValue value) throws SOAPProcessingException;
 
     /**
      * @return
      */
-    public SOAPFaultCodeValue getValue();
+    public SOAPFaultValue getValue();
 
     /**
      * @param value
      */
-    public void addSubCode(SOAPFaultSubCode value);
+    public void setSubCode(SOAPFaultSubCode value) throws SOAPProcessingException;
 
     /**
      * @return

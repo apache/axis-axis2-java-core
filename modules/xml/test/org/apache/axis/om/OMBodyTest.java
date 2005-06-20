@@ -16,6 +16,7 @@
 package org.apache.axis.om;
 
 import org.apache.axis.soap.SOAPBody;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 public class OMBodyTest extends OMTestCase implements OMConstants {
     SOAPBody soapBody;
@@ -37,7 +38,12 @@ public class OMBodyTest extends OMTestCase implements OMConstants {
      */
     public void testAddFault() {
         System.out.println("Adding SOAP fault to body ....");
-        soapBody.addChild(soapFactory.createSOAPFault(soapBody, new Exception("Testing soap fault")));
+        try {
+            soapBody.addChild(soapFactory.createSOAPFault(soapBody, new Exception("Testing soap fault")));
+        } catch (SOAPProcessingException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
         System.out.println("\t checking for SOAP Fault ...");
         assertTrue("SOAP body has no SOAP fault", soapBody.hasFault());
         System.out.println("\t checking for not-nullity ...");

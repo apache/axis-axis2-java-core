@@ -27,7 +27,7 @@ import java.util.Iterator;
 *
 *
 */
-class OMSerializerUtil {
+public class OMSerializerUtil {
 
     /**
      * Method serializeEndpart
@@ -136,18 +136,26 @@ class OMSerializerUtil {
         }
 
         // add the elements attributes
-        if (element.attributes != null) {
-            Iterator attributesList = element.attributes.values().iterator();
-            while (attributesList.hasNext()) {
-                serializeAttribute((OMAttribute) attributesList.next(), writer);
-            }
-        }
+        serializeAttributes(element, writer);
 
         // add the namespaces
+        serializeNamespaces(element, writer);
+    }
+
+    public static void serializeNamespaces(OMElementImpl element, XMLStreamWriter writer) throws XMLStreamException {
         Iterator namespaces = element.getAllDeclaredNamespaces();
         if (namespaces != null) {
             while (namespaces.hasNext()) {
                 serializeNamespace((OMNamespace) namespaces.next(), writer);
+            }
+        }
+    }
+
+    public static void serializeAttributes(OMElementImpl element, XMLStreamWriter writer) throws XMLStreamException {
+        if (element.getAttributes() != null) {
+            Iterator attributesList = element.getAttributes();
+            while (attributesList.hasNext()) {
+                serializeAttribute((OMAttribute) attributesList.next(), writer);
             }
         }
     }

@@ -67,6 +67,7 @@ public abstract class OMNodeImpl implements OMNode {
     public OMNodeImpl(OMElement parent) {
         if ((parent != null) && (parent.getType() == OMNode.ELEMENT_NODE)) {
             this.parent = (OMElementImpl) parent;
+            parent.addChild(this);
         }
     }
 

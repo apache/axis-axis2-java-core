@@ -17,29 +17,23 @@ package org.apache.axis.soap.impl.llom;
 
 import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeader;
 import org.apache.axis.soap.SOAPHeaderBlock;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
  * Class SOAPHeaderImpl
  */
-public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
+public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
     /**
      * @param envelope
      */
-    public SOAPHeaderImpl(SOAPEnvelope envelope) {
-        super(envelope);
+    public SOAPHeaderImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
+        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, true);
 
-        // set the namespaces
-        this.ns = envelope.getNamespace();
-        this.localName = SOAPConstants.HEADER_LOCAL_NAME;
     }
 
     /**
@@ -49,10 +43,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @param builder
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(SOAPConstants.HEADER_LOCAL_NAME,
-                (envelope == null) ? null : envelope.getNamespace(),
-                envelope,
-                builder);
+        super(envelope,  SOAPConstants.HEADER_LOCAL_NAME, builder);
     }
 
     /**
@@ -66,17 +57,8 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      * @throws org.apache.axis.om.OMException if a SOAP error occurs
      * @throws OMException
      */
-    public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
-            throws OMException {
-        if (ns == null || ns.getName() == null || "".equals(ns.getName())) {
-            throw new OMException("All the SOAP Header blocks should be namespace qualified");
-        }
-        SOAPHeaderBlock soapHeaderBlock =
-                new SOAPHeaderBlockImpl(localName, ns);
-        this.addChild(soapHeaderBlock);
-        soapHeaderBlock.setComplete(true);
-        return soapHeaderBlock;
-    }
+    public abstract SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
+            throws OMException;
 
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
@@ -112,25 +94,19 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
 
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
-     * <CODE>SOAPHeader</CODE> object that have the the specified actor and
+     * <CODE>SOAPHeader</CODE> object that have the the specified role and
      * detaches them from this <CODE> SOAPHeader</CODE> object. <P>This method
-     * allows an actor to process only the parts of the <CODE>SOAPHeader</CODE>
+     * allows an role to process only the parts of the <CODE>SOAPHeader</CODE>
      * object that apply to it and to remove them before passing the message on
-     * to the next actor.
+     * to the next role.
      *
-     * @param actor a <CODE>String</CODE> giving the URI of the actor for which
-     *              to search
+     * @param role a <CODE>String</CODE> giving the URI of the role for which to
+     *             search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
-     *         SOAPHeaderBlock</CODE> objects that contain the specified actor
+     *         SOAPHeaderBlock</CODE> objects that contain the specified role
      * @see #examineHeaderBlocks(String) examineHeaderBlocks(java.lang.String)
      */
-    public Iterator extractHeaderBlocks(String actor) {
-        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
-                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAPConstants.ATTR_ACTOR),
-                actor,
-                true);
-    }
+    public abstract Iterator extractHeaderBlocks(String role);
 
     /**
      * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>
@@ -144,13 +120,7 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
      *         <code>SOAPHeaderBlock</code> objects that contain the specified
      *         actor and are marked as MustUnderstand
      */
-    public Iterator examineMustUnderstandHeaderBlocks(String actor) {
-        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
-                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAPConstants.ATTR_ACTOR),
-                actor,
-                false);
-    }
+    public abstract Iterator examineMustUnderstandHeaderBlocks(String actor);
 
     /**
      * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>
@@ -187,9 +157,9 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         if (header != null) {
             headers = new ArrayList();
         }
-        
+
         node = header;
-        
+
         while (node != null) {
             if (node.getType() == OMNode.ELEMENT_NODE) {
                 header = (OMElement) node;
@@ -202,6 +172,12 @@ public class SOAPHeaderImpl extends OMElementImpl implements SOAPHeader {
         }
         return headers;
 
+    }
+
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
+        if (!(parent instanceof SOAPEnvelopeImpl)) {
+            throw new SOAPProcessingException("Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+        }
     }
 
 }

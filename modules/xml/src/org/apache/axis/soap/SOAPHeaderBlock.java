@@ -16,6 +16,7 @@
 package org.apache.axis.soap;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * <P>An object representing the contents in the SOAP header part of the SOAP
@@ -61,6 +62,7 @@ public interface SOAPHeaderBlock extends OMElement {
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public abstract void setMustUnderstand(boolean mustUnderstand);
+    public abstract void setMustUnderstand(String mustUnderstand) throws SOAPProcessingException;
 
     /**
      * Returns whether the mustUnderstand attribute for this

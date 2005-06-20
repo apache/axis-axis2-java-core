@@ -18,21 +18,19 @@ import org.apache.axis.om.OMElement;
  * the License.
  * <p/>
  */
-public interface SOAPFaultCodeValue extends OMElement{
+public interface SOAPFaultText extends OMElement{
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
     /**
-     *
-     * @param envFaultCodeEnum - Look in @see SOAP12Constants class for
-     * valid SOAP fault codes covering high level SOAP faults. Look for
-     * constants starting with SOAP_FAULT_VALUE_
+     * lang is a mandatory attribute within the SOAPFaultText which must have
+     * SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI as the namespace URI and
+     * SOAP12constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX or a capitalization thereof as the prefix
+     * @param lang
      */
-    public void setValue(String envFaultCodeEnum);
+    public void setLang(String lang);
+    public String getLang();
 
-    /**
-     * @return
-     */
-    public String getValue();
+    
 }

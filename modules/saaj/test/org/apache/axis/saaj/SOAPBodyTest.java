@@ -38,7 +38,7 @@ public class SOAPBodyTest extends TestCase {
 
     /**
      * Method suite
-     *
+     *                                                         
      * @return
      */
   /*  public static Test suite() {

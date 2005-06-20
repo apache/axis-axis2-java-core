@@ -54,6 +54,7 @@ public interface OMElement extends OMNode {
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException;
 
+
     /**
      * This returns a collection of this element.
      * Children can be of types OMElement, OMText.

@@ -47,30 +47,19 @@ public interface SOAPConstants {
      * Field BODY_FAULT_LOCAL_NAME
      */
     public static final String BODY_FAULT_LOCAL_NAME = "Fault";
-    /**
-     * Field ATTR_ACTOR
-     */
-    public static final String ATTR_ACTOR = "actor";
+
     /**
      * Field ATTR_MUSTUNDERSTAND
      */
     public static final String ATTR_MUSTUNDERSTAND = "mustUnderstand";
+    public static final String ATTR_MUSTUNDERSTAND_TRUE = "true";
+    public static final String ATTR_MUSTUNDERSTAND_FALSE = "false";
+    public static final String ATTR_MUSTUNDERSTAND_0 = "0";
+    public static final String ATTR_MUSTUNDERSTAND_1 = "1";
     /**
      * Field SOAPFAULT_LOCAL_NAME
      */
     public static final String SOAPFAULT_LOCAL_NAME = "Fault";
-    /**
-     * Field SOAPFAULT_CODE_LOCAL_NAME
-     */
-    public static final String SOAPFAULT_CODE_LOCAL_NAME = "faultcode";
-    /**
-     * Field SOAPFAULT_STRING_LOCAL_NAME
-     */
-    public static final String SOAPFAULT_STRING_LOCAL_NAME = "faultstring";
-    /**
-     * Field SOAPFAULT_ACTOR_LOCAL_NAME
-     */
-    public static final String SOAPFAULT_ACTOR_LOCAL_NAME = "faultactor";
     /**
      * Field SOAPFAULT_DETAIL_LOCAL_NAME
      */
@@ -81,4 +70,6 @@ public interface SOAPConstants {
      */
     public static final String SOAPFAULT_NAMESPACE_PREFIX =
             SOAP_DEFAULT_NAMESPACE_PREFIX;
+
+    public static final String SOAP_FAULT_DETAIL_EXCEPTION_ENTRY = "Exception";
 }

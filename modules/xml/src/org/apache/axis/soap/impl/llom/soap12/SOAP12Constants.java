@@ -54,4 +54,7 @@ public interface SOAP12Constants extends SOAPConstants{
 
     // SOAP Fault Detail
     public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "Detail";
+
+    // SOAP Fault Role
+    public static final String SOAP_FAULT_ROLE_LOCAL_NAME = "Role";
 }

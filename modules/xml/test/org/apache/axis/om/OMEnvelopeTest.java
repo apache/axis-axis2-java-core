@@ -18,6 +18,7 @@ package org.apache.axis.om;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeader;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 public class OMEnvelopeTest extends OMTestCase {
     public OMEnvelopeTest(String testName) {
@@ -53,7 +54,13 @@ public class OMEnvelopeTest extends OMTestCase {
     }
 
     public void testDefaultEnveleope() {
-        SOAPEnvelope env = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        SOAPEnvelope env = null;
+        try {
+            env = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        } catch (SOAPProcessingException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
         assertNotNull(env);
         assertNotNull("Header should not be null", env.getHeader());
         assertNotNull("Body should not be null", env.getBody());

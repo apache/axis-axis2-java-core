@@ -1,8 +1,10 @@
 package org.apache.axis.soap.impl.llom;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.soap.SOAPText;
+import org.apache.axis.soap.SOAPFaultText;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -20,23 +22,26 @@ import org.apache.axis.soap.SOAPText;
  * the License.
  * <p/>
  */
-public class SOAPTextImpl extends OMElementImpl implements SOAPText{
-    /**
-     * Eran Chinthaka (chinthaka@apache.org)
-     */
-    /**
-     * @param parent
-     * @param parent
-     */
-    public SOAPTextImpl(OMElement parent) {
-        super(parent);
+public class SOAPTextImpl extends SOAPElement{
+
+    protected SOAPTextImpl(OMElement parent) throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true);
+    }
+
+    protected SOAPTextImpl(OMElement parent, OMXMLParserWrapper builder) {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder);
     }
 
     public void setLang(String lang) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO : Chinthaka fix me
     }
 
     public String getLang() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        // TODO Chinthaka fix me
+        return null;
+    }
+
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
+        // do nothing
     }
 }

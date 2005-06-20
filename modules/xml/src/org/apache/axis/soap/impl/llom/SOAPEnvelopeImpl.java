@@ -21,10 +21,12 @@ import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeader;
 
+import javax.xml.namespace.QName;
+
 /**
  * Class SOAPEnvelopeImpl
  */
-public class SOAPEnvelopeImpl extends OMElementImpl
+public class SOAPEnvelopeImpl extends SOAPElement
         implements SOAPEnvelope, OMConstants {
 
     private SOAPBody soapBody;
@@ -34,17 +36,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      * @param builder
      */
     public SOAPEnvelopeImpl(OMXMLParserWrapper builder) {
-        super(SOAPConstants.SOAPENVELOPE_LOCAL_NAME, null, null, builder);
-    }
-
-    /**
-     * Constructor SOAPEnvelopeImpl
-     *
-     * @param ns
-     * @param builder
-     */
-    public SOAPEnvelopeImpl(OMNamespace ns, OMXMLParserWrapper builder) {
-        super(SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns, null, builder);
+        super(null, SOAPConstants.SOAPENVELOPE_LOCAL_NAME, builder);
     }
 
     /**
@@ -68,10 +60,7 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      */
     public SOAPHeader getHeader() throws OMException {
         if (soapHeader == null) {
-            OMElement element = getFirstElement();
-            if (SOAPConstants.HEADER_LOCAL_NAME.equals(element.getLocalName())) {
-                soapHeader = (SOAPHeader) element;
-            }
+            soapHeader = (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
         }
         return soapHeader;
     }
@@ -89,10 +78,12 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      */
     public SOAPBody getBody() throws OMException {
         if (soapBody == null) {
+
+            //check for the first element
             OMElement element = getFirstElement();
             if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                 soapBody = (SOAPBody) element;
-            } else {
+            } else {      // if not second element SHOULD be the body
                 OMNode node = element.getNextSibling();
                 while (node.getType() != OMNode.ELEMENT_NODE) {
                     node = node.getNextSibling();
@@ -101,6 +92,8 @@ public class SOAPEnvelopeImpl extends OMElementImpl
 
                 if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                     soapBody = (SOAPBody) element;
+                } else {
+                    throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
                 }
             }
         }
@@ -114,5 +107,9 @@ public class SOAPEnvelopeImpl extends OMElementImpl
      */
     public OMNode detach() throws OMException {
         throw new OMException("Root Element can not be detached");
+    }
+
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
+        // here do nothing as SOAPEnvelope doesn't have a parent !!!
     }
 }

@@ -23,4 +23,24 @@ public interface SOAP11Constants extends SOAPConstants{
      * Eran Chinthaka (chinthaka@apache.org)
      */
    public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
+   
+   /**
+    * Field ATTR_ACTOR
+    */
+   public static final String ATTR_ACTOR = "actor";
+   
+   /**
+    * Field SOAP_FAULT_CODE_LOCAL_NAME
+    */
+   public static final String SOAP_FAULT_CODE_LOCAL_NAME = "faultcode";
+   /**
+    * Field SOAP_FAULT_STRING_LOCAL_NAME
+    */
+   public static final String SOAP_FAULT_STRING_LOCAL_NAME = "faultstring";
+   /**
+    * Field SOAP_FAULT_ACTOR_LOCAL_NAME
+    */
+   public static final String SOAP_FAULT_ACTOR_LOCAL_NAME = "faultactor";
+
+   public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "detail";
 }

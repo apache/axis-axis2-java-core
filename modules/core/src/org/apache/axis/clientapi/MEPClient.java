@@ -30,6 +30,7 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
@@ -67,7 +68,11 @@ public abstract class MEPClient {
 
         SOAPEnvelope envelope = null;
         SOAPFactory omfac = OMAbstractFactory.getSOAP11Factory();
-        envelope = omfac.getDefaultEnvelope();
+        try {
+            envelope = omfac.getDefaultEnvelope();
+        } catch (SOAPProcessingException e) {
+            throw new AxisFault(e);
+        }
         envelope.getBody().addChild(toSend);
         msgctx.setEnvelope(envelope);
         return msgctx;

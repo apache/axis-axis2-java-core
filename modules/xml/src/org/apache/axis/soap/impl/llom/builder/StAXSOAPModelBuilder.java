@@ -24,6 +24,7 @@ import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.SOAPHeader;
 import org.apache.axis.soap.impl.llom.SOAPConstants;
 import org.apache.axis.soap.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.commons.logging.Log;
@@ -63,7 +64,21 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * element level 1 = envelope level element level 2 = Header or Body level
      * element level 3 = HeaderElement or BodyElement level
      */
-    private int elementLevel = 0;
+    int elementLevel = 0;
+
+    private boolean processingFault = false;
+
+    //added
+    /*This is used to notice whether all mandatory fault elements are present
+    */
+    private boolean processingMandatoryFaultElements = false;
+
+    //added
+    /* This is used to indicate whether detail element is processing in soap 1.2 builderhelper
+    */
+    private boolean processingDetailElements = false;
+
+    private SOAPBuilderHelper builderHelper;
 
     /**
      * Constructor StAXSOAPModelBuilder
@@ -74,21 +89,20 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         super(parser);
         soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
         identifySOAPVersion();
+        parseHeaders();
+    }
+
+    public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
+        super(parser);
+        soapFactory = factory;
+        identifySOAPVersion();
 
         parseHeaders();
     }
-    
-    public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
-            super(parser);
-            soapFactory = factory;
-            identifySOAPVersion();
-
-            parseHeaders();
-        }
 
     private void identifySOAPVersion() {
         SOAPEnvelope soapEnvelope = getSOAPEnvelope();
-        if(soapEnvelope == null){
+        if (soapEnvelope == null) {
             throw new OMException("No SOAPHeader present !!");
         }
 
@@ -97,7 +111,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             envelopeNamespace = getSOAPEnvelope().findNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
         } else {
             log.info("SOAP 1.2 message received ..");
-            soapFactory  = OMAbstractFactory.getSOAP12Factory();
+            soapFactory = OMAbstractFactory.getSOAP12Factory();
         }
 
         if (envelopeNamespace == null) {
@@ -111,15 +125,15 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
     }
 
     private void parseHeaders() {
-       // by the time execution comes here the nullity of SOAPEnvelope has been cheched in the
+        // by the time execution comes here the nullity of SOAPEnvelope has been cheched in the
         // identifySOAPVersion() method. So not checking getSOAPEnvelope() == null here
         SOAPHeader soapHeader = getSOAPEnvelope().getHeader();
 
-        if (soapHeader != null) {                  
+        if (soapHeader != null) {
             while (!soapHeader.isComplete()) {
                 next();
             }
-        }else{
+        } else {
             log.info("No SOAPHeaders present !!");
         }
     }
@@ -159,10 +173,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             e.setFirstChild(node);
         }
 
-        // fill in the attributes
-        processAttributes(node);
-        log.info("Build the OMElelment {" + node.getNamespace().getName() + '}'
-                + node.getLocalName() + "By the StaxSOAPModelBuilder");
+
+        log.info("Build the OMElelment " + node.getLocalName() + "By the StaxSOAPModelBuilder");
         return node;
     }
 
@@ -175,7 +187,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * @return
      */
     protected OMElement constructNode(OMElement parent, String elementName,
-                                    boolean isEnvelope) {
+                                      boolean isEnvelope) {
         OMElement element = null;
         if (parent == null) {
             if (!elementName.equalsIgnoreCase(SOAPConstants.SOAPENVELOPE_LOCAL_NAME)) {
@@ -183,10 +195,12 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                         + SOAPConstants.SOAPENVELOPE_LOCAL_NAME);
             }
             envelope =
-                    (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(null,
-                            this);
+                    (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(this);
             element = envelope;
             processNamespaceData(element, true);
+            // fill in the attributes
+            processAttributes(element);
+
         } else if (elementLevel == 2) {
 
             // this is either a header or a body
@@ -204,6 +218,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
                 // envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
+                processAttributes(element);
+
             } else if (elementName.equals(SOAPConstants.BODY_LOCAL_NAME)) {
                 if (bodyPresent) {
                     throw new OMBuilderException("Multiple body elements encountered");
@@ -215,6 +231,8 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
                 // envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
+                processAttributes(element);
+
             } else {
                 throw new OMBuilderException(elementName
                         + " is not supported here. Envelope can not have elements other than Header and Body.");
@@ -223,21 +241,43 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 && parent.getLocalName().equalsIgnoreCase(SOAPConstants.HEADER_LOCAL_NAME)) {
 
             // this is a headerblock
-            element = soapFactory.createSOAPHeaderBlock(elementName, null,
-                    parent, this);
+            try {
+                element = soapFactory.createSOAPHeaderBlock(elementName, null,
+                        (SOAPHeader) parent, this);
+            } catch (SOAPProcessingException e) {
+                throw new OMBuilderException(e);
+            }
             processNamespaceData(element, false);
+            processAttributes(element);
+
         } else if ((elementLevel == 3) && parent.getLocalName().equalsIgnoreCase(SOAPConstants.BODY_LOCAL_NAME) && elementName.equalsIgnoreCase(SOAPConstants.BODY_FAULT_LOCAL_NAME)) {
 
             // this is a headerblock
-            element = soapFactory.createSOAPFault(null, (SOAPBody) parent,
-                    this);
+            element = soapFactory.createSOAPFault((SOAPBody) parent, this);
             processNamespaceData(element, false);
+            processAttributes(element);
+
+
+            processingFault = true;
+
+            //added
+            processingMandatoryFaultElements = true;
+            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName())) {
+                builderHelper = new SOAP12BuilderHelper(this);
+            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName())) {
+                builderHelper = new SOAP11BuilderHelper(this);
+            }
+
+        } else if (elementLevel > 3 && processingFault) {
+            element = builderHelper.handleEvent(parser, parent, elementLevel);
         } else {
 
             // this is neither of above. Just create an element
             element = soapFactory.createOMElement(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
+            processAttributes(element);
+
         }
         return element;
     }
@@ -260,17 +300,28 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             switch (token) {
                 case XMLStreamConstants.START_ELEMENT:
                     elementLevel++;
-                   // System.out.println("Start ==> "+parser.getLocalName());
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     lastNode = createOMText();
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                   //System.out.println("End ==> "+parser.getLocalName());
-
                     if (lastNode.isComplete()) {
                         OMElement parent = lastNode.getParent();
+
+//                        //added
+//                        /*check whether all mandatory fault elements are present
+//                        */
+//                        if (parent.getLocalName().equals(SOAP12Constants.SOAPFAULT_LOCAL_NAME) && processingMandatoryFaultElements) {
+//                            throw new OMBuilderException("Missing mandatory fault elements");
+//                        }
+//                        //added
+//                        /*finish processing detail element in soap 1.2 builderhelper
+//                        */
+//                        if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+//                            this.setProcessingDetailElements(false);
+//                        }
+
                         parent.setComplete(true);
                         lastNode = parent;
                     } else {
@@ -339,7 +390,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
 
 
-        // TODO we got to have this to make sure OM reject mesagess that are not sname space qualified
+        // TODO we got to have this to make sure OM reject mesagess that are not name space qualified
         // But got to comment this to interop with Axis.1.x
         // if (namespace == null) {
         // throw new OMException("All elements must be namespace qualified!");
@@ -352,7 +403,23 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
     }
 
+    //added
+    /*these three methods to set and check detail element processing or mandatory fault element are present
+    */
     public OMNamespace getEnvelopeNamespace() {
         return envelopeNamespace;
     }
+
+    public void setBooleanProcessingMandatoryFaultElements(boolean value) {
+        this.processingMandatoryFaultElements = value;
+    }
+
+    public boolean isProcessingDetailElements() {
+        return processingDetailElements;
+    }
+
+    public void setProcessingDetailElements(boolean value) {
+        processingDetailElements = value;
+    }
+
 }

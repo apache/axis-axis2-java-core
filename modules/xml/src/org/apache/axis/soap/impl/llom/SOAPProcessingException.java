@@ -1,6 +1,6 @@
-package org.apache.axis.soap;
+package org.apache.axis.soap.impl.llom;
 
-import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -18,8 +18,15 @@ import org.apache.axis.om.OMElement;
  * the License.
  * <p/>
  */
-public interface SOAPFaultSubCodeValue extends OMElement{
+public class SOAPProcessingException extends OMException {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
+    public SOAPProcessingException(String message) {
+        super(message);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    public SOAPProcessingException(Throwable cause) {
+        super(cause);
+    }
 }

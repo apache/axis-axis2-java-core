@@ -22,13 +22,14 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
         super(testName);
     }
 
-    public void testMesssageContext() throws AxisFault {
+    public void testMesssageContext() throws AxisFault, SOAPProcessingException {
         AxisConfiguration er = new AxisConfigurationImpl();
         ServiceDescription servicesDesc = new ServiceDescription();
         er.addService(servicesDesc);

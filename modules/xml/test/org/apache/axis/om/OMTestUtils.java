@@ -38,7 +38,7 @@ public class OMTestUtils {
         if (attibIt != null) {
             while (attibIt.hasNext()) {
                 TestCase.assertNotNull("once the has next is not null, the " +
-                                "element should not be null", attibIt.next());
+                        "element should not be null", attibIt.next());
             }
         }
         Iterator it = omEle.getChildren();
@@ -46,7 +46,7 @@ public class OMTestUtils {
             while (it.hasNext()) {
                 OMNode ele = (OMNode) it.next();
                 TestCase.assertNotNull("once the has next is not null, the " +
-                                "element should not be null", ele);
+                        "element should not be null", ele);
                 if (ele instanceof OMElement) {
                     walkThrough((OMElement) ele);
                 }
@@ -58,8 +58,11 @@ public class OMTestUtils {
         if (ele == null && omele == null) {
             return;
         } else if (ele != null && omele != null) {
-            TestCase.assertTrue(ele.getLocalName().equals(omele.getLocalName()));
-            TestCase.assertTrue(ele.getNamespaceURI().equals(omele.getNamespace().getName()));
+            TestCase.assertEquals("Element name not correct", ele.getLocalName(), omele.getLocalName());
+            if (omele.getNamespace() != null) {
+                TestCase.assertEquals("Namespace URI not correct", ele.getNamespaceURI(), omele.getNamespace().getName());
+
+            }
 
             //go through the attributes
             NamedNodeMap map = ele.getAttributes();

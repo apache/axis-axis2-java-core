@@ -1,6 +1,7 @@
 package org.apache.axis.soap;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -23,6 +24,6 @@ public interface SOAPFaultReason extends OMElement{
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
-    public void setSOAPText(SOAPText soapText);
-    public SOAPText getSOAPText();
+    public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException;
+    public SOAPFaultText getSOAPText();
 }

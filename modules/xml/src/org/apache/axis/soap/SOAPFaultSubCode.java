@@ -1,6 +1,7 @@
 package org.apache.axis.soap;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -27,14 +28,14 @@ public interface SOAPFaultSubCode extends OMElement{
      * Fault SubCode contain only one mandatory Value child. This value child contains a QName
      * @param soapFaultSubCodeValue
      */
-    public void addValue(SOAPFaultSubCodeValue soapFaultSubCodeValue);
-    public SOAPFaultSubCodeValue getValue();
+    public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException;
+    public SOAPFaultValue getValue();
 
 
     /**
      * Fault SubCode can contain an optional SubCode
      * @param subCode
      */
-    public void addSubCode(SOAPFaultSubCode subCode);
+    public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException;
     public SOAPFaultSubCode getSubCode();
 }

@@ -52,6 +52,7 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.util.Utils;
 
 /**
@@ -228,6 +229,8 @@ public class AxisServlet extends HttpServlet {
         } catch (XMLStreamException e) {
             throw new ServletException(e);
         } catch (FactoryConfigurationError e) {
+            throw new ServletException(e);
+        } catch (SOAPProcessingException e) {
             throw new ServletException(e);
         }
     }

@@ -30,6 +30,7 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
 
@@ -103,7 +104,7 @@ public abstract class Stub {
     }
 
     //todo make this compliant with the SOAP12
-    protected SOAPEnvelope createEnvelope(){
+    protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
         SOAPEnvelope env = getFactory().getDefaultEnvelope();
         return env;
     }

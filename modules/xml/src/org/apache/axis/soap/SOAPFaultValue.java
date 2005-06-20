@@ -18,19 +18,8 @@ import org.apache.axis.om.OMElement;
  * the License.
  * <p/>
  */
-public interface SOAPText extends OMElement{
+public interface SOAPFaultValue extends OMElement{
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-
-    /**
-     * lang is a mandatory attribute within the SOAPText which must have
-     * SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI as the namespace URI and
-     * SOAP12constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX or a capitalization thereof as the prefix
-     * @param lang
-     */
-    public void setLang(String lang);
-    public String getLang();
-
-    
 }

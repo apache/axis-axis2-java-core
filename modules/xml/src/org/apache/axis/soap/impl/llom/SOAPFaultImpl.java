@@ -20,7 +20,9 @@ import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.soap.*;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12FaultCodeImpl;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12FaultReasonImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -33,32 +35,16 @@ import java.util.Iterator;
 /**
  * Class SOAPFaultImpl
  */
-public class SOAPFaultImpl extends OMElementImpl
+public abstract class SOAPFaultImpl extends SOAPElement
         implements SOAPFault, OMConstants {
-    /**
-     * Field e
-     */
-    private Exception e;
 
-    /**
-     * Field faultCodeElement
-     */
-    private OMElement faultCodeElement;
+    protected SOAPFaultCode faultCode;
+    protected SOAPFaultReason faultReason;
+    protected SOAPFaultNode faultNode;
+    protected SOAPFaultRoleImpl faultRole;
+    protected SOAPFaultDetail faultDetail;
 
-    /**
-     * Field faultActorElement
-     */
-    private OMElement faultActorElement;
-
-    /**
-     * Field faultStringElement
-     */
-    private OMElement faultStringElement;
-
-    /**
-     * Field detailElement
-     */
-    private OMElement detailElement;
+    protected Exception e;
 
     /**
      * Constructor SOAPFaultImpl
@@ -66,15 +52,14 @@ public class SOAPFaultImpl extends OMElementImpl
      * @param parent
      * @param e
      */
-    public SOAPFaultImpl(OMElement parent, Exception e) {
-        super(SOAPConstants.SOAPFAULT_LOCAL_NAME,
-                new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAPConstants.SOAPFAULT_NAMESPACE_PREFIX));
-        this.parent = (OMElementImpl) parent;
+    public SOAPFaultImpl(SOAPBody parent, Exception e) throws SOAPProcessingException {
+        super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true);
         this.e = e;
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-        this.setDetailInformation(OMAbstractFactory.getSOAP11Factory().createText(sw.getBuffer().toString()));
+        putExceptionToSOAPFault(e);
+    }
+
+    public SOAPFaultImpl(SOAPBody parent) throws SOAPProcessingException {
+        super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true);
     }
 
     /**
@@ -84,254 +69,113 @@ public class SOAPFaultImpl extends OMElementImpl
      * @param parent
      * @param builder
      */
-    public SOAPFaultImpl(OMNamespace ns, OMElement parent,
-                         OMXMLParserWrapper builder) {
-        super(SOAPConstants.SOAPFAULT_LOCAL_NAME, ns, parent, builder);
+    public SOAPFaultImpl(SOAPBody parent, OMXMLParserWrapper builder) {
+        super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME,builder);
     }
 
-    /**
-     * Method setCode
-     *
-     * @param faultCode
-     * @throws OMException
-     */
-    public void setCode(SOAPFaultCode faultCode) throws OMException {
-        if (faultCodeElement != null) {
-            faultCodeElement.detach();
-        }
-        faultCodeElement =
-        new OMElementImpl(SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME, this.ns);
-        this.addChild(faultCodeElement);
-        faultCodeElement.addChild(new OMTextImpl(faultCodeElement,
-                        faultCode.getNamespace().getPrefix() + ':'
-                                + faultCode.getLocalName()));
+
+    protected abstract SOAPFaultDetail getNewSOAPFaultDetail(SOAPFault fault) throws SOAPProcessingException;
+
+    // --------------- Getters and Settors --------------------------- //
+
+    public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException {
+        setNewElement(faultCode, soapFaultCode);
     }
 
-    /**
-     * Method getCode
-     *
-     * @return
-     */
     public SOAPFaultCode getCode() {
-//        if (faultCodeElement != null) {
-//            Iterator childrenIter = faultCodeElement.getChildren();
-//            while (childrenIter.hasNext()) {
-//                Object o = childrenIter.next();
-//                if ((o instanceof OMText)
-//                        && !((OMText) o).getText().trim().equals("")) {
-//                    String[] strings = ((OMText) o).getText().split(":");
-//                    return new QName("", strings[1], strings[0]);
-//                }
-//            }
-//        } else {
-//            faultCodeElement =  this.getFirstChildWithName(
-//                    new QName(
-//                            this.ns.getName(), SOAPConstants.SOAPFAULT_CODE_LOCAL_NAME,
-//                            this.ns.getPrefix()));
-//            if (faultCodeElement != null) {
-//                return this.getCode();
-//            }
-//        }
-        return null;
+        if (faultCode == null) {
+            faultCode = (SOAPFaultCode) this.getChildWithName(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
+        }
+
+        return faultCode;
     }
 
-    public void setReason(SOAPFaultReason reason) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setReason(SOAPFaultReason reason) throws SOAPProcessingException {
+        setNewElement(faultReason, reason);
     }
 
     public SOAPFaultReason getReason() {
-
-
-        SOAPFaultReason faultReason = new SOAPFaulReasonImpl(this);
-        SOAPText soapText = new SOAPTextImpl(faultReason);
-        soapText.setText(this.getFaultString());
-
-        faultReason.setSOAPText(soapText);
-        return faultReason;  //To change body of implemented methods use File | Settings | File Templates.
+        if (faultReason == null) {
+            faultReason = (SOAPFaultReason) this.getChildWithName(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
+        }
+        return faultReason;
     }
 
-    public void setNode(SOAPFaultNode node) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setNode(SOAPFaultNode node) throws SOAPProcessingException {
+        setNewElement(faultNode, node);
     }
 
     public SOAPFaultNode getNode() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        if (faultNode == null) {
+            faultNode = (SOAPFaultNode) this.getChildWithName(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
+        }
+        return faultNode;
     }
 
-    public void setRole(SOAPFaultRole role) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setRole(SOAPFaultRole role) throws SOAPProcessingException {
+        setNewElement(faultRole, role);
     }
 
     public SOAPFaultRole getRole() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void setDetail(SOAPFaultDetail detail) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public SOAPFaultDetail getDetail() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * Method setFaultActor
-     *
-     * @param faultActor
-     * @throws OMException
-     */
-    public void setFaultActor(String faultActor) throws OMException {
-        if (faultActorElement != null) {
-            faultActorElement.detach();
+        if (faultRole == null) {
+            faultRole = (SOAPFaultRoleImpl) this.getChildWithName(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
         }
-        faultActorElement =
-        new OMElementImpl(SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME, this.ns);
-        this.addChild(faultActorElement);
-        faultActorElement.addChild(new OMTextImpl(faultActorElement,
-                        faultActor));
+        return faultRole;
     }
 
-    /**
-     * Method getFaultActor
-     *
-     * @return
-     */
-    public String getFaultActor() {
-        if (faultActorElement != null) {
-            Iterator childrenIter = faultActorElement.getChildren();
-            while (childrenIter.hasNext()) {
-                Object o = childrenIter.next();
-                if ((o instanceof OMText)
-                        && !"".equals(((OMText) o).getText())) {
-                    return ((OMText) o).getText();
-                }
-            }
-        } else {
-            faultActorElement = this.getFirstChildWithName(
-                    new QName(
-                            this.ns.getName(), SOAPConstants.SOAPFAULT_ACTOR_LOCAL_NAME,
-                            this.ns.getPrefix()));
-            if (faultActorElement != null) {
-                return this.getFaultString();
-            }
-        }
-        return null;
+    public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException {
+        setNewElement(faultDetail, detail);
     }
 
-    /**
-     * Method setFaultString
-     *
-     * @param faultString
-     * @throws OMException
-     */
-    public void setFaultString(String faultString) throws OMException {
-        if (faultStringElement != null) {
-            faultStringElement.detach();
-        }
-        faultStringElement =
-        new OMElementImpl(SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME, this.ns);
-        this.addChild(faultStringElement);
-        faultStringElement.addChild(new OMTextImpl(faultStringElement,
-                        faultString));
-    }
+    public abstract SOAPFaultDetail getDetail();
 
-    /**
-     * Method getFaultString
-     *
-     * @return
-     */
-    public String getFaultString() {
-        if (faultStringElement != null) {
-            Iterator childrenIter = faultStringElement.getChildren();
-            while (childrenIter.hasNext()) {
-                Object o = childrenIter.next();
-                if ((o instanceof OMText)
-                        && !"".equals(((OMText) o).getText())) {
-                    return ((OMText) o).getText();
-                }
-            }
-        } else {
-            faultStringElement =  this.getFirstChildWithName(
-                    new QName(
-                            this.ns.getName(), SOAPConstants.SOAPFAULT_STRING_LOCAL_NAME,
-                            this.ns.getPrefix()));
-            if (faultStringElement != null) {
-                return this.getFaultString();
-            }
-        }
-        return null;
-    }
 
-    /**
-     * Method setDetailInformation
-     *
-     * @param detailInformation
-     */
-    public void setDetailInformation(OMNode detailInformation) {
-        if (detailElement != null) {
-            detailElement.detach();
-        }
-        detailElement =
-        new OMElementImpl(SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME, this.ns);
-        this.addChild(detailElement);
-        detailElement.addChild(detailInformation);
-    }
+    // ---------------------------------------------------------------------------------------------//
 
-    /**
-     * Method getDetailInformation
-     *
-     * @return
-     */
-    public OMNode getDetailInformation() {
-        if (detailElement != null) {
-            Iterator childrenIter = detailElement.getChildren();
-            while (childrenIter.hasNext()) {
-                Object o = childrenIter.next();
-                if (!((o instanceof OMText)
-                                 && "".equals(((OMText) o).getText()))) {
-                    return (OMNode) o;
-                }
-            }
-        } else {
-            detailElement = this.getFirstChildWithName(
-                    new QName(
-                            this.ns.getName(), SOAPConstants.SOAPFAULT_DETAIL_LOCAL_NAME,
-                            this.ns.getPrefix()));
-            if (detailElement != null) {
-                return detailElement;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Method getException
-     *
-     * @return
-     * @throws OMException
-     */
     public Exception getException() throws OMException {
-        if (e == null) {
-            OMNode detailsInformationNode = this.getDetailInformation();
-            if (detailsInformationNode instanceof OMElement) {
-                try {
-                    StringWriter sw = new StringWriter();
-                    XMLStreamWriter writer =
-                            XMLOutputFactory.newInstance().createXMLStreamWriter(
-                            sw);
-                    ((OMElement) detailsInformationNode).serializeWithCache(writer);
-                    writer.flush();
-                    return new Exception(sw.toString());
-                } catch (XMLStreamException e1) {
-                    throw new OMException("Exception in StAX Writer", e1);
-                }
-            } else if (detailsInformationNode instanceof OMText) {
-                return new Exception(
-                        ((OMText) detailsInformationNode).getText());
+        getDetail();
+        if (faultDetail == null) {
+            return new Exception("No Exception element found in the SOAP Detail element");
+        }
+
+        OMElement exceptionElement = faultDetail.getFirstChildWithName(new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
+        if (exceptionElement != null) {
+            return new Exception(exceptionElement.getText());
+        }
+        return new Exception("No Exception element found in the SOAP Detail element");
+    }
+
+    protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+
+        getDetail();
+        if (faultDetail == null) {
+            faultDetail = getNewSOAPFaultDetail(this);
+
+        }
+        OMElement faultDetailEnty = new OMElementImpl(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY, this.getNamespace());
+        faultDetailEnty.setText(sw.getBuffer().toString());
+        faultDetail.addChild(faultDetailEnty);
+    }
+
+    protected void setNewElement(OMElement myElement, OMElement newElement) {
+        if (myElement != null) {
+            myElement.discard();
+        }
+        this.addChild(newElement);
+        myElement = newElement;
+    }
+
+    protected OMElement getChildWithName(String childName) {
+        Iterator childrenIter = getChildren();
+        while (childrenIter.hasNext()) {
+            OMNode node = (OMNode) childrenIter.next();
+            if (node.getType() == OMNode.ELEMENT_NODE && childName.equals(((OMElement) node).getLocalName())) {
+                return (OMElement) node;
             }
-        } else {
-            return e;
         }
         return null;
     }
+
 }

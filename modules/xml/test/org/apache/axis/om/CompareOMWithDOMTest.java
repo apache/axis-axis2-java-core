@@ -20,6 +20,8 @@ import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
 import java.io.File;
 
 /**
@@ -45,6 +47,10 @@ public class CompareOMWithDOMTest extends AbstractTestCase {
                     dbf.setNamespaceAware(true);
                     DocumentBuilder builder = dbf.newDocumentBuilder();
                     Document doc = builder.parse(files[i].getAbsolutePath());
+
+//                    XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out) ;
+//                    soapEnvelope.serializeWithCache(writer);
+//                    writer.flush();
                     OMTestUtils.compare(doc.getDocumentElement(), soapEnvelope);
                 }
             }

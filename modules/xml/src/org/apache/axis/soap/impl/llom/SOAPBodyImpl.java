@@ -24,24 +24,24 @@ import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFault;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 
 /**
  * Class SOAPBodyImpl
  */
-public class SOAPBodyImpl extends OMElementImpl
+public abstract class SOAPBodyImpl extends SOAPElement
         implements SOAPBody, OMConstants {
     /**
      * Field hasSOAPFault
      */
     private boolean hasSOAPFault = false;
-    
+
     /**
      * @param envelope
      */
-    public SOAPBodyImpl(SOAPEnvelope envelope) {
-        super(envelope);
-        this.ns = envelope.getNamespace();
-        this.localName = SOAPConstants.BODY_LOCAL_NAME;
+    public SOAPBodyImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
+        super(envelope, SOAPConstants.BODY_LOCAL_NAME, true);
+
     }
 
     /**
@@ -51,8 +51,7 @@ public class SOAPBodyImpl extends OMElementImpl
      * @param builder
      */
     public SOAPBodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(SOAPConstants.BODY_LOCAL_NAME, envelope.getNamespace(), envelope,
-                builder);
+        super(envelope, SOAPConstants.BODY_LOCAL_NAME, builder);
     }
 
     /**
@@ -64,11 +63,7 @@ public class SOAPBodyImpl extends OMElementImpl
      * @throws org.apache.axis.om.OMException if there is a SOAP error
      * @throws OMException
      */
-    public SOAPFault addFault(Exception e) throws OMException {
-        SOAPFault soapFault = new SOAPFaultImpl(this, e);
-        addFault(soapFault);
-        return soapFault;
-    }
+    public abstract SOAPFault addFault(Exception e) throws OMException;
 
     /**
      * Indicates whether a <code>SOAPFault</code> object exists in
@@ -83,12 +78,13 @@ public class SOAPBodyImpl extends OMElementImpl
             return true;
         } else {
             OMElement element = getFirstElement();
-            if(element != null 
-                && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())){
+            if (element != null
+                    && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
+                    && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
+                        || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {  //added this line
                 hasSOAPFault = true;
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -102,18 +98,19 @@ public class SOAPBodyImpl extends OMElementImpl
      *         object
      */
     public SOAPFault getFault() {
-        if(hasSOAPFault){
-            OMElement element = getFirstElement();
-            if(element != null 
+        OMElement element = getFirstElement();
+        if (hasSOAPFault) {
+            return (SOAPFault) element;
+        } else if (element != null
                 && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())){
-                hasSOAPFault = true;
-                return (SOAPFault)element;
-            }else{
-                return null;
-            }
+                && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
+                    || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {     //added this line
+            hasSOAPFault = true;
+            return (SOAPFault) element;
+        } else {
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -123,10 +120,15 @@ public class SOAPBodyImpl extends OMElementImpl
      */
     public void addFault(SOAPFault soapFault) throws OMException {
         if (hasSOAPFault) {
-            throw new OMException(
-                    "SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
+            throw new OMException("SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
         }
         addChild(soapFault);
         hasSOAPFault = true;
+    }
+
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
+        if (!(parent instanceof SOAPEnvelopeImpl)) {
+            throw new SOAPProcessingException("Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+        }
     }
 }

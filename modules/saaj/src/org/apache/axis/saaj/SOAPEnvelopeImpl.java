@@ -44,7 +44,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 	 */
 	public SOAPEnvelopeImpl(){
 		//super(omEnv);
-		SOAPFactory fac = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 		omNode = omElement =omSOAPEnvelope = fac.getDefaultEnvelope();
 	}
 	

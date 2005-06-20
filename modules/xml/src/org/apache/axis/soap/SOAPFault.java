@@ -17,6 +17,7 @@ package org.apache.axis.soap;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 
 /**
@@ -45,39 +46,46 @@ public interface SOAPFault extends OMElement {
      * SOAPFaultCode is a mandatory item in a Fault, in SOAP 1.2 specification
      * @param soapFaultCode
      */
-    public void setCode(SOAPFaultCode soapFaultCode);
+    public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException ;
     public SOAPFaultCode getCode();
 
     /**
      * SOAPFaultReason is a mandatory item in a Fault, in SOAP 1.2 specification
      * @param reason
      */
-    public void setReason(SOAPFaultReason reason);
+    public void setReason(SOAPFaultReason reason) throws SOAPProcessingException;
     public SOAPFaultReason getReason();
 
     /**
      * SOAPFaultNode is an optional item in a Fault, in SOAP 1.2 specification
      * @param node
      */
-    public void setNode(SOAPFaultNode node);
+    public void setNode(SOAPFaultNode node) throws SOAPProcessingException;
     public SOAPFaultNode getNode();
 
     /**
-     * SOAPFaultRole is an optional item in a Fault, in SOAP 1.2 specification
+     * SOAPFaultRoleImpl is an optional item in a Fault, in SOAP 1.2 specification
      * @param role
      */
-    public void setRole(SOAPFaultRole role);
+    public void setRole(SOAPFaultRole role) throws SOAPProcessingException;
     public SOAPFaultRole getRole();
 
     /**
-     * SOAPFaultRole is an optional item in a Fault, in SOAP 1.2 specification
+     * SOAPFaultRoleImpl is an optional item in a Fault, in SOAP 1.2 specification
      * @param detail
      */
-    public void setDetail(SOAPFaultDetail detail);
+    public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException;
     public SOAPFaultDetail getDetail();
 
     /**
-     * Method getException
+     * This will return if there is an exception in the SOAP fault.
+     *
+     * If the exception is like;
+     * <SOAPFault>
+     *      <Detail>
+     *          <Exception> stack trace goes here </Exception>
+     *      </Detail>
+     * </SOAPFault>
      *
      * @return
      * @throws org.apache.axis.om.OMException

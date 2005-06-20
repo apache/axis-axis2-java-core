@@ -23,6 +23,7 @@ import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -167,7 +168,12 @@ public class AxisEngine {
             faultContext.setOperationContext(context.getOperationContext());
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
-            SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+            SOAPEnvelope envelope = null;
+            try {
+                envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+            } catch (SOAPProcessingException e1) {
+                throw new AxisFault(e1);
+            }
 
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();

@@ -48,7 +48,6 @@ public class OMElementImpl extends OMNodeImpl
     protected OMNode firstChild;
 
 
-
     /**
      * Field namespaces
      */
@@ -68,6 +67,7 @@ public class OMElementImpl extends OMNodeImpl
      * Field noPrefixNamespaceCounter
      */
     protected int noPrefixNamespaceCounter = 0;
+    private OMNode lastChild;
 
     /**
      * Constructor OMElementImpl
@@ -112,6 +112,15 @@ public class OMElementImpl extends OMNodeImpl
         }
     }
 
+    public OMElementImpl(String localName, OMNamespace ns, OMElement parent) {
+        super(parent);
+        this.localName = localName;
+        this.done = true;
+        if (ns != null) {
+            setNamespace(handleNamespace(ns));
+        }
+    }
+
     /**
      * Here it is assumed that this QName passed, at least contains the localName for this element
      *
@@ -144,8 +153,7 @@ public class OMElementImpl extends OMNodeImpl
             if (parent != null) {
                 ns = parent.getNamespace();
             } else {
-                throw new OMException(
-                        "Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
+                throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
             }
         }
 
@@ -163,8 +171,7 @@ public class OMElementImpl extends OMNodeImpl
             }
         }
         if (ns == null) {
-            throw new OMException(
-                    "Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
+            throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
         }
         this.setNamespace(ns);
     }
@@ -235,20 +242,17 @@ public class OMElementImpl extends OMNodeImpl
      * @param child
      */
     private void addChild(OMNodeImpl child) {
-        if ((firstChild == null) && !done) {
-            builder.next();
+        if (firstChild == null) {
+            firstChild = child;
+            child.setPreviousSibling(null);
+        } else {
+            child.setPreviousSibling(lastChild);
+            lastChild.setNextSibling(child);
         }
-
-
+        child.setNextSibling(null);
         child.setParent(this);
+        lastChild = child;
 
-        child.setPreviousSibling(null);
-        child.setNextSibling(firstChild);
-        if (firstChild != null) {
-            OMNodeImpl firstChildImpl = (OMNodeImpl) firstChild;
-            firstChildImpl.setPreviousSibling(child);
-        }
-        this.firstChild = child;
     }
 
     /**
@@ -440,8 +444,7 @@ public class OMElementImpl extends OMNodeImpl
         if (ns != null) {
             namespace = findNamespace(ns.getName(), ns.getPrefix());
             if (namespace == null) {
-                throw new OMException(
-                        "Given OMNamespace(" + ns.getName() + ns.getPrefix()
+                throw new OMException("Given OMNamespace(" + ns.getName() + ns.getPrefix()
                         + ") for "
                         + "this attribute is not declared in the scope of this element. First declare the namespace"
                         + " and then use it with the attribute");
@@ -503,9 +506,9 @@ public class OMElementImpl extends OMNodeImpl
      * @throws OMException
      */
     public OMNode detach() throws OMException {
-        if (!done){
+        if (!done) {
             build();
-        }else{
+        } else {
             super.detach();
         }
         return this;
@@ -532,16 +535,16 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * @see org.apache.axis.om.OMElement#getXMLStreamReader()
      * @return
+     * @see org.apache.axis.om.OMElement#getXMLStreamReader()
      */
     public XMLStreamReader getXMLStreamReader() {
         return getXMLStreamReader(true);
     }
 
     /**
-     * @see org.apache.axis.om.OMElement#getXMLStreamReaderWithoutCaching()
      * @return
+     * @see org.apache.axis.om.OMElement#getXMLStreamReaderWithoutCaching()
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching() {
         return getXMLStreamReader(false);
@@ -553,8 +556,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     private XMLStreamReader getXMLStreamReader(boolean cache) {
         if ((builder == null) && !cache) {
-            throw new UnsupportedOperationException(
-                    "This element was not created in a manner to be switched");
+            throw new UnsupportedOperationException("This element was not created in a manner to be switched");
         }
         return new OMStAXWrapper(builder, this, cache);
     }
@@ -563,23 +565,25 @@ public class OMElementImpl extends OMNodeImpl
      * Sets the text of the given element.
      * caution - This method will wipe out all the text elements (and hence any
      * moxed content) before setting the text
+     *
      * @param text
      */
     public void setText(String text) {
 
         OMNode child = this.getFirstChild();
-        while(child != null){
-            if(child.getType() == OMNode.TEXT_NODE){
+        while (child != null) {
+            if (child.getType() == OMNode.TEXT_NODE) {
                 child.detach();
             }
             child = child.getNextSibling();
         }
 
-        this.addChild(OMAbstractFactory.getOMFactory().createText(this,text));
+        this.addChild(OMAbstractFactory.getOMFactory().createText(this, text));
     }
 
     /**
      * select all the text children and concat them to a single string
+     *
      * @return
      */
     public String getText() {
@@ -587,10 +591,10 @@ public class OMElementImpl extends OMNodeImpl
         OMNode child = this.getFirstChild();
         OMText textNode = null;
 
-        while(child != null){
-            if(child.getType() == OMNode.TEXT_NODE){
-                textNode = (OMText)child;
-                if( textNode.getText() != null && !"".equals(textNode.getText().trim())){
+        while (child != null) {
+            if (child.getType() == OMNode.TEXT_NODE) {
+                textNode = (OMText) child;
+                if (textNode.getText() != null && !"".equals(textNode.getText().trim())) {
                     childText += textNode.getText().trim();
                 }
             }
@@ -606,14 +610,14 @@ public class OMElementImpl extends OMNodeImpl
      * @param writer
      * @throws XMLStreamException
      */
-    public void serializeWithCache(XMLStreamWriter writer)  throws XMLStreamException {
-        serialize(writer,true);
+    public void serializeWithCache(XMLStreamWriter writer) throws XMLStreamException {
+        serialize(writer, true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void serialize(XMLStreamWriter writer,boolean cache)throws XMLStreamException {
+    protected void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -622,42 +626,41 @@ public class OMElementImpl extends OMNodeImpl
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(
-                    new StreamWriterToContentHandlerConverter(writer));
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer));
         }
 
 
         if (!cache) {
             //No caching
-            if (this.firstChild!=null){
-                OMSerializerUtil.serializeStartpart(this,writer);
+            if (this.firstChild != null) {
+                OMSerializerUtil.serializeStartpart(this, writer);
                 firstChild.serialize(writer);
                 OMSerializerUtil.serializeEndpart(writer);
-            }else if (!this.done){
-                if (builderType==PULL_TYPE_BUILDER){
-                    OMSerializerUtil.serializeByPullStream(this,writer);
-                }else{
-                    OMSerializerUtil.serializeStartpart(this,writer);
+            } else if (!this.done) {
+                if (builderType == PULL_TYPE_BUILDER) {
+                    OMSerializerUtil.serializeByPullStream(this, writer);
+                } else {
+                    OMSerializerUtil.serializeStartpart(this, writer);
                     builder.setCache(cache);
                     builder.next();
                     OMSerializerUtil.serializeEndpart(writer);
                 }
-            }else{
-                OMSerializerUtil.serializeNormal(this,writer, cache);
+            } else {
+                OMSerializerUtil.serializeNormal(this, writer, cache);
             }
 
             //serilize siblings
-            if (this.nextSibling!=null){
+            if (this.nextSibling != null) {
                 nextSibling.serialize(writer);
-            }else if (this.parent!=null){
-                if (!this.parent.done){
+            } else if (this.parent != null) {
+                if (!this.parent.done) {
                     builder.setCache(cache);
                     builder.next();
                 }
             }
-        }else{
+        } else {
             //Cached
-            OMSerializerUtil.serializeNormal(this,writer, cache);
+            OMSerializerUtil.serializeNormal(this, writer, cache);
             // serialize the siblings
             OMNode nextSibling = this.getNextSibling();
             if (nextSibling != null) {
@@ -674,14 +677,13 @@ public class OMElementImpl extends OMNodeImpl
      * serialise without building the object structure in the memory. Misuse of this method will
      * cause loss of data.So its adviced to use populateYourSelf() method, before this,
      * if you want to preserve data in the stream.
+     *
      * @param writer
      * @throws XMLStreamException
      */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        this. serialize(writer,false);
+        this.serialize(writer, false);
     }
-
-
 
 
     /**
@@ -695,10 +697,10 @@ public class OMElementImpl extends OMNodeImpl
 
     public OMElement getFirstElement() {
         OMNode node = getFirstChild();
-        while(node != null){
-            if(node.getType() == OMNode.ELEMENT_NODE){
-                return (OMElement)node;
-            }else{
+        while (node != null) {
+            if (node.getType() == OMNode.ELEMENT_NODE) {
+                return (OMElement) node;
+            } else {
                 node = node.getNextSibling();
             }
         }
@@ -746,12 +748,12 @@ public class OMElementImpl extends OMNodeImpl
      * @throws OMException
      */
     public OMNamespace getNamespace() throws OMException {
-        if ((ns == null) && (parent != null)) {
-            ns = parent.getNamespace();
-        }
-        if (ns == null) {
-            throw new OMException("all elements in a soap message must be namespace qualified");
-        }
+//        if ((ns == null) && (parent != null)) {
+//            ns = parent.getNamespace();
+//        }
+//        if (ns == null) {
+//            throw new OMException("all elements in a soap message must be namespace qualified");
+//        }
         return ns;
     }
 
@@ -773,7 +775,7 @@ public class OMElementImpl extends OMNodeImpl
 
         if (ns != null) {
             qName = new QName(ns.getName(), localName, ns.getPrefix());
-        }else{
+        } else {
             qName = new QName(localName);
         }
         return qName;
@@ -781,12 +783,13 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Discard implementation for
+     *
      * @throws OMException
      */
     public void discard() throws OMException {
-        if (done){
+        if (done) {
             this.detach();
-        }else{
+        } else {
             builder.discard(this);
         }
     }
