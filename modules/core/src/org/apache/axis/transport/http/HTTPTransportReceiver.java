@@ -145,6 +145,64 @@ public class HTTPTransportReceiver {
             throw new AxisFault("Input reader not found");
         }
     }
+    
+    /**
+     * This is to be called when we are certain that the message being processed is a SOAP message
+     * @param msgContext
+     * @param engineContext
+     * @param parsedHeaders
+     * @return
+     * @throws AxisFault
+     */
+    public SOAPEnvelope checkForMessage(MessageContext msgContext, ConfigurationContext engineContext, Map parsedHeaders) throws AxisFault {
+    	
+        SOAPEnvelope soapEnvelope = null;
+
+        Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
+        if (in != null) {
+            if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(parsedHeaders.get(HTTPConstants.RESPONSE_CODE))) {
+                msgContext.setProperty(
+                    MessageContext.TRANSPORT_SUCCEED,
+                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
+                return soapEnvelope;
+            }
+            msgContext.setWSAAction((String) parsedHeaders.get(HTTPConstants.HEADER_SOAP_ACTION));
+            Utils.configureMessageContextForHTTP(
+                (String) parsedHeaders.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                msgContext.getWSAAction(),
+                msgContext);
+
+            String requestURI = (String) parsedHeaders.get(HTTPConstants.REQUEST_URI);
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            //getServiceLookUp(requestURI)));
+
+            // TODO see is it a Service request e.g. WSDL, list ....
+            // TODO take care of the other HTTPHeaders
+            try {
+                //Check for the REST behaviour, if you desire rest beahaviour
+                //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+                Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                StAXBuilder builder = null;
+                SOAPEnvelope envelope = null;
+                if (doREST != null && "true".equals(doREST)) {
+                    SOAPFactory soapFactory = new SOAP11Factory();
+                    builder = new StAXOMBuilder(xmlreader);
+                    builder.setOmbuilderFactory(soapFactory);
+                    envelope = soapFactory.getDefaultEnvelope();
+                    envelope.getBody().addChild(builder.getDocumentElement());
+                } else {
+                    builder = new StAXSOAPModelBuilder(xmlreader);
+                    envelope = (SOAPEnvelope) builder.getDocumentElement();
+                }
+                return envelope;
+            } catch (Exception e) {
+                throw new AxisFault(e.getMessage(), e);
+            }
+        } else {
+            throw new AxisFault("Input reader not found");
+        }
+    }
 
     /**
      * parses following two styles of HTTP stuff
@@ -180,14 +238,21 @@ public class HTTPTransportReceiver {
             length = readLine(reader, buf);
             if (serverSide) {
                 if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S') && (buf[3] == 'T')) {
+                	map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_POST);
                     index = 5;
-                    value = readFirstLineArg(' ');
-                    map.put(HTTPConstants.REQUEST_URI, value);
-                    value = readFirstLineArg('\n');
-                    map.put(HTTPConstants.PROTOCOL_VERSION, value);
+
+                } else if ((buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
+                	map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_GET);
+                    index = 4;
+
                 } else {
-                    throw new AxisFault("Only the POST requests are supported");
-                }
+                	throw new AxisFault("Unsupported HTTP request type: Only GET and POST is supported");
+                }                    
+                
+                value = readFirstLineArg(' ');
+                map.put(HTTPConstants.REQUEST_URI, value);
+                value = readFirstLineArg('\n');
+                map.put(HTTPConstants.PROTOCOL_VERSION, value);
             } else {
                 index = 0;
                 value = readFirstLineArg(' ');

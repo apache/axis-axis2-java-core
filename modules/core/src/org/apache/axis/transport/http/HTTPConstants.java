@@ -71,6 +71,11 @@ public class HTTPConstants {
      * Field HEADER_POST
      */
     public static final String HEADER_POST = "POST";
+    
+    /**
+     * Field HEADER_GET
+     */
+    public static final String HEADER_GET = "GET";    
 
     /**
      * Field HEADER_HOST
@@ -372,4 +377,10 @@ public class HTTPConstants {
          * Field HTTP[]
          */
     public static char HTTP[] = "HTTP/1.0 ".toCharArray();
+    
+    /**
+     * Field HTTP_REQ_TYPE
+     */
+    public static final String HTTP_REQ_TYPE = "HTTP_REQ_TYPE";
+    
 }
