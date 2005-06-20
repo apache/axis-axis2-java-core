@@ -18,6 +18,8 @@
 package org.apache.axis.clientapi;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.xml.namespace.QName;
@@ -334,7 +336,10 @@ public class InOutMEPClient extends MEPClient {
                 HTTPTransportReceiver receiver = new HTTPTransportReceiver();
                 resenvelope = receiver.checkForMessage(response, serviceContext.getEngineContext());
             } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
-                Reader in = (Reader) response.getProperty(MessageContext.TRANSPORT_READER);
+                InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
+                response.setProperty(MessageContext.TRANSPORT_IN,null);
+                Reader in = new InputStreamReader(inStream);
+
                 if (in != null) {
                     XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(in);
@@ -343,7 +348,7 @@ public class InOutMEPClient extends MEPClient {
                 } else {
                     throw new AxisFault(
                         "Sync invocation expect a proeprty "
-                            + MessageContext.TRANSPORT_READER
+                            + MessageContext.TRANSPORT_IN
                             + " set ");
                 }
             }

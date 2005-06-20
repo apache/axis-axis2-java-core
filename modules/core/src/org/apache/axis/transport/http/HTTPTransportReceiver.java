@@ -16,6 +16,8 @@
 package org.apache.axis.transport.http;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Collection;
@@ -105,7 +107,10 @@ public class HTTPTransportReceiver {
         throws AxisFault {
         SOAPEnvelope soapEnvelope = null;
 
-        Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
+        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
+        msgContext.setProperty(MessageContext.TRANSPORT_IN,null);
+        Reader in = new InputStreamReader(inStream);
+
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
             Map map = parseTheHeaders(in, serverSide);
@@ -171,8 +176,11 @@ public class HTTPTransportReceiver {
     public SOAPEnvelope checkForMessage(MessageContext msgContext, ConfigurationContext engineContext, Map parsedHeaders) throws AxisFault {
     	
         SOAPEnvelope soapEnvelope = null;
-
-        Reader in = (Reader) msgContext.getProperty(MessageContext.TRANSPORT_READER);
+        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
+        msgContext.setProperty(MessageContext.TRANSPORT_IN,null);
+        Reader in = new InputStreamReader(inStream);
+        
+        
         if (in != null) {
             if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(parsedHeaders.get(HTTPConstants.RESPONSE_CODE))) {
                 msgContext.setProperty(

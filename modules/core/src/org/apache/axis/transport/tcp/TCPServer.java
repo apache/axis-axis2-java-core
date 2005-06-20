@@ -18,9 +18,7 @@ package org.apache.axis.transport.tcp;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -110,7 +108,6 @@ public class TCPServer extends TransportListener implements Runnable {
                 msgContext.setServerSide(true);
                 OutputStream out = socket.getOutputStream();
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
 
                 AxisEngine engine = new AxisEngine(configContext);
                 try {

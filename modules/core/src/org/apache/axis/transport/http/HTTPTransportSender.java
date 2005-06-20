@@ -88,8 +88,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 outS.flush();
 
                 msgContext.setProperty(
-                    MessageContext.TRANSPORT_READER,
-                    new InputStreamReader(socket.getInputStream()));
+                    MessageContext.TRANSPORT_IN,socket.getInputStream());
                 msgContext.setProperty(HTTPConstants.SOCKET, socket);
 
                 socket.shutdownOutput();

@@ -15,6 +15,8 @@
  */
 package org.apache.axis.clientapi;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -47,8 +49,8 @@ public class TwoChannelBasedSender {
                 msgctx.getTransportIn(),
                 msgctx.getTransportOut());
         response.setProperty(
-            MessageContext.TRANSPORT_READER,
-            msgctx.getProperty(MessageContext.TRANSPORT_READER));
+            MessageContext.TRANSPORT_IN,
+            msgctx.getProperty(MessageContext.TRANSPORT_IN));
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
@@ -62,13 +64,15 @@ public class TwoChannelBasedSender {
                         resenvelope =
                             receiver.checkForMessage(response,msgctx.getSystemContext());
                     } else if (Constants.TRANSPORT_TCP.equals(transportIn.getName().getLocalPart())) {
-                        Reader in = (Reader) response.getProperty(MessageContext.TRANSPORT_READER);
+                        InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
+                        response.setProperty(MessageContext.TRANSPORT_IN,null);
+                        Reader in = new InputStreamReader(inStream);
                         if(in != null){
                             XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                             StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
                             resenvelope = (SOAPEnvelope) builder.getDocumentElement();
                         }else{
-                            throw new AxisFault("Sync invocation expect a proeprty "+ MessageContext.TRANSPORT_READER + " set ");
+                            throw new AxisFault("Sync invocation expect a proeprty "+ MessageContext.TRANSPORT_IN + " set ");
                         }
                     }
                 } catch (XMLStreamException e) {

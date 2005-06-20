@@ -63,8 +63,7 @@ public class TCPTransportSender extends AbstractTransportSender {
         try {
             socket.shutdownOutput();
             msgContext.setProperty(
-                MessageContext.TRANSPORT_READER,
-                new InputStreamReader(socket.getInputStream()));
+                MessageContext.TRANSPORT_IN,socket.getInputStream());
         } catch (IOException e) {
             throw new AxisFault(e);
         }

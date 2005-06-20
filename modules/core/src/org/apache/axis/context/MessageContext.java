@@ -44,7 +44,7 @@ public class MessageContext extends AbstractContext {
     /**
      * Field TRANSPORT_READER
      */
-    public static final String TRANSPORT_READER = "TRANSPORT_READER";
+    public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
     /**
      * Field TRANSPORT_SUCCEED

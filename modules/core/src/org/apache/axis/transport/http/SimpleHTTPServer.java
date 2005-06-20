@@ -17,6 +17,7 @@ package org.apache.axis.transport.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -140,7 +141,11 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         if (configurationContext == null) {
                             throw new AxisFault("Engine Must be null");
                         }
-                        Reader in = new InputStreamReader(socket.getInputStream());
+
+                        InputStream inStream = socket.getInputStream();
+
+                        
+
                         TransportOutDescription transportOut =
                             configurationContext.getAxisConfiguration().getTransportOut(
                                 new QName(Constants.TRANSPORT_HTTP));
@@ -156,7 +161,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         // let us put the information about incoming transport
                         OutputStream out = socket.getOutputStream();
                         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                        msgContext.setProperty(MessageContext.TRANSPORT_READER, in);
+                        msgContext.setProperty(MessageContext.TRANSPORT_IN, inStream);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
 
                         /*

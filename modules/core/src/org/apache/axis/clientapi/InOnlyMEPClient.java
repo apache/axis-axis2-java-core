@@ -71,8 +71,8 @@ public class InOnlyMEPClient extends MEPClient {
                 msgctx.getTransportIn(),
                 msgctx.getTransportOut());
         response.setProperty(
-            MessageContext.TRANSPORT_READER,
-            msgctx.getProperty(MessageContext.TRANSPORT_READER));
+            MessageContext.TRANSPORT_IN,
+            msgctx.getProperty(MessageContext.TRANSPORT_IN));
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
