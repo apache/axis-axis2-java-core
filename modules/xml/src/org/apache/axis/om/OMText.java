@@ -15,6 +15,8 @@
  */
 package org.apache.axis.om;
 
+import javax.activation.DataHandler;
+
 /**
  * Interface OMText
  */
@@ -25,9 +27,7 @@ public interface OMText extends OMNode {
      */
     String getText();
 
-    /*
-     * Re think about this
-     */
+    
     DataHandler getDataHandler();
 
     /**
@@ -35,5 +35,6 @@ public interface OMText extends OMNode {
      * @return boolean flag saying whether the node contains
      * an optimized text or not
      */
-    boolean isOptimized();
+    boolean isOptimised();
+    public String getContentID();
 }
