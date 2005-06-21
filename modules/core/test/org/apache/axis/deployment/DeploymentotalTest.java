@@ -29,7 +29,6 @@ public class DeploymentotalTest extends TestCase {
 
     public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
         String filename = "./target/test-resources/deployment";
-
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         er = builder.buildEngineContext(filename).getAxisConfiguration();
     }

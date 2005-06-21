@@ -23,44 +23,75 @@ import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisDescWSDLComponentFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
+import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLDescription;
 
+import javax.wsdl.WSDLException;
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.util.jar.JarInputStream;
+import java.util.Iterator;
 
 public class ArchiveReader implements DeploymentConstants {
 
     private Log log = LogFactory.getLog(getClass());
 
-    public ServiceDescription createService(String filename) throws DeploymentException {
-        WSDL1ToWOMBuilder builder = new WSDL1ToWOMBuilder();
-        String strArchive = filename;
-        ZipInputStream zin;
-        boolean foundwsdl = false;
+//    public ServiceDescription createService(String filename) throws DeploymentException {
+//        String strArchive = filename;
+//        ZipInputStream zin;
+//        boolean foundwsdl = false;
+//        ServiceDescription service = null;
+//        try {
+//            zin = new ZipInputStream(new FileInputStream(strArchive));
+//            ZipEntry entry;
+//            while ((entry = zin.getNextEntry()) != null) {
+//                if (entry.getName().equals(SERVICEWSDL)) {
+//                    WSDLDescription      womDescription = WOMBuilderFactory.getBuilder(
+//                            WOMBuilderFactory.WSDL11).build(zin, new AxisDescWSDLComponentFactory());
+//                    service = (ServiceDescription )womDescription ;
+//                    foundwsdl = true;
+//                    break;
+//                }
+//            }
+//            zin.close();
+//            if (!foundwsdl) {
+//                service = new ServiceDescription();
+//                log.info("WSDL file not found for the service :  " + filename);
+//            }
+//        } catch (Exception e) {
+//            throw new DeploymentException(e);
+//        }
+//        return service;
+//    }
+
+    public ServiceDescription createService(ArchiveFileData file) throws DeploymentException {
         ServiceDescription service = null;
+        InputStream in= file.getClassLoader().getResourceAsStream(SERVICEWSDL);
+        boolean foundservice = false;
         try {
-            zin = new ZipInputStream(new FileInputStream(strArchive));
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null) {
-                if (entry.getName().equals(SERVICEWSDL)) {
-                    service = (ServiceDescription) builder.build(zin, new AxisDescWSDLComponentFactory());
-                    foundwsdl = true;
-                    break;
+            if(in!= null){
+                WSDLDescription  womDescription = WOMBuilderFactory.getBuilder(
+                        WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory());
+                Iterator iterator = womDescription.getServices().keySet().iterator();
+                if(iterator.hasNext()){
+                    foundservice = true;
+                    service = (ServiceDescription)iterator.next();
                 }
-            }
-            zin.close();
-            if (!foundwsdl) {
+                if(!foundservice){
+                    service = new ServiceDescription();
+                }
+                in.close();
+            } else {
                 service = new ServiceDescription();
-                log.info("WSDL file not found for the service :  " + filename);
+                log.info("WSDL file not found for the service :  " + file.getName());
             }
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
+
         return service;
     }
 
@@ -93,7 +124,7 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException("service.xml not found");
             }
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
     }
 

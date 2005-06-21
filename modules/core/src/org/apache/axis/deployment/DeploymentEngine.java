@@ -546,7 +546,8 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         try {
-                            ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                            //ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                            ServiceDescription service = archiveReader.createService(currentArchiveFile);
                             archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(), this, service);
                             addnewService(service);
                             log.info("Deployement WS Name  " + currentArchiveFile.getName());
