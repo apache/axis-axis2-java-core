@@ -59,7 +59,7 @@ public class UtilsTCPServer {
             }
 
             configurationContext =
-                erfac.buildEngineContext(file.getAbsolutePath());
+                erfac.buildConfigurationContext(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {

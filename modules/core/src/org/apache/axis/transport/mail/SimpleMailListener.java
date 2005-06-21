@@ -86,7 +86,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         this.password = password;
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            configurationContext = builder.buildEngineContext(dir);
+            configurationContext = builder.buildConfigurationContext(dir);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -232,7 +232,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             System.out.println("java SimpleMailListener <repository>");
         } else {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ConfigurationContext configurationContext = builder.buildEngineContext(args[0]);
+            ConfigurationContext configurationContext = builder.buildConfigurationContext(args[0]);
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
                 configurationContext.getAxisConfiguration().getTransportIn(

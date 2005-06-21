@@ -56,7 +56,7 @@ public class UtilServer {
             if (!file.exists()) {
                 throw new Exception("repository directory does not exists");
             }
-            ConfigurationContext er = erfac.buildEngineContext(file.getAbsolutePath());
+            ConfigurationContext er = erfac.buildConfigurationContext(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
@@ -101,7 +101,7 @@ public class UtilServer {
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext = efac.buildClientEngineContext(null);
+        ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
         
         sysContext.getAxisConfiguration().addMdoule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());

@@ -103,7 +103,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
             this.serverSocket = serverSoc;
             // Class erClass = Class.forName("org.apache.axis.deployment.EngineContextFactoryImpl");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            this.configurationContext = erfac.buildEngineContext(dir);
+            this.configurationContext = erfac.buildConfigurationContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault("Thread interuptted", e1);

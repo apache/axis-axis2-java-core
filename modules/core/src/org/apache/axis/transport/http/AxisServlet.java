@@ -78,7 +78,7 @@ public class AxisServlet extends HttpServlet {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            configContext = erfac.buildEngineContext(repoDir);
+            configContext = erfac.buildConfigurationContext(repoDir);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
             lister = new ListingAgent(configContext);
         } catch (Exception e) {

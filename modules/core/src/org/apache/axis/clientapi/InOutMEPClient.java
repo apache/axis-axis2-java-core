@@ -88,7 +88,7 @@ public class InOutMEPClient extends MEPClient {
      * Follwoing code works for the time been
      * <code>
      *  ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext = efac.buildClientEngineContext(null); 
+        ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
         // above line "null" may be a file name if you know the client repssitory
     
         //create new service

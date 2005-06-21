@@ -165,7 +165,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     public ConfigurationContext createServerConfigurationContext() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
 
         TransportInDescription transportIn =
             new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
@@ -194,7 +194,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     public ConfigurationContext createClientConfigurationContext() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
 
         TransportInDescription transportIn =
             new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));

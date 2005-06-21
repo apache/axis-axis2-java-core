@@ -186,7 +186,7 @@ public class MailOneWayRawXMLTest extends TestCase {
     public ConfigurationContext createConfigurationContext() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
 
         TransportInDescription transportIn =
             new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));

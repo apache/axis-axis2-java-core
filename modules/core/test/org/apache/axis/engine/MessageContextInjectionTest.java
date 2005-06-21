@@ -72,7 +72,7 @@ public class MessageContextInjectionTest extends TestCase {
     protected void setUp() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildEngineContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
         LocalTransportReceiver.CONFIG_CONTEXT = configContext;
 
         ServiceDescription service = new ServiceDescription(serviceName);

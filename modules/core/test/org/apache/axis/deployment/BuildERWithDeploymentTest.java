@@ -36,7 +36,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
     public void testDeployment() throws Exception {
         String filename = "./target/test-resources/deployment";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        AxisConfiguration er = builder.buildEngineContext(filename).getAxisConfiguration();
+        AxisConfiguration er = builder.buildConfigurationContext(filename).getAxisConfiguration();
 
         assertNotNull(er);
         ServiceDescription service = er.getService(new QName("service2"));

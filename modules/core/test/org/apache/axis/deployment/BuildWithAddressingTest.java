@@ -43,7 +43,7 @@ public class BuildWithAddressingTest extends AbstractTestCase {
         //todo this test has to be complete   Deepal once addressing module finalize
        /* String filename = "./target/test-resources/deployment";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext er = builder.buildEngineContext(filename);
+        ConfigurationContext er = builder.buildConfigurationContext(filename);
         ArrayList phases = er.getPhases(AxisConfiguration.INFLOW);
         ModuleDescription modeule = er.getEngineConfig().getModule(new QName("addressing"));
         assertNotNull(modeule);

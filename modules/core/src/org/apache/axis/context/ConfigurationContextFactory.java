@@ -26,7 +26,7 @@ import org.apache.axis.phaseresolver.PhaseResolver;
  */
 public class ConfigurationContextFactory {
 
-    public ConfigurationContext buildEngineContext(String RepositaryName) throws DeploymentException {
+    public ConfigurationContext buildConfigurationContext(String RepositaryName) throws DeploymentException {
         ConfigurationContext configurationContext = null;
         try {
             DeploymentEngine deploymentEngine = new DeploymentEngine(RepositaryName);
@@ -41,7 +41,7 @@ public class ConfigurationContextFactory {
         return configurationContext;
     }
 
-    public ConfigurationContext buildClientEngineContext(String axis2home) throws DeploymentException {
+    public ConfigurationContext buildClientConfigurationContext(String axis2home) throws DeploymentException {
         ConfigurationContext engineContext = null;
         try {
             AxisConfiguration configuration = new DeploymentEngine().loadClient(axis2home);

@@ -51,7 +51,7 @@ public class MessageSender extends InOnlyMEPClient {
         ConfigurationContext sysContext = null;
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac = new ConfigurationContextFactory();
-            sysContext = efac.buildClientEngineContext(null);
+            sysContext = efac.buildClientConfigurationContext(null);
         } else {
             sysContext = ListenerManager.configurationContext;
         }
