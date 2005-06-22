@@ -102,7 +102,7 @@ public class GUIHandler {
             }
         });
         settingsMenu.add(maxResultsMenuItem);
-        maxResultsMenuItem.setEnabled(false);
+        maxResultsMenuItem.setEnabled(true);
         maxResultsMenuItem.setToolTipText("This feature is currently disabled!");
 
         JMenu helpMenu = new JMenu("Help");
