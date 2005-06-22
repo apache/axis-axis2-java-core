@@ -24,45 +24,76 @@ import java.io.PushbackInputStream;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  * This class provides input streams delimited by the mime boundaries.
  */
+
 public class MimeBodyPartInputStream extends InputStream {
 	PushbackInputStream inStream;
-	
+
+	boolean boundaryFound = false;
+
 	byte[] boundary;
-	
+
 	public MimeBodyPartInputStream(PushbackInputStream inStream, byte[] boundary) {
 		super();
 		this.inStream = inStream;
 		this.boundary = boundary;
 	}
-	
+
 	public int read() throws IOException {
-		
+		if (boundaryFound) {
+			return -1;
+		}
 		// read the next value from stream
 		int value = inStream.read();
-		
-		//read value is not the first byte of the boundary
-		if ((byte) value != boundary[0]) {
+
+		// A problem occured because all the mime parts tends to have a /r/n at the end. Making it hard to transform them to correct DataSources.
+		// This logic introduced to handle it
+		//TODO look more in to this && for a better way to do this
+		if (value == 13) {
+			value = inStream.read();
+			if (value != 10) {
+				inStream.unread(value);
+				return 13;
+			} else {
+				value = inStream.read();
+				if ((byte) value != boundary[0]) {
+					inStream.unread(value);
+					inStream.unread(10);
+					return 13;
+				}
+			}
+		} else if ((byte) value != boundary[0]) {
 			return value;
 		}
-		
+
 		// read value is the first byte of the boundary. Start matching the
 		// next characters to find a boundary
-		int boundaryIndex = 0; 
+		int boundaryIndex = 0;
 		while ((boundaryIndex < boundary.length)
 				&& ((byte) value == boundary[boundaryIndex])) {
 			value = inStream.read();
 			boundaryIndex++;
 		}
-		
+
 		if (boundaryIndex == boundary.length) { // boundary found
+			boundaryFound = true;
+			// read the end of line character
+			if (inStream.read() == 45) {
+				//check whether end of stream
+				//Last mime boundary should have a succeeding "--"
+				if (!((value = inStream.read()) == 45)) {
+					inStream.unread(value);
+				}
+
+			}
+
 			return -1;
 		}
-		
+
 		// Boundary not found. Restoring bytes skipped.
 		// write first skipped byte, push back the rest
-		
+
 		if (value != -1) { // Stream might have ended
-			inStream.unread(value); 
+			inStream.unread(value);
 		}
 		inStream.unread(boundary, 1, boundaryIndex - 1);
 		return boundary[0];

@@ -38,71 +38,72 @@ public class MIMEHelper {
 	 * if the Message is MTOM optimised then <code>MTOM_TYPE</code>
 	 */
 	public static final String MTOM_TYPE = "application/xop+xml";
-	
+
 	/**
 	 * If the message is Soap with Attachments <code>SwA_TYPE</code>
 	 */
 	public static final String SWA_TYPE = "text/xml";
-	
+
 	/**
 	 * <code>rootPart</code> is used as the key for the root BodyPart in the
 	 * Parts HashMap
 	 */
 	public static final String ROOT_PART = "SoapPart";
-	
+
 	/**
 	 * <code>ContentType</code> of the MIME message
 	 */
 	ContentType contentType;
-	
+
 	/**
 	 * Mime <code>boundary</code> which seperates mime parts
 	 */
 	byte[] boundary;
-	
+
 	/**
 	 * <code>applicationType</code> used to distinguish between MTOM & SWA If
 	 * the message is MTOM optimised type is application/xop+xml If the message
 	 * is SWA, type is ??have to find out
 	 */
 	String applicationType = null;
-	
+
 	/**
 	 * <code>pushbackInStream</code> stores the reference to the incoming
 	 * stream A PushbackStream has the ability to "push back" or "unread" one
 	 * byte.
 	 */
 	PushbackInputStream pushbackInStream;
-	
+
 	/**
 	 * <code>mimeBodyPartsMap</code> stores the already parsed Mime Body
 	 * Parts. This Map will be keyed using the content-ID's
 	 */
 	HashMap bodyPartsMap;
-	
+
 	/**
 	 * <code>partIndex</code>- Number of Mime parts parsed
 	 */
 	int partIndex = 0;
-	
+
 	public MIMEHelper(InputStream inStream, String contentTypeString)
-	throws OMException {
+			throws OMException {
+		bodyPartsMap = new HashMap();
 		try {
 			contentType = new ContentType(contentTypeString);
 		} catch (ParseException e) {
 			throw new OMException(
 					"Invalid Content Type Field in the Mime Message"
-					+ e.toString());
+							+ e.toString());
 		}
 		// Boundary always have the prefix "--".
 		this.boundary = ("--" + contentType.getParameter("boundary"))
-		.getBytes();
-		
+				.getBytes();
+
 		//TODO do we need to wrap InputStream from a BufferedInputStream before
 		// wrapping from PushbackStream
 		pushbackInStream = new PushbackInputStream(inStream,
 				(this.boundary.length + 2));
-		
+
 		// Move the read pointer to the begining of the first part
 		// read till the end of first boundary
 		while (true) {
@@ -116,20 +117,23 @@ public class MIMEHelper {
 						value = pushbackInStream.read();
 						if (value == -1)
 							throw new OMException(
-							"Unexpected End of Stream while searching for first Mime Boundary");
+									"Unexpected End of Stream while searching for first Mime Boundary");
 						boundaryIndex++;
 					}
 					if (boundaryIndex == boundary.length) { // boundary found
 						pushbackInStream.read();
 						break;
 					}
+				} else if ((byte) value == -1) {
+					throw new OMException(
+							"Mime parts not found. Stream ended while searching for the boundary");
 				}
 			} catch (IOException e1) {
 				throw new OMException("Stream Error" + e1.toString());
 			}
 		}
 	}
-	
+
 	/**
 	 * @return whether Message Type is SOAP with Attachments or MTOM optimised
 	 *         by checking the application type parameter in the Contant Type
@@ -143,33 +147,37 @@ public class MIMEHelper {
 				this.applicationType = SWA_TYPE;
 			} else {
 				throw new OMException(
-				"Invalid Application type. Support available for MTOM & SwA only.");
+						"Invalid Application type. Support available for MTOM & SwA only.");
 			}
 		}
 		return this.applicationType;
 	}
-	
+
 	/**
-	 * @return the InputStream which includes the SOAP Envelope
-	 * We assumes that the root mime part is always pointed by "start" parameter in content-type
+	 * @return the InputStream which includes the SOAP Envelope We assumes that
+	 *         the root mime part is always pointed by "start" parameter in
+	 *         content-type
 	 */
-	public InputStream getSOAPPartInputStream() throws OMException{
-	    String rootContentID = contentType.getParameter("start");
-	    rootContentID.substring(1, (rootContentID.length()-1));
-	    rootContentID.trim();
-	    DataHandler dh;
+	public InputStream getSOAPPartInputStream() throws OMException {
+		String rootContentID = contentType.getParameter("start");
+		rootContentID.trim();
+		rootContentID = rootContentID
+				.substring(1, (rootContentID.length() - 1));
+
+		DataHandler dh;
 		try {
 			dh = getDataHandler(rootContentID);
-			if (dh==null)
-			{
-			   throw new OMException("Mandatory Root MIME part containing the SOAP Envelope is missing");
+			if (dh == null) {
+				throw new OMException(
+						"Mandatory Root MIME part containing the SOAP Envelope is missing");
 			}
 			return dh.getInputStream();
 		} catch (IOException e) {
-			throw new OMException("Problem with DataHandler of the Root Mime Part. "+e);
+			throw new OMException(
+					"Problem with DataHandler of the Root Mime Part. " + e);
 		}
 	}
-	
+
 	/**
 	 * @param blobContentID
 	 * @return The DataHandler of the mime part refered by the content-Id
@@ -179,11 +187,13 @@ public class MIMEHelper {
 	 *             the getNextPart() till we find the required part.
 	 */
 	public DataHandler getDataHandler(String blobContentID) throws OMException {
-		
+
 		Part bodyPart;
-		blobContentID = "<"+blobContentID+">";
+		blobContentID = "<" + blobContentID + ">";
 		boolean attachmentFound = false;
-		
+
+		//		// without the following part a Null Pointer Exception is thrown
+		//		
 		if (bodyPartsMap.containsKey(blobContentID)) {
 			bodyPart = (Part) bodyPartsMap.get(blobContentID);
 			attachmentFound = true;
@@ -191,7 +201,8 @@ public class MIMEHelper {
 			try {
 				dh = bodyPart.getDataHandler();
 			} catch (MessagingException e) {
-				throw new OMException("Problem with Mime Body Part No "+partIndex+".  "+e);
+				throw new OMException("Problem with Mime Body Part No "
+						+ partIndex + ".  " + e);
 			}
 			return dh;
 		} else {
@@ -204,40 +215,50 @@ public class MIMEHelper {
 					if (bodyPartsMap.containsKey(blobContentID)) {
 						bodyPart = (Part) bodyPartsMap.get(blobContentID);
 						DataHandler dh = bodyPart.getDataHandler();
-	                    return dh;
+						return dh;
 					}
 				}
 			} catch (MessagingException e) {
 				throw new OMException("Invalid Mime Message " + e.toString());
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * @return The next MIME Body part in the stream Uses the MimeBodyPartStream
 	 *         to obtain streams delimited by boundaries.
 	 * @throws MessagingException
 	 */
 	// TODO do we need Locking for this
-	private MimeBodyPart getMimeBodyPart() throws OMException{
+	private MimeBodyPart getMimeBodyPart() throws OMException {
 		MimeBodyPart mimeBodyPart = null;
-		
-		//TODO A private methode to read a line
+
 		//String Line = pushbackInStream.readLine();
-		MimeBodyPartInputStream partStream = new MimeBodyPartInputStream(
-				pushbackInStream, boundary);
-		
+		MimeBodyPartInputStream partStream;
+		try {
+			if (pushbackInStream.available() > 0) {
+				partStream = new MimeBodyPartInputStream(pushbackInStream,
+						boundary);
+			} else {
+				throw new OMException(
+						"Attachment not found. End of Stream reached");
+			}
+		} catch (IOException e1) {
+			throw new OMException("Attachement not found. Problem with Stream");
+		}
+
 		try {
 			mimeBodyPart = new MimeBodyPart(partStream);
 		} catch (MessagingException e) {
-			throw new OMException("Problem reading Mime Part No "+(partIndex+1)+". "+e);
+			throw new OMException("Problem reading Mime Part No "
+					+ (partIndex + 1) + ". " + e);
 		}
-		
+
 		partIndex++;
 		return mimeBodyPart;
 	}
-	
+
 	/**
 	 * @return The Mime body part which contains the SOAP Envelope In MTOM case
 	 *         it is the first part In SwA case we assumes it to be first
@@ -254,7 +275,7 @@ public class MIMEHelper {
 		}
 		return rootMimeBodyPart;
 	}
-	
+
 	private MimeBodyPart getNextMimeBodyPart() throws OMException {
 		MimeBodyPart nextMimeBodyPart;
 		nextMimeBodyPart = getMimeBodyPart();
@@ -262,14 +283,16 @@ public class MIMEHelper {
 			String partContentID;
 			try {
 				partContentID = nextMimeBodyPart.getContentID();
-			// TODO we might need to trim the surrounding "<"">" from content ID
-			bodyPartsMap.put(partContentID, nextMimeBodyPart);
-			return nextMimeBodyPart;
+
+				bodyPartsMap.put(partContentID, nextMimeBodyPart);
+				return nextMimeBodyPart;
 			} catch (MessagingException e) {
-				throw new OMException("Error Reading Content-ID from Mime Part No "+partIndex+". "+e);
+				throw new OMException(
+						"Error Reading Content-ID from Mime Part No "
+								+ partIndex + ". " + e);
 			}
 		} else
 			return null;
 	}
-	
+
 }
