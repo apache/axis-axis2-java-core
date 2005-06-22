@@ -26,7 +26,7 @@ import java.util.HashMap;
  * <li>parameters<li>
  * <li>handlers<li>
  * <ol>
- * <p>Handler are registered once they are avlible but they avalibe to all services if server.xml
+ * <p>Handler are registered once they are avlible but they avalibe to all services if axis2.xml
  * has a module ref="." or avalible to a single service if service.xml have module ref=".."</p>
  */
 public class ModuleDescription implements FlowInclude, ParameterInclude {

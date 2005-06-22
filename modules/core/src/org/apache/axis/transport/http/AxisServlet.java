@@ -52,7 +52,6 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.util.Utils;
 
 /**
@@ -207,7 +206,7 @@ public class AxisServlet extends HttpServlet {
                     new BufferedReader(new InputStreamReader(req.getInputStream())));
 
             //Check for the REST behaviour, if you desire rest beahaviour
-            //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+            //put a <parameter name="doREST" value="true"/> at the axis2.xml
             Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
@@ -229,8 +228,6 @@ public class AxisServlet extends HttpServlet {
         } catch (XMLStreamException e) {
             throw new ServletException(e);
         } catch (FactoryConfigurationError e) {
-            throw new ServletException(e);
-        } catch (SOAPProcessingException e) {
             throw new ServletException(e);
         }
     }

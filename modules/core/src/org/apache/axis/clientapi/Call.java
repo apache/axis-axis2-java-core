@@ -35,16 +35,26 @@ import org.apache.axis.soap.SOAPEnvelope;
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
  */
 public class Call extends InOutMEPClient {
+
     private HashMap properties;
     private static OperationDescription opreationTemplate;
-
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
      * @throws AxisFault
      */
 
     public Call() throws AxisFault {
-        super(assumeServiceContext());
+        super(assumeServiceContext(null));
+    }
+
+    /**
+     * This is used to create call object with client home , using onky this constructor it can
+     * able to engage modules  , addning client side parameters
+     * @param clientHome
+     * @throws AxisFault
+     */
+    public Call(String clientHome) throws AxisFault {
+      super(assumeServiceContext(clientHome));
     }
 
     /**
@@ -117,11 +127,11 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
-    private static ServiceContext assumeServiceContext() throws AxisFault {
+    private static ServiceContext assumeServiceContext(String clinetHome) throws AxisFault {
         ConfigurationContext sysContext = null;
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac = new ConfigurationContextFactory();
-            sysContext = efac.buildClientConfigurationContext(null);
+            sysContext = efac.buildClientConfigurationContext(clinetHome);
         }else{
             sysContext = ListenerManager.configurationContext;
         }

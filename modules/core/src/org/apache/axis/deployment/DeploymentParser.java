@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 /**
  * This class is used to parse the following xml douments
- * 1 server.xml
+ * 1 axis2.xml
  * 2 service.xml
  * 3 module.xml
  * <p/>
@@ -93,7 +93,7 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
     /**
-     * To process server.xml
+     * To process axis2.xml
      */
     public void processGlobalConfig(AxisConfigurationImpl axisGlobal, String starttag)
             throws DeploymentException {
@@ -120,7 +120,7 @@ public class DeploymentParser implements DeploymentConstants {
                         TransportInDescription transportin = proccessTrasnsportIN();
                         dpengine.getAxisConfig().addTransportIn(transportin);
                     } else if (TYPEMAPPINGST.equals(ST)) {
-                        throw new UnsupportedOperationException("Type Mappings are not allowed in server.xml");
+                        throw new UnsupportedOperationException("Type Mappings are not allowed in axis2.xml");
                     } else if (MESSAGERECEIVER.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
                         if (attribCount == 2) {
@@ -154,14 +154,14 @@ public class DeploymentParser implements DeploymentConstants {
                                     }
                                 } else
                                     throw new UnsupportedOperationException(
-                                            "invalid attributes in server.xml (messageReceiver elemet) "
+                                            "invalid attributes in axis2.xml (messageReceiver elemet) "
                                             + attname);
                             } else
                                 throw new UnsupportedOperationException(
-                                        "invalid attributes in server.xml (messageReceiver elemet) "
+                                        "invalid attributes in axis2.xml (messageReceiver elemet) "
                                         + attname);
                         } else
-                            throw new UnsupportedOperationException("invalid attributes in server.xml (messageReceiver elemet)");
+                            throw new UnsupportedOperationException("invalid attributes in axis2.xml (messageReceiver elemet)");
 
                     } else if (MODULEST.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
@@ -202,7 +202,7 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else {
                         throw new UnsupportedOperationException(
-                                ST + " element is not allowed in the server.xml");
+                                ST + " element is not allowed in the axis2.xml");
                     }
                 } else if (eventType == XMLStreamConstants.END_ELEMENT) {
                     String endtagname = pullparser.getLocalName();
@@ -562,7 +562,7 @@ public class DeploymentParser implements DeploymentConstants {
     }
 
     /**
-     * this method is to process the HandlerMetaData tag in the either service.xml or server.xml
+     * this method is to process the HandlerMetaData tag in the either service.xml or axis2.xml
      *
      * @return HandlerMetaData object
      * @throws org.apache.axis.deployment.DeploymentException

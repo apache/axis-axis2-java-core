@@ -38,7 +38,7 @@ public class WSDL2Code {
 		System.out.println("-l <language> : valid languages are java and csharp. Default is java");
 		System.out.println("-t : Generate TestCase to test the generated code");
 		System.out.println("-ss : Generate server side code (i.e. skeletons).Default is off");
-		System.out.println("-sd : Generate service descriptor (i.e. server.xml).Default is off.Valid with -ss ");
+		System.out.println("-sd : Generate service descriptor (i.e. axis2.xml).Default is off.Valid with -ss ");
 		System.exit(0);
 	}
 	

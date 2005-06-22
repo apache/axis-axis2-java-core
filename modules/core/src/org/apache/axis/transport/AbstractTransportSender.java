@@ -65,7 +65,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         //Check for the REST behaviour, if you desire rest beahaviour
-        //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
+        //put a <parameter name="doREST" value="true"/> at the axis2.xml
         Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
         if (doREST != null && Constants.VALUE_TRUE.equals(doREST)) {
             this.doREST = true;

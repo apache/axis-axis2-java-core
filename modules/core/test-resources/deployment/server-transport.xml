@@ -1,4 +1,4 @@
-<server name="AxisJava2.0">
+<axisconfig name="AxisJava2.0">
     <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
     <transportReceiver name="http">
         <parameter name="para1" locked="xsd:true">10</parameter>
@@ -30,5 +30,5 @@
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
     </phaseOrder>
-</server>
+</axisconfig>
 

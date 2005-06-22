@@ -67,7 +67,7 @@ public class PhaseHolder {
             throw new PhaseException("Invalid Phase ," + phaseName
                     + "for the handler "
                     + handler.getName()
-                    + " dose not exit in server.xml or refering to phase in diffrent flow");
+                    + " dose not exit in axis2.xml or refering to phase in diffrent flow");
         }
     }
 

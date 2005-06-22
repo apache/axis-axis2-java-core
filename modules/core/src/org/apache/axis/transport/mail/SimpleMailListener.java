@@ -245,7 +245,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 sas.start();
             } else {
                 System.out.println(
-                    "Startup failed, mail transport not configured, Configure the mail trnasport in the server.xml file");
+                    "Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
             }
         }
     }

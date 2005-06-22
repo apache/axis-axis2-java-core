@@ -1,4 +1,4 @@
-<server name ="AxisJava2.0" >
+<axisconfig name ="AxisJava2.0" >
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
     <handler name="h1" class="org.apache.axis.engine.registry.SpeakingHandler">
@@ -24,4 +24,4 @@
     <gool>
         not good
     </gool>
-</server>
+</axisconfig>

@@ -118,7 +118,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, "server.xml");
+        this(RepositaryName, "axis2.xml");
     }
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
@@ -135,7 +135,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File serverConf = new File(repository, serverXMLFile);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/server.xml");
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/axis2.xml");
             if (in != null) {
                 try {
                     serverConf.createNewFile();
@@ -154,7 +154,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
             } else {
-                throw new DeploymentException("can not found org/apache/axis/deployment/server.xml");
+                throw new DeploymentException("can not found org/apache/axis/deployment/axis2.xml");
 
             }
         }
@@ -198,14 +198,14 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public AxisConfiguration load() throws DeploymentException {
         if (engineConfigName == null) {
-            throw new DeploymentException("path to Server.xml can not be NUll");
+            throw new DeploymentException("path to axis2.xml can not be NUll");
         }
         File tempfile = new File(engineConfigName);
         try {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), SERVERST);
+            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), AXIS2CONFIG);
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
@@ -243,12 +243,12 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         } else {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            in = cl.getResourceAsStream("org/apache/axis/deployment/client.xml");
+            in = cl.getResourceAsStream("org/apache/axis/deployment/axis2.xml");
         }
         try {
             axisConfig = createEngineConfig();
             DeploymentParser parser = new DeploymentParser(in, this);
-            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), CLIENTST);
+            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), AXIS2CONFIG);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e.getMessage());
         }
@@ -268,7 +268,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void checkClientHome(String clientHome) throws DeploymentException {
-        String clientXML = "client.xml";
+        String clientXML = "axis2.xml";
         this.folderName = clientHome;
         File repository = new File(clientHome);
         if (!repository.exists()) {
@@ -281,7 +281,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File serverConf = new File(repository, clientXML);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/client.xml");
+            InputStream in = cl.getResourceAsStream("org/apache/axis/deployment/axis2.xml");
             if (in != null) {
                 try {
                     serverConf.createNewFile();
@@ -300,7 +300,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
             } else {
-                throw new DeploymentException("can not found org/apache/axis/deployment/client.xml");
+                throw new DeploymentException("can not found org/apache/axis/deployment/axis2.xml");
 
             }
         }
@@ -337,11 +337,11 @@ public class DeploymentEngine implements DeploymentConstants {
                     ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
                     ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
                 throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                        " support\n recheck server.xml");
+                        " support\n recheck axis2.xml");
             }
         } catch (DeploymentException e) {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                    " support\n recheck server.xml");
+                    " support\n recheck axis2.xml");
         }
         //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here

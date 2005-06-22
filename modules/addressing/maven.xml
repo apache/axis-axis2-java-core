@@ -11,8 +11,8 @@
             <mkdir dir="target/classes/META-INF"/>
             <copy file="src/META-INF/module.xml"
 		tofile="target/classes/META-INF/module.xml"/>
-         <copy file="./test-resources/server.xml"
-		tofile="target/server.xml"/>
+         <copy file="./test-resources/axis2.xml"
+		tofile="target/axis2.xml"/>
         <mkdir dir="target/modules"/>
 	    <jar jarfile="target/addressing.mar" basedir="target/classes" >
 			<include name="**" />

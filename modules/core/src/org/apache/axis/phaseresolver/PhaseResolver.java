@@ -107,7 +107,7 @@ public class PhaseResolver {
         ModuleDescription module;
         Flow flow = null;
         ///////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////// Handlers from   server.xml from modules/////////////////////////
+        ////////////////////////// Handlers from   axis2.xml from modules/////////////////////////
         ArrayList modulqnames = (ArrayList) ((AxisConfigurationImpl) axisConfig).getEngadgedModules();
         for (int i = 0; i < modulqnames.size(); i++) {
             QName modulename = (QName) modulqnames.get(i);
@@ -137,7 +137,7 @@ public class PhaseResolver {
                 }
                 axisService.addToEngagModuleList(module);
             } else {
-                throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by server.xml");
+                throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by axis2.xml");
             }
 
             if (flow != null) {
@@ -383,7 +383,7 @@ public class PhaseResolver {
                         }
                 }
                 ////////////////////////////////////////////////////////////////////////////////////
-                /////////////////// Modules refered by server.xml //////////////////////////////////
+                /////////////////// Modules refered by axis2.xml //////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////
                 switch (type) {
                     case PhaseMetadata.IN_FLOW:
@@ -449,7 +449,7 @@ public class PhaseResolver {
                     }
             }
             ////////////////////////////////////////////////////////////////////////////////////
-            /////////////////// Modules refered by server.xml //////////////////////////////////
+            /////////////////// Modules refered by axis2.xml //////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
@@ -483,7 +483,7 @@ public class PhaseResolver {
                          * These handlers will go to operation's handler chains , since the module
                          * try to add handlres to both sytem predefined phases and user defined phase
                          * so global module can do that. here the global module are the module which are
-                         * reffred by server.xml
+                         * reffred by axis2.xml
                          */
                         continue;
                     }

@@ -37,7 +37,7 @@ public class SystemPhasesremovedTest extends TestCase{
                 ConfigurationContextFactory builder = new ConfigurationContextFactory();
                 er = builder.buildConfigurationContext(filename).getAxisConfiguration();
                 fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
-                        "inphases , phase order dose not\" +\n support\\n recheck server.xml\"");
+                        "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
             } catch (DeploymentException e) {
                 e.printStackTrace();
             }
