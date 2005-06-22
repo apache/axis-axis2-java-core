@@ -251,7 +251,8 @@ public class CodeGenWizard extends Wizard implements INewWizard
                              java2wsdlOptionsPage.getPortypeName(),
                              java2wsdlOptionsPage.getStyle(),
                              java2wsdlOutputLocationPage.getFullFileName(),
-                             java2wsdlOptionsPage.getMode()
+                             java2wsdlOptionsPage.getMode(),
+                             javaSourceSelectionPage.getSelectedMethods()
                      );
                      monitor.worked(1);
                  }

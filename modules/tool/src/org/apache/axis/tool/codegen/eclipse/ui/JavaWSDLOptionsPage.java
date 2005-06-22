@@ -78,6 +78,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     
     private Combo styleSelectionCombo;
 
+
     //TODO need more here
 
     /*
@@ -251,6 +252,8 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         }
     }
     
+
+    
     public String getStyle(){
         return this.styleSelectionCombo.getItem(styleSelectionCombo.getSelectionIndex()).toUpperCase();
     }
@@ -269,4 +272,11 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     public String getBindingName() {
         return this.bindingTextBox.getText();
     }
+    
+   private String getgetClassFileLocation(){
+       return null;
+   }
+    
+   
+ 
 }

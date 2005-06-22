@@ -15,6 +15,9 @@
  */
 package org.apache.axis.tool.codegen;
 
+
+import java.util.Vector;
+
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 
@@ -34,7 +37,8 @@ public class Java2WSDLGenerator {
             String portypeName,
             String style,
             String outputFileName,
-            int mode) throws Throwable{
+            int mode,
+            Vector listOfIncludedMethods) throws Throwable{
         try {
 
             ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
@@ -61,6 +65,8 @@ public class Java2WSDLGenerator {
             //Style
             if (style!=null && !style.trim().equals(""))
                 emitter.setStyle(style);
+            if (listOfIncludedMethods!=null)
+                emitter.setAllowedMethods(listOfIncludedMethods);
             
             if (mode!= Emitter.MODE_ALL &&
                     mode!= Emitter.MODE_IMPLEMENTATION &&

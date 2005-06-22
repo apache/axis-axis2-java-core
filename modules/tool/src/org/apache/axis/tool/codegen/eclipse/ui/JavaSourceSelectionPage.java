@@ -15,18 +15,29 @@
  */
 package org.apache.axis.tool.codegen.eclipse.ui;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Vector;
+
 import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class JavaSourceSelectionPage extends AbstractWizardPage{
@@ -34,7 +45,11 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
    
     private Text javaClassFileLocationBox;
     private Text javaClassNameBox;
-
+    private Button searchDeclaredMethodsCheckBox;
+    
+    private Table table;
+    
+    private boolean dirty;
 
     public JavaSourceSelectionPage() {  
         super("page4");
@@ -110,10 +125,35 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
                 .getResourceString("general.search"));
         searchButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                //handleDirectoryBrowse();
+                updateTable();
             }
         });
-        searchButton.setEnabled(false);
+        //searchButton.setEnabled(false);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 3;
+        
+        searchDeclaredMethodsCheckBox = new Button(container,SWT.CHECK);
+        searchDeclaredMethodsCheckBox.setLayoutData(gd);
+        searchDeclaredMethodsCheckBox.setText("List Declared Methods Only");
+        searchDeclaredMethodsCheckBox.addSelectionListener(new SelectionListener(){
+            public void widgetSelected(SelectionEvent e){
+                updateDirtyStatus(true);//dirty
+            }
+            public void widgetDefaultSelected(SelectionEvent e){} 
+        });
+        
+        gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan=3;
+        gd.verticalSpan=5;
+        table = new Table(container,SWT.SINGLE|SWT.FULL_SELECTION|SWT.CHECK);
+        table.setLinesVisible(true);
+        table.setHeaderVisible(true); 
+        table.setLayoutData(gd);
+        declareColumn(table,20,"");
+        declareColumn(table,100,"Method Name");
+        declareColumn(table,100,"Return Type");
+        declareColumn(table,100,"Parameter Count");
+        table.setVisible(false);
         
         setPageComplete(false);
         
@@ -126,6 +166,11 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
 
     }
 
+    private void declareColumn(Table table, int width,String colName){
+        TableColumn column = new TableColumn(table,SWT.NONE);
+        column.setWidth(width);
+        column.setText(colName);
+    }
     /**
      * Pops up the file browse dialog box
      *  
@@ -167,5 +212,66 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
     
     public String getClassLocation(){
         return javaClassFileLocationBox.getText();
+    }
+    
+    public Vector getSelectedMethods(){
+        Vector list = new Vector();
+        TableItem[] items = table.getItems();
+        int itemLength = items.length;
+        for(int i=0;i<itemLength;i++){
+           if(items[i].getChecked()){
+               list.add(items[i].getText(1));//get the selected method name only
+           }
+        }
+        return list;
+    }
+    
+    private void updateTable() {
+        //get a URL from the class file location
+        try {
+            String classFileLocation = this.getClassLocation();
+            URL classFileURL = new File(classFileLocation).toURL();
+            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL });
+
+            Class clazz = loader.loadClass(getClassName());
+            Method[] methods = null;
+            
+            if (searchDeclaredMethodsCheckBox.getSelection()){
+                methods = clazz.getDeclaredMethods();
+            }else{
+                methods = clazz.getMethods();
+            }
+
+            int methodCount = methods.length;
+            if (methodCount > 0) {
+                table.removeAll();
+                TableItem[] items = new TableItem[methodCount]; // An item for each field
+                for (int i = 0 ; i < methodCount; i++){
+                   items[i] = new TableItem(table, SWT.NONE);
+                   items[i].setText(1,methods[i].getName());
+                   items[i].setText(2,methods[i].getReturnType().getName());
+                   items[i].setText(3,methods[i].getParameterTypes().length+"");
+                   items[i].setChecked(true);//check them all by default
+                }
+                table.setVisible(true);
+                
+                //update the dirty variable
+               updateDirtyStatus(false);
+               updateStatus(null);
+            }
+
+        } catch (MalformedURLException e) {
+           updateStatus("Error : invalid location " +e.getMessage());
+        } catch (ClassNotFoundException e) {
+           updateStatus("Error : Class not found " + e.getMessage());
+        }
+    }
+    
+    private void updateDirtyStatus(boolean status){
+        dirty = status;
+        if (table.isVisible()){
+            table.setEnabled(!status);
+        }
+        setPageComplete(!status);
     }
 }
