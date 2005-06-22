@@ -42,404 +42,399 @@ import org.apache.axis.om.impl.llom.mtom.MTOMXMLStreamWriter;
  * Class OMTextImpl
  */
 /**
- * @author Thilina
- * @date Jun 20, 2005
- */
-/**
- * @author Thilina
- * @date Jun 20, 2005
+ * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
-    
-    protected String value = null;
-    
-    protected short textType = TEXT_NODE;
-    
-    protected String mimeType;
-    
-    protected boolean isBinary = false;
-    
-    /**
-     * Field contentID for the mime part used when serialising Binary stuff as
-     * MTOM optimised
-     */
-    private String contentID = null;
-    
-    /**
-     * Field dataHandler
-     */
-    private DataHandler dataHandler = null;
-    
-    /**
-     * Field nameSpace used when serialising Binary stuff as MTOM optimised
-     */
-    protected OMNamespace ns = new OMNamespaceImpl(
-            "http://www.w3.org/2004/08/xop/Include", "xop");
-    
-    /**
-     * Field localName used when serialising Binary stuff as MTOM optimised
-     */
-    protected String localName = "Include";
-    
-    /**
-     * Field attributes used when serialising Binary stuff as MTOM optimised
-     */
-    protected OMAttribute attribute;
-    
-    /**
-     * Constructor OMTextImpl
-     * 
-     * @param s
-     */
-    public OMTextImpl(String s) {
-        this.value = s;
-    }
-    
-    /**
-     * Constructor OMTextImpl
-     * 
-     * @param parent
-     * @param text
-     */
-    public OMTextImpl(OMElement parent, String text) {
-        super(parent);
-        this.value = text;
-        done = true;
-    }
-    
-    /**
-     * @param s -
-     *            base64 encoded String representation of Binary
-     * @param mimeType
-     *            of the Binary
-     */
-    public OMTextImpl(String s, String mimeType) {
-        this(s);
-        this.mimeType = mimeType;
-    }
-    
-    /**
-     * @param parent
-     * @param s -
-     *            base64 encoded String representation of Binary
-     * @param mimeType
-     *            of the Binary
-     */
-    public OMTextImpl(OMElement parent, String s, String mimeType) {
-        this(parent, s);
-        this.mimeType = mimeType;
-    }
-    
-    /**
-     * @param dataHandler
-     *            To send binary optimised content Created programatically
-     */
-    public OMTextImpl(DataHandler dataHandler) {
-        this.dataHandler = dataHandler;
-        if (this.contentID == null) {
-            // We can use a UUID, taken using Apache commons id project.
-            // TODO change to UUID
-            this.contentID = String.valueOf(new Random(new Date().getTime())
-                    .nextLong());
-            this.isBinary = true;
-        }
-    }
-    
-    /**
-     * @param contentID
-     * @param parent
-     * @param builder
-     *            Used when the builder is encountered with a XOP:Include tag
-     *            Stores a reference to the builder and the content-id. Supports
-     *            deffered parsing of MIME messages
-     */
-    public OMTextImpl(String contentID, OMElement parent,OMXMLParserWrapper builder) {
-        super(parent);
-        this.contentID = contentID;
-        this.isBinary = true;
-        this.builder = builder;
-    }
-    
-    /**
-     * We use the OMText class to hold comments, text, characterData, CData,
-     * etc., The codes are found in OMNode class
-     * 
-     * @param type
-     */
-    public void setTextType(short type) {
-        if ((type == TEXT_NODE) || (type == COMMENT_NODE)
-                || (type == CDATA_SECTION_NODE)) {
-            this.textType = type;
-        } else {
-            throw new UnsupportedOperationException("Attempt to set wrong type");
-        }
-    }
-    
-    public int getType() throws OMException {
-        return textType;
-    }
-    
-    /**
-     * @param writer
-     * @throws XMLStreamException
-     */
-    public void serializeWithCache(XMLStreamWriter writer)
-    throws XMLStreamException {
-        if (textType == TEXT_NODE) {
-            writer.writeCharacters(this.value);
-        } else if (textType == COMMENT_NODE) {
-            writer.writeComment(this.value);
-        } else if (textType == CDATA_SECTION_NODE) {
-            writer.writeCData(this.value);
-        }
-        OMNode nextSibling = this.getNextSibling();
-        if (nextSibling != null) {
-            nextSibling.serializeWithCache(writer);
-        }
-    }
-    
-    /**
-     * Returns the value
-     * 
-     * @return
-     */
-    public String getText() throws OMException {
-        if (!isBinary) {
-            return this.value;
-        } else {
-            try {
-                InputStream inStream;
-                inStream = this.getInputStream();
-                byte[] data;
-                data = new byte[inStream.available()];
-                
-                IOUtils.readFully(inStream, data);
-                return Base64.encode(data);
-            } catch (Exception e) {
-                throw new OMException(
-                        "Cannot read from Stream taken form the Data Handler"
-                        + e);
-            }
-        }
-        
-    }
-    
-    public boolean isOptimised() {
-        return isBinary;
-    }
-    
-    /**
-     * @return
-     * @throws org.apache.axis.om.OMException
-     * @throws OMException
-     */
-    public DataHandler getDataHandler() {
-        
-        /*
-         * this should return a DataHandler containing the binary data
-         * reperesented by the Base64 strings stored in OMText
-         */
-        if (isBinary) {
-            if (dataHandler == null) {
-                dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
-                .getDataHandler(contentID);
-            }
-            return dataHandler;
-        }
-        if (value != null) {
-            ByteArrayDataSource dataSource;
-            byte[] data = Base64.decode(value);
-            if (mimeType != null) {
-                dataSource = new ByteArrayDataSource(data, mimeType);
-            } else {
-                // Assumes type as application/octet-stream
-                dataSource = new ByteArrayDataSource(data);
-            }
-            DataHandler dataHandler = new DataHandler(dataSource);
-            return dataHandler;
-        }
-        return null;
-        
-    }
-    
-   
-    public String getLocalName() {
-        return localName;
-    }
-    
-    public java.io.InputStream getInputStream() throws OMException {
-        if (dataHandler == null) {
-            getDataHandler();
-        }
-        InputStream inStream;
-        try {
-            inStream = dataHandler.getDataSource().getInputStream();
-        } catch (IOException e) {
-            throw new OMException("Cannot get InoutStream from DataHandler."
-                    + e);
-        }
-        return inStream;
-    }
-    
-    public String getContentID() {
-        return this.contentID;
-    }
-    
-    public boolean isComplete() {
-        return true;
-    }
-    
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        boolean firstElement = false;
-        
-        if (!this.isBinary) {
-            serializeWithCache(writer);
-        } else {
-            if (writer instanceof MTOMXMLStreamWriter) {
-                // send binary as MTOM optimised
-                MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
-                this.attribute = new OMAttributeImpl("href",
-                        new OMNamespaceImpl("", ""), "cid:"
-                        + this.contentID.trim());
-                
-                this.serializeStartpart(mtomWriter);
-                mtomWriter.writeOptimised(this);
-                mtomWriter.writeEndElement();
-            } else {
-                
-                writer.writeCharacters(this.getText());
-            }
-            
-            OMNode nextSibling = this.getNextSibling();
-            if (nextSibling != null) {
-                // serilize next sibling
-                nextSibling.serialize(writer);
-            } else {
-                // TODO : See whether following part is really needed
-                if (parent == null) {
-                    return;
-                } else if (parent.isComplete()) {
-                    return;
-                } else {
-                    // do the special serialization
-                    // Only the push serializer is left now
-                    builder.next();
-                }
-                
-            }
-        }
-        
-    }
-    
-    /*
-     * Methods to copy from OMSerialize utils
-     */
-    private void serializeStartpart(XMLStreamWriter writer)
-    throws XMLStreamException {
-        String nameSpaceName = null;
-        String writer_prefix = null;
-        String prefix = null;
-        if (this.ns != null) {
-            nameSpaceName = this.ns.getName();
-            writer_prefix = writer.getPrefix(nameSpaceName);
-            prefix = this.ns.getPrefix();
-            if (nameSpaceName != null) {
-                if (writer_prefix != null) {
-                    writer
-                    .writeStartElement(nameSpaceName, this
-                            .getLocalName());
-                } else {
-                    if (prefix != null) {
-                        writer.writeStartElement(prefix, this.getLocalName(),
-                                nameSpaceName);
-                        writer.writeNamespace(prefix, nameSpaceName);
-                        writer.setPrefix(prefix, nameSpaceName);
-                    } else {
-                        writer.writeStartElement(nameSpaceName, this
-                                .getLocalName());
-                        writer.writeDefaultNamespace(nameSpaceName);
-                        writer.setDefaultNamespace(nameSpaceName);
-                    }
-                }
-            } else {
-                writer.writeStartElement(this.getLocalName());
-                
-            }
-        } else {
-            writer.writeStartElement(this.getLocalName());
-            
-        }
-        
-        // add the elements attribute "href"
-        serializeAttribute(this.attribute, writer);
-        
-        // add the namespace
-        serializeNamespace(this.ns, writer);
-        
-    }
-    
-    /**
-     * Method serializeAttribute
-     * 
-     * @param attr
-     * @param writer
-     * @throws XMLStreamException
-     */
-    static void serializeAttribute(OMAttribute attr, XMLStreamWriter writer)
-    throws XMLStreamException {
-        
-        // first check whether the attribute is associated with a namespace
-        OMNamespace ns = attr.getNamespace();
-        String prefix = null;
-        String namespaceName = null;
-        if (ns != null) {
-            
-            // add the prefix if it's availble
-            prefix = ns.getPrefix();
-            namespaceName = ns.getName();
-            if (prefix != null) {
-                writer.writeAttribute(prefix, namespaceName, attr
-                        .getLocalName(), attr.getValue());
-            } else {
-                writer.writeAttribute(namespaceName, attr.getLocalName(), attr
-                        .getValue());
-            }
-        } else {
-            writer.writeAttribute(attr.getLocalName(), attr.getValue());
-        }
-    }
-    
-    /**
-     * Method serializeNamespace
-     * 
-     * @param namespace
-     * @param writer
-     * @throws XMLStreamException
-     */
-    static void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer)
-    throws XMLStreamException {
-        if (namespace != null) {
-            String uri = namespace.getName();
-            String prefix = writer.getPrefix(uri);
-            String ns_prefix = namespace.getPrefix();
-            if (prefix == null) {
-                writer.writeNamespace(ns_prefix, namespace.getName());
-                writer.setPrefix(ns_prefix, uri);
-            }
-        }
-    }
-    
-    /**
-     * Slightly different implementation of the discard method
-     * 
-     * @throws OMException
-     */
-    public void discard() throws OMException {
-        if (done) {
-            this.detach();
-        } else {
-            builder.discard(this.parent);
-        }
-    }
-    
+
+	protected String value = null;
+
+	protected short textType = TEXT_NODE;
+
+	protected String mimeType;
+
+	protected boolean isBinary = false;
+
+	/**
+	 * Field contentID for the mime part used when serialising Binary stuff as
+	 * MTOM optimised
+	 */
+	private String contentID = null;
+
+	/**
+	 * Field dataHandler
+	 */
+	private DataHandler dataHandler = null;
+
+	/**
+	 * Field nameSpace used when serialising Binary stuff as MTOM optimised
+	 */
+	protected OMNamespace ns = new OMNamespaceImpl(
+			"http://www.w3.org/2004/08/xop/Include", "xop");
+
+	/**
+	 * Field localName used when serialising Binary stuff as MTOM optimised
+	 */
+	protected String localName = "Include";
+
+	/**
+	 * Field attributes used when serialising Binary stuff as MTOM optimised
+	 */
+	protected OMAttribute attribute;
+
+	/**
+	 * Constructor OMTextImpl
+	 * 
+	 * @param s
+	 */
+	public OMTextImpl(String s) {
+		this.value = s;
+	}
+
+	/**
+	 * Constructor OMTextImpl
+	 * 
+	 * @param parent
+	 * @param text
+	 */
+	public OMTextImpl(OMElement parent, String text) {
+		super(parent);
+		this.value = text;
+		done = true;
+	}
+
+	/**
+	 * @param s -
+	 *            base64 encoded String representation of Binary
+	 * @param mimeType
+	 *            of the Binary
+	 */
+	public OMTextImpl(String s, String mimeType) {
+		this(s);
+		this.mimeType = mimeType;
+	}
+
+	/**
+	 * @param parent
+	 * @param s -
+	 *            base64 encoded String representation of Binary
+	 * @param mimeType
+	 *            of the Binary
+	 */
+	public OMTextImpl(OMElement parent, String s, String mimeType) {
+		this(parent, s);
+		this.mimeType = mimeType;
+	}
+
+	/**
+	 * @param dataHandler
+	 *            To send binary optimised content Created programatically
+	 */
+	public OMTextImpl(DataHandler dataHandler) {
+		this.dataHandler = dataHandler;
+		if (this.contentID == null) {
+			// We can use a UUID, taken using Apache commons id project.
+			// TODO change to UUID
+			this.contentID = String.valueOf(new Random(new Date().getTime())
+					.nextLong());
+			this.isBinary = true;
+		}
+	}
+
+	/**
+	 * @param contentID
+	 * @param parent
+	 * @param builder
+	 *            Used when the builder is encountered with a XOP:Include tag
+	 *            Stores a reference to the builder and the content-id. Supports
+	 *            deffered parsing of MIME messages
+	 */
+	public OMTextImpl(String contentID, OMElement parent,
+			OMXMLParserWrapper builder) {
+		super(parent);
+		this.contentID = contentID;
+		this.isBinary = true;
+		this.builder = builder;
+	}
+
+	/**
+	 * We use the OMText class to hold comments, text, characterData, CData,
+	 * etc., The codes are found in OMNode class
+	 * 
+	 * @param type
+	 */
+	public void setTextType(short type) {
+		if ((type == TEXT_NODE) || (type == COMMENT_NODE)
+				|| (type == CDATA_SECTION_NODE)) {
+			this.textType = type;
+		} else {
+			throw new UnsupportedOperationException("Attempt to set wrong type");
+		}
+	}
+
+	public int getType() throws OMException {
+		return textType;
+	}
+
+	/**
+	 * @param writer
+	 * @throws XMLStreamException
+	 */
+	public void serializeWithCache(XMLStreamWriter writer)
+			throws XMLStreamException {
+		if (textType == TEXT_NODE) {
+			writer.writeCharacters(this.value);
+		} else if (textType == COMMENT_NODE) {
+			writer.writeComment(this.value);
+		} else if (textType == CDATA_SECTION_NODE) {
+			writer.writeCData(this.value);
+		}
+		OMNode nextSibling = this.getNextSibling();
+		if (nextSibling != null) {
+			nextSibling.serializeWithCache(writer);
+		}
+	}
+
+	/**
+	 * Returns the value
+	 * 
+	 * @return
+	 */
+	public String getText() throws OMException {
+		if (!isBinary) {
+			return this.value;
+		} else {
+			try {
+				InputStream inStream;
+				inStream = this.getInputStream();
+				byte[] data;
+				data = new byte[inStream.available()];
+
+				IOUtils.readFully(inStream, data);
+				return Base64.encode(data);
+			} catch (Exception e) {
+				throw new OMException(
+						"Cannot read from Stream taken form the Data Handler"
+								+ e);
+			}
+		}
+
+	}
+
+	public boolean isOptimised() {
+		return isBinary;
+	}
+
+	/**
+	 * @return
+	 * @throws org.apache.axis.om.OMException
+	 * @throws OMException
+	 */
+	public DataHandler getDataHandler() {
+
+		/*
+		 * this should return a DataHandler containing the binary data
+		 * reperesented by the Base64 strings stored in OMText
+		 */
+		if (isBinary) {
+			if (dataHandler == null) {
+				dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
+						.getDataHandler(contentID);
+			}
+			return dataHandler;
+		}
+		if (value != null) {
+			ByteArrayDataSource dataSource;
+			byte[] data = Base64.decode(value);
+			if (mimeType != null) {
+				dataSource = new ByteArrayDataSource(data, mimeType);
+			} else {
+				// Assumes type as application/octet-stream
+				dataSource = new ByteArrayDataSource(data);
+			}
+			DataHandler dataHandler = new DataHandler(dataSource);
+			return dataHandler;
+		}
+		return null;
+
+	}
+
+	public String getLocalName() {
+		return localName;
+	}
+
+	public java.io.InputStream getInputStream() throws OMException {
+		if (dataHandler == null) {
+			getDataHandler();
+		}
+		InputStream inStream;
+		try {
+			inStream = dataHandler.getDataSource().getInputStream();
+		} catch (IOException e) {
+			throw new OMException("Cannot get InputStream from DataHandler."
+					+ e);
+		}
+		return inStream;
+	}
+
+	public String getContentID() {
+		return this.contentID;
+	}
+
+	public boolean isComplete() {
+		return true;
+	}
+
+	public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+		boolean firstElement = false;
+
+		if (!this.isBinary) {
+			serializeWithCache(writer);
+		} else {
+			if (writer instanceof MTOMXMLStreamWriter) {
+				// send binary as MTOM optimised
+				MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
+				this.attribute = new OMAttributeImpl("href",
+						new OMNamespaceImpl("", ""), "cid:"
+								+ this.contentID.trim());
+
+				this.serializeStartpart(mtomWriter);
+				mtomWriter.writeOptimised(this);
+				mtomWriter.writeEndElement();
+			} else {
+
+				writer.writeCharacters(this.getText());
+			}
+
+			OMNode nextSibling = this.getNextSibling();
+			if (nextSibling != null) {
+				// serilize next sibling
+				nextSibling.serialize(writer);
+			} else {
+				// TODO : See whether following part is really needed
+				if (parent == null) {
+					return;
+				} else if (parent.isComplete()) {
+					return;
+				} else {
+					// do the special serialization
+					// Only the push serializer is left now
+					builder.next();
+				}
+
+			}
+		}
+
+	}
+
+	/*
+	 * Methods to copy from OMSerialize utils
+	 */
+	private void serializeStartpart(XMLStreamWriter writer)
+			throws XMLStreamException {
+		String nameSpaceName = null;
+		String writer_prefix = null;
+		String prefix = null;
+		if (this.ns != null) {
+			nameSpaceName = this.ns.getName();
+			writer_prefix = writer.getPrefix(nameSpaceName);
+			prefix = this.ns.getPrefix();
+			if (nameSpaceName != null) {
+				if (writer_prefix != null) {
+					writer
+							.writeStartElement(nameSpaceName, this
+									.getLocalName());
+				} else {
+					if (prefix != null) {
+						writer.writeStartElement(prefix, this.getLocalName(),
+								nameSpaceName);
+						writer.writeNamespace(prefix, nameSpaceName);
+						writer.setPrefix(prefix, nameSpaceName);
+					} else {
+						writer.writeStartElement(nameSpaceName, this
+								.getLocalName());
+						writer.writeDefaultNamespace(nameSpaceName);
+						writer.setDefaultNamespace(nameSpaceName);
+					}
+				}
+			} else {
+				writer.writeStartElement(this.getLocalName());
+
+			}
+		} else {
+			writer.writeStartElement(this.getLocalName());
+
+		}
+
+		// add the elements attribute "href"
+		serializeAttribute(this.attribute, writer);
+
+		// add the namespace
+		serializeNamespace(this.ns, writer);
+
+	}
+
+	/**
+	 * Method serializeAttribute
+	 * 
+	 * @param attr
+	 * @param writer
+	 * @throws XMLStreamException
+	 */
+	static void serializeAttribute(OMAttribute attr, XMLStreamWriter writer)
+			throws XMLStreamException {
+
+		// first check whether the attribute is associated with a namespace
+		OMNamespace ns = attr.getNamespace();
+		String prefix = null;
+		String namespaceName = null;
+		if (ns != null) {
+
+			// add the prefix if it's availble
+			prefix = ns.getPrefix();
+			namespaceName = ns.getName();
+			if (prefix != null) {
+				writer.writeAttribute(prefix, namespaceName, attr
+						.getLocalName(), attr.getValue());
+			} else {
+				writer.writeAttribute(namespaceName, attr.getLocalName(), attr
+						.getValue());
+			}
+		} else {
+			writer.writeAttribute(attr.getLocalName(), attr.getValue());
+		}
+	}
+
+	/**
+	 * Method serializeNamespace
+	 * 
+	 * @param namespace
+	 * @param writer
+	 * @throws XMLStreamException
+	 */
+	static void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer)
+			throws XMLStreamException {
+		if (namespace != null) {
+			String uri = namespace.getName();
+			String prefix = writer.getPrefix(uri);
+			String ns_prefix = namespace.getPrefix();
+			if (prefix == null) {
+				writer.writeNamespace(ns_prefix, namespace.getName());
+				writer.setPrefix(ns_prefix, uri);
+			}
+		}
+	}
+
+	/**
+	 * Slightly different implementation of the discard method
+	 * 
+	 * @throws OMException
+	 */
+	public void discard() throws OMException {
+		if (done) {
+			this.detach();
+		} else {
+			builder.discard(this.parent);
+		}
+	}
+
 }
