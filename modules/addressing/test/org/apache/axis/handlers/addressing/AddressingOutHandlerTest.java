@@ -9,6 +9,7 @@ import org.apache.axis.addressing.AnyContentType;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.ServiceName;
+import org.apache.axis.addressing.AddressingConstants.Submission;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.handlers.util.TestUtil;
@@ -53,13 +54,13 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testAddToSOAPHeader() throws Exception {
-        EndpointReference epr = new EndpointReference(WSA_FROM, "http://www.from.org/service/");
+        EndpointReference epr = new EndpointReference(WSA_TO, "http://www.to.org/service/");
         epr.setInterfaceName(new QName("http://www.from.org/service/port/", "Port", "portNS"));
         epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
 
         AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 5; i++) {
-            anyContentType.addReferenceValue(new QName("Reference" + i), "Value " + i * 100);
+            anyContentType.addReferenceValue(new QName(Submission.WSA_NAMESPACE, "Reference" + i), "Value " + i * 100);
 
         }
 
@@ -68,7 +69,10 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         SOAPEnvelope defaultEnvelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
 
         defaultEnvelope.getHeader().declareNamespace(Submission.WSA_NAMESPACE, "wsa");
-        outHandler.addToSOAPHeader(epr, WSA_FROM, defaultEnvelope.getHeader());
+        MessageContext msgCtxt = new MessageContext(null);
+        msgCtxt.setTo(epr);
+        msgCtxt.setEnvelope(defaultEnvelope);
+        outHandler.invoke(msgCtxt);
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
         XMLComparator xmlComparator = new XMLComparator();
@@ -86,20 +90,17 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         mIHeaders.setFrom(epr);
 
         epr = new EndpointReference(WSA_TO, "http://www.to.org/service/");
+        referenceValues = new AnyContentType();
+        referenceValues.addReferenceValue(new QName("http://reference.org","Reference4", "myRef"), "Value 400");
+        referenceValues.addReferenceValue(new QName("http://reference.org","Reference3", "myRef"), "Value 300");
+        epr.setReferenceParameters(referenceValues);
+
+        epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
+
+        epr.setInterfaceName(new QName("http://www.from.org/service/port/", "Port", "portNS"));
         mIHeaders.setTo(epr);
 
         epr = new EndpointReference(WSA_REPLY_TO, "http://www.replyTo.org/service/");
-        referenceValues = new AnyContentType();
-        referenceValues.addReferenceValue(new QName("Reference1"), "Value 100");
-        epr.setReferenceProperties(referenceValues);
-        epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));
-        referenceValues.addReferenceValue(new QName("Reference3"), "Value 300");
-        epr.setInterfaceName(new QName("http://www.from.org/service/port/", "Port", "portNS"));
-        epr.setReferenceProperties(referenceValues);
-
-        referenceValues = new AnyContentType();
-        referenceValues.addReferenceValue(new QName("Reference4"), "Value 400");
-        epr.setReferenceParameters(referenceValues);
         mIHeaders.setReplyTo(epr);
 
         mIHeaders.setMessageId("123456-7890");

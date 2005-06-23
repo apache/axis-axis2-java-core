@@ -1,15 +1,13 @@
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
-        <soapenv:Reference4>Value 400</soapenv:Reference4>
-        <soapenv:Reference1>Value 100</soapenv:Reference1>
-        <soapenv:Reference0>Value 0</soapenv:Reference0>
-        <soapenv:Reference2>Value 200</soapenv:Reference2>
-        <soapenv:Reference3>Value 300</soapenv:Reference3>
+        <wsa:Reference4>Value 400</wsa:Reference4>
+        <wsa:Reference1>Value 100</wsa:Reference1>
+        <wsa:Reference0>Value 0</wsa:Reference0>
+        <wsa:Reference2>Value 200</wsa:Reference2>
+        <wsa:Reference3>Value 300</wsa:Reference3>
         <wsa:ServiceName wsa:PortName="port">serviceNS:Service</wsa:ServiceName>
         <wsa:PortType>portNS:Port</wsa:PortType>
-        <wsa:From>
-            <wsa:Address>http://www.from.org/service/</wsa:Address>
-        </wsa:From>
+        <wsa:To>http://www.to.org/service/</wsa:To>
     </soapenv:Header>
     <soapenv:Body></soapenv:Body>
 </soapenv:Envelope>

@@ -114,7 +114,7 @@ public interface WSDLConstants {
 	 * following WSDL 2.0 defined MEPs: In-Only, Robust In-Only, In-Out,
 	 * In-Optional-Out, Out-In, Out-Optional-In.
 	 */
-	public static final int MESSAGE_LABEL_IN = 0;
+	public static final byte MESSAGE_LABEL_IN = 0;
 	
 	public static final String MESSAGE_LABEL_IN_VALUE = "In";
 

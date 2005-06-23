@@ -58,8 +58,8 @@ public interface AddressingConstants {
         public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE = "http://www.w3.org/2005/02/addressing/reply";
         public static final String WSA_ANONYMOUS_URL = "http://www.w3.org/2005/02/addressing/role/anonymous";
 
-        public static final String WSA_TYPE_ATTRIBUTE = "Type";
-        public static final String WSA_TYPE_ATTRIBUTE_VALUE = "parameter";
+        public static final String WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE = "IsReferenceParameter";
+        public static final String WSA_TYPE_ATTRIBUTE_VALUE = "true";
 
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
         public static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
@@ -68,5 +68,8 @@ public interface AddressingConstants {
 
     }
 
+
+    public static final String WS_ADDRESSING_VERSION = "WSAddressingVersion";
+    public static final String WSA_DEFAULT_PRFIX = "wsa";
 
 }

@@ -34,18 +34,18 @@ public class XMLComparator {
 
 
     public boolean compare(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
-        if(elementOne == null && elementTwo == null){
+        if (elementOne == null && elementTwo == null) {
             log.info("Both Elements are null.");
             return true;
         }
-        if(elementOne == null && elementTwo != null){
+        if (elementOne == null && elementTwo != null) {
             throw new XMLComparisonException("Element One is null and Element Two is not null");
         }
-        if(elementOne != null && elementTwo == null){
+        if (elementOne != null && elementTwo == null) {
             throw new XMLComparisonException("Element Two is null and Element One is not null");
         }
 
-        log.info("Now Checking "+ elementOne.getLocalName() + " and " + elementTwo.getLocalName() + "=============================");
+        log.info("Now Checking " + elementOne.getLocalName() + " and " + elementTwo.getLocalName() + "=============================");
 
         log.info("Comparing Element Names .......");
         compare("Elements names are not equal. ", elementOne.getLocalName(), elementTwo.getLocalName());
@@ -80,13 +80,16 @@ public class XMLComparator {
         Iterator elementOneChildren = elementOne.getChildren();
         while (elementOneChildren.hasNext()) {
             OMNode omNode = (OMNode) elementOneChildren.next();
-            if(omNode instanceof OMElement){
+            if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
+                if("Reference4".equals(elementOneChild.getLocalName())){
+                    System.out.println("Reference4");
+                }
                 OMElement elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());
-                if(elementTwoChild == null){
+                if (elementTwoChild == null) {
                     throw new XMLComparisonException(" There is no " + elementOneChild.getLocalName() + " element under " + elementTwo.getLocalName());
                 }
-                compare(elementOneChild,  elementTwoChild);
+                compare(elementOneChild, elementTwoChild);
             }
         }
     }
@@ -99,40 +102,40 @@ public class XMLComparator {
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
             OMAttribute attr = elementTwo.getFirstAttribute(omAttribute.getQName());
-            if(attr == null){
-                throw new XMLComparisonException("Attributes are not the same in two elements. Attribute "+ omAttribute.getLocalName() + " != ");
+            if (attr == null) {
+                throw new XMLComparisonException("Attributes are not the same in two elements. Attribute " + omAttribute.getLocalName() + " != ");
             }
             elementOneAtribCount++;
         }
 
         Iterator elementTwoIter = elementTwo.getAttributes();
         while (elementTwoIter.hasNext()) {
-           elementTwoIter.next();
+            elementTwoIter.next();
             elementTwoAtribCount++;
 
         }
 
-        if(elementOneAtribCount != elementTwoAtribCount){
-             throw new XMLComparisonException("Attributes are not the same in two elements.");
+        if (elementOneAtribCount != elementTwoAtribCount) {
+            throw new XMLComparisonException("Attributes are not the same in two elements.");
         }
     }
 
     private void compare(String failureNotice, String one, String two) throws XMLComparisonException {
-        if(!one.equals(two)){
-            throw new XMLComparisonException(failureNotice+ one + " != " + two);
+        if (!one.equals(two)) {
+            throw new XMLComparisonException(failureNotice + one + " != " + two);
         }
     }
 
     private void compare(String failureNotice, OMNamespace one, OMNamespace two) throws XMLComparisonException {
-        if(one == null && two == null){
+        if (one == null && two == null) {
             return;
-        }else if(one != null && two == null){
+        } else if (one != null && two == null) {
             throw new XMLComparisonException("First Namespace is NOT null. But the second is null");
-        }else if(one == null && two != null){
+        } else if (one == null && two != null) {
             throw new XMLComparisonException("First Namespace is null. But the second is NOT null");
         }
 
-        if(!one.getName().equals(two.getName())){
+        if (!one.getName().equals(two.getName())) {
             throw new XMLComparisonException(failureNotice + one + " != " + two);
         }
 

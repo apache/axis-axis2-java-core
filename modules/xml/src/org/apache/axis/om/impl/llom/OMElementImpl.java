@@ -149,31 +149,33 @@ public class OMElementImpl extends OMNodeImpl
         if (!"".equals(namespaceURI)) {
             ns = findNamespace(qname.getNamespaceURI(),
                     qname.getPrefix());
-        } else {
-            if (parent != null) {
-                ns = parent.getNamespace();
-            } else {
-                throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
-            }
-        }
+//        } else {
+//            if (parent != null) {
+//                ns = parent.getNamespace();
+//            } else {
+//                throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
+//            }
+//        }
 
-        /**
-         * What is left now is
-         *  1. nsURI = null & parent != null, but ns = null
-         *  2. nsURI != null, (parent doesn't have an ns with given URI), but ns = null
-         */
-        if ((ns == null) && !"".equals(namespaceURI)) {
-            String prefix = qname.getPrefix();
-            if (!"".equals(prefix)) {
-                ns = declareNamespace(namespaceURI, prefix);
-            } else {
-                ns = declareNamespace(namespaceURI, getNextNamespacePrefix());
+            /**
+             * What is left now is
+             *  1. nsURI = null & parent != null, but ns = null
+             *  2. nsURI != null, (parent doesn't have an ns with given URI), but ns = null
+             */
+            if ((ns == null) && !"".equals(namespaceURI)) {
+                String prefix = qname.getPrefix();
+                if (!"".equals(prefix)) {
+                    ns = declareNamespace(namespaceURI, prefix);
+                } else {
+                    ns = declareNamespace(namespaceURI, getNextNamespacePrefix());
+                }
+            }
+            if (ns != null) {
+                this.setNamespace(ns);
+//            throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
+                  
             }
         }
-        if (ns == null) {
-            throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
-        }
-        this.setNamespace(ns);
     }
 
     /**
