@@ -7,6 +7,7 @@ import org.apache.axis.soap.SOAPFaultValue;
 import org.apache.axis.soap.SOAPFault;
 import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.om.impl.llom.OMSerializerUtil;
 
 import javax.xml.namespace.QName;
@@ -73,7 +74,7 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
         }
     }
 
-    protected void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputer outputer, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -82,10 +83,10 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer));
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(outputer));
         }
 
-
+        XMLStreamWriter writer = outputer.getXmlStreamWriter();
         if (this.getNamespace() != null) {
            String prefix = this.getNamespace().getPrefix();
         String nameSpaceName = this.getNamespace().getName();
@@ -95,8 +96,8 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         }
 
-        OMSerializerUtil.serializeAttributes(this, writer);
-        OMSerializerUtil.serializeNamespaces(this, writer);
+        OMSerializerUtil.serializeAttributes(this, outputer);
+        OMSerializerUtil.serializeNamespaces(this, outputer);
 
 
         String text = this.getValue().getText();
@@ -105,7 +106,7 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
 
         //serilize siblings
             if (this.nextSibling != null) {
-                nextSibling.serialize(writer);
+                nextSibling.serialize(outputer);
             } else if (this.parent != null) {
                 if (!this.parent.isComplete()) {
                     builder.setCache(cache);

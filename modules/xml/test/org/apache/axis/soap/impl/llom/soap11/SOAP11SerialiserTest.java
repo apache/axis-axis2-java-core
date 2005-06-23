@@ -1,6 +1,7 @@
 package org.apache.axis.soap.impl.llom.soap11;
 
 import org.apache.axis.om.OMTestCase;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 
@@ -27,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
  */
 
 public class SOAP11SerialiserTest extends OMTestCase{
-    private XMLStreamWriter writer;
+    private OMOutputer omOutput;
 
     public SOAP11SerialiserTest(String testName) {
         super(testName);
@@ -40,19 +41,19 @@ public class SOAP11SerialiserTest extends OMTestCase{
     protected void setUp() throws Exception {
         super.setUp();
         soapEnvelope = (SOAPEnvelope) getOMBuilder("soap/soap11fault.xml").getDocumentElement();
-        writer = XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out);
+        omOutput = new OMOutputer(XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out));
     }
 
     public void testSerialise(){
         try {
-            soapEnvelope.serializeWithCache(writer);
-            writer.flush();
+            soapEnvelope.serializeWithCache(omOutput);
+            omOutput.flush();
 
             System.out.println("");
             System.out.println("=======================");
-            soapEnvelope.serialize(writer);
-            writer.flush();
+            soapEnvelope.serialize(omOutput);
+            omOutput.flush();
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
