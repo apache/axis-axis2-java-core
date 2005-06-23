@@ -193,6 +193,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                     }
                 } catch (Throwable e) {
                     log.error(e);
+                    e.printStackTrace();
                 } finally {
                     if (socket != null) {
                         this.socket.close();

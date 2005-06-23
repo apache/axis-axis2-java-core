@@ -15,14 +15,14 @@
  */
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
-
-import javax.xml.namespace.QName;
+import org.apache.axis.util.Utils;
 
 /**
  * Class Dispatcher
@@ -58,36 +58,21 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis.engine.AbstractDispatcher#findService(org.apache.axis.context.MessageContext)
      */
-    public ServiceDescription findService(MessageContext messageContext)
-        throws AxisFault {
-        final String URI_ID_STRING = "/services";
-            EndpointReference toEPR = messageContext.getTo();
-            if (toEPR != null) {
-                String filePart = toEPR.getAddress();
-
-                int index = filePart.lastIndexOf(URI_ID_STRING);
-                String serviceStr = null;
-                if (-1 != index) {
-                    serviceStr =
-                        filePart.substring(index + URI_ID_STRING.length() + 1);
-
-                    ConfigurationContext engineContext =
-                        messageContext.getSystemContext();
-
-                    if ((index = serviceStr.indexOf('/')) > 0) {
-                        serviceName = new QName(serviceStr.substring(0, index));
-                        operatoinName =
-                            new QName(serviceStr.substring(index + 1));
-                    } else {
-                        serviceName = new QName(serviceStr);
-                    }
-
-                    AxisConfiguration registry =
-                        messageContext.getSystemContext().getAxisConfiguration();
-                    return registry.getService(serviceName);
-                }
+    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
+        EndpointReference toEPR = messageContext.getTo();
+        if (toEPR != null) {
+            String filePart = toEPR.getAddress();
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            if (values[1] != null) {
+                operatoinName = new QName(values[1]);
             }
+            if (values[0] != null) {
+                serviceName = new QName(values[0]);
+                AxisConfiguration registry =
+                    messageContext.getSystemContext().getAxisConfiguration();
+                return registry.getService(serviceName);
+            }
+        }
         return null;
-
     }
 }

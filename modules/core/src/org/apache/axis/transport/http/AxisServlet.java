@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -43,9 +44,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
@@ -64,7 +63,7 @@ public class AxisServlet extends HttpServlet {
 
     private ConfigurationContext configContext;
 
-    private ListingAgent lister ;
+    private ListingAgent lister;
 
     /**
      * Method init
@@ -99,36 +98,17 @@ public class AxisServlet extends HttpServlet {
         throws ServletException, IOException {
 
         try {
-            String operation =
-                httpServletRequest.getParameter(Constants.REST_WITH_GET.GET_PARAMETER_OPERATION);
-            if (operation != null) {
-                SOAPFactory soapFactory = new SOAP11Factory();
-                SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
+            String filePart = httpServletRequest.getRequestURL().toString();
+            Enumeration enu = httpServletRequest.getParameterNames();
+            HashMap map = new HashMap();
+            while (enu.hasMoreElements()) {
+                String name = (String) enu.nextElement();
+                String value = httpServletRequest.getParameter(name);
+                map.put(name, value);
+            }
 
-                OMNamespace omNs =
-                    soapFactory.createOMNamespace(
-                        Constants.REST_WITH_GET.GET_PARAMETER_URL,
-                        "rest");
-                OMElement opElement =
-                    soapFactory.createOMElement(
-                        Constants.REST_WITH_GET.GET_PARAMETER_OPERATION,
-                        omNs);
-
-                Enumeration enu = httpServletRequest.getParameterNames();
-                while (enu.hasMoreElements()) {
-                    String name = (String) enu.nextElement();
-                    if (!Constants.REST_WITH_GET.GET_PARAMETER_OPERATION.equals(name)) {
-                        String value = httpServletRequest.getParameter(name);
-                        OMElement omEle =
-                            soapFactory.createOMElement(
-                                Constants.REST_WITH_GET.GET_PARAMETER_OPERATION,
-                                omNs);
-                        omEle.setText(value);
-                        opElement.addChild(omEle);
-                    }
-                }
-
-                envelope.getBody().addChild(opElement);
+            SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(filePart, map);
+            if (envelope != null) {
                 XMLStreamWriter wrtier =
                     XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
                 envelope.serialize(wrtier);
@@ -150,7 +130,7 @@ public class AxisServlet extends HttpServlet {
                             new QName(Constants.TRANSPORT_HTTP)),
                         configContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_HTTP)));
-                msgContext.setProperty(Constants.Configuration.DO_REST,Constants.VALUE_TRUE);
+                msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
 
                 msgContext.setEnvelope(envelope);
                 processSOAPMessage(msgContext, httpServletRequest, httpServletResponse);
@@ -252,8 +232,7 @@ public class AxisServlet extends HttpServlet {
                 req.getContentType(),
                 soapActionString,
                 msgContext);
-            msgContext.setProperty(
-                MessageContext.TRANSPORT_OUT,res.getOutputStream());
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, res.getOutputStream());
             engine.receive(msgContext);
 
             Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);

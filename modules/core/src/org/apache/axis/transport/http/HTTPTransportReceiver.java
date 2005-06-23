@@ -108,31 +108,44 @@ public class HTTPTransportReceiver {
         SOAPEnvelope soapEnvelope = null;
 
         InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
-        msgContext.setProperty(MessageContext.TRANSPORT_IN,null);
+        msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
         Reader in = new InputStreamReader(inStream);
 
         if (in != null) {
             boolean serverSide = msgContext.isServerSide();
             Map map = parseTheHeaders(in, serverSide);
+
+            msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+            Utils.configureMessageContextForHTTP(
+                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                msgContext.getWSAAction(),
+                msgContext);
+
+            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
+            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+
             if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(map.get(HTTPConstants.RESPONSE_CODE))) {
                 msgContext.setProperty(
                     MessageContext.TRANSPORT_SUCCEED,
                     HTTPConstants.RESPONSE_ACK_CODE_VAL);
                 return null;
-            }else if(HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
-                this.handleGETRequest((String)map.get(HTTPConstants.REQUEST_URI), 
-                    (OutputStream)map.get(MessageContext.TRANSPORT_OUT),
-                    msgContext.getSystemContext());
+            } else if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+                SOAPEnvelope envelope =
+                    HTTPTransportUtils.createEnvelopeFromGetRequest(
+                        requestURI,
+                        getGetRequestParameters(requestURI));
+                if (envelope == null) {
+                    this.handleGETRequest(
+                        requestURI,
+                        (OutputStream) map.get(MessageContext.TRANSPORT_OUT),
+                        msgContext.getSystemContext());
                     return null;
-            }else{
-                msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
-                Utils.configureMessageContextForHTTP(
-                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                    msgContext.getWSAAction(),
-                    msgContext);
+                } else {
+                    msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+                    return envelope;
+                }
 
-                String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            } else {
                 //getServiceLookUp(requestURI)));
 
                 // TODO see is it a Service request e.g. WSDL, list ....
@@ -141,7 +154,8 @@ public class HTTPTransportReceiver {
                     //Check for the REST behaviour, if you desire rest beahaviour
                     //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
                     Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-                    XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                    XMLStreamReader xmlreader =
+                        XMLInputFactory.newInstance().createXMLStreamReader(in);
                     StAXBuilder builder = null;
                     SOAPEnvelope envelope = null;
                     if (doREST != null && "true".equals(doREST)) {
@@ -158,13 +172,13 @@ public class HTTPTransportReceiver {
                 } catch (Exception e) {
                     throw new AxisFault(e.getMessage(), e);
                 }
-            
+
             }
         } else {
             throw new AxisFault("Input reader not found");
         }
     }
-    
+
     /**
      * This is to be called when we are certain that the message being processed is a SOAP message
      * @param msgContext
@@ -173,16 +187,21 @@ public class HTTPTransportReceiver {
      * @return
      * @throws AxisFault
      */
-    public SOAPEnvelope checkForMessage(MessageContext msgContext, ConfigurationContext engineContext, Map parsedHeaders) throws AxisFault {
-    	
+    public SOAPEnvelope checkForMessage(
+        MessageContext msgContext,
+        ConfigurationContext engineContext,
+        Map parsedHeaders)
+        throws AxisFault {
+
         SOAPEnvelope soapEnvelope = null;
         InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
-        msgContext.setProperty(MessageContext.TRANSPORT_IN,null);
+        msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
         Reader in = new InputStreamReader(inStream);
-        
-        
+
         if (in != null) {
-            if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(parsedHeaders.get(HTTPConstants.RESPONSE_CODE))) {
+            if (HTTPConstants
+                .RESPONSE_ACK_CODE_VAL
+                .equals(parsedHeaders.get(HTTPConstants.RESPONSE_CODE))) {
                 msgContext.setProperty(
                     MessageContext.TRANSPORT_SUCCEED,
                     HTTPConstants.RESPONSE_ACK_CODE_VAL);
@@ -260,17 +279,17 @@ public class HTTPTransportReceiver {
             length = readLine(reader, buf);
             if (serverSide) {
                 if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S') && (buf[3] == 'T')) {
-                	map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_POST);
+                    map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_POST);
                     index = 5;
 
                 } else if ((buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
-                	map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_GET);
+                    map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_GET);
                     index = 4;
 
                 } else {
-                	throw new AxisFault("Unsupported HTTP request type: Only GET and POST is supported");
-                }                    
-                
+                    throw new AxisFault("Unsupported HTTP request type: Only GET and POST is supported");
+                }
+
                 value = readFirstLineArg(' ');
                 map.put(HTTPConstants.REQUEST_URI, value);
                 value = readFirstLineArg('\n');
@@ -278,14 +297,14 @@ public class HTTPTransportReceiver {
             } else {
                 index = 0;
                 value = readFirstLineArg(' ');
-                if(value != null && value.indexOf("HTTP") >= 0){
+                if (value != null && value.indexOf("HTTP") >= 0) {
                     map.put(HTTPConstants.PROTOCOL_VERSION, value);
                     value = readFirstLineArg(' ');
                     map.put(HTTPConstants.RESPONSE_CODE, value);
-                }else{
+                } else {
                     map.put(HTTPConstants.RESPONSE_CODE, value);
                 }
-                
+
                 value = readFirstLineArg('\n');
                 map.put(HTTPConstants.RESPONSE_WORD, value);
             }
@@ -522,73 +541,120 @@ public class HTTPTransportReceiver {
         }
     }
 
-    private void handleGETRequest(String reqUri, OutputStream out,ConfigurationContext configurationContext) {
-        
-    try {
-        out.write(this.getServicesHTML(configurationContext).getBytes());
-        out.flush();
-        out.close();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-    
-    
-/**
- * Returns the HTML text for the list of services deployed
- * This can be delegated to another Class as well
- * where it will handle more options of GET messages :-?
- * @return
- */
-private String getServicesHTML(ConfigurationContext configurationContext) {
-    String temp = "";
-    Map services = configurationContext.getAxisConfiguration().getServices();
-    Hashtable erroneousServices = configurationContext.getAxisConfiguration().getFaulytServices();
-    boolean status = false;
-        
-    if(services!= null && !services.isEmpty()) {
-        status = true;
-        Collection serviceCollection = services.values();
-        for(Iterator it = serviceCollection.iterator(); it.hasNext();) {
-            Map operations;
-            Collection operationsList;
-            ServiceDescription axisService = (ServiceDescription) it.next();
-            operations = axisService.getOperations();
-            operationsList = operations.values();
-            temp += "<h2>" + "Deployed services" + "</h2>";
-            temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
-            if(operationsList.size() > 0) {
-                temp += "Available operations <ul>";
-                for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                    OperationDescription axisOperation = (OperationDescription) iterator1.next();
-                    temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
-                }
-                temp += "</ul>";
-            } else {
-                temp += "No operations speficied for this service";
-            }
+    private void handleGETRequest(
+        String reqUri,
+        OutputStream out,
+        ConfigurationContext configurationContext) {
+
+        try {
+            out.write(this.getServicesHTML(configurationContext).getBytes());
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-        
-    if(erroneousServices != null && !erroneousServices.isEmpty()) {
-            
-       temp += "<hr><h2><font color=\"blue\">Faulty Services</font></h2>";
-       status = true;
-       Enumeration faultyservices = erroneousServices.keys();
-       while (faultyservices.hasMoreElements()) {
-           String faultyserviceName = (String) faultyservices.nextElement();
-           temp += "<h3><font color=\"blue\">" + faultyserviceName + "</font></h3>";
-       }
+
+    /**
+     * Returns the HTML text for the list of services deployed
+     * This can be delegated to another Class as well
+     * where it will handle more options of GET messages :-?
+     * @return
+     */
+    private String getServicesHTML(ConfigurationContext configurationContext) {
+        String temp = "";
+        Map services = configurationContext.getAxisConfiguration().getServices();
+        Hashtable erroneousServices =
+            configurationContext.getAxisConfiguration().getFaulytServices();
+        boolean status = false;
+
+        if (services != null && !services.isEmpty()) {
+            status = true;
+            Collection serviceCollection = services.values();
+            for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
+                Map operations;
+                Collection operationsList;
+                ServiceDescription axisService = (ServiceDescription) it.next();
+                operations = axisService.getOperations();
+                operationsList = operations.values();
+                temp += "<h2>" + "Deployed services" + "</h2>";
+                temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
+                if (operationsList.size() > 0) {
+                    temp += "Available operations <ul>";
+                    for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
+                        OperationDescription axisOperation =
+                            (OperationDescription) iterator1.next();
+                        temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                    }
+                    temp += "</ul>";
+                } else {
+                    temp += "No operations speficied for this service";
+                }
+            }
+        }
+
+        if (erroneousServices != null && !erroneousServices.isEmpty()) {
+
+            temp += "<hr><h2><font color=\"blue\">Faulty Services</font></h2>";
+            status = true;
+            Enumeration faultyservices = erroneousServices.keys();
+            while (faultyservices.hasMoreElements()) {
+                String faultyserviceName = (String) faultyservices.nextElement();
+                temp += "<h3><font color=\"blue\">" + faultyserviceName + "</font></h3>";
+            }
+        }
+
+        if (!status) {
+            temp = "<h2>There are no services deployed</h2>";
+        }
+
+        temp =
+            "<html><head><title>Axis2: Services</title></head>"
+                + "<body>"
+                + temp
+                + "</body></html>";
+
+        return temp;
     }
 
-    if(!status) {
-            temp = "<h2>There are no services deployed</h2>";
+    private Map getGetRequestParameters(String requestURI) {
+        Map map = new HashMap();
+
+        char[] chars = requestURI.toCharArray();
+        final int NOT_BEGUN = 1500;
+        final int INSIDE_NAME = 1501;
+        final int INSIDE_VALUE = 1502;
+
+        int state = NOT_BEGUN;
+        StringBuffer name = new StringBuffer();
+        StringBuffer value = new StringBuffer();
+
+        for (int index = 0; index < chars.length; index++) {
+            if (state == NOT_BEGUN) {
+                if (chars[index] == '?') {
+                    state = INSIDE_NAME;
+                }
+            } else if (state == INSIDE_NAME) {
+                if (chars[index] == '=') {
+                    state = INSIDE_VALUE;
+                } else {
+                    name.append(chars[index]);
+                }
+            } else if (state == INSIDE_VALUE) {
+                if (chars[index] == ',') {
+                    state = INSIDE_NAME;
+                    map.put(name.toString(), value.toString());
+                    name.delete(0, name.length());
+                    value.delete(0, value.length());
+                } else {
+                    value.append(chars[index]);
+                }
+            }
+        }
+        if (name.length() + value.length() > 0) {
+            map.put(name.toString(), value.toString());
+        }
+        return map;
     }
-        
-    temp = "<html><head><title>Axis2: Services</title></head>" +
-      "<body>" + temp + "</body></html>";
-        
-    return temp;
-}
 
 }

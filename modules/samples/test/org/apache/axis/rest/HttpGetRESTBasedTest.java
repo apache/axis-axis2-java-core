@@ -23,11 +23,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
+import org.apache.axis.util.Utils;
 
 public class HttpGetRESTBasedTest extends TestCase {
+    private QName serviceName = new QName("EchoXMLService");
+    private QName operationName = new QName("echoOMElement");
+
 
     public HttpGetRESTBasedTest() {
         super(HttpGetRESTBasedTest.class.getName());
@@ -38,29 +46,33 @@ public class HttpGetRESTBasedTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
- //       UtilServer.start();
+       UtilServer.start();
+       
+       ServiceDescription service =
+                       Utils.createSimpleService(serviceName,Echo.class.getName(),operationName);
+               UtilServer.deployService(service);
 
     }
 
     protected void tearDown() throws Exception {
-
- //       UtilServer.stop();
+        UtilServer.unDeployService(serviceName);
+       UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {
         //TODO support the GET with the Simple Axis Server and enable this test case
-//        URL wsdlrequestUrl =
-//            new URL("http://127.0.0.1:8080/axis2/services/Version/getVersion?operation=getVersion");
-//
-//        HttpURLConnection connection = (HttpURLConnection) wsdlrequestUrl.openConnection();
-//        BufferedReader reader =
-//            new BufferedReader(new InputStreamReader(connection.getInputStream()));
-//        connection.getResponseCode();
-//        String line = reader.readLine();
-//        while (line != null) {
-//            System.out.println(line);
-//            line = reader.readLine();
-//        }
+        URL wsdlrequestUrl =
+            new URL("http://127.0.0.1:5555/axis2/services/EchoXMLService/echoOMElement?value1=value1,value2=value2");
+
+        HttpURLConnection connection = (HttpURLConnection) wsdlrequestUrl.openConnection();
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        connection.getResponseCode();
+        String line = reader.readLine();
+        while (line != null) {
+            System.out.println(line);
+            line = reader.readLine();
+        }
     }
 
 }

@@ -91,6 +91,8 @@ public class Constants {
     /**
      * Field LISTSERVICES
      */
+    public static final String REQUEST_URL_PREFIX = "/services";
+    
     public static final String LISTSERVICES = "listServices";
 
     public static final String LIST_SERVICE_FOR_MODULE_ENGAMNET = "listoperation";

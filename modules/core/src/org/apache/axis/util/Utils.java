@@ -37,8 +37,8 @@ import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
 import org.apache.wsdl.WSDLService;
 
 public class Utils {
-    
-    public static void addHandler(Flow flow,Handler handler,String phaseName){
+
+    public static void addHandler(Flow flow, Handler handler, String phaseName) {
         HandlerDescription handlerDesc = new HandlerDescription();
         PhaseRule rule = new PhaseRule(phaseName);
         handlerDesc.setRules(rule);
@@ -47,38 +47,37 @@ public class Utils {
         flow.addHandler(handlerDesc);
     }
 
-   
-//    public static void addPhasesToServiceFromFlow(
-//        ServiceContext serviceContext,
-//        String phaseName,
-//        Flow flow,
-//        int flowtype)
-//        throws AxisFault {
-//                ArrayList faultchain = new ArrayList();
-//                Phase p = new Phase(Constants.PHASE_SERVICE);
-//                faultchain.add(p);
-//                addHandlers(flow, p);
-//                serviceContext.setPhases(faultchain, flowtype);
-//    }
+    //    public static void addPhasesToServiceFromFlow(
+    //        ServiceContext serviceContext,
+    //        String phaseName,
+    //        Flow flow,
+    //        int flowtype)
+    //        throws AxisFault {
+    //                ArrayList faultchain = new ArrayList();
+    //                Phase p = new Phase(Constants.PHASE_SERVICE);
+    //                faultchain.add(p);
+    //                addHandlers(flow, p);
+    //                serviceContext.setPhases(faultchain, flowtype);
+    //    }
 
-//    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
-//        ServiceDescription service = serviceContext.getServiceConfig();
-//        addPhasesToServiceFromFlow(
-//            serviceContext,
-//            Constants.PHASE_SERVICE,
-//            service.getInFlow(),
-//            AxisConfiguration.INFLOW);
-//        addPhasesToServiceFromFlow(
-//            serviceContext,
-//            Constants.PHASE_SERVICE,
-//            service.getOutFlow(),
-//            AxisConfiguration.OUTFLOW);
-//        addPhasesToServiceFromFlow(
-//            serviceContext,
-//            Constants.PHASE_SERVICE,
-//            service.getFaultInFlow(),
-//            AxisConfiguration.FAULT_IN_FLOW);
-//    }
+    //    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
+    //        ServiceDescription service = serviceContext.getServiceConfig();
+    //        addPhasesToServiceFromFlow(
+    //            serviceContext,
+    //            Constants.PHASE_SERVICE,
+    //            service.getInFlow(),
+    //            AxisConfiguration.INFLOW);
+    //        addPhasesToServiceFromFlow(
+    //            serviceContext,
+    //            Constants.PHASE_SERVICE,
+    //            service.getOutFlow(),
+    //            AxisConfiguration.OUTFLOW);
+    //        addPhasesToServiceFromFlow(
+    //            serviceContext,
+    //            Constants.PHASE_SERVICE,
+    //            service.getFaultInFlow(),
+    //            AxisConfiguration.FAULT_IN_FLOW);
+    //    }
 
     public static ServiceDescription createSimpleService(
         QName serviceName,
@@ -88,7 +87,7 @@ public class Utils {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
-        
+
         OperationDescription axisOp = new OperationDescription(opName);
         axisOp.setMessageReciever(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
@@ -96,14 +95,14 @@ public class Utils {
         return service;
     }
 
-//    public static ServiceContext createServiceContext(
-//        ServiceDescription service,
-//        ConfigurationContext engineContext)
-//        throws AxisFault {
-//        ServiceContext serviceContext = new ServiceContext(service, engineContext);
-//        createExecutionChains(serviceContext);
-//        return serviceContext;
-//    }
+    //    public static ServiceContext createServiceContext(
+    //        ServiceDescription service,
+    //        ConfigurationContext engineContext)
+    //        throws AxisFault {
+    //        ServiceContext serviceContext = new ServiceContext(service, engineContext);
+    //        createExecutionChains(serviceContext);
+    //        return serviceContext;
+    //    }
 
     public static ServiceDescription createSimpleService(
         QName serviceName,
@@ -116,44 +115,78 @@ public class Utils {
             opName);
     }
 
-//    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
-//        if (flow != null) {
-//            int handlerCount = flow.getHandlerCount();
-//            for (int i = 0; i < handlerCount; i++) {
-//                phase.addHandler(flow.getHandler(i).getHandler());
-//            }
-//        }
-//    }
-    public static void resolvePhases(AxisConfiguration axisconfig,ServiceDescription serviceDesc) throws AxisFault, PhaseException{
-        PhaseResolver pr = new PhaseResolver(axisconfig,serviceDesc);
+    //    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
+    //        if (flow != null) {
+    //            int handlerCount = flow.getHandlerCount();
+    //            for (int i = 0; i < handlerCount; i++) {
+    //                phase.addHandler(flow.getHandler(i).getHandler());
+    //            }
+    //        }
+    //    }
+    public static void resolvePhases(AxisConfiguration axisconfig, ServiceDescription serviceDesc)
+        throws AxisFault, PhaseException {
+        PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
         pr.buildchains();
     }
-    
-    public static String getParameterValue(Parameter param){
-        if(param == null){
+
+    public static String getParameterValue(Parameter param) {
+        if (param == null) {
             return null;
-        }else{
-            return (String)param.getValue();
+        } else {
+            return (String) param.getValue();
         }
     }
-    
-    public static void configureMessageContextForHTTP(String contextType,String soapAction, MessageContext msgCtx) throws AxisFault{
-        if(Constants.SOAP.MTOM_CONTENT_TYPE.equals(contextType)){
-            if(Constants.VALUE_TRUE.equals(msgCtx.getProperty(Constants.Configuration.ENABLE_MTOM))){
-                msgCtx.setProperty(Constants.Configuration.DO_MTOM,Constants.VALUE_TRUE);
-            }else{
+
+    public static void configureMessageContextForHTTP(
+        String contextType,
+        String soapAction,
+        MessageContext msgCtx)
+        throws AxisFault {
+        if (Constants.SOAP.MTOM_CONTENT_TYPE.equals(contextType)) {
+            if (Constants
+                .VALUE_TRUE
+                .equals(msgCtx.getProperty(Constants.Configuration.ENABLE_MTOM))) {
+                msgCtx.setProperty(Constants.Configuration.DO_MTOM, Constants.VALUE_TRUE);
+            } else {
                 throw new AxisFault("MTOTM Not supported");
             }
-        }else  if(Constants.SOAP.SOAP_12_CONTENT_TYPE.equals(contextType)){
+        } else if (Constants.SOAP.SOAP_12_CONTENT_TYPE.equals(contextType)) {
             //TODO what to do with 1.2 for REST
-        }else  if(contextType != null && contextType.indexOf(Constants.SOAP.SOAP_11_CONTENT_TYPE) > -1){
-            if((soapAction == null || soapAction.length() == 0) 
-            && Constants.VALUE_TRUE.equals(msgCtx.getProperty(Constants.Configuration.ENABLE_REST))){
-                msgCtx.setProperty(Constants.Configuration.DO_REST,Constants.VALUE_TRUE);
+        } else if (
+            contextType != null && contextType.indexOf(Constants.SOAP.SOAP_11_CONTENT_TYPE) > -1) {
+            if ((soapAction == null || soapAction.length() == 0)
+                && Constants.VALUE_TRUE.equals(
+                    msgCtx.getProperty(Constants.Configuration.ENABLE_REST))) {
+                msgCtx.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
             }
         }
-    
+
     }
-    
-    
+
+    public static String[] parseRequestURLForServiceAndOperation(String filePart) {
+        String[] values = new String[2];
+
+        int index = filePart.lastIndexOf(Constants.REQUEST_URL_PREFIX);
+        String serviceStr = null;
+        if (-1 != index) {
+            serviceStr = filePart.substring(index + Constants.REQUEST_URL_PREFIX.length() + 1);
+            if ((index = serviceStr.indexOf('/')) > 0) {
+
+                values[0] = serviceStr.substring(0, index);
+                int lastIndex = serviceStr.indexOf('?');
+                if(lastIndex >= 0){
+                    values[1] = serviceStr.substring(index + 1,lastIndex);
+                }else{
+                    values[1] = serviceStr.substring(index + 1);
+                }
+                
+                
+                
+            } else {
+                values[0] = serviceStr;
+            }
+        }
+        return values;
+    }
+
 }
