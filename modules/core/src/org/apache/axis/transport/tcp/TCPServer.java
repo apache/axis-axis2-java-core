@@ -15,6 +15,7 @@
  */
 package org.apache.axis.transport.tcp;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -175,6 +176,15 @@ public class TCPServer extends TransportListener implements Runnable {
             serversocket = ListenerManager.openSocket(port);
         }
 
+    }
+    public static void main(String[] args) throws AxisFault, NumberFormatException{
+        if (args.length != 2) {
+            System.out.println("TCPServer repositoryLocation port");
+        }
+        TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]),args[0]);
+        System.out.println("[Axis2] Using the Repository " + new File(args[1]).getAbsolutePath());
+        System.out.println("[Axis2] Starting the TCP Server on port "+ args[0]);
+        tcpServer.start();
     }
 
 }

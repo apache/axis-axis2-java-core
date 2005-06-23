@@ -18,9 +18,7 @@ package org.apache.axis.transport.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -309,6 +307,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);
         try {
+            System.out.println("[Axis2] Using the Repository " + new File(args[1]).getAbsolutePath());
+            System.out.println("[Axis2] Starting the SimpleHTTPServer on port "+ args[0]);
             thread.start();
             System.in.read();
         } finally {
