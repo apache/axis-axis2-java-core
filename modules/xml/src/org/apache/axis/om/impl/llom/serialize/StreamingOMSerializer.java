@@ -15,13 +15,14 @@
  */
 package org.apache.axis.om.impl.llom.serialize;
 
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMSerializer;
-
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMSerializer;
+import org.apache.axis.om.impl.llom.OMOutputer;
 
 /**
  * Class StreamingOMSerializer
@@ -44,28 +45,31 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * Method serializeWithCache
      *
      * @param obj
-     * @param writer
+     * @param outputer
      * @throws XMLStreamException
      */
-    public void serialize(Object obj, XMLStreamWriter writer)
+    public void serialize(Object obj, OMOutputer outputer)
             throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
             throw new UnsupportedOperationException(
                     "Unsupported input object. Must be of the the type XMLStreamReader");
         }
         XMLStreamReader node = (XMLStreamReader) obj;
-        serializeNode(node, writer);
+        serializeNode(node, outputer);
     }
 
     /**
      * Method serializeNode
      *
      * @param reader
-     * @param writer
+     * @param outputer
      * @throws XMLStreamException
      */
-    protected void serializeNode(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeNode(XMLStreamReader reader, OMOutputer outputer)
             throws XMLStreamException {
+    	//TODO We get the StAXWriter at this point and uses it hereafter assuming that this is the only entry point to this class.
+    	// If there can be other classes calling methodes of this we might need to change methode signatures to OMOutputer
+    	XMLStreamWriter writer = outputer.getXmlStreamWriter();
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == START_ELEMENT) {
