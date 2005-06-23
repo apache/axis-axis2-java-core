@@ -28,9 +28,13 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
+
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
 
 /**
  * This is a Simple java Provider.
@@ -127,8 +131,15 @@ public class RawXMLINOutMessageRecevier
                 newmsgContext.setEnvelope(envelope);
             } else if((parameters != null)
                     && (parameters.length == 0)){
-            	SOAPEnvelope envelope = null;
-
+                        SOAPFactory fac = null;
+                String nsURI = msgContext.getEnvelope().getNamespace().getName();
+                if(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)){
+                    fac = OMAbstractFactory.getSOAP12Factory();
+                }else{
+                    fac = OMAbstractFactory.getSOAP11Factory();
+                }
+                
+                SOAPEnvelope envelope = fac.getDefaultEnvelope();
                 String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
@@ -137,7 +148,6 @@ public class RawXMLINOutMessageRecevier
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
@@ -146,8 +156,6 @@ public class RawXMLINOutMessageRecevier
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-                    envelope = fac.getDefaultEnvelope();
 
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
                     OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
