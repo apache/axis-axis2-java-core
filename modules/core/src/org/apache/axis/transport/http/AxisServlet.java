@@ -112,7 +112,7 @@ public class AxisServlet extends HttpServlet {
             if (envelope != null) {
                 OMOutputer outputer =
                     new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                envelope.serialize(wrtier);
+                envelope.serialize(outputer);
                 System.out.flush();
                 Object sessionContext =
                     httpServletRequest.getSession().getAttribute(
