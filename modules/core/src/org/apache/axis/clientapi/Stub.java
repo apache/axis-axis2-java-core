@@ -27,11 +27,16 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
 
 
 
@@ -116,32 +121,38 @@ public abstract class Stub {
         OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,"ns1");
         OMElement elt =  fac.createOMElement(methodName,methodNamespace);
         if (paramNames!=null){
-        //find the relevant object here, convert it and add it to the elt
-        for (int i = 0; i < paramNames.length; i++) {
-            String paramName = paramNames[i];
-            Object value  = values[i];
-            elt.addChild(StubSupporter.createRPCMappedElement(paramName,
-                    fac.createOMNamespace("",null),//empty namespace
-                    value,
-                    fac));
-        }
+            //find the relevant object here, convert it and add it to the elt
+            for (int i = 0; i < paramNames.length; i++) {
+                String paramName = paramNames[i];
+                Object value  = values[i];
+                elt.addChild(StubSupporter.createRPCMappedElement(paramName,
+                        fac.createOMNamespace("",null),//empty namespace
+                        value,
+                        fac));
+            }
         }
         body.addChild(elt);
     }
 
 
-    protected void setValueDOC(SOAPEnvelope env,OMElement value){
-        SOAPBody body = env.getBody();
-        body.addChild(value);
+    protected OMElement getElementFromReader(XMLStreamReader reader) {
+        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(),reader) ;
+        return builder.getDocumentElement();
     }
 
+    protected void setValueDoc(SOAPEnvelope env,OMElement value){
+        if (value!=null){
+            SOAPBody body = env.getBody();
+            body.addChild(value);
+        }
+    }
 
-    protected Object getValue(SOAPEnvelope env,String type,Class outputType){
+    protected OMElement getElement(SOAPEnvelope env,String type){
         SOAPBody body = env.getBody();
         OMElement element = body.getFirstElement();
 
         if (WSDLService.STYLE_RPC.equals(type)){
-            return StubSupporter.getRPCMappedElementValue(element.getFirstElement(),outputType);
+            return element.getFirstElement(); //todo this needs to be fixed
         }else if (WSDLService.STYLE_DOC.equals(type)){
             return element;
         }else {
@@ -149,11 +160,25 @@ public abstract class Stub {
         }
 
     }
+
+//    protected Object getValue(SOAPEnvelope env,String type,Class outputType){
+//        SOAPBody body = env.getBody();
+//        OMElement element = body.getFirstElement();
+//
+//        if (WSDLService.STYLE_RPC.equals(type)){
+//            return StubSupporter.getRPCMappedElementValue(element.getFirstElement(),outputType);
+//        }else if (WSDLService.STYLE_DOC.equals(type)){
+//            return element;
+//        }else {
+//            throw new UnsupportedOperationException("Unsupported type");
+//        }
+//
+//    }
     /**
      * get the message context
      */
     protected MessageContext getMessageContext() throws AxisFault {
-            return new MessageContext(_configurationContext);
+        return new MessageContext(_configurationContext);
     }
 
 

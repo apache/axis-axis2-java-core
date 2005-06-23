@@ -41,7 +41,7 @@ public interface TypeMapper {
      * @param qname name of the XML element to be mapped
      * @return a class that represents the particualr type
      */
-    public Class getTypeMapping(QName qname);
+    public String getTypeMapping(QName qname);
 
     /**
      * Get the parameter name

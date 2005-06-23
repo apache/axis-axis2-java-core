@@ -32,6 +32,8 @@ import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
 import org.apache.axis.wsdl.codegen.extension.PackageFinder;
+import org.apache.axis.wsdl.codegen.extension.XMLBeansExtension;
+import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
 
 /**
@@ -68,26 +70,32 @@ public class CodeGenerationEngine {
         AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
         axisBindingBuilder.init(this.configuration);
         axisBindingBuilder.engage();
+
         PackageFinder packageFinder = new PackageFinder();
         packageFinder.init(this.configuration);
         this.moduleEndpoints.add(packageFinder);
 
+        XMLBeansExtension xmlBeanExtension = new XMLBeansExtension();
+        xmlBeanExtension.init(this.configuration);
+        this.moduleEndpoints.add(xmlBeanExtension);
     }
 
 
     public void generate()throws CodeGenerationException{
+
         for(int i = 0; i< this.moduleEndpoints.size(); i++){
             ((CodeGenExtention)this.moduleEndpoints.get(i)).engage();
         }
 
-        Emitter clientEmitter = null;
+        Emitter emitter = null;
+        TypeMapper mapper = configuration.getTypeMapper();
 
         switch (configuration.getOutputLanguage()){
             case XSLTConstants.LanguageTypes.JAVA:
-                clientEmitter =  new JavaEmitter(this.configuration);
+                emitter =  new JavaEmitter(this.configuration,mapper);
                 break;
             case XSLTConstants.LanguageTypes.C_SHARP:
-                clientEmitter = new CSharpEmitter(this.configuration);
+                emitter = new CSharpEmitter(this.configuration,mapper);
                 break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
             case XSLTConstants.LanguageTypes.VB_DOT_NET:
@@ -97,9 +105,9 @@ public class CodeGenerationEngine {
 
         }
         if (this.configuration.isServerSide())
-            clientEmitter.emitSkeleton();
+            emitter.emitSkeleton();
         else
-            clientEmitter.emitStub();
+            emitter.emitStub();
 
 
     }

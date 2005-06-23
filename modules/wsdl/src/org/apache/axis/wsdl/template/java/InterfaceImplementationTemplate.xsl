@@ -6,6 +6,7 @@
     <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
+    <xsl:variable name="dbpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
 
     /*
@@ -39,7 +40,7 @@
 
            this.toEPR = new org.apache.axis.addressing.EndpointReference(org.apache.axis.addressing.AddressingConstants.WSA_TO,targetEndpoint);
 		    //creating the configuration
-           _configurationContext = new org.apache.axis.context.ConfigurationContextFactory().buildClientEngineContext(axis2Home);
+           _configurationContext = new org.apache.axis.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
             _configurationContext.getAxisConfiguration().addService(_service);
            _serviceContext = _configurationContext.createServiceContext(_service.getName());
 
@@ -56,8 +57,10 @@
 
      <xsl:for-each select="method">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+         <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
          <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
          <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
+         <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>  
 
          <!-- When genrating code, the MEP should be taken into account    -->
 
@@ -74,33 +77,67 @@
             _call.setTo(toEPR);
             org.apache.axis.soap.SOAPEnvelope env = null;
             env = createEnvelope();
+              //create a databinder
+            <xsl:variable name="fullsupporterclassname"><xsl:value-of select="$dbpackage"/>.<xsl:value-of select="$dbsupportclassname"/></xsl:variable>
+            <xsl:value-of select="$fullsupporterclassname"/> databindSupporter = new <xsl:value-of select="$fullsupporterclassname"/>();
+
              <xsl:choose>
               <xsl:when test="$inputtype!=''">
-                setValueRPC(env,
+                  <xsl:choose>
+
+                      <xsl:when test="$style='rpc'">
+                       // Style is RPC
+                             setValueRPC(env,
                             "<xsl:value-of select="@namespace"/>",
                             "<xsl:value-of select="@name"/>",
                             new String[]{"<xsl:value-of select="$inputparam"/>"},
-                            new Object[]{<xsl:value-of select="$inputparam"/>});     //fix this - code is RPC only
+                            new Object[]{<xsl:value-of select="$inputparam"/>});  //this needs to be fixed
+                      </xsl:when>
+
+                      <xsl:when test="$style='doc'">
+                       //Style is Doc
+                       setValueDoc(env,databindSupporter.toOM(<xsl:value-of select="$inputparam"/>));
+                      </xsl:when>
+                      <xsl:otherwise>
+                       //Unknown style!! No code is generated
+                       throw java.lang.UnsupportedOperationException("Unknown Style");
+                      </xsl:otherwise>
+                  </xsl:choose>
               </xsl:when>
               <xsl:otherwise>
-               setValueRPC(env,
+                   <xsl:choose>
+                   <xsl:when test="$style='rpc'">
+                       //Style is RPC. No input parameters
+                          setValueRPC(env,
                             "<xsl:value-of select="@namespace"/>",
                             "<xsl:value-of select="@name"/>",
                             null,
-                            null);     //fix this - code is RPC only
+                            null);
+                      </xsl:when>
+                      <!-- The follwing code is specific to XML beans-->
+                      <xsl:when test="$style='doc'">
+                       //Style is Doc. No input parameters
+                       setValueDoc(env,null);
+                      </xsl:when>
+                      <xsl:otherwise>
+                         //Unknown style!! No code is generated
+                          throw UnsupportedOperationException("Unknown Style");
+                      </xsl:otherwise>
+                  </xsl:choose>
+
              </xsl:otherwise>
             </xsl:choose>
              _messageContext.setEnvelope(env);
              <xsl:choose>
                  <xsl:when test="$outputtype=''">
-                    _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
-                    return;
-                 </xsl:when>
-                 <xsl:otherwise>
+               _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
+               return;
+              </xsl:when>
+              <xsl:otherwise>
              org.apache.axis.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
              org.apache.axis.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
-             <!-- todo this needs to be fixed -->
-             return (<xsl:value-of select="$outputtype"/>)getValue(_returnEnv,"rpc",<xsl:value-of select="$outputtype"/>.class);
+             java.lang.Object object = databindSupporter.fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+             return (<xsl:value-of select="$outputtype"/>)object;
                  </xsl:otherwise>
              </xsl:choose>
 
@@ -117,23 +154,50 @@
              org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_serviceContext);<!-- this needs to change -->
  		     org.apache.axis.context.MessageContext _messageContext = getMessageContext();
              _call.setTo(toEPR);
-             org.apache.axis.soap.SOAPEnvelope env = null;
+             org.apache.axis.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
               <xsl:when test="$inputtype!=''">
-                env = createEnvelope();
-                setValueRPC(env,
+              <xsl:choose>
+               <xsl:when test="$style='rpc'">
+                       // Style is RPC
+                             setValueRPC(env,
                             "<xsl:value-of select="@namespace"/>",
                             "<xsl:value-of select="@name"/>",
                             new String[]{"<xsl:value-of select="$inputparam"/>"},
                             new Object[]{<xsl:value-of select="$inputparam"/>});
+                      </xsl:when>
+                      <!-- The follwing code is specific to XML beans-->
+                      <xsl:when test="$style='doc'">
+                       //Style is Doc
+                       setValueDoc(env,getElementFromReader(<xsl:value-of select="$inputparam"/>.newXMLStreamReader()));
+                      </xsl:when>
+                      <xsl:otherwise>
+                          //Unknown style!! No code is generated
+                          throw UnsupportedOperationException("Unknown Style");
+                      </xsl:otherwise>
+                  </xsl:choose>
               </xsl:when>
               <xsl:otherwise>
-                env = createEnvelope();
-                setValueRPC(env,
+                   <xsl:choose>
+                   <xsl:when test="$style='rpc'">
+                       //Style is RPC. No input parameters
+                          setValueRPC(env,
                             "<xsl:value-of select="@namespace"/>",
                             "<xsl:value-of select="@name"/>",
                             null,
                             null);
+                      </xsl:when>
+                      <!-- The follwing code is specific to XML beans-->
+                      <xsl:when test="$style='doc'">
+                       //Style is Doc. No input parameters
+                       setValueDoc(env,null);
+                      </xsl:when>
+                      <xsl:otherwise>
+                         //Unknown style!! No code is generated
+                          throw UnsupportedOperationException("Unknown Style");
+                      </xsl:otherwise>
+                  </xsl:choose>
+
              </xsl:otherwise>
             </xsl:choose>
              _messageContext.setEnvelope(env);

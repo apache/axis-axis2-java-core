@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.wsdl.WSDLDescription;
+import org.apache.axis.wsdl.databinding.TypeMapper;
 
 /**
  * @author chathura@opensource.lk
@@ -31,7 +32,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 	private CommandLineOptionParser parser;
 	private File outputLocation;
     private int outputLanguage = XSLTConstants.LanguageTypes.JAVA;
+    private int databindingType = XSLTConstants.DataBindingTypes.XML_BEANS; //default is XML beans
     private boolean advancedCodeGenEnabled=false;
+
 
     private boolean asyncOn=true;
     private boolean syncOn=true;
@@ -41,6 +44,24 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeMessageReceiver = true;
     private String packageName=XSLTConstants.DEFAULT_PACKAGE_NAME;
 
+
+    private TypeMapper typeMapper;
+
+    public TypeMapper getTypeMapper() {
+        return typeMapper;
+    }
+
+    public void setTypeMapper(TypeMapper typeMapper) {
+        this.typeMapper = typeMapper;
+    }
+
+    public int getDatabindingType() {
+        return databindingType;
+    }
+
+    public void setDatabindingType(int databindingType) {
+        this.databindingType = databindingType;
+    }
 
 	/**
 	 * @param wom

@@ -36,13 +36,13 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
      *
      * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
      */
-    public Class getTypeMapping(QName qname) {
+    public String getTypeMapping(QName qname) {
         if ((qname!=null)){
             Object o = map.get(qname);
             if (o!=null){
-               return (Class)o;
+               return (String)o;
             }else{
-                return OMElement.class;
+                return "java.lang.Object";
             }
         }
 

@@ -3,7 +3,12 @@
     <xsl:template match="/interface">
     <xsl:comment>Auto generated Axis Service XML</xsl:comment>
     <service><xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>
-    <parameter name="ServiceClass" locked="xsd:false"><xsl:value-of select="@package"/>.<xsl:value-of select="@name"/></parameter>
+    <parameter name="ServiceClass" locked="xsd:false">
+        <xsl:choose>
+            <xsl:when test="@package=''"><xsl:value-of select="@name"/></xsl:when>
+            <xsl:otherwise> <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/></xsl:otherwise>
+        </xsl:choose>
+       </parameter>
     <xsl:for-each select="method">
          <xsl:comment>Mounting the method <xsl:value-of select="@name"/> </xsl:comment>
          <operation><xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute></operation>

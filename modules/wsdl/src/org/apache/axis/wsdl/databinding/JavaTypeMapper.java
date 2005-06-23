@@ -60,4 +60,7 @@ public class JavaTypeMapper extends TypeMappingAdapter{
        this.map.put(new QName(XSD_SCHEMA_URL,"QName"),QName.class);
     }
 
+    public String toString() {
+        return this.map.toString();
+    }
 }

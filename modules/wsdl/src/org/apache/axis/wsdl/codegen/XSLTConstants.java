@@ -31,6 +31,12 @@ public interface XSLTConstants {
         public static final int VB_DOT_NET=4;
     }
 
+      public interface DataBindingTypes{
+
+        public static final int XML_BEANS=1;
+        public static final int JAXB=2;
+
+    }
     /**
      * Interface templates
      */
@@ -77,7 +83,17 @@ public interface XSLTConstants {
     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestClassTemplate.xsl";
     	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/TestClassTemplate.xsl";
     }
-    
+
+     public interface XSLTDatabindingSupporterTemplates{
+    	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/XMLBeansSupporterTemplate.xsl";
+    	//public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/TestClassTemplate.xsl";
+    }
+
+    public interface XSLTLocalTestClassTemplates{
+    	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestClassTemplate.xsl";
+    	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/LocalTestClassTemplate.xsl";
+    }
+
     public interface XSLTTestSkeltonImplTemplates{
     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestSkeletonImplTemplate.xsl";
     }
