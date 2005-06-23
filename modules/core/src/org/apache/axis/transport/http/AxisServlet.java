@@ -45,6 +45,7 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
@@ -109,8 +110,8 @@ public class AxisServlet extends HttpServlet {
 
             SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(filePart, map);
             if (envelope != null) {
-                XMLStreamWriter wrtier =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+                OMOutputer outputer =
+                    new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
                 envelope.serialize(wrtier);
                 System.out.flush();
                 Object sessionContext =
