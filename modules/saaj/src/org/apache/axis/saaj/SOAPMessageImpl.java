@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.transport.http.HTTPConstants;
 
 /**
@@ -195,9 +196,9 @@ public class SOAPMessageImpl extends SOAPMessage {
 	 */
 	public void writeTo(OutputStream out) throws SOAPException, IOException {
 		try{
-		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-		((SOAPEnvelopeImpl)mSOAPPart.getEnvelope()).getOMEnvelope().serialize(writer);
-		writer.flush();
+		OMOutputer outputer = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(out));
+		((SOAPEnvelopeImpl)mSOAPPart.getEnvelope()).getOMEnvelope().serialize(outputer);
+		outputer.flush();
 		} catch(Exception e){
 			throw new SOAPException(e);
 		}
