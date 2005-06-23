@@ -18,6 +18,8 @@ package org.apache.axis.om;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axis.om.impl.llom.OMOutputer;
+
 /**
  * Interface OMSerializer
  */
@@ -29,6 +31,6 @@ public interface OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    void serialize(Object obj, XMLStreamWriter writer)
+    void serialize(Object obj, OMOutputer outputer)
             throws XMLStreamException;
 }

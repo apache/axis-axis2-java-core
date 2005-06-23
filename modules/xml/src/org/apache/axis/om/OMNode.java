@@ -18,6 +18,8 @@ package org.apache.axis.om;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axis.om.impl.llom.OMOutputer;
+
 /**
  * Interface OMNode
  */
@@ -153,7 +155,7 @@ public interface OMNode {
      * @param writer
      * @throws XMLStreamException
      */
-    public void serializeWithCache(XMLStreamWriter writer)
+    public void serializeWithCache(OMOutputer outputer)
         throws XMLStreamException;
 
     /**
@@ -162,7 +164,7 @@ public interface OMNode {
      * @param writer
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException;
+    public void serialize(OMOutputer outputer) throws XMLStreamException;
 
     /**
      * Builds itself
