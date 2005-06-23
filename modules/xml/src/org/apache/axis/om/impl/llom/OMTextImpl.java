@@ -36,7 +36,6 @@ import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
-import org.apache.axis.om.impl.llom.mtom.MTOMXMLStreamWriter;
 
 /**
  * Class OMTextImpl
@@ -179,8 +178,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param writer
 	 * @throws XMLStreamException
 	 */
-	public void serializeWithCache(XMLStreamWriter writer)
+	public void serializeWithCache(OMOutputer outputer)
 			throws XMLStreamException {
+		XMLStreamWriter writer = outputer.getXmlStreamWriter();
 		if (textType == TEXT_NODE) {
 			writer.writeCharacters(this.value);
 		} else if (textType == COMMENT_NODE) {
@@ -190,7 +190,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		}
 		OMNode nextSibling = this.getNextSibling();
 		if (nextSibling != null) {
-			nextSibling.serializeWithCache(writer);
+			nextSibling.serializeWithCache(outputer);
 		}
 	}
 
@@ -284,31 +284,30 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		return true;
 	}
 
-	public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+	public void serialize(OMOutputer outputer) throws XMLStreamException {
 		boolean firstElement = false;
 
 		if (!this.isBinary) {
-			serializeWithCache(writer);
+			serializeWithCache(outputer);
 		} else {
-			if (writer instanceof MTOMXMLStreamWriter) {
+			if (outputer.doOptimise()) {
 				// send binary as MTOM optimised
-				MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
 				this.attribute = new OMAttributeImpl("href",
 						new OMNamespaceImpl("", ""), "cid:"
 								+ this.contentID.trim());
 
-				this.serializeStartpart(mtomWriter);
-				mtomWriter.writeOptimised(this);
-				mtomWriter.writeEndElement();
+				this.serializeStartpart(outputer);
+				outputer.writeOptimised(this);
+				outputer.getXmlStreamWriter().writeEndElement();
 			} else {
 
-				writer.writeCharacters(this.getText());
+				outputer.getXmlStreamWriter().writeCharacters(this.getText());
 			}
 
 			OMNode nextSibling = this.getNextSibling();
 			if (nextSibling != null) {
 				// serilize next sibling
-				nextSibling.serialize(writer);
+				nextSibling.serialize(outputer);
 			} else {
 				// TODO : See whether following part is really needed
 				if (parent == null) {
@@ -329,11 +328,12 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	/*
 	 * Methods to copy from OMSerialize utils
 	 */
-	private void serializeStartpart(XMLStreamWriter writer)
+	private void serializeStartpart( OMOutputer outputer)
 			throws XMLStreamException {
 		String nameSpaceName = null;
 		String writer_prefix = null;
 		String prefix = null;
+		XMLStreamWriter writer = outputer.getXmlStreamWriter();
 		if (this.ns != null) {
 			nameSpaceName = this.ns.getName();
 			writer_prefix = writer.getPrefix(nameSpaceName);
@@ -366,10 +366,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		}
 
 		// add the elements attribute "href"
-		serializeAttribute(this.attribute, writer);
+		serializeAttribute(this.attribute, outputer);
 
 		// add the namespace
-		serializeNamespace(this.ns, writer);
+		serializeNamespace(this.ns, outputer);
 
 	}
 
@@ -380,9 +380,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param writer
 	 * @throws XMLStreamException
 	 */
-	static void serializeAttribute(OMAttribute attr, XMLStreamWriter writer)
+	static void serializeAttribute(OMAttribute attr, OMOutputer outputer)
 			throws XMLStreamException {
 
+		XMLStreamWriter writer = outputer.getXmlStreamWriter();
 		// first check whether the attribute is associated with a namespace
 		OMNamespace ns = attr.getNamespace();
 		String prefix = null;
@@ -411,8 +412,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param writer
 	 * @throws XMLStreamException
 	 */
-	static void serializeNamespace(OMNamespace namespace, XMLStreamWriter writer)
+	static void serializeNamespace(OMNamespace namespace, OMOutputer outputer)
 			throws XMLStreamException {
+		XMLStreamWriter writer = outputer.getXmlStreamWriter();
 		if (namespace != null) {
 			String uri = namespace.getName();
 			String prefix = writer.getPrefix(uri);
