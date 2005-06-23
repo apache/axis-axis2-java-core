@@ -5,6 +5,7 @@ import org.apache.axis.soap.SOAPFault;
 import org.apache.axis.soap.impl.llom.SOAPFaultDetailImpl;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.om.impl.llom.OMElementImpl;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.om.impl.llom.OMSerializerUtil;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.*;
@@ -55,7 +56,7 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         throw new UnsupportedOperationException();
     }
 
-    protected void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputer outputer, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -64,9 +65,9 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer));
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(outputer));
         }
-
+        XMLStreamWriter writer = outputer.getXmlStreamWriter();
         if (this.getNamespace() != null) {
            String prefix = this.getNamespace().getPrefix();
         String nameSpaceName = this.getNamespace().getName();
@@ -75,8 +76,8 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }else{
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         }
-        OMSerializerUtil.serializeAttributes(this, writer);
-        OMSerializerUtil.serializeNamespaces(this, writer);
+        OMSerializerUtil.serializeAttributes(this, outputer);
+        OMSerializerUtil.serializeNamespaces(this, outputer);
 
 
         String text = this.getText();
@@ -84,13 +85,13 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 
 
         if (firstChild != null) {
-            firstChild.serialize(writer);
+            firstChild.serialize(outputer);
         }
         writer.writeEndElement();
 
         //serilize siblings
         if (this.nextSibling != null) {
-            nextSibling.serialize(writer);
+            nextSibling.serialize(outputer);
         }
 
     }
