@@ -109,16 +109,15 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         envelopeNamespace = soapEnvelope.findNamespace(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
         if (envelopeNamespace == null) {
             envelopeNamespace = getSOAPEnvelope().findNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, "");
+            if (envelopeNamespace == null) {
+                throw new OMException("Invalid SOAP message. Doesn't have proper namespace declaration !!");
+            } else {
+                log.info("SOAP 1.1 message received ..");
+                soapFactory = OMAbstractFactory.getSOAP11Factory();
+            }
         } else {
             log.info("SOAP 1.2 message received ..");
             soapFactory = OMAbstractFactory.getSOAP12Factory();
-        }
-
-        if (envelopeNamespace == null) {
-            throw new OMException("Invalid SOAP message. Doesn't have proper namespace declaration !!");
-        } else {
-            log.info("SOAP 1.1 message received ..");
-            soapFactory = OMAbstractFactory.getSOAP11Factory();
         }
 
         omfactory = soapFactory;
