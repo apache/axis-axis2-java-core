@@ -15,20 +15,28 @@
 */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.*;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMConstants;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis.om.impl.llom.util.EmptyIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Class OMElementImpl
@@ -612,14 +620,14 @@ public class OMElementImpl extends OMNodeImpl
      * @param writer
      * @throws XMLStreamException
      */
-    public void serializeWithCache(XMLStreamWriter writer) throws XMLStreamException {
-        serialize(writer, true);
+    public void serializeWithCache(OMOutputer outputer)  throws XMLStreamException {
+        serialize(outputer,true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected void serialize(XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+    private void serialize(OMOutputer outputer,boolean cache)throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -628,32 +636,33 @@ public class OMElementImpl extends OMNodeImpl
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(writer));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(outputer));
         }
 
 
         if (!cache) {
             //No caching
-            if (this.firstChild != null) {
-                OMSerializerUtil.serializeStartpart(this, writer);
-                firstChild.serialize(writer);
-                OMSerializerUtil.serializeEndpart(writer);
-            } else if (!this.done) {
-                if (builderType == PULL_TYPE_BUILDER) {
-                    OMSerializerUtil.serializeByPullStream(this, writer);
-                } else {
-                    OMSerializerUtil.serializeStartpart(this, writer);
+            if (this.firstChild!=null){
+                OMSerializerUtil.serializeStartpart(this,outputer);
+                firstChild.serialize(outputer);
+                OMSerializerUtil.serializeEndpart(outputer);
+            }else if (!this.done){
+                if (builderType==PULL_TYPE_BUILDER){
+                    OMSerializerUtil.serializeByPullStream(this,outputer);
+                }else{
+                    OMSerializerUtil.serializeStartpart(this,outputer);
                     builder.setCache(cache);
                     builder.next();
-                    OMSerializerUtil.serializeEndpart(writer);
+                    OMSerializerUtil.serializeEndpart(outputer);
                 }
-            } else {
-                OMSerializerUtil.serializeNormal(this, writer, cache);
+            }else{
+                OMSerializerUtil.serializeNormal(this,outputer, cache);
             }
 
             //serilize siblings
             if (this.nextSibling != null) {
-                nextSibling.serialize(writer);
+                nextSibling.serialize(outputer);
             } else if (this.parent != null) {
                 if (!this.parent.done) {
                     builder.setCache(cache);
@@ -662,11 +671,11 @@ public class OMElementImpl extends OMNodeImpl
             }
         } else {
             //Cached
-            OMSerializerUtil.serializeNormal(this, writer, cache);
+            OMSerializerUtil.serializeNormal(this,outputer, cache);
             // serialize the siblings
             OMNode nextSibling = this.getNextSibling();
             if (nextSibling != null) {
-                nextSibling.serializeWithCache(writer);
+                nextSibling.serializeWithCache(outputer);
             }
         }
     }
@@ -683,8 +692,8 @@ public class OMElementImpl extends OMNodeImpl
      * @param writer
      * @throws XMLStreamException
      */
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        this.serialize(writer, false);
+    public void serialize(OMOutputer outputer) throws XMLStreamException {
+        this. serialize(outputer,false);
     }
 
 
