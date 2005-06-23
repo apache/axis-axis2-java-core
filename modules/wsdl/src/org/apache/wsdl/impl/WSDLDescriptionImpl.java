@@ -18,6 +18,7 @@ package org.apache.wsdl.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -71,18 +72,18 @@ public class WSDLDescriptionImpl extends ComponentImpl
     /**
      * This List will be a list of <code>WSDLInterface</code> objects.
      */
-    private HashMap wsdlInterfaces = new HashMap();
+    private Map wsdlInterfaces = new HashMap();
 
     /**
      * This <code>HashMap </code> is a Map of <code>WSDLBinding </code> objects.
      */
-    private HashMap bindings = new HashMap();
+    private Map bindings = new HashMap();
 
     /**
      * This <code>HashMap </code> is a list of <code>WSDLService </code> objects.
      * Support of multiple is backed by the requirements in the specification.
      */
-    private HashMap services = new HashMap();
+    private Map services = new HashMap();
 
     /**
      * WSDL imports
@@ -98,7 +99,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      * Will keep a map of all the Namespaces associated with the
      * Definition Component and will be keyed by the Namespace prefix.
      */
-    private HashMap namespaces = new HashMap();
+    private Map namespaces = new HashMap();
 
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>
@@ -106,7 +107,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @return
      */
-    public HashMap getBindings() {
+    public Map getBindings() {
         return bindings;
     }
 
@@ -115,7 +116,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @param bindings
      */
-    public void setBindings(HashMap bindings) {
+    public void setBindings(Map bindings) {
 
         // if(this.bindings.size() > 0) throw new WSDLProcessingException("WSDLBimding Map already contains " +
         // "one or more bindings. Trying to assign a new map will loose those Bindings.");
@@ -187,7 +188,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @return
      */
-    public HashMap getServices() {
+    public Map getServices() {
         return services;
     }
 
@@ -196,7 +197,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @param services
      */
-    public void setServices(HashMap services) {
+    public void setServices(Map services) {
         this.services = services;
     }
 
@@ -252,7 +253,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @return
      */
-    public HashMap getWsdlInterfaces() {
+    public Map getWsdlInterfaces() {
         return wsdlInterfaces;
     }
 
@@ -261,7 +262,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @param wsdlInterfaces
      */
-    public void setWsdlInterfaces(HashMap wsdlInterfaces) {
+    public void setWsdlInterfaces(Map wsdlInterfaces) {
         this.wsdlInterfaces = wsdlInterfaces;
     }
 
@@ -307,7 +308,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @return
      */
-    public HashMap getNamespaces() {
+    public Map getNamespaces() {
         return namespaces;
     }
 
@@ -317,7 +318,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
      *
      * @param namespaces
      */
-    public void setNamespaces(HashMap namespaces) {
+    public void setNamespaces(Map namespaces) {
         this.namespaces = namespaces;
     }
 

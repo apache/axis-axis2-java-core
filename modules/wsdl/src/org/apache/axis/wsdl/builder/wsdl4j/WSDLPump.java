@@ -115,6 +115,7 @@ public class WSDLPump {
 		wsdlDefinition.setWSDL1DefinitionName(wsdl4JDefinition.getQName());
 		wsdlDefinition
 				.setTargetNameSpace(wsdl4JDefinition.getTargetNamespace());
+		wsdlDefinition.setNamespaces(wsdl4JDefinition.getNamespaces());
 		this.copyExtensibleElements(wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition);		
 
 		/////////////////////////////////////////////////////////////////////
@@ -135,10 +136,7 @@ public class WSDLPump {
 		Types wsdl4jTypes = wsdl4JDefinition.getTypes();
 		if (null != wsdl4jTypes) {
 			WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
-			
-//			Schema schema = (Schema)wsdlTypes.getExtensibilityElements();
-//			Element element = schema.getElement();
-			
+					
 			
 			this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
 					wsdlTypes);			

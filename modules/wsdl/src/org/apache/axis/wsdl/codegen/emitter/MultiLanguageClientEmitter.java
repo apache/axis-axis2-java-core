@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
@@ -17,6 +18,7 @@ import org.apache.axis.wsdl.codegen.writer.CallbackHandlerWriter;
 import org.apache.axis.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis.wsdl.codegen.writer.MessageReceiverWriter;
 import org.apache.axis.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis.wsdl.codegen.writer.TestClassWriter;
@@ -79,6 +81,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     private static final String SERVICE_CLASS_SUFFIX ="Skeleton";
     private static final String TEST_PACKAGE_NAME_SUFFIX =".test";
     private static final String TEST_SERVICE_CLASS_NAME_SUFFIX ="SkeletonTest";
+    private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     
 
     protected InputStream xsltStream = null;
@@ -113,7 +116,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             WSDLBinding axisBinding = wom.getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
             WSDLService axisService = null;
             //write interfaces
-            HashMap services = wom.getServices();
+            Map services = wom.getServices();
             if (!services.isEmpty()) {
                 if (services.size()==1){
                     axisService = (WSDLService)services.values().toArray()[0];
@@ -249,12 +252,23 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @throws Exception
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding,WSDLService service) throws Exception {
-        XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding, service);
+        XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(axisBinding, service);        
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage()
                 );
         writeClass(interfaceImplModel,writer);
+    }
+    
+    protected void writeMessageReceiver(WSDLBinding axisBinding)throws Exception{
+    	if (configuration.isWriteMessageReceiver()){
+            XmlDocument classModel = createDocumentForMessageReceiver(axisBinding);
+            MessageReceiverWriter writer =
+                    new MessageReceiverWriter(this.configuration.getOutputLocation(),
+                            this.configuration.getOutputLanguage()
+                    );
+            writeClass(classModel,writer);
+        }
     }
 
     /**
@@ -283,7 +297,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      * @throws IOException
      * @throws Exception
      */
-    private void writeClass(XmlDocument model,ClassWriter writer) throws IOException,Exception {
+    protected void writeClass(XmlDocument model,ClassWriter writer) throws IOException,Exception {
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
         model.write(memoryStream);
         writer.loadTemplate();
@@ -293,6 +307,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     }
     
     
+
 
     /**
      * @see org.apache.axis.wsdl.codegen.emitter.Emitter#emitSkeleton()
@@ -311,12 +326,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             writeTestSkeletonImpl(axisBinding);
             //write a testservice.xml that will load the dummy skeleton impl for testing
             writeTestServiceXML(axisBinding);
+            //write a MessageReceiver for this particular service.
+            writeMessageReceiver(axisBinding);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
 
+     
     
     protected XmlDocument createDocumentForTestSkeltonImpl(WSDLBinding binding){
     	WSDLInterface boundInterface = binding.getBoundInterface();
@@ -420,6 +438,28 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
 
+        return doc;
+    }
+    
+    
+    protected XmlDocument createDocumentForMessageReceiver(WSDLBinding binding){
+    	WSDLInterface boundInterface = binding.getBoundInterface();
+
+        XmlDocument doc = new XmlDocument();
+        Element rootElement = doc.createElement("interface");
+        addAttribute(doc,"package",configuration.getPackageName(), rootElement);
+        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+MESSAGE_RECEIVER_SUFFIX,rootElement);
+        addAttribute(doc,"skeletonname",boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,rootElement);
+        addAttribute(doc, "basereceiver", "org.apache.axis.receivers.RawXMLINOutMessageRecevier", rootElement);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement);
+        doc.appendChild(rootElement);
+        try {
+			doc.write(System.out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return doc;
     }
     /**

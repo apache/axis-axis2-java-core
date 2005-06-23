@@ -38,6 +38,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean serverSide=false;
     private boolean generateDeployementDescriptor=true;
     private boolean writeTestCase=false;
+    private boolean writeMessageReceiver = true;
     private String packageName=XSLTConstants.DEFAULT_PACKAGE_NAME;
 
 
@@ -159,4 +160,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public boolean isWriteTestCase() {
         return writeTestCase;
     }
+    
+    
+	public boolean isWriteMessageReceiver() {
+		return writeMessageReceiver;
+	}
+	public void setWriteMessageReceiver(boolean writeMessageReceiver) {
+		this.writeMessageReceiver = writeMessageReceiver;
+	}
 }

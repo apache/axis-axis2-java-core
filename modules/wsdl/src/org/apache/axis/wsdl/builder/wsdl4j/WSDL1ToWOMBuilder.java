@@ -48,7 +48,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
     }
     
     public WSDLDescription build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException{
-    	WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
+    	WSDLDescription wsdlDefinitions = wsdlComponentFactory.createDescription();
 
         WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in), wsdlComponentFactory);
         pump.pump();

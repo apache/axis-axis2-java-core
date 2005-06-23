@@ -144,7 +144,7 @@ public class OperationContext extends AbstractContext {
      * @return
      * @throws AxisFault
      */
-    public MessageContext getMessageContext(byte messageLabel) throws AxisFault {
+    public MessageContext getMessageContext(int messageLabel) throws AxisFault {
         if (messageLabel == WSDLConstants.MESSAGE_LABEL_IN) {
             return inMessageContext;
         } else if (messageLabel == WSDLConstants.MESSAGE_LABEL_OUT) {

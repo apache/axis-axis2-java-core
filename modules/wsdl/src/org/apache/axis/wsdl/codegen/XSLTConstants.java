@@ -85,4 +85,10 @@ public interface XSLTConstants {
      public interface XSLTServiceXMLTemplates{
     	public static final String GENERAL_SERVICE_TEMPLATE = "/org/apache/axis/wsdl/template/general/ServiceXMLTemplate.xsl";
     }
+     
+     public interface XSLTMessageReceiverTemplates{
+     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/MessageReceiverTemplate.xsl";
+     }
+     
+     
 }

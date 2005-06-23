@@ -16,7 +16,7 @@
 package org.apache.wsdl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -32,14 +32,14 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      *
      * @return
      */
-    public HashMap getBindings();
+    public Map getBindings();
 
     /**
      * Sets the whole new set of Bindings to the WSDLDefinition.
      *
      * @param bindings
      */
-    public void setBindings(HashMap bindings);
+    public void setBindings(Map bindings);
 
     /**
      * The WSDLBinding Will be added to the map keyed  with its own QName.
@@ -83,14 +83,14 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      *
      * @return
      */
-    public HashMap getServices();
+    public Map getServices();
 
     /**
      * Method setServices
      *
      * @param services
      */
-    public void setServices(HashMap services);
+    public void setServices(Map services);
 
     /**
      * Will return the <code>WSDLService </code> if found otherwise return null.
@@ -129,14 +129,14 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      *
      * @return
      */
-    public HashMap getWsdlInterfaces();
+    public Map getWsdlInterfaces();
 
     /**
      * Method setWsdlInterfaces
      *
      * @param wsdlInterfaces
      */
-    public void setWsdlInterfaces(HashMap wsdlInterfaces);
+    public void setWsdlInterfaces(Map wsdlInterfaces);
 
     /**
      * Method getTypes
@@ -172,7 +172,7 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      *
      * @return
      */
-    public HashMap getNamespaces();
+    public Map getNamespaces();
 
     /**
      * Sets the Namespaces associated with the Difinition Component
@@ -180,7 +180,7 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      *
      * @param namespaces
      */
-    public void setNamespaces(HashMap namespaces);
+    public void setNamespaces(Map namespaces);
 
     /**
      * Will return the Namespace URI as a String if there exists an
@@ -293,7 +293,7 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
     
     /**
      * Will return the first binding component the collection returned by the 
-     * <code>HashMap</code>.
+     * <code>Map</code>.
      * @return
      */
     public WSDLBinding getFirstBinding();
