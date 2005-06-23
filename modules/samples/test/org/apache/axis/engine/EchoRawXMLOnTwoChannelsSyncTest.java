@@ -32,6 +32,7 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
@@ -119,7 +120,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
-        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        result.serializeWithCache(new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
 
     }
