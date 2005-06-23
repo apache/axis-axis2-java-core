@@ -1,19 +1,21 @@
 package org.apache.axis.om.impl.serializer;
 
-import junit.framework.TestCase;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
+
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -59,7 +61,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     private XMLStreamReader readerOne;
     private XMLStreamReader readerTwo;
-    private XMLStreamWriter writer;
+    private OMOutputer outputer;
 
    // private OMXMLParserWrapper builder;
     // private File tempFile;
@@ -75,8 +77,8 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextOne.getBytes())));
         readerTwo = XMLInputFactory.newInstance().
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
-        writer = XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out);
+        outputer = new OMOutputer(XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out));
         builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerOne);
         builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerTwo);
     }
@@ -99,7 +101,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
-        env.serializeWithCache(writer);
+        env.serializeWithCache(outputer);
         OMElement balanceElement = env.getBody().getFirstElement();
         assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
 
@@ -116,23 +118,24 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+        OMOutputer omOutputer =  new OMOutputer(System.out,false);
         //env.getBody().addChild(builder.getDocumentElement());
-        env.serializeWithCache(xmlStreamWriter);
+        
+        env.serializeWithCache(omOutputer);
        // env.serializeWithCache(xmlStreamWriter, true);
 
-        xmlStreamWriter.flush();
+        omOutputer.flush();
 
     }
     public void testSerilizationWithCacheOn() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(writer);
-       writer.flush();
+       env.serializeWithCache(outputer);
+       outputer.flush();
     }
 
      public void testSerilizationWithCacheOff() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(writer);
-       writer.flush();
+       env.serializeWithCache(outputer);
+       outputer.flush();
     }
     }

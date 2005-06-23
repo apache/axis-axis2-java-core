@@ -15,20 +15,20 @@
  */
 package org.apache.axis.om.impl.streamwrapper;
 
-import org.apache.axis.om.AbstractTestCase;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis.om.AbstractTestCase;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFactory;
 
 public class OmStAXBuilderTest extends AbstractTestCase {
     private SOAPFactory factory = null;
@@ -50,9 +50,9 @@ public class OmStAXBuilderTest extends AbstractTestCase {
     public void testStaxBuilder() throws Exception {
         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
         assertNotNull(envelope);
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
+        OMOutputer outputer = new OMOutputer(new FileOutputStream(tempFile),false);
         //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        envelope.serializeWithCache(writer);
+        envelope.serializeWithCache(outputer);
 
 
     }
