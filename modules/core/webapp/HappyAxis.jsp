@@ -10,6 +10,7 @@
                  org.apache.axis.addressing.EndpointReference,
                  org.apache.axis.clientapi.Call,
                  org.apache.axis.om.*,
+                 org.apache.axis.om.impl.llom.OMOutput,
                  org.apache.axis.soap.SOAPBody,
                  org.apache.axis.soap.SOAPEnvelope,
                  org.apache.axis.soap.SOAPFactory,
@@ -344,7 +345,7 @@
             OMElement result =
                     (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
             value = writer.toString();
             return true;
