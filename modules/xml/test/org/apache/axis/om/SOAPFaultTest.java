@@ -15,7 +15,7 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class SOAPFaultTest extends AbstractTestCase {
     private SOAPEnvelope soapEnvelope;
-    private OMOutputer outputer;
+    private OMOutput omOutput;
 
     /**
      * Constructor.
@@ -35,7 +35,7 @@ public class SOAPFaultTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        outputer = new OMOutputer(XMLOutputFactory.newInstance().
+        omOutput = new OMOutput(XMLOutputFactory.newInstance().
                 createXMLStreamWriter(System.out));
     }
 
@@ -53,7 +53,7 @@ public class SOAPFaultTest extends AbstractTestCase {
     }
 
     private void print() throws XMLStreamException {
-        soapEnvelope.serializeWithCache(outputer);
-        outputer.flush();
+        soapEnvelope.serializeWithCache(omOutput);
+        omOutput.flush();
     }
 }

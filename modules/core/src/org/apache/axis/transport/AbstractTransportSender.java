@@ -29,7 +29,7 @@ import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,11 +109,11 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         if (outputMessage != null) {
-            OMOutputer outputer = null;
+            OMOutput omOutput = null;
             try {
-                outputer = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(out));
-                outputMessage.serialize(outputer);
-                outputer.flush();
+                omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(out));
+                outputMessage.serialize(omOutput);
+                omOutput.flush();
                 out.flush();
 
             } catch (Exception e) {

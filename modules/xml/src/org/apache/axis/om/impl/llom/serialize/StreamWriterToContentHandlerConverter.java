@@ -15,7 +15,7 @@
  */
 package org.apache.axis.om.impl.llom.serialize;
 
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -45,8 +45,8 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
      *
      * @param writer
      */
-    public StreamWriterToContentHandlerConverter(OMOutputer outputer) {
-        this.writer = outputer.getXmlStreamWriter();
+    public StreamWriterToContentHandlerConverter(OMOutput omOutput) {
+        this.writer = omOutput.getXmlStreamWriter();
     }
 
     /**

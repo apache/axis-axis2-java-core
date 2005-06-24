@@ -40,7 +40,7 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
 
@@ -130,7 +130,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                     public void onComplete(AsyncResult result) {
                         try {
                             result.getResponseEnvelope().serialize(
-                                new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+                                new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
                         } catch (XMLStreamException e) {
                             reportError(e);
                         } finally {

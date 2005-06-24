@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMSerializer;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 
 /**
  * Class StreamingOMSerializer
@@ -45,31 +45,31 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * Method serializeWithCache
      *
      * @param obj
-     * @param outputer
+     * @param omOutput
      * @throws XMLStreamException
      */
-    public void serialize(Object obj, OMOutputer outputer)
+    public void serialize(Object obj, OMOutput omOutput)
             throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
             throw new UnsupportedOperationException(
                     "Unsupported input object. Must be of the the type XMLStreamReader");
         }
         XMLStreamReader node = (XMLStreamReader) obj;
-        serializeNode(node, outputer);
+        serializeNode(node, omOutput);
     }
 
     /**
      * Method serializeNode
      *
      * @param reader
-     * @param outputer
+     * @param omOutput
      * @throws XMLStreamException
      */
-    protected void serializeNode(XMLStreamReader reader, OMOutputer outputer)
+    protected void serializeNode(XMLStreamReader reader, OMOutput omOutput)
             throws XMLStreamException {
     	//TODO We get the StAXWriter at this point and uses it hereafter assuming that this is the only entry point to this class.
     	// If there can be other classes calling methodes of this we might need to change methode signatures to OMOutputer
-    	XMLStreamWriter writer = outputer.getXmlStreamWriter();
+    	XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == START_ELEMENT) {

@@ -16,7 +16,7 @@
 package org.apache.axis.om;
 
 import org.apache.axis.om.impl.llom.OMNavigator;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -33,7 +33,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     private SOAPEnvelope envelope = null;
     private OMXMLParserWrapper builder;
     private File tempFile;
-    private OMOutputer outputer;
+    private OMOutput omOutput;
 
     public OMNavigatorTest(String testName) {
         super(testName);
@@ -46,7 +46,7 @@ public class OMNavigatorTest extends AbstractTestCase {
         builder = new StAXSOAPModelBuilder(xmlStreamReader);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
-        outputer = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile)));
+        omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile)));
         //        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 
 
@@ -55,7 +55,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     public void testnavigatorFullyBuilt() throws Exception {
         assertNotNull(envelope);
         //dump the out put to a  temporary file
-        envelope.serializeWithCache(outputer);
+        envelope.serializeWithCache(omOutput);
 
         //now the OM is fully created test the navigation
         OMNavigator navigator = new OMNavigator(envelope);
@@ -98,7 +98,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
-        outputer.flush();
+        omOutput.flush();
         tempFile.delete();
     }
 

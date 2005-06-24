@@ -31,14 +31,14 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 
 public class ElementSerializerTest extends AbstractTestCase {
     private XMLStreamReader reader;
-    private OMOutputer outputer;
+    private OMOutput omOutput;
     private OMXMLParserWrapper builder;
     private File tempFile;
 
@@ -50,45 +50,45 @@ public class ElementSerializerTest extends AbstractTestCase {
         reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
-        outputer = new OMOutputer(XMLOutputFactory.newInstance().
+        omOutput = new OMOutput(XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile)));
         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
     }
 
     public void testElementSerilization() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serializeWithCache(outputer);
+        elt.serializeWithCache(omOutput);
 
     }
 
     public void testElementSerilizationCacheOff() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serializeWithCache(outputer);
+        elt.serializeWithCache(omOutput);
 
     }
 
     public void testElementSerilizationChild() throws Exception {
         OMElement elt = builder.getDocumentElement();
         OMNode node = elt.getFirstChild().getNextSibling();
-        node.serializeWithCache(outputer);
+        node.serializeWithCache(omOutput);
 
     }
 
     public void testElementSerilizationSOAPBodyCacheOff() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         OMNode node = env.getBody();
-        node.serializeWithCache(outputer);
+        node.serializeWithCache(omOutput);
     }
 
     public void testElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
-        body.serializeWithCache(outputer);
+        body.serializeWithCache(omOutput);
     }
 
     public void testCompleteElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        env.serializeWithCache(outputer);
+        env.serializeWithCache(omOutput);
     }
 
     public void testDualNamespaces1() throws Exception {
@@ -104,7 +104,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt12.addChild(elt22);
         root.addChild(elt11);
         root.addChild(elt12);
-        root.serializeWithCache(outputer);
+        root.serializeWithCache(omOutput);
     }
 
     public void testDualNamespaces2() throws Exception {
@@ -118,11 +118,11 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt2.addChild(txt1);
         elt1.addChild(elt2);
         root.addChild(elt1);
-        root.serializeWithCache(outputer);
+        root.serializeWithCache(omOutput);
     }
 
     protected void tearDown() throws Exception {
-        outputer.flush();
+        omOutput.flush();
         tempFile.delete();
     }
 }

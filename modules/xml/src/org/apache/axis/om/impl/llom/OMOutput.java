@@ -39,7 +39,7 @@ import org.apache.axis.om.OMText;
  * optimisable content
  */
 
-public class OMOutputer {
+public class OMOutput {
 	private XMLStreamWriter xmlWriter;
 	
 	private boolean doOptimise;
@@ -64,7 +64,7 @@ public class OMOutputer {
 	 * @param xmlWriter
 	 *            if it is guaranteed for not using attachments one can use this
 	 */
-	public OMOutputer(XMLStreamWriter xmlWriter) {
+	public OMOutput(XMLStreamWriter xmlWriter) {
 		this.xmlWriter = xmlWriter;
 	}
 	
@@ -73,7 +73,7 @@ public class OMOutputer {
 	 * @throws XMLStreamException
 	 *  
 	 */
-	public OMOutputer(OutputStream outStream, boolean doOptimise)
+	public OMOutput(OutputStream outStream, boolean doOptimise)
 	throws XMLStreamException, FactoryConfigurationError {
 		this.doOptimise = doOptimise;
 		this.outStream = outStream;

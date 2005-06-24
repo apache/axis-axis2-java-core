@@ -2,7 +2,7 @@ package org.apache.axis.soap.impl.llom.soap11;
 
 import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.soap.impl.llom.*;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
@@ -62,12 +62,12 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         return new SOAP11FaultDetailImpl(fault);
     }
 
-    public void serializeWithCache(OMOutputer outputer) throws XMLStreamException {
-        super.serializeWithCache(outputer);
+    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+        super.serializeWithCache(omOutput);
     }
 
-    public void serialize(OMOutputer outputer) throws XMLStreamException {
-        super.serialize(outputer);
+    public void serialize(OMOutput omOutput) throws XMLStreamException {
+        super.serialize(omOutput);
     }
 
 //    /**

@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.soap.SOAPBody;
@@ -34,7 +34,7 @@ import org.apache.axis.soap.SOAPEnvelope;
 
 public class OMSerailizerTest extends AbstractTestCase {
     private XMLStreamReader reader;
-    private OMOutputer outputer;
+    private OMOutput omOutput;
     private File tempFile;
 
     public OMSerailizerTest(String testName) {
@@ -45,7 +45,7 @@ public class OMSerailizerTest extends AbstractTestCase {
         reader = XMLInputFactory.newInstance().
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
-        outputer = new OMOutputer(XMLOutputFactory.newInstance().
+        omOutput = new OMOutput(XMLOutputFactory.newInstance().
                 createXMLStreamWriter(new FileOutputStream(tempFile)));
         //        writer = XMLOutputFactory.newInstance().
         //                createXMLStreamWriter(System.out);
@@ -54,7 +54,7 @@ public class OMSerailizerTest extends AbstractTestCase {
     public void testRawSerializer() throws Exception {
         StreamingOMSerializer serializer = new StreamingOMSerializer();
         //serializer.setNamespacePrefixStack(new Stack());
-        serializer.serialize(reader, outputer);
+        serializer.serialize(reader, omOutput);
 
     }
 
@@ -63,7 +63,7 @@ public class OMSerailizerTest extends AbstractTestCase {
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(env.getXMLStreamReaderWithoutCaching(), outputer);
+        serializer.serialize(env.getXMLStreamReaderWithoutCaching(), omOutput);
     }
 
     public void testElementPullStream1WithCacheOff() throws Exception {
@@ -71,7 +71,7 @@ public class OMSerailizerTest extends AbstractTestCase {
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(env.getXMLStreamReader(), outputer);
+        serializer.serialize(env.getXMLStreamReader(), omOutput);
     }
 
     public void testElementPullStream2() throws Exception {
@@ -80,11 +80,11 @@ public class OMSerailizerTest extends AbstractTestCase {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(body.getXMLStreamReaderWithoutCaching(), outputer);
+        serializer.serialize(body.getXMLStreamReaderWithoutCaching(), omOutput);
     }
 
     protected void tearDown() throws Exception {
-        outputer.flush();
+        omOutput.flush();
         tempFile.delete();
     }
 }

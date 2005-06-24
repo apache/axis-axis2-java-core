@@ -6,7 +6,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -43,7 +43,7 @@ public class EchoBlockingClient {
             OMElement result = (OMElement) call.invokeBlocking("echo", payload);
 
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
 
             System.out.println(writer.toString());

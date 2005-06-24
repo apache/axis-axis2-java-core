@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
@@ -61,7 +61,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     private XMLStreamReader readerOne;
     private XMLStreamReader readerTwo;
-    private OMOutputer outputer;
+    private OMOutput omOutput;
 
    // private OMXMLParserWrapper builder;
     // private File tempFile;
@@ -77,7 +77,7 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextOne.getBytes())));
         readerTwo = XMLInputFactory.newInstance().
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
-        outputer = new OMOutputer(XMLOutputFactory.newInstance().
+        omOutput = new OMOutput(XMLOutputFactory.newInstance().
                 createXMLStreamWriter(System.out));
         builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerOne);
         builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerTwo);
@@ -101,7 +101,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
-        env.serializeWithCache(outputer);
+        env.serializeWithCache(omOutput);
         OMElement balanceElement = env.getBody().getFirstElement();
         assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
 
@@ -118,7 +118,7 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        OMOutputer omOutputer =  new OMOutputer(System.out,false);
+        OMOutput omOutputer =  new OMOutput(System.out,false);
         //env.getBody().addChild(builder.getDocumentElement());
         
         env.serializeWithCache(omOutputer);
@@ -129,13 +129,13 @@ public class NoNamespaceSerializerTest extends TestCase {
     }
     public void testSerilizationWithCacheOn() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(outputer);
-       outputer.flush();
+       env.serializeWithCache(omOutput);
+       omOutput.flush();
     }
 
      public void testSerilizationWithCacheOff() throws Exception{
        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(outputer);
-       outputer.flush();
+       env.serializeWithCache(omOutput);
+       omOutput.flush();
     }
     }

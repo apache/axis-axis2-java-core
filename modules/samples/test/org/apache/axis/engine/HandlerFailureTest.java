@@ -36,7 +36,7 @@ import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
@@ -156,7 +156,7 @@ public class HandlerFailureTest extends TestCase {
             call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
             call.setTo(targetEPR);
             OMElement result = call.invokeBlocking(operationName.getLocalPart(),method);
-            OMOutputer omOutput = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
             result.serialize(omOutput);
            omOutput.flush();
             fail("the test must fail due to bad service Name");

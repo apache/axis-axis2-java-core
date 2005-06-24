@@ -3,7 +3,7 @@ package org.apache.axis.soap.impl.llom.soap11;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.axis.om.impl.llom.OMOutputer;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.OMSerializerUtil;
 import org.apache.axis.soap.impl.llom.SOAPFaultReasonImpl;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
@@ -58,7 +58,7 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
         }
     }
 
-    protected void serialize(OMOutputer outputer, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -67,10 +67,10 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(outputer));
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
         }
 
-        XMLStreamWriter writer = outputer.getXmlStreamWriter();
+        XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (this.getNamespace() != null) {
            String prefix = this.getNamespace().getPrefix();
         String nameSpaceName = this.getNamespace().getName();
@@ -79,8 +79,8 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
         }else{
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME);
         }
-        OMSerializerUtil.serializeAttributes(this, outputer);
-        OMSerializerUtil.serializeNamespaces(this, outputer);
+        OMSerializerUtil.serializeAttributes(this, omOutput);
+        OMSerializerUtil.serializeNamespaces(this, omOutput);
 
         String text = this.getSOAPText().getText();
         writer.writeCharacters(text);
@@ -88,7 +88,7 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
         //serilize siblings
         if (this.nextSibling != null) {
-            nextSibling.serialize(outputer);
+            nextSibling.serialize(omOutput);
         } else if (this.parent != null) {
             if (!this.parent.isComplete()) {
                 builder.setCache(cache);
