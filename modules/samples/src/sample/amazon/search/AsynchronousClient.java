@@ -29,6 +29,7 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.impl.llom.OMOutputer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -155,10 +156,10 @@ public class AsynchronousClient {
 
             System.out.println("Sending the Async message ....");
 
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter
-                    (System.out);
-            requestContext.getEnvelope().serialize(writer);
-            writer.flush();
+           OMOutputer omOutput = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter
+                    (System.out));
+            requestContext.getEnvelope().serialize(omOutput);
+            omOutput.flush();
 
             System.out.println();
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");

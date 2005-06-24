@@ -44,7 +44,7 @@ import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis.om.impl.llom.OMOutputer;
+
 
 public class RESTBasedEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =

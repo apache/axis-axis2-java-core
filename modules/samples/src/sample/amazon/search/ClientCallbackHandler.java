@@ -20,6 +20,7 @@ import org.apache.axis.clientapi.AsyncResult;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.soap.SOAPEnvelope;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -67,9 +68,9 @@ public class ClientCallbackHandler extends Callback {
     public void onComplete(AsyncResult result) {
          System.out.println("Responce message received to the ClientCallbackHandler ...");
         try {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-            result.getResponseEnvelope().serialize(writer);
-            writer.flush();
+            OMOutputer outputer = new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+            result.getResponseEnvelope().serialize(outputer);
+            outputer.flush();
         } catch (XMLStreamException e) {
             System.out.println("Error occured after responce is received");
             e.printStackTrace();

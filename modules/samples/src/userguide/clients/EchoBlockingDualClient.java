@@ -6,6 +6,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.impl.llom.OMOutputer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -37,7 +38,7 @@ public class EchoBlockingDualClient {
             OMElement result = (OMElement) call.invokeBlocking("echo", payload);
 
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serializeWithCache(new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
 
             System.out.println(writer.toString());

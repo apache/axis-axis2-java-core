@@ -8,6 +8,7 @@ import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.impl.llom.OMOutputer;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -36,8 +37,8 @@ public class EchoNonBlockingClient {
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(
-                                XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+                        result.getResponseEnvelope().serializeWithCache(new OMOutputer(
+                                XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
                         writer.flush();
 
                         System.out.println(writer.toString());

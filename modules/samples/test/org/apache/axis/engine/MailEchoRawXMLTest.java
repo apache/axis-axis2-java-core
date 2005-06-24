@@ -34,6 +34,7 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.impl.llom.OMOutputer;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -145,7 +146,7 @@ public class MailEchoRawXMLTest extends TestCase {
 
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
-        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+        result.serializeWithCache(new OMOutputer(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
     }
     
