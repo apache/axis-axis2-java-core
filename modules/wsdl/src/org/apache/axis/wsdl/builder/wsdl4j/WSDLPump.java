@@ -40,6 +40,8 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
@@ -611,6 +613,26 @@ public class WSDLPump {
 				extensibilityElement.setSoapAction(soapOperation.getSoapActionURI());
 				extensibilityElement.setStyle(soapOperation.getStyle());
 				Boolean required = soapOperation.getRequired();
+				if(null != required){
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			}else if(SOAPConstants.Q_ELEM_SOAP_BODY.equals(wsdl4jElement.getElementType())){
+				SOAPBody soapBody = (SOAPBody)wsdl4jElement;
+				org.apache.wsdl.extensions.SOAPBody extensibilityElement = (org.apache.wsdl.extensions.SOAPBody)extensionFactory.getExtensionElement(soapBody.getElementType());
+				extensibilityElement.setNamespaceURI(soapBody.getNamespaceURI());
+				extensibilityElement.setUse(soapBody.getUse());
+				Boolean required = soapBody.getRequired();
+				if(null != required){
+					extensibilityElement.setRequired(required.booleanValue());
+				}
+				component.addExtensibilityElement(extensibilityElement);
+			}else if(SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement.getElementType())){
+				SOAPBinding soapBinding = (SOAPBinding)wsdl4jElement;
+				org.apache.wsdl.extensions.SOAPBinding extensibilityElement = (org.apache.wsdl.extensions.SOAPBinding)extensionFactory.getExtensionElement(soapBinding.getElementType());
+				extensibilityElement.setTransportURI(soapBinding.getTransportURI());
+				extensibilityElement.setStyle(soapBinding.getStyle());
+				Boolean required = soapBinding.getRequired();
 				if(null != required){
 					extensibilityElement.setRequired(required.booleanValue());
 				}
