@@ -40,7 +40,10 @@ public class ExtensionFactoryImpl implements ExtensionFactory , ExtensionConstan
 	 		return new SchemaImpl();
 	 	if(qName.equals(SOAP_OPERATION))
 	 		return new SOAPOperationImpl();
-	 	
+	 	if(SOAP_BODY.equals(qName))
+	 		return new SOAPBodyImpl();
+	 	if(SOAP_BINDING.equals(qName))
+	 		return new SOAPBindingImpl();
 	 	
 	 	return new DefaultExtensibilityElementImpl();
 	 }
