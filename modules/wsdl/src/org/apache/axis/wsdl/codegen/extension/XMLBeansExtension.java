@@ -9,6 +9,7 @@ import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlOptions;
 import org.apache.wsdl.extensions.DefaultExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
@@ -58,7 +59,11 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
             extensiblityElt =  (WSDLExtensibilityElement)typesArray.get(i);
             if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                 try {
-                    xmlObjects[i] = XmlObject.Factory.parse(((Schema)extensiblityElt).getElelment());
+                    Element schemaElement = ((Schema)extensiblityElt).getElelment();
+//                    //add the namespaces
+                    XmlOptions options = new XmlOptions();
+                    options.setLoadAdditionalNamespaces(configuration.getWom().getNamespaces());
+                    xmlObjects[i] = XmlObject.Factory.parse(schemaElement,options);
                 } catch (XmlException e) {
                     throw new RuntimeException(e);
                 }
