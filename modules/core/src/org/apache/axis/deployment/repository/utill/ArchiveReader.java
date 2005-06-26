@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.WSDLException;
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -202,7 +201,7 @@ public class ArchiveReader implements DeploymentConstants {
                 in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
             }
             if(in == null){
-                throw new DeploymentException( moduleName + " dose not found");
+                throw new DeploymentException( moduleName + " does not found");
             }
             ZipInputStream zin = null;
             zin = new ZipInputStream(in);
