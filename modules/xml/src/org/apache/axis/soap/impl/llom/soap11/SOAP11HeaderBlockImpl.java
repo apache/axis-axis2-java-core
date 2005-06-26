@@ -24,9 +24,8 @@ import org.apache.axis.soap.SOAPHeader;
  * License for the specific language governing permissions and limitations under
  * the License.
  * <p/>
- *
+ * <p/>
  * Eran Chinthaka (chinthaka@apache.org)
- *
  */
 public class SOAP11HeaderBlockImpl extends SOAPHeaderBlockImpl {
     /**
@@ -73,12 +72,12 @@ public class SOAP11HeaderBlockImpl extends SOAPHeaderBlockImpl {
     public void setMustUnderstand(String mustUnderstand) throws SOAPProcessingException {
         if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equals(mustUnderstand)) {
             setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        }else{
+        } else {
             throw new SOAPProcessingException("mustUndertand should be one of \"true\", \"false\", \"0\" or \"1\" ");
         }
     }
 
-     /**
+    /**
      * Returns whether the mustUnderstand attribute for this
      * <CODE>SOAPHeaderBlock</CODE> object is turned on.
      *
@@ -86,11 +85,17 @@ public class SOAP11HeaderBlockImpl extends SOAPHeaderBlockImpl {
      *         this <CODE>SOAPHeaderBlock</CODE> object is turned on;
      *         <CODE>false</CODE> otherwise
      */
-    public boolean getMustUnderstand() {
+    public boolean getMustUnderstand() throws SOAPProcessingException {
         String mustUnderstand = "";
         if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI))
                 != null) {
-            return SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand) ;
+            if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand)) {
+                return true;
+            } else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(mustUnderstand)) {
+                return false;
+            } else {
+                throw new SOAPProcessingException("Invalid value found in mustUnderstand value of " + this.getLocalName() + " header block");
+            }
         }
         return false;
 

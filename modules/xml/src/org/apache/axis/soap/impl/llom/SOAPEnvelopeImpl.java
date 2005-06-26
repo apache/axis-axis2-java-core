@@ -81,19 +81,21 @@ public class SOAPEnvelopeImpl extends SOAPElement
 
             //check for the first element
             OMElement element = getFirstElement();
-            if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                soapBody = (SOAPBody) element;
-            } else {      // if not second element SHOULD be the body
-                OMNode node = element.getNextSibling();
-                while (node.getType() != OMNode.ELEMENT_NODE) {
-                    node = node.getNextSibling();
-                }
-                element = (OMElement) node;
-
+            if (element != null) {
                 if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                     soapBody = (SOAPBody) element;
-                } else {
-                    throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
+                } else {      // if not second element SHOULD be the body
+                    OMNode node = element.getNextSibling();
+                    while (node != null && node.getType() != OMNode.ELEMENT_NODE) {
+                        node = node.getNextSibling();
+                    }
+                    element = (OMElement) node;
+
+                    if (node != null && SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                        soapBody = (SOAPBody) element;
+                    } else {
+                        throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
+                    }
                 }
             }
         }

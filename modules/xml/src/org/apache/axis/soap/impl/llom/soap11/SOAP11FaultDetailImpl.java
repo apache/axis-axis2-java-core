@@ -48,15 +48,15 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }
     }
 
-    public void addDetailEntry(OMElement detailElement) {
-        throw new UnsupportedOperationException();
-    }
+//    public void addDetailEntry(OMElement detailElement) {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    public Iterator getAllDetailEntries() {
+//        throw new UnsupportedOperationException();
+//    }
 
-    public Iterator getAllDetailEntries() {
-        throw new UnsupportedOperationException();
-    }
-
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+     public void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -96,8 +96,5 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 
     }
 
-    public String getLocalName() {
-        return SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME;
-    }
-
+    
 }

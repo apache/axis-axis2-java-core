@@ -74,7 +74,7 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
         }
     }
 
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+     protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -116,7 +116,5 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
 
     }
 
-    public String getLocalName() {
-        return SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME;
-    }
+    
 }

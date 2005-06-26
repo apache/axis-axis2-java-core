@@ -72,7 +72,7 @@ public interface SOAPHeaderBlock extends OMElement {
      *         <CODE>SOAPHeaderBlock</CODE> object is turned on;
      *         <CODE>false</CODE> otherwise
      */
-    public abstract boolean getMustUnderstand();
+    public abstract boolean getMustUnderstand() throws SOAPProcessingException;
 
 
     public abstract boolean isProcessed();

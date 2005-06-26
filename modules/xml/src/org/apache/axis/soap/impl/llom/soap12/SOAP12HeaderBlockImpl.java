@@ -68,7 +68,7 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
     }
 
     public void setMustUnderstand(boolean mustUnderstand) {
-        setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand ? "1" : "0", SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand ? "1" : "0", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
     }
 
@@ -80,11 +80,17 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
         }
     }
 
-    public boolean getMustUnderstand() {
+    public boolean getMustUnderstand() throws SOAPProcessingException{
         String mustUnderstand = "";
         if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI))
                 != null) {
-            return SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand);
+            if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand)) {
+                return true;
+            }else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(mustUnderstand)) {
+                return false;
+            }else{
+                throw new SOAPProcessingException("Invalid value found in mustUnderstand value of "+this.getLocalName() + " header block");
+            }
         }
         return false;
 

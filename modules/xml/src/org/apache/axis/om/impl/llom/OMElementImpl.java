@@ -627,7 +627,7 @@ public class OMElementImpl extends OMNodeImpl
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void serialize(OMOutput omOutput,boolean cache)throws XMLStreamException {
+    protected void serialize(OMOutput omOutput,boolean cache)throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -782,10 +782,14 @@ public class OMElementImpl extends OMNodeImpl
      * @return
      */
     public QName getQName() {
-        QName qName = null;
+         QName qName = null;
 
         if (ns != null) {
-            qName = new QName(ns.getName(), localName, ns.getPrefix());
+            if (ns.getPrefix() != null) {
+                qName = new QName(ns.getName(), localName, ns.getPrefix());
+            }else{
+               qName = new QName(ns.getName(), localName);
+            }
         } else {
             qName = new QName(localName);
         }

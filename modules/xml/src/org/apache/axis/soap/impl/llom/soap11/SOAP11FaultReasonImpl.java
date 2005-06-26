@@ -98,7 +98,5 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
     }
 
-    public String getLocalName() {
-        return SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME;
-    }
+   
 }

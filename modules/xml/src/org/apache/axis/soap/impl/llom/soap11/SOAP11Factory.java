@@ -3,10 +3,8 @@ package org.apache.axis.soap.impl.llom.soap11;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.*;
 import org.apache.axis.soap.impl.llom.*;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12HeaderImpl;
 import org.apache.axis.soap.impl.llom.factory.SOAPLinkedListImplFactory;
 
 /**
@@ -31,7 +29,7 @@ public class SOAP11Factory extends SOAPLinkedListImplFactory {
      */
 
     public SOAPEnvelope createSOAPEnvelope() {
-        return new SOAPEnvelopeImpl(new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX));
+        return new SOAPEnvelopeImpl(new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX));
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
@@ -157,15 +155,14 @@ public class SOAP11Factory extends SOAPLinkedListImplFactory {
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
         new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
 
 
-        SOAPHeaderImpl headerImpl = new SOAP11HeaderImpl(env);
-        headerImpl.setComplete(true);
+        SOAPHeader headerImpl = createSOAPHeader(env);
 
-        SOAPBodyImpl bodyImpl = new SOAP11BodyImpl(env);
-        bodyImpl.setComplete(true);
+        SOAPBody bodyImpl = createSOAPBody(env);
+
         return env;
     }
 

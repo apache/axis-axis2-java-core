@@ -88,7 +88,5 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
 
     }
 
-    public String getLocalName() {
-        return SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME;
-    }
+   
 }

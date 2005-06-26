@@ -40,7 +40,7 @@ public class SOAP11SerialiserTest extends OMTestCase{
 
     protected void setUp() throws Exception {
         super.setUp();
-        soapEnvelope = (SOAPEnvelope) getOMBuilder("soap/soap11fault.xml").getDocumentElement();
+        soapEnvelope = (SOAPEnvelope) getOMBuilder("soap/soap11/soap11fault.xml").getDocumentElement();
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
                 createXMLStreamWriter(System.out));
     }

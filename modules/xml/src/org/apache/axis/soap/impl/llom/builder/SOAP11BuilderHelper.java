@@ -94,7 +94,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 processAttributes(element);
             } else {
                 element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
-                processNamespaceData(element, true);
+                processNamespaceData(element, false);
                 processAttributes(element);
             }
 
@@ -108,13 +108,13 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 throw new OMBuilderException("faultactor element should not have children");
             } else {
                 element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
-                processNamespaceData(element, true);
+                processNamespaceData(element, false);
                 processAttributes(element);
             }
 
         } else if (elementLevel > 5) {
             element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
-            processNamespaceData(element, true);
+            processNamespaceData(element, false);
             processAttributes(element);
         }
 

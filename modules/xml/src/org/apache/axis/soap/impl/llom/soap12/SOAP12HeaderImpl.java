@@ -11,6 +11,7 @@ import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -28,8 +29,8 @@ import java.util.Iterator;
  * the License.
  * <p/>
  */
-public class SOAP12HeaderImpl extends SOAPHeaderImpl{
-     /**
+public class SOAP12HeaderImpl extends SOAPHeaderImpl {
+    /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
@@ -79,7 +80,4 @@ public class SOAP12HeaderImpl extends SOAPHeaderImpl{
                 true);
     }
 
-    public Iterator examineMustUnderstandHeaderBlocks(String actor) {
-        throw new UnsupportedOperationException();
-    }
 }

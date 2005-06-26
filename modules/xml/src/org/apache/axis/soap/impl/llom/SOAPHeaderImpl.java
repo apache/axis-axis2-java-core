@@ -120,7 +120,22 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      *         <code>SOAPHeaderBlock</code> objects that contain the specified
      *         actor and are marked as MustUnderstand
      */
-    public abstract Iterator examineMustUnderstandHeaderBlocks(String actor);
+    public Iterator examineMustUnderstandHeaderBlocks(String actor){
+        Iterator headerBlocksIter = this.getChildren();
+        ArrayList mustUnderstandHeadersWithGivenActor = new ArrayList();
+        while (headerBlocksIter.hasNext()) {
+            Object o = headerBlocksIter.next();
+            if (o instanceof SOAPHeaderBlock) {
+                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
+                String role = soapHeaderBlock.getRole();
+                boolean mustUnderstand = soapHeaderBlock.getMustUnderstand();
+                if ((role != null) && role.equalsIgnoreCase(actor) && mustUnderstand) {
+                    mustUnderstandHeadersWithGivenActor.add(soapHeaderBlock);
+                }
+            }
+        }
+        return mustUnderstandHeadersWithGivenActor.iterator();
+    }
 
     /**
      * Returns an <code>Iterator</code> over all the <code>SOAPHeaderBlock</code>

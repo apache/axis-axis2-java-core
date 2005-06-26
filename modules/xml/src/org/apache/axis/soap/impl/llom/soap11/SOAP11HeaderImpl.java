@@ -76,9 +76,6 @@ public class SOAP11HeaderImpl extends SOAPHeaderImpl {
 
     }
 
-    public Iterator examineMustUnderstandHeaderBlocks(String actor) {
-        throw new UnsupportedOperationException();
-    }
-
+    
 
 }

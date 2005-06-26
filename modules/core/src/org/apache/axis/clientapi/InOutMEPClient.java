@@ -42,6 +42,7 @@ import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportListener;
@@ -164,6 +165,7 @@ public class InOutMEPClient extends MEPClient {
             MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
 
             SOAPEnvelope resenvelope = response.getEnvelope();
+
             if (resenvelope.getBody().hasFault()) {
                 throw new AxisFault(resenvelope.getBody().getFault().getException());
             }

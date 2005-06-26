@@ -21,6 +21,7 @@ import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
@@ -28,6 +29,7 @@ import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 
 /**
@@ -179,6 +181,7 @@ public class AxisEngine {
             SOAPBody body = envelope.getBody();
             e.printStackTrace();
             body.addFault(new AxisFault(e.getMessage(), e));
+
             faultContext.setEnvelope(envelope);
 
             OperationContext opContext = context.getOperationContext();

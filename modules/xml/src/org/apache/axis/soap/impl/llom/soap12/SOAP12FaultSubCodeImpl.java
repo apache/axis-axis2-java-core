@@ -51,7 +51,7 @@ public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl{
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
-        if (!(parent instanceof SOAP12FaultSubCodeImpl) || (parent instanceof SOAP12FaultCodeImpl)) {
+        if (!((parent instanceof SOAP12FaultSubCodeImpl) || (parent instanceof SOAP12FaultCodeImpl))) {
             throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP FaultSubCode or SOAP FaultCodeValue as the parent. But received some other implementation");
         }
     }

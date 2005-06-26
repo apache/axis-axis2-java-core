@@ -32,7 +32,7 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
      */
 
     public SOAPEnvelope createSOAPEnvelope() {
-        return new SOAPEnvelopeImpl(new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX));
+        return new SOAPEnvelopeImpl(new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX));
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
@@ -158,14 +158,11 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
                 new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
-        SOAPBodyImpl bodyImpl = new SOAP12BodyImpl(env);
-        env.addChild(bodyImpl);
+        SOAPHeader headerImpl = createSOAPHeader(env);
+        SOAPBody bodyImpl = createSOAPBody(env);
 
-        SOAPHeaderImpl headerImpl = new SOAP12HeaderImpl(env);
-        headerImpl.setComplete(true);
-        env.addChild(headerImpl);
         return env;
     }
 

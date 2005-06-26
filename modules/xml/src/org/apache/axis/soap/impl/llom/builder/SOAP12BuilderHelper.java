@@ -66,7 +66,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 if (codePresent) {
                     throw new OMBuilderException("Multiple Code element encountered");
                 } else {
-                    element = factory.createSOAPFaultCode((SOAPFault) parent, null);
+                    element = factory.createSOAPFaultCode((SOAPFault) parent, builder);
                     codePresent = true;
                     codeprocessing = true;
                 }
@@ -76,7 +76,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                         if (reasonPresent) {
                             throw new OMBuilderException("Multiple Reason Element encountered");
                         } else {
-                            element = factory.createSOAPFaultReason((SOAPFault) parent, null);
+                            element = factory.createSOAPFaultReason((SOAPFault) parent, builder);
                             reasonPresent = true;
                             reasonProcessing = true;
                         }
@@ -97,7 +97,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                         if (nodePresent) {
                             throw new OMBuilderException("Multiple Node element encountered");
                         } else {
-                            element = factory.createSOAPFaultNode((SOAPFault) parent, null);
+                            element = factory.createSOAPFaultNode((SOAPFault) parent, builder);
                             nodePresent = true;
                         }
                     } else {
@@ -112,7 +112,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                         if (rolePresent) {
                             throw new OMBuilderException("Multiple Role element encountered");
                         } else {
-                            element = factory.createSOAPFaultRole((SOAPFault) parent, null);
+                            element = factory.createSOAPFaultRole((SOAPFault) parent, builder);
                             rolePresent = true;
                         }
                     } else {
@@ -127,7 +127,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                         if (detailPresent) {
                             throw new OMBuilderException("Multiple detail element encountered");
                         } else {
-                            element = factory.createSOAPFaultDetail((SOAPFault) parent, null);
+                            element = factory.createSOAPFaultDetail((SOAPFault) parent, builder);
                             detailPresent = true;
                         }
                     } else {
@@ -144,7 +144,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
             if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) {
                 if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME)) {
                     if (!valuePresent) {
-                        element = factory.createSOAPFaultValue((SOAPFaultCode) parent, null);
+                        element = factory.createSOAPFaultValue((SOAPFaultCode) parent, builder);
                         valuePresent = true;
                         codeprocessing = false;
                     } else {
@@ -154,7 +154,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
                     if (!subcodePresent) {
                         if (valuePresent) {
-                            element = factory.createSOAPFaultSubCode((SOAPFaultCode) parent, null);
+                            element = factory.createSOAPFaultSubCode((SOAPFaultCode) parent, builder);
                             subcodePresent = true;
                             subCodeProcessing = true;
                         } else {
@@ -170,7 +170,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
 
             } else if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
                 if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME)) {
-                    element = factory.createSOAPFaultText((SOAPFaultReason) parent, null);
+                    element = factory.createSOAPFaultText((SOAPFaultReason) parent, builder);
                     element.setComplete(false);
                     reasonProcessing = false;
                     builder.setBooleanProcessingMandatoryFaultElements(false);
@@ -178,7 +178,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                     throw new OMBuilderException(parser.getLocalName() + " is not supported inside the reason");
                 }
             } else if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
-                element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, null);
+                element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, builder);
                 builder.setProcessingDetailElements(true);
                 detailElementNames = new Vector();
                 detailElementNames.add(parser.getLocalName());
@@ -194,7 +194,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                     if (subcodeValuePresent) {
                         throw new OMBuilderException("multiple subCode value encountered");
                     } else {
-                        element = factory.createSOAPFaultValue((SOAPFaultSubCode) parent, null);
+                        element = factory.createSOAPFaultValue((SOAPFaultSubCode) parent, builder);
                         subcodeValuePresent = true;
                         subSubcodePresent = false;
                         subCodeProcessing = false;
@@ -202,7 +202,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
                     if (subcodeValuePresent) {
                         if (!subSubcodePresent) {
-                            element = factory.createSOAPFaultSubCode((SOAPFaultSubCode) parent, null);
+                            element = factory.createSOAPFaultSubCode((SOAPFaultSubCode) parent, builder);
                             subcodeValuePresent = false;
                             subSubcodePresent = true;
                             subCodeProcessing = true;
@@ -226,7 +226,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 }
                 if (localNameExist) {
                     detailElementNames.setSize(detailElementLevel);
-                    element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, null);
+                    element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, builder);
                     detailElementNames.add(parser.getLocalName());
                 }
 

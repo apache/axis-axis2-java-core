@@ -157,7 +157,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
 
     public SOAPFaultDetail getDetail()  {
         if (faultDetail == null || faultDetail.getParent() != this) {
-            faultDetail = (SOAPFaultDetail) this.getChildWithName(SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
+            faultDetail = (SOAPFaultDetail) this.getChildWithName(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         }
         return faultDetail;
     }
@@ -166,6 +166,13 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         if (!(parent instanceof SOAP11BodyImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Body as the parent. But received some other implementation");
         }
+    }
+
+    public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException {
+        if (!(detail instanceof SOAP11FaultDetailImpl)) {
+            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Detail. But received some other implementation");
+        }
+        super.setDetail(detail);
     }
 
 }
