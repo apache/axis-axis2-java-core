@@ -65,27 +65,27 @@ public class InOnlyMEPClient extends MEPClient {
 
         engine.send(msgctx);
 
-        MessageContext response =
-            new MessageContext(msgctx.getSystemContext(),
-                msgctx.getSessionContext(),
-                msgctx.getTransportIn(),
-                msgctx.getTransportOut());
-        response.setProperty(
-            MessageContext.TRANSPORT_IN,
-            msgctx.getProperty(MessageContext.TRANSPORT_IN));
-        response.setServerSide(false);
-        response.setOperationContext(msgctx.getOperationContext());
-        response.setServiceContext(msgctx.getServiceContext());
-
-        if(Constants.TRANSPORT_HTTP.equals(senderTransport.getName().getLocalPart())){
-            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-            receiver.checkForMessage(response, sysContext);
-            SOAPEnvelope resenvelope = response.getEnvelope();
-            if (resenvelope!= null && resenvelope.getBody().hasFault()) {
-                throw new AxisFault(resenvelope.getBody().getFault().getException());
-            }
-        }
+//        MessageContext response =
+//            new MessageContext(msgctx.getSystemContext(),
+//                msgctx.getSessionContext(),
+//                msgctx.getTransportIn(),
+//                msgctx.getTransportOut());
+//        response.setProperty(
+//            MessageContext.TRANSPORT_IN,
+//            msgctx.getProperty(MessageContext.TRANSPORT_IN));
+//        response.setServerSide(false);
+//        response.setOperationContext(msgctx.getOperationContext());
+//        response.setServiceContext(msgctx.getServiceContext());
+//
+//        if(Constants.TRANSPORT_HTTP.equals(senderTransport.getName().getLocalPart())){
+//            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
+//            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
+//            receiver.checkForMessage(response, sysContext);
+//            SOAPEnvelope resenvelope = response.getEnvelope();
+//            if (resenvelope!= null && resenvelope.getBody().hasFault()) {
+//                throw new AxisFault(resenvelope.getBody().getFault().getException());
+//            }
+//        }
     }
 
     /**

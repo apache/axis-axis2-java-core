@@ -97,13 +97,6 @@ public interface AxisConfiguration extends ParameterInclude{
       */
      public void engageModule(QName moduleref) throws AxisFault ;
 
-    /**
-     * Method getTransports
-     *
-     * @return
-     * @throws AxisFault
-     */
-    public HashMap getTransports() throws AxisFault;
 
     /**
      *  This returns 

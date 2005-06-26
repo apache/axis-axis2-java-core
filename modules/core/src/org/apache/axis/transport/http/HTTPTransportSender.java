@@ -15,84 +15,103 @@
 */
 package org.apache.axis.transport.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.URL;
+import java.util.Map;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.Parameter;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
-
-import java.io.*;
-import java.net.*;
 
 /**
  * Class HTTPTransportSender
  */
 public class HTTPTransportSender extends AbstractTransportSender {
-    /**
-     * Field out
-     */
-    protected Writer out;
+    private boolean chuncked = false;
+    private boolean doMTOM = false;
+    private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+    public static final String TRANSPORT_SENDER_INFO = "TRANSPORT_SENDER_INFO";
 
-    /**
-     * Field socket
-     */
-    private Socket socket;
-    private ByteArrayOutputStream outputStream;
- 
     protected void writeTransportHeaders(
-        Writer out,
+        OutputStream out,
         URL url,
         MessageContext msgContext,
         int contentLength)
-        throws IOException {
-        Object soapAction = msgContext.getWSAAction();
-        String soapActionString = soapAction == null ? "" : soapAction.toString();
-        StringBuffer buf = new StringBuffer();
-        buf.append("POST ").append(url.getFile()).append(" HTTP/1.0\n");
-        buf.append("Content-Type: text/xml; charset=utf-8\n");
-        buf.append("Accept: application/soap+xml, application/dime, multipart/related, text/*\n");
-        buf.append("Host: ").append(url.getHost()).append("\n");
-        buf.append("Cache-Control: no-cache\n");
-        buf.append("Pragma: no-cache\n");
-        buf.append("Content-Length: " + contentLength + "\n");
-        if (!this.doREST) {
-            buf.append("SOAPAction: \"" + soapActionString + "\"\n");
+        throws AxisFault {
+        try {
+            Object soapAction = msgContext.getWSAAction();
+            String soapActionString =
+                soapAction == null ? "" : soapAction.toString();
+            StringBuffer buf = new StringBuffer();
+            buf.append(HTTPConstants.HEADER_POST).append(" ");
+            buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
+            if(doMTOM){
+                //TODO fix this for MTOM
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append("multipart/related").append("\n");
+            }else{
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": text/xml; charset=utf-8\n");
+            }
+            
+            buf.append(HTTPConstants.HEADER_ACCEPT).append(": application/soap+xml, application/dime, multipart/related, text/*\n");
+            buf.append(HTTPConstants.HEADER_HOST).append(": ").append(url.getHost()).append("\n");
+            buf.append(HTTPConstants.HEADER_CACHE_CONTROL).append(": no-cache\n");
+            buf.append(HTTPConstants.HEADER_PRAGMA).append(": no-cache\n");
+            if (chuncked) {
+                buf
+                    .append(HTTPConstants.HEADER_TRANSFER_ENCODING)
+                    .append(": ")
+                    .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
+                    .append("\n");
+            } else {
+                buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
+            }
+            if (!this.doREST) {
+                buf.append("SOAPAction: \"" + soapActionString + "\"\n");
+            }
+            buf.append("\n");
+            out.write(buf.toString().getBytes());
+        } catch (IOException e) {
+            throw new AxisFault(e);
         }
-        buf.append("\n");
-        out.write(buf.toString());
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext) {
+        MessageContext msgContext,
+        OutputStream out) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext)
+    private OutputStream openSocket(MessageContext msgContext)
         throws AxisFault {
+        TransportSenderInfo transportInfo =
+            (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
+
         EndpointReference toURL = msgContext.getTo();
         if (toURL != null) {
             try {
                 URL url = new URL(toURL.getAddress());
                 SocketAddress add =
-                    new InetSocketAddress(url.getHost(), url.getPort() == -1 ? 80 : url.getPort());
-                socket = new Socket();
+                    new InetSocketAddress(
+                        url.getHost(),
+                        url.getPort() == -1 ? 80 : url.getPort());
+                Socket socket = new Socket();
                 socket.connect(add);
-                OutputStream outS = socket.getOutputStream();
-                byte[] bytes = outputStream.toByteArray();
-
-                Writer realOut = new OutputStreamWriter(outS);
-                //write header to the out put stream
-                writeTransportHeaders(realOut, url, msgContext, bytes.length);
-                realOut.flush();
-                //write the content to the real output stream
-                outS.write(bytes);
-                outS.flush();
-
-                msgContext.setProperty(
-                    MessageContext.TRANSPORT_IN,socket.getInputStream());
-                msgContext.setProperty(HTTPConstants.SOCKET, socket);
-
-                socket.shutdownOutput();
-
+                transportInfo.url = url;
+                transportInfo.in = socket.getInputStream();
+                transportInfo.out = socket.getOutputStream();
+                transportInfo.socket = socket;
+                return transportInfo.out;
             } catch (MalformedURLException e) {
                 throw new AxisFault(e.getMessage(), e);
             } catch (IOException e) {
@@ -103,43 +122,176 @@ public class HTTPTransportSender extends AbstractTransportSender {
         }
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr) {
-        outputStream = new ByteArrayOutputStream();
-        return outputStream;
+    public void finalizeSendWithToAddress(
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
+        try {
+            TransportSenderInfo transportInfo =
+                (TransportSenderInfo) msgContext.getProperty(
+                    TRANSPORT_SENDER_INFO);
+            InputStream in = null;
+            if (chuncked) {
+                ((ChunkedOutputStream) out).eos();
+            } else {
+                openSocket(msgContext);
+                OutputStream outS = transportInfo.out;
+                in = transportInfo.in;
+                byte[] bytes = transportInfo.outputStream.toByteArray();
+
+                //write header to the out put stream
+                writeTransportHeaders(
+                    outS,
+                    transportInfo.url,
+                    msgContext,
+                    bytes.length);
+                outS.flush();
+                //write the content to the real output stream
+                outS.write(bytes);
+            }
+
+            transportInfo.socket.shutdownOutput();
+            HTTPTransportReceiver tr = new HTTPTransportReceiver();
+            Map map = tr.parseTheHeaders(transportInfo.in, false);
+            if (!HTTPConstants
+                .RESPONSE_ACK_CODE_VAL
+                .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
+                String transferEncoding =
+                    (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                if (transferEncoding != null
+                    && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
+                        transferEncoding)) {
+                    in = new ChunkedInputStream(transportInfo.in);
+                }
+                msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
+            }
+        } catch (AxisFault e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
-    public void startSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-    OutputStream out)
+    protected OutputStream openTheConnection(
+        EndpointReference epr,
+        MessageContext msgctx)
         throws AxisFault {
-        Object contianerManaged = msgContext.getProperty(Constants.CONTAINER_MANAGED);
-        if (contianerManaged == null || !Constants.VALUE_TRUE.equals(contianerManaged)) {
-            try {
-                out.write(new String(HTTPConstants.HTTP).getBytes());
-                out.write(new String(HTTPConstants.OK).getBytes());
-                out.write("\n\n".getBytes());
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
+        msgctx.setProperty(TRANSPORT_SENDER_INFO, new TransportSenderInfo());
+        if (chuncked) {
+            return openSocket(msgctx);
+        } else {
+            TransportSenderInfo transportInfo =
+                (TransportSenderInfo) msgctx.getProperty(TRANSPORT_SENDER_INFO);
+            transportInfo.outputStream = new ByteArrayOutputStream();
+            return transportInfo.outputStream;
         }
     }
 
-    public void startSendWithToAddress(MessageContext msgContext,OutputStream out) {
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
+        //        Object contianerManaged =
+        //            msgContext.getProperty(Constants.CONTAINER_MANAGED);
+        //        if (contianerManaged == null
+        //            || !Constants.VALUE_TRUE.equals(contianerManaged)) {
+        //            try {
+        //                out.write(new String(HTTPConstants.HTTP).getBytes());
+        //                out.write(new String(HTTPConstants.OK).getBytes());
+        //                out.write("\n\n".getBytes());
+        //            } catch (IOException e) {
+        //                throw new AxisFault(e);
+        //            }
+        //        }
+        return out;
+    }
+
+    public OutputStream startSendWithToAddress(
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
+        try {
+            Object value = msgContext.getProperty(Constants.Configuration.DO_MTOM);
+            if(Constants.VALUE_TRUE.equals(value)){
+                doMTOM = true;
+            }
+            
+            if (chuncked) {
+                TransportSenderInfo transportInfo =
+                    (TransportSenderInfo) msgContext.getProperty(
+                        TRANSPORT_SENDER_INFO);
+                writeTransportHeaders(out, transportInfo.url, msgContext, -1);
+                out.flush();
+                return new ChunkedOutputStream(out);
+            } else {
+                return out;
+            }
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
+
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis.transport.TransportSender#cleanUp()
      */
-    public void cleanUp() throws AxisFault {
+    public void cleanUp(MessageContext msgContext) throws AxisFault {
+        TransportSenderInfo transportInfo =
+            (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
         try {
-            if (socket != null) {
-                socket.close();
-                socket = null;
+            if (transportInfo.socket != null) {
+                transportInfo.socket.close();
             }
 
         } catch (IOException e) {
         }
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportSender#init(org.apache.axis.context.ConfigurationContext, org.apache.axis.description.TransportOutDescription)
+     */
+    public void init(
+        ConfigurationContext confContext,
+        TransportOutDescription transportOut)
+        throws AxisFault {
+        //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter> or 
+        //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.1</parameter> is checked
+        Parameter version =
+            transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
+        if (version != null) {
+            if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+                Parameter transferEncoding =
+                    transportOut.getParameter(
+                        HTTPConstants.HEADER_TRANSFER_ENCODING);
+                if (transferEncoding != null
+                    && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
+                        transferEncoding.getValue())) {
+                    this.chuncked = true;
+                }
+            } else if (
+                HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
+                //TODO HTTP1.0 specific parameters
+            } else {
+                throw new AxisFault(
+                    "Parameter "
+                        + HTTPConstants.PROTOCOL_VERSION
+                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+            }
+        }
+
+    }
+
+    private class TransportSenderInfo {
+        public InputStream in;
+        public OutputStream out;
+        public ByteArrayOutputStream outputStream;
+        public URL url;
+        public Socket socket;
     }
 
 }

@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>Mail transport</title>
+
+</head>
+
+<body><h1>Mail transport</h1>
+<p>Mail transport has two parts, transport Sender and transport Listener. </p>
+
+ <a>First you need following additional jar dependencies in the classpath, they can be found by downloading the <a href="http://java.sun.com/products/javamail/">JavaMail API</a></p>
+  <ol>
+  <LI>pop3.jar</LI>
+  <LI>smtp.jar</LI>
+  <LI>mailapi.jar</LI>
+  <LI>activation.jar</LI>
+  </ol>
+  
+  
+<h2>Transport Sender</h2>
+<p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the server.xml file or client.xml file or in both.
+  </p>
+  
+  <code>
+  <pre>   &lt;transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender"&gt;
+        &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.port" locked="xsd:false"&gt;25&lt;/parameter&gt;
+   &lt;/transportSender&gt;
+  </pre>
+  </code>
+  
+  <h2>Transport Receiver</h2>
+ 
+  
+  <p>You need a mail address that has pop access, the mail Listener can be activated by adding following entry to the server.xml file or client.xml file or in both.</p>
+  
+  <code><pre>  &lt;transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
+        &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.port" locked="xsd:false"&gt;110&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress" locked="xsd:false"&gt;email address&lt;/parameter&gt;
+  &lt;/transportReceiver&gt;
+  </pre></code>
+  
+  <p>At the Client side if the Mail Listener is needed it is automatically started by Axis2.</p>
+  
+  <h2>Using Mail transport in the Server Side</h2>
+  <p> If the Mail Listener is need to be started as the server it can be done with following command with the all the axis2 jars and the mail dependency jars in the classpath.</p>
+  <code>Java org.apache.axis.transport.mail.SimpleMailListener repository-directory</code>
+
+  <h2>Using Mail transport in the Client Side</h2>
+  <p>Following code segment shows how to send a oneway SOAP message using the mail transport, this need the Transport Sender configured.</p>
+<pre>
+<code>
+OMElement payload = ....
+
+MessageSender sender = new MessageSender(serviceContext);
+sender.setTo(targetEPR);
+sender.setSenderTransport(Constants.TRANSPORT_MAIL);
+
+sender.send(operationName.getLocalPart(), payload);
+</code>
+</pre>
+  
+  <h2>Configure James as SMTP and POP server</h2>
+  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start the James, connect to the James via telnet for administrator James with following code
+</p>
+  <code>
+  <pre>  $telnet 127.0.0.1 4555
+  Trying 127.0.0.1...
+Connected to localhost.localdomain (127.0.0.1).
+Escape character is '^]'.
+JAMES Remote Administration Tool 2.2.0
+Please enter your login and password
+Login id:
+root
+Password:
+root
+Welcome root. HELP for a list of commands
+  </pre>
+  </code>
+
+  <p>add users to the James</p>
+  <code>
+  <pre>adduser axis2-server axis2
+User axis2-server added
+adduser axis2-client axis2
+User axis2-client added
+Connection closed by foreign host.
+  </pre>
+  </code>  
+  
+  <p>Now the James is up and running with the accounts</p>
+  
+  <hr>  
+  
+  <p>&nbsp;</p>
+  
+  
+ 
+   
+</body>
+</html>

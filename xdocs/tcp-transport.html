@@ -1,0 +1,41 @@
+<html>
+<body>
+<h1>TCP transport</h1> 
+
+<p>TCP transport has come up as a alternative transport with Web Services, the idea is to open the socket to the server and write SOAP Message to the server. The SOAP Message must be self contained in terms of the information needed to process the itself.</p>
+<p>Axis2 TCP transport has two parts, a transport Listener for receiving the Messages and transport Sender to send the SOAP Messages. Axis2 installation has both the components built in to itself  by default. In the axis2.xml configuration file the two would look like follows. </p>
+<code>
+<pre>
+&lt:transportReceiver name="tcp" class="org.apache.axis.transport.tcp.TCPServer"&gt:
+    &lt:parameter name="port" locked="xsd:false"&gt:6060&lt:/parameter&gt:
+&lt:/transportReceiver&gt:
+</pre>
+</code>
+<transportSender name="tcp" class="org.apache.axis.transport.tcp.TCPTransportSender"/>
+
+<h2>How to start the TCPServer</h2>
+
+<p>The TCP server can be started by running the class org.apache.axis.transport.tcp.TCPServer with two parameters <a href="faq.html#b5">repository</a> and port number as argument. This class needed all the axis dependancy jars in the classapth. </p>
+<p>Alternatively the TCP Server can be run with tcp-server.bat/ tcp-server.sh file in the bin directory of the Binary distribution of TCP Server.</p> 
+
+<h2>How send SOAP Messages with TCP transport</h2>
+
+<p>The TCP transport can be enabled very easily from the call API, following code segment demonstrate how it can be done.</p>
+<code>
+<pre>
+OMElement payload = ...
+
+org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
+call.setTo(targetEPR);
+call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+
+OMElement result =
+        (OMElement) call.invokeBlocking("echo", payload);
+call.close();
+</pre>
+</code>
+<p>The method to note is setTransportInfo that accepts sender transport, Listener transport and should the return path of the TCP Channel need to be used. It is good Idea to engage the addressing module to make the SOAP Message self contained. Only other option I can think of is to use the URI of the first child of the SOAP Body to dispatch the service. The
+Parameter is of the type <a href="faq.html#a2">OMElement</a>, the XML represntation of Axis2.</p>
+</body>
+</html>

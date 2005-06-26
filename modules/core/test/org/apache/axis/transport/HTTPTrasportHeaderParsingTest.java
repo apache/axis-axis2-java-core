@@ -22,7 +22,10 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Map;
 
@@ -43,7 +46,8 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Pragma: no-cache\n"
                 + "SOAPAction: \"\"\n"
                 + "Content-Length: 73507\n\nee rwewebtewbeww";
-        StringReader reader = new StringReader(message);
+
+        InputStream reader = new ByteArrayInputStream(message.getBytes());
         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
 
         Map map = reciver.parseTheHeaders(reader, true);
@@ -67,7 +71,7 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Date: Sat, 12 Feb 2005 10:39:39 GMT\n"
                 + "Server: Apache-Coyote/1.1\n"
                 + "Connection: close\n\nA";
-        StringReader reader = new StringReader(message);
+        InputStream reader = new ByteArrayInputStream(message.getBytes());
         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
 
         Map map = reciver.parseTheHeaders(reader, false);
@@ -89,9 +93,9 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                     + "Date: Sat, 12 Feb 2005 10:39:39 GMT\n"
                     + "Server: Apache-Coyote/1.1\n"
                     + "Connection: close";
-            StringReader reader = new StringReader(message);
+            InputStream reader = new ByteArrayInputStream(message.getBytes());
             HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-            BufferedReader br = new BufferedReader(reader);
+            BufferedInputStream br = new BufferedInputStream(reader);
             Map map = reciver.parseTheHeaders(br, false);
             fail("test must failed as \n\n is missing");
         } catch (AxisFault e) {

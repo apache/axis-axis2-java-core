@@ -48,13 +48,17 @@ public class UtilServer {
     public static synchronized void unDeployService(QName service) throws AxisFault {
         reciver.getSystemContext().getAxisConfiguration().removeService(service);
     }
-
+    
     public static synchronized void start() throws Exception {
+        start(org.apache.axis.Constants.TESTING_REPOSITORY);
+    }
+
+    public static synchronized void start(String repositry) throws Exception {
         if (count == 0) {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            File file = new File(org.apache.axis.Constants.TESTING_REPOSITORY);
+            File file = new File(repositry);
             if (!file.exists()) {
-                throw new Exception("repository directory does not exists");
+                throw new Exception("repository directory "+ file.getAbsolutePath()+ " does not exists");
             }
             ConfigurationContext er = erfac.buildConfigurationContext(file.getAbsolutePath());
             try {

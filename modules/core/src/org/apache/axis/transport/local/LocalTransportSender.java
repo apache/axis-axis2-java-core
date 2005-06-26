@@ -35,13 +35,14 @@ public class LocalTransportSender extends AbstractTransportSender {
 
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
+    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
+        return out;
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext)
+    public void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out)
         throws AxisFault {
         try {
-            InputStream in = new ByteArrayInputStream(out.toByteArray());
+            InputStream in = new ByteArrayInputStream(this.out.toByteArray());
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver();
             localTransportReceiver.processMessage(in, msgContext.getTo());
             in.close();
@@ -54,7 +55,7 @@ public class LocalTransportSender extends AbstractTransportSender {
     /* (non-Javadoc)
      * @see org.apache.axis.transport.AbstractTransportSender#openTheConnection(org.apache.axis.addressing.EndpointReference)
      */
-    protected OutputStream openTheConnection(EndpointReference epr) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference epr,MessageContext msgContext) throws AxisFault {
         //out = new PipedOutputStream();
         out = new ByteArrayOutputStream();
         return out;
@@ -63,7 +64,7 @@ public class LocalTransportSender extends AbstractTransportSender {
     /* (non-Javadoc)
      * @see org.apache.axis.transport.AbstractTransportSender#startSendWithOutputStreamFromIncomingConnection(org.apache.axis.context.MessageContext, java.io.Writer)
      */
-    public void startSendWithOutputStreamFromIncomingConnection(
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
     OutputStream out)
         throws AxisFault {
@@ -72,13 +73,13 @@ public class LocalTransportSender extends AbstractTransportSender {
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext)
+        MessageContext msgContext,OutputStream out)
         throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
 
-    public void cleanUp() throws AxisFault {
+    public void cleanUp(MessageContext msgContext) throws AxisFault {
     }
 
 }

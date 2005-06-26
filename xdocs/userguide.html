@@ -701,136 +701,18 @@ line tool.  </p>
 <a href="CodegenToolReference.html">Service Archiver</a>.</p>
 <hr/>
 <p>&nbsp;</p>
-<h2><a name="#configTransport">Configuring Transports</a></h2>
-<h3>Configuring HTTP transports</h3>
-<p>The HTTP is configured by default, the server can be started by following </p>
-<code>Java org.apache.axis.transport.http.SimpleHTTPServer repository port</code>
-<h3>Configuring TCP transports</h3>
-<p>The TCP transport is configured by default</p>
 
 
-<h3>Configuring Mail transport</h3>
-<p>Mail transport has two parts, transport Sender and transport Listener. </p>
 
- <a>First you need following additional jar dependencies in the classpath, they can be found by downloading the <a href="http://java.sun.com/products/javamail/">JavaMail API</a></p>
-  <ol>
-  <LI>pop3.jar</LI>
-  <LI>smtp.jar</LI>
-  <LI>mailapi.jar</LI>
-  <LI>activation.jar</LI>
-  </ol>
+ <h2>Advanced Topics</h2>
+ <ul>
+ 	<li><a href="rest-ws.html">RESTful Web Services</a></li>
+ 	<li><a href="tcp-transport.html">TCP transport</a></li>
+ 	<li><a href="mail-transport.html">Mail Transport</a></li>
+ 	<li><a href="http-transport.html">HTTP Transports</a></li>
+  </ul>
   
-  
-<h4>Transport Sender</h4>
-<p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the server.xml file or client.xml file or in both.
-  </p>
-  
-  <code>
-  <pre>   &lt;transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.port" locked="xsd:false"&gt;25&lt;/parameter&gt;
-   &lt;/transportSender&gt;
-  </pre>
-  </code>
-  
-  <h4>Transport Receiver</h4>
  
-  
-  <p>You need a mail address that has pop access, the mail Listener can be activated by adding following entry to the server.xml file or client.xml file or in both.</p>
-  
-  <code><pre>  &lt;transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
-        &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.port" locked="xsd:false"&gt;110&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="xsd:false"&gt;email address&lt;/parameter&gt;
-  &lt;/transportReceiver&gt;
-  </pre></code>
-  
-  <p>At the Client side if the Mail Listener is needed it is automatically started by Axis2. If the Mail Listener is need to be started as the server it can be done with following command with the all the axis2 jars and the mail dependency jars in the classpath.</p>
-  
-  <code>Java org.apache.axis.transport.mail.SimpleMailListener repository-directory</code>
-  
-  <h4>Configure James as SMTP and POP server</h4>
-  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start the James, connect to the James via telnet for administrator James with following code
-</p>
-  <code>
-  <pre>  $telnet 127.0.0.1 4555
-  Trying 127.0.0.1...
-Connected to localhost.localdomain (127.0.0.1).
-Escape character is '^]'.
-JAMES Remote Administration Tool 2.2.0
-Please enter your login and password
-Login id:
-root
-Password:
-root
-Welcome root. HELP for a list of commands
-  </pre>
-  </code>
-
-  <p>add users to the James</p>
-  <code>
-  <pre>adduser axis2-server axis2
-User axis2-server added
-adduser axis2-client axis2
-User axis2-client added
-Connection closed by foreign host.
-  </pre>
-  </code>  
-  
-  <p>Now the James is up and running with the accounts</p>
-  
-  <hr>  
-  
-  <p>&nbsp;</p>
-  
-  
- <h3>REST Support </h3>
- 
- <h4>Enable REST support in the Server Side</h4>  
-    <p>REST support can be enabled in the Server side by adding the following line to the server.xml file.</p>
-    
-    <code>
-    &lt;parameter name="eanbleREST" locked="xsd:false"&gt;true&lt;/parameter&gt;
-    </code>
-    
-<!--    -->
-
-  <h4>Enable the REST support for the Client side</h4>
-  <p>There are two ways to enable REST at the client side, first is to do the same thing done at the 
-  Server side in the client.xml file or do the following in the Call.</p>
-  <code>call.set(Constants.Configuration.DO_REST,"true");</code>
-  
-  <h4>Accsess a REST Web Service Via HTTP GET</h4>
-   <p>Axis2 let the users accsess Web Service that has simple type parameters via the HTTP GET. For example following URL requests the version service Via HTTP GET. But the Web Services arrived via GET assumes REST . Other parameter are converted in to the XML and put them in to the SOAP Body.</p>
-   <code>http://127.0.0.1:8080/axis2/services/Version/getVersion?operation=getVersion</code>
-   <p>Result can be shown in the browser as follows</p>
-   <img src="images/userguide/http-get-ws.png"/>
-   
-  <p>A GET request should fulfil following conditions</p>
-   <ol>
-      <li>All the parameters the Web Service should accept MUST be simple types (e.g. String, int, float, long)</li>
-      <li>There must be a parameter called operation that states the name of the operation</li>
-   </ol>
-   
-   <p>For an example  request <code>http://127.0.0.1:8080/axis2/services/Version/getVersion?operation=getVersion</code> will be converted to the following SOAP Message for processing by Axis2</p>
-   <pre>
-   <code>
-       &lt;soapenv:Envelope 
-       		xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"&gt;
-    	    &lt;soapenv:Body&gt;
-        	&lt;axis2:getVersion xmlns:axis2="http://ws.apache.org/goGetWithREST" &gt;&lt;/axis2:getVersion&gt;
-    	    &lt;/soapenv:Body&gt;
-       &lt;/soapenv:Envelope&gt;
-   </code>
-   </pre>
-   
    
 </body>
 </html>

@@ -16,6 +16,11 @@
         <copy file="../addressing/target/addressing.mar" 
 		tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
+        
+        <!-- Create Chuncked enabled Repository -->
+        <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
+        <copy file="test/org/apache/axis/engine/chuncking-enabled-axis2.xml" 
+        tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
     </postGoal>
 
     <postGoal name="test:test">

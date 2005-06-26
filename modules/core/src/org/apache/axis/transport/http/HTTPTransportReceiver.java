@@ -17,18 +17,13 @@ package org.apache.axis.transport.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
@@ -38,12 +33,8 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.transport.TransportUtils;
 import org.apache.axis.util.Utils;
 
 /**
@@ -78,7 +69,7 @@ public class HTTPTransportReceiver {
     /**
      * Field buf
      */
-    private char[] buf = new char[1024];
+    private byte[] buf = new byte[1024];
 
     /**
      * Field index
@@ -95,41 +86,41 @@ public class HTTPTransportReceiver {
      */
     private boolean done = false;
 
+
     /**
      * Method invoke
      *
      * @param msgContext
      * @throws AxisFault
      */
-    public SOAPEnvelope checkForMessage(
-        MessageContext msgContext,
-        ConfigurationContext engineContext)
+    public SOAPEnvelope handleHTTPRequest(
+        MessageContext msgContext,InputStream inStream, Map map)
         throws AxisFault {
         SOAPEnvelope soapEnvelope = null;
 
-        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
-        msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
-        Reader in = new InputStreamReader(inStream);
 
-        if (in != null) {
-            boolean serverSide = msgContext.isServerSide();
-            Map map = parseTheHeaders(in, serverSide);
 
-            msgContext.setWSAAction((String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+            msgContext.setWSAAction(
+                (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
             Utils.configureMessageContextForHTTP(
                 (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
                 msgContext.getWSAAction(),
                 msgContext);
 
             String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            msgContext.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO, requestURI));
 
-            if (HTTPConstants.RESPONSE_ACK_CODE_VAL.equals(map.get(HTTPConstants.RESPONSE_CODE))) {
+            if (HTTPConstants
+                .RESPONSE_ACK_CODE_VAL
+                .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
                 msgContext.setProperty(
                     MessageContext.TRANSPORT_SUCCEED,
                     HTTPConstants.RESPONSE_ACK_CODE_VAL);
                 return null;
-            } else if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+            } else if (
+                HTTPConstants.HEADER_GET.equals(
+                    map.get(HTTPConstants.HTTP_REQ_TYPE))) {
                 SOAPEnvelope envelope =
                     HTTPTransportUtils.createEnvelopeFromGetRequest(
                         requestURI,
@@ -141,109 +132,17 @@ public class HTTPTransportReceiver {
                         msgContext.getSystemContext());
                     return null;
                 } else {
-                    msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+                    msgContext.setProperty(
+                        Constants.Configuration.DO_REST,
+                        Constants.VALUE_TRUE);
                     return envelope;
                 }
 
             } else {
-                //getServiceLookUp(requestURI)));
-
-                // TODO see is it a Service request e.g. WSDL, list ....
-                // TODO take care of the other HTTPHeaders
-                try {
-                    //Check for the REST behaviour, if you desire rest beahaviour
-                    //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-                    Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-                    XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(in);
-                    StAXBuilder builder = null;
-                    SOAPEnvelope envelope = null;
-                    if (doREST != null && "true".equals(doREST)) {
-                        SOAPFactory soapFactory = new SOAP11Factory();
-                        builder = new StAXOMBuilder(xmlreader);
-                        builder.setOmbuilderFactory(soapFactory);
-                        envelope = soapFactory.getDefaultEnvelope();
-                        envelope.getBody().addChild(builder.getDocumentElement());
-                    } else {
-                        builder = new StAXSOAPModelBuilder(xmlreader);
-                        envelope = (SOAPEnvelope) builder.getDocumentElement();
-                    }
-                    return envelope;
-                } catch (Exception e) {
-                    throw new AxisFault(e.getMessage(), e);
-                }
-
+                return TransportUtils.createSOAPMessage(msgContext,inStream);
             }
-        } else {
-            throw new AxisFault("Input reader not found");
-        }
     }
 
-    /**
-     * This is to be called when we are certain that the message being processed is a SOAP message
-     * @param msgContext
-     * @param engineContext
-     * @param parsedHeaders
-     * @return
-     * @throws AxisFault
-     */
-    public SOAPEnvelope checkForMessage(
-        MessageContext msgContext,
-        ConfigurationContext engineContext,
-        Map parsedHeaders)
-        throws AxisFault {
-
-        SOAPEnvelope soapEnvelope = null;
-        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
-        msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
-        Reader in = new InputStreamReader(inStream);
-
-        if (in != null) {
-            if (HTTPConstants
-                .RESPONSE_ACK_CODE_VAL
-                .equals(parsedHeaders.get(HTTPConstants.RESPONSE_CODE))) {
-                msgContext.setProperty(
-                    MessageContext.TRANSPORT_SUCCEED,
-                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
-                return soapEnvelope;
-            }
-            msgContext.setWSAAction((String) parsedHeaders.get(HTTPConstants.HEADER_SOAP_ACTION));
-            Utils.configureMessageContextForHTTP(
-                (String) parsedHeaders.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                msgContext.getWSAAction(),
-                msgContext);
-
-            String requestURI = (String) parsedHeaders.get(HTTPConstants.REQUEST_URI);
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
-            //getServiceLookUp(requestURI)));
-
-            // TODO see is it a Service request e.g. WSDL, list ....
-            // TODO take care of the other HTTPHeaders
-            try {
-                //Check for the REST behaviour, if you desire rest beahaviour
-                //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-                Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder = null;
-                SOAPEnvelope envelope = null;
-                if (doREST != null && "true".equals(doREST)) {
-                    SOAPFactory soapFactory = new SOAP11Factory();
-                    builder = new StAXOMBuilder(xmlreader);
-                    builder.setOmbuilderFactory(soapFactory);
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(builder.getDocumentElement());
-                } else {
-                    builder = new StAXSOAPModelBuilder(xmlreader);
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
-                }
-                return envelope;
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage(), e);
-            }
-        } else {
-            throw new AxisFault("Input reader not found");
-        }
-    }
 
     /**
      * parses following two styles of HTTP stuff
@@ -268,7 +167,8 @@ public class HTTPTransportReceiver {
      * @return
      * @throws AxisFault
      */
-    public HashMap parseTheHeaders(Reader reader, boolean serverSide) throws AxisFault {
+    public HashMap parseTheHeaders(InputStream in, boolean serverSide)
+        throws AxisFault {
         HashMap map = new HashMap();
         try {
             StringBuffer str = new StringBuffer();
@@ -276,14 +176,22 @@ public class HTTPTransportReceiver {
             String key = null;
             String value = null;
             int start = 0;
-            length = readLine(reader, buf);
+            length = readLine(in, buf);
             if (serverSide) {
-                if ((buf[0] == 'P') && (buf[1] == 'O') && (buf[2] == 'S') && (buf[3] == 'T')) {
-                    map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_POST);
+                if ((buf[0] == 'P')
+                    && (buf[1] == 'O')
+                    && (buf[2] == 'S')
+                    && (buf[3] == 'T')) {
+                    map.put(
+                        HTTPConstants.HTTP_REQ_TYPE,
+                        HTTPConstants.HEADER_POST);
                     index = 5;
 
-                } else if ((buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
-                    map.put(HTTPConstants.HTTP_REQ_TYPE, HTTPConstants.HEADER_GET);
+                } else if (
+                    (buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
+                    map.put(
+                        HTTPConstants.HTTP_REQ_TYPE,
+                        HTTPConstants.HEADER_GET);
                     index = 4;
 
                 } else {
@@ -310,7 +218,7 @@ public class HTTPTransportReceiver {
             }
             state = BEFORE_SEPERATOR;
             while (!done) {
-                length = readLine(reader, buf);
+                length = readLine(in, buf);
                 if (length <= 0) {
                     throw new AxisFault("Premature end of steam");
                 }
@@ -325,7 +233,7 @@ public class HTTPTransportReceiver {
                                     i++; // ignore next space
                                 }
                             } else {
-                                str.append(buf[i]);
+                                str.append((char) buf[i]);
                             }
                             break;
                         case AFTER_SEPERATOR :
@@ -335,7 +243,7 @@ public class HTTPTransportReceiver {
                                 str = new StringBuffer();
                                 i = length;
                             } else {
-                                str.append(buf[i]);
+                                str.append((char) buf[i]);
                             }
                             break;
 
@@ -351,7 +259,8 @@ public class HTTPTransportReceiver {
                             // case END:
                             // break;
                         default :
-                            throw new AxisFault("Error Occured Unknown state " + state);
+                            throw new AxisFault(
+                                "Error Occured Unknown state " + state);
                     }
                 }
                 state = BEFORE_SEPERATOR;
@@ -477,7 +386,7 @@ public class HTTPTransportReceiver {
         StringBuffer str = new StringBuffer();
         try {
             while ((buf[index] != terminal) && (index < length)) {
-                str.append(buf[index]);
+                str.append((char) buf[index]);
                 index++;
             }
             index++;
@@ -497,7 +406,8 @@ public class HTTPTransportReceiver {
          * @return
          * @throws java.io.IOException
          */
-    protected int readLine(Reader is, char[] b) throws java.io.IOException {
+    protected int readLine(InputStream is, byte[] b)
+        throws java.io.IOException {
         int count = 0, c;
 
         // System.out.println("inside here");
@@ -509,7 +419,7 @@ public class HTTPTransportReceiver {
         int off = 0;
         while (c != -1) {
             if ((c != '\n') && (c != '\r')) {
-                b[off++] = (char) c;
+                b[off++] = (byte) c;
                 count++;
                 c = is.read();
             } else {
@@ -535,7 +445,7 @@ public class HTTPTransportReceiver {
             }
         }
         if (c == -1) {
-            throw new AxisFault("Every line should ends with the \n, unexpected End of stream");
+            throw new AxisFault("Every line should ends with the \\n, unexpected End of stream");
         } else {
             return (count > 0) ? count : -1;
         }
@@ -549,7 +459,6 @@ public class HTTPTransportReceiver {
         try {
             out.write(this.getServicesHTML(configurationContext).getBytes());
             out.flush();
-            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -563,7 +472,8 @@ public class HTTPTransportReceiver {
      */
     private String getServicesHTML(ConfigurationContext configurationContext) {
         String temp = "";
-        Map services = configurationContext.getAxisConfiguration().getServices();
+        Map services =
+            configurationContext.getAxisConfiguration().getServices();
         Hashtable erroneousServices =
             configurationContext.getAxisConfiguration().getFaulytServices();
         boolean status = false;
@@ -581,10 +491,14 @@ public class HTTPTransportReceiver {
                 temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";
-                    for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
+                    for (Iterator iterator1 = operationsList.iterator();
+                        iterator1.hasNext();
+                        ) {
                         OperationDescription axisOperation =
                             (OperationDescription) iterator1.next();
-                        temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                        temp += "<li>"
+                            + axisOperation.getName().getLocalPart()
+                            + "</li>";
                     }
                     temp += "</ul>";
                 } else {
@@ -599,8 +513,11 @@ public class HTTPTransportReceiver {
             status = true;
             Enumeration faultyservices = erroneousServices.keys();
             while (faultyservices.hasMoreElements()) {
-                String faultyserviceName = (String) faultyservices.nextElement();
-                temp += "<h3><font color=\"blue\">" + faultyserviceName + "</font></h3>";
+                String faultyserviceName =
+                    (String) faultyservices.nextElement();
+                temp += "<h3><font color=\"blue\">"
+                    + faultyserviceName
+                    + "</font></h3>";
             }
         }
 

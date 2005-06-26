@@ -1,0 +1,52 @@
+
+<html>
+<head><TITLE>RESTful Web Services Support</TITLE></head>
+<body>
+
+<h1>RESTful Web Services Support</h1>
+<p>Axis2 can be configured as REST Cantainer and can be used to send and receives restful web services. The REST Web Services can be access in two ways, using HTTP GET and POST. </p>
+ 
+ <h2>Doing REST web services with HTTP POST</h2> 
+  <p>REST support can be enabled in the Server side by adding the following line to the server.xml file.</p>
+  <code>
+    &lt;parameter name="eanbleREST" locked="xsd:false"&gt;true&lt;/parameter&gt;
+    </code>
+  <p>But it act both as a REST endpoint as well as a SOAP endpoint. When a Message is received if the content type is text/xml and the SOAP Action Headers is missing the Message is considered as a RESTful Message. Else they are treated as usual SOAP Messages.</p>
+  
+    <p>While sending the Messages decision they should be RESTful or not is up to the Client side developer. There are two ways to enable REST at the client side, first is to do the same thing done at the 
+  Server side in the client.xml file or do the following in the Call.</p>
+    
+    
+    
+<code>call.set(Constants.Configuration.DO_REST,"true");</code>
+  
+  <h2>Accsess a REST Web Service Via HTTP GET</h2>
+   <p>Axis2 let the users accsess Web Service that has simple type parameters via the HTTP GET. For example following URL requests the version service Via HTTP GET. But the Web Services arrived via GET assumes REST . Other parameter are converted in to the XML and put them in to the SOAP Body.</p>
+   <code>http://127.0.0.1:8080/axis2/services/Version/getVersion?operation=getVersion</code>
+   <p>Result can be shown in the browser as follows</p>
+   <img src="images/userguide/http-get-ws.png"/>
+   
+  <p>A GET request should fulfil following conditions</p>
+   <ol>
+      <li>All the parameters the Web Service should accept MUST be simple types (e.g. String, int, float, long)</li>
+      <li>There must be a parameter called operation that states the name of the operation</li>
+   </ol>
+   
+   <p>For an example  request <code>http://127.0.0.1:8080/axis2/services/Version/getVersion?operation=getVersion</code> will be converted to the following SOAP Message for processing by Axis2</p>
+   <pre>
+   <code>
+&lt;soapenv:Envelope 
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"	
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"&gt;	
+    &lt;soapenv:Body&gt;
+   	&lt;axis2:getVersion xmlns:axis2="http://ws.apache.org/goGetWithREST" &gt;&lt;/axis2:getVersion&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+</code>
+   </pre>
+   
+   
+</body>
+</html>

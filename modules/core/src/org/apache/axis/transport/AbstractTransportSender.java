@@ -19,13 +19,14 @@ import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMElement;
@@ -57,6 +58,10 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
     public AbstractTransportSender() {
         init(new HandlerDescription(NAME));
     }
+    
+    public void init(ConfigurationContext confContext,TransportOutDescription transportOut)throws AxisFault{
+    
+    }
 
     /**
      * Method invoke
@@ -83,21 +88,27 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         if (epr != null) {
-            out = openTheConnection(epr);
-            startSendWithToAddress(msgContext, out);
+            out = openTheConnection(epr,msgContext);
+            OutputStream newOut = startSendWithToAddress(msgContext, out);
+            if(newOut != null){
+                out = newOut;
+            }
             writeMessage(msgContext, out);
-            finalizeSendWithToAddress(msgContext);
+            finalizeSendWithToAddress(msgContext,out);
         } else {
             out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
             if (out != null) {
                 startSendWithOutputStreamFromIncomingConnection(msgContext, out);
                 writeMessage(msgContext, out);
-                finalizeSendWithOutputStreamFromIncomingConnection(msgContext);
+                finalizeSendWithOutputStreamFromIncomingConnection(msgContext,out);
             } else {
                 throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
         }
-        msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
+        //TODO fix this, we do not set the value if the operation context is not avalible
+        if(msgContext.getOperationContext()!= null){
+            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);        
+        }
     }
 
     public void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
@@ -115,7 +126,6 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 outputMessage.serialize(omOutput);
                 omOutput.flush();
                 out.flush();
-
             } catch (Exception e) {
                 throw new AxisFault("Stream error", e);
             }
@@ -124,20 +134,20 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
     }
 
-    public abstract void startSendWithToAddress(MessageContext msgContext, OutputStream out)
+    public abstract OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out)
             throws AxisFault;
 
-    public abstract void finalizeSendWithToAddress(MessageContext msgContext)
+    public abstract void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out)
             throws AxisFault;
 
 
-    public abstract void startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+    public abstract OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
                                                                          OutputStream out)
             throws AxisFault;
 
-    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext)
+    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,OutputStream out)
             throws AxisFault;
 
 
-    protected abstract OutputStream openTheConnection(EndpointReference epr) throws AxisFault;
+    protected abstract OutputStream openTheConnection(EndpointReference epr,MessageContext msgctx) throws AxisFault;
 }

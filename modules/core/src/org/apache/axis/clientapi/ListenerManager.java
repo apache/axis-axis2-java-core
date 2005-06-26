@@ -49,7 +49,7 @@ public class ListenerManager {
             TransportInDescription tranportIn =
                 configurationContext.getAxisConfiguration().getTransportIn(new QName(transport));
             TransportListener listener = tranportIn.getReciever();
-            listener.init(configurationContext, tranportIn);
+//            listener.init(configurationContext, tranportIn);
             listener.start();
             tsState = new TransportListnerState(listener);
             listeners.put(transport,tsState);

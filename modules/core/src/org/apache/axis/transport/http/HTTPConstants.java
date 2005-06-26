@@ -15,6 +15,8 @@
  */
 package org.apache.axis.transport.http;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * HTTP protocol and message context constants.
  */
@@ -382,5 +384,30 @@ public class HTTPConstants {
      * Field HTTP_REQ_TYPE
      */
     public static final String HTTP_REQ_TYPE = "HTTP_REQ_TYPE";
+    
+
+       /**
+        * Default content encoding chatset
+        */
+         public static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
+
+    /**
+       * Method getBytes
+       * @param data
+       * @return
+       */
+       public static byte[] getBytes(final String data) {
+          if (data == null) {
+              throw new IllegalArgumentException("Parameter may not be null");
+          }
+
+          try {
+              return data.getBytes(HTTP_ELEMENT_CHARSET);
+          } catch (UnsupportedEncodingException e){
+
+          }
+              return data.getBytes();
+          }
+
     
 }

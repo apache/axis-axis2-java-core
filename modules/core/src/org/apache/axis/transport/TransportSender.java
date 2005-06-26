@@ -15,6 +15,9 @@
  */
 package org.apache.axis.transport;
 
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
 
@@ -22,5 +25,6 @@ import org.apache.axis.engine.Handler;
  * Interface TransportSender
  */
 public interface TransportSender extends Handler {
-    public void cleanUp() throws AxisFault;
+    public void cleanUp(MessageContext msgContext) throws AxisFault;
+    public void init(ConfigurationContext confContext,TransportOutDescription transportOut)throws AxisFault;
 }

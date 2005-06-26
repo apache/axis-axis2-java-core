@@ -39,7 +39,7 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext)
+    public void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out)
         throws AxisFault {
             try {
                 TransportOutDescription transportOut = msgContext.getTransportOut();
@@ -91,16 +91,17 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
+    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
+        return out;
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference epr,MessageContext msgContext) throws AxisFault {
         byteArrayOutputStream = new ByteArrayOutputStream();
             return byteArrayOutputStream;
     }
 
     //Output Stream based cases are not supported 
-    public void startSendWithOutputStreamFromIncomingConnection(
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
     OutputStream out)
         throws AxisFault {
@@ -108,13 +109,13 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext)
+        MessageContext msgContext,OutputStream out)
         throws AxisFault {
     }
     /* (non-Javadoc)
      * @see org.apache.axis.transport.TransportSender#cleanUp()
      */
-    public void cleanUp() throws AxisFault {
+    public void cleanUp(MessageContext msgContext) throws AxisFault {
         // TODO Auto-generated method stub
 
     }

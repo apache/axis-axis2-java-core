@@ -46,10 +46,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     private final HashMap services = new HashMap();
 
-    /**
-     * Field transports
-     */
-    private final HashMap transports = new HashMap();
+
 
     private final HashMap transportsIn = new HashMap();
 
@@ -221,22 +218,13 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     public HashMap getTransportsIn() {
-        return transports;
+        return transportsIn;
     }
 
     public HashMap getTransportsOut() {
         return transportsOut;
     }
 
-    /**
-     * Method getTransports
-     *
-     * @return
-     * @throws AxisFault
-     */
-    public HashMap getTransports() throws AxisFault {
-        return transports;
-    }
 
     public void setInPhases(ArrayList inPhases) {
         this.inPhases = inPhases;

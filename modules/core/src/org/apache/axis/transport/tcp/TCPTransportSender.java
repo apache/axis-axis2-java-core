@@ -56,10 +56,10 @@ public class TCPTransportSender extends AbstractTransportSender {
         //TCP no headers   :)
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext) {
+    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,OutputStream out) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext) throws AxisFault {
+    public void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out) throws AxisFault {
         try {
             socket.shutdownOutput();
             msgContext.setProperty(
@@ -69,7 +69,7 @@ public class TCPTransportSender extends AbstractTransportSender {
         }
     }
 
-    protected OutputStream openTheConnection(EndpointReference toURL) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference toURL,MessageContext msgContext) throws AxisFault {
         if (toURL != null) {
             try {
                 URL url = new URL(toURL.getAddress());
@@ -88,16 +88,18 @@ public class TCPTransportSender extends AbstractTransportSender {
         }
     }
 
-    public void startSendWithOutputStreamFromIncomingConnection(
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
         MessageContext msgContext,
         OutputStream out)
         throws AxisFault {
+            return out;
     }
 
-    public void startSendWithToAddress(MessageContext msgContext, OutputStream out) {
+    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) {
+        return out;
     }
 
-    public void cleanUp() throws AxisFault {
+    public void cleanUp(MessageContext msgContext) throws AxisFault {
         try {
             if (socket != null) {
                 socket.close();

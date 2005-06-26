@@ -18,9 +18,9 @@ package org.apache.axis.transport.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -76,6 +76,9 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * latch to true if stop() is called
      */
     private boolean stopped = false;
+    
+    private boolean chuncked = false;
+    private int port;
 
     public SimpleHTTPServer() {
     }
@@ -157,20 +160,24 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
 
                         // We do not have any Addressing Headers to put
                         // let us put the information about incoming transport
-                        OutputStream out = socket.getOutputStream();
-                        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                        msgContext.setProperty(MessageContext.TRANSPORT_IN, inStream);
                         HTTPTransportReceiver reciver = new HTTPTransportReceiver();
+                        Map map = reciver.parseTheHeaders(inStream, true);
+                        
+                        SimpleHTTPOutputStream out;
+                        String transferEncoding = (String)map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                        if(transferEncoding != null 
+                            && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)){
+                                inStream = new ChunkedInputStream(inStream);
+                                out = new SimpleHTTPOutputStream(socket.getOutputStream(),true);
+                            }else{
+                                out = new SimpleHTTPOutputStream(socket.getOutputStream(),false);
+                            }
 
-                        /*
-                         * If the request is a GET request then  
-                         * process the request and send out HTML
-                         * if not get the soap message and process it
-                         */
+                        //OutputStream out = socket.getOutputStream();
+                        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
-                        //Handle POST Request
                         SOAPEnvelope envelope =
-                            reciver.checkForMessage(msgContext, configurationContext);
+                            reciver.handleHTTPRequest(msgContext,inStream,map);
 
                         if (envelope != null) {
                             msgContext.setEnvelope(envelope);
@@ -178,16 +185,16 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                             AxisEngine engine = new AxisEngine(configurationContext);
                             engine.receive(msgContext);
 
-                            Object contextWritten =
-                                msgContext.getProperty(Constants.RESPONSE_WRITTEN);
-                            if (contextWritten == null
-                                || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                                out.write(new String(HTTPConstants.NOCONTENT).getBytes());
-                                out.close();
-                            }
+//                            Object contextWritten =
+//                                msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+//                            if (contextWritten == null
+//                                || !Constants.VALUE_TRUE.equals(contextWritten)) {
+//                                out.write(new String(HTTPConstants.NOCONTENT).getBytes());
+//                                out.close();
+//                            }
 
                         }
-
+                        out.finalize();
                     }
                 } catch (Throwable e) {
                     log.error(e);
@@ -232,6 +239,10 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * @throws Exception
      */
     public void start() throws AxisFault {
+        if(serverSocket == null){
+            serverSocket = ListenerManager.openSocket(port);
+        }
+        
         Thread newThread = new Thread(this);
         newThread.start();
     }
@@ -329,8 +340,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         this.configurationContext = axisConf;
         Parameter param = transprtIn.getParameter(PARAM_PORT);
         if (param != null) {
-            int port = Integer.parseInt((String) param.getValue());
-            serverSocket = ListenerManager.openSocket(port);
+            this.port = Integer.parseInt((String) param.getValue());
         }
     }
 
