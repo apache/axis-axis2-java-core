@@ -27,7 +27,7 @@
     </INfaultflow>
 
     <operation name="creatSeq" mep="MEP_URI_IN_OUT">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
         <parameter name="para1" locked="xsd:true">10</parameter>
     </operation>
 </module>

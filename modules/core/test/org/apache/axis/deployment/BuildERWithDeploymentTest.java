@@ -44,7 +44,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         //commentd since there is no service based messgeRecivers
         /*MessageReceiver provider = service.getMessageReceiver();
         assertNotNull(provider);
-        assertTrue(provider instanceof RawXMLINOutMessageRecevier);*/
+        assertTrue(provider instanceof RawXMLINOutMessageReceiver);*/
         ClassLoader cl = service.getClassLoader();
         assertNotNull(cl);
         Class.forName("Echo2", true, cl);

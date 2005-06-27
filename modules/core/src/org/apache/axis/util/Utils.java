@@ -33,7 +33,7 @@ import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;
-import org.apache.axis.receivers.RawXMLINOutMessageRecevier;
+import org.apache.axis.receivers.RawXMLINOutMessageReceiver;
 import org.apache.wsdl.WSDLService;
 
 public class Utils {
@@ -110,7 +110,7 @@ public class Utils {
         QName opName) {
         return createSimpleService(
             serviceName,
-            new RawXMLINOutMessageRecevier(),
+            new RawXMLINOutMessageReceiver(),
             className,
             opName);
     }

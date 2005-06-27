@@ -1,5 +1,5 @@
 <axisconfig name="AxisJava2.0">
-    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
     <transportReceiver name="http">
         <parameter name="para1" locked="xsd:true">10</parameter>
     </transportReceiver>

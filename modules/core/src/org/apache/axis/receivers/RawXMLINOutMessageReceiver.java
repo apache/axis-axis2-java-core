@@ -37,7 +37,7 @@ import org.apache.wsdl.WSDLService;
 /**
  * This is a Simple java Provider.
  */
-public class RawXMLINOutMessageRecevier
+public class RawXMLINOutMessageReceiver
         extends AbstractInOutSyncMessageReceiver
         implements MessageReceiver {
     /**
@@ -63,7 +63,7 @@ public class RawXMLINOutMessageRecevier
     /**
      * Constructor RawXMLProvider
      */
-    public RawXMLINOutMessageRecevier() {
+    public RawXMLINOutMessageReceiver() {
         scope = Constants.APPLICATION_SCOPE;
     }
 

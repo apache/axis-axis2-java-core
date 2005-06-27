@@ -421,7 +421,7 @@ public class DeploymentParser implements DeploymentConstants {
                                         Thread.currentThread().getContextClassLoader();
                                 Class messageReceiver =
                                         Class.forName(
-                                                "org.apache.axis.receivers.RawXMLINOutMessageRecevier",
+                                                "org.apache.axis.receivers.RawXMLINOutMessageReceiver",
                                                 true,
                                                 loader1);
                                 operation.setMessageReciever(
@@ -901,7 +901,7 @@ public class DeploymentParser implements DeploymentConstants {
                                         Thread.currentThread().getContextClassLoader();
                                 Class messageReceiver =
                                         Class.forName(
-                                                "org.apache.axis.receivers.RawXMLINOutMessageRecevier",
+                                                "org.apache.axis.receivers.RawXMLINOutMessageReceiver",
                                                 true,
                                                 loader1);
                                 operation.setMessageReciever(

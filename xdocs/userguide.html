@@ -129,9 +129,9 @@ public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMEleme
 &quot;userguide/example1&quot; package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
 <p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed 
 in Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
-<source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageRecevier&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
-<p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageRecevier</strong> since it is an 
-IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageRecevier</strong> as the message receiver. </p>
+<source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
+<p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageReceiver</strong> since it is an
+IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver. </p>
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
 for MyService we will use &quot;MyService.aar&quot; with the &quot;service.xml&quot; packaged 
 in the META-INF as shown in the following picture.</p>
@@ -576,10 +576,10 @@ This is a sample Web Service with a logging module engaged.
 <font color="#33CC00">&lt;module ref=&quot;logging&quot;/&gt;</font>
 &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example2.MyService&lt;/parameter&gt;
 &lt;operation name=&quot;echo&quot;&gt;
-&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
 &lt;/operation&gt;
 &lt;operation name=&quot;ping&quot;&gt;
-&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageRecevier&quot;/&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
 &lt;/operation&gt;
 &lt;/service&gt;
 </code></pre></p>

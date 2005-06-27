@@ -4,9 +4,9 @@
     </description>
     <parameter name="ServiceClass" locked="xsd:false">userguide.example1.MyService</parameter>
     <operation name="echo">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
      <operation name="ping">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOnlyMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
   </service>

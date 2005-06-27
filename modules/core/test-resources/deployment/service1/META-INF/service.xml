@@ -22,7 +22,7 @@
     </Outfaultflow>
     <operation name="echoString">
         <module ref="module1"/>
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
     <operation name="echoStringArray"/>
     <operation name="echoEchoStruct"/>

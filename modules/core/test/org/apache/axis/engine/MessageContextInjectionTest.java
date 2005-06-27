@@ -37,7 +37,7 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.receivers.AbstractMessageReceiver;
-import org.apache.axis.receivers.RawXMLINOnlyMessageRecevier;
+import org.apache.axis.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
@@ -79,7 +79,7 @@ public class MessageContextInjectionTest extends TestCase {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, MessageContextEnabledEcho.class.getName()));
         OperationDescription operation = new OperationDescription(operationName);
-        operation.setMessageReciever(new RawXMLINOnlyMessageRecevier());
+        operation.setMessageReciever(new RawXMLINOnlyMessageReceiver());
         service.addOperation(operation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration().addService(service);

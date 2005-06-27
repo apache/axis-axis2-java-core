@@ -5,9 +5,9 @@
     <module ref="logging"/>
     <parameter name="ServiceClass" locked="xsd:false">userguide.example2.MyService</parameter>
     <operation name="echo">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
     <operation name="ping">
-        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+        <messageReceiver class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
 </service>

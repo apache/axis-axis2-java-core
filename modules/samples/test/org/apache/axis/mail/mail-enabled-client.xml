@@ -13,7 +13,7 @@
    <!-- Message Receivers -->
    <!-- ================================================= -->
     <!-- This is the Deafult Message Receiver for the Request Response style Operations -->
-    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
 
     <transportReceiver name="http" class="org.apache.axis.transport.http.SimpleHTTPServer">
         <parameter name="port" locked="xsd:false">6060</parameter>

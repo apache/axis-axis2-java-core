@@ -18,7 +18,7 @@
    <!-- Message Receivers -->
    <!-- ================================================= -->
     <!-- This is the Deafult Message Receiver for the Request Response style Operations -->
-    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageRecevier"/>
+    <messageReceiver mep="INOUT" class="org.apache.axis.receivers.RawXMLINOutMessageReceiver"/>
 
    <!-- ================================================= -->
    <!-- Transport Ins -->
