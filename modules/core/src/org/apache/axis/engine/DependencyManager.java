@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 
 import org.apache.axis.context.MessageContext;
 
-public class DependancyManager {
+public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
     public static void configureBusinussLogicProvider(Object obj, MessageContext msgctx)
         throws AxisFault {

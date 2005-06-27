@@ -21,7 +21,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.engine.DependancyManager;
+import org.apache.axis.engine.DependencyManager;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -33,8 +33,6 @@ import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
-
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
 
 /**
  * This is a Simple java Provider.
@@ -89,7 +87,7 @@ public class RawXMLINOutMessageRecevier
 
             // find the WebService method
             Class ImplClass = obj.getClass();
-            DependancyManager.configureBusinussLogicProvider(obj, msgContext);
+            DependencyManager.configureBusinussLogicProvider(obj, msgContext);
 
             OperationDescription op = msgContext.getOperationContext().getAxisOperation();
             if (op == null) {
