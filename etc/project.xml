@@ -2,11 +2,13 @@
 <project>
 <name>Axis2.0</name>
   <pomVersion>3</pomVersion>
-  <!-- a unique name for this project -->
 
+  <!-- a unique name for this project -->
+  <name>Apache Axis 2.0</name>
+  <id>axis</id>
   <groupId>axis</groupId>
-  
-  
+  <package>org.apache.axis2</package>
+
   <currentVersion>M2</currentVersion>
   
   <!-- details about the organization that 'owns' the project -->

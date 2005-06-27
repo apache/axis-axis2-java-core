@@ -43,11 +43,183 @@
        | 
      -->
  
-<project default="jar" xmlns:m="jelly:maven" xmlns:ant="jelly:ant" xmlns:j="jelly:core">
+<project default="jar"
+    xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
+    xmlns:ant="jelly:ant"
+    xmlns:maven="jelly:maven"
+    xmlns:define="jelly:define">
+
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
     
+    <!-- ======= -->
+    <!-- Modules -->
+    <!-- ======= -->
+    <goal name="modules:reactor:init">
+        <!--
+           | Determine the includes which the reactor will use.
+           |
+           | Uses 4 properties to control which modules will be include:
+           |
+           | module.types      Comma seperated list of module types (ie. specs or modules)
+           | module.includes   Comma seperated list of module names (ie. common, core, ...)
+           | modules           Same as module.includes, module.includes initializes to this value
+           | module.excludes   Comma seperated list of module names to exclude
+           |
+           | The end result is that modules.reactor.includes is set to the project.xml files
+           | to include.  This is the value the reactor will use.
+           |
+           | Example, to only build the common and core modules:
+           |
+           | maven -Dmodules=common,core
+         -->
 
+        <j:if test="${context.getVariable('module.types') == null}">
+            <j:set var="module.types" value="modules,applications,plugins"/>
+        </j:if>
+
+        <j:if test="${context.getVariable('modules') == null}">
+            <!-- The default is to build everything -->
+            <j:set var="modules" value="*"/>
+        </j:if>
+
+        <j:if test="${context.getVariable('module.includes') == null}">
+            <j:set var="module.includes" value="${modules}"/>
+        </j:if>
+
+        <j:if test="${context.getVariable('module.excludes') == null}">
+            <j:set var="module.excludes" value=""/>
+        </j:if>
+
+        <u:tokenize var="types" delim=",">${module.types}</u:tokenize>
+
+        <ant:fileScanner var="scanner">
+            <ant:fileset dir="${basedir}">
+                <j:forEach var="type" items="${types}">
+                    <j:choose>
+                        <j:when test="${context.getVariable('module.includes') == '*'}">
+                            <ant:include name="${type}/*/project.xml"/>
+                        </j:when>
+                        <j:otherwise>
+                            <u:tokenize var="includes" delim=",">${module.includes}</u:tokenize>
+                            <j:forEach var="include" items="${includes}">
+                                <u:available file="${basedir}/${type}/${include}/project.xml">
+                                    <ant:include name="${type}/${include}/project.xml"/>
+                                </u:available>
+                            </j:forEach>
+                        </j:otherwise>
+                    </j:choose>
+
+                    <j:choose>
+                        <j:when test="${context.getVariable('module.excludes') == '*'}">
+                            <ant:exclude name="${type}/*/project.xml"/>
+                        </j:when>
+                        <j:otherwise>
+                            <u:tokenize var="excludes" delim=",">${module.excludes}</u:tokenize>
+                            <j:forEach var="exclude" items="${excludes}">
+                                <u:available file="${basedir}/${type}/${exclude}/project.xml">
+                                    <ant:exclude name="${type}/${exclude}/project.xml"/>
+                                </u:available>
+                            </j:forEach>
+                        </j:otherwise>
+                    </j:choose>
+                </j:forEach>
+            </ant:fileset>
+        </ant:fileScanner>
+
+        <!-- Setup the includes which will be used by the reactor -->
+        <j:forEach var="file" items="${scanner.iterator()}">
+            <!--
+               | Would be nice if reactor would take a file set, but for now just remove
+               | the baseddir portion of the file's name.  So this will essentially strip off
+               | ${basedir}
+             -->
+            <j:set var="directory" value="${file.parentFile.parentFile.name}/${file.parentFile.name}"/>
+            <j:set var="filename" value="${directory}/${file.name}"/>
+            <j:choose>
+                <j:when test="${context.getVariable('modules.reactor.includes') == null}">
+                    <j:set var="modules.directories" value="${directory}"/>
+                    <j:set var="modules.reactor.includes" value="${filename}"/>
+                </j:when>
+                <j:otherwise>
+                    <j:set var="modules.directories" value="${modules.directories},${directory}"/>
+                    <j:set var="modules.reactor.includes" value="${modules.reactor.includes},${filename}"/>
+                </j:otherwise>
+            </j:choose>
+        </j:forEach>
+    </goal>
+
+    <!-- Helper tags for modules -->
+    <define:taglib uri="local:modules">
+        <define:tag name="reactor">
+            <attainGoal name="modules:reactor:init"/>
+
+            <j:choose>
+                <j:when test="${goals != null}">
+                    <maven:reactor
+                        basedir="${basedir}"
+                        includes="${modules.reactor.includes}"
+                        banner="Executing (${goals}):"
+                        ignoreFailures="false"
+                        goals="${goals}"
+                        postProcessing="true"
+                        />
+                </j:when>
+                <j:when test="${goals == null}">
+                    <maven:reactor
+                        basedir="${basedir}"
+                        includes="${modules.reactor.includes}"
+                        banner="Executing (${goals}):"
+                        ignoreFailures="false"
+                        postProcessing="true"
+                        />
+                </j:when>
+            </j:choose>
+
+            <!-- Set reactor projects in parent scope so goals have access to it -->
+            <j:set var="reactorProjects" value="${reactorProjects}" scope="parent"/>
+        </define:tag>
+    </define:taglib>
+    
+    <goal name="m:init">
+        <ant:fileScanner var="scanner">
+            <ant:fileset dir="${basedir}">
+                <u:tokenize var="includes" delim=",">${maven.multiproject.includes}</u:tokenize>
+                <j:forEach var="include" items="${includes}">
+                    <ant:include name="${include}"/>
+                </j:forEach>
+                <u:tokenize var="excludes" delim=",">${maven.multiproject.excludes}</u:tokenize>
+                <j:forEach var="exclude" items="${excludes}">
+                    <ant:exclude name="${exclude}"/>
+                </j:forEach>
+            </ant:fileset>
+        </ant:fileScanner>
+
+        <j:set var="maven.multiproject.includes" value=""/>
+        <j:set var="maven.multiproject.excludes" value=""/>
+        <j:set var="modules.directories" value=""/>
+
+        <u:tokenize var="moduleList" delim=",">${modules}</u:tokenize>
+        <j:set var="currentDir" value="${basedir}/"/>
+        <j:forEach var="file" items="${scanner.iterator()}">
+            <j:set var="directory" value="${file.parentFile.absolutePath}"/>
+            <j:set var="include" value="${file.absolutePath.substring(currentDir.length())}"/>
+            <j:if test="${moduleList.isEmpty() || moduleList.contains(file.parentFile.name)}">
+                <j:choose>
+                    <j:when test="${context.getVariable('maven.multiproject.includes') == ''}">
+                        <j:set var="modules.directories" value="${directory}"/>
+                        <j:set var="maven.multiproject.includes" value="${include}"/>
+                    </j:when>
+                    <j:otherwise>
+                        <j:set var="modules.directories" value="${modules.directories},${directory}"/>
+                        <j:set var="maven.multiproject.includes" value="${maven.multiproject.includes},${include}"/>
+                    </j:otherwise>
+                </j:choose>
+            </j:if>
+        </j:forEach>
+    </goal>
+    
   <goal name="jar">
     <attainGoal name="multiproject:install"/>
     <attainGoal name="create-jar"/>
@@ -66,28 +238,46 @@
 	       <include name="**/*.java"/>
 	       <include name="**/*.xml"/>
 	       <include name="**/*.wsdl"/>
-	       <exclude name="**/traget/**"/>
+	       <exclude name="**/target/**"/>
 	   </srcfiles>
 	</uptodate>
 	<echo message="the files are up to date = ${jars.uptodate}"></echo>
     </goal>	
 
+    <goal name="modules:clean">
+        <attainGoal name="modules:reactor:init"/>
+        <u:tokenize var="directories" delim=",">${modules.directories}</u:tokenize>
+        <j:forEach var="directory" items="${directories}">
+            <ant:echo>+----------------------------------------</ant:echo>
+            <ant:echo>| Cleaning: ${directory} </ant:echo>
+            <ant:echo>+----------------------------------------</ant:echo>
+            <ant:delete dir="${directory}/target"/>
+            <ant:delete quiet="false" failonerror="false">
+                <ant:fileset dir="${directory}">
+                    <ant:include name="maven.log"/>
+                    <ant:include name="velocity.log*"/>
+                    <ant:include name="junit*.properties"/>
+					<ant:include name="axis.log"/>
+					<ant:include name="junit*.properties"/>
+					<ant:include name="temp.properties"/>
+                </ant:fileset>
+            </ant:delete>
+            <ant:echo></ant:echo>
+        </j:forEach>
+        <ant:echo>+----------------------------------------</ant:echo>
+        <ant:echo>| Cleaning: target and etc/target  </ant:echo>
+        <ant:echo>+----------------------------------------</ant:echo>
+        <ant:delete dir="target"/>
+        <ant:delete dir="etc/target"/>
+    </goal>
+
+    <goal name="clean">
+        <attainGoal name="modules:clean"/>
+    </goal>
+
   <!-- ================================================================ -->
   <!--- Clean the Repository -->
   <!-- ================================================================ -->
-				
-    <goal name="clean">
-		<attainGoal name="multiproject:clean"/>
-		<delete dir="target"/>
-		<ant:delete >
-	    	<ant:fileset dir=".">
-                <ant:include name="**/axis.log"/>
-                <ant:include name="**/junit*.properties"/>
-                <ant:include name="**/temp.properties"/>
-	    	</ant:fileset>
-        </ant:delete>
-    </goal>
-
     <goal name="clean-repo">
 	<ant:delete >
 	    <ant:fileset dir="${maven.repo.local}">
@@ -131,7 +321,7 @@
 
     <goal name="war" prereqs="init"> 
          <j:if test="${jars.uptodate != 'yes'}">
-                <attainGoal name="multiproject:install"/>
+                <attainGoal name="jar"/>
                 <attainGoal name="create-lib"/>
          </j:if> 
         <!-- jar the test classes -->
