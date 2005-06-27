@@ -133,9 +133,8 @@
 		<exclude>**/*InteropStubTest.java</exclude>
 		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
 		<exclude>**/*MailOneWayRawXMLTest.java</exclude> 
-				<exclude>**/*MailRequestResponseRawXMLTest.java</exclude> 
-		
-		
+		<exclude>**/*MailRequestResponseRawXMLTest.java</exclude> 
+		<exclude>**/*EchoRawXMLChunckedTest.java</exclude> 
       </excludes>
      <includes>
         <include>**/*Test.java</include>
