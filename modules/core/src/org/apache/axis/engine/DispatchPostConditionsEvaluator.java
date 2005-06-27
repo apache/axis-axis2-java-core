@@ -26,19 +26,19 @@ import org.apache.axis.handlers.AbstractHandler;
 /**
  * Class Dispatcher
  */
-public class DispatchPostConditionsEvaluater extends AbstractHandler implements Handler {
+public class DispatchPostConditionsEvaluator extends AbstractHandler implements Handler {
     /**
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "DispatchPostConditionsEvaluater");
+        new QName("http://axis.ws.apache.org", "DispatchPostConditionsEvaluator");
 
     /**
      * Constructor Dispatcher
      */
     private ConfigurationContext engineContext;
 
-    public DispatchPostConditionsEvaluater() {
+    public DispatchPostConditionsEvaluator() {
         init(new HandlerDescription(NAME));
     }
 

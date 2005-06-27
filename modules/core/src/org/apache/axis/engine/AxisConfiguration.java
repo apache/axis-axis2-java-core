@@ -91,7 +91,7 @@ public interface AxisConfiguration extends ParameterInclude{
     public boolean isEngaged(QName moduleName);
 
      /**
-      * To engae a module at the run time it can be used this method
+      * To engage a module at the run time it can be used this method
       * @param moduleref
       * @throws AxisFault
       */
