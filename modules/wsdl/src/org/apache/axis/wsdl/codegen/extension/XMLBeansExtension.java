@@ -42,7 +42,7 @@ import java.util.List;
 *
 *
 */
-public class XMLBeansExtension extends AbstractCodeGenerationExtension implements CodeGenExtention {
+public class XMLBeansExtension extends AbstractCodeGenerationExtension implements CodeGenExtension {
     private static final String DEFUALT_STS_NAME = "foo";
 
 

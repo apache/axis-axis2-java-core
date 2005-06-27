@@ -23,7 +23,7 @@ import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
  * @author chathura@opensource.lk
  *
  */
-public interface CodeGenExtention {
+public interface CodeGenExtension {
 	
 	
 	public void init(CodeGenConfiguration configuration);

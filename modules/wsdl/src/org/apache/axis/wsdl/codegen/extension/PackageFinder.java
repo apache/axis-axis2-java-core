@@ -29,7 +29,7 @@ import org.apache.wsdl.WSDLBinding;
  *  
  */
 public class PackageFinder extends AbstractCodeGenerationExtension implements
-		CodeGenExtention {
+		CodeGenExtension {
 
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;

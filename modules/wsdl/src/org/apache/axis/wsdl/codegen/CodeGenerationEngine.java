@@ -30,7 +30,7 @@ import org.apache.axis.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis.wsdl.codegen.emitter.Emitter;
 import org.apache.axis.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.codegen.extension.CodeGenExtention;
+import org.apache.axis.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis.wsdl.codegen.extension.PackageFinder;
 import org.apache.axis.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.axis.wsdl.databinding.TypeMapper;
@@ -84,7 +84,7 @@ public class CodeGenerationEngine {
     public void generate()throws CodeGenerationException{
 
         for(int i = 0; i< this.moduleEndpoints.size(); i++){
-            ((CodeGenExtention)this.moduleEndpoints.get(i)).engage();
+            ((CodeGenExtension)this.moduleEndpoints.get(i)).engage();
         }
 
         Emitter emitter = null;

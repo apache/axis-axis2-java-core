@@ -23,7 +23,7 @@ import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
  * @author chathura@opensource.lk
  *
  */
-public class PolicyEvaluator implements CodeGenExtention{
+public class PolicyEvaluator implements CodeGenExtension{
 	
 	CodeGenConfiguration configuration;
 

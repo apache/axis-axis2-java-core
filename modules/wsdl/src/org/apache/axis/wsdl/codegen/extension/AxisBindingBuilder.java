@@ -27,7 +27,7 @@ import org.apache.wsdl.WSDLInterface;
  * @author chathura@opensource.lk
  *
  */
-public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtention {
+public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtension {
 	
 	public static final String AXIS_NAMESPACE = "http://ws.apache.org/axis2/";
 	
