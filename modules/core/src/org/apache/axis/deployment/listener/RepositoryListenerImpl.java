@@ -18,7 +18,7 @@ package org.apache.axis.deployment.listener;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.repository.utill.WSInfoList;
+import org.apache.axis.deployment.repository.util.WSInfoList;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -33,9 +33,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
-import org.apache.axis.deployment.repository.utill.ArchiveFileData;
-import org.apache.axis.deployment.repository.utill.ArchiveReader;
-import org.apache.axis.deployment.repository.utill.WSInfo;
+import org.apache.axis.deployment.repository.util.ArchiveFileData;
+import org.apache.axis.deployment.repository.util.ArchiveReader;
+import org.apache.axis.deployment.repository.util.WSInfo;
 import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;

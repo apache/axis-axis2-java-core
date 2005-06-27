@@ -18,7 +18,7 @@ package org.apache.axis.engine;
 import org.apache.axis.description.*;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.phaseresolver.PhaseResolver;
-import org.apache.axis.deployment.repository.utill.ArchiveReader;
+import org.apache.axis.deployment.repository.util.ArchiveReader;
 import org.apache.axis.deployment.DeploymentEngine;
 
 import javax.xml.namespace.QName;

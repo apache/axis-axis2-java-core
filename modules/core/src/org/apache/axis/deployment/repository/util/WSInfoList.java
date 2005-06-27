@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.deployment.repository.utill;
+package org.apache.axis.deployment.repository.util;
 
 import org.apache.axis.deployment.DeploymentConstants;
 import org.apache.axis.deployment.DeploymentEngine;
