@@ -23,7 +23,6 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMAbstractFactory;
@@ -31,6 +30,8 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 
 /**
  * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
@@ -38,6 +39,7 @@ import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 public abstract class MEPClient {
     protected ServiceContext serviceContext;
     protected final String mep;
+    protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
@@ -56,23 +58,16 @@ public abstract class MEPClient {
                     + " And the Axis Operations suppiled supports "
                     + axisop.getMessageExchangePattern());
         }
-        
-        if(serviceContext.getServiceConfig().getOperation(axisop.getName()) == null){
+
+        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
             serviceContext.getServiceConfig().addOperation(axisop);
         }
     }
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {
-        MessageContext msgctx =
-            new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
 
-        SOAPEnvelope envelope = null;
-        SOAPFactory omfac = OMAbstractFactory.getSOAP11Factory();
-        try {
-            envelope = omfac.getDefaultEnvelope();
-        } catch (SOAPProcessingException e) {
-            throw new AxisFault(e);
-        }
+        SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         envelope.getBody().addChild(toSend);
         msgctx.setEnvelope(envelope);
         return msgctx;
@@ -87,15 +82,32 @@ public abstract class MEPClient {
                 transport = toURL.substring(0, index);
             }
         }
-        
-        if(transport  != null){
+
+        if (transport != null) {
             return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
-                                new QName(transport));
-            
-        }else{
+                new QName(transport));
+
+        } else {
             throw new AxisFault("Cannot Infer transport from the URL");
         }
-         
+
+    }
+
+    public SOAPEnvelope createDefaultSOAPEnvelope() {
+        SOAPFactory fac = null;
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
+            fac = OMAbstractFactory.getSOAP12Factory();
+        } else {
+            fac = OMAbstractFactory.getSOAP11Factory();
+        }
+        return fac.getDefaultEnvelope();
+    }
+
+    /**
+     * @param string
+     */
+    public void setSoapVersionURI(String string) {
+        soapVersionURI = string;
     }
 
 }

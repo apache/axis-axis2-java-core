@@ -73,12 +73,20 @@ public class RawXMLINOutMessageRecevier
         throws AxisFault {
         try {
 
+            SOAPFactory fac = null;
+            String nsURI = msgContext.getEnvelope().getNamespace().getName();
+            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                fac = OMAbstractFactory.getSOAP12Factory();
+            } else {
+                fac = OMAbstractFactory.getSOAP11Factory();
+            }
+
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
 
             // find the WebService method
             Class ImplClass = obj.getClass();
-            DependancyManager.configureBusinussLogicProvider(obj,msgContext);
+            DependancyManager.configureBusinussLogicProvider(obj, msgContext);
 
             OperationDescription op = msgContext.getOperationContext().getAxisOperation();
             if (op == null) {
@@ -109,7 +117,7 @@ public class RawXMLINOutMessageRecevier
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+                    envelope = fac.getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
@@ -118,7 +126,6 @@ public class RawXMLINOutMessageRecevier
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
                     envelope = fac.getDefaultEnvelope();
 
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
@@ -129,21 +136,13 @@ public class RawXMLINOutMessageRecevier
                     throw new AxisFault("Unknown style ");
                 }
                 newmsgContext.setEnvelope(envelope);
-            } else if((parameters != null)
-                    && (parameters.length == 0)){
-                        SOAPFactory fac = null;
-                String nsURI = msgContext.getEnvelope().getNamespace().getName();
-                if(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)){
-                    fac = OMAbstractFactory.getSOAP12Factory();
-                }else{
-                    fac = OMAbstractFactory.getSOAP11Factory();
-                }
-                
+            } else if ((parameters != null) && (parameters.length == 0)) {
+
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
                 String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
-                    
+
                     Object[] parms = new Object[0];
 
                     // invoke the WebService
@@ -151,7 +150,7 @@ public class RawXMLINOutMessageRecevier
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
-                    
+
                     Object[] parms = new Object[0];
 
                     // invoke the WebService
@@ -165,7 +164,7 @@ public class RawXMLINOutMessageRecevier
                     throw new AxisFault("Unknown style ");
                 }
                 newmsgContext.setEnvelope(envelope);
-            }else {
+            } else {
                 throw new AxisFault(
                     "Raw Xml provider supports only the methods bearing the signature public OMElement "
                         + "&lt;method-name&gt;(OMElement) where the method name is anything");
