@@ -32,12 +32,12 @@ import junit.framework.TestCase;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ContextHireachyTest extends TestCase {
+public class ContextHierarchyTest extends TestCase {
     private OperationDescription operationDescription;
     private ServiceDescription serviceDescription;
     private AxisConfiguration axisConfiguration;
 
-    public ContextHireachyTest(String arg0) {
+    public ContextHierarchyTest(String arg0) {
         super(arg0);
     }
 
