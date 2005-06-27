@@ -24,13 +24,13 @@ import org.apache.axis.wsdl.codegen.XSLTConstants;
  * @author chathura@opensource.lk
  *
  */
-public class TestSkeltonImplWriter extends ClassWriter {
+public class TestSkeletonImplWriter extends ClassWriter {
 
-	  public TestSkeltonImplWriter(String outputFileLocation) {
+	  public TestSkeletonImplWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public TestSkeltonImplWriter(File outputFileLocation,int language) {
+    public TestSkeletonImplWriter(File outputFileLocation,int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -39,7 +39,7 @@ public class TestSkeltonImplWriter extends ClassWriter {
         Class clazz = this.getClass();
         switch (language){
             case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTTestSkeltonImplTemplates.JAVA_TEMPLATE);
+                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTTestSkeletonImplTemplates.JAVA_TEMPLATE);
                 break;
             default:
                 throw new UnsupportedOperationException();

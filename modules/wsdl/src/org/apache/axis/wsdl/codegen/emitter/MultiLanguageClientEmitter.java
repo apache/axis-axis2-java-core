@@ -23,7 +23,7 @@ import org.apache.axis.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis.wsdl.codegen.writer.TestServiceXMLWriter;
-import org.apache.axis.wsdl.codegen.writer.TestSkeltonImplWriter;
+import org.apache.axis.wsdl.codegen.writer.TestSkeletonImplWriter;
 import org.apache.axis.wsdl.codegen.writer.LocalTestClassWriter;
 import org.apache.axis.wsdl.codegen.writer.DatabindingSupportClassWriter;
 import org.apache.axis.wsdl.databinding.TypeMapper;
@@ -152,9 +152,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
     protected void writeTestSkeletonImpl(WSDLBinding binding)throws Exception{
         if (configuration.isWriteTestCase()){
-            XmlDocument classModel = createDocumentForTestSkeltonImpl(binding);
-            TestSkeltonImplWriter callbackWriter =
-                    new TestSkeltonImplWriter(this.configuration.getOutputLocation(),
+            XmlDocument classModel = createDocumentForTestSkeletonImpl(binding);
+            TestSkeletonImplWriter callbackWriter =
+                    new TestSkeletonImplWriter(this.configuration.getOutputLocation(),
                             this.configuration.getOutputLanguage()
                     );
             writeClass(classModel,callbackWriter);
@@ -375,7 +375,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         }
     }
 
-    protected XmlDocument createDocumentForTestSkeltonImpl(WSDLBinding binding){
+    protected XmlDocument createDocumentForTestSkeletonImpl(WSDLBinding binding){
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         XmlDocument doc = new XmlDocument();

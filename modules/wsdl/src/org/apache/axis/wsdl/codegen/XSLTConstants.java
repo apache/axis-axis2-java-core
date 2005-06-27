@@ -94,7 +94,7 @@ public interface XSLTConstants {
     	public static final String CSHARP_TEMPLATE = "/org/apache/axis/wsdl/template/csharp/LocalTestClassTemplate.xsl";
     }
 
-    public interface XSLTTestSkeltonImplTemplates{
+    public interface XSLTTestSkeletonImplTemplates{
     	public static final String JAVA_TEMPLATE = "/org/apache/axis/wsdl/template/java/TestSkeletonImplTemplate.xsl";
     }
 
