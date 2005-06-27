@@ -40,8 +40,8 @@ import com.ibm.wsdl.extensions.soap.SOAPConstants;
  * This is a Simple java Provider.
  */
 public class RawXMLINOutMessageRecevier
-    extends AbstractInOutSyncMessageReceiver
-    implements MessageReceiver {
+        extends AbstractInOutSyncMessageReceiver
+        implements MessageReceiver {
     /**
      * Field log
      */
@@ -70,16 +70,19 @@ public class RawXMLINOutMessageRecevier
     }
 
     public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
 
             SOAPFactory fac = null;
             String nsURI = msgContext.getEnvelope().getNamespace().getName();
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
                 fac = OMAbstractFactory.getSOAP12Factory();
-            } else {
+            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
                 fac = OMAbstractFactory.getSOAP11Factory();
+            }else {
+                throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
             }
+
 
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
@@ -102,8 +105,8 @@ public class RawXMLINOutMessageRecevier
             }
             Class[] parameters = method.getParameterTypes();
             if ((parameters != null)
-                && (parameters.length == 1)
-                && OMElement.class.getName().equals(parameters[0].getName())) {
+                    && (parameters.length == 1)
+                    && OMElement.class.getName().equals(parameters[0].getName())) {
                 OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
 
                 OMElement parmeter = null;
@@ -113,7 +116,7 @@ public class RawXMLINOutMessageRecevier
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;
-                    Object[] parms = new Object[] { parmeter };
+                    Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
@@ -122,7 +125,7 @@ public class RawXMLINOutMessageRecevier
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
                     parmeter = methodElement.getFirstElement();
-                    Object[] parms = new Object[] { parmeter };
+                    Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
@@ -165,8 +168,7 @@ public class RawXMLINOutMessageRecevier
                 }
                 newmsgContext.setEnvelope(envelope);
             } else {
-                throw new AxisFault(
-                    "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
                         + "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
         } catch (Exception e) {
