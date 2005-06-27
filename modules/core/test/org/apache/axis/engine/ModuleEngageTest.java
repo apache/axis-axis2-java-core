@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
  * Date: Jun 21, 2005
  * Time: 2:09:04 PM
  */
-public class ModuleEngaeTest extends TestCase{
+public class ModuleEngageTest extends TestCase{
     AxisConfiguration ac;
 
     public void testModuleEngageMent() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
