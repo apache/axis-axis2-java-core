@@ -40,6 +40,7 @@ import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOnlyMessageRecevier;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.transport.local.LocalTransportReceiver;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
@@ -108,7 +109,7 @@ public class MessageContextInjectionTest extends TestCase {
 
         sender.setTo(targetEPR);
         sender.setSenderTransport(Constants.TRANSPORT_LOCAL);
-
+        sender.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         sender.send(operationName.getLocalPart(), payload);
         
     }

@@ -154,4 +154,21 @@ public class EchoRawXMLTest extends TestCase {
         result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
     }
+
+    public void testCorrectSOAPEnvelope() throws Exception {
+
+        OMElement payload = createEnvelope();
+
+        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+
+        OMElement result =
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+        call.close();
+    }
+
+
 }

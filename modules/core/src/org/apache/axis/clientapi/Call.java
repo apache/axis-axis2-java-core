@@ -37,7 +37,7 @@ import org.apache.axis.soap.SOAPEnvelope;
 public class Call extends InOutMEPClient {
 
     private HashMap properties;
-    private static OperationDescription opreationTemplate;
+    protected static OperationDescription operationTemplate;
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
      * @throws AxisFault
@@ -79,10 +79,10 @@ public class Call extends InOutMEPClient {
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
          if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(opreationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(opreationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(opreationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(opreationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
 
@@ -111,10 +111,10 @@ public class Call extends InOutMEPClient {
             serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(opreationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(opreationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(opreationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(opreationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
         MessageContext msgctx = prepareTheSystem(toSend);
@@ -127,7 +127,7 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
-    private static ServiceContext assumeServiceContext(String clinetHome) throws AxisFault {
+    protected static ServiceContext assumeServiceContext(String clinetHome) throws AxisFault {
         ConfigurationContext sysContext = null;
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac = new ConfigurationContextFactory();
@@ -139,8 +139,8 @@ public class Call extends InOutMEPClient {
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
-        opreationTemplate = new OperationDescription(new QName("TemplateOperatin"));
-        axisService.addOperation(opreationTemplate);
+        operationTemplate = new OperationDescription(new QName("TemplateOperatin"));
+        axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceContext service = sysContext.createServiceContext(assumedServiceName);
         return service;
