@@ -32,12 +32,12 @@ import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 
-public class OMSerailizerTest extends AbstractTestCase {
+public class OMSerializerTest extends AbstractTestCase {
     private XMLStreamReader reader;
     private OMOutput omOutput;
     private File tempFile;
 
-    public OMSerailizerTest(String testName) {
+    public OMSerializerTest(String testName) {
         super(testName);
     }
 
