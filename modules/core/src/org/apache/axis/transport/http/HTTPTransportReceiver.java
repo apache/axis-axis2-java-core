@@ -86,62 +86,62 @@ public class HTTPTransportReceiver {
      */
     private boolean done = false;
 
-
-    /**
-     * Method invoke
-     *
-     * @param msgContext
-     * @throws AxisFault
-     */
-    public SOAPEnvelope handleHTTPRequest(
-        MessageContext msgContext,InputStream inStream, Map map)
-        throws AxisFault {
-        SOAPEnvelope soapEnvelope = null;
-
-
-
-            msgContext.setWSAAction(
-                (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
-            Utils.configureMessageContextForHTTP(
-                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                msgContext.getWSAAction(),
-                msgContext);
-
-            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-            msgContext.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO, requestURI));
-
-            if (HTTPConstants
-                .RESPONSE_ACK_CODE_VAL
-                .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
-                msgContext.setProperty(
-                    MessageContext.TRANSPORT_SUCCEED,
-                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
-                return null;
-            } else if (
-                HTTPConstants.HEADER_GET.equals(
-                    map.get(HTTPConstants.HTTP_REQ_TYPE))) {
-                SOAPEnvelope envelope =
-                    HTTPTransportUtils.createEnvelopeFromGetRequest(
-                        requestURI,
-                        getGetRequestParameters(requestURI));
-                if (envelope == null) {
-                    this.handleGETRequest(
-                        requestURI,
-                        (OutputStream) map.get(MessageContext.TRANSPORT_OUT),
-                        msgContext.getSystemContext());
-                    return null;
-                } else {
-                    msgContext.setProperty(
-                        Constants.Configuration.DO_REST,
-                        Constants.VALUE_TRUE);
-                    return envelope;
-                }
-
-            } else {
-                return TransportUtils.createSOAPMessage(msgContext,inStream);
-            }
-    }
+//
+//    /**
+//     * Method invoke
+//     *
+//     * @param msgContext
+//     * @throws AxisFault
+//     */
+//    public SOAPEnvelope handleHTTPRequest(
+//        MessageContext msgContext,InputStream inStream, Map map)
+//        throws AxisFault {
+//        SOAPEnvelope soapEnvelope = null;
+//
+//
+//
+//            msgContext.setWSAAction(
+//                (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
+//            Utils.configureMessageContextForHTTP(
+//                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+//                msgContext.getWSAAction(),
+//                msgContext);
+//
+//            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
+//            msgContext.setTo(
+//                new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+//
+//            if (HTTPConstants
+//                .RESPONSE_ACK_CODE_VAL
+//                .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
+//                msgContext.setProperty(
+//                    MessageContext.TRANSPORT_SUCCEED,
+//                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
+//                return null;
+//            } else if (
+//                HTTPConstants.HEADER_GET.equals(
+//                    map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+//                SOAPEnvelope envelope =
+//                    HTTPTransportUtils.createEnvelopeFromGetRequest(
+//                        requestURI,
+//                        getGetRequestParameters(requestURI));
+//                if (envelope == null) {
+//                    this.handleGETRequest(
+//                        requestURI,
+//                        (OutputStream) map.get(MessageContext.TRANSPORT_OUT),
+//                        msgContext.getSystemContext());
+//                    return null;
+//                } else {
+//                    msgContext.setProperty(
+//                        Constants.Configuration.DO_REST,
+//                        Constants.VALUE_TRUE);
+//                    return envelope;
+//                }
+//
+//            } else {
+//                return TransportUtils.createSOAPMessage(msgContext,inStream);
+//            }
+//    }
 
 
     /**
@@ -451,18 +451,7 @@ public class HTTPTransportReceiver {
         }
     }
 
-    private void handleGETRequest(
-        String reqUri,
-        OutputStream out,
-        ConfigurationContext configurationContext) {
-
-        try {
-            out.write(this.getServicesHTML(configurationContext).getBytes());
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+ 
 
     /**
      * Returns the HTML text for the list of services deployed
@@ -470,7 +459,7 @@ public class HTTPTransportReceiver {
      * where it will handle more options of GET messages :-?
      * @return
      */
-    private String getServicesHTML(ConfigurationContext configurationContext) {
+    public static String getServicesHTML(ConfigurationContext configurationContext) {
         String temp = "";
         Map services =
             configurationContext.getAxisConfiguration().getServices();
@@ -534,7 +523,7 @@ public class HTTPTransportReceiver {
         return temp;
     }
 
-    private Map getGetRequestParameters(String requestURI) {
+    public static Map getGetRequestParameters(String requestURI) {
         Map map = new HashMap();
 
         char[] chars = requestURI.toCharArray();

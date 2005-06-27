@@ -34,9 +34,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.description.TransportOutDescription;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -175,25 +173,34 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
 
                         //OutputStream out = socket.getOutputStream();
                         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+                        
+                        
+                        
+                             if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+                                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(msgContext,
+                                    inStream,
+                                    out, 
+                                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                                    (String) map.get(HTTPConstants.HEADER_SOAP_ACTION), 
+                                    (String) map.get(HTTPConstants.REQUEST_URI),
+                                    configurationContext,
+                                    HTTPTransportReceiver.getGetRequestParameters((String) map.get(HTTPConstants.REQUEST_URI)));
+                                    
+                                    if(!processed){
+                                        out.write(HTTPTransportReceiver.getServicesHTML(configurationContext).getBytes());
+                                                                    out.flush();
+                                    }
+                                 } else {
+                                     HTTPTransportUtils.processHTTPPostRequest(msgContext,
+                                    inStream,
+                                    out, 
+                                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                                    (String) map.get(HTTPConstants.HEADER_SOAP_ACTION), 
+                                    (String) map.get(HTTPConstants.REQUEST_URI),
+                                    configurationContext);
+                                 }
 
-                        SOAPEnvelope envelope =
-                            reciver.handleHTTPRequest(msgContext,inStream,map);
 
-                        if (envelope != null) {
-                            msgContext.setEnvelope(envelope);
-
-                            AxisEngine engine = new AxisEngine(configurationContext);
-                            engine.receive(msgContext);
-
-//                            Object contextWritten =
-//                                msgContext.getProperty(Constants.RESPONSE_WRITTEN);
-//                            if (contextWritten == null
-//                                || !Constants.VALUE_TRUE.equals(contextWritten)) {
-//                                out.write(new String(HTTPConstants.NOCONTENT).getBytes());
-//                                out.close();
-//                            }
-
-                        }
                         out.finalize();
                     }
                 } catch (Throwable e) {

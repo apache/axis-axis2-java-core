@@ -17,21 +17,96 @@
  */
 package org.apache.axis.transport.http;
 
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.axis.Constants;
+import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis.transport.TransportUtils;
 import org.apache.axis.util.Utils;
 
 public class HTTPTransportUtils {
+
+    public static void processHTTPPostRequest(
+        MessageContext msgContext,
+        InputStream in,
+        OutputStream out,
+        String contentType,
+        String soapAction,
+        String requestURI,
+        ConfigurationContext configurationContext)
+        throws AxisFault {
+
+        msgContext.setWSAAction(soapAction);
+        msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+
+        if (Constants.SOAP.MTOM_CONTENT_TYPE.equals(contentType)) {
+            if (Constants
+                .VALUE_TRUE
+                .equals(msgContext.getProperty(Constants.Configuration.ENABLE_MTOM))) {
+                msgContext.setProperty(Constants.Configuration.DO_MTOM, Constants.VALUE_TRUE);
+            } else {
+                throw new AxisFault("MTOTM Not supported");
+            }
+        } else if (Constants.SOAP.SOAP_12_CONTENT_TYPE.equals(contentType)) {
+            //TODO what to do with 1.2 for REST
+        } else if (
+            contentType != null && contentType.indexOf(Constants.SOAP.SOAP_11_CONTENT_TYPE) > -1) {
+            if ((soapAction == null || soapAction.length() == 0)
+                && Constants.VALUE_TRUE.equals(
+                    msgContext.getProperty(Constants.Configuration.ENABLE_REST))) {
+                msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+            }
+        }
+
+        SOAPEnvelope envelope = TransportUtils.createSOAPMessage(msgContext, in);
+
+        msgContext.setEnvelope(envelope);
+        AxisEngine engine = new AxisEngine(configurationContext);
+        engine.receive(msgContext);
+    }
+
+    public static boolean  processHTTPGetRequest(
+        MessageContext msgContext,
+        InputStream in,
+        OutputStream out,
+        String contentType,
+        String soapAction,
+        String requestURI,
+        ConfigurationContext configurationContext,Map requestParameters) throws AxisFault {
+
+        try {
+            SOAPEnvelope envelope =
+                HTTPTransportUtils.createEnvelopeFromGetRequest(
+                    requestURI,
+                requestParameters);
+            if (envelope == null) {
+                return false;
+            } else {
+                msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+                msgContext.setEnvelope(envelope);
+                AxisEngine engine = new AxisEngine(configurationContext);
+                engine.receive(msgContext);
+                return true;
+            }
+        }catch (IOException e) {
+            throw new AxisFault(e);
+        }
+    }
     public static final SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map) {
         String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl);
 

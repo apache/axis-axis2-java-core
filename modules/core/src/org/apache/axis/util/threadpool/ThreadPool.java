@@ -1,13 +1,12 @@
 package org.apache.axis.util.threadpool;
 
-import sun.misc.Queue;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-
+import org.apache.axis.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis.engine.AxisFault;
-
 
 /**
  * This the thread pool for axis2. This class will be used a singleton
@@ -25,30 +24,18 @@ public class ThreadPool {
     private static List threads;
     private static List tasks;
     private static boolean shoutDown;
-    private static ThreadPool instance;
 
-    private ThreadPool() {
+    public ThreadPool() {
         threads = new ArrayList();
         tasks = new ArrayList();
-    }
 
-
-    public static ThreadPool getInstance() {
-        if(log.isDebugEnabled())
-        log.debug("ThreadPool Created");
-
-        if (instance != null) {
-            return instance;
-        } else {
-            instance = new ThreadPool();
-            for (int i = 0; i < MAX_THREAD_COUNT; i++) {
-                ThreadWorker threadWorker = new ThreadWorker();
-                threadWorker.setPool(instance);
-                threads.add(threadWorker);
-                threadWorker.start();
-            }
-            return instance;
+        for (int i = 0; i < MAX_THREAD_COUNT; i++) {
+            ThreadWorker threadWorker = new ThreadWorker();
+            threadWorker.setPool(this);
+            threads.add(threadWorker);
+            threadWorker.start();
         }
+
     }
 
     public void addWorker(AxisWorker worker) throws AxisFault {
@@ -92,8 +79,8 @@ public class ThreadPool {
      * A forceful shutdown mechanism for thread pool.
      */
     public void forceShutDown() {
-        if(log.isDebugEnabled())
-        log.debug("forceShutDown called. Thread workers will be stopped");
+        if (log.isDebugEnabled())
+            log.debug("forceShutDown called. Thread workers will be stopped");
         Iterator ite = threads.iterator();
         while (ite.hasNext()) {
             ThreadWorker worker = (ThreadWorker) ite.next();

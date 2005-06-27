@@ -15,9 +15,7 @@
 */
 package org.apache.axis.transport.http;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -29,11 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
@@ -45,13 +38,6 @@ import org.apache.axis.context.SessionContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.impl.llom.OMOutput;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis.util.Utils;
 
 /**
@@ -99,6 +85,17 @@ public class AxisServlet extends HttpServlet {
         throws ServletException, IOException {
 
         try {
+            
+            Object sessionContext =
+                httpServletRequest.getSession().getAttribute(
+                    Constants.SESSION_CONTEXT_PROPERTY);
+            if (sessionContext == null) {
+                sessionContext = new SessionContext(null);
+                httpServletRequest.getSession().setAttribute(
+                    Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
+            }
+
             String filePart = httpServletRequest.getRequestURL().toString();
             Enumeration enu = httpServletRequest.getParameterNames();
             HashMap map = new HashMap();
@@ -107,41 +104,31 @@ public class AxisServlet extends HttpServlet {
                 String value = httpServletRequest.getParameter(name);
                 map.put(name, value);
             }
+            
+            MessageContext msgContext =
+                new MessageContext(
+                    configContext,
+                    (SessionContext) sessionContext,
+                    configContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_HTTP)),
+                    configContext.getAxisConfiguration().getTransportOut(
+                        new QName(Constants.TRANSPORT_HTTP)));
+            msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
 
-            SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(filePart, map);
-            if (envelope != null) {
-                OMOutput omOutput =
-                    new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-                envelope.serialize(omOutput);
-                System.out.flush();
-                Object sessionContext =
-                    httpServletRequest.getSession().getAttribute(
-                        Constants.SESSION_CONTEXT_PROPERTY);
-                if (sessionContext == null) {
-                    sessionContext = new SessionContext(null);
-                    httpServletRequest.getSession().setAttribute(
-                        Constants.SESSION_CONTEXT_PROPERTY,
-                        sessionContext);
-                }
-                MessageContext msgContext =
-                    new MessageContext(
-                        configContext,
-                        (SessionContext) sessionContext,
-                        configContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_HTTP)),
-                        configContext.getAxisConfiguration().getTransportOut(
-                            new QName(Constants.TRANSPORT_HTTP)));
-                msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+            
+            boolean processed = HTTPTransportUtils.processHTTPGetRequest(msgContext,
+            httpServletRequest.getInputStream(),
+            httpServletResponse.getOutputStream(),
+            httpServletRequest.getContentType(),
+            httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION), 
+            httpServletRequest.getRequestURL().toString(),
+                                               configContext,map);
 
-                msgContext.setEnvelope(envelope);
-                processSOAPMessage(msgContext, httpServletRequest, httpServletResponse);
-
-            } else {
-                lister.handle(httpServletRequest, httpServletResponse);
+            
+            if (!processed) {
+                            lister.handle(httpServletRequest, httpServletResponse);
             }
         } catch (OMException e) {
-            throw new AxisFault(e);
-        } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
             throw new AxisFault(e);
@@ -181,34 +168,20 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)),
                     configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)));
-
-            XMLStreamReader reader =
-                XMLInputFactory.newInstance().createXMLStreamReader(
-                    new BufferedReader(new InputStreamReader(req.getInputStream())));
-
-            //Check for the REST behaviour, if you desire rest beahaviour
-            //put a <parameter name="doREST" value="true"/> at the axis2.xml
-            Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-            StAXBuilder builder = null;
-            SOAPEnvelope envelope = null;
-            if (doREST != null && "true".equals(doREST)) {
-                SOAPFactory soapFactory = new SOAP11Factory();
-                builder = new StAXOMBuilder(reader);
-                builder.setOmbuilderFactory(soapFactory);
-                envelope = soapFactory.getDefaultEnvelope();
-                envelope.getBody().addChild(builder.getDocumentElement());
-            } else {
-                builder = new StAXSOAPModelBuilder(reader);
-                envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        
+            res.setContentType("text/xml; charset=utf-8");             
+            HTTPTransportUtils.processHTTPPostRequest(msgContext,
+                                                req.getInputStream(),
+                                                res.getOutputStream(), 
+                                                req.getContentType(),
+                                                req.getHeader(HTTPConstants.HEADER_SOAP_ACTION), 
+                                                req.getRequestURL().toString(),
+                                                configContext);
+            Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+            if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
-
-            msgContext.setEnvelope(envelope);
-            processSOAPMessage(msgContext, req, res);
         } catch (AxisFault e) {
-            throw new ServletException(e);
-        } catch (XMLStreamException e) {
-            throw new ServletException(e);
-        } catch (FactoryConfigurationError e) {
             throw new ServletException(e);
         }
     }

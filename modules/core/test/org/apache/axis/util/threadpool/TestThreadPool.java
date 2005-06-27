@@ -36,7 +36,7 @@ public class TestThreadPool extends AbstractTestCase {
 
 
     public void testPool() throws AxisFault {
-        ThreadPool tPool = ThreadPool.getInstance();
+        ThreadPool tPool = new ThreadPool();
         List workerList = new ArrayList();
 
         for (int i = 0; i < 5; i++) {
