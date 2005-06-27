@@ -685,11 +685,11 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This was requested during the second Axis2 summit. When one call this method, this will
-     * serialise without building the object structure in the memory. Misuse of this method will
+     * serialize without building the object structure in the memory. Misuse of this method will
      * cause loss of data.So its adviced to use populateYourSelf() method, before this,
      * if you want to preserve data in the stream.
      *
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     public void serialize(OMOutput omOutput) throws XMLStreamException {
