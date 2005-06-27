@@ -24,7 +24,7 @@ import org.apache.axis.phaseresolver.PhaseException;
 
 import javax.xml.stream.XMLStreamException;
 
-public class DeploymentotalTest extends TestCase {
+public class DeploymentTotalTest extends TestCase {
     AxisConfiguration er;
 
     public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
