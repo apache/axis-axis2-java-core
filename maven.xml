@@ -46,6 +46,7 @@
 <project default="jar"
     xmlns:j="jelly:core"
     xmlns:u="jelly:util"
+    xmlns:deploy="deploy"
     xmlns:ant="jelly:ant"
     xmlns:maven="jelly:maven"
     xmlns:define="jelly:define">
@@ -298,20 +299,19 @@
         </jar>
     </goal>
 
-		
-    <goal name="create-lib" prereqs="create-jar">
-	<ant:copy todir="target/lib" flatten="true">
-	<ant:fileset dir="${maven.repo.local}">
-	    <ant:include name="stax/jars/stax-api-1.0.jar"/>
-	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-	    <ant:include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-	    <ant:include name="log4j/jars/log4j-1.2.8.jar"/>
-	    <ant:include name="stax/jars/stax-1.1.1-dev.jar"/>
-	    <ant:include name="commons-fileupload/jars/commons-fileupload-1.0.jar"/>
-            <ant:include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-            <ant:include name="geronimo-spec/jars/geronimo-spec-activation-1.0.2-rc3.jar"/>
-	</ant:fileset> 
-	</ant:copy> 
+    <goal name="create-lib">
+		<attainGoal name="modules:reactor:init"/>
+			<maven:reactor
+				basedir="${basedir}"
+				postProcessing="true"
+				includes="${modules.reactor.includes}"
+				banner="Executing (${goals}):"
+				ignoreFailures="false"/>
+				<j:forEach var="x" items="${reactorProjects}">
+						<ant:echo message="${x}"/>
+						<deploy:copy-deps todir="target/lib" 
+								projectDescriptor="${x.getFile()}"/>
+		</j:forEach>
     </goal>		
 
   <!-- ================================================================ -->
