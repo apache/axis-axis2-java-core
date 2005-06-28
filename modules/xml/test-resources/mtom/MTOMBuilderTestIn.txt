@@ -1,0 +1,16 @@
+Content-Type: multipart/Related; type="application/xop+xml"; 
+	start="<SOAP part>"; boundary="----=_Part_0_9971081.1119397256753"
+
+------=_Part_0_9971081.1119397256753
+Content-Type: application/xop+xml
+Content-Transfer-Encoding: 8bit
+Content-ID: <SOAP part>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><m:data xmlns:m="http://www.example.org/stuff"><m:name m:contentType="text/plain"><xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/Include" href="cid:-4495222909959974498"></xop:Include></m:name></m:data></soap:Body></soap:Envelope>
+------=_Part_0_9971081.1119397256753
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: binary
+Content-ID: <-4495222909959974498>
+
+8A ýþÿb
+------=_Part_0_9971081.1119397256753--
