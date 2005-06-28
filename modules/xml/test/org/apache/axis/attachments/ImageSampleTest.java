@@ -64,9 +64,9 @@ public class ImageSampleTest extends AbstractTestCase {
 	
 	String outBase64FileName = "mtom/OMSerializeBase64Out.xml";
 	
-	String imageInFileName = "mtom/img/Waterlilies.jpg";
+	String imageInFileName = "mtom/img/test.jpg";
 	
-	String imageOutFileName = "mtom/img/WaterliliesOut.jpg";
+	String imageOutFileName = "mtom/img/testOut.jpg";
 	
 	String inMimeFileName = "mtom/ImageMTOMOut.bin";
 	
