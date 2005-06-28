@@ -34,7 +34,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SCOPE = "scope";
 
-    SOAPFactory fac;
+    protected SOAPFactory fac;
+
 
     /**
      * Method makeNewServiceObject
@@ -108,5 +109,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         } else {
             return makeNewServiceObject(msgContext);
         }
+    }
+
+    public SOAPFactory getSOAPFactory(){
+        return fac;
     }
 }

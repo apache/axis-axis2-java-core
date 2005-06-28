@@ -23,13 +23,9 @@ import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.DependencyManager;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -107,7 +103,7 @@ public class RawXMLINOutMessageReceiver
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = fac.getDefaultEnvelope();
+                    envelope = getSOAPFactory().getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
@@ -116,10 +112,10 @@ public class RawXMLINOutMessageReceiver
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = fac.getDefaultEnvelope();
+                    envelope = getSOAPFactory().getDefaultEnvelope();
 
-                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                    OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
+                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
+                    OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);
                     responseMethodName.addChild(result);
                     envelope.getBody().addChild(responseMethodName);
                 } else {
@@ -128,7 +124,7 @@ public class RawXMLINOutMessageReceiver
                 newmsgContext.setEnvelope(envelope);
             } else if ((parameters != null) && (parameters.length == 0)) {
 
-                SOAPEnvelope envelope = fac.getDefaultEnvelope();
+                SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
                 String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
@@ -146,8 +142,8 @@ public class RawXMLINOutMessageReceiver
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
 
-                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                    OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
+                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
+                    OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);
                     responseMethodName.addChild(result);
                     envelope.getBody().addChild(responseMethodName);
                 } else {
