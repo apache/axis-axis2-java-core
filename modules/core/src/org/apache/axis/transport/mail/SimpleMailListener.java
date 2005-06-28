@@ -158,7 +158,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         if (msg != null) {
                             MailWorker worker = new MailWorker(msg, configurationContext);
-                            configurationContext.getThreadPool().addWorker(worker);
+                            worker.doWork();
                         }
                         msg.setFlag(Flags.Flag.DELETED, true);
                     }
@@ -166,6 +166,8 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 }
 
                 receiver.disconnect();
+                //Waiting for 3 seconds.
+                Thread.sleep(3000);
 
             } catch (Exception e) {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue

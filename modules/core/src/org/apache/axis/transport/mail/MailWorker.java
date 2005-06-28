@@ -32,6 +32,8 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.TransportInDescription;
+import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -75,13 +77,11 @@ public class MailWorker implements AxisWorker {
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            msgContext =
-                new MessageContext(
-            reg,
-                    reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
-                    reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+            TransportInDescription transportIn = reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+            TransportOutDescription transportOut = reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+            
+            msgContext = new MessageContext(reg,transportIn,transportOut);
             msgContext.setServerSide(true);
-
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
             msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION));
 
@@ -96,13 +96,11 @@ public class MailWorker implements AxisWorker {
                     new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
             
-             
-
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
-            
-            
             if (recepainets != null) {
                 msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets+ "/"+serviceURL));
+            }else{
+                throw new AxisFault("No receptineist found in the Email");
             }
 
             // add the SOAPEnvelope

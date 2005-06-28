@@ -72,7 +72,7 @@ public class EMailSender {
             });
 
             MimeMessage msg = new MimeMessage(session);
-
+            msg.setFrom(new InternetAddress((user)));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             msg.setSubject(subject);
             msg.setText(message);
