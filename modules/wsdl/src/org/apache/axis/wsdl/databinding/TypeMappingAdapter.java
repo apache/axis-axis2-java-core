@@ -42,7 +42,7 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
             if (o!=null){
                return (String)o;
             }else{
-                return "java.lang.Object";
+                return "org.apache.axis.om.OMElement";
             }
         }
 

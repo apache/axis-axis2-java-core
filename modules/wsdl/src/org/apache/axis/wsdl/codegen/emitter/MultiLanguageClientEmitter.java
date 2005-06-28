@@ -363,6 +363,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             writeTestClasses(axisBinding);
             //write the local test classes
             writeLocalTestClasses(axisBinding);
+            writeDatabindingSupporters(axisBinding);
             //write a dummy implementation call for the tests to run.
             writeTestSkeletonImpl(axisBinding);
             //write a testservice.xml that will load the dummy skeleton impl for testing
@@ -495,7 +496,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc,"package",configuration.getPackageName(), rootElement);
         addAttribute(doc,"name",boundInterface.getName().getLocalPart()+MESSAGE_RECEIVER_SUFFIX,rootElement);
         addAttribute(doc,"skeletonname",boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,rootElement);
-        addAttribute(doc, "basereceiver", "org.apache.axis.receivers.RawXMLINOutMessageReceiver", rootElement);
+        addAttribute(doc, "basereceiver", "org.apache.axis.receivers.AbstractInOutSyncMessageReceiver", rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
@@ -553,6 +554,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             addAttribute(doc,"namespace",operation.getName().getNamespaceURI(),methodElement);
             addAttribute(doc,"style",operation.getStyle(),methodElement);
             addAttribute(doc,"dbsupportname",localPart+DATABINDING_SUPPORTER_NAME_SUFFIX,methodElement);
+            addAttribute(doc, "mep",operation.getMessageExchangePattern(), methodElement);
             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
             rootElement.appendChild(methodElement);

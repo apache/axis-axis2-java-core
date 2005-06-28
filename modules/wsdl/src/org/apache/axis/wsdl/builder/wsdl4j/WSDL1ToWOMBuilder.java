@@ -24,6 +24,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 import org.apache.axis.wsdl.builder.WOMBuilder;
 import org.apache.axis.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -37,23 +38,25 @@ import org.xml.sax.SAXException;
  */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 
-    public WSDLDescription build(InputStream in) throws WSDLException {
+    public WSDLVersionWrapper build(InputStream in) throws WSDLException {
 
-        WSDLDescription wsdlDefinitions = new WSDLDescriptionImpl();
+        WSDLDescription wsdlDescription = new WSDLDescriptionImpl();
 
-        WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in));
+        Definition wsdl1Definition = this.readInTheWSDLFile(in);
+		WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
         pump.pump();
 
-        return wsdlDefinitions;
+        return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
     }
     
-    public WSDLDescription build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException{
-    	WSDLDescription wsdlDefinitions = wsdlComponentFactory.createDescription();
+    public WSDLVersionWrapper build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException{
+    	WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
-        WSDLPump pump = new WSDLPump(wsdlDefinitions, this.readInTheWSDLFile(in), wsdlComponentFactory);
+        Definition wsdl1Definition = this.readInTheWSDLFile(in);
+		WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition, wsdlComponentFactory);
         pump.pump();
 
-        return wsdlDefinitions;
+        return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
     	
     }
 

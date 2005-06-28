@@ -19,18 +19,18 @@ import java.io.InputStream;
 
 import javax.wsdl.WSDLException;
 
-import org.apache.wsdl.WSDLDescription;
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 
 /**
  * @author chathura@opensource.lk
  */
 public class WSDL2ToWOMBuilder implements WOMBuilder {
 
-    public WSDLDescription build(InputStream in) throws WSDLException {
+    public WSDLVersionWrapper build(InputStream in) throws WSDLException {
         throw new UnsupportedOperationException("Not Implemented");
     }
     
-    public WSDLDescription build(InputStream in, WSDLComponentFactory wsdlComponenetFactory)throws WSDLException{
+    public WSDLVersionWrapper build(InputStream in, WSDLComponentFactory wsdlComponenetFactory)throws WSDLException{
     	throw new UnsupportedOperationException("Not Implemented");
     	
     }

@@ -19,14 +19,14 @@ import java.io.InputStream;
 
 import javax.wsdl.WSDLException;
 
-import org.apache.wsdl.WSDLDescription;
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 
 /**
  * @author chathura@opensource.lk
  */
 public interface WOMBuilder {
 
-    public WSDLDescription build(InputStream in) throws WSDLException;
+    public WSDLVersionWrapper build(InputStream in) throws WSDLException;
     
-    public WSDLDescription build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException;
+    public WSDLVersionWrapper build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException;
 }

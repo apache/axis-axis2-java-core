@@ -116,7 +116,7 @@ public class CodeGenerationEngine {
     private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException, IOException {
         String uri = ((CommandLineOption) parser.getAllOptions().get(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
         InputStream in = new FileInputStream(new File(uri));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
     }
 
 

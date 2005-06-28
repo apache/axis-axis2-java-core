@@ -43,7 +43,7 @@ public class ServiceDescriptionBuilderTest extends TestCase {
             if(in == null){
                 throw new Exception("Input Stream is null , fileNot Found") ;
             }
-            WSDLDescription womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory());
+            WSDLDescription womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory()).getDescription();
             Iterator iterator = womDescription.getServices().keySet().iterator();
             if(iterator.hasNext()){
                 this.service = (ServiceDescription)iterator.next();

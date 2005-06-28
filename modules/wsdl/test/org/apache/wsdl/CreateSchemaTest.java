@@ -21,14 +21,11 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
-import org.apache.wsdl.util.Utils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -48,14 +45,15 @@ public class CreateSchemaTest extends AbstractTestCase {
 	}
 
 	protected void setUp() throws Exception {
-		InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
-		this.womDescription = WOMBuilderFactory.getBuilder(
-				WOMBuilderFactory.WSDL11).build(in);
-
-		WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-		Document doc = Utils.newDocument(new FileInputStream(getTestResourceFile(
-				"BookQuote.wsdl")));
-		this.wsdl4jDefinition = reader.readWSDL(null, doc);
+		WSDLVersionWrapper wsdlVersionWrapper = null;
+        if (null == this.womDescription) {
+            InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
+            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+			this.womDescription = wsdlVersionWrapper.getDescription();
+        }
+        if (null == wsdl4jDefinition) {
+            this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
+        }
 	}
 
 	public void testInsertedMultipartType() {

@@ -24,12 +24,9 @@ import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
-import org.apache.wsdl.util.Utils;
-import org.w3c.dom.Document;
 
 /**
  * @author chathura@opensource.lk
@@ -46,14 +43,14 @@ public class WOMBuilderTest extends AbstractTestCase {
 
     private void initialize() throws Exception {
 
+    	WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
             InputStream in = new FileInputStream(getTestResourceFile("InteropTest.wsdl"));
-            this.womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+			this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
-            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-            Document doc = Utils.newDocument(new FileInputStream(getTestResourceFile("InteropTest.wsdl")));
-            this.wsdl4jDefinition = reader.readWSDL(null, doc);
+            this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
         }
     }
 

@@ -44,7 +44,7 @@ public class BindingOperationTest extends AbstractTestCase {
 		InputStream in = new FileInputStream(
 				getTestResourceFile("BookQuote.wsdl"));
 		womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
-				.build(in);
+				.build(in).getDescription();
 		
 		assertNotNull(womDescription);
 		if(null !=womDescription){
