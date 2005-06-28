@@ -53,14 +53,14 @@ public interface OMNode {
      * @return
      * @throws OMException
      */
-    public OMElement getParent() throws OMException;
+    public OMContainer getParent() throws OMException;
 
     /**
      * Method setParent
      *
      * @param element
      */
-    public void setParent(OMElement element);
+    public void setParent(OMContainer element);
 
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.

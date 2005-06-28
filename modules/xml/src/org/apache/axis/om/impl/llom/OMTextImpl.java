@@ -435,7 +435,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (done) {
 			this.detach();
 		} else {
-			builder.discard(this.parent);
+			builder.discard((OMElement)this.parent);
 		}
 	}
 

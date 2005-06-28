@@ -32,45 +32,45 @@ import org.w3c.dom.DOMException;
 public class TextImpl extends NodeImpl implements Text {
 
 	private OMText omText;
-	
+
 	public TextImpl(String s){
 		//super();
 		omNode = omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(s);
 	}
-	
+
 	public TextImpl(SOAPElementImpl parent, String s) throws SOAPException{
 		//super();
 		//super.setParentElement(parent);
 		OMElement par = parent.getOMElement();
 		omNode = omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(par, s);
 	}
-	
+
 	public TextImpl(org.w3c.dom.CharacterData data){
         if ( data == null ){
            throw new IllegalArgumentException( "Text value may not be null." );
         }
         omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(data.getData());
 	}
-	
+
 	/*Overridden Method*/
 	public SOAPElement getParentElement() {
-		OMElement parent = omText.getParent();
+		OMElement parent = (OMElement)omText.getParent();
 		return new SOAPElementImpl(parent);
 	}
-	
+
 	/*Overridden Method*/
 	public void setParentElement(SOAPElement parent) throws SOAPException {
 		OMElement omParent = ((SOAPElementImpl)parent).getOMElement();
 		omText.setParent(omParent);
 	}
-	
+
 	/*Overridden Method*/
 	public String getValue() {
 		return omText.getText();
 	}
-	
+
 	public boolean isComment() {
-		
+
 		String temp = omText.getText();
 		if(temp.startsWith("<!--") && temp.endsWith("-->"))
             return true;
@@ -81,10 +81,10 @@ public class TextImpl extends NodeImpl implements Text {
      * Implementation of DOM TEXT Interface
      * *************************************************************
      */
-	
-	
+
+
 	public org.w3c.dom.Text splitText(int offset) throws DOMException {
-		
+
 		String temp = omText.getText();
 		int length = temp.length();
 		String tailData = temp.substring(offset);
@@ -104,33 +104,33 @@ public class TextImpl extends NodeImpl implements Text {
         return tailText;
 	}
 
-	
+
 	public int getLength() {
-		
+
 		return omText.getText().length();
 	}
 
-	
+
 	public void deleteData(int offset, int count) throws DOMException {
-		
+
 		String temp = omText.getText();
 		StringBuffer subString = new StringBuffer(temp.substring(0,offset));
 		if(temp.length() - offset >= count - offset)
 			subString = subString.append(temp.substring(offset+count));
 		temp = subString.toString();
 		omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(temp);
-		
+
 	}
 
-	
+
 	public String getData() throws DOMException {
-		
+
 		return omText.getText();
 	}
 
-	
+
 	public String substringData(int offset, int count) throws DOMException {
-		
+
 		String temp = omText.getText();
 		if(temp.length() - offset >= count - offset)
 			return temp.substring(offset, count);
@@ -138,19 +138,19 @@ public class TextImpl extends NodeImpl implements Text {
 			return temp.substring(offset);
 	}
 
-	
+
 	public void replaceData(int offset, int count, String arg)
 			throws DOMException {
-		
+
 		deleteData(offset, count);
 		StringBuffer temp = new StringBuffer(omText.getText());
 		temp.append(arg);
 		omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
 	}
 
-	
+
 	public void insertData(int offset, String arg) throws DOMException {
-		
+
 		if(offset < 0 || offset > omText.getText().length())
 			throw new DOMException(DOMException.INDEX_SIZE_ERR, "");
 		StringBuffer temp = new StringBuffer(omText.getText().substring(0, offset));
@@ -158,18 +158,18 @@ public class TextImpl extends NodeImpl implements Text {
 		omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
 	}
 
-	
+
 	public void appendData(String arg) throws DOMException {
-		
+
 		StringBuffer temp = new StringBuffer(omText.getText());
 		temp = temp.append(arg);
 		omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
 
 	}
 
-	
+
 	public void setData(String arg) throws DOMException {
-		
+
 		omText = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(arg);
 	}
 

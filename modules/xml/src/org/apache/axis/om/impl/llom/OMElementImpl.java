@@ -26,6 +26,7 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMContainer;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
@@ -85,7 +86,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param parent
      * @param builder
      */
-    public OMElementImpl(String localName, OMNamespace ns, OMElement parent,
+    public OMElementImpl(String localName, OMNamespace ns, OMContainer parent,
                          OMXMLParserWrapper builder) {
         super(parent);
         this.localName = localName;
@@ -100,7 +101,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param parent
      * @param parent
      */
-    protected OMElementImpl(OMElement parent) {
+    protected OMElementImpl(OMContainer parent) {
         super(parent);
         this.done = true;
     }
@@ -120,7 +121,7 @@ public class OMElementImpl extends OMNodeImpl
         }
     }
 
-    public OMElementImpl(String localName, OMNamespace ns, OMElement parent) {
+    public OMElementImpl(String localName, OMNamespace ns, OMContainer parent) {
         super(parent);
         this.localName = localName;
         this.done = true;
@@ -136,7 +137,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param parent
      * @throws OMException
      */
-    public OMElementImpl(QName qname, OMElement parent) throws OMException {
+    public OMElementImpl(QName qname, OMContainer parent) throws OMException {
         super(parent);
         this.localName = qname.getLocalPart();
         this.done = true;
@@ -149,7 +150,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param qname
      * @param parent
      */
-    private void handleNamespace(QName qname, OMElement parent) {
+    private void handleNamespace(QName qname, OMContainer parent) {
         OMNamespace ns;
 
         // first try to find a namespace from the scope
@@ -336,7 +337,17 @@ public class OMElementImpl extends OMNodeImpl
 
         // go up to check with ancestors
         if (parent != null) {
-            return parent.findNamespace(uri, prefix);
+        	//Comment by Jaya:
+        	//For the OMDocument there won't be any explicit namespace
+        	//declarations, so going up the parent chain till the document
+        	//element should be enough.
+        	//If at a later point community decides that some standard 
+        	//namespaces, like 'xml' which every XML w/ namespaces document
+        	//is supposed to contain implicitly, should go into OMDocument then
+        	//this 'if' block needs to be revisited.
+        	if( parent instanceof OMElement) {
+        		return ((OMElementImpl)parent).findNamespace(uri, prefix);
+        	}
         }
         return null;
     }
@@ -664,7 +675,7 @@ public class OMElementImpl extends OMNodeImpl
             if (this.nextSibling != null) {
                 nextSibling.serialize(omOutput);
             } else if (this.parent != null) {
-                if (!this.parent.done) {
+                if (!this.parent.isComplete()) {
                     builder.setCache(cache);
                     builder.next();
                 }

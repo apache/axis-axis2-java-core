@@ -16,6 +16,7 @@
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMContainer;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMXMLParserWrapper;
@@ -27,7 +28,7 @@ public abstract class OMNodeImpl implements OMNode {
     /**
      * Field parent
      */
-    protected OMElementImpl parent;
+    protected OMContainer parent;
 
     /**
      * Field nextSibling
@@ -64,9 +65,14 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @param parent
      */
-    public OMNodeImpl(OMElement parent) {
-        if ((parent != null) && (parent.getType() == OMNode.ELEMENT_NODE)) {
-            this.parent = (OMElementImpl) parent;
+    public OMNodeImpl(OMContainer parent) {
+        //if ((parent != null) && (parent.getType() == OMNode.ELEMENT_NODE)) {
+    	//Comment by Jaya:
+    	//OMContainer is only implemented by OMElement and OMDocument which are
+    	//quite well deemed to act as parents, so checking the type of parent
+    	//is not necessary.
+    	if ((parent != null)) {
+            this.parent = parent;
             parent.addChild(this);
         }
     }
@@ -79,7 +85,7 @@ public abstract class OMNodeImpl implements OMNode {
      * @throws org.apache.axis.om.OMException
      * @throws OMException
      */
-    public OMElement getParent() throws OMException {
+    public OMContainer getParent() throws OMException {
         return parent;
     }
 
@@ -88,18 +94,19 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @param element
      */
-    public void setParent(OMElement element) {
+    public void setParent(OMContainer element) {
 
-        if( ((OMElement)this.parent) == element){
+        if( (this.parent) == element){
             return;
         }
 
-        if (element instanceof OMNodeImpl) {//todo fix me
-            if(this.parent != null){
-                this.detach();
-            }
-            this.parent = (OMElementImpl) element;
+        //If we are asked to assign a new parent in place 
+        //of an existing one. We should detach this node
+        //from the aegis of previous parent.
+        if(this.parent != null){
+            this.detach();
         }
+        this.parent = element;
     }
 
     /**

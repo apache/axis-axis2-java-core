@@ -22,6 +22,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMContainer;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
@@ -163,7 +164,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @throws SOAPException
 	 * @see javax.xml.soap.SOAPElement#addTextNode(java.lang.String)
 	 */
-	public SOAPElement addTextNode(String text) throws SOAPException {		
+	public SOAPElement addTextNode(String text) throws SOAPException {
 		//We need to create an OMText node and add that to
 		//the omElement delegate member that we have with us. All this OMElement's setText() does
 		omElement.setText(text);
@@ -180,7 +181,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#addAttribute(javax.xml.soap.Name, java.lang.String)
 	 */
 	public SOAPElement addAttribute(Name name, String value)
-			throws SOAPException {		
+			throws SOAPException {
 		org.apache.axis.om.OMNamespace omNS = org.apache.axis.om.OMAbstractFactory.getOMFactory().createOMNamespace(name.getURI(), name.getPrefix());
 		//TODO:
 		//The namespace of the attribute must be within the scope of the SOAPElement
@@ -210,7 +211,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#getAttributeValue(javax.xml.soap.Name)
 	 */
 	public String getAttributeValue(Name name) {
-		//This method is waiting on the finalization of the name for a method 
+		//This method is waiting on the finalization of the name for a method
 		//in OMElement that returns a OMAttribute from an input QName
 		return omElement.getFirstAttribute( new QName(name.getURI(),name.getLocalName(),name.getPrefix())).getValue();
 	}
@@ -240,11 +241,11 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @return
 	 * @see javax.xml.soap.SOAPElement#getNamespaceURI(java.lang.String)
 	 */
-	public String getNamespaceURI(String prefix) {		
+	public String getNamespaceURI(String prefix) {
 		//Lets get all the inscope namespaces of this SOAPElement and iterate over them,
 		//whenever the prefix mathces break and return the corresponding URI.
 		Iterator nsIter = omElement.getAllDeclaredNamespaces();
-		
+
 		//loop over to see a prefix matching namespace.
 		while(nsIter.hasNext()) {
 			Object o = nsIter.next();
@@ -259,11 +260,11 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 
 	/**
 	 * method getNamespacePrefixes
-	 * This method returns an iterator over all the declared namespaces prefix names. 
+	 * This method returns an iterator over all the declared namespaces prefix names.
 	 * @return Iterator
 	 * @see javax.xml.soap.SOAPElement#getNamespacePrefixes()
 	 */
-	public Iterator getNamespacePrefixes() {		
+	public Iterator getNamespacePrefixes() {
 		//Get all declared namespace, make a list of their prefixes and return an iterator over that list
 		ArrayList prefixList = new ArrayList();
 		Iterator nsIter = omElement.getAllDeclaredNamespaces();
@@ -282,7 +283,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @return
 	 * @see javax.xml.soap.SOAPElement#getElementName()
 	 */
-	public Name getElementName() {		
+	public Name getElementName() {
 		QName qName = omElement.getQName();
 		return (Name)(new PrefixedQName(qName.getNamespaceURI(), qName.getLocalPart(), qName.getPrefix()));
 	}
@@ -340,7 +341,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 				arrayList.add(childElement);
 				}
 				//javax.xml.soap.Node childElement = new NodeImpl((org.apache.axis.om.OMNode)o);
-				
+
 			}
 		}
 		return arrayList.iterator();
@@ -398,12 +399,12 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	public void removeContents() {
 		//We will get all the children and iteratively call the detach() on all of 'em.
 		Iterator childIter = omElement.getChildren();
-		
+
 		while(childIter.hasNext()) {
 			Object o = childIter.next();
-			if(o instanceof org.apache.axis.om.OMNode) 
-				((org.apache.axis.om.OMNode)o).detach();			
-		}		
+			if(o instanceof org.apache.axis.om.OMNode)
+				((org.apache.axis.om.OMNode)o).detach();
+		}
 	}
 
 	/**
@@ -414,7 +415,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	public Iterator getVisibleNamespacePrefixes() {
 		//I'll recursively return all the declared namespaces till this node, including its parents etc.
 		Iterator namespacesIter = omElement.getAllDeclaredNamespaces();
-		ArrayList returnList = new ArrayList();		
+		ArrayList returnList = new ArrayList();
 		while(namespacesIter.hasNext()) {
 			Object o = namespacesIter.next();
 			if (o instanceof org.apache.axis.om.OMNamespace) {
@@ -424,9 +425,9 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		}//taken care of adding namespaces of this node.
 		//now we have to take care of adding the namespaces that are in the scope till the level of
 		//this nodes' parent.
-		org.apache.axis.om.OMElement parent = omElement.getParent();
-		if (parent!=null) {
-			Iterator parentScopeNamespacesIter = parent.getAllDeclaredNamespaces();
+		org.apache.axis.om.OMContainer parent = omElement.getParent();
+		if (parent!=null && parent instanceof org.apache.axis.om.OMElement) {
+			Iterator parentScopeNamespacesIter = ((org.apache.axis.om.OMElement)parent).getAllDeclaredNamespaces();
 			while(parentScopeNamespacesIter.hasNext()) {
 				Object o = parentScopeNamespacesIter.next();
 				if (o instanceof org.apache.axis.om.OMNamespace) {
@@ -434,7 +435,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 					returnList.add(soapNode);
 				}
 			}
-		}			
+		}
 		return returnList.iterator();
 	}
 
@@ -455,7 +456,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	public void removeAttribute(String localName) throws DOMException {
 		//just got a localName, so assuming the namespace to be that of element
 		Name elementQualifiedName = this.getElementName();
-		//now try to remove that Attribute from this SOAPElement 
+		//now try to remove that Attribute from this SOAPElement
 		this.removeAttribute(new PrefixedQName(elementQualifiedName.getURI(), localName, elementQualifiedName.getPrefix()));
 	}
 
@@ -478,13 +479,13 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		return false;
 	}
 
-	/** 
+	/**
 	 * method getAttribute
 	 * This method retrieves the value of an attribute having specified localname.
 	 * In case of an element having multiple attributes with same localname but declared
 	 * in different namespaces, use of this method is unadvised.
 	 * @param name
-	 * @return String 
+	 * @return String
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
 	public String getAttribute(String name) {
@@ -503,17 +504,17 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 */
 	public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
 		Name name = new PrefixedQName(namespaceURI, localName, null);
-		this.removeAttribute(name);		
+		this.removeAttribute(name);
 	}
 
 	/**
 	 * Method setAttribute
 	 * This method creates and adds an attribute with the given localName and value
-	 * into the underlying OM. It uses the namespace of omElement datamember of this SOAPElement for the 
+	 * into the underlying OM. It uses the namespace of omElement datamember of this SOAPElement for the
 	 * newly added attribute.
 	 * @param localName
 	 * @param value
-	 * @return 
+	 * @return
 	 * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
 	 */
 	public void setAttribute(String localName, String value) throws DOMException {
@@ -525,7 +526,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 
 	/**
 	 * method hasAttributeNS
-	 * This method returns true when an attribute with a given local name and 
+	 * This method returns true when an attribute with a given local name and
 	 * namespace URI is specified on this element or has a default value, false
 	 * otherwise.
 	 * @param namespaceURI
@@ -544,7 +545,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		return false;
 	}
 
-	/** 
+	/**
 	 * method getAttributeNode
 	 * This method retrieves an attribute node by the specified localname
 	 * @param name
@@ -560,7 +561,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 				//wrap it into a org.w3c.dom.Attr object and return
 				return (new org.apache.axis.saaj.AttrImpl(omAttr, this));
 			}
-		} 
+		}
 		return null;
 	}
 
@@ -570,7 +571,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @param Attr
 	 * The attribute node that should be removed.
 	 * @return Attr
-	 * The removed attribute node 
+	 * The removed attribute node
 	 * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
 	 */
 	public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
@@ -602,7 +603,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	/**
 	 * Method setAttributeNode
 	 * This method creates and adds an attribute corresponding to the supplied <code>Attr</code>
-	 * object into the underlying OM. The attribute added is created against it's own namespace 
+	 * object into the underlying OM. The attribute added is created against it's own namespace
 	 * @param attr - a dom Attr object
 	 * @return Attr - a dom Attr object corresponding to the added attribute.
 	 * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
@@ -616,10 +617,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 
 	/**
 	 * Method getElementsByTagName
-	 * Returns a NodeList of all the descendant Elements with the given local 
+	 * Returns a NodeList of all the descendant Elements with the given local
 	 * name, in the order in which they are encountered in a preorder traversal
 	 * of this Element tree.
-	 * Current SOAPElement MAY not feature in the returned NodeList, only 
+	 * Current SOAPElement MAY not feature in the returned NodeList, only
 	 * the descendant elements matching the criterion should be added.
 	 * @param localName
 	 * @return NodeList
@@ -630,7 +631,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		NodeListImpl returnList;
 		if (childIter==null)
 			return null;
-		else {			
+		else {
 			returnList = new NodeListImpl();
 			while(childIter.hasNext()) {
 				NodeList list = getElementsByTagNamePreOrder((SOAPElement)childIter.next(), localName);
@@ -640,7 +641,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		}
 		return (NodeList)returnList;
 	}
-	
+
 	private NodeList getElementsByTagNamePreOrder(SOAPElement child, String localName) {
 		NodeListImpl returnList = new NodeListImpl();
 		//We are doing preorder, so see if root itself is a match and place it first in the order
@@ -700,19 +701,19 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		Iterator attrIter = omElement.getAttributes();
 		while(attrIter.hasNext()) {
 			org.apache.axis.om.OMAttribute omAttr = (org.apache.axis.om.OMAttribute)(attrIter.next());
-			if (omAttr.getLocalName().equals(localName) && omAttr.getNamespace().getName().equals(namespaceURI)) {				
-				return (new org.apache.axis.saaj.AttrImpl(omAttr, this));				
+			if (omAttr.getLocalName().equals(localName) && omAttr.getNamespace().getName().equals(namespaceURI)) {
+				return (new org.apache.axis.saaj.AttrImpl(omAttr, this));
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * getElementsByTagNameNS 
-	 * Returns a NodeList of all the descendant Elements with a given local 
-	 * name and namespace URI in the order in which they are encountered in a 
+	 * getElementsByTagNameNS
+	 * Returns a NodeList of all the descendant Elements with a given local
+	 * name and namespace URI in the order in which they are encountered in a
 	 * preorder traversal of this Element tree.
-	 * Current SOAPElement MAY not feature in the returned NodeList, only 
+	 * Current SOAPElement MAY not feature in the returned NodeList, only
 	 * the descendant elements matching the criterion should be added.
 	 * @param namespaceURI
 	 * @param localName
@@ -724,7 +725,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		NodeListImpl returnList;
 		if (childIter==null)
 			return null;
-		else {			
+		else {
 			returnList = new NodeListImpl();
 			while(childIter.hasNext()) {
 				NodeList list = getElementsByTagNameNSPreOrder((SOAPElement)childIter.next(), namespaceURI, localName);
@@ -734,7 +735,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		}
 		return (NodeList)returnList;
 	}
-	
+
 	private NodeList getElementsByTagNameNSPreOrder(SOAPElement child, String namespaceURI, String localName) {
 		NodeListImpl returnList = new NodeListImpl();
 		//We are doing preorder, so see if root itself is a match and place it first in the order

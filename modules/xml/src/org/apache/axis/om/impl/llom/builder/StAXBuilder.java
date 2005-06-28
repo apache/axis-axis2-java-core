@@ -140,7 +140,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
         }
         OMNode node;
         if (lastNode.isComplete()) {
-            node = omfactory.createText(lastNode.getParent(), parser.getText());
+            node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -188,7 +188,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             if (lastNode != null) {
                 lastNode.setNextSibling(null);
             } else {
-                OMElement parent = elementImpl.getParent();
+                OMElement parent = (OMElement)elementImpl.getParent();
                 if (parent == null) {
                     throw new OMException();
                 }

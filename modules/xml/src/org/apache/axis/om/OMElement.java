@@ -22,7 +22,7 @@ import java.util.Iterator;
 /**
  * Interface OMElement
  */
-public interface OMElement extends OMNode {
+public interface OMElement extends OMNode, OMContainer {
     /**
      * This will add child to the element. One must preserve the order of children, in this operation
      * Tip : appending the new child is prefered

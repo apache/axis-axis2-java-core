@@ -163,7 +163,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
         } else if (lastNode.isComplete()) {
-            node = constructNode(lastNode.getParent(), elementName, false);
+            node = constructNode((OMElement)lastNode.getParent(), elementName, false);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -306,7 +306,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     if (lastNode.isComplete()) {
-                        OMElement parent = lastNode.getParent();
+                        OMElement parent = (OMElement)lastNode.getParent();
 
 //                        //added
 //                        /*check whether all mandatory fault elements are present

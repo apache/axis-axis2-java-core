@@ -113,9 +113,9 @@ public class SAXOMBuilder extends DefaultHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		if (lastNode.isComplete()) {
-			OMElement parent = lastNode.getParent();
+			OMContainer parent = lastNode.getParent();
 			parent.setComplete(true);
-			lastNode = parent;
+			lastNode = (OMNode)parent;
 		} else {
 			OMElement e = (OMElement) lastNode;
 			e.setComplete(true);
@@ -134,7 +134,7 @@ public class SAXOMBuilder extends DefaultHandler {
 		}
 		OMNode node;
 		if (lastNode.isComplete()) {
-			node = factory.createText(lastNode.getParent(), new String(ch,
+			node = factory.createText((OMElement)lastNode.getParent(), new String(ch,
 					start, length));
 			lastNode.setNextSibling(node);
 			node.setPreviousSibling(lastNode);

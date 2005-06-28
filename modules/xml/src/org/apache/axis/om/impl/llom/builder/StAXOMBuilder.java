@@ -129,7 +129,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     if (lastNode.isComplete()) {
-                        OMElement parent = lastNode.getParent();
+                        OMElement parent = (OMElement)lastNode.getParent();
                         parent.setComplete(true);
                         lastNode = parent;
                     } else {

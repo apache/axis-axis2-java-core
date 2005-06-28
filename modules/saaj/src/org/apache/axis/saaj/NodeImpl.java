@@ -35,12 +35,12 @@ import org.w3c.dom.CharacterData;
 
 /**
  * Class NodeImpl
- * 
+ *
  * @author Ashutosh Shahi
  * ashutosh.shahi@gmail.com
  */
 public class NodeImpl implements Node {
-	
+
 	/**
 	 * Field omNode
 	 */
@@ -49,20 +49,20 @@ public class NodeImpl implements Node {
 	 * field document
 	 */
 	protected org.w3c.dom.Document document;
-	
+
 	//protected CharacterData textRep = null;
-	
+
 	/**
 	 * Constructor NodeImpl
 	 *
 	 */
 	public NodeImpl(){
-	
+
 	}
-	
+
 	/**
 	 * Constructor NodeImpl
-	 * 
+	 *
 	 * @param node
 	 */
 	public NodeImpl(OMNode node){
@@ -70,7 +70,7 @@ public class NodeImpl implements Node {
 	}
 	/**
 	 * Constructor NodeImpl
-	 * 
+	 *
 	 * @param attrib
 	 */
 	public NodeImpl(OMAttribute attrib){
@@ -79,10 +79,10 @@ public class NodeImpl implements Node {
 		// Find out a way to construct OMNode from a OMAttribute
 		// as OMAttributes are immutable
 	}
-	
+
 	/**
 	 * Constructor NodeImpl
-	 * 
+	 *
 	 * @param ns
 	 */
 	public NodeImpl(OMNamespace ns){
@@ -91,27 +91,27 @@ public class NodeImpl implements Node {
 		// Find out a way to construct OMNode from OMNamespace
 		// OMNamespace is immutable
 	}
-	
+
      /**
      * constructor which adopts the name and NS of the char data, and its text
      * @param text
      */
 /*    public NodeImpl(CharacterData text) {
-    	
+
     }
 */
-	
+
 	public OMNode getOMNode(){
 		return omNode;
 	}
-	
+
 	/**
 	 * Method getValue
-	 * 
+	 *
 	 * @see javax.xml.soap.Node#getValue()
 	 */
 	public String getValue() {
-		
+
 		if(omNode.getType() == OMNode.TEXT_NODE)
 			return ((OMText)omNode).getText();
 		else if(omNode.getType() == OMNode.ELEMENT_NODE)
@@ -122,11 +122,11 @@ public class NodeImpl implements Node {
 	/**
 	 * Method setParentElement
 	 * @param parent
-	 * 
+	 *
 	 * @see javax.xml.soap.Node#setParentElement(javax.xml.soap.SOAPElement)
 	 */
 	public void setParentElement(SOAPElement parent) throws SOAPException {
-		
+
 		OMElement omParent = ((SOAPElementImpl)parent).getOMElement();
 		omNode.setParent(omParent);
 	}
@@ -136,8 +136,8 @@ public class NodeImpl implements Node {
 	 * @see javax.xml.soap.Node#getParentElement()
 	 */
 	public SOAPElement getParentElement() {
-		
-		OMElement omParent = omNode.getParent();
+
+		OMElement omParent = (OMElement)omNode.getParent();
 		return new SOAPElementImpl(omParent);
 	}
 
@@ -146,7 +146,7 @@ public class NodeImpl implements Node {
 	 * @see javax.xml.soap.Node#detachNode()
 	 */
 	public void detachNode() {
-	
+
 		omNode.detach();
 	}
 
@@ -163,13 +163,13 @@ public class NodeImpl implements Node {
 	/**
 	 * Method setValue
 	 * @param value
-	 * 
+	 *
 	 * @see javax.xml.soap.Node#setValue(java.lang.String)
 	 */
 	public void setValue(String value) {
-		
+
 		if(omNode.getType() == OMNode.TEXT_NODE){
-			OMElement parent = omNode.getParent();
+			OMElement parent = (OMElement)omNode.getParent();
 			((OMText)omNode).discard();
 			omNode = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(parent, value);
 		} else if(omNode.getType() == OMNode.ELEMENT_NODE){
@@ -180,7 +180,7 @@ public class NodeImpl implements Node {
 			else if(firstChild.getType() == OMNode.TEXT_NODE){
 				((OMText)firstChild).discard();
 				firstChild = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText((OMElement)omNode, value);
-			}	
+			}
 		} else{
 			throw new IllegalStateException();
 		}
@@ -191,7 +191,7 @@ public class NodeImpl implements Node {
 	 * @see org.w3c.dom.Node#getNodeType()
 	 */
 	public short getNodeType() {
-		
+
 		return (short)omNode.getType();
 	}
 
@@ -247,7 +247,7 @@ public class NodeImpl implements Node {
 	 * @see org.w3c.dom.Node#getNamespaceURI()
 	 */
 	public String getNamespaceURI() {
-		
+
 		return ((OMElement)omNode).getNamespace().getName();
 	}
 
@@ -256,7 +256,7 @@ public class NodeImpl implements Node {
 	 * @see org.w3c.dom.Node#getNodeName()
 	 */
 	public String getNodeName() {
-		
+
 		if(omNode.getType() == OMNode.ELEMENT_NODE )
 			return ((OMElement)omNode).getLocalName();
 		else if(omNode.getType() == OMNode.COMMENT_NODE)
@@ -298,9 +298,9 @@ public class NodeImpl implements Node {
 	 * @see org.w3c.dom.Node#setNodeValue(java.lang.String)
 	 */
 	public void setNodeValue(String value) throws DOMException {
-		
+
 		if(omNode.getType() == OMNode.TEXT_NODE){
-			OMElement parent = omNode.getParent();
+			OMElement parent = (OMElement)omNode.getParent();
 			((OMText)omNode).discard();
 			omNode = org.apache.axis.om.OMAbstractFactory.getOMFactory().createText(parent, value);
 		}
@@ -329,7 +329,7 @@ public class NodeImpl implements Node {
 		// method not part of org.w3c.dom.Node, created to set the document
 		this.document = doc;
 	}
-	
+
 	/**
 	 * Method getOwnerDocument
 	 * @see org.w3c.dom.Node#getOwnerDocument()
@@ -348,7 +348,7 @@ public class NodeImpl implements Node {
 		// Dropping for now
 		// TODO
 		Iterator iter = ((OMElement)omNode).getAttributes();
-		
+
 		return null;
 	}
 
@@ -367,7 +367,7 @@ public class NodeImpl implements Node {
 	 * @see org.w3c.dom.Node#getLastChild()
 	 */
 	public org.w3c.dom.Node getLastChild() {
-		
+
 		Iterator children = ((OMElement)omNode).getChildren();
 		Object child = null;
 		while(children.hasNext()){
@@ -383,15 +383,15 @@ public class NodeImpl implements Node {
 	 * dom Node method
 	 */
 	public org.w3c.dom.Node getNextSibling() {
-		
+
 		OMNode sibling = omNode.getNextSibling();
 		return new NodeImpl(sibling);
 	}
 
-	
+
 	public org.w3c.dom.Node getParentNode() {
-		
-		OMElement parent = omNode.getParent();
+
+		OMElement parent = (OMElement)omNode.getParent();
 		return new NodeImpl(parent);
 	}
 
@@ -399,7 +399,7 @@ public class NodeImpl implements Node {
 	 * dom Node method
 	 */
 	public org.w3c.dom.Node getPreviousSibling() {
-		
+
 		OMNode prevSibling = omNode.getPreviousSibling();
 		return new NodeImpl(prevSibling);
 	}
@@ -439,7 +439,7 @@ public class NodeImpl implements Node {
 	 */
 	public org.w3c.dom.Node appendChild(org.w3c.dom.Node node)
 			throws DOMException {
-		
+
 		OMNode child = Dom2OmUtils.toOM(node);
 		if(omNode.getType() == OMNode.ELEMENT_NODE)
 			((OMElement)omNode).addChild(child);
@@ -463,7 +463,7 @@ public class NodeImpl implements Node {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -472,7 +472,7 @@ public class NodeImpl implements Node {
 	 */
 	public org.w3c.dom.Node insertBefore(org.w3c.dom.Node arg0,
 			org.w3c.dom.Node arg1) throws DOMException {
-		
+
 		return null;
 	}
 
@@ -488,13 +488,13 @@ public class NodeImpl implements Node {
 			while(iter.hasNext()){
 				Object nextChild = iter.next();
 				if(nextChild instanceof OMNode && nextChild.equals(refOmChild)){
-					
+
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public boolean equals(Object o){
 		if(o instanceof NodeImpl){
 			if(this.omNode.equals(((NodeImpl)o).omNode))

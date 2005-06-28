@@ -36,7 +36,7 @@ public interface OMFactory {
      * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
-                                              OMElement parent,
+                                              OMContainer parent,
                                               OMXMLParserWrapper builder);
 
     /**
@@ -64,7 +64,7 @@ public interface OMFactory {
      * @return
      * @throws OMException
      */
-    public OMElement createOMElement(QName qname, OMElement parent)
+    public OMElement createOMElement(QName qname, OMContainer parent)
             throws OMException;
 
     /**

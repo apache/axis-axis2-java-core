@@ -54,7 +54,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
-                                     OMElement parent,
+                                     OMContainer parent,
                                      OMXMLParserWrapper builder) {
         OMElementImpl element = new OMElementImpl(localName, ns, parent,
                 builder);
@@ -84,7 +84,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @return
      * @throws OMException
      */
-    public OMElement createOMElement(QName qname, OMElement parent)
+    public OMElement createOMElement(QName qname, OMContainer parent)
             throws OMException {
         return new OMElementImpl(qname, parent);
     }

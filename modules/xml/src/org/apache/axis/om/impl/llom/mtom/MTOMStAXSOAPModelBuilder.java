@@ -99,7 +99,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 			}
 			
 			if (lastNode.isComplete()) {
-				node = new OMTextImpl(contentID, lastNode.getParent(), this);
+				node = new OMTextImpl(contentID, (OMElement) lastNode.getParent(), this);
 				lastNode.setNextSibling(node);
 				node.setPreviousSibling(lastNode);
 			} else {
@@ -114,7 +114,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 			if (lastNode == null) {
 				node = constructNode(null, elementName, true);
 			} else if (lastNode.isComplete()) {
-				node = constructNode(lastNode.getParent(), elementName, false);
+				node = constructNode((OMElement)lastNode.getParent(), elementName, false);
 				lastNode.setNextSibling(node);
 				node.setPreviousSibling(lastNode);
 			} else {

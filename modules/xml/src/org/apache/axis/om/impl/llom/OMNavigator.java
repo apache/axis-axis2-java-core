@@ -18,6 +18,7 @@
 
  import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMContainer;
 
  /**
   * Refer to the testClass to find out how to use
@@ -132,11 +133,12 @@ import org.apache.axis.om.OMNode;
              }
          } else {
              OMNode nextSibling = ((OMNodeImpl) next).nextSibling;
-             OMNode parent = next.getParent();
+             //OMNode parent = next.getParent();
+             OMContainer parent = next.getParent();
              if (nextSibling != null) {
                  next = nextSibling;
              } else if ((parent != null) && parent.isComplete()) {
-                 next = parent;
+                 next = (OMNodeImpl)parent;
                  backtracked = true;
              } else {
                  next = null;
