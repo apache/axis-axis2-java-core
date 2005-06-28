@@ -17,6 +17,10 @@
 package org.apache.axis.receivers;
 
 import org.apache.axis.Constants;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
 import org.apache.axis.description.Parameter;
@@ -30,6 +34,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SCOPE = "scope";
 
+    SOAPFactory fac;
+
     /**
      * Method makeNewServiceObject
      *
@@ -39,6 +45,16 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
+
+            String nsURI = msgContext.getEnvelope().getNamespace().getName();
+            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                fac = OMAbstractFactory.getSOAP12Factory();
+            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                fac = OMAbstractFactory.getSOAP11Factory();
+            }else {
+                throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+            }
+
             ServiceDescription service =
                 msgContext.getOperationContext().getServiceContext().getServiceConfig();
             ClassLoader classLoader = service.getClassLoader();

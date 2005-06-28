@@ -71,17 +71,6 @@ public class RawXMLINOutMessageReceiver
             throws AxisFault {
         try {
 
-            SOAPFactory fac = null;
-            String nsURI = msgContext.getEnvelope().getNamespace().getName();
-            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                fac = OMAbstractFactory.getSOAP12Factory();
-            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                fac = OMAbstractFactory.getSOAP11Factory();
-            }else {
-                throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
-            }
-
-
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
 
