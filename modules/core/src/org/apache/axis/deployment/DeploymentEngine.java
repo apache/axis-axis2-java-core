@@ -149,7 +149,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     in.close();
                     out.close();
                 } catch (IOException e) {
-                    throw new DeploymentException(e.getMessage());
+                    throw new DeploymentException(e);
                 }
 
 
@@ -209,7 +209,7 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (FileNotFoundException e) {
             throw new DeploymentException("Exception at deployment", e);
         } catch (XMLStreamException e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         setDeploymentFeatures();
         if (hotDeployment) {
@@ -222,7 +222,7 @@ public class DeploymentEngine implements DeploymentConstants {
             validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
-            throw new DeploymentException(axisFault.getMessage());
+            throw new DeploymentException(axisFault);
         }
         return axisConfig;
     }
@@ -250,7 +250,7 @@ public class DeploymentEngine implements DeploymentConstants {
             DeploymentParser parser = new DeploymentParser(in, this);
             parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), AXIS2CONFIG);
         } catch (XMLStreamException e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         if (isRepositoryExist) {
             hotDeployment = false;
@@ -260,7 +260,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 engagdeModules();
             } catch (AxisFault axisFault) {
                 log.info("Module validation failed" + axisFault.getMessage());
-                throw new DeploymentException(axisFault.getMessage());
+                throw new DeploymentException(axisFault);
             }
         }
         return axisConfig;
@@ -295,7 +295,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     in.close();
                     out.close();
                 } catch (IOException e) {
-                    throw new DeploymentException(e.getMessage());
+                    throw new DeploymentException(e);
                 }
 
 
@@ -331,7 +331,6 @@ public class DeploymentEngine implements DeploymentConstants {
         DeploymentData tempdata = DeploymentData.getInstance();
         ArrayList inPhases = tempdata.getINPhases();
         //TODO condition checking should be otherway since null value can occur
-        try {
             if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
                     ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
                     ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
@@ -339,10 +338,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
                         " support\n recheck axis2.xml");
             }
-        } catch (DeploymentException e) {
-            throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                    " support\n recheck axis2.xml");
-        }
         //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here
         //ArrayList systemDefaultPhases =((AxisConfigurationImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
@@ -685,11 +680,9 @@ public class DeploymentEngine implements DeploymentConstants {
             loadServiceProperties(axisService);
             axisConfig.addService(axisService);
         } catch (XMLStreamException e) {
-            throw new DeploymentException("XMLStreamException" + e.getMessage());
-        } catch (DeploymentException e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault.getMessage());
+            throw new DeploymentException(axisFault);
         }
         return axisService;
     }

@@ -42,7 +42,7 @@ public class ConfigurationContextFactory {
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault.getMessage());
+            throw new DeploymentException(axisFault);
         }
         return configurationContext;
     }
@@ -59,7 +59,7 @@ public class ConfigurationContextFactory {
             initModules(engineContext);
             initTransports(engineContext);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault.getMessage());
+            throw new DeploymentException(axisFault);
         }
         return engineContext;
     }
@@ -88,7 +88,7 @@ public class ConfigurationContextFactory {
                 }
             }
         } catch (AxisFault e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
     }
 
@@ -110,7 +110,7 @@ public class ConfigurationContextFactory {
         } catch (PhaseException e) {
             throw new PhaseException(e.getMessage());
         } catch (AxisFault axisFault) {
-            throw new PhaseException(axisFault.getMessage());
+            throw new PhaseException(axisFault);
         }
     }
 

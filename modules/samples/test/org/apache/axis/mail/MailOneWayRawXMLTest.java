@@ -18,6 +18,8 @@ package org.apache.axis.mail;
 
 //todo
 
+import java.io.File;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
@@ -31,10 +33,7 @@ import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
@@ -44,13 +43,17 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.transport.mail.MailTransportSender;
 import org.apache.axis.transport.mail.SimpleMailListener;
+import org.apache.axis.transport.mail.server.MailConstants;
+import org.apache.axis.transport.mail.server.MailServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MailOneWayRawXMLTest extends TestCase {
+    private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH = Constants.TESTING_PATH+ "mail-transport-enabledRepository"; 
+    
+    
     private EndpointReference targetEPR =
         new EndpointReference(
             AddressingConstants.WSA_TO,
@@ -77,9 +80,11 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        ConfigurationContext configContext = createNewConfigurationContext();  
+        //start the mail server      
+        MailServer server = new MailServer(configContext,MailConstants.POP_SERVER_PORT,MailConstants.SMTP_SERVER_PORT);
+        
         SimpleMailListener ml = new SimpleMailListener();
-
-        ConfigurationContext configContext = createConfigurationContext();
         ml.init(
             configContext,
             configContext.getAxisConfiguration().getTransportIn(
@@ -114,7 +119,7 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     public void testOneWay() throws Exception {
-        ConfigurationContext configContext = createConfigurationContext();
+        ConfigurationContext configContext = createNewConfigurationContext();
         ServiceDescription service = new ServiceDescription(serviceName);
         OperationDescription operation = new OperationDescription(operationName);
         operation.setMessageReciever(new MessageReceiver() {
@@ -183,33 +188,76 @@ public class MailOneWayRawXMLTest extends TestCase {
     //               }
     //
     //           }
-    public ConfigurationContext createConfigurationContext() throws Exception {
+    public ConfigurationContext createNewConfigurationContext() throws Exception {
+        File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
+        assertTrue("Mail repository directory "+ file.getAbsolutePath() + " does not exsist",file.exists());
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
-
-        TransportInDescription transportIn =
-            new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "axis2"));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.password", "axis2"));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "110"));
-        transportIn.addParameter(
-            new ParameterImpl("transport.mail.replyToAddress", "axis2@127.0.0.1"));
-        transportIn.setReciver(new SimpleMailListener());
-
-        TransportOutDescription transportOut =
-            new TransportOutDescription(new QName(Constants.TRANSPORT_MAIL));
-
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "axis2"));
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.password", "axis2"));
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.port", "25"));
-        transportOut.setSender(new MailTransportSender());
-
-        configContext.getAxisConfiguration().addTransportIn(transportIn);
-        configContext.getAxisConfiguration().addTransportOut(transportOut);
+            builder.buildConfigurationContext(file.getAbsolutePath());
         return configContext;
     }
+    
+    
+//    // <code for axis configuration setup and service setup>
+//    private EndpointReference targetEPR =
+//        new EndpointReference(
+//            AddressingConstants.WSA_TO,
+//            "axis2-server@127.0.0.1" + "/axis/services/EchoXMLService/echoOMElement");
+//    private QName serviceName = new QName("EchoXMLService");
+//    private QName operationName = new QName("echoOMElement");
+//    private QName transportName = new QName("http://localhost/my", "NullTransport");
+//
+//    protected void setUpServer() {
+//        try {
+//            ConfigurationContext configContext = createServerConfigurationContext();
+//            configContext.getAxisConfiguration().engageModule(new QName(Constants.MODULE_ADDRESSING));
+//            ServiceDescription service =
+//                Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+//            configContext.getAxisConfiguration().addService(service);
+//            Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+//            ServiceContext serviceContext = configContext.createServiceContext(serviceName);
+//            MailServer.configurationContext = configContext;
+//        } catch (PhaseException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (AxisFault e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
+//    
+//    public ConfigurationContext createServerConfigurationContext() throws Exception {
+//        ConfigurationContextFactory builder = new ConfigurationContextFactory();
+//        ConfigurationContext configContext =
+//            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+//
+//        TransportInDescription transportIn =
+//            new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
+//        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
+//        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "axis2-server"));
+//        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.password", "axis2"));
+//        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "1134"));
+//        transportIn.addParameter(
+//            new ParameterImpl("transport.mail.replyToAddress", "axis2-server@127.0.0.1"));
+//        transportIn.setReciver(new SimpleMailListener());
+//
+//        TransportOutDescription transportOut =
+//            new TransportOutDescription(new QName(Constants.TRANSPORT_MAIL));
+//
+//        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
+//        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "axis2-server"));
+//        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.password", "axis2"));
+//        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.port", "1049"));
+//        transportOut.setSender(new MailTransportSender());
+//
+//        configContext.getAxisConfiguration().addTransportIn(transportIn);
+//        configContext.getAxisConfiguration().addTransportOut(transportOut);
+//        return configContext;
+//    }
+//    // </code for axis engine setup and service setup>
+
 
 }

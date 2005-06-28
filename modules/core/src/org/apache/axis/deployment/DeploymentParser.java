@@ -144,13 +144,13 @@ public class DeploymentParser implements DeploymentConstants {
                                         }
                                     } catch (ClassNotFoundException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " , e);
                                     } catch (IllegalAccessException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " , e);
                                     } catch (InstantiationException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " + e.getMessage());
+                                                "Error in loading messageRecivers " , e);
                                     }
                                 } else
                                     throw new UnsupportedOperationException(
@@ -283,7 +283,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return transportin;
     }
@@ -351,7 +351,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return transportout;
     }
@@ -504,7 +504,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return desc;
     }
@@ -554,7 +554,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         // adding element to the parameter
         parameter.setValue(element);
@@ -656,7 +656,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         // adding element to the parameter
         return handler;
@@ -689,7 +689,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
     }
 
@@ -769,13 +769,13 @@ public class DeploymentParser implements DeploymentConstants {
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e);
+                                            "Error in loading messageRecivers " , e);
                                 } catch (IllegalAccessException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e);
+                                            "Error in loading messageRecivers " , e);
                                 } catch (InstantiationException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " + e);
+                                            "Error in loading messageRecivers " , e);
                                 }
                             } else {
                                 throw new UnsupportedOperationException(
@@ -908,13 +908,13 @@ public class DeploymentParser implements DeploymentConstants {
                                         (MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " , e);
                             } catch (IllegalAccessException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " , e);
                             } catch (InstantiationException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageRecivers " , e);
                             }
                         }
                         module.addOperation(operation);
@@ -934,7 +934,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
 
     }
@@ -970,7 +970,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return inFlow;
     }
@@ -1005,7 +1005,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
 
         return outFlow;
@@ -1041,7 +1041,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return faultFlow;
     }
@@ -1076,7 +1076,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return faultFlow;
     }
@@ -1112,7 +1112,7 @@ public class DeploymentParser implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new DeploymentException("parser Exception", e);
         } catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
         return pahseList;
     }
