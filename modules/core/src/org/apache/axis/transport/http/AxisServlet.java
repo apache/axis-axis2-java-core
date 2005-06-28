@@ -178,7 +178,7 @@ public class AxisServlet extends HttpServlet {
                 req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                 req.getRequestURL().toString(),
                 configContext);
-            Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+            Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
             if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
@@ -210,7 +210,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, res.getOutputStream());
             engine.receive(msgContext);
 
-            Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
+            Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
             if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
