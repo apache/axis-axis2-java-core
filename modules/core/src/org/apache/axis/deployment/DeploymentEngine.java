@@ -122,6 +122,9 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
+        if(RepositaryName == null || RepositaryName.trim().equals("")){
+            throw new DeploymentException("Axis2 repositary can not be null");
+        }
         this.folderName = RepositaryName;
         axis2repository = RepositaryName;
         File repository = new File(RepositaryName);
@@ -331,13 +334,13 @@ public class DeploymentEngine implements DeploymentConstants {
         DeploymentData tempdata = DeploymentData.getInstance();
         ArrayList inPhases = tempdata.getINPhases();
         //TODO condition checking should be otherway since null value can occur
-            if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
-                    ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                    ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
-                    ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
-                throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                        " support\n recheck axis2.xml");
-            }
+        if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+                ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+                ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
+                ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+            throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
+                    " support\n recheck axis2.xml");
+        }
         //  ArrayList outPhaes = tempdata.getOUTPhases();
         //TODO do the validation code here
         //ArrayList systemDefaultPhases =((AxisConfigurationImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
@@ -487,7 +490,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addNewModule(ModuleDescription moduelmetada) throws AxisFault {
-       // currentArchiveFile.setClassLoader();
+        // currentArchiveFile.setClassLoader();
         Flow inflow = moduelmetada.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -583,7 +586,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             log.info("AxisFault  " + axisFault);
                             moduleStatus = "Error:\n" + axisFault.getMessage();
                         } finally {
-                             if (moduleStatus.startsWith("Error:")) {
+                            if (moduleStatus.startsWith("Error:")) {
                                 axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()), moduleStatus);
                             }
                             currentArchiveFile = null;
