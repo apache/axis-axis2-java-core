@@ -128,6 +128,7 @@ public class HTTPTransportUtils {
         ConfigurationContext configurationContext,Map requestParameters) throws AxisFault {
             msgContext.setWSAAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
         try {
             SOAPEnvelope envelope =
                 HTTPTransportUtils.createEnvelopeFromGetRequest(

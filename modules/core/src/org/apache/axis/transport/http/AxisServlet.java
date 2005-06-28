@@ -95,7 +95,6 @@ public class AxisServlet extends HttpServlet {
                     sessionContext);
             }
 
-            String filePart = httpServletRequest.getRequestURL().toString();
             Enumeration enu = httpServletRequest.getParameterNames();
             HashMap map = new HashMap();
             while (enu.hasMoreElements()) {
@@ -112,7 +111,8 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)),
                     configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)));
-            msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+                    msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
+            msgContext.setServerSide(true);
 
             boolean processed =
                 HTTPTransportUtils.processHTTPGetRequest(
@@ -124,7 +124,6 @@ public class AxisServlet extends HttpServlet {
                     httpServletRequest.getRequestURL().toString(),
                     configContext,
                     map);
-            httpServletResponse.getOutputStream().flush();
             if (!processed) {
                 lister.handle(httpServletRequest, httpServletResponse);
             }
