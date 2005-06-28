@@ -33,13 +33,11 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 
-/**
- * Class OMTextImpl
- */
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
@@ -50,6 +48,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	protected short textType = TEXT_NODE;
 
 	protected String mimeType;
+
+	protected boolean optimize = false;
 
 	protected boolean isBinary = false;
 
@@ -107,9 +107,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param mimeType
 	 *            of the Binary
 	 */
-	public OMTextImpl(String s, String mimeType) {
+	public OMTextImpl(String s, String mimeType, boolean optimize) {
 		this(s);
 		this.mimeType = mimeType;
+		this.optimize = optimize;
+		if (this.contentID == null && optimize==true) {
+			createContentID();
+		}
 	}
 
 	/**
@@ -119,23 +123,40 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param mimeType
 	 *            of the Binary
 	 */
-	public OMTextImpl(OMElement parent, String s, String mimeType) {
+	public OMTextImpl(OMElement parent, String s, String mimeType,
+			boolean optimize) {
 		this(parent, s);
 		this.mimeType = mimeType;
+		this.optimize = optimize;
+		if (this.contentID == null && optimize==true) {
+			createContentID();
+		}
 	}
 
 	/**
 	 * @param dataHandler
-	 *            To send binary optimised content Created programatically
+	 *            To send binary optimised content Created programatically.
 	 */
 	public OMTextImpl(DataHandler dataHandler) {
 		this.dataHandler = dataHandler;
+		this.isBinary = true;
+		this.optimize = true;
 		if (this.contentID == null) {
-			// We can use a UUID, taken using Apache commons id project.
-			// TODO change to UUID
-			this.contentID = String.valueOf(new Random(new Date().getTime())
-					.nextLong());
-			this.isBinary = true;
+			createContentID();
+		}
+	}
+
+	/**
+	 * @param dataHandler
+	 * @param optimize
+	 *            To send binary content. Created progrmatically.
+	 */
+	public OMTextImpl(DataHandler dataHandler, boolean optimize) {
+		this.dataHandler = dataHandler;
+		this.isBinary = true;
+		this.optimize = optimize;
+		if (this.contentID == null && optimize==true) {
+			createContentID();
 		}
 	}
 
@@ -151,6 +172,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 			OMXMLParserWrapper builder) {
 		super(parent);
 		this.contentID = contentID;
+		this.optimize = true;
 		this.isBinary = true;
 		this.builder = builder;
 	}
@@ -178,8 +200,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 * @param writer
 	 * @throws XMLStreamException
 	 */
-	public void serializeWithCache(OMOutput omOutput)
-			throws XMLStreamException {
+	public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
 		XMLStreamWriter writer = omOutput.getXmlStreamWriter();
 		if (textType == TEXT_NODE) {
 			writer.writeCharacters(this.value);
@@ -196,11 +217,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
 	/**
 	 * Returns the value
-	 * 
-	 * @return
 	 */
 	public String getText() throws OMException {
-		if (!isBinary) {
+		if (this.value != null) {
 			return this.value;
 		} else {
 			try {
@@ -208,7 +227,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 				inStream = this.getInputStream();
 				byte[] data;
 				data = new byte[inStream.available()];
-
 				IOUtils.readFully(inStream, data);
 				return Base64.encode(data);
 			} catch (Exception e) {
@@ -220,8 +238,15 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
 	}
 
-	public boolean isOptimised() {
-		return isBinary;
+	public boolean isOptimized() {
+		return optimize;
+	}
+
+	public void doOptimize(boolean value) {
+		this.optimize = value;
+		if (this.contentID == null && value==true) {
+			getContentID();
+		}
 	}
 
 	/**
@@ -235,13 +260,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		 * this should return a DataHandler containing the binary data
 		 * reperesented by the Base64 strings stored in OMText
 		 */
-		if (isBinary) {
-			if (dataHandler == null) {
-				dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
-						.getDataHandler(contentID);
-			}
-			return dataHandler;
-		}
 		if (value != null) {
 			ByteArrayDataSource dataSource;
 			byte[] data = Base64.decode(value);
@@ -253,9 +271,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 			}
 			DataHandler dataHandler = new DataHandler(dataSource);
 			return dataHandler;
+		} else {
+			if (dataHandler == null) {
+				dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
+						.getDataHandler(contentID);
+			}
+			return dataHandler;
 		}
-		return null;
-
 	}
 
 	public String getLocalName() {
@@ -263,17 +285,21 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	}
 
 	public java.io.InputStream getInputStream() throws OMException {
-		if (dataHandler == null) {
-			getDataHandler();
+		if (isBinary == true) {
+			if (dataHandler == null) {
+				getDataHandler();
+			}
+			InputStream inStream;
+			try {
+				inStream = dataHandler.getDataSource().getInputStream();
+			} catch (IOException e) {
+				throw new OMException(
+						"Cannot get InputStream from DataHandler." + e);
+			}
+			return inStream;
+		} else {
+			throw new OMException("Unsupported Operation");
 		}
-		InputStream inStream;
-		try {
-			inStream = dataHandler.getDataSource().getInputStream();
-		} catch (IOException e) {
-			throw new OMException("Cannot get InputStream from DataHandler."
-					+ e);
-		}
-		return inStream;
 	}
 
 	public String getContentID() {
@@ -287,7 +313,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	public void serialize(OMOutput omOutput) throws XMLStreamException {
 		boolean firstElement = false;
 
-		if (!this.isBinary) {
+		if (!this.optimize) {
 			serializeWithCache(omOutput);
 		} else {
 			if (omOutput.doOptimise()) {
@@ -300,10 +326,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 				omOutput.writeOptimised(this);
 				omOutput.getXmlStreamWriter().writeEndElement();
 			} else {
-
 				omOutput.getXmlStreamWriter().writeCharacters(this.getText());
 			}
-
+			// TODO do we need these
 			OMNode nextSibling = this.getNextSibling();
 			if (nextSibling != null) {
 				// serilize next sibling
@@ -324,11 +349,18 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		}
 
 	}
+	private void createContentID()
+	{
+//		 We can use a UUID, taken using Apache commons id project.
+		// TODO change to UUID
+		this.contentID = String.valueOf(new Random(new Date().getTime())
+				.nextLong());
+	}
 
 	/*
 	 * Methods to copy from OMSerialize utils
 	 */
-	private void serializeStartpart( OMOutput omOutput)
+	private void serializeStartpart(OMOutput omOutput)
 			throws XMLStreamException {
 		String nameSpaceName = null;
 		String writer_prefix = null;
@@ -435,7 +467,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (done) {
 			this.detach();
 		} else {
-			builder.discard((OMElement)this.parent);
+			builder.discard((OMElement) this.parent);
 		}
 	}
 

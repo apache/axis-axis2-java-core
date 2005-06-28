@@ -5,7 +5,6 @@ import org.apache.axis.soap.SOAPFault;
 import org.apache.axis.soap.impl.llom.SOAPFaultDetailImpl;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.OMSerializerUtil;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.*;

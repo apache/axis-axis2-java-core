@@ -16,7 +16,6 @@
 package org.apache.axis.om;
 
 import org.apache.axis.om.impl.llom.OMNavigator;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;

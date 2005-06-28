@@ -18,7 +18,6 @@ package org.apache.axis.om;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.om.impl.llom.OMOutput;
 
 /**
  * Interface OMSerializer

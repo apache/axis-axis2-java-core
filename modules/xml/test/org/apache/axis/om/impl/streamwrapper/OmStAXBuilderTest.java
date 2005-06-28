@@ -24,8 +24,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;

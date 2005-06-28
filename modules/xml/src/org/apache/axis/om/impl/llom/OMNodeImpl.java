@@ -15,7 +15,6 @@
 */
 package org.apache.axis.om.impl.llom;
 
-import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMContainer;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;

@@ -15,7 +15,7 @@
  */
 package org.apache.axis.om.impl.llom.serialize;
 
-import org.apache.axis.om.impl.llom.OMOutput;
+import org.apache.axis.om.OMOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;

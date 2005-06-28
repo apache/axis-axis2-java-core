@@ -15,7 +15,6 @@
  */
 package org.apache.axis.om;
 
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 
 import javax.xml.stream.XMLOutputFactory;

@@ -11,8 +11,8 @@ import junit.framework.TestCase;
 
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
@@ -118,13 +118,13 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        OMOutput omOutputer =  new OMOutput(System.out,false);
+        OMOutput omOutput =  new OMOutput(System.out,false);
         //env.getBody().addChild(builder.getDocumentElement());
         
-        env.serializeWithCache(omOutputer);
+        env.serializeWithCache(omOutput);
        // env.serializeWithCache(xmlStreamWriter, true);
 
-        omOutputer.flush();
+        omOutput.flush();
 
     }
     public void testSerilizationWithCacheOn() throws Exception{

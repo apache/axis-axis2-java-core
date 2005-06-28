@@ -29,7 +29,7 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.impl.llom.OMOutput;
+import org.apache.axis.om.OMOutput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;

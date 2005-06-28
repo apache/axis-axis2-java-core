@@ -36,7 +36,7 @@ import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.OMOutput;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;

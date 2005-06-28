@@ -18,6 +18,7 @@ package org.apache.axis.engine;
 
 //todo
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 
@@ -26,6 +27,7 @@ import junit.framework.TestCase;
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.attachments.ByteArrayDataSource;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
@@ -35,20 +37,21 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMOutput;
+import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class EchoRawXMLChunckedTest extends TestCase {
+public class EchoRawMTOMTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
                     "http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+            + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
+    private QName operationName = new QName("echoMTOMtoBase64");
     private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private AxisConfiguration engineRegistry;
@@ -60,16 +63,16 @@ public class EchoRawXMLChunckedTest extends TestCase {
 
     private boolean finish = false;
 
-    public EchoRawXMLChunckedTest() {
-        super(EchoRawXMLChunckedTest.class.getName());
+    public EchoRawMTOMTest() {
+        super(EchoRawMTOMTest.class.getName());
     }
 
-    public EchoRawXMLChunckedTest(String testName) {
+    public EchoRawMTOMTest(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
+        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
         Echo.class.getName(),
@@ -77,8 +80,6 @@ public class EchoRawXMLChunckedTest extends TestCase {
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
-                
-
     }
 
     protected void tearDown() throws Exception {
@@ -87,62 +88,24 @@ public class EchoRawXMLChunckedTest extends TestCase {
     }
 
     private OMElement createEnvelope() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
-        method.addChild(value);
-        
-        return method;
+    	
+    	 OMFactory fac = OMAbstractFactory.getOMFactory();
+    	 OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+		 OMElement data = fac.createOMElement("data", omNs);
+		 byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+				98 };
+		 DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
+		 OMTextImpl textData = new OMTextImpl(dataHandler);
+		 data.addChild(textData); 
+         return data;
     }
-
-//    public void testEchoXMLASync() throws Exception {
-//                OMElement payload = createEnvelope();
-//
-//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(Constants.TESTING_PATH + "chuncked-enabledRepository");
-//
-//        call.setTo(targetEPR);
-//        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-//
-//        Callback callback = new Callback() {
-//            public void onComplete(AsyncResult result) {
-//                try {
-//                    result.getResponseEnvelope().serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-//                } catch (XMLStreamException e) {
-//                    reportError(e);
-//                } finally {
-//                    finish = true;
-//                }
-//            }
-//
-//            public void reportError(Exception e) {
-//                e.printStackTrace();
-//                finish = true;
-//            }
-//        };
-//
-//        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
-//        int index = 0;
-//        while (!finish) {
-//            Thread.sleep(1000);
-//            index++;
-//            if(index > 10 ){
-//                throw new AxisFault("Server is shutdown as the Async response take too longs time");
-//            }
-//        }
-//        call.close();
-//
-//
-//        log.info("send the reqest");
-//    }
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(Constants.TESTING_PATH + "chuncked-enabledRepository");
+        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
@@ -152,4 +115,21 @@ public class EchoRawXMLChunckedTest extends TestCase {
         result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
     }
+
+   /* public void testCorrectSOAPEnvelope() throws Exception {
+
+        OMElement payload = createEnvelope();
+
+        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+
+        OMElement result =
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+        call.close();
+    }*/
+
+
 }

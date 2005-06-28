@@ -17,6 +17,7 @@
 package org.apache.axis.engine;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMText;
 
 /**
  * @version $Rev: $ $Date: $
@@ -42,6 +43,13 @@ public class Echo {
 
     public int echoInt(int in) {
         return in;
+    }
+    
+    public OMElement echoMTOMtoBase64(OMElement omEle)
+    {
+    	OMText omText  = (OMText)omEle.getFirstChild();
+    	omText.doOptimize(false);
+    	return omEle;
     }
 
 }

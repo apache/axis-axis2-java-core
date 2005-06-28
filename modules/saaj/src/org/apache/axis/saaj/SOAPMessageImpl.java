@@ -28,7 +28,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis.om.impl.llom.OMOutput;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.transport.http.HTTPConstants;
 
 /**

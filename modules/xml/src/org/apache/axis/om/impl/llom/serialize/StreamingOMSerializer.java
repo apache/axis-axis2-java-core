@@ -21,8 +21,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMSerializer;
-import org.apache.axis.om.impl.llom.OMOutput;
 
 /**
  * Class StreamingOMSerializer

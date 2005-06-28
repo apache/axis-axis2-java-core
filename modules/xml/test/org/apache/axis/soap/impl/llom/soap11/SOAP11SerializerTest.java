@@ -1,13 +1,12 @@
 package org.apache.axis.soap.impl.llom.soap11;
 
-import org.apache.axis.om.OMTestCase;
-import org.apache.axis.om.impl.llom.OMOutput;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.soap.SOAPEnvelope;
-
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis.om.OMOutput;
+import org.apache.axis.om.OMTestCase;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

@@ -30,7 +30,7 @@ import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.impl.llom.OMOutput;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

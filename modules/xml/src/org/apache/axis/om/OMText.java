@@ -34,7 +34,9 @@ public interface OMText extends OMNode {
 	 * @return boolean flag saying whether the node contains
 	 * an optimized text or not
 	 */
-	boolean isOptimised();
+	boolean isOptimized();
+	
+	void doOptimize(boolean value);
 
-	public String getContentID();
+	String getContentID();
 }

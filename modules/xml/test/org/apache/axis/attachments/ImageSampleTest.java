@@ -30,10 +30,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 

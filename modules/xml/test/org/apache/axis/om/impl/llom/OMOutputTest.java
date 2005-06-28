@@ -25,6 +25,7 @@ import org.apache.axis.attachments.ByteArrayDataSource;
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMOutput;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

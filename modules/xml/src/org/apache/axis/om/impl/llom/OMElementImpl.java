@@ -30,6 +30,7 @@ import org.apache.axis.om.OMContainer;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;

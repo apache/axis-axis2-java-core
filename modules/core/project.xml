@@ -106,18 +106,18 @@
                <module>true</module>
            </properties>
        </dependency>
-	 <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-javamail</artifactId>
-            <version>1.3.1-rc3</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
             <version>1.2</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+         <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-javamail</artifactId>
+            <version>1.3.1-rc3</version>
             <properties>
                 <module>true</module>
             </properties>
