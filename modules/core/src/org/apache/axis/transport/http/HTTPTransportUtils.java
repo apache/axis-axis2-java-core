@@ -69,6 +69,8 @@ public class HTTPTransportUtils {
         try {
             msgContext.setWSAAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+            msgContext.setServerSide(true);
             
             SOAPEnvelope envelope = null;
             StAXBuilder builder = null;
@@ -129,6 +131,7 @@ public class HTTPTransportUtils {
             msgContext.setWSAAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+            msgContext.setServerSide(true);
         try {
             SOAPEnvelope envelope =
                 HTTPTransportUtils.createEnvelopeFromGetRequest(

@@ -29,7 +29,7 @@
 
   <transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
         <parameter name="transport.mail.pop3.host" locked="xsd:false">127.0.0.1</parameter>
-        <parameter name="transport.mail.pop3.user" locked="xsd:false">axis2</parameter>
+        <parameter name="transport.mail.pop3.user" locked="xsd:false">axis2@127.0.0.1</parameter>
         <parameter name="transport.mail.pop3.password" locked="xsd:false">axis2</parameter>
         <parameter name="transport.mail.pop3.port" locked="xsd:false">1134</parameter>
         <parameter name="transport.mail.replyToAddress" locked="xsd:false">axis2@127.0.0.1</parameter>
