@@ -27,6 +27,7 @@ import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.storage.AxisStorage;
+import org.apache.axis.util.threadpool.ThreadPool;
 
 public class ConfigurationContext extends AbstractContext{
 
@@ -35,6 +36,7 @@ public class ConfigurationContext extends AbstractContext{
 
     private Map sessionContextMap;
     private Map moduleContextMap;
+    private ThreadPool threadPool;
 
     /**
      * Map containing <code>MessageID</code> to
@@ -117,6 +119,16 @@ public class ConfigurationContext extends AbstractContext{
         }else{
             throw new AxisFault("Service not found service name = "+serviceName );
         }
+    }
+
+    /**
+     * @return
+     */
+    public ThreadPool getThreadPool() {
+        if(threadPool == null){
+            threadPool = new ThreadPool();
+        }
+        return threadPool;
     }
 
 }

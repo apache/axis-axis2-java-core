@@ -17,23 +17,16 @@ package org.apache.axis.transport.http;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.ListenerManager;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.TransportListener;
 import org.apache.commons.logging.Log;
@@ -63,11 +56,6 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * Field serverSocket
      */
     protected ServerSocket serverSocket;
-
-    /**
-     * Field socket
-     */
-    protected Socket socket;
 
     /**
      * are we stopped?
@@ -126,9 +114,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     public void run() {
         try {
             while (!stopped) {
-                try {
-
                     // Accept and process requests from the socket
+                    Socket socket = null;
                     try {
                         socket = serverSocket.accept();
                     } catch (java.io.InterruptedIOException iie) {
@@ -137,81 +124,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                         break;
                     }
                     if (socket != null) {
-                        if (configurationContext == null) {
-                            throw new AxisFault("Engine Must be null");
-                        }
-
-                        InputStream inStream = socket.getInputStream();
-
-                        
-
-                        TransportOutDescription transportOut =
-                            configurationContext.getAxisConfiguration().getTransportOut(
-                                new QName(Constants.TRANSPORT_HTTP));
-                        MessageContext msgContext =
-                            new MessageContext(
-                                configurationContext,
-                                configurationContext.getAxisConfiguration().getTransportIn(
-                                    new QName(Constants.TRANSPORT_HTTP)),
-                                transportOut);
-                        msgContext.setServerSide(true);
-
-                        // We do not have any Addressing Headers to put
-                        // let us put the information about incoming transport
-                        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                        Map map = reciver.parseTheHeaders(inStream, true);
-                        
-                        SimpleHTTPOutputStream out;
-                        String transferEncoding = (String)map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
-                        if(transferEncoding != null 
-                            && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)){
-                                inStream = new ChunkedInputStream(inStream);
-                                out = new SimpleHTTPOutputStream(socket.getOutputStream(),true);
-                            }else{
-                                out = new SimpleHTTPOutputStream(socket.getOutputStream(),false);
-                            }
-
-                        //OutputStream out = socket.getOutputStream();
-                        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                        
-                        
-                        
-                             if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
-                                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(msgContext,
-                                    inStream,
-                                    out, 
-                                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                                    (String) map.get(HTTPConstants.HEADER_SOAP_ACTION), 
-                                    (String) map.get(HTTPConstants.REQUEST_URI),
-                                    configurationContext,
-                                    HTTPTransportReceiver.getGetRequestParameters((String) map.get(HTTPConstants.REQUEST_URI)));
-                                    
-                                    if(!processed){
-                                        out.write(HTTPTransportReceiver.getServicesHTML(configurationContext).getBytes());
-                                                                    out.flush();
-                                    }
-                                 } else {
-                                     HTTPTransportUtils.processHTTPPostRequest(msgContext,
-                                    inStream,
-                                    out, 
-                                    (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                                    (String) map.get(HTTPConstants.HEADER_SOAP_ACTION), 
-                                    (String) map.get(HTTPConstants.REQUEST_URI),
-                                    configurationContext);
-                                 }
-
-
-                        out.finalize();
+                        configurationContext.getThreadPool().addWorker(new HTTPWorker(configurationContext,socket));
                     }
-                } catch (Throwable e) {
-                    log.error(e);
-                    e.printStackTrace();
-                } finally {
-                    if (socket != null) {
-                        this.socket.close();
-                        this.socket = null;
-                    }
-                }
             }
         } catch (IOException e) {
             log.error(e);

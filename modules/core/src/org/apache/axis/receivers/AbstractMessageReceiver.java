@@ -68,28 +68,29 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             msgContext.getOperationContext().getServiceContext().getServiceConfig();
 
         Parameter scopeParam = service.getParameter(SCOPE);
-        String scope = Constants.MESSAGE_SCOPE;
         QName serviceName = service.getName();
-        if (Constants.MESSAGE_SCOPE.equals(scope)) {
-            return makeNewServiceObject(msgContext);
-        } else if (Constants.SESSION_SCOPE.equals(scope)) {
+        if (scopeParam != null &&  Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
             SessionContext sessionContext = msgContext.getSessionContext();
-            Object obj = sessionContext.getProperty(serviceName.getLocalPart());
-            if (obj == null) {
-                obj = makeNewServiceObject(msgContext);
-                sessionContext.setProperty(serviceName.getLocalPart(), obj);
+            synchronized(sessionContext){
+                Object obj = sessionContext.getProperty(serviceName.getLocalPart());
+                if (obj == null) {
+                    obj = makeNewServiceObject(msgContext);
+                    sessionContext.setProperty(serviceName.getLocalPart(), obj);
+                }
+                return obj;
             }
-            return obj;
-        } else if (Constants.APPLICATION_SCOPE.equals(scope)) {
+        } else if (scopeParam != null &&  Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
             SessionContext globalContext = msgContext.getSessionContext();
-            Object obj = globalContext.getProperty(serviceName.getLocalPart());
-            if (obj == null) {
-                obj = makeNewServiceObject(msgContext);
-                globalContext.setProperty(serviceName.getLocalPart(), obj);
+            synchronized(globalContext){
+                Object obj = globalContext.getProperty(serviceName.getLocalPart());
+                if (obj == null) {
+                    obj = makeNewServiceObject(msgContext);
+                    globalContext.setProperty(serviceName.getLocalPart(), obj);
+                }
+                return obj;
             }
-            return obj;
         } else {
-            throw new AxisFault("unknown scope " + scope);
+            return makeNewServiceObject(msgContext);
         }
     }
 }

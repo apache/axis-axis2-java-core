@@ -43,9 +43,11 @@ public class TransportUtils {
         return createSOAPMessage(msgContext, inStream);
     }
 
+
+ 
     public static SOAPEnvelope createSOAPMessage(
         MessageContext msgContext,
-        InputStream inStream)
+        InputStream inStream )
         throws AxisFault {
         try {
             //Check for the REST behaviour, if you desire rest beahaviour
@@ -53,9 +55,6 @@ public class TransportUtils {
             Object doREST =
                 msgContext.getProperty(Constants.Configuration.DO_REST);
             Reader reader = new InputStreamReader(inStream);
-            
-            char[] chars = new char[1024];
-            int read = 100;
             
             XMLStreamReader xmlreader =
                 XMLInputFactory.newInstance().createXMLStreamReader(reader);

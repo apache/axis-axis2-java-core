@@ -17,32 +17,18 @@ package org.apache.axis.transport.tcp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.ListenerManager;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
@@ -58,7 +44,8 @@ public class TCPServer extends TransportListener implements Runnable {
     private ConfigurationContext configContext;
 
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
-    public TCPServer(){}
+    public TCPServer() {
+    }
 
     public TCPServer(int port, String dir) throws AxisFault {
         try {
@@ -86,7 +73,6 @@ public class TCPServer extends TransportListener implements Runnable {
         while (started) {
             Socket socket = null;
             try {
-
                 try {
                     socket = serversocket.accept();
                 } catch (java.io.InterruptedIOException iie) {
@@ -94,47 +80,12 @@ public class TCPServer extends TransportListener implements Runnable {
                     log.debug(e);
                     break;
                 }
-
-                
-                Reader in = new InputStreamReader(socket.getInputStream());
-                TransportOutDescription transportOut =
-                    configContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_TCP));
-                MessageContext msgContext =
-                    new MessageContext(
-                        configContext,
-                        configContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_TCP)),
-                        transportOut);
-                msgContext.setServerSide(true);
-                OutputStream out = socket.getOutputStream();
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-
-                AxisEngine engine = new AxisEngine(configContext);
-                try {
-                    XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(in);
-                    StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-                    msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
-                } catch (Exception e) {
-                    throw new AxisFault(e.getMessage(), e);
+                if (socket != null) {
+                    configContext.getThreadPool().addWorker(new TCPWorker(configContext, socket));
                 }
-                engine.receive(msgContext);
-            } catch (Throwable e) {
+            } catch (AxisFault e) {
                 log.error(e);
                 e.printStackTrace();
-            } finally {
-                try {
-                    if (socket != null) {
-                        socket.close();
-                        if (!started) {
-                            serversocket.close();
-                        }
-                    }
-
-                } catch (IOException e1) {
-                    log.error(e1);
-                }
             }
         }
 
@@ -177,13 +128,13 @@ public class TCPServer extends TransportListener implements Runnable {
         }
 
     }
-    public static void main(String[] args) throws AxisFault, NumberFormatException{
+    public static void main(String[] args) throws AxisFault, NumberFormatException {
         if (args.length != 2) {
             System.out.println("TCPServer repositoryLocation port");
         }
-        TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]),args[0]);
+        TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]), args[0]);
         System.out.println("[Axis2] Using the Repository " + new File(args[1]).getAbsolutePath());
-        System.out.println("[Axis2] Starting the TCP Server on port "+ args[0]);
+        System.out.println("[Axis2] Starting the TCP Server on port " + args[0]);
         tcpServer.start();
     }
 

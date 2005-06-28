@@ -27,7 +27,6 @@ import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.MessageSender;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ParameterImpl;
@@ -71,9 +70,7 @@ public class MessageContextInjectionTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContext =
-            builder.buildConfigurationContext(org.apache.axis.Constants.TESTING_REPOSITORY);
+        ConfigurationContext configContext = new ConfigurationContext(new AxisConfigurationImpl());
         LocalTransportReceiver.CONFIG_CONTEXT = configContext;
 
         ServiceDescription service = new ServiceDescription(serviceName);

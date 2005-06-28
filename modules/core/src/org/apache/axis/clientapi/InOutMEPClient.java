@@ -18,15 +18,8 @@
 package org.apache.axis.clientapi;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
@@ -41,12 +34,9 @@ import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis.om.impl.llom.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportListener;
-import org.apache.axis.transport.http.HTTPTransportReceiver;
+import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.wsdl.WSDLConstants;
 
 /**
@@ -135,8 +125,7 @@ public class InOutMEPClient extends MEPClient {
                 }
             }
             if (callback.envelope != null) {
-                MessageContext resMsgctx =
-                    new MessageContext(serviceContext.getEngineContext());
+                MessageContext resMsgctx = new MessageContext(serviceContext.getEngineContext());
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -159,7 +148,6 @@ public class InOutMEPClient extends MEPClient {
             msgctx.setOperationContext(
                 OperationContextFactory.createMEPContext(
                     WSDLConstants.MEP_CONSTANT_IN_OUT,
-                    
                     axisop,
                     serviceContext));
             MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
@@ -193,37 +181,17 @@ public class InOutMEPClient extends MEPClient {
                 axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 msgctx.setReplyTo(
-                ListenerManager.replyToEPR(
+                    ListenerManager.replyToEPR(
                         serviceContext.getServiceConfig().getName().getLocalPart()
                             + "/"
-                            + axisop.getName().getLocalPart(),listenerTransport.getName().getLocalPart()));
-                msgctx.setOperationContext(
-                    axisop.findOperationContext(msgctx, serviceContext));
+                            + axisop.getName().getLocalPart(),
+                        listenerTransport.getName().getLocalPart()));
+                msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
                 engine.send(msgctx);
             } else {
-                Thread thread = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            msgctx.setOperationContext(
-                                OperationContextFactory.createMEPContext(
-                                    WSDLConstants.MEP_CONSTANT_IN_OUT,
-                                    axisop,
-                                    serviceContext));
-                            msgctx.setServiceContext(serviceContext);
-                            MessageContext response =
-                                TwoChannelBasedSender.send(msgctx, listenerTransport);
-                            SOAPEnvelope resenvelope = response.getEnvelope();
-                            AsyncResult asyncResult = new AsyncResult();
-                            asyncResult.setResult(resenvelope);
-                            callback.onComplete(asyncResult);
-                            callback.setComplete(true);
-                        } catch (AxisFault e) {
-                            callback.reportError(e);
-                        }
-                    }
-                });
-                thread.start();
+                serviceContext.getEngineContext().getThreadPool().addWorker(
+                    new NonBlockingInvocationWorker(callback,axisop,msgctx));
             }
 
             //            //TODO start the server
@@ -319,63 +287,71 @@ public class InOutMEPClient extends MEPClient {
             throw new AxisFault("useSeparateListener = false is only supports by the htpp transport set as the sender and receiver");
         }
 
-        this.senderTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(new QName(senderTransport));
-        this.listenerTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(new QName(listenerTransport));
+        this.senderTransport =
+            serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
+                new QName(senderTransport));
+        this.listenerTransport =
+            serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
+                new QName(listenerTransport));
 
         if (useSeparateListener == true) {
-            if(!serviceContext.getEngineContext().getAxisConfiguration().isEngaged(new QName(Constants.MODULE_ADDRESSING))){
+            if (!serviceContext
+                .getEngineContext()
+                .getAxisConfiguration()
+                .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault("to do two Transport Channels the Addressing Modules must be engeged");
             }
             ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
         }
     }
 
-//    private SOAPEnvelope checkReturnChannel(MessageContext response) throws AxisFault {
-//        SOAPEnvelope resenvelope = null;
-//        try {
-//            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-//            if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
-//                HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-//                resenvelope = receiver.handleHTTPRequest(response, serviceContext.getEngineContext());
-//            } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
-//                InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
-//                response.setProperty(MessageContext.TRANSPORT_IN,null);
-//                Reader in = new InputStreamReader(inStream);
-//
-//                if (in != null) {
-//                    XMLStreamReader xmlreader =
-//                        XMLInputFactory.newInstance().createXMLStreamReader(in);
-//                    StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-//                    resenvelope = (SOAPEnvelope) builder.getDocumentElement();
-//                } else {
-//                    throw new AxisFault(
-//                        "Sync invocation expect a proeprty "
-//                            + MessageContext.TRANSPORT_IN
-//                            + " set ");
-//                }
-//            }
-//        } catch (XMLStreamException e) {
-//            throw new AxisFault(e);
-//        } catch (FactoryConfigurationError e) {
-//            throw new AxisFault(e);
-//        }
-//        return resenvelope;
-//    }
+    //    private SOAPEnvelope checkReturnChannel(MessageContext response) throws AxisFault {
+    //        SOAPEnvelope resenvelope = null;
+    //        try {
+    //            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
+    //            if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
+    //                HTTPTransportReceiver receiver = new HTTPTransportReceiver();
+    //                resenvelope = receiver.handleHTTPRequest(response, serviceContext.getEngineContext());
+    //            } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
+    //                InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
+    //                response.setProperty(MessageContext.TRANSPORT_IN,null);
+    //                Reader in = new InputStreamReader(inStream);
+    //
+    //                if (in != null) {
+    //                    XMLStreamReader xmlreader =
+    //                        XMLInputFactory.newInstance().createXMLStreamReader(in);
+    //                    StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
+    //                    resenvelope = (SOAPEnvelope) builder.getDocumentElement();
+    //                } else {
+    //                    throw new AxisFault(
+    //                        "Sync invocation expect a proeprty "
+    //                            + MessageContext.TRANSPORT_IN
+    //                            + " set ");
+    //                }
+    //            }
+    //        } catch (XMLStreamException e) {
+    //            throw new AxisFault(e);
+    //        } catch (FactoryConfigurationError e) {
+    //            throw new AxisFault(e);
+    //        }
+    //        return resenvelope;
+    //    }
 
     private void checkTransport(MessageContext msgctx) throws AxisFault {
         if (senderTransport == null) {
             senderTransport = inferTransport(to);
         }
         if (listenerTransport == null) {
-            listenerTransport =  serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
-            senderTransport.getName());
+            listenerTransport =
+                serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
+                    senderTransport.getName());
         }
 
         if (msgctx.getTransportIn() == null) {
-                msgctx.setTransportIn(listenerTransport);
+            msgctx.setTransportIn(listenerTransport);
         }
         if (msgctx.getTransportOut() == null) {
-                msgctx.setTransportOut(senderTransport);
+            msgctx.setTransportOut(senderTransport);
         }
 
     }
@@ -389,18 +365,52 @@ public class InOutMEPClient extends MEPClient {
         public void reportError(Exception e) {
             error = e;
         }
-//        public boolean hasResult() {
-//            return envelope != null || error != null;
-//        }
+        //        public boolean hasResult() {
+        //            return envelope != null || error != null;
+        //        }
     }
 
     public void engageModule(QName moduleName) throws AxisFault {
         serviceContext.getEngineContext().getAxisConfiguration().engageModule(moduleName);
     }
-    
-    public void close() throws AxisFault{
+
+    public void close() throws AxisFault {
         //senderTransport.getSender().cleanUp();
         ListenerManager.stop(listenerTransport.getName().getLocalPart());
-     }
+    }
 
+    private class NonBlockingInvocationWorker implements AxisWorker {
+
+        private Callback callback;
+        private OperationDescription axisop;
+        private MessageContext msgctx;
+
+        public NonBlockingInvocationWorker(
+            Callback callback,
+            OperationDescription axisop,
+            MessageContext msgctx) {
+            this.callback = callback;
+            this.axisop = axisop;
+            this.msgctx = msgctx;
+        }
+
+        public void doWork() {
+            try {
+                msgctx.setOperationContext(
+                    OperationContextFactory.createMEPContext(
+                        WSDLConstants.MEP_CONSTANT_IN_OUT,
+                        axisop,
+                        serviceContext));
+                msgctx.setServiceContext(serviceContext);
+                MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
+                SOAPEnvelope resenvelope = response.getEnvelope();
+                AsyncResult asyncResult = new AsyncResult();
+                asyncResult.setResult(resenvelope);
+                callback.onComplete(asyncResult);
+                callback.setComplete(true);
+            } catch (Exception e) {
+                callback.reportError(e);
+            }
+        }
+    }
 }

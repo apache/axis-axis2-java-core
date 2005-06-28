@@ -158,7 +158,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         if (msg != null) {
                             MailWorker worker = new MailWorker(msg, configurationContext);
-                            worker.run();
+                            configurationContext.getThreadPool().addWorker(worker);
                         }
                         msg.setFlag(Flags.Flag.DELETED, true);
                     }

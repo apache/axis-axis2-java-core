@@ -37,10 +37,11 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class MailWorker implements Runnable {
+public class MailWorker implements AxisWorker {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
 
     private String contentType = "text/xml";
@@ -68,7 +69,7 @@ public class MailWorker implements Runnable {
     /**
      * The main workhorse method.
      */
-    public void run() {
+    public void doWork() {
         // create an Axis server
         AxisEngine engine = new AxisEngine(reg);
         MessageContext msgContext = null;

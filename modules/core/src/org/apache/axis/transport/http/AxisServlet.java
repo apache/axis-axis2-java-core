@@ -83,12 +83,11 @@ public class AxisServlet extends HttpServlet {
         HttpServletRequest httpServletRequest,
         HttpServletResponse httpServletResponse)
         throws ServletException, IOException {
-
+            httpServletResponse.setContentType("text/xml; charset=utf-8");
         try {
-            
+
             Object sessionContext =
-                httpServletRequest.getSession().getAttribute(
-                    Constants.SESSION_CONTEXT_PROPERTY);
+                httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
                 httpServletRequest.getSession().setAttribute(
@@ -104,7 +103,7 @@ public class AxisServlet extends HttpServlet {
                 String value = httpServletRequest.getParameter(name);
                 map.put(name, value);
             }
-            
+
             MessageContext msgContext =
                 new MessageContext(
                     configContext,
@@ -115,18 +114,19 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
 
-            
-            boolean processed = HTTPTransportUtils.processHTTPGetRequest(msgContext,
-            httpServletRequest.getInputStream(),
-            httpServletResponse.getOutputStream(),
-            httpServletRequest.getContentType(),
-            httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION), 
-            httpServletRequest.getRequestURL().toString(),
-                                               configContext,map);
-
-            
+            boolean processed =
+                HTTPTransportUtils.processHTTPGetRequest(
+                    msgContext,
+                    httpServletRequest.getInputStream(),
+                    httpServletResponse.getOutputStream(),
+                    httpServletRequest.getContentType(),
+                    httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                    httpServletRequest.getRequestURL().toString(),
+                    configContext,
+                    map);
+            httpServletResponse.getOutputStream().flush();
             if (!processed) {
-                            lister.handle(httpServletRequest, httpServletResponse);
+                lister.handle(httpServletRequest, httpServletResponse);
             }
         } catch (OMException e) {
             throw new AxisFault(e);
@@ -168,15 +168,16 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)),
                     configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)));
-                        
-            res.setContentType("text/xml; charset=utf-8");             
-            HTTPTransportUtils.processHTTPPostRequest(msgContext,
-                                                req.getInputStream(),
-                                                res.getOutputStream(), 
-                                                req.getContentType(),
-                                                req.getHeader(HTTPConstants.HEADER_SOAP_ACTION), 
-                                                req.getRequestURL().toString(),
-                                                configContext);
+
+            res.setContentType("text/xml; charset=utf-8");
+            HTTPTransportUtils.processHTTPPostRequest(
+                msgContext,
+                req.getInputStream(),
+                res.getOutputStream(),
+                req.getContentType(),
+                req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                req.getRequestURL().toString(),
+                configContext);
             Object contextWritten = msgContext.getProperty(Constants.RESPONSE_WRITTEN);
             if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
