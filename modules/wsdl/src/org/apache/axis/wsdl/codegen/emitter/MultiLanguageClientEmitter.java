@@ -648,6 +648,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected XmlDocument createDOMDocuementForInterfaceImplementation(WSDLBinding binding, WSDLService service) {
         WSDLInterface boundInterface = binding.getBoundInterface();
+
         WSDLEndpoint endpoint = null;
         HashMap endpoints = service.getEndpoints();
         XmlDocument doc = new XmlDocument();
@@ -662,17 +663,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc,"dbsupportpackage",configuration.getPackageName()+DATABINDING_PACKAGE_NAME_SUFFIX,rootElement);
         addEndpoints(doc,rootElement,endpoints);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement,binding);
         doc.appendChild(rootElement);
 
-        //////////////////////////
-//        try {
-//            doc.write(System.out);
-//        } catch (IOException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-
-        ///////////////////////////////
+//        //////////////////////////
+        try {
+            doc.write(System.out);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+//
+//        ///////////////////////////////
 
 
         return doc;
