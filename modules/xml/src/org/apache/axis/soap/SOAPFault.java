@@ -90,5 +90,6 @@ public interface SOAPFault extends OMElement {
      * @return
      * @throws org.apache.axis.om.OMException
      */
-    public abstract Exception getException() throws OMException;
+    public Exception getException() throws OMException;
+    public void setException(Exception e) throws OMException;
 }

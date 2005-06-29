@@ -171,4 +171,21 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         throw new UnsupportedOperationException();
     }
+
+    public SOAPEnvelope getDefaultFaultEnvelope() throws SOAPProcessingException {
+        SOAPEnvelope defaultEnvelope = getDefaultEnvelope();
+        SOAPFault fault = createSOAPFault(defaultEnvelope.getBody());
+
+        SOAPFaultCode faultCode = createSOAPFaultCode(fault);
+        SOAPFaultValue value = createSOAPFaultValue(faultCode);
+
+        SOAPFaultReason reason = createSOAPFaultReason(fault);
+        SOAPFaultText faultText = createSOAPFaultText(reason);
+
+        SOAPFaultNode faultNode = createSOAPFaultNode(fault);
+        SOAPFaultRole faultRole = createSOAPFaultRole(fault);
+        SOAPFaultDetail faultDetail = createSOAPFaultDetail(fault);
+
+        return defaultEnvelope;
+    }
 }

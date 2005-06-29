@@ -183,7 +183,7 @@ public class OMElementImpl extends OMNodeImpl
             if (ns != null) {
                 this.setNamespace(ns);
 //            throw new OMException("Element can not be declared without a namespaceURI. Every Element should be namespace qualified");
-                  
+
             }
         }
     }
@@ -338,17 +338,17 @@ public class OMElementImpl extends OMNodeImpl
 
         // go up to check with ancestors
         if (parent != null) {
-        	//Comment by Jaya:
-        	//For the OMDocument there won't be any explicit namespace
-        	//declarations, so going up the parent chain till the document
-        	//element should be enough.
-        	//If at a later point community decides that some standard 
-        	//namespaces, like 'xml' which every XML w/ namespaces document
-        	//is supposed to contain implicitly, should go into OMDocument then
-        	//this 'if' block needs to be revisited.
-        	if( parent instanceof OMElement) {
-        		return ((OMElementImpl)parent).findNamespace(uri, prefix);
-        	}
+            //Comment by Jaya:
+            //For the OMDocument there won't be any explicit namespace
+            //declarations, so going up the parent chain till the document
+            //element should be enough.
+            //If at a later point community decides that some standard
+            //namespaces, like 'xml' which every XML w/ namespaces document
+            //is supposed to contain implicitly, should go into OMDocument then
+            //this 'if' block needs to be revisited.
+            if (parent instanceof OMElement) {
+                return ((OMElementImpl) parent).findNamespace(uri, prefix);
+            }
         }
         return null;
     }
@@ -632,14 +632,14 @@ public class OMElementImpl extends OMNodeImpl
      * @param writer
      * @throws XMLStreamException
      */
-    public void serializeWithCache(OMOutput omOutput)  throws XMLStreamException {
-        serialize(omOutput,true);
+    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+        serialize(omOutput, true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected void serialize(OMOutput omOutput,boolean cache)throws XMLStreamException {
+    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -648,28 +648,27 @@ public class OMElementImpl extends OMNodeImpl
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(
-                    new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
         }
 
 
         if (!cache) {
             //No caching
-            if (this.firstChild!=null){
-                OMSerializerUtil.serializeStartpart(this,omOutput);
+            if (this.firstChild != null) {
+                OMSerializerUtil.serializeStartpart(this, omOutput);
                 firstChild.serialize(omOutput);
                 OMSerializerUtil.serializeEndpart(omOutput);
-            }else if (!this.done){
-                if (builderType==PULL_TYPE_BUILDER){
-                    OMSerializerUtil.serializeByPullStream(this,omOutput);
-                }else{
-                    OMSerializerUtil.serializeStartpart(this,omOutput);
+            } else if (!this.done) {
+                if (builderType == PULL_TYPE_BUILDER) {
+                    OMSerializerUtil.serializeByPullStream(this, omOutput);
+                } else {
+                    OMSerializerUtil.serializeStartpart(this, omOutput);
                     builder.setCache(cache);
                     builder.next();
                     OMSerializerUtil.serializeEndpart(omOutput);
                 }
-            }else{
-                OMSerializerUtil.serializeNormal(this,omOutput, cache);
+            } else {
+                OMSerializerUtil.serializeNormal(this, omOutput, cache);
             }
 
             //serilize siblings
@@ -683,7 +682,7 @@ public class OMElementImpl extends OMNodeImpl
             }
         } else {
             //Cached
-            OMSerializerUtil.serializeNormal(this,omOutput, cache);
+            OMSerializerUtil.serializeNormal(this, omOutput, cache);
             // serialize the siblings
             OMNode nextSibling = this.getNextSibling();
             if (nextSibling != null) {
@@ -705,7 +704,7 @@ public class OMElementImpl extends OMNodeImpl
      * @throws XMLStreamException
      */
     public void serialize(OMOutput omOutput) throws XMLStreamException {
-        this. serialize(omOutput,false);
+        this.serialize(omOutput, false);
     }
 
 
@@ -785,9 +784,11 @@ public class OMElementImpl extends OMNodeImpl
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace) {
-        OMNamespace ns = this.findNamespace(namespace.getName(), namespace.getPrefix());
-        if (ns == null) {
-            ns = this.declareNamespace(namespace);
+        if (ns != null) {
+            OMNamespace ns = this.findNamespace(namespace.getName(), namespace.getPrefix());
+            if (ns == null) {
+                ns = this.declareNamespace(namespace);
+            }
         }
         this.ns = namespace;
     }
@@ -798,13 +799,13 @@ public class OMElementImpl extends OMNodeImpl
      * @return
      */
     public QName getQName() {
-         QName qName = null;
+        QName qName = null;
 
         if (ns != null) {
             if (ns.getPrefix() != null) {
                 qName = new QName(ns.getName(), localName, ns.getPrefix());
-            }else{
-               qName = new QName(ns.getName(), localName);
+            } else {
+                qName = new QName(ns.getName(), localName);
             }
         } else {
             qName = new QName(localName);

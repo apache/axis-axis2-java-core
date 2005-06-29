@@ -22,9 +22,10 @@ import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMOutput;
-import org.apache.axis.soap.SOAPBody;
-import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.*;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis.soap.impl.llom.SOAPConstants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,8 +46,6 @@ public class AxisEngine {
 
     /**
      * Constructor AxisEngine
-     *
-     *
      */
     public AxisEngine(ConfigurationContext engineContext) {
         log.info("Axis Engine Started");
@@ -103,7 +102,7 @@ public class AxisEngine {
         try {
             ConfigurationContext sysCtx = msgContext.getSystemContext();
             ArrayList phases =
-                sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+                    sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
 
             if (paused) {
                 resumeInvocationPhases(phases, msgContext);
@@ -148,11 +147,10 @@ public class AxisEngine {
 
             // create a SOAP envelope with the Fault
             MessageContext faultContext =
-                new MessageContext(
-                    engineContext,
-                    context.getSessionContext(),
-                    context.getTransportIn(),
-                    context.getTransportOut());
+                    new MessageContext(engineContext,
+                            context.getSessionContext(),
+                            context.getTransportIn(),
+                            context.getTransportOut());
 
             if (context.getFaultTo() != null) {
                 faultContext.setFaultTo(context.getFaultTo());
@@ -171,8 +169,14 @@ public class AxisEngine {
             faultContext.setProcessingFault(true);
             faultContext.setServerSide(true);
             SOAPEnvelope envelope = null;
+
             try {
-                envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(context.getEnvelope().getNamespace().getName())) {
+                    envelope = OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
+                } else {
+                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultFaultEnvelope();
+                }
             } catch (SOAPProcessingException e1) {
                 throw new AxisFault(e1);
             }
@@ -180,7 +184,10 @@ public class AxisEngine {
             // TODO do we need to set old Headers back?
             SOAPBody body = envelope.getBody();
             e.printStackTrace();
-            body.addFault(new AxisFault(e.getMessage(), e));
+            
+//            body.addFault(new AxisFault(e.getMessage(), e));
+            body.getFault().setException(new AxisFault(e.getMessage(), e));
+            extractFaultInformationFromMessageContext(context, envelope.getBody().getFault());
 
             faultContext.setEnvelope(envelope);
 
@@ -199,6 +206,33 @@ public class AxisEngine {
         } else {
             // TODO log and exit
             log.error("Error in fault flow", e);
+        }
+    }
+
+    private void extractFaultInformationFromMessageContext(MessageContext context, SOAPFault fault) {
+        Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
+        if (faultCode != null) {
+            fault.setCode((SOAPFaultCode) faultCode);
+        }
+
+        Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
+        if (faultReason != null) {
+            fault.setReason((SOAPFaultReason) faultReason);
+        }
+
+        Object faultRole = context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
+        if (faultRole != null) {
+            fault.getRole().setText((String) faultRole);
+        }
+
+        Object faultNode = context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
+        if (faultNode != null) {
+            fault.getNode().setText((String) faultNode);
+        }
+
+        Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
+        if (faultDetail != null) {
+            fault.setDetail((SOAPFaultDetail) faultDetail);
         }
     }
 
@@ -245,8 +279,9 @@ public class AxisEngine {
     /* -----------------   Methods related to storage ----------------------------------------------*/
     /**
      * Stores an object in the underlying storage
+     *
      * @param context The relevant engine context
-     * @param obj the object to be stored
+     * @param obj     the object to be stored
      * @return the storage key
      */
     public Object store(ConfigurationContext context, Object obj) {
@@ -255,10 +290,11 @@ public class AxisEngine {
 
     /**
      * retrieves an object from the underlying storage
-     * @see #store(org.apache.axis.context.EngineContext, Object)
+     *
      * @param context
      * @param key
      * @return
+     * @see #store(org.apache.axis.context.EngineContext, Object)
      */
     public Object retrieve(ConfigurationContext context, Object key) {
         return context.getStorage().get(key);
@@ -266,9 +302,10 @@ public class AxisEngine {
 
     /**
      * removes an object from the underlying storage
+     *
      * @param context
      * @param key
-     * @return  the object removed
+     * @return the object removed
      */
     public Object remove(ConfigurationContext context, Object key) {
         return context.getStorage().remove(key);
@@ -276,6 +313,7 @@ public class AxisEngine {
 
     /**
      * Clears the underlying storage
+     *
      * @param context
      * @return
      */

@@ -154,15 +154,11 @@ public class SOAP11Factory extends SOAPLinkedListImplFactory {
 
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
-        new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                new OMNamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
-
-
         SOAPHeader headerImpl = createSOAPHeader(env);
-
         SOAPBody bodyImpl = createSOAPBody(env);
-
         return env;
     }
 

@@ -274,4 +274,5 @@ public interface SOAPFactory extends OMFactory{
      * @return
      */
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException;
+    public SOAPEnvelope getDefaultFaultEnvelope() throws SOAPProcessingException;
 }

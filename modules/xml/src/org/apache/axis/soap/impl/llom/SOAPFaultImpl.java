@@ -54,6 +54,10 @@ public abstract class SOAPFaultImpl extends SOAPElement
      */
     public SOAPFaultImpl(SOAPBody parent, Exception e) throws SOAPProcessingException {
         super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true);
+        setException(e);
+    }
+
+    public void setException(Exception e) {
         this.e = e;
         putExceptionToSOAPFault(e);
     }
