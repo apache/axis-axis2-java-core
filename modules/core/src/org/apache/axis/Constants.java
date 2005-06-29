@@ -78,10 +78,9 @@ public class Constants {
      * Field TRANSPORT_HTTP
      */
     public static final String TRANSPORT_HTTP = "http";
-
-    /**
-     * Field TRANSPORT_SMTP
-     */
+    
+    public static final String TRANSPORT_COMMONS_HTTP = "commons-http";
+    
     public static final String TRANSPORT_MAIL = "mail";
 
     public static final String TRANSPORT_JMS = "jms";

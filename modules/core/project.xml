@@ -98,6 +98,15 @@
                <module>true</module>
            </properties>
        </dependency>
+       	<dependency>
+           <groupId>commons-httpclient</groupId>
+           <artifactId>commons-httpclient</artifactId>
+           <version>3.0-rc2</version>
+           <properties>
+               <module>true</module>
+           </properties>
+       </dependency>
+       
 	<dependency>
            <groupId>commons-fileupload</groupId>
            <artifactId>commons-fileupload</artifactId>

@@ -251,13 +251,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis.transport.TransportSender#init(org.apache.axis.context.ConfigurationContext, org.apache.axis.description.TransportOutDescription)
-     */
-    public void init(
-        ConfigurationContext confContext,
-        TransportOutDescription transportOut)
-        throws AxisFault {
+    public void init(ConfigurationContext confContext,TransportOutDescription transportOut) throws AxisFault {
         //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter> or 
         //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.1</parameter> is checked
         Parameter version =

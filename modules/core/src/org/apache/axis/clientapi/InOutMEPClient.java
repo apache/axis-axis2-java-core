@@ -191,7 +191,7 @@ public class InOutMEPClient extends MEPClient {
                 engine.send(msgctx);
             } else {
                 serviceContext.getEngineContext().getThreadPool().addWorker(
-                    new NonBlockingInvocationWorker(callback,axisop,msgctx));
+                    new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
             //            //TODO start the server
@@ -277,22 +277,28 @@ public class InOutMEPClient extends MEPClient {
         boolean useSeparateListener)
         throws AxisFault {
 
-        if (useSeparateListener
-            || (senderTransport.equals(listenerTransport)
+        if (useSeparateListener) {
+            if ((senderTransport.equals(listenerTransport)
                 && (Constants.TRANSPORT_HTTP.equals(senderTransport)
-                    || Constants.TRANSPORT_TCP.equals(senderTransport)))) {
-
-            this.useSeparateListener = useSeparateListener;
-        } else {
-            throw new AxisFault("useSeparateListener = false is only supports by the htpp transport set as the sender and receiver");
+                    || Constants.TRANSPORT_TCP.equals(senderTransport)))
+                || (Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport)
+                    && Constants.TRANSPORT_HTTP.equals(listenerTransport))) {
+                this.useSeparateListener = useSeparateListener;
+            } else {
+                throw new AxisFault("useSeparateListener = false is only supports by the htpp transport set as the sender and receiver");
+            }
         }
 
-        this.senderTransport =
-            serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
-                new QName(senderTransport));
-        this.listenerTransport =
-            serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(
-                new QName(listenerTransport));
+        AxisConfiguration axisConfig = serviceContext.getEngineContext().getAxisConfiguration();
+        this.listenerTransport = axisConfig.getTransportIn(new QName(listenerTransport));
+        this.senderTransport = axisConfig.getTransportOut(new QName(senderTransport));
+        if (this.senderTransport == null) {
+            throw new AxisFault("Unknown transport " + senderTransport);
+        }
+
+        if (this.listenerTransport == null) {
+            throw new AxisFault("Unknown transport " + listenerTransport);
+        }
 
         if (useSeparateListener == true) {
             if (!serviceContext
