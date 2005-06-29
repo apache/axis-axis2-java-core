@@ -328,7 +328,9 @@
 		<ant:war destfile="target/axis2.war" webxml="modules/core/conf/web.xml">
 		  	<ant:fileset dir="modules/core/webapp"/>
 		  	<ant:lib dir="target/lib">
-			    	<ant:include name="*.jar"/>
+						<ant:include name="**"/>
+						<ant:exclude name="**servlet**"/>
+						<ant:exclude name="commons-httpclient-*.jar"/>
 		  	</ant:lib>  
 			<ant:classes dir="modules/core/conf">
       		    	<ant:include name="*.properties"/>
