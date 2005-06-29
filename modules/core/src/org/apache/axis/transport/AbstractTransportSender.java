@@ -18,7 +18,6 @@ package org.apache.axis.transport;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
@@ -136,14 +135,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 		if (outputMessage != null) {
 			OMOutput omOutput = null;
 
-			boolean doMTOM = false;
-			if (msgContext.getProperty(Constants.Configuration.DO_MTOM)!=null) {
-					doMTOM = ((Boolean) msgContext
-						.getProperty(Constants.Configuration.DO_MTOM))
-						.booleanValue();
-			}
-			else 
-			{
+			boolean doMTOM = msgContext.isDoMTOM();
+			if (!doMTOM){
 				doMTOM = HTTPTransportUtils.doWriteMTOM(msgContext);
 			}
 			try {
@@ -151,6 +144,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 					omOutput = new OMOutput(out, true);
 					outputMessage.serialize(omOutput);
 					omOutput.flush();
+                    omOutput.complete();
 					out.flush();
 				} else {
 					omOutput = new OMOutput(out, false);

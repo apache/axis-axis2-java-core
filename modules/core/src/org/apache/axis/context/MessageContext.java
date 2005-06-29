@@ -124,6 +124,8 @@ public class MessageContext extends AbstractContext {
     
     private String soapAction;
     
+    private boolean doMTOM = false;
+    
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
      * @param engineContext
@@ -565,6 +567,20 @@ public class MessageContext extends AbstractContext {
      */
     public void setSoapAction(String string) {
         soapAction = string;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isDoMTOM() {
+        return doMTOM;
+    }
+
+    /**
+     * @param b
+     */
+    public void setDoMTOM(boolean b) {
+        doMTOM = b;
     }
 
 }

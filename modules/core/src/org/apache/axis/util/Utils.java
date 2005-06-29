@@ -137,31 +137,7 @@ public class Utils {
         }
     }
 
-    public static void configureMessageContextForHTTP(
-        String contextType,
-        String soapAction,
-        MessageContext msgCtx)
-        throws AxisFault {
-        if (Constants.SOAP.MTOM_CONTENT_TYPE.equals(contextType)) {
-            if (Constants
-                .VALUE_TRUE
-                .equals(msgCtx.getProperty(Constants.Configuration.ENABLE_MTOM))) {
-                msgCtx.setProperty(Constants.Configuration.DO_MTOM, Constants.VALUE_TRUE);
-            } else {
-                throw new AxisFault("MTOTM Not supported");
-            }
-        } else if (Constants.SOAP.SOAP_12_CONTENT_TYPE.equals(contextType)) {
-            //TODO what to do with 1.2 for REST
-        } else if (
-            contextType != null && contextType.indexOf(Constants.SOAP.SOAP_11_CONTENT_TYPE) > -1) {
-            if ((soapAction == null || soapAction.length() == 0)
-                && Constants.VALUE_TRUE.equals(
-                    msgCtx.getProperty(Constants.Configuration.ENABLE_REST))) {
-                msgCtx.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
-            }
-        }
-
-    }
+ 
 
     public static String[] parseRequestURLForServiceAndOperation(String filePart) {
         String[] values = new String[2];

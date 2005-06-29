@@ -176,7 +176,7 @@ public class Constants {
         // globally enable MTOM 
         public static final String ENABLE_MTOM = "enableMTOM";
         //set after checking the Envelope & ENABLE_MTOM
-        public static final String DO_MTOM = "doMTOM";
+        //public static final String DO_MTOM = "doMTOM";
     }
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";

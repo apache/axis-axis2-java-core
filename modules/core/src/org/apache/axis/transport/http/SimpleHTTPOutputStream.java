@@ -95,7 +95,11 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
             out.flush();
         }
         if(chuncked){
-            ((ChunkedOutputStream)out).eos();
+            //TODO sometimes the out stream is closed by the client
+            try {
+                ((ChunkedOutputStream)out).eos();
+            } catch (IOException e) {
+            }
         }
     }
     

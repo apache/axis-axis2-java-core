@@ -91,7 +91,10 @@ public class TCPServer extends TransportListener implements Runnable {
 
     }
 
-    public synchronized void start() {
+    public synchronized void start() throws AxisFault {
+        if(serversocket == null){
+            serversocket = ListenerManager.openSocket(port);
+        }
         started = true;
         Thread thread = new Thread(this);
         thread.start();
@@ -124,7 +127,6 @@ public class TCPServer extends TransportListener implements Runnable {
         Parameter param = transprtIn.getParameter(PARAM_PORT);
         if (param != null) {
             int port = Integer.parseInt((String) param.getValue());
-            serversocket = ListenerManager.openSocket(port);
         }
 
     }

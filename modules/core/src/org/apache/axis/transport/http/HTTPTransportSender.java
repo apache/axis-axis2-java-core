@@ -26,9 +26,6 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Map;
 
-import javax.servlet.http.HttpUtils;
-
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
@@ -78,7 +75,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     .append(": ")
                     .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
                     .append("\n");
-            } else {
+            } 
+            if(!chuncked && !msgContext.isDoMTOM()) {
                 buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
             }
             if (!this.doREST) {
@@ -135,9 +133,11 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 (TransportSenderInfo) msgContext.getProperty(
                     TRANSPORT_SENDER_INFO);
             InputStream in = null;
-            if (chuncked) {
-                ((ChunkedOutputStream) out).eos();
-            } else {
+            if(chuncked || msgContext.isDoMTOM()){
+                if (chuncked) {
+                    ((ChunkedOutputStream) out).eos();
+                } 
+            }else{                
                 openSocket(msgContext);
                 OutputStream outS = transportInfo.out;
                 in = transportInfo.in;
@@ -184,7 +184,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
         MessageContext msgctx)
         throws AxisFault {
         msgctx.setProperty(TRANSPORT_SENDER_INFO, new TransportSenderInfo());
-        if (chuncked) {
+        
+        if(msgctx.isDoMTOM() || chuncked){
             return openSocket(msgctx);
         } else {
             TransportSenderInfo transportInfo =
@@ -218,15 +219,18 @@ public class HTTPTransportSender extends AbstractTransportSender {
         OutputStream out)
         throws AxisFault {
         try {
-           
-            if (chuncked) {
+            if(msgContext.isDoMTOM() || chuncked){
                 TransportSenderInfo transportInfo =
                     (TransportSenderInfo) msgContext.getProperty(
                         TRANSPORT_SENDER_INFO);
                 writeTransportHeaders(out, transportInfo.url, msgContext, -1);
                 out.flush();
-                return new ChunkedOutputStream(out);
-            } else {
+                if (chuncked) {
+                    return new ChunkedOutputStream(out);
+                } else {
+                    return out;
+                }
+            }else {
                 return out;
             }
         } catch (IOException e) {

@@ -29,16 +29,12 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
-import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMException;
-import org.apache.axis.util.Utils;
 
 /**
  * Class AxisServlet
@@ -187,38 +183,6 @@ public class AxisServlet extends HttpServlet {
         }
     }
 
-    public void processSOAPMessage(
-        MessageContext msgContext,
-        HttpServletRequest req,
-        HttpServletResponse res)
-        throws AxisFault {
-        try {
-            res.setContentType("text/xml; charset=utf-8");
-            AxisEngine engine = new AxisEngine(configContext);
-            msgContext.setServerSide(true);
-
-            String filePart = req.getRequestURL().toString();
-            msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, filePart));
-            String soapActionString = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
-            if (soapActionString != null) {
-                msgContext.setWSAAction(soapActionString);
-                msgContext.setSoapAction(soapActionString);
-            }
-            Utils.configureMessageContextForHTTP(
-                req.getContentType(),
-                soapActionString,
-                msgContext);
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, res.getOutputStream());
-            engine.receive(msgContext);
-
-            Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-            if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                res.setStatus(HttpServletResponse.SC_ACCEPTED);
-            }
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
-
-    }
+  
 
 }

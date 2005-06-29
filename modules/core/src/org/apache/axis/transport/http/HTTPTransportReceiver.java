@@ -17,7 +17,6 @@ package org.apache.axis.transport.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,17 +24,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.transport.TransportUtils;
-import org.apache.axis.util.Utils;
 
 /**
  * Class HTTPTransportReceiver
@@ -469,14 +461,15 @@ public class HTTPTransportReceiver {
 
         if (services != null && !services.isEmpty()) {
             status = true;
-            Collection serviceCollection = services.values();
+            Collection serviceCollection = services.values(); 
+            temp += "<h2>" + "Deployed services" + "</h2>";
             for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
                 Map operations;
                 Collection operationsList;
                 ServiceDescription axisService = (ServiceDescription) it.next();
                 operations = axisService.getOperations();
                 operationsList = operations.values();
-                temp += "<h2>" + "Deployed services" + "</h2>";
+
                 temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";
