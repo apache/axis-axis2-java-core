@@ -27,6 +27,7 @@ import org.apache.axis.transport.TransportSender;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -35,9 +36,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     private boolean chuncked = false;
     private boolean doMTOM = false;
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
-    public static final String TRANSPORT_SENDER_INFO = "TRANSPORT_SENDER_INFO";
+    public static final String HTTP_METHOD = "HTTP_METHOD";
 
-    protected PostMethod postMethod;
+    
     protected HttpClient httpClient;
     protected OMElement outputMessage;
     protected boolean doREST;
@@ -106,6 +107,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             String soapActionString = soapAction == null ? "" : soapAction.toString();
 
             PostMethod postMethod = new PostMethod();
+            postMethod.setPath(url.getFile());
+            msgContext.setProperty(HTTP_METHOD,postMethod);
             postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked));
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
                 ((PostMethod) postMethod).setContentChunked(true);
@@ -152,7 +155,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
             //code that wirte the stream to the wire
 
-            this.httpClient.executeMethod(hostConfig, this.postMethod);
+            this.httpClient.executeMethod(hostConfig, postMethod);
             if(postMethod.getStatusCode() == HttpStatus.SC_OK){
                 InputStream in = postMethod.getResponseBodyAsStream();
                 if(in == null){
@@ -258,7 +261,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
      * @see org.apache.axis.transport.TransportSender#cleanUp(org.apache.axis.context.MessageContext)
      */
     public void cleanUp(MessageContext msgContext) throws AxisFault {
-        ((PostMethod) this.postMethod).releaseConnection();
+        HttpMethod httpMethod = (HttpMethod)msgContext.getProperty(HTTP_METHOD);
+        if(httpMethod != null){
+            httpMethod.releaseConnection();
+        }
 
     }
 

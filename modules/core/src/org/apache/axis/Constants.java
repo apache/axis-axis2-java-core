@@ -183,6 +183,7 @@ public class Constants {
     public static final String CONTAINER_MANAGED = "ContainerManaged";
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     
+    
     public static final String TESTING_PATH = "target/test-resources/"; 
     //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
    

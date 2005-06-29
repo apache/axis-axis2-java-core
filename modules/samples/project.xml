@@ -66,6 +66,15 @@
             </properties>
 		<url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
+        <dependency>
+           <groupId>commons-httpclient</groupId>
+           <artifactId>commons-httpclient</artifactId>
+           <version>3.0-rc2</version>
+           <properties>
+               <module>true</module>
+           </properties>
+       </dependency>
+        
 	<dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -128,7 +137,7 @@
 		<exclude>**/*MailOneWayRawXMLTest.java</exclude> 
 		<exclude>**/*MailRequestResponseRawXMLTest.java</exclude> 
 		<exclude>**/*EchoRawXMLChunckedTest.java</exclude> 
-		<exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude> 
+		<!-- <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>  -->
 		<exclude>**/*EchoRawMTOMTest.java</exclude> 
       </excludes>
      <includes>
