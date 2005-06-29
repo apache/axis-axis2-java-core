@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Enumeration;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationException;
@@ -37,8 +38,10 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
+import org.apache.wsdl.extensions.SOAPBody;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -131,7 +134,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
                     throw new UnsupportedOperationException("Single service WSDL files only");
                 }
             }
-
+            //
+            testCompatibiltyAll(axisBinding);
+            //
             writeInterface(axisBinding);
             //write interface implementations
             writeInterfaceImplementation(axisBinding,axisService);
@@ -356,6 +361,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         try {
             //get the binding
             WSDLBinding axisBinding = this.configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
+            //
+            testCompatibiltyAll(axisBinding);
             //write interfaces
             writeSkeleton(axisBinding);
             //write interface implementations
@@ -561,14 +568,19 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             addAttribute(doc,"namespace",operation.getName().getNamespaceURI(),methodElement);
             addAttribute(doc,"style",operation.getStyle(),methodElement);
             addAttribute(doc,"dbsupportname",localPart+DATABINDING_SUPPORTER_NAME_SUFFIX,methodElement);
-            if(null != binding)
-            	addSOAPAction(doc,methodElement,binding.getBindingOperation(operation.getName()));
-            addAttribute(doc, "mep",operation.getMessageExchangePattern(), methodElement);
-             methodElement.appendChild(getInputElement(doc,operation));
+            if(null != binding){
+                WSDLBindingOperation bindingOperation = binding.getBindingOperation(operation.getName());
+                addSOAPAction(doc,methodElement,bindingOperation);
+                testCompatibilityInput(bindingOperation);
+                testCompatibilityOutput(bindingOperation);
+            }
+            addAttribute(doc,"mep",operation.getMessageExchangePattern(), methodElement);
+            methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
             rootElement.appendChild(methodElement);
         }
     }
+
 
    private void addSOAPAction(XmlDocument doc,Element rootElement,WSDLBindingOperation binding){
     		Iterator extIterator = binding.getExtensibilityElements().iterator();
@@ -716,5 +728,42 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         return word.replaceAll("\\W","_");
     }
 
+    private void testCompatibiltyAll(WSDLBinding binding){
+         HashMap map = binding.getBindingOperations();
+         WSDLBindingOperation bindingOp;
+         Collection col = map.values();
+         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+             bindingOp =  (WSDLBindingOperation)iterator.next();
+             testCompatibilityInput(bindingOp);
+             testCompatibilityOutput(bindingOp);
+         }
+
+
+    }
+    private void testCompatibilityInput(WSDLBindingOperation binding){
+
+    		Iterator extIterator = binding.getInput().getExtensibilityElements().iterator();
+           while(extIterator.hasNext()){
+    			WSDLExtensibilityElement element = (WSDLExtensibilityElement)extIterator.next();
+    			if(element.getType().equals(ExtensionConstants.SOAP_BODY)){
+                    if(WSDLConstants.WSDL_USE_ENCODED.equals(((SOAPBody)element).getUse())){
+                        throw new RuntimeException("The use 'encoded' is not supported!");
+                    }
+    			}
+    		}
+    }
+
+     private void testCompatibilityOutput(WSDLBindingOperation binding){
+
+    		Iterator extIterator = binding.getOutput().getExtensibilityElements().iterator();
+           while(extIterator.hasNext()){
+    			WSDLExtensibilityElement element = (WSDLExtensibilityElement)extIterator.next();
+    			if(element.getType().equals(ExtensionConstants.SOAP_BODY)){
+                    if(WSDLConstants.WSDL_USE_ENCODED.equals(((SOAPBody)element).getUse())){
+                        throw new RuntimeException("The use 'encoded' is not supported!");
+                    }
+    			}
+    		}
+    }
 }
 

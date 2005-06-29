@@ -14,6 +14,7 @@ import org.apache.wsdl.extensions.DefaultExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLTypes;
 import org.w3c.dom.Element;
 
 import javax.wsdl.extensions.ExtensibilityElement;
@@ -51,7 +52,12 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
     }
 
     public void engage() {
-        List typesArray = configuration.getWom().getTypes().getExtensibilityElements();
+        WSDLTypes typesList = configuration.getWom().getTypes();
+        if (typesList==null){
+            //there are no types to be code generated
+            return;
+        }
+        List typesArray = typesList.getExtensibilityElements();
         WSDLExtensibilityElement extensiblityElt = null;
         XmlObject[] xmlObjects=new XmlObject[typesArray.size()];
 
@@ -108,10 +114,10 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
             configuration.setTypeMapper(mapper);
 
         } catch (XmlException e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
-
     }
+
 
 
 }

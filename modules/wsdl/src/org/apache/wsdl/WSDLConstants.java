@@ -127,5 +127,13 @@ public interface WSDLConstants {
 	public static final int MESSAGE_LABEL_OUT = 1;
 	
 	public static final String MESSAGE_LABEL_OUT_VALUE = "Out";
-	
+
+    /**
+     *
+     */
+    public static final String WSDL_USE_LITERAL="literal";
+    public static final String WSDL_USE_ENCODED="encoded";
+
+
+
 }
