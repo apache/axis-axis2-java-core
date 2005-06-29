@@ -51,9 +51,9 @@ public class HTTPTransportSender extends AbstractTransportSender {
         int contentLength)
         throws AxisFault {
         try {
-            Object soapAction = msgContext.getWSAAction();
-            String soapActionString =
-                soapAction == null ? "" : soapAction.toString();
+            String soapAction = msgContext.getSoapAction();
+            soapAction = (soapAction!= null)?soapAction:msgContext.getWSAAction();
+            soapAction = (soapAction == null)? "" : soapAction.toString();
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
             buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
@@ -78,7 +78,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
             }
             if (!this.doREST) {
-                buf.append("SOAPAction: \"" + soapActionString + "\"\n");
+                buf.append("SOAPAction: \"" + soapAction + "\"\n");
             }
             buf.append("\n");
             out.write(buf.toString().getBytes());

@@ -202,6 +202,7 @@ public class AxisServlet extends HttpServlet {
             String soapActionString = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             if (soapActionString != null) {
                 msgContext.setWSAAction(soapActionString);
+                msgContext.setSoapAction(soapActionString);
             }
             Utils.configureMessageContextForHTTP(
                 req.getContentType(),

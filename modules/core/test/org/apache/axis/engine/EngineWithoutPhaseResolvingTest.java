@@ -91,6 +91,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
 
         mc.setWSAAction(opearationName.getLocalPart());
+        mc.setSoapAction(opearationName.getLocalPart());
         System.out.flush();
     }
 

@@ -122,6 +122,8 @@ public class MessageContext extends AbstractContext {
     
     private QName pausedHandlerName;
     
+    private String soapAction;
+    
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
      * @param engineContext
@@ -549,6 +551,20 @@ public class MessageContext extends AbstractContext {
      */
     public void setPausedPhaseName(String name) {
         pausedPhaseName = name;
+    }
+
+    /**
+     * @return
+     */
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    /**
+     * @param string
+     */
+    public void setSoapAction(String string) {
+        soapAction = string;
     }
 
 }

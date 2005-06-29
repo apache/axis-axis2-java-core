@@ -123,6 +123,7 @@ public class EnginePausingTest extends TestCase {
         axisOp.getRemainingPhasesInFlow().add(phase3);
 
         mc.setWSAAction(operationName.getLocalPart());
+        mc.setSoapAction(operationName.getLocalPart());
         System.out.flush();
 
     }

@@ -68,6 +68,7 @@ public class HTTPTransportUtils {
 
         try {
             msgContext.setWSAAction(soapAction);
+            msgContext.setSoapAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
@@ -129,6 +130,7 @@ public class HTTPTransportUtils {
         String requestURI,
         ConfigurationContext configurationContext,Map requestParameters) throws AxisFault {
             msgContext.setWSAAction(soapAction);
+            msgContext.setSoapAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);

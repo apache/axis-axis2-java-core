@@ -137,6 +137,7 @@ public class InOutMEPClient extends MEPClient {
             }
         } else {
             msgctx.setTo(to);
+            msgctx.setSoapAction(soapAction);
             msgctx.setServiceContext(serviceContext);
             ConfigurationContext syscontext = serviceContext.getEngineContext();
 
@@ -174,6 +175,7 @@ public class InOutMEPClient extends MEPClient {
             AxisEngine engine = new AxisEngine(syscontext);
             //TODO
             checkTransport(msgctx);
+            msgctx.setSoapAction(soapAction);
 
             if (useSeparateListener) {
                 String messageID = String.valueOf(System.currentTimeMillis());

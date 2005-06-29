@@ -83,7 +83,9 @@ public class MailWorker implements AxisWorker {
             msgContext = new MessageContext(reg,transportIn,transportOut);
             msgContext.setServerSide(true);
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION));
+            String soapAction  = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
+            msgContext.setWSAAction(soapAction);
+            msgContext.setSoapAction(soapAction);
 
             String serviceURL = mimeMessage.getSubject();
             if (serviceURL == null) {
