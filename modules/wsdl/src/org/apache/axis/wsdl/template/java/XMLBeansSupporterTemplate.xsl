@@ -27,12 +27,18 @@
           }
 
         //Generates an empty object for testing
+        // Caution - may need some manual editing to wrk properly
          public org.apache.xmlbeans.XmlObject getTestObject(java.lang.Class type){
                 try{
                    <xsl:for-each select="param">
                     <xsl:if test="@type!=''">
                     if (<xsl:value-of select="@type"/>.class.equals(type)){
-                        return <xsl:value-of select="@type"/>.Factory.newInstance() ;
+                        <xsl:value-of select="@type"/> emptyObject= <xsl:value-of select="@type"/>.Factory.newInstance();
+                        ////////////////////////////////////////////////
+                        // TODO
+                        // Fill in the empty object with necessaey values. Empty XMLBeans objects do not generate proper events
+                        ////////////////////////////////////////////////
+                        return emptyObject;
                     }
                      </xsl:if>
                     </xsl:for-each>
@@ -48,8 +54,11 @@
         <xsl:if test="@type!=''">
           public  org.apache.axis.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
 		    org.apache.axis.om.impl.llom.builder.StAXOMBuilder builder = org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory.createStAXOMBuilder
-            (org.apache.axis.om.OMAbstractFactory.getOMFactory(),param.newXMLStreamReader()) ;
-		    return builder.getDocumentElement();
+            (org.apache.axis.om.OMAbstractFactory.getOMFactory(),new org.apache.axis.clientapi.StreamWrapper(param.newXMLStreamReader())) ;
+		    org.apache.axis.om.OMElement documentElement = builder.getDocumentElement();
+            //Building the element is needed to avoid certain stream errors!
+            documentElement.build();
+            return documentElement;
           }
        </xsl:if>
     </xsl:template>

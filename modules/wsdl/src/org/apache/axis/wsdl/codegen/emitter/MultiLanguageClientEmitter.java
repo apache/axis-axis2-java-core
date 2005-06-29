@@ -36,10 +36,14 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.extensions.ExtensionConstants;
+import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import javax.wsdl.extensions.ExtensibilityElement;
 
 
 
@@ -500,12 +504,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
-        try {
-			doc.write(System.out);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
         return doc;
     }
     /**
@@ -538,10 +537,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     }
 
     private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement){
-        loadOperations(boundInterface, doc, rootElement, null, null);
+        loadOperations(boundInterface, doc, rootElement, null);
     }
 
-    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement, String operationPrefix, String operationPostfix) {
+    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement,WSDLBindingOperation binding) {
         Collection col = boundInterface.getOperations().values();
         Element methodElement = null;
         WSDLOperation operation = null;
@@ -554,12 +553,29 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             addAttribute(doc,"namespace",operation.getName().getNamespaceURI(),methodElement);
             addAttribute(doc,"style",operation.getStyle(),methodElement);
             addAttribute(doc,"dbsupportname",localPart+DATABINDING_SUPPORTER_NAME_SUFFIX,methodElement);
+            addSOAPAction(doc,methodElement,binding);
             addAttribute(doc, "mep",operation.getMessageExchangePattern(), methodElement);
             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
             rootElement.appendChild(methodElement);
         }
     }
+
+   private void addSOAPAction(XmlDocument doc,Element rootElement,WSDLBindingOperation binding){
+    		Iterator extIterator = binding.getExtensibilityElements().iterator();
+            boolean actionAdded = false;
+    		while(extIterator.hasNext()){
+    			ExtensibilityElement element = (ExtensibilityElement)extIterator.next();
+    			if(element.getElementType().equals(ExtensionConstants.SOAP_OPERATION)){
+                    addAttribute(doc,"soapaction", ((SOAPOperation)element).getSoapAction(),rootElement);
+                    actionAdded = true ;
+    			}
+    		}
+
+       if (!actionAdded){
+           addAttribute(doc,"soapaction", "",rootElement);
+    	}
+   }
 
     protected XmlDocument createDOMDocuementForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
@@ -642,6 +658,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
+
+        //////////////////////////
+//        try {
+//            doc.write(System.out);
+//        } catch (IOException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+
+        ///////////////////////////////
+
+
         return doc;
 
     }

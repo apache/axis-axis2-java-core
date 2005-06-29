@@ -61,6 +61,7 @@
          <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
          <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
          <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>  
+         <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
 
          <!-- When genrating code, the MEP should be taken into account    -->
 
@@ -74,7 +75,7 @@
 
 		    org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_serviceContext);
  		    org.apache.axis.context.MessageContext _messageContext = getMessageContext();
-            _call.setTo(toEPR);
+            _call.setTo(toEPR); 
             org.apache.axis.soap.SOAPEnvelope env = null;
             env = createEnvelope();
               //create a databinder
