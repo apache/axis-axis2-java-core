@@ -280,7 +280,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
      */
     protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()){
-            //Note -  One can generate the service xml using the interface XML
             XmlDocument skeletonModel = createDOMDocuementForServiceXML(axisBinding, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(this.configuration.getOutputLocation(),
                     this.configuration.getOutputLanguage()
@@ -474,14 +473,16 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
 
         XmlDocument doc = new XmlDocument();
         Element rootElement = doc.createElement("interface");
+        String localPart = boundInterface.getName().getLocalPart();
         if(forTesting){
             addAttribute(doc,"package",configuration.getPackageName()+TEST_PACKAGE_NAME_SUFFIX, rootElement);
-            addAttribute(doc,"name",boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+            addAttribute(doc,"name",localPart+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
         }else{
             addAttribute(doc,"package",configuration.getPackageName(), rootElement);
-            addAttribute(doc,"name",boundInterface.getName().getLocalPart()+SERVICE_CLASS_SUFFIX,rootElement);
+            addAttribute(doc,"name",localPart+SERVICE_CLASS_SUFFIX,rootElement);
         }
-        addAttribute(doc,"servicename",boundInterface.getName().getLocalPart()+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        addAttribute(doc,"servicename",localPart+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        addAttribute(doc,"messagereceiver",localPart+MESSAGE_RECEIVER_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
         doc.appendChild(rootElement);
@@ -496,8 +497,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         XmlDocument doc = new XmlDocument();
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,"package",configuration.getPackageName(), rootElement);
-        addAttribute(doc,"name",boundInterface.getName().getLocalPart()+MESSAGE_RECEIVER_SUFFIX,rootElement);
-        addAttribute(doc,"skeletonname",boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,rootElement);
+        String localPart = boundInterface.getName().getLocalPart();
+        addAttribute(doc,"name",localPart+MESSAGE_RECEIVER_SUFFIX,rootElement);
+        addAttribute(doc,"skeletonname",localPart + SERVICE_CLASS_SUFFIX,rootElement);
         addAttribute(doc, "basereceiver", "org.apache.axis.receivers.AbstractInOutSyncMessageReceiver", rootElement);
         addAttribute(doc,"dbsupportpackage",configuration.getPackageName()+DATABINDING_PACKAGE_NAME_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
