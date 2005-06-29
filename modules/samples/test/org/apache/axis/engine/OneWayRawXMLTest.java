@@ -29,6 +29,7 @@ import org.apache.axis.clientapi.MessageSender;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -73,6 +74,7 @@ public class OneWayRawXMLTest extends TestCase {
         operation.setMessageReciever(new MessageReceiver() {
             public void recieve(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
+                TestingUtils.campareWithCreatedOMElement(envelope.getBody().getFirstElement());
             }
         });
         service.addOperation(operation);
@@ -85,21 +87,12 @@ public class OneWayRawXMLTest extends TestCase {
         UtilServer.stop();
     }
 
-    private OMElement createEnvelope() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
-        method.addChild(value);
-
-        return method;
-    }
+  
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        OMElement payload = createEnvelope();
+        OMElement payload = TestingUtils.createDummyOMElement();
 
         MessageSender sender = new MessageSender();
 

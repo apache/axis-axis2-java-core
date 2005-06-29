@@ -29,6 +29,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -85,16 +86,7 @@ public class EchoRawXMLLoadTest extends TestCase {
         UtilServer.stop();
     }
 
-    private OMElement createEnvelope() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
-        method.addChild(value);
-        
-        return method;
-    }
+    
 
 //    public void testEchoXMLASync() throws Exception {
 //                OMElement payload = createEnvelope();
@@ -138,7 +130,7 @@ public class EchoRawXMLLoadTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        OMElement payload = createEnvelope();
+        OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
@@ -151,7 +143,7 @@ public class EchoRawXMLLoadTest extends TestCase {
         OMElement result1 =
                         (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+        TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }
 }

@@ -27,6 +27,7 @@ import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -86,16 +87,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         UtilServer.stop();
     }
 
-    private SOAPEnvelope createEnvelope(SOAPFactory fac) {
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
-        method.addChild(value);
-        reqEnv.getBody().addChild(method);
-        return reqEnv;
-    }
+ 
 
     public void testEchoXMLCompleteSync() throws Exception {
         ServiceDescription service =
@@ -120,7 +112,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
 
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+        TestingUtils.campareWithCreatedOMElement(result);
         call.close();
 
     }

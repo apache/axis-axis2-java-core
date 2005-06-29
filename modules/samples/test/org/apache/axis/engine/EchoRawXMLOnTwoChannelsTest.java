@@ -30,6 +30,7 @@ import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -92,16 +93,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         UtilServer.stop();
     }
 
-    private SOAPEnvelope createEnvelope(SOAPFactory fac) {
-        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
-        method.addChild(value);
-        reqEnv.getBody().addChild(method);
-        return reqEnv;
-    }
+ 
 
     public void testEchoXMLCompleteASync() throws Exception {
         ServiceDescription service =
@@ -128,14 +120,8 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    try {
-                        result.getResponseEnvelope().serialize(
-                            new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-                    } catch (XMLStreamException e) {
-                        reportError(e);
-                    } finally {
-                        finish = true;
-                    }
+                    TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
+                    finish = true;
                 }
 
                 public void reportError(Exception e) {

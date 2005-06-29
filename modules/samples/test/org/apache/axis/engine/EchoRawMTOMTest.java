@@ -31,6 +31,7 @@ import org.apache.axis.attachments.ByteArrayDataSource;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -99,6 +100,7 @@ public class EchoRawMTOMTest extends TestCase {
 		 data.addChild(textData); 
          return data;
     }
+
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
