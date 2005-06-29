@@ -114,6 +114,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (this.contentID == null && optimize==true) {
 			createContentID();
 		}
+        done = true;
+
 	}
 
 	/**
@@ -131,6 +133,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (this.contentID == null && optimize==true) {
 			createContentID();
 		}
+        done = true;
+
 	}
 
 	/**
@@ -144,6 +148,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (this.contentID == null) {
 			createContentID();
 		}
+        done = true;
+
 	}
 
 	/**
@@ -158,6 +164,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		if (this.contentID == null && optimize==true) {
 			createContentID();
 		}
+        done = true;
+
 	}
 
 	/**
@@ -175,6 +183,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		this.optimize = true;
 		this.isBinary = true;
 		this.builder = builder;
+        done = true;
+        
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.om.impl.llom.OMAttributeImpl;
 
 import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
 
 /**
  * Class OMLinkedListImplFactory
@@ -122,6 +123,18 @@ public class OMLinkedListImplFactory implements OMFactory {
         OMTextImpl textNode = new OMTextImpl(s);
     ;
         return textNode;
+    }
+
+    public OMText createText(String s, String mimeType, boolean optimize) {
+        return new OMTextImpl(s, mimeType, optimize);
+    }
+
+    public OMText createText(DataHandler dataHandler, boolean optimize) {
+        return new OMTextImpl(dataHandler, optimize);
+    }
+
+    public OMText createText(OMElement parent, String s, String mimeType, boolean optimize) {
+        return new OMTextImpl(parent, s, mimeType, optimize);
     }
 
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {

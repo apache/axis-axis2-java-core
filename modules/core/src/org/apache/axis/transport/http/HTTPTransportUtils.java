@@ -43,6 +43,8 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
@@ -207,4 +209,22 @@ public class HTTPTransportUtils {
                }
                return builder;
            }
+    
+    public boolean checkEnvelopeForOptimise(SOAPEnvelope envelope)
+    {
+        return isOptimised(envelope);
+    }
+
+    private boolean isOptimised(OMElement element) {
+        Iterator childrenIter = element.getChildren();
+        while(childrenIter.hasNext()){
+            OMNode node = (OMNode) childrenIter.next();
+            if( OMNode.TEXT_NODE == node.getType() && ((OMText)node).isOptimized()){
+    			return true;
+            }else if (OMNode.ELEMENT_NODE == node.getType()) {
+                return isOptimised((OMElement) node);
+            }
+        }
+        return false;
+    }
 }

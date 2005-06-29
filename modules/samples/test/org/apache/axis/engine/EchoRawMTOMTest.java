@@ -95,7 +95,7 @@ public class EchoRawMTOMTest extends TestCase {
 		 byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
 				98 };
 		 DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-		 OMTextImpl textData = new OMTextImpl(dataHandler);
+		 OMTextImpl textData = new OMTextImpl(dataHandler, false);
 		 data.addChild(textData); 
          return data;
     }

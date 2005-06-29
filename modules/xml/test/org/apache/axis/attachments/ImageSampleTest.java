@@ -102,7 +102,7 @@ public class ImageSampleTest extends AbstractTestCase {
 		ImageDataSource dataSource = new ImageDataSource("WaterLilies.jpg",
 				expectedImage);
 		expectedDH = new DataHandler(dataSource);
-		OMText binaryNode = new OMTextImpl(expectedDH);
+		OMText binaryNode = new OMTextImpl(expectedDH, false);
 		
 		envelope.addChild(body);
 		body.addChild(data);
