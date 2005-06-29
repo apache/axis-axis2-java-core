@@ -233,6 +233,8 @@ public class MIMEHelper {
 	// TODO do we need Locking for this
 	private MimeBodyPart getMimeBodyPart() throws OMException {
 		MimeBodyPart mimeBodyPart = null;
+        
+        
 
 		//String Line = pushbackInStream.readLine();
 		MimeBodyPartInputStream partStream;

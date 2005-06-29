@@ -47,8 +47,8 @@ import org.apache.commons.logging.LogFactory;
 public class EchoRawMTOMTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:5555"
-           // + (UtilServer.TESTING_PORT)
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT + 1)
             + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");

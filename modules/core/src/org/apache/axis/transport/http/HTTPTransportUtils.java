@@ -62,7 +62,6 @@ public class HTTPTransportUtils {
 			InputStream in, OutputStream out, String contentType,
 			String soapAction, String requestURI,
 			ConfigurationContext configurationContext) throws AxisFault {
-
 		try {
 			msgContext.setWSAAction(soapAction);
 			msgContext.setSoapAction(soapAction);
@@ -73,16 +72,7 @@ public class HTTPTransportUtils {
 
 			SOAPEnvelope envelope = null;
 			StAXBuilder builder = null;
-			Reader reader = new InputStreamReader(in);
-			XMLStreamReader xmlreader = XMLInputFactory.newInstance()
-					.createXMLStreamReader(reader);
 
-			StringTokenizer st = new StringTokenizer(contentType);
-
-			String mimetype = null;
-			if (st.hasMoreTokens()) {
-				mimetype = st.nextToken();
-			}
 
 			if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0){
 				builder = selectBuilderForMIME(msgContext, in, contentType);
@@ -96,6 +86,9 @@ public class HTTPTransportUtils {
 					msgContext.setProperty(Constants.Configuration.DO_REST,
 							Constants.VALUE_TRUE);
 					SOAPFactory soapFactory = new SOAP11Factory();
+                    Reader reader = new InputStreamReader(in);
+                    XMLStreamReader xmlreader = XMLInputFactory.newInstance()
+                            .createXMLStreamReader(reader);
 					builder = new StAXOMBuilder(xmlreader);
 					builder.setOmbuilderFactory(soapFactory);
 					envelope = soapFactory.getDefaultEnvelope();
@@ -104,6 +97,9 @@ public class HTTPTransportUtils {
 			}
 
 			if (envelope == null) {
+                Reader reader = new InputStreamReader(in);
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance()
+                        .createXMLStreamReader(reader);
 				builder = new StAXSOAPModelBuilder(xmlreader);
 				envelope = (SOAPEnvelope) builder.getDocumentElement();
 			}
