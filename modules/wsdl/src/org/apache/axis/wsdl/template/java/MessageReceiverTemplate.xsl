@@ -38,73 +38,81 @@
             
 				<xsl:for-each select="method">
 				
-			<xsl:variable name="returntype">
-				<xsl:value-of select="output/param/@type"/>
-			</xsl:variable>
-			<xsl:variable name="returnvariable">
-				<xsl:value-of select="output/param/@name"/>
-			</xsl:variable>
-			<xsl:variable name="namespace">
-				<xsl:value-of select="@namespace"/>
-			</xsl:variable>
-			<xsl:variable name="name">
-				<xsl:value-of select="@name"/>
-			</xsl:variable>
-			<xsl:variable name="style">
-				<xsl:value-of select="@style"/>
-			</xsl:variable>
+			<xsl:variable name="returntype"><xsl:value-of select="output/param/@type"/></xsl:variable>
+			<xsl:variable name="returnvariable"><xsl:value-of select="output/param/@name"/></xsl:variable>
+			<xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
+			<xsl:variable name="dbsupportname"><xsl:value-of select="@dbsupportname"/></xsl:variable>
+			
+			<xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+			<xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 					
 					
 					if(methodName.equals("<xsl:value-of select="@name"/> ")){
-						
-						<xsl:for-each select="input/param">
-				<xsl:if test="@type!=''">
-					<xsl:value-of select="@type"/>
-					<xsl:text> </xsl:text>
-					<xsl:value-of select="@name"/> = null;
-								
-							</xsl:if>
-			</xsl:for-each>
+											
+				
 			<xsl:if test="$returntype!=''">
 				<xsl:value-of select="$returntype"/>
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$returnvariable"/> = null;
 						</xsl:if>
-			<xsl:choose>
+						
+						
+			<xsl:choose>			
 				<xsl:when test="$style='rpc'">
-				//rpc style
+					//rpc style				
+					<xsl:variable name="inputparamcount"><xsl:value-of select="count(input/param)"/></xsl:variable>
+				<xsl:for-each select="input/param">
+					<xsl:if test="@type!=''">
+		
+					org.apache.axis.om.OMElement firstChild = (org.apache.axis.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild();		
+					if(null == firstChild)
+						throw new org.apache.axis.engine.AxisFault("Wrapper Element Not Found for the operation of RPC style");
+					java.util.Iterator children = firstChild.getChildren();
+					org.apache.xmlbeans.XmlObject[] params = new org.apache.xmlbeans.XmlObject[<xsl:value-of select="$inputparamcount"/>];
+					int count = 0;
+					while(children.hasNext() &amp;&amp; count &lt; <xsl:value-of select="$inputparamcount"/>){
+						params[count] = org.soapinterop.databinding.echoStringDatabindingSupporter.fromOM((org.apache.axis.om.OMElement)children.next(), <xsl:value-of select="@type"/>.class);
+						count++;
+					}
+				if(count!= <xsl:value-of select="$inputparamcount"/>)
+					throw new org.apache.axis.engine.AxisFault("Parts mismatch in the message");					
+						 
+					</xsl:if>
+				</xsl:for-each>
+				
 					<xsl:if test="$returntype!=''">
 						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(
 								<xsl:for-each select="input/param">
-						<xsl:if test="@type!=''">
-							<xsl:value-of select="@name"/>
-						</xsl:if>
-					</xsl:for-each>);
+									<xsl:if test="@type!=''">
+										(<xsl:value-of select="@type"/>)params[<xsl:value-of select="position()-1"/>]<xsl:if test="position()!=$inputparamcount">,</xsl:if>
+									</xsl:if>
+								</xsl:for-each>);
 							//Create a default envelop
 								envelope = getSOAPFactory().getDefaultEnvelope();
 								org.apache.axis.om.OMNamespace ns = getSOAPFactory().createOMNamespace("<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$name"/>Responce");
 								org.apache.axis.om.OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);		
 								//Create a Omelement of the result if a result exist
 								<xsl:if test="$returntype!=''">
-									responseMethodName.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.echoStringDatabindingSupporter.toOM(<xsl:value-of select="$returnvariable"/>));		
+									responseMethodName.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));		
 								</xsl:if>
 											
 								envelope.getBody().setFirstChild(responseMethodName);
-							</xsl:when>
+				</xsl:when>
+							
+							
+							
+							
 							
 				<xsl:when test="$style='doc'">
 				//doc style
 					<xsl:if test="$returntype!=''">
-						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(
-								<xsl:for-each select="input/param">
-						<xsl:if test="@type!=''">
-							<xsl:value-of select="@name"/>
-						</xsl:if>
-					</xsl:for-each>);
+						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(<xsl:if test="input/param/@type!=''">(<xsl:value-of select="input/param/@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild(), <xsl:value-of select="input/param/@type"/>.class)</xsl:if>);
+						
 					//Create a default envelop
 					envelope = getSOAPFactory().getDefaultEnvelope();
 					//Create a Omelement of the result if a result exist
-					<xsl:if test="$returntype!=''">envelope.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.echoStringDatabindingSupporter.toOM(<xsl:value-of select="$returnvariable"/>));		
+					
+					<xsl:if test="$returntype!=''">envelope.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));		
 					</xsl:if>											
 				</xsl:when>
 							
