@@ -26,6 +26,8 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Map;
 
+import javax.servlet.http.HttpUtils;
+
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
@@ -33,6 +35,7 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.transport.AbstractTransportSender;
 
 /**
@@ -51,15 +54,22 @@ public class HTTPTransportSender extends AbstractTransportSender {
         int contentLength)
         throws AxisFault {
         try {
-            String soapAction = msgContext.getSoapAction();
-            soapAction = (soapAction!= null)?soapAction:msgContext.getWSAAction();
-            soapAction = (soapAction == null)? "" : soapAction.toString();
+            Object soapAction = msgContext.getWSAAction();
+            String soapActionString =
+                soapAction == null ? "" : soapAction.toString();
+            boolean enableMTOM = false;
+            if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM)!=null)
+            {
+            	enableMTOM = Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
+            }            
+            boolean envelopeContainsOptimise  = HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
+            boolean doMTOM = enableMTOM && envelopeContainsOptimise;
+            msgContext.setProperty(Constants.Configuration.DO_MTOM,new Boolean(doMTOM));
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
             buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
             if(doMTOM){
-                //TODO fix this for MTOM
-                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append("multipart/related").append("\n");
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(OMOutput.getContentType(true)).append("\n");
             }else{
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": text/xml; charset=utf-8\n");
             }
@@ -78,7 +88,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
             }
             if (!this.doREST) {
-                buf.append("SOAPAction: \"" + soapAction + "\"\n");
+                buf.append("SOAPAction: \"" + soapActionString + "\"\n");
             }
             buf.append("\n");
             out.write(buf.toString().getBytes());
@@ -251,7 +261,13 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
     }
 
-    public void init(ConfigurationContext confContext,TransportOutDescription transportOut) throws AxisFault {
+    /* (non-Javadoc)
+     * @see org.apache.axis.transport.TransportSender#init(org.apache.axis.context.ConfigurationContext, org.apache.axis.description.TransportOutDescription)
+     */
+    public void init(
+        ConfigurationContext confContext,
+        TransportOutDescription transportOut)
+        throws AxisFault {
         //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter> or 
         //<parameter name="PROTOCOL" locked="xsd:false">HTTP/1.1</parameter> is checked
         Parameter version =

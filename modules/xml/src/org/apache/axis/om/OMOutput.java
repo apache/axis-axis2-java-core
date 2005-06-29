@@ -45,9 +45,9 @@ public class OMOutput {
 
 	private ByteArrayOutputStream bufferedSoapOutStream;
 
-	private String mimeBoundary = null;
+	private static String mimeBoundary = "----=_AxIs2_Def_boundary_=42214532";
 
-	private String contentType = null;
+	//private String contentType = null;
 
 	/**
 	 * @param xmlWriter
@@ -105,11 +105,12 @@ public class OMOutput {
 		return doOptimise;
 	}
 
-	public String getContentType() {
-		if (contentType == null && doOptimise) {
-			MIMEOutputUtils.getContentTypeForMime(getMimeBoundary());
+	public static String getContentType(boolean doOptimize) {
+		if (doOptimize) {
+			return MIMEOutputUtils.getContentTypeForMime(mimeBoundary);
 		}
-		return contentType.toString();
+		//TODO have to check whether SOAP1.1 & SOAP 1.2
+		return null;
 	}
 
 	public void writeOptimised(OMText node) {
@@ -120,16 +121,16 @@ public class OMOutput {
 		if (doOptimise) {
 			xmlWriter.flush();
 			MIMEOutputUtils.complete(outStream, bufferedSoapOutStream,
-					binaryNodeList, getMimeBoundary());
+					binaryNodeList, mimeBoundary);
 		}
 	}
 
-	private String getMimeBoundary() {
+	/*private String getMimeBoundary() {
 		//TODO have to dynamically generate.
 		if (mimeBoundary == null) {
 			mimeBoundary = "----=_AxIs2_Def_boundary_=42214532";
 		}
 		return mimeBoundary;
-	}
+	}*/
 
 }

@@ -209,13 +209,14 @@ public class HTTPTransportUtils {
                }
                return builder;
            }
+
     
-    public boolean checkEnvelopeForOptimise(SOAPEnvelope envelope)
+    public static boolean checkEnvelopeForOptimise(SOAPEnvelope envelope)
     {
         return isOptimised(envelope);
     }
 
-    private boolean isOptimised(OMElement element) {
+    private static boolean isOptimised(OMElement element) {
         Iterator childrenIter = element.getChildren();
         while(childrenIter.hasNext()){
             OMNode node = (OMNode) childrenIter.next();
@@ -227,4 +228,5 @@ public class HTTPTransportUtils {
         }
         return false;
     }
+
 }

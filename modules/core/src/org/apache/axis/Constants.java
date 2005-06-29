@@ -170,10 +170,12 @@ public class Constants {
         public static final String MTOM_CONTENT_TYPE = "multipart/related";
     }
 
-    public static interface Configuration {
+   public static interface Configuration {
         public static final String DO_REST = "doREST";
-        public static final String ENABLE_REST = "eanbleREST";
-        public static final String ENABLE_MTOM = "eanbleMTOM";
+        public static final String ENABLE_REST = "enableREST";
+        // globally enable MTOM 
+        public static final String ENABLE_MTOM = "enableMTOM";
+        //set after checking the Envelope & ENABLE_MTOM
         public static final String DO_MTOM = "doMTOM";
     }
     public static final String VALUE_TRUE = "true";
