@@ -62,8 +62,8 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
                     Element schemaElement = ((Schema)extensiblityElt).getElelment();
 //                    //add the namespaces
                     XmlOptions options = new XmlOptions();
-                    options.setCompileDownloadUrls();
                     options.setLoadAdditionalNamespaces(configuration.getWom().getNamespaces());
+                    //options.
                     xmlObjects[i] = XmlObject.Factory.parse(schemaElement,options);
                 } catch (XmlException e) {
                     throw new RuntimeException(e);

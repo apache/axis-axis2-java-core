@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis.om.impl.llom.builder;
 
 import org.apache.axis.om.*;
@@ -26,18 +26,13 @@ import javax.xml.stream.XMLStreamReader;
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
  * And this will habe the Document concept also.
  */
-public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
+public class StAXOMBuilder extends StAXBuilder{
     /**
      * Field document
      */
     protected OMDocument document;
 
-    /**
-     * Field omFactory
-     */
-    protected OMFactory omFactory;
-
-    /**
+     /**
      * Constructor StAXOMBuilder
      *
      * @param ombuilderFactory
@@ -113,6 +108,10 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
             if (done) {
                 throw new OMException();
             }
+            ///////////////////////////////////
+//            int token = parser.getEventType();
+            //////////////////////////////////
+
             int token = parser.next();
             if (!cache) {
                 return token;
@@ -122,7 +121,9 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
-                    document = new OMDocument(this);
+                    //Don't do anything in the start document event
+                    //We've already assumed that start document has passed!
+                    //document = new OMDocument(this);
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     lastNode = createOMText();
@@ -146,6 +147,9 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
                 default :
                     throw new OMException();
             }
+            ////////////////////
+           // if (!done) parser.next();
+            ///////////////////
             return token;
         } catch (OMException e) {
             throw e;
@@ -170,16 +174,46 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
      * @param isSOAPElement
      */
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
-        int namespaceCount = parser.getNamespaceCount();
+          int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.declareNamespace(parser.getNamespaceURI(i),
                     parser.getNamespacePrefix(i));
         }
 
         // set the own namespace
-        OMNamespace namespace =
-                node.findNamespace(parser.getNamespaceURI(),
-                parser.getPrefix());
-        node.setNamespace(namespace);
+        String namespaceURI = parser.getNamespaceURI();
+        String prefix = parser.getPrefix();
+        OMNamespace namespace = null;
+        if (!"".equals(namespaceURI)) {
+            if (prefix == null) {
+                // this means, this elements has a default namespace or it has inherited a default namespace from its parent
+                namespace = node.findNamespace(namespaceURI, "");
+                if (namespace == null) {
+                    namespace = node.declareNamespace(namespaceURI, "");
+                }
+            } else {
+                namespace = node.findNamespace(namespaceURI, prefix);
+                if(namespace == null){
+                    node.setNamespace(omfactory.createOMNamespace(namespaceURI, prefix));
+                }else{
+                    node.setNamespace(namespace);
+                }
+            }
+
+        } else {
+            // What to do if namespace URI is not available
+        }
     }
+//        int namespaceCount = parser.getNamespaceCount();
+//        for (int i = 0; i < namespaceCount; i++) {
+//            node.declareNamespace(parser.getNamespaceURI(i),
+//                    parser.getNamespacePrefix(i));
+//        }
+//
+//        // set the own namespace
+//        OMNamespace namespace =
+//                node.findNamespace(parser.getNamespaceURI(),
+//                        parser.getPrefix());
+//        node.setNamespace(namespace);
+//    }
 }

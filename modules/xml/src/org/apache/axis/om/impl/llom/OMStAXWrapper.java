@@ -812,7 +812,12 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 }
                 log.info(
                         "Switching to the Real Stax parser to generated the future events");
-                currentEvent = parser.getEventType();
+
+                if ((currentEvent == START_DOCUMENT) && (currentEvent == parser.getEventType())){
+                    currentEvent = parser.next();
+                } else{
+                    currentEvent = parser.getEventType();
+                }
                 updateCompleteStatus();
                 break;
             case NAVIGABLE:
@@ -1006,9 +1011,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         switch (nodeType) {
             case OMNode.ELEMENT_NODE:
                 OMElement element = (OMElement) node;
-                log.info("Generating events from element {"
-                                + element.getNamespace().getName() + '}'
-                                + element.getLocalName() + " Generated OM tree");
+//                log.info("Generating events from element {"
+//                                + element.getNamespace().getName() + '}'
+//                                + element.getLocalName() + " Generated OM tree");
                 returnEvent = generateElementEvents(element);
                 break;
             case OMNode.TEXT_NODE:

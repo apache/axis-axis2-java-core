@@ -78,7 +78,7 @@ public class OMDocument implements OMContainer {
      * @return
      */
     public OMElement getRootElement() {
-        if (rootElement == null) {
+        while (rootElement == null) {
             parserWrapper.next();
         }
         return rootElement;

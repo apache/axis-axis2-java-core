@@ -4,6 +4,7 @@ import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 
 /*
@@ -28,12 +29,12 @@ public class StaxParserTest extends AbstractTestCase {
     XMLStreamReader parser1;
     XMLStreamReader parser2;
     XMLStreamReader parser3;
-    String xmlDocument = "<purchase-order xmlns=\"http://openuri.org/easypo\">\n" +
-            "  <customer>\n" +
-            "    <name>Gladys Kravitz</name>\n" +
-            "    <address>Anytown, PA</address>\n" +
-            "  </customer>\n" +
-            "  <date>2005-03-06T14:06:12.697+06:00</date>\n" +
+    String xmlDocument = "<purchase-order xmlns=\"http://openuri.org/easypo\">" +
+            "<customer>" +
+            "    <name>Gladys Kravitz</name>" +
+            "    <address>Anytown, PA</address>" +
+            "  </customer>" +
+            "  <date>2005-03-06T14:06:12.697+06:00</date>" +
             "</purchase-order>";
 
     public StaxParserTest(String testName) {
@@ -46,11 +47,11 @@ public class StaxParserTest extends AbstractTestCase {
 
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(),
                 XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
-        parser2 = builder.getDocumentElement().getXMLStreamReaderWithoutCaching();
+        parser2 = builder.getDocumentElement().getXMLStreamReader();
 
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(),
                 XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
-        parser3 = builder2.getDocumentElement().getXMLStreamReader();
+        parser3 = builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
     }
 
@@ -59,9 +60,11 @@ public class StaxParserTest extends AbstractTestCase {
         assertEquals(parser1.getEventType(),parser2.getEventType());
 
         while(parser1.hasNext()){
-            int parser1Event = parser1.next();
-            int parser2Event = parser2.next();
-            assertEquals(parser1Event,parser2Event);
+
+                int parser1Event = parser1.next();
+                int parser2Event = parser2.next();
+                assertEquals(parser1Event,parser2Event);
+
         }
 
 

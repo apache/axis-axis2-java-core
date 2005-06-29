@@ -785,6 +785,10 @@ public class OMElementImpl extends OMNodeImpl
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace) {
+        OMNamespace ns = this.findNamespace(namespace.getName(), namespace.getPrefix());
+        if (ns == null) {
+            ns = this.declareNamespace(namespace);
+        }
         this.ns = namespace;
     }
 

@@ -555,7 +555,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             addAttribute(doc,"dbsupportname",localPart+DATABINDING_SUPPORTER_NAME_SUFFIX,methodElement);
             addSOAPAction(doc,methodElement,binding);
             addAttribute(doc, "mep",operation.getMessageExchangePattern(), methodElement);
-            methodElement.appendChild(getInputElement(doc,operation));
+             methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
             rootElement.appendChild(methodElement);
         }
