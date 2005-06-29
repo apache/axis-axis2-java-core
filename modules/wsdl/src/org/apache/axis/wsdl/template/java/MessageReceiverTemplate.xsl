@@ -37,6 +37,7 @@
             if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
             
 				<xsl:for-each select="method">
+				
 			<xsl:variable name="returntype">
 				<xsl:value-of select="output/param/@type"/>
 			</xsl:variable>
@@ -85,7 +86,7 @@
 								org.apache.axis.om.OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);		
 								//Create a Omelement of the result if a result exist
 								<xsl:if test="$returntype!=''">
-									responseMethodName.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$name"/>DatabindingSupporter().toOM(<xsl:value-of select="$returnvariable"/>));		
+									responseMethodName.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.echoStringDatabindingSupporter.toOM(<xsl:value-of select="$returnvariable"/>));		
 								</xsl:if>
 											
 								envelope.getBody().setFirstChild(responseMethodName);
@@ -103,7 +104,7 @@
 					//Create a default envelop
 					envelope = getSOAPFactory().getDefaultEnvelope();
 					//Create a Omelement of the result if a result exist
-					<xsl:if test="$returntype!=''">envelope.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$name"/>DatabindingSupporter().toOM(<xsl:value-of select="$returnvariable"/>));		
+					<xsl:if test="$returntype!=''">envelope.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.echoStringDatabindingSupporter.toOM(<xsl:value-of select="$returnvariable"/>));		
 					</xsl:if>											
 				</xsl:when>
 							
