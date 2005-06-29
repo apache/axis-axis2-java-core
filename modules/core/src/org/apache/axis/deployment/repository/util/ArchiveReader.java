@@ -23,8 +23,8 @@ import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisDescWSDLComponentFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.wsdl.WSDLVersionWrapper;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis.wsdl.WSDLVersionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -44,14 +44,20 @@ public class ArchiveReader implements DeploymentConstants {
 //        ZipInputStream zin;
 //        boolean foundwsdl = false;
 //        ServiceDescription service = null;
+//        Definition difinition = null;
 //        try {
 //            zin = new ZipInputStream(new FileInputStream(strArchive));
 //            ZipEntry entry;
 //            while ((entry = zin.getNextEntry()) != null) {
 //                if (entry.getName().equals(SERVICEWSDL)) {
-//                    WSDLDescription      womDescription = WOMBuilderFactory.getBuilder(
+//                    WSDLVersionWrapper wsdlVersionWrapper = WOMBuilderFactory.getBuilder(
 //                            WOMBuilderFactory.WSDL11).build(zin, new AxisDescWSDLComponentFactory());
-//                    service = (ServiceDescription )womDescription ;
+//                    WSDLDescription      womDescription = wsdlVersionWrapper.getDescription();
+//                    Iterator iterator = womDescription.getServices().keySet().iterator();
+//                    if(iterator.hasNext()){
+//                        service = (ServiceDescription)iterator.next();
+//                    }
+//                    difinition = wsdlVersionWrapper.getDefinition();
 //                    foundwsdl = true;
 //                    break;
 //                }
@@ -61,6 +67,7 @@ public class ArchiveReader implements DeploymentConstants {
 //                service = new ServiceDescription();
 //                log.info("WSDL file not found for the service :  " + filename);
 //            }
+//            service.setWSDLDefinition(difinition);
 //        } catch (Exception e) {
 //            throw new DeploymentException(e);
 //        }
@@ -73,9 +80,8 @@ public class ArchiveReader implements DeploymentConstants {
         boolean foundservice = false;
         try {
             if(in!= null){
-                WSDLVersionWrapper wsdlVersionWrapper = WOMBuilderFactory.getBuilder(
-                        WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory());
-				WSDLDescription  womDescription = wsdlVersionWrapper.getDescription();
+                WSDLVersionWrapper wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory());
+                WSDLDescription  womDescription = wsdlVersionWrapper.getDescription();
                 Iterator iterator = womDescription.getServices().keySet().iterator();
                 if(iterator.hasNext()){
                     foundservice = true;
@@ -84,6 +90,7 @@ public class ArchiveReader implements DeploymentConstants {
                 if(!foundservice){
                     service = new ServiceDescription();
                 }
+                service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
                 in.close();
             } else {
                 service = new ServiceDescription();

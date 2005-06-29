@@ -19,8 +19,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.context.MessageContext;
@@ -41,6 +48,10 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
 public class ServiceDescription
         extends WSDLServiceImpl
         implements WSDLService, ParameterInclude, FlowInclude, DescriptionConstants {
+
+     private Definition difDefinition = null; //to store the wsdl definition , which is build at the deployment time
+
+
     /**
      * TODO this should be in the WSDLInterface, yet we want it to have in the
      * the Services, so we put this here for M1 until we foud better way to do
@@ -519,6 +530,25 @@ public class ServiceDescription
      */
     public void setServiceDescription(String serviceDescription) {
         this.serviceDescription = serviceDescription;
+    }
+
+    public Definition getWSDLDefinition() {
+        return difDefinition;
+    }
+
+    public void setWSDLDefinition(Definition difDefinition) {
+        this.difDefinition = difDefinition;
+    }
+
+    public void printWSDL(Writer out)throws AxisFault{
+        try {
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(this.getWSDLDefinition(),out);
+            out.flush();
+        } catch (WSDLException e) {
+            throw new AxisFault(e);
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
 }

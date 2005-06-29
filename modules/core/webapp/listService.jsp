@@ -56,7 +56,7 @@
                  operations = axisService.getOperations();
                  operationsList = operations.values();
                  serviceName = axisService.getName().getLocalPart();
-     %><hr><h2><font color="blue"><%=serviceName%></font></h2>
+     %><hr><h2><font color="blue"><a href="listSingleService.jsp?wsdl=<%=serviceName%>"><%=serviceName%></a></font></h2>
      <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
                  Collection engagdeModules = axisService.getEngagedModules();
@@ -120,7 +120,7 @@
                     <%
                        }
                    }
-                   request.getSession().removeAttribute(Constants.SERVICE_MAP);
+                //   request.getSession().removeAttribute(Constants.SERVICE_MAP);
                    status = true;
                }if(!status){
                     %> There seems to be no services listed! Try hitting refresh <%

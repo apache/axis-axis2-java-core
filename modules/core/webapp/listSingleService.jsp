@@ -4,7 +4,10 @@
                  org.apache.axis.Constants,
                  java.util.Hashtable,
                  org.apache.axis.description.ServiceDescription,
-                 org.apache.axis.description.OperationDescription"%>
+                 org.apache.axis.description.OperationDescription,
+                 javax.xml.namespace.QName,
+                 java.io.StringWriter,
+                 java.io.PrintWriter"%>
  <%--
   Created by IntelliJ IDEA.
   User: Ajith
@@ -25,47 +28,30 @@
             ServiceDescription service = (ServiceDescription)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
             //System.out.println("service = " + service);
             String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
-            System.out.println("isFault = " + isFault);
+            String wsdl = request.getParameter("wsdl");
+            boolean isWsdl = false;
+            if(wsdl!=null){
+                HashMap map = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+                ServiceDescription wsdlservice = (ServiceDescription)map.get(new QName(wsdl));
+                StringWriter writter = new StringWriter();
+                String value =  writter.toString();
+                wsdlservice.printWSDL(writter);
+                response.sendRedirect(value);
+                //TODO fix me 
+                isWsdl = true;
+            }
+//            if(wsdl !=null){
+//                HashMap services =(HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+//                ServiceDescription service_wsdl =(ServiceDescription)services.get(new QName(wsdl));
+//                service_wsdl.printWSDL(response.getWriter());
+//                return;
+//            }
             if(Constants.IS_FAULTY.equals(isFault)){
                 Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
                 String servicName = (String)request.getParameter("serviceName");
                 %> <h3>This Web service has deployment faults</h3><%
                 %><font color="red" ><%=(String)errornessservices.get(servicName) %></font><%
 
-            }else  if (service!=null){
-            %> <h2>This location contains a web service</h2><%
-                HashMap operations;
-                Collection operationsList;
-
-
-                operations = service.getOperations();
-                operationsList = operations.values();
-
-
-        %>
-        <hr><h3><font color="blue"><%=service.getName().getLocalPart()%></font></h3>
-        <%
-
-                if (operationsList.size() > 0) {
-        %>
-                    <i>Available operations</i>
-        <%
-                } else {
-        %>
-                    <i> There are no opeartions specified!!</i>
-        <%
-                }
-        %><ul><%
-                for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                    OperationDescription axisOperation = (OperationDescription) iterator1.next();
-        %><li>
-<%=axisOperation.getName().getLocalPart()%></li>
-<%
-                }
-        %>
-    </ul>
-        <%
-           request.getSession().removeAttribute(Constants.SINGLE_SERVICE);
             }else{
         %> Oh! this place seems to be empty!!! <%
 }

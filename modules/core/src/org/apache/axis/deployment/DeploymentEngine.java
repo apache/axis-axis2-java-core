@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.wsdl.factory.WSDLFactory;
 
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
@@ -544,7 +545,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         try {
-                            //ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                           // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
                             ServiceDescription service = archiveReader.createService(currentArchiveFile);
                             archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(), this, service);
                             addnewService(service);
@@ -552,12 +553,10 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException de) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + de);
-                            de.printStackTrace();
                             serviceStatus = "Error:\n" + de.getMessage();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
-                            axisFault.printStackTrace();
                             serviceStatus = "Error:\n" + axisFault.getMessage();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentArchiveFile.getName());

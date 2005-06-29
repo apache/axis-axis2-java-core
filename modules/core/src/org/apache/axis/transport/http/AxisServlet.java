@@ -153,6 +153,7 @@ public class AxisServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         try {
+            System.out.println("came here");
             Object sessionContext =
                 req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
