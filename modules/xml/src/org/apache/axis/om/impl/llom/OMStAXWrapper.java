@@ -925,7 +925,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getEncoding() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     /**
@@ -943,8 +943,10 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getVersion() {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+          return "1.0"; //todo put the constant
     }
+
 
     /**
      * Method isStandalone
@@ -952,7 +954,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public boolean isStandalone() {
-        throw new UnsupportedOperationException();
+       return true;
     }
 
     /**
@@ -961,7 +963,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public boolean standaloneSet() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     /**
@@ -970,7 +972,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getCharacterEncodingScheme() {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+       return "utf-8";
     }
 
     /**
