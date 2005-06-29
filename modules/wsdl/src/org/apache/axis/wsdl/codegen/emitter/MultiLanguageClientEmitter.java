@@ -499,6 +499,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc,"name",boundInterface.getName().getLocalPart()+MESSAGE_RECEIVER_SUFFIX,rootElement);
         addAttribute(doc,"skeletonname",boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,rootElement);
         addAttribute(doc, "basereceiver", "org.apache.axis.receivers.AbstractInOutSyncMessageReceiver", rootElement);
+        addAttribute(doc,"dbsupportpackage",configuration.getPackageName()+DATABINDING_PACKAGE_NAME_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement, binding);
         doc.appendChild(rootElement);
