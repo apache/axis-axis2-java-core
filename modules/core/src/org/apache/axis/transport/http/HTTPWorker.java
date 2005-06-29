@@ -67,6 +67,7 @@ public class HTTPWorker implements AxisWorker {
                 // let us put the information about incoming transport
                 HTTPTransportReceiver reciver = new HTTPTransportReceiver();
                 Map map = reciver.parseTheHeaders(inStream, true);
+                
 
                 SimpleHTTPOutputStream out;
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);

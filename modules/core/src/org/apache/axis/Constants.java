@@ -185,7 +185,7 @@ public class Constants {
     
     
     public static final String TESTING_PATH = "target/test-resources/"; 
-    //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
+   //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
    
    public static final String TESTING_REPOSITORY = TESTING_PATH+ "samples";
    

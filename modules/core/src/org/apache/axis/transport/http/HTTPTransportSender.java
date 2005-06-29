@@ -55,7 +55,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             String soapActionString =
                 soapAction == null ? "" : soapAction.toString();
             
-            boolean doMTOM = HTTPTransportUtils.doWriteMTOM(msgContext);
+            boolean doMTOM = msgContext.isDoMTOM();
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
             buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");

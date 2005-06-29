@@ -84,8 +84,7 @@ public class HTTPTransportUtils {
 				mimetype = st.nextToken();
 			}
 
-			if (HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED
-					.equalsIgnoreCase(mimetype)) {
+			if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0){
 				builder = selectBuilderForMIME(msgContext, in, contentType);
 				envelope = (SOAPEnvelope) builder.getDocumentElement();
 			} else if (contentType != null
@@ -186,6 +185,7 @@ public class HTTPTransportUtils {
 			InputStream inStream, String contentTypeString) throws OMException,
 			XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
+
 		MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString);
 		XMLStreamReader reader = XMLInputFactory.newInstance()
 				.createXMLStreamReader(
@@ -213,16 +213,17 @@ public class HTTPTransportUtils {
 
 	private static boolean isOptimised(OMElement element) {
 		Iterator childrenIter = element.getChildren();
+        boolean isOptimized = false;
 		while (childrenIter.hasNext()) {
 			OMNode node = (OMNode) childrenIter.next();
 			if (OMNode.TEXT_NODE == node.getType()
 					&& ((OMText) node).isOptimized()) {
-				return true;
+                        isOptimized =  true;
 			} else if (OMNode.ELEMENT_NODE == node.getType()) {
-				return isOptimised((OMElement) node);
+                isOptimized = isOptimised((OMElement) node);
 			}
 		}
-		return false;
+		return isOptimized;
 	}
 
 	public static boolean doWriteMTOM(MessageContext msgContext) {

@@ -81,6 +81,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 		if (doREST != null && Constants.VALUE_TRUE.equals(doREST)) {
 			this.doREST = true;
 		}
+        
+        msgContext.setDoMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
 
 		OutputStream out = null;
 
@@ -135,12 +137,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 		if (outputMessage != null) {
 			OMOutput omOutput = null;
 
-			boolean doMTOM = msgContext.isDoMTOM();
-			if (!doMTOM){
-				doMTOM = HTTPTransportUtils.doWriteMTOM(msgContext);
-			}
 			try {
-				if (doMTOM) {
+				if (msgContext.isDoMTOM()) {
 					omOutput = new OMOutput(out, true);
 					outputMessage.serialize(omOutput);
 					omOutput.flush();
