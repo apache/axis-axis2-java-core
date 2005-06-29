@@ -323,7 +323,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	public void serialize(OMOutput omOutput) throws XMLStreamException {
 		boolean firstElement = false;
 
-		if (!this.optimize) {
+		if (!this.isBinary) {
 			serializeWithCache(omOutput);
 		} else {
 			if (omOutput.doOptimise()) {

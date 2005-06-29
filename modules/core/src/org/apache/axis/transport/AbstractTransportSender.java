@@ -32,6 +32,7 @@ import org.apache.axis.handlers.AbstractHandler;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMOutput;
 import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.transport.http.HTTPTransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -140,6 +141,10 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 					doMTOM = ((Boolean) msgContext
 						.getProperty(Constants.Configuration.DO_MTOM))
 						.booleanValue();
+			}
+			else 
+			{
+				doMTOM = HTTPTransportUtils.doWriteMTOM(msgContext);
 			}
 			try {
 				if (doMTOM) {

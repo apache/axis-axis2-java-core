@@ -57,14 +57,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
             Object soapAction = msgContext.getWSAAction();
             String soapActionString =
                 soapAction == null ? "" : soapAction.toString();
-            boolean enableMTOM = false;
-            if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM)!=null)
-            {
-            	enableMTOM = Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
-            }            
-            boolean envelopeContainsOptimise  = HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
-            boolean doMTOM = enableMTOM && envelopeContainsOptimise;
-            msgContext.setProperty(Constants.Configuration.DO_MTOM,new Boolean(doMTOM));
+            
+            boolean doMTOM = HTTPTransportUtils.doWriteMTOM(msgContext);
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
             buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
@@ -224,11 +218,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         OutputStream out)
         throws AxisFault {
         try {
-            Object value = msgContext.getProperty(Constants.Configuration.DO_MTOM);
-            if(Constants.VALUE_TRUE.equals(value)){
-                doMTOM = true;
-            }
-            
+           
             if (chuncked) {
                 TransportSenderInfo transportInfo =
                     (TransportSenderInfo) msgContext.getProperty(

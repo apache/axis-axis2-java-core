@@ -47,8 +47,8 @@ import org.apache.commons.logging.LogFactory;
 public class EchoRawMTOMTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
+                    "http://127.0.0.1:5556"
+           // + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -96,7 +96,7 @@ public class EchoRawMTOMTest extends TestCase {
 		 byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
 				98 };
 		 DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-		 OMTextImpl textData = new OMTextImpl(dataHandler, false);
+		 OMTextImpl textData = new OMTextImpl(dataHandler, true);
 		 data.addChild(textData); 
          return data;
     }
@@ -110,6 +110,7 @@ public class EchoRawMTOMTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
 
         call.setTo(targetEPR);
+        call.set(Constants.Configuration.ENABLE_MTOM,Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         OMElement result =
