@@ -16,19 +16,20 @@ import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis.wsdl.codegen.writer.BeanWriter;
 import org.apache.axis.wsdl.codegen.writer.CallbackHandlerWriter;
 import org.apache.axis.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis.wsdl.codegen.writer.DatabindingSupportClassWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis.wsdl.codegen.writer.LocalTestClassWriter;
 import org.apache.axis.wsdl.codegen.writer.MessageReceiverWriter;
 import org.apache.axis.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis.wsdl.codegen.writer.TestServiceXMLWriter;
 import org.apache.axis.wsdl.codegen.writer.TestSkeletonImplWriter;
-import org.apache.axis.wsdl.codegen.writer.LocalTestClassWriter;
-import org.apache.axis.wsdl.codegen.writer.DatabindingSupportClassWriter;
 import org.apache.axis.wsdl.databinding.TypeMapper;
 import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -36,14 +37,11 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import javax.wsdl.extensions.ExtensibilityElement;
 
 
 
@@ -502,8 +500,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         addAttribute(doc,"skeletonname",boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,rootElement);
         addAttribute(doc, "basereceiver", "org.apache.axis.receivers.AbstractInOutSyncMessageReceiver", rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement);
+        loadOperations(boundInterface, doc, rootElement, binding);
         doc.appendChild(rootElement);
+        
+        try {
+			doc.write(System.out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         return doc;
     }
@@ -540,7 +545,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         loadOperations(boundInterface, doc, rootElement, null);
     }
 
-    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement,WSDLBindingOperation binding) {
+    private void loadOperations(WSDLInterface boundInterface, XmlDocument doc, Element rootElement,WSDLBinding binding) {
         Collection col = boundInterface.getOperations().values();
         Element methodElement = null;
         WSDLOperation operation = null;
@@ -553,7 +558,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             addAttribute(doc,"namespace",operation.getName().getNamespaceURI(),methodElement);
             addAttribute(doc,"style",operation.getStyle(),methodElement);
             addAttribute(doc,"dbsupportname",localPart+DATABINDING_SUPPORTER_NAME_SUFFIX,methodElement);
-            addSOAPAction(doc,methodElement,binding);
+            if(null != binding)
+            	addSOAPAction(doc,methodElement,binding.getBindingOperation(operation.getName()));
             addAttribute(doc, "mep",operation.getMessageExchangePattern(), methodElement);
              methodElement.appendChild(getInputElement(doc,operation));
             methodElement.appendChild(getOutputElement(doc,operation));
@@ -565,8 +571,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     		Iterator extIterator = binding.getExtensibilityElements().iterator();
             boolean actionAdded = false;
     		while(extIterator.hasNext()){
-    			ExtensibilityElement element = (ExtensibilityElement)extIterator.next();
-    			if(element.getElementType().equals(ExtensionConstants.SOAP_OPERATION)){
+    			WSDLExtensibilityElement element = (WSDLExtensibilityElement)extIterator.next();
+    			if(element.getType().equals(ExtensionConstants.SOAP_OPERATION)){
                     addAttribute(doc,"soapaction", ((SOAPOperation)element).getSoapAction(),rootElement);
                     actionAdded = true ;
     			}

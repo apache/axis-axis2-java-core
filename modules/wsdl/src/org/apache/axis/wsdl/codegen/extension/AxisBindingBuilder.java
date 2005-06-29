@@ -16,11 +16,15 @@
 
 package org.apache.axis.wsdl.codegen.extension;
 
+import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
 
 /**
@@ -54,6 +58,16 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
 		
 		newBinding.setBindingFaults(binding.getBindingFaults());
 		newBinding.setBindingOperations(binding.getBindingOperations());
+		Iterator elementIterator = binding.getExtensibilityElements().iterator();
+		while(elementIterator.hasNext()){
+			newBinding.addExtensibilityElement((WSDLExtensibilityElement)elementIterator.next());
+		}
+		
+		Iterator attributeIterator = binding.getExtensibilityAttributes().iterator();
+		while(attributeIterator.hasNext()){
+			newBinding.addExtensibleAttributes((WSDLExtensibilityAttribute)attributeIterator.next());
+		}
+		
 		wom.addBinding(newBinding);						
 	}
 }

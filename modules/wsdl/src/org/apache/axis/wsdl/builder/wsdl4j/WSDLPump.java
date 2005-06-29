@@ -295,7 +295,6 @@ public class WSDLPump {
 
     /////////////////////////////////////////////////////////////////////////////
     //////////////////////////// Internal Component Copying ///////////////////
-    //TODO Faults
     public void populateOperations(WSDLOperation wsdlOperation,
                                    Operation wsdl4jOperation, String nameSpaceOfTheOperation) {
         //Copy Name Attrebute
@@ -472,7 +471,6 @@ public class WSDLPump {
             WSDLBindingMessageReference wsdlInputBinding =
                     this.wsdlComponenetFactory.createWSDLBindingMessageReference();
             wsdlInputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-            //TODO Faults
             this.copyExtensibleElements(wsdl4jInputBinding.getExtensibilityElements(),
                     wsdlInputBinding);
             wsdlBindingOperation.setInput(wsdlInputBinding);
@@ -483,9 +481,8 @@ public class WSDLPump {
         if(null != wsdl4jOutputBinding){
             WSDLBindingMessageReference wsdlOutputBinding = this.wsdlComponenetFactory
                     .createWSDLBindingMessageReference();
-
             wsdlOutputBinding.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-            //TODO Faults
+            
             this.copyExtensibleElements(wsdl4jOutputBinding.getExtensibilityElements(),
                     wsdlOutputBinding);
             wsdlBindingOperation.setOutput(wsdlOutputBinding);
