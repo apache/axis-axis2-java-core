@@ -34,8 +34,8 @@ import org.apache.wsdl.WSDLService;
  * This is a Simple java Provider.
  */
 public class RawXMLINOutMessageReceiver
-        extends AbstractInOutSyncMessageReceiver
-        implements MessageReceiver {
+    extends AbstractInOutSyncMessageReceiver
+    implements MessageReceiver {
     /**
      * Field log
      */
@@ -45,11 +45,6 @@ public class RawXMLINOutMessageReceiver
      * Field scope
      */
     private String scope;
-
-    /**
-     * Field method
-     */
-    private Method method;
 
     /**
      * Field classLoader
@@ -64,7 +59,7 @@ public class RawXMLINOutMessageReceiver
     }
 
     public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
-            throws AxisFault {
+        throws AxisFault {
         try {
 
             // get the implementation class for the Web Service
@@ -72,91 +67,81 @@ public class RawXMLINOutMessageReceiver
 
             // find the WebService method
             Class ImplClass = obj.getClass();
+
+            //Inject the Message Context if it is asked for
             DependencyManager.configureBusinussLogicProvider(obj, msgContext);
 
-            OperationDescription op = msgContext.getOperationContext().getAxisOperation();
-            if (op == null) {
-                throw new AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
-            }
-            String methodName = op.getName().getLocalPart();
-            Method[] methods = ImplClass.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals(methodName)) {
-                    this.method = methods[i];
-                    break;
-                }
-            }
-            Class[] parameters = method.getParameterTypes();
-            if ((parameters != null)
-                    && (parameters.length == 1)
-                    && OMElement.class.getName().equals(parameters[0].getName())) {
-                OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
-
-                OMElement parmeter = null;
-                SOAPEnvelope envelope = null;
-
+            OperationDescription opDesc = msgContext.getOperationContext().getAxisOperation();
+            Method method = findOperation(opDesc, ImplClass);
+            if (method != null) {
                 String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
-                if (WSDLService.STYLE_DOC.equals(style)) {
-                    parmeter = methodElement;
-                    Object[] parms = new Object[]{parmeter};
+                Class[] parameters = method.getParameterTypes();
+                Object[] args = null;
 
-                    // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = getSOAPFactory().getDefaultEnvelope();
-                    envelope.getBody().setFirstChild(result);
-
-                } else if (WSDLService.STYLE_RPC.equals(style)) {
-                    parmeter = methodElement.getFirstElement();
-                    Object[] parms = new Object[]{parmeter};
-
-                    // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = getSOAPFactory().getDefaultEnvelope();
-
-                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
-                    OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);
-                    responseMethodName.addChild(result);
-                    envelope.getBody().addChild(responseMethodName);
+                if (parameters == null || parameters.length == 0) {
+                    args = new Object[0];
+                } else if (parameters.length == 1) {
+                    OMElement omElement = null;
+                    if (WSDLService.STYLE_DOC.equals(style)) {
+                        omElement = msgContext.getEnvelope().getBody().getFirstElement();
+                    } else if (WSDLService.STYLE_RPC.equals(style)) {
+                        OMElement operationElement = msgContext.getEnvelope().getBody().getFirstElement();
+                        if (operationElement != null) {
+                            if (method.getName().equals(operationElement.getLocalName())) {
+                                omElement = operationElement.getFirstElement();
+                            } else {
+                                throw new AxisFault("Operation Name does not match the immediate child name, expected "+ method.getName() + " but get " + operationElement.getLocalName());
+                            }
+                        } else {
+                            throw new AxisFault("rpc style expect the immediate child of the SOAP body ");
+                        }
+                    } else {
+                        throw new AxisFault("Unknown style ");
+                    }
+                    args = new Object[] { omElement };
                 } else {
-                    throw new AxisFault("Unknown style ");
+                    throw new AxisFault(
+                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                            + "&lt;method-name&gt;(OMElement) where the method name is anything");
                 }
-                newmsgContext.setEnvelope(envelope);
-            } else if ((parameters != null) && (parameters.length == 0)) {
+
+                OMElement result = (OMElement) method.invoke(obj, args);
+                
+                OMElement bodyContent = null;
+                if (WSDLService.STYLE_RPC.equals(style)) {
+                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
+                    bodyContent =
+                        getSOAPFactory().createOMElement(method.getName() + "Response", ns);
+                    bodyContent.addChild(result);
+                }else{
+                    bodyContent = result;
+                }
 
                 SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
-                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
 
-                if (WSDLService.STYLE_DOC.equals(style)) {
-
-                    Object[] parms = new Object[0];
-
-                    // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope.getBody().setFirstChild(result);
-
-                } else if (WSDLService.STYLE_RPC.equals(style)) {
-
-                    Object[] parms = new Object[0];
-
-                    // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-
-                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
-                    OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);
-                    responseMethodName.addChild(result);
-                    envelope.getBody().addChild(responseMethodName);
-                } else {
-                    throw new AxisFault("Unknown style ");
-                }
+                envelope.getBody().addChild(bodyContent);
                 newmsgContext.setEnvelope(envelope);
             } else {
-                throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
-                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                throw new AxisFault(
+                    "Implementation class does not define a method called" + opDesc.getName());
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
 
+    }
+
+    public Method findOperation(OperationDescription op, Class ImplClass) {
+        Method method = null;
+        String methodName = op.getName().getLocalPart();
+        Method[] methods = ImplClass.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().equals(methodName)) {
+                method = methods[i];
+                break;
+            }
+        }
+        return method;
     }
 }

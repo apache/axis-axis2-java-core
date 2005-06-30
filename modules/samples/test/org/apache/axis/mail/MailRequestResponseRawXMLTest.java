@@ -157,7 +157,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             while (!finish) {
                 Thread.sleep(1000);
                 index++;
-                if (index > 10) {
+                if (index > 30) {
                     throw new AxisFault("Server is shutdown as the Async response take too longs time");
                 }
             }
