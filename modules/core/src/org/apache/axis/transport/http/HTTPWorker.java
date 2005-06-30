@@ -63,11 +63,11 @@ public class HTTPWorker implements AxisWorker {
                         transportOut);
                 msgContext.setServerSide(true);
 
-                // We do not have any Addressing Headers to put
-                // let us put the information about incoming transport
+                //parse the Transport Headers
                 HTTPTransportReceiver reciver = new HTTPTransportReceiver();
                 Map map = reciver.parseTheHeaders(inStream, true);
 
+                //build a way to write the respone if the Axis choose to do so
                 SimpleHTTPOutputStream out;
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
@@ -77,12 +77,14 @@ public class HTTPWorker implements AxisWorker {
                 } else {
                     out = new SimpleHTTPOutputStream(socket.getOutputStream(), false);
                 }
-                
-
-                //OutputStream out = socket.getOutputStream();
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
+                //This is way to provide Accsess to the transport information to the transport Sender
+                msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new SimpleHTTPOutTransportInfo(out));
+                
+
                 if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
+                    //It is GET handle the Get request 
                     boolean processed =
                         HTTPTransportUtils.processHTTPGetRequest(
                             msgContext,
@@ -101,6 +103,7 @@ public class HTTPWorker implements AxisWorker {
                         out.flush();
                     }
                 } else {
+                    //It is POST, handle it
                     HTTPTransportUtils.processHTTPPostRequest(
                         msgContext,
                         inStream,

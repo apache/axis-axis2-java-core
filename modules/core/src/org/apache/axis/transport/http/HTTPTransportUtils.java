@@ -231,7 +231,7 @@ public class HTTPTransportUtils {
 		boolean envelopeContainsOptimise = HTTPTransportUtils
 				.checkEnvelopeForOptimise(msgContext.getEnvelope());
 		boolean doMTOM = enableMTOM && envelopeContainsOptimise;
-		msgContext.setDoMTOM(doMTOM);
+		msgContext.setDoingMTOM(doMTOM);
 		return doMTOM;
 	}
 }

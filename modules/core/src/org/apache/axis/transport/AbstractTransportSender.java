@@ -82,7 +82,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 			this.doREST = true;
 		}
         
-        msgContext.setDoMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+        msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
 
 		OutputStream out = null;
 
@@ -138,7 +138,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 			OMOutput omOutput = null;
 
 			try {
-				if (msgContext.isDoMTOM()) {
+				if (msgContext.isDoingMTOM()) {
 					omOutput = new OMOutput(out, true);
 					outputMessage.serialize(omOutput);
 					omOutput.flush();

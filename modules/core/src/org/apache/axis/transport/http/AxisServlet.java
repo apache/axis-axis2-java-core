@@ -109,6 +109,7 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)));
                     msgContext.setProperty(Constants.Configuration.DO_REST, Constants.VALUE_TRUE);
             msgContext.setServerSide(true);
+            msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new ServletBasedOutTransportInfo(httpServletResponse));
 
             boolean processed =
                 HTTPTransportUtils.processHTTPGetRequest(

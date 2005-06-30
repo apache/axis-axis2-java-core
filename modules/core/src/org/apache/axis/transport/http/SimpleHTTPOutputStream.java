@@ -26,6 +26,7 @@ import org.apache.axis.engine.AxisFault;
 public class SimpleHTTPOutputStream extends FilterOutputStream {
     private boolean written = false;
     private boolean chuncked = false;
+    private String contentType = null;
     
     public SimpleHTTPOutputStream(
         OutputStream out,boolean chuncked)
@@ -72,10 +73,18 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
             buf.append(new String(HTTPConstants.OK)).append("\n");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append("\n");
+            if(contentType != null){
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
+                buf.append(contentType).append("\n");
+            }
             buf.append("\n");
         }else{
             buf.append(new String(HTTPConstants.HTTP));
             buf.append(new String(HTTPConstants.OK)).append("\n");
+            if(contentType != null){
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
+                buf.append(contentType).append("\n");
+            }
             buf.append("\n");
         }
         out.write(buf.toString().getBytes());
@@ -111,6 +120,13 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
             finalize();
         }
         super.close();
+    }
+
+    /**
+     * @param string
+     */
+    public void setContentType(String string) {
+        contentType = string;
     }
 
 }

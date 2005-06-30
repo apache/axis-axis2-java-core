@@ -385,6 +385,7 @@ public class HTTPConstants {
      */
     public static final String HTTP_REQ_TYPE = "HTTP_REQ_TYPE";
     
+    public static final String HTTPOutTransportInfo = "HTTPOutTransportInfo";
 
        /**
         * Default content encoding chatset

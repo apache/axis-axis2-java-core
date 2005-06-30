@@ -45,6 +45,8 @@ public class MessageContext extends AbstractContext {
      * Field TRANSPORT_READER
      */
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
+    
+    
 
     /**
      * Field TRANSPORT_SUCCEED
@@ -124,7 +126,7 @@ public class MessageContext extends AbstractContext {
     
     private String soapAction;
     
-    private boolean doMTOM = false;
+    private boolean doingMTOM = false;
     
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -572,15 +574,15 @@ public class MessageContext extends AbstractContext {
     /**
      * @return
      */
-    public boolean isDoMTOM() {
-        return doMTOM;
+    public boolean isDoingMTOM() {
+        return doingMTOM;
     }
 
     /**
      * @param b
      */
-    public void setDoMTOM(boolean b) {
-        doMTOM = b;
+    public void setDoingMTOM(boolean b) {
+        doingMTOM = b;
     }
 
 }

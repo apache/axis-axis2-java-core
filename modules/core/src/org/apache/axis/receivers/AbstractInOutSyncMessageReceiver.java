@@ -57,7 +57,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
         newmsgCtx.setProperty(Constants.Configuration.DO_REST,messgeCtx.getProperty((Constants.Configuration.DO_REST)));
-        newmsgCtx.setDoMTOM(messgeCtx.isDoMTOM());
+        newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
         
         invokeBusinessLogic(messgeCtx,newmsgCtx);
 

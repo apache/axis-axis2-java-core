@@ -55,7 +55,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             String soapActionString =
                 soapAction == null ? "" : soapAction.toString();
             
-            boolean doMTOM = msgContext.isDoMTOM();
+            boolean doMTOM = msgContext.isDoingMTOM();
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
             buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
@@ -76,7 +76,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
                     .append("\n");
             } 
-            if(!chuncked && !msgContext.isDoMTOM()) {
+            if(!chuncked && !msgContext.isDoingMTOM()) {
                 buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
             }
             if (!this.doREST) {
@@ -133,7 +133,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 (TransportSenderInfo) msgContext.getProperty(
                     TRANSPORT_SENDER_INFO);
             InputStream in = null;
-            if(chuncked || msgContext.isDoMTOM()){
+            if(chuncked || msgContext.isDoingMTOM()){
                 if (chuncked) {
                     ((ChunkedOutputStream) out).eos();
                 } 
@@ -185,7 +185,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         throws AxisFault {
         msgctx.setProperty(TRANSPORT_SENDER_INFO, new TransportSenderInfo());
         
-        if(msgctx.isDoMTOM() || chuncked){
+        if(msgctx.isDoingMTOM() || chuncked){
             return openSocket(msgctx);
         } else {
             TransportSenderInfo transportInfo =
@@ -199,18 +199,10 @@ public class HTTPTransportSender extends AbstractTransportSender {
         MessageContext msgContext,
         OutputStream out)
         throws AxisFault {
-        //        Object contianerManaged =
-        //            msgContext.getProperty(Constants.CONTAINER_MANAGED);
-        //        if (contianerManaged == null
-        //            || !Constants.VALUE_TRUE.equals(contianerManaged)) {
-        //            try {
-        //                out.write(new String(HTTPConstants.HTTP).getBytes());
-        //                out.write(new String(HTTPConstants.OK).getBytes());
-        //                out.write("\n\n".getBytes());
-        //            } catch (IOException e) {
-        //                throw new AxisFault(e);
-        //            }
-        //        }
+        if(msgContext.isDoingMTOM()){
+            HTTPOutTransportInfo httpOutTransportInfo = (HTTPOutTransportInfo)msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo);
+            httpOutTransportInfo.setContentType(OMOutput.getContentType(true));
+        }
         return out;
     }
 
@@ -219,7 +211,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
         OutputStream out)
         throws AxisFault {
         try {
-            if(msgContext.isDoMTOM() || chuncked){
+            if(msgContext.isDoingMTOM() || chuncked){
                 TransportSenderInfo transportInfo =
                     (TransportSenderInfo) msgContext.getProperty(
                         TRANSPORT_SENDER_INFO);
