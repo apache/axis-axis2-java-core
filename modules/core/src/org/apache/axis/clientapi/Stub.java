@@ -49,7 +49,7 @@ public abstract class Stub {
     protected ConfigurationContext _configurationContext;
     protected static ServiceDescription _service;
     protected ServiceContext _serviceContext;
-    protected EndpointReference toEPR ;
+    protected String toEPR ;
 
 
 

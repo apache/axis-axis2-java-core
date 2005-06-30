@@ -106,7 +106,7 @@
 				<xsl:when test="$style='doc'">
 				//doc style
 					<xsl:if test="$returntype!=''">
-						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(<xsl:if test="input/param/@type!=''">(<xsl:value-of select="input/param/@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild(), <xsl:value-of select="input/param/@type"/>.class)</xsl:if>);
+						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(<xsl:if test="input/param/@type!=''">(<xsl:value-of select="input/param/@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild().detach(), <xsl:value-of select="input/param/@type"/>.class)</xsl:if>);
 						
 					//Create a default envelop
 					envelope = getSOAPFactory().getDefaultEnvelope();

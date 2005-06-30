@@ -143,7 +143,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             //write the call back handlers
             writeCallBackHandlers(axisBinding);
             //write the test classes
-            writeTestClasses(axisBinding);
+//            writeTestClasses(axisBinding);
             //write the databinding supporters
             writeDatabindingSupporters(axisBinding);
             //write a dummy implementation call for the tests to run.
@@ -368,7 +368,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
             //write interface implementations
             writeServiceXml(axisBinding);
             //write the local test classes
-            writeLocalTestClasses(axisBinding);
+//            writeLocalTestClasses(axisBinding);
             //write a dummy implementation call for the tests to run.
             writeTestSkeletonImpl(axisBinding);
             //write a testservice.xml that will load the dummy skeleton impl for testing
@@ -485,11 +485,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         if(forTesting){
             addAttribute(doc,"package",configuration.getPackageName()+TEST_PACKAGE_NAME_SUFFIX, rootElement);
             addAttribute(doc,"name",localPart+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+            addAttribute(doc,"servicename",localPart+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
         }else{
             addAttribute(doc,"package",configuration.getPackageName(), rootElement);
             addAttribute(doc,"name",localPart+SERVICE_CLASS_SUFFIX,rootElement);
+            addAttribute(doc,"servicename",localPart,rootElement);
         }
-        addAttribute(doc,"servicename",localPart+TEST_SERVICE_CLASS_NAME_SUFFIX,rootElement);
+        
         addAttribute(doc,"messagereceiver",localPart+MESSAGE_RECEIVER_SUFFIX,rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
