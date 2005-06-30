@@ -18,6 +18,8 @@
 package org.apache.axis.transport.http;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -371,15 +373,27 @@ public class ListingAgent {
             throws IOException {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
+        String wsdl = req.getParameter("wsdl");
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
+                if(wsdl != null){
+                    StringWriter writer = new StringWriter();
+                    ((ServiceDescription)serviceObj).printWSDL(writer);
+                    String wsdl_value = writer.toString() ;
+                    if(wsdl_value == null || wsdl_value.trim().equals("")){
+                        wsdl_value = "WSDL is not available!!!";
+                    }
+                    res.setContentType("text/xml");
+                    req.getSession().setAttribute(Constants.WSDL_CONTENT, wsdl_value);
+                }   else {
+                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
+                }
             }
         }
         String URI = req.getRequestURI();
         URI = URI.substring(0, URI.indexOf("services"));
         res.sendRedirect(URI + LIST_SINGLE_SERVICE_JSP_NAME);
     }
-    
+
 }

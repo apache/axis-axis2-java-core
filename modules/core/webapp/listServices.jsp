@@ -47,7 +47,7 @@
             operations = axisService.getOperations();
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
-            %><hr><h2><font color="blue"><%=serviceName%></font></h2>
+            %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl=<%=serviceName%>"></a><%=serviceName%></font></h2>
             <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
             if (operationsList.size() > 0) {

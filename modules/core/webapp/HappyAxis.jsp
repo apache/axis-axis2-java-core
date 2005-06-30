@@ -10,7 +10,6 @@
                  org.apache.axis.addressing.EndpointReference,
                  org.apache.axis.clientapi.Call,
                  org.apache.axis.om.*,
-                 org.apache.axis.om.impl.llom.OMOutput,
                  org.apache.axis.soap.SOAPBody,
                  org.apache.axis.soap.SOAPEnvelope,
                  org.apache.axis.soap.SOAPFactory,

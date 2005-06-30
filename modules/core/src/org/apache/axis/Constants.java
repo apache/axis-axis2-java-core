@@ -155,6 +155,7 @@ public class Constants {
      * Field SINGLE_SERVICE
      */
     public static final String SINGLE_SERVICE = "singleservice";
+    public static final String WSDL_CONTENT = "wsdl";
 
     /**
      * Field METHOD_NAME_ESCAPE_CHARACTOR
