@@ -60,7 +60,7 @@ public class ImageSampleTest extends AbstractTestCase {
 	
 	File outBase64File;
 	
-	String outFileName = "mtom/OMSerializeMTOMOut.txt";
+	String outFileName = "mtom/ActualImageMTOMOut.bin";
 	
 	String outBase64FileName = "mtom/OMSerializeBase64Out.xml";
 	
@@ -70,7 +70,7 @@ public class ImageSampleTest extends AbstractTestCase {
 	
 	String inMimeFileName = "mtom/ImageMTOMOut.bin";
 	
-	String contentTypeString = "multipart/Related; type=\"application/xop+xml\";start=\"<http://example.org/my.hsh>\"; boundary=\"----=_Part_0_2628939.1119398330392\"";
+	String contentTypeString = "multipart/Related; type=\"application/xop+xml\";start=\"<SOAPPart>\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"";
 	
 	
 	/*
