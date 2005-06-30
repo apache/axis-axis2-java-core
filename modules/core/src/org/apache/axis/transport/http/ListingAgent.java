@@ -379,12 +379,12 @@ public class ListingAgent {
             if (serviceObj != null) {
                 if(wsdl != null){
                     StringWriter writer = new StringWriter();
-                    ((ServiceDescription)serviceObj).printWSDL(writer);
-                    String wsdl_value = writer.toString() ;
+                    ((ServiceDescription)serviceObj).printWSDL(writer,filePart);
+                    String wsdl_value = writer.toString().trim() ;
                     if(wsdl_value == null || wsdl_value.trim().equals("")){
                         wsdl_value = "WSDL is not available!!!";
-                    }
-                    res.setContentType("text/xml");
+                    } 
+                    res.setContentType("xml");
                     req.getSession().setAttribute(Constants.WSDL_CONTENT, wsdl_value);
                 }   else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);

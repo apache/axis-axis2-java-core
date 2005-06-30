@@ -8,26 +8,12 @@
                  javax.xml.namespace.QName,
                  java.io.StringWriter,
                  java.io.PrintWriter"%>
- <%--
-  Created by IntelliJ IDEA.
-  User: Ajith
-  Date: Feb 17, 2005
-  Time: 8:47:13 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--        <jsp:include page="include/header.inc"></jsp:include>--%>
-
-        <%
-            ServiceDescription service = (ServiceDescription)request.getSession().getAttribute(Constants.SINGLE_SERVICE);
-            String wsdl_value = (String)request.getSession().getAttribute(Constants.WSDL_CONTENT);
-            //System.out.println("service = " + service);
-            String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
-            String wsdl = request.getParameter("wsdl");
-            boolean isWsdl = false;
-            if(wsdl_value!=null){
-                %>
-                <%=wsdl_value%>
+<%@ page contentType="text/xml;charset=UTF-8" language="java" %>
+<%
+String wsdl_value = (String)request.getSession().getAttribute(Constants.WSDL_CONTENT);
+String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
+if(wsdl_value!=null){%>
+<%=wsdl_value.trim()%>
                 <%
             } else if(Constants.IS_FAULTY.equals(isFault)){
                 Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);

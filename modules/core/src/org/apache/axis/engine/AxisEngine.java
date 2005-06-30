@@ -114,12 +114,14 @@ public class AxisEngine {
             OperationContext operationContext = msgContext.getOperationContext();
             OperationDescription operationDescription = operationContext.getAxisOperation();
             phases = operationDescription.getRemainingPhasesInFlow();
+
             if (paused) {
                 resumeInvocationPhases(phases, msgContext);
             } else {
                 invokePhases(phases, msgContext);
             }
-            if (msgContext.isServerSide()) {
+            paused = msgContext.isPaused();
+            if (msgContext.isServerSide() && !paused) {
                 // add invoke Phase
                 MessageReceiver reciver = operationDescription.getMessageReciever();
                 reciver.recieve(msgContext);
