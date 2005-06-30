@@ -112,7 +112,7 @@
 					envelope = getSOAPFactory().getDefaultEnvelope();
 					//Create a Omelement of the result if a result exist
 					
-					<xsl:if test="$returntype!=''">envelope.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));		
+					<xsl:if test="$returntype!=''">envelope.getBody().setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));		
 					</xsl:if>											
 				</xsl:when>
 							
