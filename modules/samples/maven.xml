@@ -45,7 +45,7 @@
         <mkdir dir="${samples.dir}/userguide"/>
         <attainGoal name="userguide"/>
         <attainGoal name="amazonQS"/>
-        <!--<attainGoal name="googleSearch"/>-->
+        <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
     </goal>
