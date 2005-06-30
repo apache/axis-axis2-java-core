@@ -70,6 +70,9 @@
   <li>HTTP transport Support</li>
   <li>SMTP transport Support</li>
   <li>TCP transport Support</li>
+  <li> Encoding/data binding</li>
+  <li> MTOM/MIME/SWA attachments support</li>
+   <li>SOAP 1.1 and 1.2 validation </li>
 </ul>
 <p>The release include following tools</p>
 <ol>
@@ -81,11 +84,8 @@
 <h2><a name="_Toc96698079"></a>What's still to do? </h2>
 <p>Please see a list of what we think needs doing - and please consider helping out if you're interested & able!</p>
 <ul>
-  <li> Encoding/data binding</li>
-  <li>SOAP 1.1 and 1.2 validation </li>
   <li> JAX-RPC 1.1/2.0 compliance</li>
   <li> Data binding support for WSDL Based code (server/client) code generator</li>
-  <li> MTOM/MIME/SWA attachments support</li>
   <li> Complete XML infoset support for AXIOM</li>
   <li> Implementation of other transports. e.g. JMS..</li>
   <li> Web Service Policy Support</li>
@@ -233,7 +233,7 @@ Services&nbsp; and let's see how to use them Now!</b></p>
             OMElement result = (OMElement) call.invokeBlocking("echo", payload);
 </span>
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
 
             System.out.println(writer.toString());
@@ -318,8 +318,7 @@ connections<strong>. The ultimate asynchrony!!</strong></p>
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(
-                                XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+                        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
                         writer.flush();
 
                         System.out.println(writer.toString());
@@ -361,10 +360,10 @@ the response.</font></span></p>
 <p>Before we run the sample client we need one more step to perform. As mentioned earlier Axis2 uses addressing based correlation 
 mechanism and hence we need to &quot;engage&quot; addressing module in the server side as well. According to the Axis2 architecture addressing module is deployed in the &quot;<strong>pre-dispatch</strong>&quot; 
 phase (See <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more 
-details about phases)&nbsp; and hence &quot;engaging&quot; means simply adding module reference in the &quot;server.xml&quot; (NOT the &quot;service.xml&quot;). Please add the following line to the &quot;server.xml&quot; that you can find in the &quot;/webapps/axis2/WEB-INF&quot; 
+details about phases)&nbsp; and hence &quot;engaging&quot; means simply adding module reference in the &quot;axis2.xml&quot; (NOT the &quot;service.xml&quot;). Please add the following line to the &quot;axis2.xml&quot; that you can find in the &quot;/webapps/axis2/WEB-INF&quot; 
 directory in the servlet container. </p>
 <source><pre> &lt;module ref=&quot;addressing&quot;/&gt;</pre></source>
-<p>Note: Please note that<span class="style15"><font color="#000000"> once you change the &quot;server.xml&quot; you need to restart the servlet container.</font></span></p>
+<p>Note: Please note that<span class="style15"><font color="#000000"> once you change the &quot;axis2.xml&quot; you need to restart the servlet container.</font></span></p>
 <p>This will enable the addressing in the server side and now you can test the &quot;TestEchoNonBlockingDualClient&quot; using the &quot;testEchoNonBlockingDualClient&quot; 
 target of the ant file found at &quot;Axis2Home/samples&quot; directory. 
 If you can see the response OMElement printed in the client side, that means you 
@@ -393,7 +392,7 @@ Service.</p>
   <li>Create the Module Implementation</li>
   <li>Create the Handlers</li>
   <li>Create the moduel.xml</li>
-  <li>Modify the &quot;server.xml&quot; (if you need custom phases)</li>
+  <li>Modify the &quot;axis2.xml&quot; (if you need custom phases)</li>
   <li>Modify the &quot;service.xml&quot; to engage modules at the deployment time.</li>
   <li>Package in a &quot;.mar&quot; (Module Archive)</li>
   <li>Deploy the module in Axis2</li>
@@ -505,16 +504,16 @@ which this handler runs. </p>
 &lt;/handler&gt;
 </pre></source></p>
 
-<h4>Step 4: Modify the &quot;server.xml&quot;</h4>
+<h4>Step 4: Modify the &quot;axis2.xml&quot;</h4>
 
 
 <p>In this handler the phase &quot;loggingPhase&quot; is defined by the module writer. It 
 is not a pre-defined handler phase and hence the module writer should introduce 
-it to the &quot;server.xml&quot; (NOT the service.xml) so that Axis2 engine knows where to 
+it to the &quot;axis2.xml&quot; (NOT the service.xml) so that Axis2 engine knows where to 
 place the handler in different &quot;flows&quot; (<br>
 InFlow, OutFlow, etc...). Following xml lines shows the respective changes to 
-the &quot;server.xml&quot; in order for us to deploy this logging module in Axis2 engine. 
-This is an extract of the phase section of the &quot;server.xml&quot;.</p>
+the &quot;axis2.xml&quot; in order for us to deploy this logging module in Axis2 engine. 
+This is an extract of the phase section of the &quot;axis2.xml&quot;.</p>
 
 
 <source><pre>
@@ -559,7 +558,7 @@ phase for it to get executed.
 <h4>Step5 : Modify the &quot;service.xml&quot;</h4>
 
 <p>Up to this point we have created the required classes and the configuration 
-descriptions for the logging module and by changing the &quot;server.xml&quot; we have 
+descriptions for the logging module and by changing the &quot;axis2.xml&quot; we have 
 created the required phases for the logging module. Now the next step is to &quot;<b>engage</b>&quot; 
 (use) this module in one of our services. For this, let's use the same Web 
 Service that we have used throughout the user guide, the MyService. However, 
