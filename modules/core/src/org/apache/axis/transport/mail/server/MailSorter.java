@@ -63,9 +63,7 @@ public class MailSorter {
             msgContext.setServerSide(true);
 
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage);
-            msgContext.setWSAAction(soapAction);
-            msgContext.setSoapAction(soapAction);
+            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
 
             String serviceURL = mimeMessage.getSubject();
             if (serviceURL == null) {

@@ -89,7 +89,6 @@ public class SMTPWorker extends Thread {
             	    MailSorter mSort = new MailSorter(this.st,this.configurationContext);
             	    mSort.sort((String)recivers.get(idx), new MimeMessage(mail));
                 } catch (MessagingException e1) {
-					// TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
             }
@@ -107,19 +106,17 @@ public class SMTPWorker extends Thread {
     }
     
     private String processInput(String input) {
-
+        byte[] CR_LF = new byte[] {0x0D, 0x0A};
     	if(input==null) return MailConstants.COMMAND_UNKNOWN;
         if(mail!=null && transmitionEnd) return MailConstants.COMMAND_TRANSMISSION_END;
 
         if (input.startsWith("MAIL")) {
-            temp += input + "\n";
-
             mail = new MimeMessage(Session.getInstance(new Properties(), new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return null;
                 }
             }));
-    
+
             int start = input.indexOf("<") + 1;
             int end;
             
@@ -152,8 +149,8 @@ public class SMTPWorker extends Thread {
         } else if (input.startsWith("RCPT")) {
 
             String domain = MailConstants.SERVER_DOMAIN;
-            //System.out.println("RCPT:" + input);
-            temp += input + "\n";
+            //System.out.println("RCPT:" + input); 
+            //temp += input + "\n";  TODO Check this
             int start = input.indexOf("<") + 1;
             int end;
             
@@ -183,8 +180,6 @@ public class SMTPWorker extends Thread {
             return MailConstants.RCPT_OK;
 
         } else if (input.equalsIgnoreCase("DATA")) {
-            
-            //session.setDataWriting(true);
             dataWriting = true;
             return MailConstants.DATA_START_SUCCESS;
             
@@ -200,10 +195,11 @@ public class SMTPWorker extends Thread {
         	bodyData = true;
         	return null;
         } else if(mail!=null && dataWriting){
-        	temp += input + "\n";
         	try {
 				if (bodyData) {
-					mail.setContent(input, "text/plain");
+		        	temp += input;
+					mail.setContent(temp, "text/plain");
+					System.out.println("\n\n\n---------------" + temp + "---------------\n\n\n");
 				} else {
 					mail.addHeaderLine(input);
 				}

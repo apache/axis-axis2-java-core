@@ -48,6 +48,8 @@ public class POP3Worker extends Thread{
     ArrayList messages = new ArrayList();
     private void processInput(String input, PrintWriter printWriter){
         int listLen = (MailConstants.LIST+" ").length();
+        byte[] CR_LF = new byte[] {0x0D, 0x0A};
+        byte[] CR_LF_DOT_CR_LF = new byte[] { 0x0D, 0x0A, '.', 0x0D, 0x0A };
         String user = "";
         if(input==null) {
             this.doneProcess = true; // This should not be happening
@@ -96,8 +98,12 @@ public class POP3Worker extends Thread{
 	                int index = Integer.parseInt(i);
 	                printWriter.println(MailConstants.OK);
 	                MimeMessage m = (MimeMessage)messages.get(index-1);
+
 	                m.writeTo(socket.getOutputStream());
-	                byte[] CR_LF_DOT_CR_LF = new byte[] { 0x0D, 0x0A, '.', 0x0D, 0x0A };
+	                //System.out.println("\n\n\n\n ========This is the mail========");
+	                //m.writeTo(System.out);//socket.getOutputStream());
+	                //System.out.println("\n\n\n\n ========This is the mail========");
+	                
 	                socket.getOutputStream().write(CR_LF_DOT_CR_LF);// This is a bit of a hack to get it working. Have to find a bette way to handle this.
 	                socket.getOutputStream().flush();
 	            } catch(NumberFormatException e) {
