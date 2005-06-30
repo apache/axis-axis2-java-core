@@ -12,7 +12,7 @@ set AXIS_HOME=%cd%
 
 :gotHome
 
-if exist "%AXIS_HOME%\bin\server.bat" goto okHome
+if exist "%AXIS_HOME%\bin\http-server.bat" goto okHome
 echo The AXIS_HOME environment variable is not defined correctly
 echo This environment variable is needed to run this program
 goto end
@@ -28,8 +28,8 @@ if exist "%REPO_FOLDER%\services" goto okService
 mkdir "%REPO_FOLDER%\services"
 
 :okService
-set EXECUTABLE="%AXIS_HOME%\bin\server.bat"
+set EXECUTABLE="%AXIS_HOME%\bin\http-server.bat"
 
-call %EXECUTABLE% %REPO_FOLDER% 8080   
+call %EXECUTABLE% %REPO_FOLDER% 8080  
 
 :end
