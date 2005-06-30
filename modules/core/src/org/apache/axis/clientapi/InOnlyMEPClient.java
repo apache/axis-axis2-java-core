@@ -67,7 +67,7 @@ public class InOnlyMEPClient extends MEPClient {
     /**
      * @param action
      */
-    public void setAction(String action) {
+    public void setWsaAction(String action) {
         messageInformationHeaders.setAction(action);
     }
 

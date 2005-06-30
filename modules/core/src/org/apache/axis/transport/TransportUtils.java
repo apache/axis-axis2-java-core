@@ -41,7 +41,7 @@ public class TransportUtils {
         InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
         msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
         if (inStream == null) {
-            throw new AxisFault("Input stram is Null");
+            throw new AxisFault("Input stream is Null");
         }
         return createSOAPMessage(msgContext, inStream);
     }

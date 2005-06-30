@@ -42,6 +42,7 @@ public abstract class MEPClient {
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
     protected boolean doREST = false; 
+    protected String wsaAction;
 
     public void setDoREST(boolean b) {
        doREST = b;
@@ -73,6 +74,9 @@ public abstract class MEPClient {
             serviceContext.getServiceConfig().addOperation(axisop);
         }
         msgCtx.setDoingREST(doREST);
+        if(wsaAction != null){
+            msgCtx.setWSAAction(wsaAction);
+        }
     }
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {
@@ -127,6 +131,13 @@ public abstract class MEPClient {
      */
     public void setSoapAction(String string) {
         soapAction = string;
+    }
+
+    /**
+     * @param string
+     */
+    public void setWsaAction(String string) {
+        wsaAction = string;
     }
 
 }
