@@ -99,7 +99,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         dispatch.addHandler(new AddressingBasedDispatcher(), 0);
         dispatch.addHandler(new RequestURIBasedDispatcher(), 1);
-        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(),2);
+        dispatch.addHandler(new SOAPActionBasedDispatcher(), 2);
+        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(),3);
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
         
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
