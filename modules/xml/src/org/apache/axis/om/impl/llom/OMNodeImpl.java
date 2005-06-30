@@ -38,11 +38,11 @@ public abstract class OMNodeImpl implements OMNode {
      * Field previousSibling
      */
     protected OMNodeImpl previousSibling;
-       /**
+    /**
      * Field builder
      */
     protected OMXMLParserWrapper builder;
-   
+
     /**
      * Field done
      */
@@ -66,11 +66,11 @@ public abstract class OMNodeImpl implements OMNode {
      */
     public OMNodeImpl(OMContainer parent) {
         //if ((parent != null) && (parent.getType() == OMNode.ELEMENT_NODE)) {
-    	//Comment by Jaya:
-    	//OMContainer is only implemented by OMElement and OMDocument which are
-    	//quite well deemed to act as parents, so checking the type of parent
-    	//is not necessary.
-    	if ((parent != null)) {
+        //Comment by Jaya:
+        //OMContainer is only implemented by OMElement and OMDocument which are
+        //quite well deemed to act as parents, so checking the type of parent
+        //is not necessary.
+        if ((parent != null)) {
             this.parent = parent;
             parent.addChild(this);
         }
@@ -95,14 +95,14 @@ public abstract class OMNodeImpl implements OMNode {
      */
     public void setParent(OMContainer element) {
 
-        if( (this.parent) == element){
+        if ((this.parent) == element) {
             return;
         }
 
         //If we are asked to assign a new parent in place 
         //of an existing one. We should detach this node
         //from the aegis of previous parent.
-        if(this.parent != null){
+        if (this.parent != null) {
             this.detach();
         }
         this.parent = element;
@@ -160,19 +160,18 @@ public abstract class OMNodeImpl implements OMNode {
      */
     public OMNode detach() throws OMException {
         if (parent == null) {
-            throw new OMException(
-                    "Elements that doesn't have a parent can not be detached");
+            throw new OMException("Elements that doesn't have a parent can not be detached");
         }
         OMNodeImpl nextSibling = (OMNodeImpl) getNextSibling();
         if (previousSibling == null) {
             parent.setFirstChild(nextSibling);
         } else {
-            previousSibling.setNextSibling(nextSibling);
+            getPreviousSibling().setNextSibling(nextSibling);
         }
         if (nextSibling != null) {
-            nextSibling.setPreviousSibling(previousSibling);
+            nextSibling.setPreviousSibling(getPreviousSibling());
         }
-
+        this.parent = null;
         return this;
     }
 
@@ -267,21 +266,18 @@ public abstract class OMNodeImpl implements OMNode {
     }
 
 
-
-   /**
+    /**
      * This will completely parse this node and build the object structure in the memory.
      * However a programmatically created node will have done set to true by default and will cause
      * populateyourself not to work properly!
+     *
      * @throws OMException
      */
     public void build() throws OMException {
-        while(!done){
+        while (!done) {
             builder.next();
         }
     }
-
-
-
 
 
 }

@@ -46,10 +46,6 @@ public abstract class MEPClient {
         return soapAction;
     }
 
-    public void setSoapAction(String soapAction) {
-        this.soapAction = soapAction;
-    }
-
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
         this.mep = mep;

@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -104,6 +105,30 @@ public class SOAPversionTest extends TestCase {
                  inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
         assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
 
+
+        inOutMEPClient.close();
+    }
+
+    public void testSOAPfault() throws AxisFault {
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+
+        OMElement payload = createEnvelope();
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
+        inOutMEPClient.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+        inOutMEPClient.setTo(targetEPR);
+        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+
+        SOAPEnvelope result =
+                 inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
+//        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
+        try {
+            OMOutput output = new OMOutput(System.out, false);
+            result.serializeWithCache(output);
+            output.flush();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
 
         inOutMEPClient.close();
     }

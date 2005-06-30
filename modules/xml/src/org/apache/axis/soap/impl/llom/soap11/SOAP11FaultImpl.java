@@ -69,59 +69,12 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         super.serialize(omOutput);
     }
 
-//    /**
-//     * Method getException
-//     *
-//     * @return
-//     * @throws OMException
-//     */
-//    public Exception getException() throws OMException {
-//       getDetail();
-//        if (faultDetail == null) {
-//            return null;
-//        }
-//
-//        OMElement exceptionElement = faultDetail.getFirstChildWithName(new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
-//        if(exceptionElement != null){
-//             return new Exception(exceptionElement.getText());
-//        }
-//        return null;
-//    }
-//
-//    protected void putExceptionToSOAPFault(Exception e) {
-//        StringWriter sw = new StringWriter();
-//        e.printStackTrace(new PrintWriter(sw));
-//        getDetail();
-//        if (faultDetail == null) {
-//            faultDetail = new SOAP11FaultDetailImpl(this);
-//
-//        }
-//        OMElement faultDetailEnty = new OMElementImpl(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY, this.getNamespace());
-//        faultDetailEnty.setText(sw.getBuffer().toString());
-//        faultDetail.addChild(faultDetailEnty);
-//    }
-//
-//    /**
-//     * Equivalent for FaultCode in SOAP 1.1 is faultCode.
-//     * So creating faultCode element and putting the value as SOAPFaultCode.SOAPFaultCodeValue.value
-//     *
-//     * @param soapFaultCode
-//     * @throws SOAPProcessingException
-//     */
     public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException {
         if (!(soapFaultCode instanceof SOAP11FaultCodeImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Code. But received some other implementation");
         }
         super.setCode(soapFaultCode);
     }
-//
-//    public SOAPFaultCode getCode() {
-//        if (faultCode == null) {
-//            faultCode = (SOAPFaultCode) getChildWithName(SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME);
-//        }
-//        return faultCode;
-//    }
-//
     public void setReason(SOAPFaultReason reason) throws SOAPProcessingException {
         if (!(reason instanceof SOAP11FaultReasonImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Reason. But received some other implementation");
@@ -129,36 +82,17 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         super.setReason(reason);
     }
 //
-//    public SOAPFaultReason getReason() {
-//        if (faultReason == null) {
-//            faultReason = (SOAPFaultReason) getChildWithName(SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME);
-//        }
-//        return faultReason;
-//    }
-//
     public void setNode(SOAPFaultNode node) throws SOAPProcessingException {
         if (!(node instanceof SOAP11FaultNodeImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Node. But received some other implementation");
         }
         super.setNode(node);
     }
-//
-//    public SOAPFaultNode getNode() {
-//        throw new UnsupportedOperationException();
-//    }
-//
     public void setRole(SOAPFaultRole role) throws SOAPProcessingException {
         if (!(role instanceof SOAP11FaultRoleImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Role. But received some other implementation");
         }
         super.setRole(role);
-    }
-
-    public SOAPFaultDetail getDetail()  {
-        if (faultDetail == null || faultDetail.getParent() != this) {
-            faultDetail = (SOAPFaultDetail) this.getChildWithName(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
-        }
-        return faultDetail;
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {

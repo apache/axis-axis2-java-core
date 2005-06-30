@@ -18,8 +18,11 @@ package org.apache.axis.soap;
 
 import junit.framework.TestCase;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMOutput;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+
+import javax.xml.stream.XMLStreamException;
 
 public class SOAPFaultTest extends SOAPFaultTestCase {
 
@@ -205,7 +208,7 @@ public class SOAPFaultTest extends SOAPFaultTestCase {
         try {
             soap12Fault.setDetail(soap11Factory.createSOAPFaultDetail(soap11Fault));
             fail("SOAP11FaultDetail should not be set in to a SOAP12Fault");
-            
+
         } catch (Exception e) {
             assertTrue(true);
         }
@@ -255,5 +258,37 @@ public class SOAPFaultTest extends SOAPFaultTestCase {
     public void testSOAP12GetDetailWithParser() {
         assertFalse("SOAP 1.2 Fault Test with parser: - getDetail method returns null", soap12FaultWithParser.getDetail() == null);
         assertTrue("SOAP 1.2 Fault Test with parser: - Fault detail local name mismatch", soap12FaultWithParser.getDetail().getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
+    }
+
+    public void testMoreChildrenAddition() {
+        OMOutput output = null;
+        try {
+            output = new OMOutput(System.out, false);
+            SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
+            SOAPEnvelope envelope = soapFactory.getDefaultFaultEnvelope();
+
+            assertNotNull("Default FaultEnvelope must have a SOAPFault in it", envelope.getBody().getFault());
+            assertNotNull("Default FaultEnvelope must have a SOAPFaultCode in it", envelope.getBody().getFault().getCode());
+            assertNotNull("Default FaultEnvelope must have a SOAPFaultCodeValue in it", envelope.getBody().getFault().getCode().getValue());
+            assertNotNull("Default FaultEnvelope must have a SOAPFaultReason in it", envelope.getBody().getFault().getReason());
+            assertNotNull("Default FaultEnvelope must have a SOAPFaultText in it", envelope.getBody().getFault().getReason().getSOAPText());
+
+            SOAPEnvelope soapEnvelope = soapFactory.getDefaultFaultEnvelope();
+            String errorCodeString = "Some Error occurred !!";
+            soapEnvelope.getBody().getFault().getCode().getValue().setText(errorCodeString);
+
+            SOAPFaultCode code = soapEnvelope.getBody().getFault().getCode();
+            envelope.getBody().getFault().setCode(code);
+
+            assertTrue("Parent Value of Code has not been set to new fault", code.getParent() == envelope.getBody().getFault());
+            assertTrue("Parent Value of Code is still pointing to old fault", code.getParent() != soapEnvelope.getBody().getFault());
+            assertNull("Old fault must not have a fault code", soapEnvelope.getBody().getFault().getCode());
+            assertEquals("The SOAP Code value must be "+errorCodeString, errorCodeString, envelope.getBody().getFault().getCode().getValue().getText());
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+
     }
 }

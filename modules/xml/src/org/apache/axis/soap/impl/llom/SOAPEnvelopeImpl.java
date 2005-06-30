@@ -29,9 +29,6 @@ import javax.xml.namespace.QName;
 public class SOAPEnvelopeImpl extends SOAPElement
         implements SOAPEnvelope, OMConstants {
 
-    private SOAPBody soapBody;
-    private SOAPHeader soapHeader;
-
     /**
      * @param builder
      */
@@ -59,10 +56,7 @@ public class SOAPEnvelopeImpl extends SOAPElement
      * @throws OMException
      */
     public SOAPHeader getHeader() throws OMException {
-        if (soapHeader == null) {
-            soapHeader = (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
-        }
-        return soapHeader;
+        return (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
     }
 
     /**
@@ -77,13 +71,11 @@ public class SOAPEnvelopeImpl extends SOAPElement
      * @throws OMException
      */
     public SOAPBody getBody() throws OMException {
-        if (soapBody == null) {
-
             //check for the first element
             OMElement element = getFirstElement();
             if (element != null) {
                 if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                    soapBody = (SOAPBody) element;
+                    return (SOAPBody) element;
                 } else {      // if not second element SHOULD be the body
                     OMNode node = element.getNextSibling();
                     while (node != null && node.getType() != OMNode.ELEMENT_NODE) {
@@ -92,14 +84,13 @@ public class SOAPEnvelopeImpl extends SOAPElement
                     element = (OMElement) node;
 
                     if (node != null && SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                        soapBody = (SOAPBody) element;
+                        return (SOAPBody) element;
                     } else {
                         throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
                     }
                 }
             }
-        }
-        return soapBody;
+        return null;
     }
 
     /**

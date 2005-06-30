@@ -89,14 +89,6 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
         super.setDetail(detail);
     }
 
-    public SOAPFaultDetail getDetail() {
-        if (faultDetail == null || faultDetail.getParent() != this) {
-            faultDetail = (SOAPFaultDetail) this.getChildWithName(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
-        }
-        return faultDetail;
-    }
-
-
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12BodyImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Body as the parent. But received some other implementation");

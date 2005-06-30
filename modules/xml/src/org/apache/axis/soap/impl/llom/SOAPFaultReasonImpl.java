@@ -55,11 +55,8 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
         UtilProvider.setNewElement(this, text, soapFaultText);
     }
-
+                                                                                                                      
     public SOAPFaultText getSOAPText() {
-        if (text == null) {
-            text =  (SOAPFaultText) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
-        }
-        return text;
+        return (SOAPFaultText) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
     }
 }

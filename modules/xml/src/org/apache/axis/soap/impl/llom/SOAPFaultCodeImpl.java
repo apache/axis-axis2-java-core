@@ -32,8 +32,6 @@ import javax.xml.namespace.QName;
  */
 public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFaultCode {
 
-    protected SOAPFaultValue value;
-    protected SOAPFaultSubCode subCode;
 
     /**
      * Constructor OMElementImpl
@@ -63,20 +61,14 @@ public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFault
     }
 
     public SOAPFaultValue getValue() {
-        if (value == null) {
-            value = (SOAPFaultValue) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
-        }
-        return value;
+       return (SOAPFaultValue) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
     }
 
     public void setSubCode(SOAPFaultSubCode value) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, subCode, value);
+        UtilProvider.setNewElement(this, getSubCode(), value);
     }
 
     public SOAPFaultSubCode getSubCode() {
-        if (subCode == null) {
-            subCode = (SOAPFaultSubCode) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
-        }
-        return subCode;
+        return (SOAPFaultSubCode) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
     }
 }
