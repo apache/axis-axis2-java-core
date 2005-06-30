@@ -17,6 +17,7 @@
  */
 package org.apache.axis.transport.mail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -75,7 +76,11 @@ public class EMailSender {
             msg.setFrom(new InternetAddress((user)));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             msg.setSubject(subject);
+            
+            msg.addHeaderLine("Content-Type: text/plain; charset=us-ascii");
+            
             msg.setText(message);
+            msg.setHeader("Content-Transfer-Encoding", "7bit");
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);
