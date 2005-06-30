@@ -165,7 +165,7 @@ public class AxisServlet extends HttpServlet {
                         new QName(Constants.TRANSPORT_HTTP)),
                     configContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP)));
-
+            msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new ServletBasedOutTransportInfo(res));
             res.setContentType("text/xml; charset=utf-8");
             HTTPTransportUtils.processHTTPPostRequest(
                 msgContext,
