@@ -132,7 +132,6 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(serviceContext);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
-        try {
             call.setTo(targetEPR);
             call.setTransportInfo(Constants.TRANSPORT_MAIL, Constants.TRANSPORT_MAIL, true);
             Callback callback = new Callback() {
@@ -158,13 +157,11 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             while (!finish) {
                 Thread.sleep(1000);
                 index++;
-//                if (index > 10) {
-//                    throw new AxisFault("Server is shutdown as the Async response take too longs time");
-//                }
+                if (index > 10) {
+                    throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                }
             }
-        } finally {
             call.close();
-        }
 
     }
     public ConfigurationContext createServerConfigurationContext() throws Exception {

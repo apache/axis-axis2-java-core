@@ -21,6 +21,7 @@ import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
+import org.apache.axis.transport.http.HTTPConstants;
 
 /**
  * This is the Absract IN-OUT MEP MessageReciver. The
@@ -55,6 +56,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
+        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
         newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
         newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
         

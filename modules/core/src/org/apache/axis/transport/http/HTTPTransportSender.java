@@ -213,7 +213,12 @@ public class HTTPTransportSender extends AbstractTransportSender {
         throws AxisFault {
         if(msgContext.isDoingMTOM()){
             HTTPOutTransportInfo httpOutTransportInfo = (HTTPOutTransportInfo)msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo);
-            httpOutTransportInfo.setContentType(OMOutput.getContentType(true));
+            if(httpOutTransportInfo != null){
+                httpOutTransportInfo.setContentType(OMOutput.getContentType(true));
+            }else{
+                throw new AxisFault("Property "+ HTTPConstants.HTTPOutTransportInfo + " not set by the Server");
+            }
+            
         }
         return out;
     }
