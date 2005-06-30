@@ -148,6 +148,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 if (chuncked) {
                     ((ChunkedOutputStream) out).eos();
                 } 
+                in = transportInfo.in;
             }else{                
                 openSocket(msgContext);
                 OutputStream outS = transportInfo.out;
