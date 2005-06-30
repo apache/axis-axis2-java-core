@@ -25,55 +25,57 @@ import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.stream.XMLStreamException;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 public class MIMEOutputUtils {
-
+	
 	private static byte[] CRLF = { 13, 10 };
-
+	
 	static String SOAP_PART_CONTENT_ID = "<SOAPPart>";
-
+	
 	public static void complete(OutputStream outStream,
 			OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
 			String boundary) throws XMLStreamException {
 		try {
 			startWritingMime(outStream, boundary);
-		
-
-		DataHandler dh = new DataHandler(bufferedSoapOutStream.toString(),
-				"text/xml");
-		MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
-		rootMimeBodyPart.setDataHandler(dh);
-		rootMimeBodyPart.addHeader("Content-Type", "application/xop+xml");
-		rootMimeBodyPart.addHeader("Content-Transfer-Encoding", "8bit");
-		rootMimeBodyPart.addHeader("Content-ID", SOAP_PART_CONTENT_ID);
-
-		writeBodyPart(outStream, rootMimeBodyPart, boundary);
-
-		Iterator binaryNodeIterator = binaryNodeList.iterator();
-		while (binaryNodeIterator.hasNext()) {
-			OMText binaryNode = (OMText) binaryNodeIterator.next();
-			writeBodyPart(outStream, createMimeBodyPart(binaryNode), boundary);
-		}
-		finishWritingMime(outStream);
+			
+			DataHandler dh = new DataHandler(bufferedSoapOutStream.toString(),
+			"text/xml");
+			MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
+			rootMimeBodyPart.setDataHandler(dh);
+			rootMimeBodyPart.addHeader("Content-Type", "application/xop+xml");
+			rootMimeBodyPart.addHeader("Content-Transfer-Encoding", "8bit");
+			rootMimeBodyPart.addHeader("Content-ID", SOAP_PART_CONTENT_ID);
+			
+			writeBodyPart(outStream, rootMimeBodyPart, boundary);
+			
+			Iterator binaryNodeIterator = binaryNodeList.iterator();
+			while (binaryNodeIterator.hasNext()) {
+				OMText binaryNode = (OMText) binaryNodeIterator.next();
+				writeBodyPart(outStream, createMimeBodyPart(binaryNode),
+						boundary);
+			}
+			finishWritingMime(outStream);
 		} catch (IOException e) {
-			throw new OMException("Problem with the OutputStream."+e.toString());
+			throw new OMException("Problem with the OutputStream."
+					+ e.toString());
 		} catch (MessagingException e) {
-			throw new OMException("Problem writing Mime Parts."+e.toString());
+			throw new OMException("Problem writing Mime Parts." + e.toString());
 		}
 	}
-
+	
 	private static MimeBodyPart createMimeBodyPart(OMText node)
-			throws MessagingException {
+	throws MessagingException {
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();
 		mimeBodyPart.setDataHandler(node.getDataHandler());
 		mimeBodyPart.addHeader("Content-Transfer-Encoding", "binary");
 		mimeBodyPart.addHeader("Content-ID", "<" + node.getContentID() + ">");
 		return mimeBodyPart;
-
+		
 	}
-
+	
 	/**
 	 * @throws IOException
 	 *             This will write the boundary to output Stream
@@ -83,17 +85,17 @@ public class MIMEOutputUtils {
 		outStream.write(new byte[] { 45, 45 });
 		outStream.write(boundary.getBytes());
 	}
-
+	
 	/**
 	 * @throws IOException
 	 *             This will write the boundary with CRLF
 	 */
 	private static void startWritingMime(OutputStream outStream, String boundary)
-			throws IOException {
+	throws IOException {
 		writeMimeBoundary(outStream, boundary);
-		outStream.write(CRLF);
+		//outStream.write(CRLF);
 	}
-
+	
 	/**
 	 * this will write a CRLF for the earlier boudary then the BodyPart data
 	 * with headers followed by boundary. Writes only the boundary. No more
@@ -110,16 +112,16 @@ public class MIMEOutputUtils {
 		outStream.write(CRLF);
 		writeMimeBoundary(outStream, boundary);
 	}
-
+	
 	/**
 	 * @throws IOException
 	 *             This will write "--" to the end of last boundary
 	 */
 	private static void finishWritingMime(OutputStream outStream)
-			throws IOException {
+	throws IOException {
 		outStream.write(new byte[] { 45, 45 });
 	}
-
+	
 	public static String getContentTypeForMime(String boundary) {
 		ContentType contentType = new ContentType();
 		contentType.setPrimaryType("multipart");
@@ -132,5 +134,5 @@ public class MIMEOutputUtils {
 		contentType.setParameter("startinfo", "application/xop+xml");
 		return contentType.toString();
 	}
-
+	
 }

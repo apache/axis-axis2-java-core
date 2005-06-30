@@ -234,8 +234,6 @@ public class MIMEHelper {
 	private MimeBodyPart getMimeBodyPart() throws OMException {
 		MimeBodyPart mimeBodyPart = null;
         
-        
-
 		//String Line = pushbackInStream.readLine();
 		MimeBodyPartInputStream partStream;
 		try {
@@ -285,7 +283,6 @@ public class MIMEHelper {
 			String partContentID;
 			try {
 				partContentID = nextMimeBodyPart.getContentID();
-
 				bodyPartsMap.put(partContentID, nextMimeBodyPart);
 				return nextMimeBodyPart;
 			} catch (MessagingException e) {

@@ -48,7 +48,7 @@ public class EchoRawMTOMTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
                     "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT + 1)
+            + (UtilServer.TESTING_PORT+1)
             + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -92,13 +92,15 @@ public class EchoRawMTOMTest extends TestCase {
     	
     	 OMFactory fac = OMAbstractFactory.getOMFactory();
     	 OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+    	 OMElement rpcWrapEle = fac.createOMElement("methodeWrap",omNs);
 		 OMElement data = fac.createOMElement("data", omNs);
 		 byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
 				98 };
 		 DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
 		 OMTextImpl textData = new OMTextImpl(dataHandler, true);
 		 data.addChild(textData); 
-         return data;
+         rpcWrapEle.addChild(data);
+		 return rpcWrapEle;
     }
 
 
