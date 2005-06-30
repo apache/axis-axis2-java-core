@@ -42,9 +42,11 @@ public class ClientUtil {
 
     /**
      * method getMessageContext
+     *
      * @return msgContext
      */
-    public static MessageContext getMessageContext(AsynchronousClient asyncClient) throws DeploymentException {
+    public static MessageContext getMessageContext(AsynchronousClient asyncClient)
+            throws DeploymentException {
         OMNamespace defNs;
         OMElement operation;
         MessageContext msgContext = null;
@@ -54,12 +56,9 @@ public class ClientUtil {
         defNs = OMAbstractFactory.getSOAP11Factory().createOMNamespace("", "");
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope envelope = omFactory.getDefaultEnvelope();
-        envelope.declareNamespace(
-                "http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        envelope.declareNamespace(
-                "http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        envelope.declareNamespace(
-                "http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+        envelope.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        envelope.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        envelope.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
         envelope.declareNamespace("http://www.w3.org/1999/XMLSchema",
                 "xsd");
 
@@ -68,16 +67,16 @@ public class ClientUtil {
         operation.addAttribute("SOAP-ENV:encordingStyle",
                 "http://schemas.xmlsoap.org/soap/encoding/", null);
 
-        operation.addChild(getOMElement(omFactory,defNs,"oe","xsd:string","latin1"));
-        operation.addChild(getOMElement(omFactory,defNs,"ie","xsd:string","latin1"));
-        operation.addChild(getOMElement(omFactory,defNs,"lr","xsd:string",""));
-        operation.addChild(getOMElement(omFactory,defNs,"safeSearch","xsd:boolean","false"));
-        operation.addChild(getOMElement(omFactory,defNs,"restrict","xsd:string",""));
-        operation.addChild(getOMElement(omFactory,defNs,"filter","xsd:boolean","true"));
-        operation.addChild(getOMElement(omFactory,defNs,"maxResults","xsd:int","10"));
-        operation.addChild(getOMElement(omFactory,defNs,"start","xsd:int",str_ST_index));
-        operation.addChild(getOMElement(omFactory,defNs,"q","xsd:string",asyncClient.getSearch()));
-        operation.addChild(getOMElement(omFactory,defNs,"key","xsd:string",asyncClient.getKey()));
+        operation.addChild(getOMElement(omFactory, defNs, "key", "xsd:string", asyncClient.getKey()));
+        operation.addChild(getOMElement(omFactory, defNs, "q", "xsd:string", asyncClient.getSearch()));
+        operation.addChild(getOMElement(omFactory, defNs, "start", "xsd:int", str_ST_index));
+        operation.addChild(getOMElement(omFactory, defNs, "maxResults", "xsd:int", "10"));
+        operation.addChild(getOMElement(omFactory, defNs, "filter", "xsd:boolean", "true"));
+        operation.addChild(getOMElement(omFactory, defNs, "restrict", "xsd:string", ""));
+        operation.addChild(getOMElement(omFactory, defNs, "safeSearch", "xsd:boolean", "false"));
+        operation.addChild(getOMElement(omFactory, defNs, "lr", "xsd:string", ""));
+        operation.addChild(getOMElement(omFactory, defNs, "ie", "xsd:string", "latin1"));
+        operation.addChild(getOMElement(omFactory, defNs, "oe", "xsd:string", "latin1"));
 
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = fac.buildClientConfigurationContext("doGoogleSearch");
@@ -90,7 +89,8 @@ public class ClientUtil {
         return msgContext;
     }
 
-    private static OMElement getOMElement(OMFactory factory,OMNamespace ns,String elementName,String type,String text){
+    private static OMElement getOMElement(OMFactory factory, OMNamespace ns, String elementName,
+                                          String type, String text) {
         OMElement part = factory.createOMElement(elementName, ns);
         part.addAttribute("xsi:type", type, null);
         part.addChild(factory.createText(text));
