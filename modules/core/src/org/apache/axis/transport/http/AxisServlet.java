@@ -26,15 +26,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.axis.Constants;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.SessionContext;
+import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMException;
 
 /**
  * Class AxisServlet
@@ -80,6 +79,7 @@ public class AxisServlet extends HttpServlet {
         HttpServletResponse httpServletResponse)
         throws ServletException, IOException {
             httpServletResponse.setContentType("text/xml; charset=utf-8");
+            MessageContext msgContext  = null;
         try {
 
             Object sessionContext =
@@ -99,7 +99,7 @@ public class AxisServlet extends HttpServlet {
                 map.put(name, value);
             }
 
-            MessageContext msgContext =
+            msgContext =
                 new MessageContext(
                     configContext,
                     (SessionContext) sessionContext,
@@ -124,12 +124,12 @@ public class AxisServlet extends HttpServlet {
             if (!processed) {
                 lister.handle(httpServletRequest, httpServletResponse);
             }
-        } catch (OMException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
-        } catch (IOException e) {
-            throw new AxisFault(e);
+        } catch (Exception e) {
+            AxisEngine engine = new AxisEngine(configContext);
+            if(msgContext!= null){
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, httpServletResponse.getOutputStream());
+                engine.handleFault(msgContext,e);            
+            }
         }
 
     }
@@ -149,6 +149,7 @@ public class AxisServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+            MessageContext msgContext = null;
         try {
             System.out.println("came here");
             Object sessionContext =
@@ -157,7 +158,7 @@ public class AxisServlet extends HttpServlet {
                 sessionContext = new SessionContext(null);
                 req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }
-            MessageContext msgContext =
+            msgContext =
                 new MessageContext(
                     configContext,
                     (SessionContext) sessionContext,
@@ -180,10 +181,11 @@ public class AxisServlet extends HttpServlet {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
         } catch (AxisFault e) {
-            throw new ServletException(e);
+            AxisEngine engine = new AxisEngine(configContext);
+            if(msgContext!= null){
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, res.getOutputStream());
+                engine.handleFault(msgContext,e);            
+            }
         }
     }
-
-  
-
 }

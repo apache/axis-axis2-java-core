@@ -45,18 +45,19 @@ public class TCPWorker implements AxisWorker {
     private ConfigurationContext configurationContext;
     private Socket socket;
 
-    public TCPWorker(ConfigurationContext configurationContext,Socket socket){
+    public TCPWorker(ConfigurationContext configurationContext, Socket socket) {
         this.configurationContext = configurationContext;
         this.socket = socket;
-    } 
+    }
 
     public void doWork() {
+        MessageContext msgContext = null;
         try {
             Reader in = new InputStreamReader(socket.getInputStream());
             TransportOutDescription transportOut =
                 configurationContext.getAxisConfiguration().getTransportOut(
                     new QName(Constants.TRANSPORT_TCP));
-            MessageContext msgContext =
+            msgContext =
                 new MessageContext(
                     configurationContext,
                     configurationContext.getAxisConfiguration().getTransportIn(
@@ -68,8 +69,7 @@ public class TCPWorker implements AxisWorker {
 
             AxisEngine engine = new AxisEngine(configurationContext);
             try {
-                XMLStreamReader xmlreader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(in);
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
                 msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
@@ -78,12 +78,21 @@ public class TCPWorker implements AxisWorker {
             engine.receive(msgContext);
 
         } catch (Throwable e) {
-            log.error(e);
-            e.printStackTrace();
+            try {
+                AxisEngine engine = new AxisEngine(configurationContext);
+                if (msgContext != null) {
+                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, socket.getOutputStream());
+                    engine.handleFault(msgContext, e);
+                }
+            } catch (Exception e1) {
+                log.error(e);
+                e.printStackTrace();
+            }
+
         } finally {
             if (socket != null) {
-               try {
-                     this.socket.close();
+                try {
+                    this.socket.close();
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();

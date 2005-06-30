@@ -118,15 +118,7 @@ public class MailWorker implements AxisWorker {
             engine.receive(msgContext);
         } catch (Exception e) {
             e.printStackTrace();
-            AxisFault af;
-            if (e instanceof AxisFault) {
-                af = (AxisFault) e;
-                //log.debug(Messages.getMessage("serverFault00"), af);
-                // CT 07-Feb-2005
-                log.debug("Error occured while trying to process the mail.", af);
-            } else {
-                af = AxisFault.makeFault(e);
-            }
+            log.error(e);
         }
 
         /*

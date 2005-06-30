@@ -28,6 +28,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
@@ -38,12 +39,14 @@ public class HTTPWorker implements AxisWorker {
     private ConfigurationContext configurationContext;
     private Socket socket;
 
-    public HTTPWorker(ConfigurationContext configurationContext,Socket socket){
+    public HTTPWorker(ConfigurationContext configurationContext, Socket socket) {
         this.configurationContext = configurationContext;
         this.socket = socket;
-    } 
+    }
 
     public void doWork() {
+        MessageContext msgContext = null;
+        SimpleHTTPOutputStream out = null;
         try {
             if (socket != null) {
                 if (configurationContext == null) {
@@ -55,7 +58,7 @@ public class HTTPWorker implements AxisWorker {
                 TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(
                         new QName(Constants.TRANSPORT_HTTP));
-                MessageContext msgContext =
+                msgContext =
                     new MessageContext(
                         configurationContext,
                         configurationContext.getAxisConfiguration().getTransportIn(
@@ -68,7 +71,7 @@ public class HTTPWorker implements AxisWorker {
                 Map map = reciver.parseTheHeaders(inStream, true);
 
                 //build a way to write the respone if the Axis choose to do so
-                SimpleHTTPOutputStream out;
+
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
                     && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
@@ -80,8 +83,9 @@ public class HTTPWorker implements AxisWorker {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
                 //This is way to provide Accsess to the transport information to the transport Sender
-                msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new SimpleHTTPOutTransportInfo(out));
-                
+                msgContext.setProperty(
+                    HTTPConstants.HTTPOutTransportInfo,
+                    new SimpleHTTPOutTransportInfo(out));
 
                 if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
                     //It is GET handle the Get request 
@@ -117,15 +121,26 @@ public class HTTPWorker implements AxisWorker {
                 out.finalize();
             }
         } catch (Throwable e) {
-            log.error(e);
+            try {
+                AxisEngine engine = new AxisEngine(configurationContext);
+                if (msgContext != null) {
+                    if (out == null) {
+                        out = new SimpleHTTPOutputStream(socket.getOutputStream(), false);
+                    }
+                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+                    engine.handleFault(msgContext, e);
+                }
+            } catch (Exception e1) {
+                log.error(e1);
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         } finally {
             if (socket != null) {
-               try {
-                     this.socket.close();
+                try {
+                    this.socket.close();
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    log.error(e1);
                 }
             }
         }
