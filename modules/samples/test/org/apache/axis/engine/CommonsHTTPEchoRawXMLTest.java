@@ -90,7 +90,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(Constants.TESTING_PATH+"commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_COMMONS_HTTP, false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -127,7 +127,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call(Constants.TESTING_PATH+"commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_COMMONS_HTTP, false);
 
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);

@@ -86,7 +86,7 @@ public class RawXMLINOnlyMessageReceiver
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
                     break;
-                }
+                } 
             }
             Class[] parameters = method.getParameterTypes();
             if ((parameters != null)

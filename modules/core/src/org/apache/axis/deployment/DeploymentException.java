@@ -23,8 +23,6 @@ public class DeploymentException extends AxisFault {
         super(cause);
     }
 
- 
-
     public DeploymentException(String message) {
         super(message);
     }

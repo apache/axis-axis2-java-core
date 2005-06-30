@@ -386,6 +386,7 @@ public class HTTPConstants {
     public static final String HTTP_REQ_TYPE = "HTTP_REQ_TYPE";
     
     public static final String HTTPOutTransportInfo = "HTTPOutTransportInfo";
+    public static final String MTOM_RECIVED = "MTOM_RECEIVED";
 
        /**
         * Default content encoding chatset

@@ -234,16 +234,17 @@ public class InOutMEPClient extends MEPClient {
         boolean useSeparateListener)
         throws AxisFault {
 
-        if (useSeparateListener) {
-            if ((senderTransport.equals(listenerTransport)
-                && (Constants.TRANSPORT_HTTP.equals(senderTransport)
-                    || Constants.TRANSPORT_TCP.equals(senderTransport)))
-                || (Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport)
-                    && Constants.TRANSPORT_HTTP.equals(listenerTransport))) {
-                this.useSeparateListener = useSeparateListener;
-            } else {
-                throw new AxisFault("useSeparateListener = false is only supports by the htpp transport set as the sender and receiver");
+        if (!useSeparateListener) {
+            boolean isTransportsEqual = senderTransport.equals(listenerTransport);
+            boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(senderTransport)
+                            || Constants.TRANSPORT_TCP.equals(senderTransport) 
+                            || Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
+            if(!isTransportsEqual || !isATwoWaytransport){
+                throw new AxisFault("useSeparateListener = false is only supports by the htpp/tcp and tcp commons transport set as the sender and receiver");
             }
+        }else{
+            this.useSeparateListener = useSeparateListener;
+
         }
 
         AxisConfiguration axisConfig = serviceContext.getEngineContext().getAxisConfiguration();
