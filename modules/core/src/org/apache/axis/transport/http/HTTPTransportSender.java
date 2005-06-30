@@ -33,6 +33,8 @@ import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMOutput;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis.transport.AbstractTransportSender;
 
 /**
@@ -62,7 +64,16 @@ public class HTTPTransportSender extends AbstractTransportSender {
             if(doMTOM){
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(OMOutput.getContentType(true)).append("\n");
             }else{
-                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": text/xml; charset=utf-8\n");
+                String nsURI = msgContext.getEnvelope().getNamespace().getName();
+                           if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                               buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
+                               buf.append("; charset=utf-8\n");
+                           } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                               buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": text/xml; charset=utf-8\n");
+                           }else {
+                               throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+                           }
+                
             }
             
             buf.append(HTTPConstants.HEADER_ACCEPT).append(": application/soap+xml, application/dime, multipart/related, text/*\n");

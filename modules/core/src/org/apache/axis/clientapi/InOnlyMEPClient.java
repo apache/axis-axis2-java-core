@@ -19,7 +19,6 @@ package org.apache.axis.clientapi;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -31,8 +30,6 @@ import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.transport.http.HTTPTransportReceiver;
 import org.apache.wsdl.WSDLConstants;
 
 public class InOnlyMEPClient extends MEPClient {
@@ -65,28 +62,6 @@ public class InOnlyMEPClient extends MEPClient {
         msgctx.setOperationContext(axisop.findOperationContext(msgctx,serviceContext));
 
         engine.send(msgctx);
-
-//        MessageContext response =
-//            new MessageContext(msgctx.getSystemContext(),
-//                msgctx.getSessionContext(),
-//                msgctx.getTransportIn(),
-//                msgctx.getTransportOut());
-//        response.setProperty(
-//            MessageContext.TRANSPORT_IN,
-//            msgctx.getProperty(MessageContext.TRANSPORT_IN));
-//        response.setServerSide(false);
-//        response.setOperationContext(msgctx.getOperationContext());
-//        response.setServiceContext(msgctx.getServiceContext());
-//
-//        if(Constants.TRANSPORT_HTTP.equals(senderTransport.getName().getLocalPart())){
-//            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-//            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-//            receiver.checkForMessage(response, sysContext);
-//            SOAPEnvelope resenvelope = response.getEnvelope();
-//            if (resenvelope!= null && resenvelope.getBody().hasFault()) {
-//                throw new AxisFault(resenvelope.getBody().getFault().getException());
-//            }
-//        }
     }
 
     /**

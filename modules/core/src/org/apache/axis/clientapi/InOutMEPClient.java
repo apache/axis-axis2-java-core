@@ -196,52 +196,6 @@ public class InOutMEPClient extends MEPClient {
                     new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
-            //            //TODO start the server
-            //            if (!useSeparateListener) {
-            //                Runnable newThread = new Runnable() {
-            //                    public void run() {
-            //                        try {
-            //                            MessageContext response =
-            //                                new MessageContext(
-            //                                    msgctx.getSessionContext(),
-            //                                    msgctx.getTransportIn(),
-            //                                    msgctx.getTransportOut(),
-            //                                    msgctx.getSystemContext());
-            //                            response.setServerSide(false);
-            //                            response.setProperty(
-            //                                MessageContext.TRANSPORT_READER,
-            //                                msgctx.getProperty(
-            //                                    MessageContext.TRANSPORT_READER));
-            //                            response.setOperationContext(
-            //                                msgctx.getOperationContext());
-            //                            response.setServiceContext(
-            //                                msgctx.getServiceContext());
-            //
-            //                            SOAPEnvelope resenvelope =
-            //                                checkReturnChannel(response);
-            //                            if (resenvelope != null) {
-            //                                response.setEnvelope(resenvelope);
-            //                                AxisEngine engine =
-            //                                    new AxisEngine(
-            //                                        serviceContext.getEngineContext());
-            //                                engine.receive(response);
-            //
-            //                                resenvelope = response.getEnvelope();
-            //                                AsyncResult asyncResult = new AsyncResult();
-            //                                asyncResult.setResult(resenvelope);
-            //                                callback.onComplete(asyncResult);
-            //                            } else {
-            //                                throw new AxisFault("Blocking invocation always expect a response");
-            //                            }
-            //                        } catch (AxisFault e) {
-            //                            callback.reportError(e);
-            //                        }
-            //
-            //                    }
-            //                };
-            //                (new Thread(newThread)).start();
-            //            }
-
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
         } catch (IOException e) {
@@ -312,38 +266,6 @@ public class InOutMEPClient extends MEPClient {
             ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
         }
     }
-
-    //    private SOAPEnvelope checkReturnChannel(MessageContext response) throws AxisFault {
-    //        SOAPEnvelope resenvelope = null;
-    //        try {
-    //            //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-    //            if (Constants.TRANSPORT_HTTP.equals(listenerTransport)) {
-    //                HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-    //                resenvelope = receiver.handleHTTPRequest(response, serviceContext.getEngineContext());
-    //            } else if (Constants.TRANSPORT_TCP.equals(listenerTransport)) {
-    //                InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
-    //                response.setProperty(MessageContext.TRANSPORT_IN,null);
-    //                Reader in = new InputStreamReader(inStream);
-    //
-    //                if (in != null) {
-    //                    XMLStreamReader xmlreader =
-    //                        XMLInputFactory.newInstance().createXMLStreamReader(in);
-    //                    StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-    //                    resenvelope = (SOAPEnvelope) builder.getDocumentElement();
-    //                } else {
-    //                    throw new AxisFault(
-    //                        "Sync invocation expect a proeprty "
-    //                            + MessageContext.TRANSPORT_IN
-    //                            + " set ");
-    //                }
-    //            }
-    //        } catch (XMLStreamException e) {
-    //            throw new AxisFault(e);
-    //        } catch (FactoryConfigurationError e) {
-    //            throw new AxisFault(e);
-    //        }
-    //        return resenvelope;
-    //    }
 
     private void checkTransport(MessageContext msgctx) throws AxisFault {
         if (senderTransport == null) {

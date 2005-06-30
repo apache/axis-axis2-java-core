@@ -52,6 +52,7 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis.util.Utils;
 
@@ -77,7 +78,9 @@ public class HTTPTransportUtils {
 				builder = selectBuilderForMIME(msgContext, in, contentType);
 				envelope = (SOAPEnvelope) builder.getDocumentElement();
 			} else if (contentType != null
-					&& contentType.indexOf(Constants.SOAP.SOAP_11_CONTENT_TYPE) > -1) {
+					&& contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                 //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
+                 //the SOAP Action is absent it is rest !!        
 				if ((soapAction == null || soapAction.length() == 0)
 						&& Constants.VALUE_TRUE
 								.equals(msgContext

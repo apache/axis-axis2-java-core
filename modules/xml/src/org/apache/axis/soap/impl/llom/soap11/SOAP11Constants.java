@@ -43,4 +43,7 @@ public interface SOAP11Constants extends SOAPConstants{
    public static final String SOAP_FAULT_ACTOR_LOCAL_NAME = "faultactor";
 
    public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "detail";
+   
+   //SOAP 1.2 Content Type
+   public static final String SOAP_11_CONTENT_TYPE = "text/xml";
 }

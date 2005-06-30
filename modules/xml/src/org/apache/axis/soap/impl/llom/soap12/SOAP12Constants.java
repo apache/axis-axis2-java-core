@@ -57,4 +57,7 @@ public interface SOAP12Constants extends SOAPConstants{
 
     // SOAP Fault Role
     public static final String SOAP_FAULT_ROLE_LOCAL_NAME = "Role";
+    
+    //SOAP 1.2 Content Type
+    public static final String SOAP_12_CONTENT_TYPE = "application/soap+xml";
 }

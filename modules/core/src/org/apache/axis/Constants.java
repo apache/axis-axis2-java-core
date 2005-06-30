@@ -163,12 +163,6 @@ public class Constants {
 
     public static final String LOGGED = "Logged";
 
-    public static interface SOAP {
-        public static final String SOAP_12_CONTENT_TYPE = "application/soap+xml";
-        public static final String SOAP_11_CONTENT_TYPE = "text/xml";
-        //TODO
-        public static final String MTOM_CONTENT_TYPE = "multipart/related";
-    }
 
    public static interface Configuration {
         public static final String DO_REST = "doREST";
