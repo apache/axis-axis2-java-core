@@ -133,11 +133,12 @@ public class TCPServer extends TransportListener implements Runnable {
     public static void main(String[] args) throws AxisFault, NumberFormatException {
         if (args.length != 2) {
             System.out.println("TCPServer repositoryLocation port");
+        }else{
+            TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]), args[0]);
+            System.out.println("[Axis2] Using the Repository " + new File(args[0]).getAbsolutePath());
+            System.out.println("[Axis2] Starting the TCP Server on port " + args[1]);
+            tcpServer.start();
         }
-        TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]), args[0]);
-        System.out.println("[Axis2] Using the Repository " + new File(args[1]).getAbsolutePath());
-        System.out.println("[Axis2] Starting the TCP Server on port " + args[0]);
-        tcpServer.start();
     }
 
 }
