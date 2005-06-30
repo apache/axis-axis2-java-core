@@ -239,7 +239,9 @@ public class InOutMEPClient extends MEPClient {
             boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(senderTransport)
                             || Constants.TRANSPORT_TCP.equals(senderTransport) 
                             || Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
-            if(!isTransportsEqual || !isATwoWaytransport){
+            boolean isCommonsAndHTTP =  Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport) 
+                    && Constants.TRANSPORT_HTTP.equals(listenerTransport);                         
+            if(!isCommonsAndHTTP && (!isTransportsEqual || !isATwoWaytransport)){
                 throw new AxisFault("useSeparateListener = false is only supports by the htpp/tcp and tcp commons transport set as the sender and receiver");
             }
         }else{

@@ -26,9 +26,11 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Map;
 
+import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.Parameter;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.engine.AxisFault;
@@ -180,6 +182,15 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     in = new ChunkedInputStream(transportInfo.in);
                 }
                 msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
+                
+                String contentType = (String)map.get(HTTPConstants.HEADER_CONTENT_TYPE);
+                if (contentType != null && contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0){
+                    OperationContext opContext = msgContext.getOperationContext();
+                    if(opContext != null){
+                        opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,contentType);
+                    }
+                    
+                }
             }
         } catch (AxisFault e) {
             // TODO Auto-generated catch block

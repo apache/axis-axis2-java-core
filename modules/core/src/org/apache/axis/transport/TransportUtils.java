@@ -22,7 +22,9 @@ import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
@@ -30,42 +32,48 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
-
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.transport.http.HTTPTransportUtils;
 
 public class TransportUtils {
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext)
-        throws AxisFault {
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
 
-        InputStream inStream =
-            (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
+        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
         msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
-        if(inStream == null){
+        if (inStream == null) {
             throw new AxisFault("Input stram is Null");
         }
         return createSOAPMessage(msgContext, inStream);
     }
 
-
- 
-    public static SOAPEnvelope createSOAPMessage(
-        MessageContext msgContext,
-        InputStream inStream )
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream)
         throws AxisFault {
         try {
-            Reader reader = new InputStreamReader(inStream);
-            
-            XMLStreamReader xmlreader =
-                XMLInputFactory.newInstance().createXMLStreamReader(reader);
-                
+            Object contentType = null;
+            OperationContext opContext = msgContext.getOperationContext();
+            if (opContext != null) {
+                contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
+            }
+
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
-            if (msgContext.isDoingREST()) {
+
+            if (contentType != null) {
+                builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream, (String)contentType);
+                envelope = (SOAPEnvelope) builder.getDocumentElement();
+            }else if (msgContext.isDoingREST()) {
+                Reader reader = new InputStreamReader(inStream);
+                XMLStreamReader xmlreader =
+                    XMLInputFactory.newInstance().createXMLStreamReader(reader);
                 SOAPFactory soapFactory = new SOAP11Factory();
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);
                 envelope = soapFactory.getDefaultEnvelope();
                 envelope.getBody().addChild(builder.getDocumentElement());
             } else {
+                Reader reader = new InputStreamReader(inStream);
+                XMLStreamReader xmlreader =
+                    XMLInputFactory.newInstance().createXMLStreamReader(reader);
                 builder = new StAXSOAPModelBuilder(xmlreader);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
