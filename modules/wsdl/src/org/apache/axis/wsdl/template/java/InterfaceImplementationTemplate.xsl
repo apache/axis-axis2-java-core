@@ -77,12 +77,12 @@
 		    org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_serviceContext);
  		    org.apache.axis.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(toEPR);
+            _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
             org.apache.axis.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:choose>
               <xsl:when test="$inputtype!=''">
                   <xsl:choose>
-
                       <xsl:when test="$style='rpc'">
                        // Style is RPC
                              setValueRPC(env,
@@ -152,6 +152,7 @@
              org.apache.axis.clientapi.Call _call = new org.apache.axis.clientapi.Call(_serviceContext);<!-- this needs to change -->
  		     org.apache.axis.context.MessageContext _messageContext = getMessageContext();
              _call.setTo(toEPR);
+            _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
              org.apache.axis.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
               <xsl:when test="$inputtype!=''">

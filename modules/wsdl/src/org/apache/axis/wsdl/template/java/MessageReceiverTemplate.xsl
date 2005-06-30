@@ -47,7 +47,7 @@
 			<xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 					
 					
-					if(methodName.equals("<xsl:value-of select="@name"/> ")){
+					if(methodName.equals("<xsl:value-of select="@name"/>")){
 											
 				
 			<xsl:if test="$returntype!=''">

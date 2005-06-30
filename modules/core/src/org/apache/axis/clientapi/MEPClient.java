@@ -42,6 +42,14 @@ public abstract class MEPClient {
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
 
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    public void setSoapAction(String soapAction) {
+        this.soapAction = soapAction;
+    }
+
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
         this.mep = mep;
