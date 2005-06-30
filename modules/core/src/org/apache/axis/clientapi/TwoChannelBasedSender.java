@@ -55,7 +55,7 @@ public class TwoChannelBasedSender {
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
-
+        response.setDoingREST(msgctx.isDoingREST());
         
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response);
 //                try {

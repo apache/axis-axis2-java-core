@@ -41,6 +41,12 @@ public abstract class MEPClient {
     protected final String mep;
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
+    protected boolean doREST = false; 
+
+    public void setDoREST(boolean b) {
+       doREST = b;
+   }
+
 
     public String getSoapAction() {
         return soapAction;
@@ -51,7 +57,7 @@ public abstract class MEPClient {
         this.mep = mep;
     }
 
-    protected void verifyInvocation(OperationDescription axisop) throws AxisFault {
+    protected void verifyInvocation(OperationDescription axisop,MessageContext msgCtx) throws AxisFault {
         if (axisop == null) {
             throw new AxisFault("OperationDescription can not be null");
         }
@@ -66,6 +72,7 @@ public abstract class MEPClient {
         if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
             serviceContext.getServiceConfig().addOperation(axisop);
         }
+        msgCtx.setDoingREST(doREST);
     }
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {

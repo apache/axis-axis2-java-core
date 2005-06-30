@@ -80,11 +80,10 @@ public class HTTPTransportUtils {
 			} else if (contentType != null
 					&& contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                  //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
-                 //the SOAP Action is absent it is rest !!        
+                 //the SOAP Action is absent it is rest !!    
+                Object enable =  msgContext.getProperty(Constants.Configuration.ENABLE_REST);
 				if ((soapAction == null || soapAction.length() == 0)
-						&& Constants.VALUE_TRUE
-								.equals(msgContext
-										.getProperty(Constants.Configuration.ENABLE_REST))) {
+						&& Constants.VALUE_TRUE.equals(enable)) {
 					msgContext.setDoingREST(true);
 					SOAPFactory soapFactory = new SOAP11Factory();
                     Reader reader = new InputStreamReader(in);

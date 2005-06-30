@@ -165,12 +165,9 @@ public class Constants {
 
 
    public static interface Configuration {
-        public static final String DO_REST = "doREST";
         public static final String ENABLE_REST = "enableREST";
         // globally enable MTOM 
         public static final String ENABLE_MTOM = "enableMTOM";
-        //set after checking the Envelope & ENABLE_MTOM
-        //public static final String DO_MTOM = "doMTOM";
     }
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
@@ -178,8 +175,8 @@ public class Constants {
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     
     
-    public static final String TESTING_PATH = "target/test-resources/"; 
-   //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
+    //public static final String TESTING_PATH = "target/test-resources/"; 
+   public static final String TESTING_PATH = "modules/samples/target/test-resources/";
    
    public static final String TESTING_REPOSITORY = TESTING_PATH+ "samples";
    

@@ -61,6 +61,7 @@ public class InOutMEPClient extends MEPClient {
      */
     protected boolean useSeparateListener = false;
 
+
     /**
      * The address the message should be send
      */
@@ -108,7 +109,7 @@ public class InOutMEPClient extends MEPClient {
 
     public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
         throws AxisFault {
-        verifyInvocation(axisop);
+        verifyInvocation(axisop,msgctx);
         if (useSeparateListener) {
             SyncCallBack callback = new SyncCallBack();
             invokeNonBlocking(axisop, msgctx, callback);
@@ -167,7 +168,7 @@ public class InOutMEPClient extends MEPClient {
         final MessageContext msgctx,
         final Callback callback)
         throws AxisFault {
-        verifyInvocation(axisop);
+        verifyInvocation(axisop,msgctx);
         msgctx.setTo(to);
         try {
             final ConfigurationContext syscontext = serviceContext.getEngineContext();
@@ -343,4 +344,5 @@ public class InOutMEPClient extends MEPClient {
             }
         }
     }
+   
 }

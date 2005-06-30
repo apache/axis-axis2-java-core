@@ -43,7 +43,7 @@ public class InOnlyMEPClient extends MEPClient {
     }
 
     public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
-        verifyInvocation(axisop);
+        verifyInvocation(axisop,msgctx);
         msgctx.setSoapAction(soapAction);
         msgctx.setMessageInformationHeaders(messageInformationHeaders);
         msgctx.setServiceContext(serviceContext);

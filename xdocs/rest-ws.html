@@ -9,7 +9,7 @@
  <h2>Doing REST web services with HTTP POST</h2> 
   <p>REST support can be enabled in the Server side by adding the following line to the axis.xml file.</p>
   <code>
-    &lt;parameter name="eanbleREST" locked="xsd:false"&gt;true&lt;/parameter&gt;
+    call.setDoREST(true);
     </code>
   <p>But it act both as a REST endpoint as well as a SOAP endpoint. When a Message is received if the content type is text/xml and the SOAP Action Headers is missing the Message is considered as a RESTful Message. Else they are treated as usual SOAP Messages.</p>
   

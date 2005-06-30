@@ -20,12 +20,15 @@ package org.apache.axis.rest;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
+import org.apache.axis.clientapi.AsyncResult;
+import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.Parameter;
@@ -33,6 +36,7 @@ import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisConfigurationImpl;
+import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
@@ -151,45 +155,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         return method;
     }
 
-//    public void testEchoXMLASync() throws Exception {
-//                OMElement payload = createEnvelope();
-//
-//        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-//
-//        call.setTo(targetEPR);
-//        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-//
-//        Callback callback = new Callback() {
-//            public void onComplete(AsyncResult result) {
-//                try {
-//                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
-//                } catch (XMLStreamException e) {
-//                    reportError(e);
-//                } finally {
-//                    finish = true;
-//                }
-//            }
-//
-//            public void reportError(Exception e) {
-//                e.printStackTrace();
-//                finish = true;
-//            }
-//        };
-//
-//        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
-//        int index = 0;
-//        while (!finish) {
-//            Thread.sleep(1000);
-//            index++;
-//            if(index > 10 ){
-//                throw new AxisFault("Server is shutdown as the Async response take too longs time");
-//            }
-//        }
-//
-//
-//        log.info("send the reqest");
-//    }
-
+    
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
@@ -199,7 +165,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        call.set(Constants.Configuration.DO_REST,"true");
+        call.setDoREST(true);
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
