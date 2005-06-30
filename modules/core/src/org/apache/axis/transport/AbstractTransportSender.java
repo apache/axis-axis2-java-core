@@ -48,7 +48,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 	 */
 	private Log log = LogFactory.getLog(getClass());
 
-	protected boolean doREST = false;
+
 
 	/**
 	 * Field NAME
@@ -77,11 +77,6 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		//Check for the REST behaviour, if you desire rest beahaviour
 		//put a <parameter name="doREST" value="true"/> at the axis2.xml
-		Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-		if (doREST != null && Constants.VALUE_TRUE.equals(doREST)) {
-			this.doREST = true;
-		}
-        
         msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
 
 		OutputStream out = null;
@@ -130,7 +125,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 		SOAPEnvelope envelope = msgContext.getEnvelope();
 		OMElement outputMessage = envelope;
 
-		if (envelope != null && this.doREST) {
+		if (envelope != null && msgContext.isDoingREST()) {
 			outputMessage = envelope.getBody().getFirstElement();
 		}
 

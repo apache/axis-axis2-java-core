@@ -34,14 +34,13 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
     private boolean chuncked = false;
-    private boolean doMTOM = false;
+
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
     public static final String HTTP_METHOD = "HTTP_METHOD";
 
     
     protected HttpClient httpClient;
     protected OMElement outputMessage;
-    protected boolean doREST;
 
     public CommonsHTTPTransportSender() {
     } //default
@@ -50,10 +49,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         try {
             //Check for the REST behaviour, if you desire rest beahaviour
             //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-            Object doREST = msgContext.getProperty(Constants.Configuration.DO_REST);
-            if (doREST != null && Constants.VALUE_TRUE.equals(doREST)) {
-                this.doREST = true;
-            }
 
             EndpointReference epr = null;
             if (msgContext.getTo() != null
@@ -65,7 +60,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             OMElement dataOut = null;
-            if (this.doREST) {
+            if (msgContext.isDoingREST()) {
                 dataOut = msgContext.getEnvelope().getFirstElement();
             } else {
                 dataOut = msgContext.getEnvelope();
@@ -144,7 +139,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 }
             }
             // othervise assumes HTTP 1.1 and keep-alive is default.
-            if (!this.doREST) {
+            if (!msgContext.isDoingREST()) {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
             }
 

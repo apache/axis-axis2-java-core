@@ -126,7 +126,11 @@ public class MessageContext extends AbstractContext {
     
     private String soapAction;
     
+    
+    //Are we doing MTOM now?
     private boolean doingMTOM = false;
+    //Are we doing REST now?
+    private boolean doingREST = false;
     
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -583,6 +587,20 @@ public class MessageContext extends AbstractContext {
      */
     public void setDoingMTOM(boolean b) {
         doingMTOM = b;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isDoingREST() {
+        return doingREST;
+    }
+
+    /**
+     * @param b
+     */
+    public void setDoingREST(boolean b) {
+        doingREST = b;
     }
 
 }

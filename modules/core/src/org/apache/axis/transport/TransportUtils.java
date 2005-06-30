@@ -22,7 +22,6 @@ import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
@@ -53,10 +52,6 @@ public class TransportUtils {
         InputStream inStream )
         throws AxisFault {
         try {
-            //Check for the REST behaviour, if you desire rest beahaviour
-            //put a <parameter name="doREST" value="true"/> at the server.xml/client.xml file
-            Object doREST =
-                msgContext.getProperty(Constants.Configuration.DO_REST);
             Reader reader = new InputStreamReader(inStream);
             
             XMLStreamReader xmlreader =
@@ -64,7 +59,7 @@ public class TransportUtils {
                 
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
-            if (doREST != null && "true".equals(doREST)) {
+            if (msgContext.isDoingREST()) {
                 SOAPFactory soapFactory = new SOAP11Factory();
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);

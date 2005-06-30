@@ -111,4 +111,11 @@ public abstract class MEPClient {
         soapVersionURI = string;
     }
 
+    /**
+     * @param string
+     */
+    public void setSoapAction(String string) {
+        soapAction = string;
+    }
+
 }

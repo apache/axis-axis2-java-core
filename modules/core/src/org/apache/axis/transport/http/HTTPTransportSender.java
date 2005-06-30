@@ -79,7 +79,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             if(!chuncked && !msgContext.isDoingMTOM()) {
                 buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
             }
-            if (!this.doREST) {
+            if (!msgContext.isDoingREST()) {
                 buf.append("SOAPAction: \"" + soapActionString + "\"\n");
             }
             buf.append("\n");

@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -83,8 +82,7 @@ public class HTTPTransportUtils {
 						&& Constants.VALUE_TRUE
 								.equals(msgContext
 										.getProperty(Constants.Configuration.ENABLE_REST))) {
-					msgContext.setProperty(Constants.Configuration.DO_REST,
-							Constants.VALUE_TRUE);
+					msgContext.setDoingREST(true);
 					SOAPFactory soapFactory = new SOAP11Factory();
                     Reader reader = new InputStreamReader(in);
                     XMLStreamReader xmlreader = XMLInputFactory.newInstance()
@@ -133,8 +131,7 @@ public class HTTPTransportUtils {
 			if (envelope == null) {
 				return false;
 			} else {
-				msgContext.setProperty(Constants.Configuration.DO_REST,
-						Constants.VALUE_TRUE);
+				msgContext.setDoingREST(true);
 				msgContext.setEnvelope(envelope);
 				AxisEngine engine = new AxisEngine(configurationContext);
 				engine.receive(msgContext);
