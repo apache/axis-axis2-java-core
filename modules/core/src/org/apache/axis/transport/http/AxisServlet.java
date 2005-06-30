@@ -151,7 +151,6 @@ public class AxisServlet extends HttpServlet {
         throws ServletException, IOException {
             MessageContext msgContext = null;
         try {
-            System.out.println("came here");
             Object sessionContext =
                 req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
