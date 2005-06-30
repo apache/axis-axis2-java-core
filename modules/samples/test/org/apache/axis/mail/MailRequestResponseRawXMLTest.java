@@ -157,7 +157,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             while (!finish) {
                 Thread.sleep(1000);
                 index++;
-                if (index > 30) {
+                if (index > 10) {
                     throw new AxisFault("Server is shutdown as the Async response take too longs time");
                 }
             }
@@ -172,7 +172,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         TransportInDescription transportIn =
             new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "foo"));
+        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "foo@127.0.0.1"));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.password", "axis2"));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "1134"));
         transportIn.addParameter(
@@ -184,7 +184,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             new TransportOutDescription(new QName(Constants.TRANSPORT_MAIL));
 
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "foo@127.0.0.1"));
+        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "foo"));
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.password", "axis2"));
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.port", "1049"));
         transportOut.setSender(new MailTransportSender());
@@ -203,7 +203,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         TransportInDescription transportIn =
             new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
-        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "bar"));
+        transportIn.addParameter(new ParameterImpl("transport.mail.pop3.user", "bar@127.0.0.1"));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.password", "axis2"));
         transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "1134"));
         transportIn.addParameter(
@@ -215,7 +215,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             new TransportOutDescription(new QName(Constants.TRANSPORT_MAIL));
 
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
-        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "bar@127.0.0.1"));
+        transportOut.addParameter(new ParameterImpl("transport.mail.smtp.user", "bar"));
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.password", "axis2"));
         transportOut.addParameter(new ParameterImpl("transport.mail.smtp.port", "1049"));
         transportOut.setSender(new MailTransportSender());
