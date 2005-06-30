@@ -24,7 +24,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a> For
  *         the moment this assumes that transport takes the decision of whether

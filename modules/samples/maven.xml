@@ -33,7 +33,12 @@
       <!-- Commons transport enabled enabled Repository -->
         <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
         <copy file="test/org/apache/axis/engine/commons-http-enabled-axis2.xml" 
-        tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>        
+        tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>       
+        
+        <!-- MTOM enabled Repository -->
+        <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
+        <copy file="test/org/apache/axis/engine/MTOM-enabled-axis2.xml" 
+        tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>         
     </postGoal>
 
     <postGoal name="test:test">

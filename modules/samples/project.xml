@@ -138,7 +138,8 @@
 		<exclude>**/*MailRequestResponseRawXMLTest.java</exclude> 
 		<exclude>**/*EchoRawXMLChunckedTest.java</exclude> 
 		<!-- <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>  -->
-		<exclude>**/*EchoRawMTOMTest.java</exclude> 
+		<exclude>**/*EchoRawMTOMTest.java</exclude>
+		<exclude>**/*EchoRawMTOMToBase64Test.java</exclude> 
       </excludes>
      <includes>
         <include>**/*Test.java</include>

@@ -15,9 +15,9 @@
  */
 
 package org.apache.axis.engine;
-
-//todo
-
+/**
+ * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
+ */
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -31,7 +31,6 @@ import org.apache.axis.attachments.ByteArrayDataSource;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
@@ -45,20 +44,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class EchoRawMTOMTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT+1)
-            + "/axis/services/EchoXMLService/echoMTOMtoBase64");
-    private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoMTOMtoBase64");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+	 private EndpointReference targetEPR =
+        new EndpointReference(AddressingConstants.WSA_TO,
+                "http://127.0.0.1:"
+        + (UtilServer.TESTING_PORT+1)
+        + "/axis/services/EchoXMLService/echoOMElement");
+private Log log = LogFactory.getLog(getClass());
+private QName serviceName = new QName("EchoXMLService");
+private QName operationName = new QName("echoOMElement");
+private QName transportName = new QName("http://localhost/my", "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
-    //private Thread thisThread;
-   // private SimpleHTTPServer sas;
+   
     private ServiceContext serviceContext;
     private ServiceDescription service;
 
@@ -73,7 +71,7 @@ public class EchoRawMTOMTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service =
                 Utils.createSimpleService(serviceName,
         Echo.class.getName(),
@@ -110,31 +108,14 @@ public class EchoRawMTOMTest extends TestCase {
         OMElement payload = createEnvelope();
 
         org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM,Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+//        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
     }
-
-   /* public void testCorrectSOAPEnvelope() throws Exception {
-
-        OMElement payload = createEnvelope();
-
-        org.apache.axis.clientapi.Call call = new org.apache.axis.clientapi.Call();
-
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-
-        OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-        call.close();
-    }*/
-
 
 }

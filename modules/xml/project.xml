@@ -36,6 +36,7 @@
 		<exclude>**/*MTOMStAXSOAPModelBuilderTest.java</exclude> 
 		<exclude>**/*ImageSampleTest.java</exclude> 
 		<exclude>**/*MIMEHelperTest.java</exclude> 
+		<exclude>**/*MIMEOutputUtilsTest.java</exclude>
       	</excludes>
       	<includes>
         	<include>**/*Test.java</include>

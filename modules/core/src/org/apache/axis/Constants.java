@@ -169,6 +169,8 @@ public class Constants {
         public static final String ENABLE_REST = "enableREST";
         // globally enable MTOM 
         public static final String ENABLE_MTOM = "enableMTOM";
+        public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
+        public static final String CACHE_ATTACHMENTS = "cacheAttachments";
     }
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";

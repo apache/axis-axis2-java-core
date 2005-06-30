@@ -66,7 +66,7 @@ public class MIMEOutputUtils {
 		}
 	}
 	
-	private static MimeBodyPart createMimeBodyPart(OMText node)
+	protected static MimeBodyPart createMimeBodyPart(OMText node)
 	throws MessagingException {
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();
 		mimeBodyPart.setDataHandler(node.getDataHandler());
@@ -80,7 +80,7 @@ public class MIMEOutputUtils {
 	 * @throws IOException
 	 *             This will write the boundary to output Stream
 	 */
-	private static void writeMimeBoundary(OutputStream outStream,
+	protected static void writeMimeBoundary(OutputStream outStream,
 			String boundary) throws IOException {
 		outStream.write(new byte[] { 45, 45 });
 		outStream.write(boundary.getBytes());
@@ -90,7 +90,7 @@ public class MIMEOutputUtils {
 	 * @throws IOException
 	 *             This will write the boundary with CRLF
 	 */
-	private static void startWritingMime(OutputStream outStream, String boundary)
+	protected static void startWritingMime(OutputStream outStream, String boundary)
 	throws IOException {
 		writeMimeBoundary(outStream, boundary);
 		//outStream.write(CRLF);
@@ -104,7 +104,7 @@ public class MIMEOutputUtils {
 	 * @throws IOException
 	 * @throws MessagingException
 	 */
-	private static void writeBodyPart(OutputStream outStream,
+	protected static void writeBodyPart(OutputStream outStream,
 			MimeBodyPart part, String boundary) throws IOException,
 			MessagingException {
 		outStream.write(CRLF);
@@ -117,7 +117,7 @@ public class MIMEOutputUtils {
 	 * @throws IOException
 	 *             This will write "--" to the end of last boundary
 	 */
-	private static void finishWritingMime(OutputStream outStream)
+	protected static void finishWritingMime(OutputStream outStream)
 	throws IOException {
 		outStream.write(new byte[] { 45, 45 });
 	}
