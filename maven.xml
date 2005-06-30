@@ -335,8 +335,10 @@
 			<ant:classes dir="modules/core/conf">
       		    	<ant:include name="*.properties"/>
 			</ant:classes>
-                        <ant:webinf dir="modules/samples/target/toWar/"/>
-                        <ant:webinf dir="modules/core/src/org/apache/axis/deployment"/>
+            <ant:webinf dir="modules/samples/target/toWar/"/>
+            <ant:webinf dir="modules/core/src/org/apache/axis/deployment">
+                   <ant:include name="*.xml"/>
+             </ant:webinf>
 		</ant:war>
     </goal>
 	<!-- to transforme htmls to xdocs -->
@@ -383,9 +385,8 @@
 		</ant:copy>
 		<ant:copy todir="${bin.dist.dir}/samples">
 			<ant:fileset dir="modules/samples/target/samples">
-                                <include name="**"/>
-                                <exclude name="googleSearch"/>
-                        </ant:fileset>
+                      <include name="**"/>
+             </ant:fileset>
 		</ant:copy> 
 		<ant:copy todir="${bin.dist.dir}/">
 			<ant:fileset dir=".">
