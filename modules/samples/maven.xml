@@ -206,6 +206,27 @@
             </fileset>           
         </jar>
     </goal>
-
-
+    
+    
+    <goal name="test-mtom">
+    		<echo message="running MTOM tests"/>
+			<junit printsummary="yes" haltonfailure="yes">
+					<classpath>
+					      <fileset dir="${maven.repo.local}">
+        						<include name="j2ee/jars/***.jar"/>
+					      </fileset>
+					      <pathelement location="target/test-classes" />
+				          <path refid="maven.dependency.classpath"/>
+					 </classpath>
+				   <formatter type="plain"/>
+				   <test name="org.apache.axis.engine.EchoRawMTOMToBase64Test" />
+  				   <test name="org.apache.axis.engine.EchoRawMTOMTest" />
+				   <!--
+				  <batchtest fork="yes" todir="${reports.tests}">
+					    <fileset dir="test">
+						      <include name="**MTOM*.java"/>
+     				    </fileset>
+				  </batchtest> -->
+			</junit>
+    </goal>
  </project>
