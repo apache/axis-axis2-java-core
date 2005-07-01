@@ -86,7 +86,7 @@ public class RawXMLINOnlyMessageReceiver
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
                     break;
-                } 
+                }
             }
             Class[] parameters = method.getParameterTypes();
             if ((parameters != null)
@@ -119,8 +119,12 @@ public class RawXMLINOnlyMessageReceiver
 
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
                     OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
-                    responseMethodName.addChild(result);
-                    envelope.getBody().addChild(responseMethodName);
+                    if (result != null) {
+                        responseMethodName.addChild(result);
+                    }
+                    if (responseMethodName != null) {
+                        envelope.getBody().addChild(responseMethodName);
+                    }
                 } else {
                     throw new AxisFault("Unknown style ");
                 }
