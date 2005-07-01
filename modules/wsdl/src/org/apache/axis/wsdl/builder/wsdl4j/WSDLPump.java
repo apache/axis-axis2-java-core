@@ -311,11 +311,15 @@ public class WSDLPump {
                     .createMessageReference();
             wsdlInputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
             wsdlInputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            wsdlInputMessage.setElement(this.generateReferenceQname(wsdl4jInputMessage.getMessage()));
-            this.copyExtensibleElements(
-                    (wsdl4jInputMessage.getMessage()).getExtensibilityElements(),
-                    wsdlInputMessage
-            );
+            
+            Message message = wsdl4jInputMessage.getMessage();
+            if(null != message){
+				wsdlInputMessage.setElement(this.generateReferenceQname(message));
+	            this.copyExtensibleElements(
+	                    (message).getExtensibilityElements(),
+	                    wsdlInputMessage
+	            );
+            }
             this.copyExtensibilityAttribute(wsdl4jInputMessage.getExtensionAttributes(),
                     wsdlInputMessage);
             wsdlOperation.setInputMessage(wsdlInputMessage);
@@ -329,11 +333,14 @@ public class WSDLPump {
             wsdlOutputMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
             wsdlOutputMessage.setMessageLabel(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-            wsdlOutputMessage.setElement(this.generateReferenceQname(wsdl4jOutputMessage.getMessage()));
-            this.copyExtensibleElements(
-                    (wsdl4jOutputMessage.getMessage()).getExtensibilityElements(),
-                    wsdlOutputMessage
-            );
+            Message outputMessage = wsdl4jOutputMessage.getMessage();
+            if(null != outputMessage){
+				wsdlOutputMessage.setElement(this.generateReferenceQname(outputMessage));
+	            this.copyExtensibleElements(
+	                    (outputMessage).getExtensibilityElements(),
+	                    wsdlOutputMessage
+	            );
+            }
             this.copyExtensibilityAttribute(wsdl4jOutputMessage.getExtensionAttributes(),
                     wsdlOutputMessage);
             wsdlOperation.setOutputMessage(wsdlOutputMessage);
@@ -348,7 +355,10 @@ public class WSDLPump {
             Fault fault = (Fault)faults.get(faultKeyIterator.next());
             faultReference = wsdlComponenetFactory.createFaultReference();
             faultReference.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-            faultReference.setRef(this.generateReferenceQname(fault.getMessage()));
+            Message faultMessage = fault.getMessage();
+            if(null != faultMessage){
+            	faultReference.setRef(this.generateReferenceQname(faultMessage));
+            }
             wsdlOperation.addOutFault(faultReference);
             this.copyExtensibilityAttribute(fault.getExtensionAttributes(), faultReference);
             //TODO Fault Message lable
@@ -361,7 +371,7 @@ public class WSDLPump {
 
     }
     private QName generateReferenceQname(Message wsdl4jMessage){
-        QName referenceQName = null;
+        QName referenceQName = null;        
         if (wsdl4jMessage.getParts().size() > 1){
             // Multipart Message
 
