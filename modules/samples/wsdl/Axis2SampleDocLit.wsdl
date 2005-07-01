@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="Axis2SampleDocLitService" 
-    targetNamespace="http://soapinterop.org/Axis2SampleDocLit" 
+    targetNamespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
     xmlns="http://schemas.xmlsoap.org/wsdl/" 
     xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" 
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-    xmlns:tns="http://soapinterop.org/Axis2SampleDocLit" 
+    xmlns:tns="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-    xmlns:xsd1="http://soapinterop.org/xsd"
+    xmlns:xsd1="http://userguide.axis2.apache.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <types>
-        <schema targetNamespace="http://soapinterop.org/xsd"
+        <schema targetNamespace="http://userguide.axis2.apache.org/xsd"
             xmlns="http://www.w3.org/2001/XMLSchema" 
             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
             elementFormDefault="qualified">
@@ -84,44 +84,44 @@
         <operation name="echoString">
             <soap:operation soapAction="echoString" style="rpc"/>
             <input name="echoString">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </input>
             <output name="echoStringResponse">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </output>
         </operation>
         <operation name="echoStringArray">
             <soap:operation soapAction="echoStringArray" style="rpc"/>
             <input name="echoStringArray">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </input>
             <output name="echoStringArrayResponse">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </output>
         </operation>
         <operation name="echoStruct">
             <soap:operation soapAction="echoStruct" style="rpc"/>
             <input name="echoStruct">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </input>
             <output name="echoStructResponse">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </output>
         </operation>
         <operation name="echoVoid">
             <soap:operation soapAction="echoVoid" style="rpc"/>
             <input name="echoVoid">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </input>
             <output name="echoVoidResponse">
-                <soap:body namespace="http://soapinterop.org/Axis2SampleDocLit" 
+                <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit" 
                     use="literal"/>
             </output>
         </operation>
@@ -130,7 +130,7 @@
         <port binding="tns:Axis2SampleDocLitPortBinding" 
             name="Axis2SampleDocLitPort">
             <soap:address 
-                location="http://mssoapinterop.org/stkv3/wsdl/Axis2SampleDocLit.wsdl"/>
+                location="http://userguide.axis2.apache.org/stkv3/wsdl/Axis2SampleDocLit.wsdl"/>
         </port>
     </service>
 </definitions>
