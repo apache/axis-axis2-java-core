@@ -120,16 +120,26 @@ directory in your machine and for the explanations purposes we will name this
 directory as &quot;Axis2Home&quot;. </p>
 <h2> Web Services Using Axis2</h2>
 <p>Before starting, please check whether you have deployed the &quot;axis2.war&quot; in your servlet container and it is working 
-properly. (See <a href="installationguide.htm">Installation Guide</a>)</p>
+properly. (See 
+<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/installationguide.htm">Installation Guide</a>). User can 
+select any of the&nbsp; following two ways of writing web services using Axis2. </p>
+<ul>
+	<li>Use Axis2's primary interfaces and implement the business logic.</li>
+	<li>Start from the WSDL -&gt;Code generate the Skeleton -&gt;Implement the 
+	Business Logic.</li>
+</ul>
 <h3>MyService</h3>
-<p>First let's see how we can write a simple Web Service (MyService) and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
+<p>First let's see how we can write a simple Web Service (MyService) using 
+Axis2's primary interfaces and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
 <source><pre>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
-public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and responds with another OMElement after processing.</pre></source>
+public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and 
+				          //responds with another OMElement after processing.
+</pre></source>
 <p>Complete code for this example Web Service (MyService) can be found in the &quot;Axis2Home/samples/userguide/src&quot; directory under 
 &quot;userguide/example1&quot; package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
 <p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed 
 in Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
-<source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis2.receivers.RawXMLINOutMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
+<source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
 <p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageReceiver</strong> since it is an
 IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver. </p>
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
@@ -144,8 +154,194 @@ dropping the &quot;.aar&quot; in to &quot;services&quot; directory that can be f
 the &quot;\webapps\axis2\WEB-INF&quot; of your servlet container and hence please copy the &quot;MyService.aar&quot; into the 
 &quot;<b>services</b>&quot; directory. Once these steps are completed, please start the servlet container (if you have not already started) and check the link &quot;List Available services&quot; in the page http://localhost:8080/axis2/index.jsp and see whether the MyService is deployed properly. If 
 everything is ok, you will see the following out put.. </p>
-<p align="center"><img src="images/userguide/MyServiceDeployed.jpg" width="797" height="654"> </p>
+<p align="center"><img src="images/userguide/MyServiceDeployed.jpg"> </p>
 <p>If you can see the above output then you have successfully deployed MyService on Axis2. Now let's see how we can write Web Service client to use this services. 
+Axis2 provides an easy way to deploy a Web Services using, index.jsp. (See the 
+installation guide for more information on this)</p>
+<h3>Axis2SampleDocLitPortType</h3>
+<p>Now let's see how we can generate the skeleton from a 
+given WSDL and implement the business logic using Axis2. For this we use 
+Axis2SampleDocLit.wsdl that can be found in the <b>wsdl</b> directory under 
+samples.</p>
+<h4>Generating Skeleton</h4>
+<p>To generate the skeleton and the required classes you can use the WSDL2Java 
+tool provided in Axis2. This tool is located in the bin directory of the 
+distribution and can be executed using the provided scripts (.bat or .sh). The 
+tool's parameter list is as follows and user can specify these values depending 
+on their requirements.</p>
+<source><pre>
+Usage WSDL2Code -uri <Location of WSDL> :WSDL file location
+-o <output Location> : output file location
+-a : Generate async style code only. Default if off
+-s : Generate sync style code only. Default if off. takes precedence over -a
+-p <package name> : set custom package name
+-l <language> : valid languages are java and csharp. Default is java
+-t : Generate TestCase to test the generated code
+-ss : Generate server side code (i.e. skeletons).Default is off
+-sd : Generate service descriptor (i.e. axis2.xml).Default is off.Valid with -ss
+</pre>
+</source></p>
+<p>We will use the tool with the following parameters and generate the skeleton and the other 
+required classes.</p>
+<source><pre>
+WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -ss -sd -o ..\samples\src -p org.apache.axis2.userguide
+</pre></source></p>
+<p>This will generate the required classes in the <b>src</b> directory inside 
+samples. This will also generate the schema classes in a directory named <b>
+schema</b> and please note that these are not source files and should be availed 
+in the class path in order to compile the generated classes </p>
+<h4>Implement the Business Logic</h4>
+<p>Locate the skeleton class that can be found under src/usreguide directory 
+with the name &quot;Axis2SampleDocLitPortTypeSkeleton.java&quot;. This is the skeleton for 
+our web service and we can easily fill the business logic now. The WSDL we have 
+used has four operations as follows.</p>
+<ul>
+	<li>echoVoid&nbsp;&nbsp; - Operation that does not accept any input 
+	parameters&nbsp; and also provide no out put parameters. Just perform some 
+	task</li>
+	<li>echoString&nbsp; - Operation that echos a String value </li>
+	<li>echoStringArray - Operation that accept string array as the input and 
+	echos them back</li>
+	<li>echoStruct - Operation that accept a Struct as the input and echos them 
+	back.</li>
+</ul>
+<h4>echoVoid&nbsp;&nbsp; </h4>
+<p>Locate the following code segment&nbsp; in the 
+&quot;Axis2SampleDocLitPortTypeSkeleton.java&quot;&nbsp; and fill the business 
+logic. For the explanation purpose we do not need anything to be implemented 
+here.</p>
+<source><pre>
+public  void echoVoid(){
+     //Todo fill this with the necessary business logic
+}
+</pre></source></p>
+<h4>echoString&nbsp; </h4>
+<p>Locate the following code segment&nbsp; in the 
+&quot;Axis2SampleDocLitPortTypeSkeleton.java&quot;&nbsp; and fill the business 
+logic as shown below.</p>
+<source><pre>
+ public  org.soapinterop.xsd.EchoStringArrayReturnDocument 
+ 		echoStringArray(org.soapinterop.xsd.EchoStringArrayParamDocument param2){
+    //Todo fill this with the necessary business logic
+    return null;
+ }
+</pre>
+</source></p>
+<p>Once filled with the business logic it will be as follows. The code is simple 
+and the explanations are given in the comments.</p>
+<source><pre>
+public org.soapinterop.xsd.EchoStringReturnDocument 
+			  echoString(org.soapinterop.xsd.EchoStringParamDocument param6) {
+   //Use the factory to create the output document.
+   EchoStringReturnDocument retDoc = EchoStringReturnDocument.Factory.newInstance();
+   //send the string back.
+   retDoc.setEchoStringReturn(param6.getEchoStringParam());
+   return retDoc;
+}
+</pre></source></p>
+<p>Similarly following code fragments shows how you can fill the business logic 
+for our first web service.</p>
+<h4>echoStringArray </h4>
+<source><pre>
+public org.soapinterop.xsd.EchoStringArrayReturnDocument 
+		echoStringArray(org.soapinterop.xsd.EchoStringArrayParamDocument param2) {
+
+    //Use the factory to create the output document.
+    EchoStringArrayReturnDocument retDoc = EchoStringArrayReturnDocument.Factory.newInstance();
+
+    //Get the String array from the input parameters.
+    String[] inParams = param2.getEchoStringArrayParam().getStringArray();
+    ArrayOfstringLiteral retParams = ArrayOfstringLiteral.Factory.newInstance();
+    //Set the input parameters to the output parameters for echoing.
+    for (int i = 0; i < inParams.length; i++) {
+        retParams.addString(inParams[i]);
+    }
+
+    //return the output document.
+    retDoc.setEchoStringArrayReturn(retParams);
+    return retDoc;
+}</pre>
+</source></p>
+<h4>echoStruct</h4>
+<source><pre>
+public org.soapinterop.xsd.EchoStructReturnDocument 
+		echoStruct(org.soapinterop.xsd.EchoStructParamDocument param4) {
+  
+   //Use the factory to create the output document.
+   EchoStructReturnDocument retDoc = EchoStructReturnDocument.Factory.newInstance();
+  
+   //Get the SOAPStrcut from the incoming parameters
+   SOAPStruct inStruct = param4.getEchoStructParam();
+   
+   //Struct for the sending back
+   SOAPStruct outStruct = SOAPStruct.Factory.newInstance();
+   
+   //Fill the outgoing struct
+   outStruct.setVarFloat(inStruct.getVarFloat());
+   outStruct.setVarInt(inStruct.getVarInt());
+   outStruct.setVarString(inStruct.getVarString());
+   //Set the outgoing document.
+   retDoc.setEchoStructReturn(outStruct);
+  
+   return retDoc;
+}</pre>
+<h4>
+service.xml<br>
+</h4></source>
+<p>&nbsp;Axis2 uses &quot;service.xml&quot; to hold the 
+configuretions for a particular web service deployed in the Axis2 engine. When 
+we generate the skeleton using the WSDL2Java tool, it will also generate the 
+required service.xml for this web service as well and it can be found in the 
+same directory as the skeleton. The generated service.xml is as follows.</p>
+<source><pre>
+&lt;!--Auto generated Axis Service XML--&gt;
+&lt;service name=&quot;Axis2SampleDocLitPortTypeSkeletonTest&quot;&gt;
+&lt;parameter locked=&quot;xsd:false&quot; name=&quot;ServiceClass&quot;&gt;userguide.Axis2SampleDocLitPortTypeSkeleton&lt;/parameter&gt;
+&lt;!--Mounting the method echoVoid--&gt;
+&lt;operation name=&quot;echoVoid&quot;&gt;
+&lt;messageReceiver class=&quot;userguide.Axis2SampleDocLitPortTypeMessageReceiver&quot;/&gt;
+&lt;/operation&gt;
+&lt;!--Mounting the method echoStringArray--&gt;
+&lt;operation name=&quot;echoStringArray&quot;&gt;
+&lt;messageReceiver class=&quot;userguide.Axis2SampleDocLitPortTypeMessageReceiver&quot;/&gt;
+&lt;/operation&gt;
+&lt;!--Mounting the method echoStruct--&gt;
+&lt;operation name=&quot;echoStruct&quot;&gt;
+&lt;messageReceiver class=&quot;userguide.Axis2SampleDocLitPortTypeMessageReceiver&quot;/&gt;
+&lt;/operation&gt;
+&lt;!--Mounting the method echoString--&gt;
+&lt;operation name=&quot;echoString&quot;&gt;
+&lt;messageReceiver class=&quot;userguide.Axis2SampleDocLitPortTypeMessageReceiver&quot;/&gt;
+&lt;/operation&gt;
+&lt;/service&gt;
+</pre></source></p>
+<p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next xml tags describe the operations that are available in this service with respective message receivers. </p>
+<h4>Packaging</h4>
+<p>Next step in the process is to package the classes in a .aar (axis2 archive) 
+and deploy it in Axis2. When the WSDL2Java tool generate the skeleton it will 
+also generate the required data binding classes as well. These schema related 
+classes are located in the <b>schema </b>directory of the generated code. Copy 
+this to your class path and compile the skeleton and the supporting classes. In 
+order to create the .aar file, let's create the following directory structure 
+with the required files and then simply use jar command to package it. </p>
+<p>
+<img border="0" src="images/userguide/DirectoryStructure.JPG" width="164" height="142"></p>
+<p>Go to the top level directory where you can find the class files for the 
+above service (i.e. one level up in the directory structure shown above) and 
+type the following command in a command line.</p>
+<source><pre>
+jar -cf echo.jar .
+</pre></source></p>
+<p>Deploying the service&nbsp; is just a matter of 
+dropping the &quot;.aar&quot; in to &quot;services&quot; directory that can be found in 
+the &quot;\webapps\axis2\WEB-INF&quot; of your servlet container and hence please copy the &quot;echo.aar&quot; into the 
+&quot;<b>services</b>&quot; directory. Once these steps are completed, please start the servlet container (if you have not already started) and check the link &quot;List Available services&quot; in the page http://localhost:8080/axis2/index.jsp and see whether the 
+Axis2SampleDocLitPortType is deployed properly. If 
+everything is ok, you will see the following out put.. </p>
+<p align="center">
+<img border="0" src="images/userguide/ServiceDeployed.JPG"> </p>
+<p>If you can see the above output then you have successfully deployed 
+Axis2SampleDocLitPortType on Axis2. Now let's see how we can write Web Service client to use this services. 
 Axis2 provides an easy way to deploy a Web Services using, index.jsp. (See the 
 installation guide for more information on this)</p>
 <h2> Web Service Clients Using Axis2 </h2>
@@ -161,7 +357,7 @@ hand, if there are simultaneous service invocations that&nbsp; we need to
 perform from a single client application, then the use of a &quot;blocking&quot; client 
 API will degrade the performance of the client application. Similarly there are 
 various other consequences such as One-Way transports that come in to play when we 
-need to invoke Web Services. So let's try to analyze some common service 
+need 's try<< to analyze some common service 
 invocation paradigms.</p>
 <p> Many web service engines provide the users with a Blocking and Non-Blocking 
 client APIs. </p>
@@ -190,7 +386,7 @@ connections for request and response. The asynchronous behavior that we gain
 using can be called, <b>Transport Level Asynchrony</b>.</p>
 <p> By combining the two we can obtain four different invocation patterns for web 
 services as shown in the following table.</p>
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" height="99">
+<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" height="99" id="table1">
   <tr>
     <td width="33%" height="19">API (Blocking/Non-Blocking)</td>
     <td width="33%" height="19">&nbsp;Dual Transports (Yes/No)</td>
@@ -220,8 +416,13 @@ services as shown in the following table.</p>
     transport level</td>
   </tr>
 </table>
-<p><b>Axis2 provides the user with all these possibilities to invoke Web 
-Services&nbsp; and let's see how to use them Now!</b></p>
+<p>Axis2 provides the user with all these possibilities to invoke Web Services. 
+In addition Axis2 provides a data binding support making the life easy for 
+developers writing Web Service client applications. In this user guide we will 
+first see how we can write Web Service clients using the Axis2's primary APIs 
+and later we will see how we can use generated stubs to simply write Web Service 
+Clients.</p>
+<h3>Using Axis2's Primary APIs</h3>
 <h3>EchoBlockingClient</h3>
 <p>Axis2 provides the user with several invocation patterns for Web Services, ranging from pure blocking single channel invocations to a non-blocking dual channel invocations. First let's see how we can write a client to invoke &quot;echo&quot; operation of &quot;MyService&quot; using the simplest good old blocking invocation. The client code that you need to write will be as follows.</p>
 <source><pre>  try {
@@ -277,7 +478,7 @@ desirable when there are many Web Service invocations to be done in a single cli
 <source><pre>call.invokeNonBlocking(&quot;echo&quot;, payload, callback);</pre></source>
 <p>The invocation  accepts a callback object as a parameter. Axis2 client API provides an 
 abstract Callback with the following methods.</p>
-<p><source><pre>public abstract void onComplete(AsyncResult result);
+<source><pre>public abstract void onComplete(AsyncResult result);
 public abstract void reportError(Exception e);
 public boolean isComplete() {}</pre></source></p>
 <p>The user is expected to implement the &quot;onComplete &quot; and &quot;reportError &quot; methods of their extended call back class. Axis2 engine calls the onComplete method once the Web Service 
@@ -318,7 +519,8 @@ connections<strong>. The ultimate asynchrony!!</strong></p>
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+                        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance()
+                        					.createXMLStreamWriter(writer)));
                         writer.flush();
 
                         System.out.println(writer.toString());
@@ -359,7 +561,8 @@ informs the Axis2 engine to stop the client side listener started to retrieve
 the response.</font></span></p>
 <p>Before we run the sample client we need one more step to perform. As mentioned earlier Axis2 uses addressing based correlation 
 mechanism and hence we need to &quot;engage&quot; addressing module in the server side as well. According to the Axis2 architecture addressing module is deployed in the &quot;<strong>pre-dispatch</strong>&quot; 
-phase (See <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more 
+phase (See 
+<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/Axis2ArchitectureGuide.html">Architecture Guide</a> for more 
 details about phases)&nbsp; and hence &quot;engaging&quot; means simply adding module reference in the &quot;axis2.xml&quot; (NOT the &quot;service.xml&quot;). Please add the following line to the &quot;axis2.xml&quot; that you can find in the &quot;/webapps/axis2/WEB-INF&quot; 
 directory in the servlet container. </p>
 <source><pre> &lt;module ref=&quot;addressing&quot;/&gt;</pre></source>
@@ -381,9 +584,131 @@ response. User can test this client using the &quot;echoBlockingDualClient&quot;
 target of the ant build file 
 found in the &quot;Axis2Home/samples&quot; directory.</p>
 <p>See <a href="#configTransport">Configuring Transports</a> for use different transports.</p>
+<h3>With Data Binding </h3>
+<p>Axis2 provides the data binding support for Web Service client as well. The user can generate the required stubs from a given WSDL with 
+the other supporting classes. Let's see how we can generate the stubs for the 
+WSDL we have used earlier to generate the skeleton for the 
+&quot;Axis2SampleDocLitPortType&quot;. Simply run the WSDL2Java tool that can be found in 
+the bin directory of the Axis2 distribution using the following command.</p>
+<source><pre>
+WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -o ..\samples\src -p org.apache.axis2.userguide
+</pre></source></p>
+<p>This will generate the required stub &quot;Axis2SampleDocLitPortTypeStub.java&quot; 
+that can be used to invoke the Web Service Axis2SampleDocLitPortType. Let's see 
+how we can use this stub to write Web Service clients to utilize the Web Service 
+Axis2SampleDocLitPortType (the service that we have already deployed).</p>
+<h3>Client for echoVoid Operation</h3>
+<p>Following code fragment shows the necessary code for utilizing the echoVoid 
+operation of the Axis2SampleDocLitPortType that we have already deployed. In 
+this operation, a blank SOAP body element is sent to the Web Service and the 
+same SOAP envelope is echoed back.</p>
+<source>
+<pre>
+ try {
+   //Create the stub by passing the AXIS_HOME and target EPR.
+   //We pass null to the AXIS_HOME and hence the stub will use the current directory sa the AXIS_HOME
+   Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null, 
+   				"http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+   stub.echoVoid();
+
+} catch (Exception e) {
+    e.printStackTrace();
+}
+</pre></source></p>
+<h3>Client for echoString Operation</h3>
+<p>Following code fragment shows the necessary code for utilizing the echoString 
+operation of the Axis2SampleDocLitPortType that we have already deployed. The 
+code is very simple to understand and the explanations are given in the 
+comments.</p>
+<source><pre>
+try {
+     //Create the stub by passing the AXIS_HOME and target EPR.
+     //We pass null to the AXIS_HOME and hence the stub will use the current directory sa the AXIS_HOME 
+     Axis2SampleDocLitPortTypeStub stub= new Axis2SampleDocLitPortTypeStub(null,
+     				"http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+     //Create the request document to be sent.
+     EchoStringParamDocument  reqDoc= EchoStringParamDocument.Factory.newInstance();
+     reqDoc.setEchoStringParam("Axis2 Echo");
+     //invokes the web service.
+     EchoStringReturnDocument resDoc=stub.echoString(reqDoc);
+     System.out.println(resDoc.getEchoStringReturn());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+</pre></source></p>
+
+
+
+
+<p>Similarly following code fragments shows client side code for echoStringArray 
+operation and echoStruct operation respectively.</p>
+<h3>Client for echoStringArray Operation</h3>
+<source>
+<pre>
+try {
+     //Create the stub by passing the AXIS_HOME and target EPR.
+     //We pass null to the AXIS_HOME and hence the stub will use the current directory sa the AXIS_HOME
+     Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
+     				"http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+
+     //Create the request document to be sent.
+     EchoStringArrayParamDocument reqDoc = EchoStringArrayParamDocument.Factory.newInstance();
+     ArrayOfstringLiteral paramArray = ArrayOfstringLiteral.Factory.newInstance();
+
+     paramArray.addString("Axis2");
+     paramArray.addString("Echo");
+
+      reqDoc.setEchoStringArrayParam(paramArray);
+      EchoStringArrayReturnDocument resDoc = stub.echoStringArray(reqDoc);
+
+      //Get the response params
+      String[] resParams = resDoc.getEchoStringArrayReturn().getStringArray();
+
+      for (int i = 0; i < resParams.length; i++) {
+           System.out.println(resParams[i]);
+      }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+</pre></source></p>
+<h3>Client for echoStruct Operation</h3>
+<source><pre>
+try {
+    //Create the stub by passing the AXIS_HOME and target EPR.
+    //We pass null to the AXIS_HOME and hence the stub will use the current directory sa the AXIS_HOME
+    Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null, 
+    				"http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+    //Create the request Document
+    EchoStructParamDocument reqDoc = EchoStructParamDocument.Factory.newInstance();
+
+    //Create the complex type
+    SOAPStruct reqStruct = SOAPStruct.Factory.newInstance();
+
+    reqStruct.setVarFloat(100.50F);
+    reqStruct.setVarInt(10);
+    reqStruct.setVarString("High");
+
+    reqDoc.setEchoStructParam(reqStruct);
+
+    //Service invocation
+    EchoStructReturnDocument resDoc = stub.echoStruct(reqDoc);
+    SOAPStruct resStruct = resDoc.getEchoStructReturn();
+
+    System.out.println("floot Value :" + resStruct.getVarFloat());
+    System.out.println("int Value :" + resStruct.getVarInt());
+    System.out.println("String Value :" + resStruct.getVarString());
+
+} catch (Exception e) {
+    e.printStackTrace();
+}</pre></source></p>
+
+
+
+
 <h2>Modules</h2>
 <p>Axis2 provides an extended support for modules (See
-<a href="Axis2ArchitectureGuide.html">Architecture Guide</a> for more details 
+<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/Axis2ArchitectureGuide.html">Architecture Guide</a> for more details 
 about modules in axis2). Let's see how we can create a custom module and deploy 
 it to the MyService that we have created earlier. Following steps shows the 
 actions that needs to be performed to deploy a custom module for a given Web 
@@ -409,7 +734,7 @@ these and see how it works.</p>
 <h4>
 Step1 : LoggingModule Class</h4>
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2 modules 
-should implement the &quot;org.apache.axis2.modules.Module&quot; interface with the
+should implement the &quot;org.apache.axis.modules.Module&quot; interface with the 
 following methods.</p>
 <source><pre>public void init(AxisConfiguration axisSystem) throws AxisFault;//Initialize the module
 public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
@@ -420,7 +745,7 @@ with the complete configuration hierarchy and this can be used to fine tune the
 module behavior by the module writers. For the simple logging service, we can keep these methods blank in our implementation class.</p>
 <h4>Step2 : LogHandler</h4>
 <p>A module in axis2 can contain, one or more handlers that perform various 
-SOAP header processing at different phases. (See<a href="Axis2ArchitectureGuide.html"> 
+SOAP header processing at different phases. (See<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/Axis2ArchitectureGuide.html"> 
 Architecture Guide</a> for more information about phases). For the logging 
 module we will write a handle with the following methods. &quot;public void 
 invoke(MessageContext ctx);&quot; is the method that is called by the Axis2 engine 
@@ -575,10 +900,10 @@ This is a sample Web Service with a logging module engaged.
 <font color="#33CC00">&lt;module ref=&quot;logging&quot;/&gt;</font>
 &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example2.MyService&lt;/parameter&gt;
 &lt;operation name=&quot;echo&quot;&gt;
-&lt;messageReceiver class=&quot;org.apache.axis2.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
 &lt;/operation&gt;
 &lt;operation name=&quot;ping&quot;&gt;
-&lt;messageReceiver class=&quot;org.apache.axis2.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
+&lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;
 &lt;/operation&gt;
 &lt;/service&gt;
 </code></pre></p>
@@ -696,8 +1021,8 @@ AXIS_HOME would not be correct in this case)</p>
 plug-ins, the Codegen tool even has the accompanying Ant task and the command 
 line tool.  </p>
 <p>Documentation for the code generator tool is available for the
-<a href="CodegenToolReference.html">Codegen wizard</a> and the
-<a href="CodegenToolReference.html">Service Archiver</a>.</p>
+<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/CodegenToolReference.html">Codegen wizard</a> and the
+<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/CodegenToolReference.html">Service Archiver</a>.</p>
 <hr/>
 <p>&nbsp;</p>
 
@@ -705,10 +1030,14 @@ line tool.  </p>
 
  <h2>Advanced Topics</h2>
  <ul>
- 	<li><a href="rest-ws.html">RESTful Web Services</a></li>
- 	<li><a href="tcp-transport.html">TCP transport</a></li>
- 	<li><a href="mail-transport.html">Mail Transport</a></li>
- 	<li><a href="http-transport.html">HTTP Transports</a></li>
+ 	<li>
+	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/rest-ws.html">RESTful Web Services</a></li>
+ 	<li>
+	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/tcp-transport.html">TCP transport</a></li>
+ 	<li>
+	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/mail-transport.html">Mail Transport</a></li>
+ 	<li>
+	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/http-transport.html">HTTP Transports</a></li>
   </ul>
   
  
