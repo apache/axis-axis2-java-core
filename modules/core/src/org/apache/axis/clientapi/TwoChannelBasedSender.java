@@ -15,25 +15,12 @@
  */
 package org.apache.axis.clientapi;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.transport.TransportUtils;
-import org.apache.axis.transport.http.HTTPTransportReceiver;
 
 
 public class TwoChannelBasedSender {
@@ -55,35 +42,11 @@ public class TwoChannelBasedSender {
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
+        
+        //If request is REST we assume the response is REST, so set the variable
         response.setDoingREST(msgctx.isDoingREST());
         
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response);
-//                try {
-//                    //TODO Fix this we support only the HTTP Sync cases, so we hardcode this
-//                    if (Constants.TRANSPORT_HTTP.equals(transportIn.getName().getLocalPart())) {
-//                        HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-//                        resenvelope =
-//                            receiver.checkForMessage(response,msgctx.getSystemContext());
-//                    } else if (Constants.TRANSPORT_TCP.equals(transportIn.getName().getLocalPart())) {
-//                        InputStream inStream = (InputStream) response.getProperty(MessageContext.TRANSPORT_IN);
-//                        response.setProperty(MessageContext.TRANSPORT_IN,null);
-//                        Reader in = new InputStreamReader(inStream);
-//                        if(in != null){
-//                            XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-//                            StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-//                            resenvelope = (SOAPEnvelope) builder.getDocumentElement();
-//                        }else{
-//                            throw new AxisFault("Sync invocation expect a proeprty "+ MessageContext.TRANSPORT_IN + " set ");
-//                        }
-//                    }
-//                } catch (XMLStreamException e) {
-//                    throw new AxisFault(e);
-//                } catch (FactoryConfigurationError e) {
-//                    throw new AxisFault(e);
-//                }
-                
-
-
 
         if (resenvelope != null) {
             response.setEnvelope(resenvelope);

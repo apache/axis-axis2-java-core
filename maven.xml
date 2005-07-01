@@ -331,6 +331,7 @@
 						<ant:include name="**"/>
 						<ant:exclude name="**servlet**"/>
 						<ant:exclude name="commons-httpclient-*.jar"/>
+						<ant:exclude name="ant*.jar"/>
 		  	</ant:lib>  
 			<ant:classes dir="modules/core/conf">
       		    	<ant:include name="*.properties"/>
@@ -374,10 +375,13 @@
 		<ant:copy todir="${bin.dist.dir}/lib" flatten="true">
 			<ant:fileset dir="target/lib">
 				<ant:include name="*.jar"/>
+				<ant:exclude name="**servlet**.jar"/>
+				<ant:exclude name="commons-httpclient-*.jar"/>
+				<ant:exclude name="ant*.jar"/>
 			</ant:fileset> 
 		</ant:copy> 
 		<ant:copy file="target/axis2.war" tofile="${bin.dist.dir}/webapps/axis2.war"/>
-                <ant:copy file="modules/samples/script/build.xml" tofile="${bin.dist.dir}/samples/build.xml"/>
+        <ant:copy file="modules/samples/script/build.xml" tofile="${bin.dist.dir}/samples/build.xml"/>
 		<ant:copy todir="${bin.dist.dir}/samples">
 			<ant:fileset dir="modules/samples/conf/">
 				<ant:include name="*.xml"/>

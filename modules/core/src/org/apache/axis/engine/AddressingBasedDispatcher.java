@@ -15,13 +15,13 @@
 */
 package org.apache.axis.engine;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class Dispatcher

@@ -18,7 +18,6 @@
 package org.apache.axis.transport.http;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;

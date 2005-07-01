@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.wsdl.factory.WSDLFactory;
 
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;

@@ -26,7 +26,6 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Map;
 
-import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
@@ -44,7 +43,7 @@ import org.apache.axis.transport.AbstractTransportSender;
  */
 public class HTTPTransportSender extends AbstractTransportSender {
     private boolean chuncked = false;
-    private boolean doMTOM = false;
+
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
     public static final String TRANSPORT_SENDER_INFO = "TRANSPORT_SENDER_INFO";
 

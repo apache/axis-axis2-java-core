@@ -16,7 +16,8 @@
 
 package org.apache.axis.clientapi;
 
-import org.apache.axis.addressing.EndpointReference;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -29,14 +30,11 @@ import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPBody;
+import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 
 
 

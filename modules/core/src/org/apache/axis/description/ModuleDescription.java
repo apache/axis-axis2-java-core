@@ -15,10 +15,11 @@
 */
 package org.apache.axis.description;
 
-import org.apache.axis.modules.Module;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+
+import org.apache.axis.modules.Module;
 
 /**
  * <p>This holds the information about a Module. </p>

@@ -15,7 +15,6 @@
  */
 package org.apache.axis.addressing;
 
-import javax.xml.namespace.QName;
 
 /**
  * Interface AddressingConstants

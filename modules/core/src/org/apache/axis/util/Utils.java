@@ -18,7 +18,6 @@ package org.apache.axis.util;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.Flow;
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.description.OperationDescription;

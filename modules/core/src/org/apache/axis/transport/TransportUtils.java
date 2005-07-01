@@ -22,7 +22,6 @@ import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.Constants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.engine.AxisFault;
@@ -59,6 +58,7 @@ public class TransportUtils {
             SOAPEnvelope envelope = null;
 
             if (contentType != null) {
+                msgContext.setDoingMTOM(true);
                 builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream, (String)contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }else if (msgContext.isDoingREST()) {

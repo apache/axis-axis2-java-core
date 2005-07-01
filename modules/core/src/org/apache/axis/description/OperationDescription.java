@@ -1,6 +1,16 @@
 package org.apache.axis.description;
 
-import org.apache.axis.context.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.OperationContext;
+import org.apache.axis.context.OperationContextFactory;
+import org.apache.axis.context.ServiceContext;
 import org.apache.axis.engine.AxisError;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
@@ -10,11 +20,6 @@ import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

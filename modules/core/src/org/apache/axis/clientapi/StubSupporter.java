@@ -1,8 +1,8 @@
 package org.apache.axis.clientapi;
 
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

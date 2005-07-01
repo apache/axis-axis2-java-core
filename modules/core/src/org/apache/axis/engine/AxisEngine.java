@@ -15,23 +15,25 @@
  */
 package org.apache.axis.engine;
 
+import java.util.ArrayList;
+
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.TransportOutDescription;
 import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMOutput;
-import org.apache.axis.soap.*;
+import org.apache.axis.soap.SOAPBody;
+import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis.soap.SOAPFault;
+import org.apache.axis.soap.SOAPFaultCode;
+import org.apache.axis.soap.SOAPFaultDetail;
+import org.apache.axis.soap.SOAPFaultReason;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis.soap.impl.llom.SOAPConstants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLStreamException;
-import java.util.ArrayList;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()

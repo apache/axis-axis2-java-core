@@ -17,9 +17,9 @@ package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.transport.TransportSender;
 import org.apache.axis.engine.Phase;
 import org.apache.axis.phaseresolver.PhaseMetadata;
+import org.apache.axis.transport.TransportSender;
 
 /**
  * Represents a transport deployed in AXis2
