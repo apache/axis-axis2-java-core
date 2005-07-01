@@ -16,7 +16,7 @@
 
 package sample.google.search;
 
-import org.apache.axis.engine.AxisFault;
+import org.apache.axis2.engine.AxisFault;
 import sample.google.common.util.PropertyLoader;
 
 import javax.swing.*;

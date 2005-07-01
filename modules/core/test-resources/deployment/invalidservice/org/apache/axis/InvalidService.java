@@ -1,6 +1,6 @@
-package org.apache.axis;
+package org.apache.axis2;
 
-import org.apache.axis.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPEnvelope;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

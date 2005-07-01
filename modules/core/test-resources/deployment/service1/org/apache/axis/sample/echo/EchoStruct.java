@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package org.apache.axis.sample.echo;
+package org.apache.axis2.sample.echo;
 
 public class EchoStruct implements java.io.Serializable {
     private java.lang.String value1;

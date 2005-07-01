@@ -15,11 +15,11 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import org.apache.axis.clientapi.AsyncResult;
-import org.apache.axis.clientapi.Callback;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.soap.SOAPBody;
+import org.apache.axis2.clientapi.AsyncResult;
+import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.soap.SOAPBody;
 
 import javax.swing.*;
 import java.util.Iterator;

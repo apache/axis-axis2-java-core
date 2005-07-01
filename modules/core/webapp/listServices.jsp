@@ -1,7 +1,7 @@
-<%@ page import="org.apache.axis.Constants,
+<%@ page import="org.apache.axis2.Constants,
                  java.util.*,
-                 org.apache.axis.description.ServiceDescription,
-                 org.apache.axis.description.OperationDescription"%>
+                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.OperationDescription"%>
  <%--
     /*
  * Copyright 2002,2004 The Apache Software Foundation.

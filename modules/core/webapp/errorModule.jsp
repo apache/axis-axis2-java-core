@@ -1,4 +1,4 @@
-<%@ page import="org.apache.axis.Constants,
+<%@ page import="org.apache.axis2.Constants,
                  java.util.Hashtable"%>
  <%--
   Created by IntelliJ IDEA.

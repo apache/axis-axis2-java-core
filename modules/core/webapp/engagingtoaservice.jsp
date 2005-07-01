@@ -1,10 +1,10 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="java.sql.*,
                                                                              java.util.HashMap,
-                                                                             org.apache.axis.Constants,
+                                                                             org.apache.axis2.Constants,
                                                                              java.util.Collection,
                                                                              java.util.Iterator,
-                                                                             org.apache.axis.description.ModuleDescription,
-                                                                             org.apache.axis.description.ServiceDescription" errorPage="" %>
+                                                                             org.apache.axis2.description.ModuleDescription,
+                                                                             org.apache.axis2.description.ServiceDescription" errorPage="" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>

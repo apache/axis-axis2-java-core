@@ -18,7 +18,7 @@
 <p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
   <code>
   <pre>
-   &lt;transportSender name="mail" class="org.apache.axis.transport.mail.MailTransportSender"&gt;
+   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
         &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
         &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
         &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
@@ -32,7 +32,7 @@
   <p>You need a mail address that has pop access, the mail Listener can be activated by adding following entry to the axis2.xml file.</p>
 
   <code><pre>
-   &lt;transportReceiver name="mail" class="org.apache.axis.transport.mail.SimpleMailListener">
+   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">
         &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
         &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
         &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
@@ -45,7 +45,7 @@
 
   <h2>Using Mail transport in the Server Side</h2>
   <p> If the Mail Listener is need to be started as the server it can be done with following command with the all the axis2 jars and the mail dependency jars in the classpath.</p>
-  <code>java org.apache.axis.transport.mail.SimpleMailListener repository-directory</code>
+  <code>java org.apache.axis2.transport.mail.SimpleMailListener repository-directory</code>
 
   <h2>Using Mail transport in the Client Side</h2>
   <p>Following code segment shows how to send a oneway SOAP message using the mail transport, this need the Transport Sender configured.</p>

@@ -177,7 +177,7 @@ public OMNamespace findInScopeNamespace(String uri, String prefix) throws OMExce
 public OMNamespace findDeclaredNamespace(String uri, String prefix) throws OMException;
 </pre>
 <div align="left"><b>Code listing 2.5</b></div>
-<p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. These namespace declarations will serialize into â€œxmlns:prefix=â€uriâ€â€ type string inside an element.
+<p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. These namespace declarations will serialize into â€œxmlns:prefix=â€�?uriâ€�?â€�? type string inside an element.
 FindInscopeNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if itâ€™s not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
 
 <!-- Special section -->
@@ -336,7 +336,7 @@ The getPullparser() method is very useful when the events need to be handled in 
 <p>
 There is a requirement to build an OM with a given object structure. A Typical scenario will be to build OM from an object structure that is returned from a data binding tool. So when the need arises to generate an OM from an object, a special builder class is to be used. The ObjectToOMBuilder class implements the XMLParserWrapper  (which is effectively the builder interface), but unlike the other builders such a conversion cannot be pull based. It is �push based&quot; which means that the builder should have access to a content handler in order to push events. Hence the ObjectToOmBuilder implements the registerContentHandler method which accepts an instance of the SAX ContentHandler.interface.
 In serializing however the user need not worry whether the inner parts of the OM tree consists of Object builders which are push based. The serializing mechanism automatically registers a StreamToContentHandlerConverter which effectively redirects all the ContentHandler events into the relevant XMLStreamWriter. 
-The ObjectToOMBuilder expects an org.apache.axis.om.OutObject interface from the third party for registering a SAX ContentHandler. The ObjctToOMBuilder should also be supplied with the parent element which the supplied object should be serialized under. When the ObjectToOMBuilder is asked to proceed the call is in turn passed to the OutObject to fire SAX events. The ObjectToOMBuilder will take care of building the structure (if needed).</p>
+The ObjectToOMBuilder expects an org.apache.axis2.om.OutObject interface from the third party for registering a SAX ContentHandler. The ObjctToOMBuilder should also be supplied with the parent element which the supplied object should be serialized under. When the ObjectToOMBuilder is asked to proceed the call is in turn passed to the OutObject to fire SAX events. The ObjectToOMBuilder will take care of building the structure (if needed).</p>
 
 <p>The following code segment explains this scenario.</p>
 <pre class="code">
@@ -396,10 +396,10 @@ This behavior is due to the nature of the serialization where it tries to be acc
 <h2>Appendix</h2>
 <h3>Program listing for complete OM - build and serialize</h3>
 <pre class="code">
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.om.SOAPEnvelope;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.*;
 import java.io.FileReader;

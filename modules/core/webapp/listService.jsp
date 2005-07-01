@@ -1,10 +1,10 @@
-<%@ page import="org.apache.axis.Constants,
+<%@ page import="org.apache.axis2.Constants,
                  java.util.*,
-                 org.apache.axis.description.ServiceDescription,
-                 org.apache.axis.description.OperationDescription,
-                 org.apache.axis.description.ModuleDescription,
-                 org.apache.axis.addressing.EndpointReference,
-                 org.apache.axis.addressing.AddressingConstants"%>
+                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.OperationDescription,
+                 org.apache.axis2.description.ModuleDescription,
+                 org.apache.axis2.addressing.EndpointReference,
+                 org.apache.axis2.addressing.AddressingConstants"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.

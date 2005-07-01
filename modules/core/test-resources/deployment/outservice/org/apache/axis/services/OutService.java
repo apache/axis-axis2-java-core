@@ -1,9 +1,9 @@
-package org.apache.axis.services;
+package org.apache.axis2.services;
 
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -162,7 +162,7 @@ public abstract class MessageFactory {
             throws IOException, SOAPException;
 
     private static final String DEFAULT_MESSAGE_FACTORY =
-        "org.apache.axis.saaj.MessageFactoryImpl";
+        "org.apache.axis2.saaj.MessageFactoryImpl";
 
     private static final String MESSAGE_FACTORY_PROPERTY =
         "javax.xml.soap.MessageFactory";

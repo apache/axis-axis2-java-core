@@ -1,4 +1,4 @@
-<%@ page import="org.apache.axis.Constants"%>        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="org.apache.axis2.Constants"%>        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
         <html>
         <%
            /*

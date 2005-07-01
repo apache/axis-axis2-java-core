@@ -23,12 +23,12 @@
  * Time: 7:14:26 PM
  */
         %>
-<%@ page import="org.apache.axis.Constants,
-                 org.apache.axis.description.ServiceDescription,
-                 org.apache.axis.description.ModuleDescription,
-                 org.apache.axis.description.OperationDescription,
+<%@ page import="org.apache.axis2.Constants,
+                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.ModuleDescription,
+                 org.apache.axis2.description.OperationDescription,
                  java.util.*,
-                 org.apache.axis.engine.Phase"%>
+                 org.apache.axis2.engine.Phase"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head><title>View Phases</title>

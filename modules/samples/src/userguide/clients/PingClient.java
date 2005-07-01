@@ -1,11 +1,11 @@
 package userguide.clients;
 
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.MessageSender;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMElement;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.MessageSender;
+import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.om.OMElement;
 
 /**
  * Created by IntelliJ IDEA.

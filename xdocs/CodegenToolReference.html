@@ -110,7 +110,7 @@ scripts are found in the bin directory of the binary distribution)</p>
 </table>
 <h1>Code Generator Wizard - Ant Task</h1>
 <p>The code generator also comes bundled with an Ant task. The ant task is 
-implemented by the org.apache.axis.tool.ant.AntCodegenTask class. Following are 
+implemented by the org.apache.axis2.tool.ant.AntCodegenTask class. Following are
 the ant task attributes.</p>
 <h2>Ant Task Reference</h2>
 <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber2" height="458">
@@ -180,7 +180,7 @@ the ant task attributes.</p>
 &lt;project name=&quot;CodegenExample&quot; default=&quot;main&quot; basedir=&quot;.&quot;&gt;
 &lt;target name=&quot;declare&quot; &gt;
 &lt;taskdef name=&quot;codegen&quot;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classname=&quot;org.apache.axis.tool.ant.AntCodegenTask&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classname=&quot;org.apache.axis2.tool.ant.AntCodegenTask&quot;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classpath=&quot;classes&quot;/&gt;
 &lt;/target&gt;
 &lt;target name=&quot;main&quot; depends=&quot;declare&quot;&gt;
@@ -192,7 +192,7 @@ the ant task attributes.</p>
 /&gt;
 &lt;/target&gt;
 &lt;/project&gt;</pre></p>
-<p>Notice the main target that uses the "codegen" task which will use the org.apache.axis.tool.ant.AntCodegenTask class and run the code generation tool internally while passing the relevant arguments and do the proper generation. If a user types</p>
+<p>Notice the main target that uses the "codegen" task which will use the org.apache.axis2.tool.ant.AntCodegenTask class and run the code generation tool internally while passing the relevant arguments and do the proper generation. If a user types</p>
 <p>>ant or >ant main</p>
 <p>it will generate the serverside code and service.xml for the given WSDL file(C:\test\wsdl\CombinedService.wsdl) and the generated code will be written to C:\ directory.</p>
 <p>For this Ant task to work the following jars need to be in the class path.</p>

@@ -1,9 +1,9 @@
-package org.apache.axis.echo;
+package org.apache.axis2.echo;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

@@ -16,14 +16,14 @@
 
 package sample.amazon.search;
 
-import org.apache.axis.Constants;
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMOutput;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.om.OMOutput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;

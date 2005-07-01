@@ -1,6 +1,6 @@
 package userguide.example2;
 
-import org.apache.axis.om.OMElement;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.stream.XMLStreamException;
 

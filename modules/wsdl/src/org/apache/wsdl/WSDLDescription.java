@@ -15,7 +15,7 @@
  */
 package org.apache.wsdl;
 
-import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

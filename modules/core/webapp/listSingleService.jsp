@@ -1,10 +1,10 @@
 <%@ page import="java.util.Iterator,
                  java.util.HashMap,
                  java.util.Collection,
-                 org.apache.axis.Constants,
+                 org.apache.axis2.Constants,
                  java.util.Hashtable,
-                 org.apache.axis.description.ServiceDescription,
-                 org.apache.axis.description.OperationDescription,
+                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.OperationDescription,
                  javax.xml.namespace.QName,
                  java.io.StringWriter,
                  java.io.PrintWriter"%>

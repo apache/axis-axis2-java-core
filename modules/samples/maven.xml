@@ -19,25 +19,25 @@
         
         <!-- Create Chuncked enabled Repository -->
         <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
-        <copy file="test/org/apache/axis/engine/chuncking-enabled-axis2.xml" 
+        <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
         tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
         
         <!-- Create Mail transport enabled Repository -->
         <mkdir dir="target/test-resources/mail-transport-enabledRepository"/>
          <mkdir dir="target/test-resources/mail-transport-enabledRepository/modules"/>
-        <copy file="test/org/apache/axis/mail/mail-enabled-axis2.xml" 
+        <copy file="test/org/apache/axis2/mail/mail-enabled-axis2.xml"
         tofile="target/test-resources/mail-transport-enabledRepository/axis2.xml"/>
         <copy file="../addressing/target/addressing.mar" 
 		tofile="target/test-resources/mail-transport-enabledRepository/modules/addressing.mar"/>
         
       <!-- Commons transport enabled enabled Repository -->
         <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
-        <copy file="test/org/apache/axis/engine/commons-http-enabled-axis2.xml" 
+        <copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
         tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>       
         
         <!-- MTOM enabled Repository -->
         <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
-        <copy file="test/org/apache/axis/engine/MTOM-enabled-axis2.xml" 
+        <copy file="test/org/apache/axis2/engine/MTOM-enabled-axis2.xml"
         tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>         
     </postGoal>
 

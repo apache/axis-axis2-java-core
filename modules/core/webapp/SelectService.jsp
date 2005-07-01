@@ -1,9 +1,9 @@
 <%@ page import="java.util.HashMap,
-                 org.apache.axis.Constants,
+                 org.apache.axis2.Constants,
                  java.util.Collection,
                  java.util.Iterator,
-                 org.apache.axis.description.ModuleDescription,
-                 org.apache.axis.description.ServiceDescription"%>
+                 org.apache.axis2.description.ModuleDescription,
+                 org.apache.axis2.description.ServiceDescription"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.

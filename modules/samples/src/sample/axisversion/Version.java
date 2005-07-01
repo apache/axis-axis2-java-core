@@ -1,9 +1,9 @@
 package sample.axisversion;
 
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

@@ -34,7 +34,7 @@
     			<className>javax.activation.DataHandler</className>
     			<excludes>
     				<exclude>javax/xml/soap/**.java</exclude>
-    				<exclude>org/apache/axis/saaj/**.java</exclude>
+    				<exclude>org/apache/axis2/saaj/**.java</exclude>
     			</excludes>
     		</sourceModification>
     	</sourceModifications> -->   	

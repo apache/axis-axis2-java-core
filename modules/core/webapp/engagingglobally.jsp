@@ -25,10 +25,10 @@
         %>
 
 <%@ page import="java.util.Collection,
-                 org.apache.axis.Constants,
+                 org.apache.axis2.Constants,
                  java.util.Iterator,
                  javax.xml.namespace.QName,
-                 org.apache.axis.description.ModuleDescription,
+                 org.apache.axis2.description.ModuleDescription,
                  java.util.HashMap,
                  java.util.Enumeration"%><html>
 <head>

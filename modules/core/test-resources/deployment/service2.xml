@@ -8,7 +8,7 @@
     <beanMapping>bean mappping should come here</beanMapping>
 
 
-    <handler name="h1" class="org.apache.axis.engine.registry.SpeakingHandler">
+    <handler name="h1" class="org.apache.axis2.engine.registry.SpeakingHandler">
         <order before="anyBefireURI" after="anyafterURI" phase="anyhase" phaseFirst="true" phaseLast="false"/>
         <parameter name="para8" locked="xsd:true">123</parameter>
         <parameter name="para9" locked="xsd:true">456</parameter>
@@ -22,7 +22,7 @@
      </inflow>
 
     <outflow>
-        <handler name="h3" class="org.apache.axis.engine.registry.SpeakingHandler">
+        <handler name="h3" class="org.apache.axis2.engine.registry.SpeakingHandler">
             <order before="anyBefireURI" after="anyafterURI" phase="anyhase" phaseFirst="true" phaseLast="false"/>
             <parameter name="para8" locked="xsd:true">123</parameter>
             <parameter name="para9" locked="xsd:true">456</parameter>

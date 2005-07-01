@@ -143,5 +143,5 @@ public abstract class SOAPFactory {
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";
 
     private static final String DEFAULT_SF =
-        "org.apache.axis.saaj.SOAPFactoryImpl";
+        "org.apache.axis2.saaj.SOAPFactoryImpl";
 }

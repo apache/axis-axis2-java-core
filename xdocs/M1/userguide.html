@@ -265,7 +265,7 @@ the server script can be used. The sever script however needs two parameters, th
 
 <h4><strong>Deploying the sample </strong></h4>
 <p>Before deploying the sample, it is necessary to package the web service. The actual web service implementation is the EchoXML.java and it is necessary to write a service.xml so that the necessary statistics about the service will be available to the Axis2 engine at the runtime. </p>
-<pre class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; 
+<pre class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis2.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt;
    &nbsp;&nbsp;&lt;java:implementation class=&quot;userguide.sample1.EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;
 &nbsp;&nbsp;&lt;operation name=&quot;echo&quot; qname=&quot;echo&quot;/&gt;   
 &lt;/service&gt; </pre>
@@ -308,8 +308,8 @@ public void revoke(MessageContext msgContext){
 } </pre>
 <p>It is assumed that the sample is compiled. Please refer "Building Sample" above.</p>
 <h4><strong>Deploying the sample </strong></h4>
-<p>The implementation of the web service will be EchoXML, operation will be echo and the provider will be org.apache.axis.providers.RawXMLProvider, which are similar to that of the <strong>“Echo Synchronous call” </strong>. The difference is that there will be a handler that will be added in the server side. For further discussion refer the following service.xml which will be used in deploying the service. </p>
-<pre class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt; 
+<p>The implementation of the web service will be EchoXML, operation will be echo and the provider will be org.apache.axis2.providers.RawXMLProvider, which are similar to that of the <strong>“Echo Synchronous call” </strong>. The difference is that there will be a handler that will be added in the server side. For further discussion refer the following service.xml which will be used in deploying the service. </p>
+<pre class="style1 style2 style3">&lt;service provider=&quot;org.apache.axis2.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt;
  &nbsp;&lt;java:implementation class=&quot;userguide.sample1.EchoXML&quot; xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt; &nbsp;&nbsp; </pre><pre class="style1 style2 style3">&nbsp;&nbsp;&lt;inflow&gt;    
  &nbsp;&nbsp;&nbsp;&nbsp;&lt;handler name=&quot;LoggingHandler&quot; class=&quot;userguide.sample1.LoggingHandler&quot;&gt;  
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;order phase=&quot;Logging&quot;/&gt;  
@@ -407,11 +407,11 @@ public void revoke(MessageContext msgContext){
 } </pre>
 <p><strong>&#149;&nbsp; Write the service.xml file </strong></p>
 <p>the following XML snippet is a very simple service.xml file. </p>
-<pre class="style4">&lt;service provider=&quot;org.apache.axis.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt;  
+<pre class="style4">&lt;service provider=&quot;org.apache.axis2.providers.RawXMLProvider&quot; style=&quot;rpc&quot;&gt;
  &nbsp;&nbsp;&lt;java:implementation class=&quot;&lt;implementation-classname&gt;&quot;  xmlns:java=&quot;http://ws.apache.org/axis2/deployment/java&quot;/&gt;  
   &nbsp;&nbsp;&lt;operation name=&quot;&lt;method-name&gt;&quot; qname=&quot;&lt;method-name&gt;&quot;/&gt; ...  
  &lt;/service&gt; </pre>
-<p>Here the org.apache.axis.providers.RawXMLProvider is the default provider for the Apache Axis2 M1, the provider can be changed by specifying the relevant parameter. Note that &lt;method-name&gt; should be replaced by the relevant method name. </p>
+<p>Here the org.apache.axis2.providers.RawXMLProvider is the default provider for the Apache Axis2 M1, the provider can be changed by specifying the relevant parameter. Note that &lt;method-name&gt; should be replaced by the relevant method name. </p>
 <p><strong>&#149;&nbsp; Create an archive with the service.xml file and with class files </strong></p>
 <p>Compile the the Web Service implementation class and any other supporting class. Archive them in to a jar file. Place the service.xml file in the META-INF directory. </p>
 <p>Name of the archive would be the name of the service. For example if the service name is echo the archive should be echo.jar or echo.aar ( <strong>a</strong>xis <strong>ar</strong>chive) </p>

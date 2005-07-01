@@ -14,11 +14,11 @@
  * limitations under the License.
  */
  
-package org.apache.axis.sample.handlers;
+package org.apache.axis2.sample.handlers;
 
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.handlers.AbstractHandler;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +30,7 @@ public class LoggingHandler extends AbstractHandler {
 
 	private Log log = LogFactory.getLog(getClass());
 	/* (non-Javadoc)
-	 * @see org.apache.axis.engine.Handler#invoke(org.apache.axis.context.MessageContext)
+	 * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
 	 */
 	
 	

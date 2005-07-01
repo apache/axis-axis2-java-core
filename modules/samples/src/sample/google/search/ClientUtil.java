@@ -16,17 +16,17 @@
 
 package sample.google.search;
 
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 
 /**
  * Builds the MessageContext as called by AsynchronousClient

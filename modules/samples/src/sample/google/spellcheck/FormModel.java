@@ -1,17 +1,17 @@
 package sample.google.spellcheck;
 
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.clientapi.AsyncResult;
-import org.apache.axis.clientapi.Call;
-import org.apache.axis.clientapi.Callback;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.soap.SOAPBody;
-import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.AsyncResult;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import sample.google.common.util.PropertyLoader;
 
 import javax.xml.namespace.QName;

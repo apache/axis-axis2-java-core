@@ -16,8 +16,8 @@
 
 package org.apache.wsdl;
 
-import org.apache.axis.wsdl.WSDLVersionWrapper;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 
