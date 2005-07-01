@@ -51,7 +51,7 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
 		super(testName);
 	}
 	
-	String contentTypeString = "multipart/Related; type=\"application/xop+xml\"; boundary=\"----=_Part_0_9971081.1119397256753\"; start=\"<SOAP part>\"";
+	String contentTypeString = "multipart/Related; type=\"application/xop+xml\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"; start=\"<SOAPPart>\"";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -74,6 +74,7 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
 		OMElement body = (OMElement) root.getFirstChild();
 		System.out.println(body.getLocalName() + " : "
 				+ body.getNamespace().getName());
+		
 		OMElement data = (OMElement) body.getFirstChild();
 		System.out.println(data.getLocalName() + " : "
 				+ data.getNamespace().getName());
@@ -91,8 +92,8 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
 				-1, 98 };
 		DataHandler actualDH;
 		actualDH = blob.getDataHandler();
-		ByteArrayInputStream object = (ByteArrayInputStream) actualDH
-		.getContent();
+		//ByteArrayInputStream object = (ByteArrayInputStream) actualDH
+		//.getContent();
 		//byte[] actualObject= null;
 		//  object.read(actualObject,0,10);
 		

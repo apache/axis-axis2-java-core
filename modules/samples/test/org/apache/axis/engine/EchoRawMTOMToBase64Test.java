@@ -47,7 +47,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
                     "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT+1)
+            + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -91,7 +91,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     	
     	 OMFactory fac = OMAbstractFactory.getOMFactory();
     	 OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-    	 OMElement rpcWrapEle = fac.createOMElement("methodeWrap",omNs);
+    	 OMElement rpcWrapEle = fac.createOMElement("echoMTOMtoBase64",omNs);
 		 OMElement data = fac.createOMElement("data", omNs);
 		 byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
 				98 };
@@ -104,7 +104,9 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+    	for(int i=0; i<10;i++)
+    	{
+    	SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
 
@@ -118,6 +120,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         call.close();
+        System.out.println(i);
+    	}
     }
 
    /* public void testCorrectSOAPEnvelope() throws Exception {
