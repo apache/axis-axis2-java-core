@@ -119,8 +119,9 @@ public class RawXMLINOutMessageReceiver
                 }
 
                 SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
-
-                envelope.getBody().addChild(bodyContent);
+                if(bodyContent!= null){
+                    envelope.getBody().addChild(bodyContent);
+                }
                 newmsgContext.setEnvelope(envelope);
             } else {
                 throw new AxisFault(
