@@ -249,8 +249,8 @@ Modules can not be added while the Axis2 is running but rater it ll be available
 <p>There deployment Model provides a concrete mechanism to configure Axis2. Deployment Model has four entities that provide the configuration. </p>
 
 
-<h3>The <em>server.xml</em> file and <em>client.xml</em> files </h3>
-<p>These two files holds the global configuration for the client and server, and provide following information.</p>
+<h3>The <em>axis2.xml</em> file </h3>
+<p>This file holds the global configuration for the client and server, and provide following information.</p>
 <ol>
 <li>The global parameters</li>
 <li>Registered transports in and transport outs </li>
@@ -269,7 +269,7 @@ Modules can not be added while the Axis2 is running but rater it ll be available
 <h3>Module Archive</h3> 
 <p>Module archive must have a <em>META-INF/module.xml</em> file and dependent classes the <em>module.xml</em> file has Module parameters and the Operations defined in  the module.</p>
 
-<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a <em>server.xml</em> or a <em>client.xml</em> file and build the global configuration. Then the Deployment check for the Module archives and then for the service archives, the corresponding services and Modules are added to the Axis Configuration. System will build Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.
+<p>When the system started up the Axis2 ask the deployment model  to create a Axis Configuration, the Deployment Model first find a <em>axis2.xml</em> file and build the global configuration. Then the Deployment check for the Module archives and then for the service archives, the corresponding services and Modules are added to the Axis Configuration. System will build Contexts on top of the Axis Configurations and the Axis2 is ready to send or receive the SOAP Message. The Hot deployment is allowed only for the Service and in that case a thread will check the repository repeatedly, and add the Service corresponds to the new found Service archives to the repository.
     </p>
 
 
