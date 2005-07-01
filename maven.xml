@@ -378,6 +378,7 @@
 				<ant:exclude name="**servlet**.jar"/>
 				<ant:exclude name="commons-httpclient-*.jar"/>
 				<ant:exclude name="ant*.jar"/>
+				<ant:exclude name="commons-fileupload-*.jar"/>				
 			</ant:fileset> 
 		</ant:copy> 
 		<ant:copy file="target/axis2.war" tofile="${bin.dist.dir}/webapps/axis2.war"/>

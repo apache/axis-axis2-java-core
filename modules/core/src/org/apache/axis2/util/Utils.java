@@ -140,7 +140,6 @@ public class Utils {
         if (-1 != index) {
             serviceStr = filePart.substring(index + Constants.REQUEST_URL_PREFIX.length() + 1);
             if ((index = serviceStr.indexOf('/')) > 0) {
-
                 values[0] = serviceStr.substring(0, index);
                 int lastIndex = serviceStr.indexOf('?');
                 if(lastIndex >= 0){
@@ -148,9 +147,6 @@ public class Utils {
                 }else{
                     values[1] = serviceStr.substring(index + 1);
                 }
-                
-                
-                
             } else {
                 values[0] = serviceStr;
             }
