@@ -85,8 +85,15 @@ public class MIMEHelper {
 	 */
 	int partIndex = 0;
 
-	public MIMEHelper(InputStream inStream, String contentTypeString)
+	boolean fileCacheEnable = false;
+
+	String attachmentRepoDir = null;
+
+	public MIMEHelper(InputStream inStream, String contentTypeString,
+			boolean fileCacheEnable, String attachmentRepoDir)
 			throws OMException {
+		this.attachmentRepoDir = attachmentRepoDir;
+		this.fileCacheEnable = fileCacheEnable;
 		bodyPartsMap = new HashMap();
 		try {
 			contentType = new ContentType(contentTypeString);
@@ -132,6 +139,11 @@ public class MIMEHelper {
 				throw new OMException("Stream Error" + e1.toString());
 			}
 		}
+	}
+	
+	public MIMEHelper(InputStream inStream, String contentTypeString)
+			throws OMException {
+		this(inStream,contentTypeString,false,null);
 	}
 
 	/**
@@ -212,6 +224,7 @@ public class MIMEHelper {
 					if (bodyPart == null) {
 						return null;
 					}
+					System.out.println("blob cid : "+blobContentID);
 					if (bodyPartsMap.containsKey(blobContentID)) {
 						bodyPart = (Part) bodyPartsMap.get(blobContentID);
 						DataHandler dh = bodyPart.getDataHandler();
@@ -233,20 +246,20 @@ public class MIMEHelper {
 	// TODO do we need Locking for this
 	private MimeBodyPart getMimeBodyPart() throws OMException {
 		MimeBodyPart mimeBodyPart = null;
-        
+
 		//String Line = pushbackInStream.readLine();
 		MimeBodyPartInputStream partStream;
-		try {
-			if (pushbackInStream.available() > 0) {
+//		try {
+			//if (pushbackInStream.available() > 0) {
 				partStream = new MimeBodyPartInputStream(pushbackInStream,
 						boundary);
-			} else {
-				throw new OMException(
-						"Attachment not found. End of Stream reached");
-			}
-		} catch (IOException e1) {
-			throw new OMException("Attachement not found. Problem with Stream");
-		}
+			//} else {
+			//	throw new OMException(
+			//			"Attachment not found. End of Stream reached");
+			//}
+//		} catch (IOException e1) {
+//			throw new OMException("Attachement not found. Problem with Stream");
+//		}
 
 		try {
 			mimeBodyPart = new MimeBodyPart(partStream);
@@ -283,6 +296,7 @@ public class MIMEHelper {
 			String partContentID;
 			try {
 				partContentID = nextMimeBodyPart.getContentID();
+				System.out.println("Mime part cid : "+partContentID);
 				bodyPartsMap.put(partContentID, nextMimeBodyPart);
 				return nextMimeBodyPart;
 			} catch (MessagingException e) {
