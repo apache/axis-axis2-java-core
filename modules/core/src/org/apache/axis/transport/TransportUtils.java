@@ -15,13 +15,6 @@
  */
 package org.apache.axis.transport;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.OperationContext;
 import org.apache.axis.engine.AxisFault;
@@ -33,6 +26,12 @@ import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPTransportUtils;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class TransportUtils {
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {

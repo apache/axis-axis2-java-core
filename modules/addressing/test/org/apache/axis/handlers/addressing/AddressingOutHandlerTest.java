@@ -1,15 +1,7 @@
 package org.apache.axis.handlers.addressing;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.AnyContentType;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.addressing.ServiceName;
-import org.apache.axis.addressing.AddressingConstants.Submission;
+import org.apache.axis.addressing.*;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.handlers.util.TestUtil;
@@ -17,6 +9,8 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.impl.llom.util.XMLComparator;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.namespace.QName;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

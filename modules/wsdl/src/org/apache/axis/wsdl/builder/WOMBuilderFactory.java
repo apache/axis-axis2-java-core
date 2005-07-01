@@ -15,17 +15,16 @@
  */
 package org.apache.axis.wsdl.builder;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.wsdl.WSDLException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis.wsdl.builder.wsdl4j.WSDL1ToWOMBuilder;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.util.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import javax.wsdl.WSDLException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk

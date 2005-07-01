@@ -1,12 +1,8 @@
 package org.apache.axis.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisFault;
-import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.context.ConfigurationContextFactory;
-
-import javax.xml.stream.XMLStreamException;
+import org.apache.axis.engine.AxisConfiguration;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

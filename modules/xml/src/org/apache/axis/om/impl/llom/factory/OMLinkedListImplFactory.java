@@ -16,13 +16,13 @@
 package org.apache.axis.om.impl.llom.factory;
 
 import org.apache.axis.om.*;
+import org.apache.axis.om.impl.llom.OMAttributeImpl;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
-import org.apache.axis.om.impl.llom.OMAttributeImpl;
 
-import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 
 /**
  * Class OMLinkedListImplFactory

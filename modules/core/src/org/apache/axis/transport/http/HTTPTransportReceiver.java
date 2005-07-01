@@ -15,19 +15,14 @@
  */
 package org.apache.axis.transport.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Class HTTPTransportReceiver

@@ -15,29 +15,15 @@
  */
 package org.apache.axis.transport.tcp;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import junit.framework.TestCase;
-
-import org.apache.axis.addressing.AddressingConstants;
-import org.apache.axis.addressing.EndpointReference;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.engine.AxisConfiguration;
-import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
 
 public class TCPTransportTest extends TestCase {
     public TCPTransportTest(String arg0) {

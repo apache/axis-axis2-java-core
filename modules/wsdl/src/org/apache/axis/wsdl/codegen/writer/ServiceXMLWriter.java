@@ -1,10 +1,10 @@
 package org.apache.axis.wsdl.codegen.writer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import org.apache.axis.wsdl.codegen.XSLTConstants;
 import org.apache.axis.wsdl.util.FileWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

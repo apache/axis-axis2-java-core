@@ -1,14 +1,13 @@
 package org.apache.axis.handlers.addressing;
 
 import junit.framework.TestCase;
-
+import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
-import org.apache.axis.addressing.AddressingConstants;
+import org.apache.axis.handlers.util.TestUtil;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeader;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.handlers.util.TestUtil;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

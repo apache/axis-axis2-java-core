@@ -23,17 +23,17 @@ import org.apache.axis.deployment.DeploymentParser;
 import org.apache.axis.description.AxisDescWSDLComponentFactory;
 import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis.wsdl.WSDLVersionWrapper;
+import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.util.Iterator;
 
 public class ArchiveReader implements DeploymentConstants {
 

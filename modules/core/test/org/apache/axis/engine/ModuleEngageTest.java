@@ -1,15 +1,15 @@
 package org.apache.axis.engine;
 
 import junit.framework.TestCase;
-import org.apache.axis.phaseresolver.PhaseException;
-import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.context.ConfigurationContextFactory;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.description.OperationDescription;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.phaseresolver.PhaseException;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

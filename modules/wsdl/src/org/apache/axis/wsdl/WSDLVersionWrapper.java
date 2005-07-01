@@ -16,9 +16,9 @@
 
 package org.apache.axis.wsdl;
 
-import javax.wsdl.Definition;
-
 import org.apache.wsdl.WSDLDescription;
+
+import javax.wsdl.Definition;
 
 /**
  * @author chathura@opensource.lk

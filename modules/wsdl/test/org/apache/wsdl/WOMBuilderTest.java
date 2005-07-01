@@ -16,17 +16,16 @@
 package org.apache.wsdl;
 
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
+import org.apache.axis.wsdl.WSDLVersionWrapper;
+import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-
-import org.apache.axis.wsdl.WSDLVersionWrapper;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

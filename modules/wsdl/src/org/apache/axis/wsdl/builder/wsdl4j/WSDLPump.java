@@ -15,27 +15,18 @@
 */
 package org.apache.axis.wsdl.builder.wsdl4j;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import org.apache.axis.wsdl.builder.WSDLComponentFactory;
+import org.apache.crimson.tree.XmlDocument;
+import org.apache.wsdl.*;
+import org.apache.wsdl.extensions.DefaultExtensibilityElement;
+import org.apache.wsdl.extensions.ExtensionConstants;
+import org.apache.wsdl.extensions.ExtensionFactory;
+import org.apache.wsdl.impl.WSDLProcessingException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingFault;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Fault;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
+import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -44,33 +35,10 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
-
-import org.apache.axis.wsdl.builder.WSDLComponentFactory;
-import org.apache.crimson.tree.XmlDocument;
-import org.apache.wsdl.Component;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingFault;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLFaultReference;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.DefaultExtensibilityElement;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.ExtensionFactory;
-import org.apache.wsdl.impl.WSDLProcessingException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk

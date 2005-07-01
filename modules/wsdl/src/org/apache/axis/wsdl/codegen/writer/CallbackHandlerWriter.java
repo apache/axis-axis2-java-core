@@ -16,9 +16,9 @@
 
 package org.apache.axis.wsdl.codegen.writer;
 
-import java.io.File;
-
 import org.apache.axis.wsdl.codegen.XSLTConstants;
+
+import java.io.File;
 
 /**
  * @author chathura@opensource.lk

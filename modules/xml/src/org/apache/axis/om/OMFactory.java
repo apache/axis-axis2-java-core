@@ -15,8 +15,8 @@
  */
 package org.apache.axis.om;
 
-import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 
 /**
  * Class OMFactory

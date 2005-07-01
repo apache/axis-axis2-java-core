@@ -1,8 +1,8 @@
 package sample.google.common.util;
 
-import java.util.Properties;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

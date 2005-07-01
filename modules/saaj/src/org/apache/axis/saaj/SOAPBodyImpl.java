@@ -15,22 +15,15 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Locale;
-
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-
-import org.w3c.dom.Document;
-
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.soap.SOAPFactory;
-import org.apache.axis.om.OMAbstractFactory;
+import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.*;
+import java.util.Locale;
 
 /**
  * Class SOAPBodeImpl

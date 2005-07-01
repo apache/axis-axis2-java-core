@@ -18,12 +18,7 @@ package org.apache.axis.engine;
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -36,12 +31,14 @@ import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 
 public class EchoRawMTOMTest extends TestCase {
 	 private EndpointReference targetEPR =

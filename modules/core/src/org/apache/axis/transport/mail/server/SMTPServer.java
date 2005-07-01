@@ -1,10 +1,10 @@
 package org.apache.axis.transport.mail.server;
 
+import org.apache.axis.context.ConfigurationContext;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.apache.axis.context.ConfigurationContext;
 
 
 /**

@@ -15,13 +15,13 @@
  */
 package org.apache.axis.saaj;
 
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMElement;
+
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMAbstractFactory;
 
 /**
  * @author shaas02

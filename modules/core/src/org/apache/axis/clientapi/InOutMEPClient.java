@@ -17,10 +17,6 @@
  */
 package org.apache.axis.clientapi;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
@@ -38,6 +34,9 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * This Class capture handling the In-Out type Method invocations. this provides the 

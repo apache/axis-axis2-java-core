@@ -15,14 +15,13 @@
  */
 package org.apache.axis.om;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.LinkedList;
-
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a> For

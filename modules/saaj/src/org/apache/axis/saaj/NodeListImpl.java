@@ -18,9 +18,9 @@ package org.apache.axis.saaj;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.List;
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Ashutosh Shahi

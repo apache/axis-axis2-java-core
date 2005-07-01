@@ -16,17 +16,6 @@
 
 package org.apache.axis.transport.mail;
 
-import java.io.ByteArrayInputStream;
-import java.util.Properties;
-
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -42,6 +31,16 @@ import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.util.Properties;
 
 public class MailWorker implements AxisWorker {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());

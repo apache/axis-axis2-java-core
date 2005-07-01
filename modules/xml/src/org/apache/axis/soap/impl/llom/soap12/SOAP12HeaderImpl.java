@@ -1,8 +1,8 @@
 package org.apache.axis.soap.impl.llom.soap12;
 
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMException;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeaderBlock;
@@ -11,7 +11,6 @@ import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
-import java.util.ArrayList;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

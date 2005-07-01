@@ -17,8 +17,6 @@
  */
 package org.apache.axis.clientapi;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
@@ -31,6 +29,8 @@ import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisEngine;
 import org.apache.axis.engine.AxisFault;
 import org.apache.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
 
 public class InOnlyMEPClient extends MEPClient {
     protected MessageInformationHeadersCollection messageInformationHeaders;

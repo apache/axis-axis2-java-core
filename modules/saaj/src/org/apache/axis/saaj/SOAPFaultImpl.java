@@ -15,15 +15,11 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Locale;
-
-import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
-
-import org.apache.axis.om.OMNode;
+import java.util.Locale;
 
 /**
  * Class SOAPFaultImpl

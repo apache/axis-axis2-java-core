@@ -16,25 +16,24 @@
 
 package sample.amazon.search;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.io.IOException;
-import java.io.*;
-import java.util.*;
-
 import org.apache.axis.Constants;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.context.MessageContext;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMOutput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * This class implements main() method and sendMsg() methods,

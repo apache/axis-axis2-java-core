@@ -16,26 +16,8 @@
 
 package org.apache.axis.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.deployment.util.DeploymentData;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.FlowImpl;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
@@ -43,6 +25,14 @@ import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * This class is used to parse the following xml douments

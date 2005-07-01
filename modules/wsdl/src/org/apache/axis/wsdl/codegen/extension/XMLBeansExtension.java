@@ -2,28 +2,14 @@ package org.apache.axis.wsdl.codegen.extension;
 
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.databinding.JavaTypeMapper;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.BindingConfig;
-import org.apache.xmlbeans.Filer;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.wsdl.extensions.DefaultExtensibilityElement;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.extensions.ExtensionConstants;
+import org.apache.wsdl.extensions.Schema;
+import org.apache.xmlbeans.*;
 import org.w3c.dom.Element;
 
-import javax.wsdl.extensions.ExtensibilityElement;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.Writer;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.List;
 
 /*

@@ -15,37 +15,20 @@
  */
 package org.apache.axis.saaj;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.util.SessionUtils;
+import org.w3c.dom.*;
 
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPPart;
-import javax.xml.transform.Source;
-
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.util.SessionUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
+import javax.xml.transform.Source;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

@@ -15,20 +15,10 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Iterator;
-
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.framework.Test;
+
+import javax.xml.soap.*;
+import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

@@ -15,12 +15,11 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

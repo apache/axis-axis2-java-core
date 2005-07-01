@@ -17,11 +17,11 @@
  */
 package org.apache.axis.transport.http;
 
+import org.apache.axis.engine.AxisFault;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.axis.engine.AxisFault;
 
 public class SimpleHTTPOutputStream extends FilterOutputStream {
     private boolean written = false;

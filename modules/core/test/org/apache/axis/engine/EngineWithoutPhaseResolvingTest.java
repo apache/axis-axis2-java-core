@@ -33,7 +33,6 @@ import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {

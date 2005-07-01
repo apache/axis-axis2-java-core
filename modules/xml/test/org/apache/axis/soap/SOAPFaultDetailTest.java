@@ -16,7 +16,9 @@
 
 package org.apache.axis.soap;
 
-import org.apache.axis.om.*;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMText;
 
 import java.util.Iterator;
 

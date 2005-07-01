@@ -16,7 +16,6 @@
 
 package org.apache.axis.soap;
 
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 

@@ -23,10 +23,8 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPTransportReceiver;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Map;
 
 public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {

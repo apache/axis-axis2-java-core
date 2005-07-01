@@ -15,14 +15,10 @@
  */
 package org.apache.axis.saaj;
 
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-
-import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.soap.SOAPFactory;
+
+import javax.xml.soap.*;
 
 
 /**

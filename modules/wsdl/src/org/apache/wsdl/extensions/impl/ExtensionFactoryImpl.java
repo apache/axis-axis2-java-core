@@ -16,11 +16,11 @@
 
 package org.apache.wsdl.extensions.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.ExtensionFactory;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk

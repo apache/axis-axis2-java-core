@@ -15,19 +15,17 @@
  */
 package org.apache.axis.saaj;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPEnvelope;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
 import org.apache.axis.engine.AxisFault;
+
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**

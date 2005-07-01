@@ -15,16 +15,8 @@
  */
 package org.apache.axis.util;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.description.PhaseRule;
-import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Handler;
@@ -34,6 +26,8 @@ import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.receivers.AbstractMessageReceiver;
 import org.apache.axis.receivers.RawXMLINOutMessageReceiver;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
 
 public class Utils {
 

@@ -3,12 +3,10 @@ package org.apache.axis.soap.impl.llom.soap12;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.soap.SOAPHeader;
 import org.apache.axis.soap.impl.llom.SOAPConstants;
 import org.apache.axis.soap.impl.llom.SOAPHeaderBlockImpl;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11HeaderImpl;
-import org.apache.axis.soap.SOAPHeader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

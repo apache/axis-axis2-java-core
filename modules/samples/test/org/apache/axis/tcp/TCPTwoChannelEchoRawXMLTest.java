@@ -18,12 +18,7 @@ package org.apache.axis.tcp;
 
 
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -36,13 +31,13 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Echo;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.integration.UtilsTCPServer;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMOutput;
+import org.apache.axis.om.*;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.axis.util.Utils;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =

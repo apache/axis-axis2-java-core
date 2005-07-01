@@ -15,13 +15,12 @@
  */
 package org.apache.axis.saaj;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

@@ -16,10 +16,10 @@
 
 package org.apache.axis.wsdl.codegen.writer;
 
+import org.apache.axis.wsdl.util.FileWriter;
+
 import java.io.File;
 import java.io.FileOutputStream;
-
-import org.apache.axis.wsdl.util.FileWriter;
 
 /**
  * @author chathura@opensource.lk

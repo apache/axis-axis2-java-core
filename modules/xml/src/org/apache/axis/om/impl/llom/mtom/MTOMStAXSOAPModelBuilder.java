@@ -16,20 +16,16 @@
  */
 package org.apache.axis.om.impl.llom.mtom;
 
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.attachments.MIMEHelper;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

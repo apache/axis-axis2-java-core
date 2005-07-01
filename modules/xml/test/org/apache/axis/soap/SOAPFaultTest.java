@@ -16,13 +16,9 @@
 
 package org.apache.axis.soap;
 
-import junit.framework.TestCase;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMOutput;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
-
-import javax.xml.stream.XMLStreamException;
 
 public class SOAPFaultTest extends SOAPFaultTestCase {
 

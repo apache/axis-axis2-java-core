@@ -17,16 +17,12 @@
  */
 package org.apache.axis.transport.local;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
+
+import java.io.*;
 
 
 public class LocalTransportSender extends AbstractTransportSender {

@@ -15,13 +15,6 @@
  */
 package org.apache.axis.om.impl.streamwrapper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMOutput;
@@ -29,6 +22,12 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 public class OmStAXBuilderTest extends AbstractTestCase {
     private SOAPFactory factory = null;

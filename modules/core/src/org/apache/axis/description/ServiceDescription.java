@@ -15,24 +15,8 @@
 */
 package org.apache.axis.description;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.factory.WSDLFactory;
-import javax.xml.namespace.QName;
-
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.engine.AxisFault;
@@ -45,8 +29,14 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import javax.wsdl.*;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.factory.WSDLFactory;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * Class ServiceDescription

@@ -18,7 +18,6 @@
 package org.apache.axis.integration;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMFactory;

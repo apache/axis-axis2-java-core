@@ -16,12 +16,8 @@
 
 package org.apache.axis.soap;
 
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SOAPHeaderTest extends SOAPHeaderTestCase {
     protected boolean isThereException;

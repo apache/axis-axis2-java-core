@@ -15,21 +15,14 @@
  */
 package org.apache.axis.saaj;
 
+import org.apache.axis.om.OMOutput;
+import org.apache.axis.transport.http.HTTPConstants;
+
+import javax.xml.soap.*;
+import javax.xml.stream.XMLOutputFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.om.OMOutput;
-import org.apache.axis.transport.http.HTTPConstants;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

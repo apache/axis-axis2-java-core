@@ -16,8 +16,6 @@
 
 package org.apache.axis.clientapi;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -35,6 +33,8 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.stream.XMLStreamReader;
 
 
 

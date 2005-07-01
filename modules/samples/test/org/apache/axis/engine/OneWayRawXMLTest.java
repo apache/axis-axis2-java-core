@@ -18,10 +18,7 @@ package org.apache.axis.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -33,12 +30,12 @@ import org.apache.axis.integration.TestingUtils;
 import org.apache.axis.integration.UtilServer;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class OneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =

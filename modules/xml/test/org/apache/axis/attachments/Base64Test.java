@@ -16,12 +16,12 @@
  */
 package org.apache.axis.attachments;
 
+import junit.framework.TestCase;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

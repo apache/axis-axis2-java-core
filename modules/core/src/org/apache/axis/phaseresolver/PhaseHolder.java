@@ -15,11 +15,11 @@
 */
 package org.apache.axis.phaseresolver;
 
-import java.util.ArrayList;
-
 import org.apache.axis.description.HandlerDescription;
 import org.apache.axis.engine.Handler;
 import org.apache.axis.engine.Phase;
+
+import java.util.ArrayList;
 
 
 /**

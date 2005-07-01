@@ -1,13 +1,11 @@
 package org.apache.axis.soap.impl.llom.builder;
 
-import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
-import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
 import org.apache.axis.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.xml.stream.XMLStreamReader;
 

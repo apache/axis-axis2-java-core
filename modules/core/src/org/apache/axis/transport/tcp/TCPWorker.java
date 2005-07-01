@@ -17,16 +17,6 @@
  */
 package org.apache.axis.transport.tcp;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.Constants;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
@@ -39,6 +29,15 @@ import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.Socket;
 
 public class TCPWorker implements AxisWorker {
     protected Log log = LogFactory.getLog(getClass().getName());

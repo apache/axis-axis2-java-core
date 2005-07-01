@@ -3,7 +3,6 @@ package org.apache.axis.om.impl.llom;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.impl.llom.serialize.StreamingOMSerializer;
 

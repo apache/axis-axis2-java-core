@@ -1,8 +1,7 @@
 package org.apache.axis.util.threadpool;
 
-import junit.framework.TestCase;
-import org.apache.axis.engine.AxisFault;
 import org.apache.axis.AbstractTestCase;
+import org.apache.axis.engine.AxisFault;
 
 import java.util.ArrayList;
 import java.util.List;

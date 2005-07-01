@@ -1,20 +1,13 @@
 package org.apache.axis.soap.impl.llom.soap11;
 
-import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.OMTextImpl;
-import org.apache.axis.soap.impl.llom.*;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12FaultCodeImpl;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMOutput;
+import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.soap.*;
+import org.apache.axis.soap.impl.llom.SOAPFaultImpl;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.util.Iterator;
 
 
 /**

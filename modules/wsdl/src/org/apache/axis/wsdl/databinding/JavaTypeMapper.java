@@ -1,9 +1,6 @@
 package org.apache.axis.wsdl.databinding;
 
-import java.math.BigDecimal;
-import java.util.Date;
 
-import javax.xml.namespace.QName;
 
 
 /*

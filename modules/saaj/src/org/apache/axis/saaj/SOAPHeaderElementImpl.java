@@ -15,9 +15,9 @@
  */
 package org.apache.axis.saaj;
 
-import javax.xml.soap.SOAPHeaderElement;
-
 import org.apache.axis.soap.SOAPHeaderBlock;
+
+import javax.xml.soap.SOAPHeaderElement;
 
 /**
  * Class SOAPHeaderImpl

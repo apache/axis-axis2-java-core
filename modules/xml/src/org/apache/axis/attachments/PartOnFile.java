@@ -16,24 +16,17 @@
  */
 package org.apache.axis.attachments;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
+import org.apache.axis.om.OMException;
 
 import javax.activation.DataHandler;
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
-
-import org.apache.axis.om.OMException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

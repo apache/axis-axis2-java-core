@@ -15,20 +15,16 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Iterator;
-
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMContainer;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 import java.util.ArrayList;
+import java.util.Iterator;
 /**
  * Class SOAPElementImpl
  *

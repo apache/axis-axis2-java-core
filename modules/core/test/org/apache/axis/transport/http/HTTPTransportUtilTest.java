@@ -4,16 +4,10 @@ import junit.framework.TestCase;
 import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.impl.llom.OMAttributeImpl;
-import org.apache.axis.om.impl.llom.OMTextImpl;
-import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.SOAPEnvelope;
-import org.apache.axis.attachments.ByteArrayDataSource;
+import org.apache.axis.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

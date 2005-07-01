@@ -16,22 +16,20 @@
  */
 package org.apache.axis.om.impl.llom.mtom;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.attachments.MIMEHelper;
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMText;
 import org.apache.axis.om.OMXMLParserWrapper;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

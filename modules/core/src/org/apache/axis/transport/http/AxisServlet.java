@@ -15,9 +15,13 @@
 */
 package org.apache.axis.transport.http;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
+import org.apache.axis.Constants;
+import org.apache.axis.context.ConfigurationContext;
+import org.apache.axis.context.ConfigurationContextFactory;
+import org.apache.axis.context.MessageContext;
+import org.apache.axis.context.SessionContext;
+import org.apache.axis.engine.AxisEngine;
+import org.apache.axis.engine.AxisFault;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -26,14 +30,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-
-import org.apache.axis.Constants;
-import org.apache.axis.context.ConfigurationContext;
-import org.apache.axis.context.ConfigurationContextFactory;
-import org.apache.axis.context.MessageContext;
-import org.apache.axis.context.SessionContext;
-import org.apache.axis.engine.AxisEngine;
-import org.apache.axis.engine.AxisFault;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * Class AxisServlet

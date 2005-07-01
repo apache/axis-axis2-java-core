@@ -18,10 +18,7 @@ package org.apache.axis.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -37,6 +34,8 @@ import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class CallUnregisteredServiceTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());

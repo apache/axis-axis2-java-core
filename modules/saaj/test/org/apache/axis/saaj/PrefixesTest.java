@@ -17,15 +17,8 @@ package org.apache.axis.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-
+import javax.xml.soap.*;
 import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
 
 /**
  * @author Ashutosh Shahi

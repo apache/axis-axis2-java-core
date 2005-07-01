@@ -15,10 +15,6 @@
  */
 package org.apache.axis.transport;
 
-import java.io.OutputStream;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -34,6 +30,9 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.http.HTTPTransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.OutputStream;
 
 /**
  * By the time this Class is invoked either the To EPR on the MessageContext

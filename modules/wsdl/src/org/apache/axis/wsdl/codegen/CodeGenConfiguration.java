@@ -16,11 +16,11 @@
 
 package org.apache.axis.wsdl.codegen;
 
+import org.apache.axis.wsdl.databinding.TypeMapper;
+import org.apache.wsdl.WSDLDescription;
+
 import java.io.File;
 import java.util.Map;
-
-import org.apache.wsdl.WSDLDescription;
-import org.apache.axis.wsdl.databinding.TypeMapper;
 
 /**
  * @author chathura@opensource.lk

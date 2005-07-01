@@ -15,27 +15,15 @@
 */
 package org.apache.axis.engine;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.repository.util.ArchiveReader;
-import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ParameterInclude;
-import org.apache.axis.description.ParameterIncludeImpl;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.axis.phaseresolver.PhaseResolver;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.util.*;
 
 /**
  * Class EngineRegistryImpl

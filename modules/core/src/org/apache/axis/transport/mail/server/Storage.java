@@ -5,10 +5,9 @@ package org.apache.axis.transport.mail.server;
  * @author Chamil Thanthrimudalige.
  */
 
+import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
-import javax.mail.internet.MimeMessage;
 
 public class Storage {
 	private ArrayList mails = new ArrayList();

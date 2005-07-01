@@ -17,10 +17,10 @@
  */
 package org.apache.axis.engine;
 
+import org.apache.axis.context.MessageContext;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.apache.axis.context.MessageContext;
 
 public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";

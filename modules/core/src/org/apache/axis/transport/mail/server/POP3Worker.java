@@ -3,17 +3,12 @@
  */
 package org.apache.axis.transport.mail.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 public class POP3Worker extends Thread{
     private Socket socket;

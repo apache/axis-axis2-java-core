@@ -16,9 +16,9 @@
 
 package org.apache.wsdl.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLExtensibilityAttribute;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk

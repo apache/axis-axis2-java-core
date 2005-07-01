@@ -1,22 +1,13 @@
 package org.apache.axis.transport.mail.server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import org.apache.axis.context.ConfigurationContext;
+
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.axis.context.ConfigurationContext;
 
 
 /**

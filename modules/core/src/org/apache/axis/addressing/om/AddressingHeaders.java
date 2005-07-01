@@ -69,15 +69,7 @@ public class AddressingHeaders {
         this.action = action;
     }
 
-    /**
-     * Method toOM
-     *
-     * @param soapHeader
-     */
-    public void toOM(SOAPHeader soapHeader) {
-    }
-
-    // ------------------- Setters and Getters --------------------------------------
+     // ------------------- Setters and Getters --------------------------------------
 
     /**
      * Method getWsaTo

@@ -15,8 +15,8 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Iterator;
 import javax.xml.soap.MimeHeader;
+import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi	ashutosh.shahi@gmail.com

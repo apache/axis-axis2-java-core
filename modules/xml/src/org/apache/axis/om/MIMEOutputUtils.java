@@ -15,16 +15,15 @@
  */
 package org.apache.axis.om;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

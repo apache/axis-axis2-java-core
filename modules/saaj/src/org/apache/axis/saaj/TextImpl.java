@@ -15,13 +15,13 @@
  */
 package org.apache.axis.saaj;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Text;
-import javax.xml.soap.SOAPException;
-
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMText;
 import org.w3c.dom.DOMException;
+
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.Text;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

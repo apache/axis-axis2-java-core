@@ -15,23 +15,17 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Iterator;
-
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMText;
+import org.apache.axis.om.*;
 import org.apache.axis.util.Dom2OmUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.CharacterData;
+
+import javax.xml.soap.Node;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import java.util.Iterator;
 
 /**
  * Class NodeImpl

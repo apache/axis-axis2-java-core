@@ -4,7 +4,6 @@ import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 
 /*

@@ -16,11 +16,9 @@
 package org.apache.axis.saaj;
 
 import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
 
-import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
+import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com

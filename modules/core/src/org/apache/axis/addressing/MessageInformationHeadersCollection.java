@@ -15,11 +15,11 @@
  */
 package org.apache.axis.addressing;
 
-import java.util.ArrayList;
-
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPHeader;
+
+import java.util.ArrayList;
 
 /**
  * This holds the WSA Message Information Headers

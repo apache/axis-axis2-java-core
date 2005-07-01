@@ -1,5 +1,20 @@
 package org.apache.axis.wsdl.codegen.emitter;
 
+import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis.wsdl.codegen.CodeGenerationException;
+import org.apache.axis.wsdl.codegen.Constants;
+import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis.wsdl.codegen.writer.*;
+import org.apache.axis.wsdl.databinding.TypeMapper;
+import org.apache.crimson.tree.XmlDocument;
+import org.apache.wsdl.*;
+import org.apache.wsdl.extensions.ExtensionConstants;
+import org.apache.wsdl.extensions.SOAPBody;
+import org.apache.wsdl.extensions.SOAPOperation;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,43 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Enumeration;
-
-import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis.wsdl.codegen.CodeGenerationException;
-import org.apache.axis.wsdl.codegen.Constants;
-import org.apache.axis.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis.wsdl.codegen.writer.BeanWriter;
-import org.apache.axis.wsdl.codegen.writer.CallbackHandlerWriter;
-import org.apache.axis.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis.wsdl.codegen.writer.DatabindingSupportClassWriter;
-import org.apache.axis.wsdl.codegen.writer.InterfaceImplementationWriter;
-import org.apache.axis.wsdl.codegen.writer.InterfaceWriter;
-import org.apache.axis.wsdl.codegen.writer.LocalTestClassWriter;
-import org.apache.axis.wsdl.codegen.writer.MessageReceiverWriter;
-import org.apache.axis.wsdl.codegen.writer.ServiceXMLWriter;
-import org.apache.axis.wsdl.codegen.writer.SkeletonWriter;
-import org.apache.axis.wsdl.codegen.writer.TestClassWriter;
-import org.apache.axis.wsdl.codegen.writer.TestServiceXMLWriter;
-import org.apache.axis.wsdl.codegen.writer.TestSkeletonImplWriter;
-import org.apache.axis.wsdl.databinding.TypeMapper;
-import org.apache.crimson.tree.XmlDocument;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPOperation;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 
 

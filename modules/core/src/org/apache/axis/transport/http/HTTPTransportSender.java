@@ -15,17 +15,6 @@
 */
 package org.apache.axis.transport.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.URL;
-import java.util.Map;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.MessageContext;
@@ -37,6 +26,13 @@ import org.apache.axis.om.OMOutput;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis.transport.AbstractTransportSender;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.*;
+import java.util.Map;
 
 /**
  * Class HTTPTransportSender

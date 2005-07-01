@@ -17,18 +17,10 @@
  */
 package org.apache.axis.transport;
 
-import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
-
 import org.apache.axis.engine.AxisFault;
+
+import javax.mail.*;
+import java.util.Properties;
 
 /**
  * @author hemapani

@@ -16,18 +16,6 @@
  */
 package org.apache.axis.attachments;
 
-import java.awt.Image;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMOutput;
@@ -36,6 +24,12 @@ import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.OMTextImpl;
 import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.awt.*;
+import java.io.*;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
@@ -73,14 +67,7 @@ public class ImageSampleTest extends AbstractTestCase {
 	String contentTypeString = "multipart/Related; type=\"application/xop+xml\";start=\"<SOAPPart>\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"";
 	
 	
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-	}
-	
+
 	public void testImageSampleSerialize() throws Exception {
 		
 		outMTOMFile = getTestResourceFile(outFileName);

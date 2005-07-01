@@ -22,7 +22,6 @@ import org.apache.axis.clientapi.Call;
 import org.apache.axis.clientapi.Callback;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
-
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;

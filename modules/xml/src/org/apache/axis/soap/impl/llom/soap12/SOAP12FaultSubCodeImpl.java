@@ -1,17 +1,12 @@
 package org.apache.axis.soap.impl.llom.soap12;
 
-import org.apache.axis.soap.impl.llom.SOAPFaultSubCodeImpl;
-import org.apache.axis.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11FaultSubCodeImpl;
-import org.apache.axis.soap.SOAPFaultSubCode;
-import org.apache.axis.soap.SOAPFaultCode;
-import org.apache.axis.soap.SOAPFaultValue;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OMException;
-
-import javax.xml.namespace.QName;
+import org.apache.axis.soap.SOAPFaultCode;
+import org.apache.axis.soap.SOAPFaultSubCode;
+import org.apache.axis.soap.SOAPFaultValue;
+import org.apache.axis.soap.impl.llom.SOAPFaultSubCodeImpl;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

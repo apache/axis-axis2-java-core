@@ -18,12 +18,7 @@ package org.apache.axis.mail;
 
 //todo
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -33,20 +28,12 @@ import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.ParameterImpl;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.Echo;
 import org.apache.axis.engine.MessageReceiver;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMOutput;
+import org.apache.axis.om.*;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.transport.mail.MailTransportSender;
 import org.apache.axis.transport.mail.SimpleMailListener;
@@ -55,6 +42,10 @@ import org.apache.axis.transport.mail.server.MailServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 public class MailRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR =

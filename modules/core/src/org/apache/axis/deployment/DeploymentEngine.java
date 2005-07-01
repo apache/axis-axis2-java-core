@@ -16,22 +16,6 @@
 
 package org.apache.axis.deployment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.wsdl.factory.WSDLFactory;
-
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis.deployment.repository.util.ArchiveFileData;
@@ -41,12 +25,7 @@ import org.apache.axis.deployment.scheduler.DeploymentIterator;
 import org.apache.axis.deployment.scheduler.Scheduler;
 import org.apache.axis.deployment.scheduler.SchedulerTask;
 import org.apache.axis.deployment.util.DeploymentData;
-import org.apache.axis.description.Flow;
-import org.apache.axis.description.HandlerDescription;
-import org.apache.axis.description.ModuleDescription;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
@@ -56,6 +35,11 @@ import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.util.*;
 
 
 public class DeploymentEngine implements DeploymentConstants {

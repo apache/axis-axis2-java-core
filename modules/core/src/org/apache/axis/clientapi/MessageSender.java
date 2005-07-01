@@ -17,8 +17,6 @@
  */
 package org.apache.axis.clientapi;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.context.ServiceContext;
@@ -26,6 +24,8 @@ import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.om.OMElement;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author hemapani

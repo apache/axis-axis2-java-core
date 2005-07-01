@@ -15,9 +15,9 @@
  */
 package org.apache.axis.saaj;
 
-import javax.xml.soap.SOAPBodyElement;
-
 import org.apache.axis.om.OMElement;
+
+import javax.xml.soap.SOAPBodyElement;
 
 /**
  * Class SOAPBodeElementImpl

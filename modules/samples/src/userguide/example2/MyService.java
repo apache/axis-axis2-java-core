@@ -1,8 +1,8 @@
 package userguide.example2;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis.om.OMElement;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Created by IntelliJ IDEA.

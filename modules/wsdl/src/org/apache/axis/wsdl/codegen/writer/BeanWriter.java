@@ -1,8 +1,8 @@
 package org.apache.axis.wsdl.codegen.writer;
 
-import java.io.File;
-
 import org.apache.axis.wsdl.codegen.XSLTConstants;
+
+import java.io.File;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

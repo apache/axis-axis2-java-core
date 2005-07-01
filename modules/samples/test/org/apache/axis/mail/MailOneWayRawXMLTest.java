@@ -18,12 +18,7 @@ package org.apache.axis.mail;
 
 //todo
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis.Constants;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
@@ -34,7 +29,6 @@ import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.engine.MessageReceiver;
 import org.apache.axis.om.OMAbstractFactory;
@@ -49,6 +43,9 @@ import org.apache.axis.transport.mail.server.MailServer;
 import org.apache.axis.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.File;
 
 public class MailOneWayRawXMLTest extends TestCase {
     private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH = Constants.TESTING_PATH+ "mail-transport-enabledRepository"; 

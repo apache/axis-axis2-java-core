@@ -1,8 +1,6 @@
 package org.apache.axis.engine.util;
 
-import org.apache.axis.clientapi.InOutMEPClient;
 import org.apache.axis.clientapi.Call;
-import org.apache.axis.context.ServiceContext;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.engine.AxisFault;
@@ -10,7 +8,6 @@ import org.apache.axis.om.OMElement;
 import org.apache.axis.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

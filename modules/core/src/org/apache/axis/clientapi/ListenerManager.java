@@ -17,17 +17,16 @@
  */
 package org.apache.axis.clientapi;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.description.TransportInDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.TransportListener;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.HashMap;
 
 public class ListenerManager {
 

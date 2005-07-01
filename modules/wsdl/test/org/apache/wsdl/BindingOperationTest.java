@@ -16,12 +16,11 @@
 
 package org.apache.wsdl;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk

@@ -15,8 +15,7 @@
  */
 package org.apache.axis.context;
 
-import javax.xml.namespace.QName;
-
+import junit.framework.TestCase;
 import org.apache.axis.description.OperationDescription;
 import org.apache.axis.description.ParameterImpl;
 import org.apache.axis.description.ServiceDescription;
@@ -24,7 +23,7 @@ import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisConfigurationImpl;
 import org.apache.axis.engine.AxisFault;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
 
 /**
  * @author srinath

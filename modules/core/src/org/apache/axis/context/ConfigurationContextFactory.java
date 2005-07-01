@@ -1,12 +1,5 @@
 package org.apache.axis.context;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.deployment.DeploymentEngine;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.description.ModuleDescription;
@@ -21,6 +14,12 @@ import org.apache.axis.phaseresolver.PhaseException;
 import org.apache.axis.phaseresolver.PhaseResolver;
 import org.apache.axis.transport.TransportListener;
 import org.apache.axis.transport.TransportSender;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.

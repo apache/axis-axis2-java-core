@@ -2,10 +2,6 @@
 package sample.google.search;
 
 import org.apache.axis.Constants;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.Call;
@@ -15,12 +11,8 @@ import org.apache.axis.engine.AxisFault;
 import sample.google.common.util.PropertyLoader;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.io.File;
-import java.io.FileInputStream;
 
 /*
 * Copyright 2001-2004 The Apache Software Foundation.

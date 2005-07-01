@@ -1,16 +1,19 @@
 package org.apache.axis.soap.impl.llom.builder;
 
 import junit.framework.TestCase;
-import javax.xml.stream.*;
-import java.io.StringReader;
-import java.util.Iterator;
-import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.soap.*;
 import org.apache.axis.soap.impl.llom.SOAPConstants;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis.soap.*;
+import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.StringReader;
+import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.

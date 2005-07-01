@@ -15,28 +15,19 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Random;
+import org.apache.axis.attachments.Base64;
+import org.apache.axis.attachments.ByteArrayDataSource;
+import org.apache.axis.attachments.IOUtils;
+import org.apache.axis.om.*;
+import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis.attachments.Base64;
-import org.apache.axis.attachments.ByteArrayDataSource;
-import org.apache.axis.attachments.IOUtils;
-import org.apache.axis.om.OMAttribute;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMOutput;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

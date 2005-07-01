@@ -16,7 +16,6 @@
 package org.apache.axis.soap.impl.llom;
 
 import org.apache.axis.om.*;
-import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPHeader;

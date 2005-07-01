@@ -17,8 +17,6 @@
  */
 package org.apache.axis.clientapi;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.context.ServiceContext;
@@ -31,6 +29,8 @@ import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
 import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
+
+import javax.xml.namespace.QName;
 
 /**
  * This is the Super Class for all the MEPClients, All the MEPClient will extend this.

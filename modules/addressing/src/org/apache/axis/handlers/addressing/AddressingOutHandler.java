@@ -1,7 +1,6 @@
 package org.apache.axis.handlers.addressing;
 
 import org.apache.axis.addressing.*;
-import org.apache.axis.addressing.AddressingConstants.Submission;
 import org.apache.axis.addressing.miheaders.RelatesTo;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.engine.AxisFault;

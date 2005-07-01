@@ -16,18 +16,16 @@
 
 package org.apache.axis.soap;
 
-import junit.framework.TestCase;
-import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.AbstractTestCase;
+import org.apache.axis.om.OMAbstractFactory;
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.FileReader;
+import javax.xml.stream.XMLStreamReader;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.FileReader;
 
 public class SOAPTestCase extends AbstractTestCase {
     protected SOAPFactory soap11Factory;

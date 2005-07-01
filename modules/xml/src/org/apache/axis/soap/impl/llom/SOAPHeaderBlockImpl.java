@@ -22,9 +22,8 @@ import org.apache.axis.om.OMXMLParserWrapper;
 import org.apache.axis.om.impl.llom.OMAttributeImpl;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis.soap.SOAPHeaderBlock;
 import org.apache.axis.soap.SOAPHeader;
-import org.apache.axis.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 

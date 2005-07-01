@@ -15,10 +15,9 @@
  */
 package org.apache.axis.om;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Properties;
+import junit.framework.TestCase;
+import org.apache.axis.attachments.ByteArrayDataSource;
+import org.apache.axis.soap.SOAPFactory;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -26,11 +25,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePartDataSource;
-
-import junit.framework.TestCase;
-
-import org.apache.axis.attachments.ByteArrayDataSource;
-import org.apache.axis.soap.SOAPFactory;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author Thilina

@@ -1,12 +1,11 @@
 package org.apache.axis.soap.impl.llom.factory;
 
-import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis.om.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis.soap.*;
-import org.apache.axis.soap.impl.llom.*;
+import org.apache.axis.soap.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

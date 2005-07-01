@@ -1,15 +1,9 @@
 package org.apache.axis.soap.impl.llom;
 
-import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.om.OMNamespace;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.OMException;
-import org.apache.axis.soap.SOAPFaultValue;
 import org.apache.axis.soap.SOAPFaultValue;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
-
-import javax.xml.namespace.QName;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

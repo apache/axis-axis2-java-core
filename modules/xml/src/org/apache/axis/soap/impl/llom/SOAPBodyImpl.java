@@ -19,7 +19,6 @@ import org.apache.axis.om.OMConstants;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFault;

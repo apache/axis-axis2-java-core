@@ -16,15 +16,14 @@
 
 package org.apache.axis.integration;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.context.ConfigurationContext;
 import org.apache.axis.context.ConfigurationContextFactory;
 import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.tcp.TCPServer;
+
+import javax.xml.namespace.QName;
+import java.io.File;
 
 public class UtilsTCPServer {
     private static int count = 0;

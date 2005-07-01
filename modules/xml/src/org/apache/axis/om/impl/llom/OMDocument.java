@@ -15,17 +15,12 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMContainer;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis.om.impl.llom.traverse.OMChildrenQNameIterator;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * Class OMDocument

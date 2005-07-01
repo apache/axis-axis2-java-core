@@ -1,15 +1,15 @@
 package org.apache.axis.engine;
 
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.util.Iterator;
-
-import org.apache.axis.description.ServiceDescription;
+import junit.framework.TestCase;
 import org.apache.axis.description.AxisDescWSDLComponentFactory;
+import org.apache.axis.description.ServiceDescription;
 import org.apache.axis.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.WSDLDescription;
-import junit.framework.TestCase;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

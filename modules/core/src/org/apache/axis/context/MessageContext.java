@@ -15,19 +15,15 @@
  */
 package org.apache.axis.context;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.addressing.MessageInformationHeadersCollection;
 import org.apache.axis.addressing.miheaders.RelatesTo;
-import org.apache.axis.description.OperationDescription;
-import org.apache.axis.description.Parameter;
-import org.apache.axis.description.ServiceDescription;
-import org.apache.axis.description.TransportInDescription;
-import org.apache.axis.description.TransportOutDescription;
+import org.apache.axis.description.*;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 import org.apache.axis.soap.SOAPEnvelope;
+
+import javax.xml.namespace.QName;
 
 /**
  * The palce where all the service specific states are kept.

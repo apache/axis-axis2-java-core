@@ -16,16 +16,15 @@
  */
 package org.apache.axis.om.impl.llom;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
-import javax.activation.DataHandler;
-
 import org.apache.axis.attachments.ByteArrayDataSource;
 import org.apache.axis.om.AbstractTestCase;
 import org.apache.axis.om.OMAttribute;
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMOutput;
+
+import javax.activation.DataHandler;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>

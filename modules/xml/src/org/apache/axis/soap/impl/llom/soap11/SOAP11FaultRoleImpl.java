@@ -1,19 +1,16 @@
 package org.apache.axis.soap.impl.llom.soap11;
 
-import org.apache.axis.soap.impl.llom.SOAPFaultRoleImpl;
-import org.apache.axis.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis.soap.SOAPFault;
 import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMOutput;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis.om.impl.llom.OMSerializerUtil;
+import org.apache.axis.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis.soap.SOAPFault;
+import org.apache.axis.soap.impl.llom.SOAPFaultRoleImpl;
+import org.apache.axis.soap.impl.llom.SOAPProcessingException;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

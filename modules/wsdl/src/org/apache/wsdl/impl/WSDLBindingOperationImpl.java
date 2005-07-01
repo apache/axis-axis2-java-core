@@ -15,15 +15,14 @@
  */
 package org.apache.wsdl.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.wsdl.WSDLBindingFault;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLOperation;
+
+import javax.xml.namespace.QName;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author chathura@opensource.lk

@@ -117,7 +117,7 @@ public class ArchiveFileData {
                 urlsToLoadFrom = new URL[]{file.toURL()};
                 classLoader = new URLClassLoader(urlsToLoadFrom, parent);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new AxisFault(e);
             }
             try {
                 ZipInputStream zin = new ZipInputStream(new FileInputStream(file));

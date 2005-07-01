@@ -15,17 +15,16 @@
  */
 package org.apache.axis.saaj;
 
-import java.util.Iterator;
-import java.util.ArrayList;
+import org.apache.axis.om.OMAbstractFactory;
+import org.apache.axis.om.OMFactory;
+import org.apache.axis.om.OMNamespace;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMAbstractFactory;
-import org.apache.axis.om.OMNamespace;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Class SOAPHeaderImpl

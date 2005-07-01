@@ -1,10 +1,5 @@
 package sample.google.spellcheck;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.addressing.AddressingConstants;
 import org.apache.axis.addressing.EndpointReference;
 import org.apache.axis.clientapi.AsyncResult;
@@ -17,8 +12,11 @@ import org.apache.axis.om.OMNamespace;
 import org.apache.axis.soap.SOAPBody;
 import org.apache.axis.soap.SOAPEnvelope;
 import org.apache.axis.soap.SOAPFactory;
-
 import sample.google.common.util.PropertyLoader;
+
+import javax.xml.namespace.QName;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  *  class sample.google.spellcheck.FormModel

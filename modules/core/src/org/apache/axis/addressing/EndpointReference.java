@@ -15,9 +15,9 @@
  */
 package org.apache.axis.addressing;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.om.OMElement;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class EndpointReference

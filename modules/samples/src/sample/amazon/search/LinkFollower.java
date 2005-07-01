@@ -16,11 +16,11 @@
 
 package sample.amazon.search;
 
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.*;
-import java.io.IOException;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * class LinkFollower

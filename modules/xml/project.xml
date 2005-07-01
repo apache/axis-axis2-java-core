@@ -138,4 +138,6 @@
             </properties>
         </dependency>
     </dependencies>
+    
+    <reports/>
 </project>

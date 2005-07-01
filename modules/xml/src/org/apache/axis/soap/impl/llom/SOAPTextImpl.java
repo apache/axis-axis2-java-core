@@ -2,8 +2,6 @@ package org.apache.axis.soap.impl.llom;
 
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.impl.llom.OMElementImpl;
-import org.apache.axis.soap.SOAPFaultText;
 import org.apache.axis.soap.impl.llom.soap12.SOAP12Constants;
 
 /**

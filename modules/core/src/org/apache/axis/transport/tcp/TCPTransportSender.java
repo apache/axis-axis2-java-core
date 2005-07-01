@@ -21,8 +21,14 @@ import org.apache.axis.engine.AxisFault;
 import org.apache.axis.transport.AbstractTransportSender;
 import org.apache.axis.util.URL;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 /**
  * Class HTTPTransportSender

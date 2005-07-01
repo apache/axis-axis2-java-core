@@ -1,17 +1,13 @@
 package org.apache.axis.handlers.addressing;
 
-import java.io.File;
-
 import junit.framework.TestCase;
-
-import org.apache.axis.deployment.DeploymentEngine;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.context.ConfigurationContextFactory;
+import org.apache.axis.description.ModuleDescription;
 import org.apache.axis.engine.AxisConfiguration;
 import org.apache.axis.engine.AxisFault;
 
 import javax.xml.namespace.QName;
+import java.io.File;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

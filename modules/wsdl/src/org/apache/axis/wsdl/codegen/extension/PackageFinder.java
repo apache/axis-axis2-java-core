@@ -16,13 +16,13 @@
 
 package org.apache.axis.wsdl.codegen.extension;
 
-import java.util.Map;
-
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CommandLineOption;
 import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis.wsdl.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
+
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
