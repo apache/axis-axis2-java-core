@@ -181,7 +181,14 @@ public class HTTPTransportUtils {
 			XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
 
-		MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString);
+		boolean fileCacheForAttachments = (Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.CACHE_ATTACHMENTS)));
+		String attachmentRepoDir=null;
+		if (fileCacheForAttachments)
+		{
+			attachmentRepoDir = (String)msgContext.getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+		}
+			
+		MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,fileCacheForAttachments,attachmentRepoDir);
 		XMLStreamReader reader = XMLInputFactory.newInstance()
 				.createXMLStreamReader(
 						new BufferedReader(new InputStreamReader(mimeHelper

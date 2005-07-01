@@ -108,14 +108,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 *            of the Binary
 	 */
 	public OMTextImpl(String s, String mimeType, boolean optimize) {
-		this(s);
-		this.mimeType = mimeType;
-		this.optimize = optimize;
-		if (this.contentID == null && optimize==true) {
-			createContentID();
-		}
-        done = true;
-
+		this(null,s,mimeType,optimize);
 	}
 
 	/**
@@ -134,7 +127,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 			createContentID();
 		}
         done = true;
-
 	}
 
 	/**
@@ -142,13 +134,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 *            To send binary optimised content Created programatically.
 	 */
 	public OMTextImpl(DataHandler dataHandler) {
-		this.dataHandler = dataHandler;
-		this.isBinary = true;
-		this.optimize = true;
-		if (this.contentID == null) {
-			createContentID();
-		}
-        done = true;
+		this(dataHandler,true);
 
 	}
 
@@ -367,6 +353,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 				.nextLong());
 	}
 
+
 	/*
 	 * Methods to copy from OMSerialize utils
 	 */
@@ -377,28 +364,29 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		String prefix = null;
 		XMLStreamWriter writer = omOutput.getXmlStreamWriter();
 		if (this.ns != null) {
-			nameSpaceName = this.ns.getName();
-			writer_prefix = writer.getPrefix(nameSpaceName);
-			prefix = this.ns.getPrefix();
-			if (nameSpaceName != null) {
-				if (writer_prefix != null) {
-					writer
-							.writeStartElement(nameSpaceName, this
-									.getLocalName());
-				} else {
-					if (prefix != null) {
-						writer.writeStartElement(prefix, this.getLocalName(),
-								nameSpaceName);
-						writer.writeNamespace(prefix, nameSpaceName);
-						writer.setPrefix(prefix, nameSpaceName);
-					} else {
-						writer.writeStartElement(nameSpaceName, this
-								.getLocalName());
-						writer.writeDefaultNamespace(nameSpaceName);
-						writer.setDefaultNamespace(nameSpaceName);
-					}
-				}
-			} else {
+            nameSpaceName = this.ns.getName();
+            writer_prefix = writer.getPrefix(nameSpaceName);
+            prefix = this.ns.getPrefix();
+          
+            if (nameSpaceName != null) {
+                if (writer_prefix != null) {
+                    writer.writeStartElement(nameSpaceName,
+                            this.getLocalName());
+                } else {
+                    if (prefix != null) {
+                        writer.writeStartElement(prefix, this.getLocalName(),
+                                nameSpaceName);
+                        //TODO FIX ME
+                        //writer.writeNamespace(prefix, nameSpaceName);
+                        writer.setPrefix(prefix, nameSpaceName);
+                    } else {
+                        writer.writeStartElement(nameSpaceName,
+                                this.getLocalName());
+                        writer.writeDefaultNamespace(nameSpaceName);
+                        writer.setDefaultNamespace(nameSpaceName);
+                    }
+                }
+            } else {
 				writer.writeStartElement(this.getLocalName());
 
 			}
@@ -408,6 +396,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		}
 
 		// add the elements attribute "href"
+		
 		serializeAttribute(this.attribute, omOutput);
 
 		// add the namespace
@@ -459,12 +448,12 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		XMLStreamWriter writer = omOutput.getXmlStreamWriter();
 		if (namespace != null) {
 			String uri = namespace.getName();
-			String prefix = writer.getPrefix(uri);
+			//String prefix = writer.getPrefix(uri);
 			String ns_prefix = namespace.getPrefix();
-			if (prefix == null) {
+			//if (prefix == null) {
 				writer.writeNamespace(ns_prefix, namespace.getName());
 				writer.setPrefix(ns_prefix, uri);
-			}
+			//}
 		}
 	}
 
