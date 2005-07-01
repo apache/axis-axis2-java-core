@@ -57,6 +57,7 @@
                  operationsList = operations.values();
                  serviceName = axisService.getName().getLocalPart();
      %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl=<%=serviceName%>"><%=serviceName%></a></font></h2>
+     <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
      <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
                  Collection engagdeModules = axisService.getEngagedModules();
@@ -82,8 +83,7 @@
                  for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
                      OperationDescription axisOperation = (OperationDescription) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
-                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"
-                         + axisOperation.getName().getLocalPart()%>
+<%--                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                  <%
                      engagdeModules = null;
                      engagdeModules = axisOperation.getModules();

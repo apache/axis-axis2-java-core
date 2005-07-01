@@ -89,6 +89,12 @@ public class OperationDescription extends WSDLOperationImpl implements
 
     public void addToEngageModuleList(ModuleDescription moduleName){
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+            ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
+            if(moduleName.getName().equals(moduleDescription.getName())){
+                return;
+            }
+        }
         collectionModule.add(moduleName);
     }
 

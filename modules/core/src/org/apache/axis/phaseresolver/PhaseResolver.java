@@ -143,6 +143,7 @@ public class PhaseResolver {
                         }
                 }
                 axisService.addToEngagModuleList(module);
+                operation.addToEngageModuleList(module);
             } else {
                 throw new PhaseException("referance to invalid module " + modulename.getLocalPart() + " by axis2.xml");
             }
