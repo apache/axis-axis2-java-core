@@ -38,7 +38,7 @@
         */
         public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
 
-          if(targetEndpoint.charAt(targetEndpoint.length())!='/')
+          if(targetEndpoint.charAt(targetEndpoint.length()-1)!='/')
         		targetEndpoint = targetEndpoint+"/";
            this.toEPR = targetEndpoint;
 		    //creating the configuration
