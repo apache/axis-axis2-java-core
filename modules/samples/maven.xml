@@ -219,8 +219,8 @@
 				          <path refid="maven.dependency.classpath"/>
 					 </classpath>
 				   <formatter type="plain"/>
-				   <test name="org.apache.axis.engine.EchoRawMTOMToBase64Test" />
-  				   <test name="org.apache.axis.engine.EchoRawMTOMTest" />
+				   <test name="org.apache.axis2.engine.EchoRawMTOMToBase64Test" />
+  				   <test name="org.apache.axis2.engine.EchoRawMTOMTest" />
 				   <!--
 				  <batchtest fork="yes" todir="${reports.tests}">
 					    <fileset dir="test">

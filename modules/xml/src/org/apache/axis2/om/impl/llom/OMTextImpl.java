@@ -249,7 +249,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
 	/**
 	 * @return
-	 * @throws org.apache.axis.om.OMException
+	 * @throws org.apache.axis2.om.OMException
 	 * @throws OMException
 	 */
 	public DataHandler getDataHandler() {
