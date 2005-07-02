@@ -9,4 +9,4 @@ AXIS2_CLASSPATH=$AXIS2_CLASSPATH:./lib/stax-1.1.1-dev.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:./lib/stax-api-1.0.jar
 export AXIS2_CLASSPATH
 echo the classpath $AXIS2_CLASSPATH
-java -classpath $AXIS2_CLASSPATH org.apache.axis.transport.tcp.TCPServer  $1 $2
+java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.tcp.TCPServer  $1 $2
