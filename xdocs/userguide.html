@@ -28,8 +28,15 @@
 <p>&nbsp; </p>
 <h2><a name="_Toc96698076"></a>Introduction </h2>
 <p>Welcome to Axis 2.0, the next generation of Apache Axis !!! This User Guide will help you to understand what you will get from Axis 2.0 and how to get started. We hope you will benefit from the power of Axis 2.0. </p>
+
+<h2>Attention</h2>
+<ul>
+<li>This User Guide is written based on the Axis2 binary distribution, the Binary distribution can be created from the
+source distribution using the maven goal <code>$maven dist-bin</code></li>
+<li>Before we start, its highly recommended to read <a href="http://ws.apache.org/axis/java/user-guide.html">Axis 1.x User's guide </a>, if you are new to Axis.</li>
+</ul>
 <h2><a name="_Toc96698077"></a>What is Axis 2.0 ? </h2>
-<p>Before we start, its highly recommended to read <a href="http://ws.apache.org/axis/java/user-guide.html">Axis 1.x User's guide </a>, if you are new to Axis. </p>
+
 <p>Axis 2.0 is the next generation of Apache Axis. In late August 2004, during the Axis Summit held in Colombo, Sri Lanka, a new architecture was introduced to have a much more flexible, efficient and configurable Axis. Even though the architecture is new, some of the well established concepts from Axis 1.x, like handlers are preserved in Axis 2.0 also. Axis 2.0 comes with lots of new features, enhancements and new industry specification implementations. </p>
 <p>After months of continued discussion and coding effort in this direction, Axis 2.0 now delivers the following key features: </p>
 <ul>
@@ -52,27 +59,19 @@
 <p>This release includes the following features:</p>
 <ul>
   <li>AXIOM, a SOAP specific streaming XML infoset model for SOAP 1.1/1.2 Messages</li>
+  <li>Support for One-Way Messaging and Request Response Messaging</li>
   <li>Modules, mechanism to extend the SOAP Processing Model</li>
-  <li>Support for WS-Addressing</li>
+  <li>Archives based deployment Model </li>
+  <li>WSDL Code Generation Tool for Stub and skeltons</li>
+  <li>XML Beans based data binding support</li>
+  <li>Support for WS-Addressing, both the submission and final versions</li>
   <li>Client API</li>
-  <li>Support for One-Way Messaging</li>
-  <li>Support for Request Response Messaging
-      <ol>
-        <LI>Synchronous, Using a two way transport</LI>
-        <LI>Asynchronous, Using a two way transport</LI>
-        <LI>Synchronous, Using a one way transport</LI>
-        <LI>Asynchronous, Using a one way transport</LI>
-      </ol>
-  </li>
-  <li>Hot deployment of Web Services and Module deployment based on the archived modules </li>
-  <li>WSDL Code Generation Tool.</li>
   <li>REST Web Service Support</li>
   <li>HTTP transport Support</li>
   <li>SMTP transport Support</li>
   <li>TCP transport Support</li>
-  <li> Encoding/data binding</li>
-  <li> MTOM/MIME/SWA attachments support</li>
-   <li>SOAP 1.1 and 1.2 validation </li>
+  <li>MTOM/SWA attachments support</li>
+  <li>SAAJ implementation</li>
 </ul>
 <p>The release include following tools</p>
 <ol>
@@ -84,8 +83,11 @@
 <h2><a name="_Toc96698079"></a>What's still to do? </h2>
 <p>Please see a list of what we think needs doing - and please consider helping out if you're interested & able!</p>
 <ul>
-  <li> JAX-RPC 1.1/2.0 compliance</li>
-  <li> Data binding support for WSDL Based code (server/client) code generator</li>
+  <li> JAX-RPC 1.1 and/or JAX-WS   compliance</li>
+  <li> Pluggable Data binding support</li>
+  <li> SOAP Encoding</li>
+  <li> Binary serialization and deserialization support</li>    
+  <li> Management Interface for Axis2</li>      
   <li> Complete XML infoset support for AXIOM</li>
   <li> Implementation of other transports. e.g. JMS..</li>
   <li> Web Service Policy Support</li>
@@ -128,7 +130,8 @@ select any of the&nbsp; following two ways of writing web services using Axis2. 
 	<li>Start from the WSDL -&gt;Code generate the Skeleton -&gt;Implement the 
 	Business Logic.</li>
 </ul>
-<h3>MyService</h3>
+<h3>Write My Service using Axis2</h3>
+<h4>MyService</h4>
 <p>First let's see how we can write a simple Web Service (MyService) using 
 Axis2's primary interfaces and deploy it. For this purpose we will create a Web Service with two operations as follows.</p>
 <source><pre>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and do some processing.
@@ -137,11 +140,39 @@ public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMEleme
 </pre></source>
 <p>Complete code for this example Web Service (MyService) can be found in the &quot;Axis2Home/samples/userguide/src&quot; directory under 
 &quot;userguide/example1&quot; package. As you can see, the two operations are very simple and need no explanations on what they are doing. So let's see how we can write the deployment descriptors for the service and deploy it.</p>
+
+<h4>How to write the Web Service?</h4>
+<p>Write a new Web Service with Axis2 involve four steps</p>
+<ol>
+   <li>Write the Implementation Class</li>
+   <li>Write a service.xml file to explain the Web Service</li>
+   <li>create a *.aar archive for the Web Service</li>
+   <li>Deploy the Web Service</li>         
+</ol>
+
+<h4>Step1 :Write the Implementation Class</h4>
+<p>Provides a implementation class that provide the business logic for the Web Service, it should have  
+methods that match the operations in the Web Service. Unless you have data binding the signature of the
+methods can have one parameter of type OMElement.</p>
+<source><pre>
+public class MyService{
+    public void ping(OMElement element){
+     ......
+    }
+    public OMElement echo(OMElement element){
+     ......
+    }
+}
+</pre></source>
+
+<h4>Step2 :Write the service.xml file</h4>
 <p>Axis2 uses &quot;service.xml&quot; to keep configurations for a Web Service. Each Web Service deployed 
 in Axis2 needs a &quot;service.xml&quot; containing the configurations. &quot;service.xml&quot; for MyService will be as follows; we will see what each parameter means later.</p>
 <source><pre>&lt;service name=&quot;MyService&quot;&gt;<br>    &lt;description&gt;<br>        This is a sample Web Service with two operations, echo and ping.<br>    &lt;/description&gt;<br>    &lt;parameter name=&quot;ServiceClass&quot; locked=&quot;xsd:false&quot;&gt;userguide.example1.MyService&lt;/parameter&gt;<br>    &lt;operation name=&quot;echo&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOutMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br>     &lt;operation name=&quot;ping&quot;&gt;<br>        &lt;messageReceiver class=&quot;org.apache.axis.receivers.RawXMLINOnlyMessageReceiver&quot;/&gt;<br>    &lt;/operation&gt;<br> &lt;/service&gt;</pre></source>
 <p>As it can be seen, first line of the &quot;service.xml&quot; gives the name of the Web Service. This is used in the URL to the service as the service name. Next comes the description and the service class. The next two xml tags describe the operations that are available in this service with respective message receivers. For the &quot;echo&quot; operation we have used a <strong>RawXMLINOutMessageReceiver</strong> since it is an
 IN-OUT operation. For IN-ONLY operation, &quot;ping&quot; we have used <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver. </p>
+
+<h4>Step3 :Create the Web Service Archive</h4>
 <p>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment package for Web Services. So, 
 for MyService we will use &quot;MyService.aar&quot; with the &quot;service.xml&quot; packaged 
 in the META-INF as shown in the following picture.</p>
@@ -149,6 +180,8 @@ in the META-INF as shown in the following picture.</p>
 <p>To create  &quot;MyService.aar&quot;  user can first create a jar file containing all the files necessary for the service and then rename the &quot;jar&quot; to &quot;aar&quot; so that Axis2 understands it as a service archive. 
 This has already been created in the &quot;Axis2Home/samples/userguide&quot; directory, 
 and let's use it.. </p>
+
+<h4>Step4 :Depoly the Web Service</h4>
 <p>Deploying the service&nbsp; is just a matter of 
 dropping the &quot;.aar&quot; in to &quot;services&quot; directory that can be found in 
 the &quot;\webapps\axis2\WEB-INF&quot; of your servlet container and hence please copy the &quot;MyService.aar&quot; into the 
@@ -1031,13 +1064,13 @@ line tool.  </p>
  <h2>Advanced Topics</h2>
  <ul>
  	<li>
-	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/rest-ws.html">RESTful Web Services</a></li>
+	<a href="rest-ws.html">RESTful Web Services</a></li>
  	<li>
-	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/tcp-transport.html">TCP transport</a></li>
+	<a href="tcp-transport.html">TCP transport</a></li>
  	<li>
-	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/mail-transport.html">Mail Transport</a></li>
+	<a href="mail-transport.html">Mail Transport</a></li>
  	<li>
-	<a href="file:///G:/Documents%20and%20Settings/Jaliya/Desktop/http-transport.html">HTTP Transports</a></li>
+	<a href="http-transport.html">HTTP Transports</a></li>
   </ul>
   
  
