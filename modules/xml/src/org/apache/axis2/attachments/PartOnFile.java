@@ -16,17 +16,24 @@
  */
 package org.apache.axis2.attachments;
 
-import org.apache.axis2.om.OMException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
 
 import javax.activation.DataHandler;
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
+
+import org.apache.axis2.om.OMException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -51,7 +58,11 @@ public class PartOnFile implements Part {
 		contentType = bodyPart.getContentType();
 		headers = bodyPart.getAllHeaders();
 		// TODO Find a better naming algorithm
-		fileName = repoDir+"/"+(new Date()).getTime() + ".tmp";
+		if (repoDir==null)
+		{
+			repoDir=".";
+		}
+		fileName = repoDir+(new Date()).getTime() + ".tmp";
 		FileOutputStream outFileStream;
 		outFileStream = new FileOutputStream(fileName);
 		bodyPart.writeTo(outFileStream);

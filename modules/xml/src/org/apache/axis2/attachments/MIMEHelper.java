@@ -16,7 +16,10 @@
  */
 package org.apache.axis2.attachments;
 
-import org.apache.axis2.om.OMException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.HashMap;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -24,10 +27,8 @@ import javax.mail.Part;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.ParseException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.HashMap;
+
+import org.apache.axis2.om.OMException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
@@ -219,11 +220,10 @@ public class MIMEHelper {
 		} else {
 			try {
 				while (true) {
-					bodyPart = this.getNextMimeBodyPart();
+					bodyPart = this.getNextPart();
 					if (bodyPart == null) {
 						return null;
 					}
-					System.out.println("blob cid : "+blobContentID);
 					if (bodyPartsMap.containsKey(blobContentID)) {
 						bodyPart = (Part) bodyPartsMap.get(blobContentID);
 						DataHandler dh = bodyPart.getDataHandler();
@@ -288,19 +288,29 @@ public class MIMEHelper {
 		return rootMimeBodyPart;
 	}
 
-	private MimeBodyPart getNextMimeBodyPart() throws OMException {
+	private Part getNextPart() throws OMException {
 		MimeBodyPart nextMimeBodyPart;
 		nextMimeBodyPart = getMimeBodyPart();
 		if (nextMimeBodyPart != null) {
 			String partContentID;
 			try {
 				partContentID = nextMimeBodyPart.getContentID();
-				System.out.println("Mime part cid : "+partContentID);
-				bodyPartsMap.put(partContentID, nextMimeBodyPart);
-				return nextMimeBodyPart;
+				if (fileCacheEnable)
+				{
+					PartOnFile part = new PartOnFile(nextMimeBodyPart,partContentID,attachmentRepoDir);
+					return part;
+				}
+				else{
+					bodyPartsMap.put(partContentID, nextMimeBodyPart);
+					return nextMimeBodyPart;
+				}	
 			} catch (MessagingException e) {
 				throw new OMException(
 						"Error Reading Content-ID from Mime Part No "
+								+ partIndex + ". " + e);
+			} catch (Exception e) {
+				throw new OMException(
+						"Error Creating File  Storage Part"
 								+ partIndex + ". " + e);
 			}
 		} else

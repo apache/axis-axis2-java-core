@@ -15,19 +15,28 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.attachments.Base64;
-import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.attachments.IOUtils;
-import org.apache.axis2.om.*;
-import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
-
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis2.attachments.Base64;
+import org.apache.axis2.attachments.ByteArrayDataSource;
+import org.apache.axis2.attachments.IOUtils;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
@@ -43,6 +52,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	protected boolean optimize = false;
 
 	protected boolean isBinary = false;
+	
+	private static Random rnd = new Random(new Date().getTime());
 
 	/**
 	 * Field contentID for the mime part used when serialising Binary stuff as
@@ -238,7 +249,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
 	/**
 	 * @return
-	 * @throws org.apache.axis2.om.OMException
+	 * @throws org.apache.axis.om.OMException
 	 * @throws OMException
 	 */
 	public DataHandler getDataHandler() {
@@ -340,8 +351,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	{
 //		 We can use a UUID, taken using Apache commons id project.
 		// TODO change to UUID
-		this.contentID = String.valueOf(new Random(new Date().getTime())
-				.nextLong());
+		this.contentID = String.valueOf(rnd.nextLong());
 	}
 
 
