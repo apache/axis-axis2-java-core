@@ -100,7 +100,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
 		OMElement data = fac.createOMElement("data", omNs);
 		byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
 				98 };
-		for (int i = 0; i <1; i++) {
+		for (int i = 0; i <4; i++) {
 			OMElement subData = fac.createOMElement("subData", omNs);
 			DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(
 					byteArray));
@@ -108,7 +108,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
 			//OMText textData = new OMTextImpl("Thilina Gunarathne");
 			subData.addChild(textData);
 			data.addChild(subData);
-			System.out.println("Creating blobs "+i);
+			//System.out.println("Creating blobs "+i);
 		}
 		
 		rpcWrapEle.addChild(data);

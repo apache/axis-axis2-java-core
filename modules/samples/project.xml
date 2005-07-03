@@ -132,14 +132,16 @@
         <exclude>**/*Abstract*.java</exclude>
 	    <exclude>**/*Util*.java</exclude>
 		<exclude>**/*InteropStubTest.java</exclude>
-		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
+		<exclude>**/*EchoRawXMLChunckedTest.java</exclude>
+		<exclude>**org/apache/axis2/mail/*.java</exclude>
+		<exclude>**org/apache/axis2/mtom/*.java</exclude>
+<!--		<exclude>**/*MailEchoRawXMLTest.java</exclude> 
 		<exclude>**/*MailOneWayRawXMLTest.java</exclude> 
 		<exclude>**/*MailRequestResponseRawXMLTest.java</exclude> 
-		<exclude>**/*EchoRawXMLChunckedTest.java</exclude> 
-		<!-- <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>  -->
+     	  <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>  
 		<exclude>**/*EchoRawMTOMTest.java</exclude>
-<exclude>**/*EchoRawMTOMLoadTest.java</exclude>
-		<exclude>**/*EchoRawMTOMToBase64Test.java</exclude> 
+        <exclude>**/*EchoRawMTOMLoadTest.java</exclude>
+		<exclude>**/*EchoRawMTOMToBase64Test.java</exclude>  -->
       </excludes>
      <includes>
         <include>**/*Test.java</include>

@@ -51,6 +51,8 @@ public class TransportUtils {
             OperationContext opContext = msgContext.getOperationContext();
             if (opContext != null) {
                 contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
+            }else{
+                throw new AxisFault("Operation Context can not be Null");
             }
 
             StAXBuilder builder = null;
@@ -78,7 +80,7 @@ public class TransportUtils {
             }
             return envelope;
         } catch (Exception e) {
-            throw new AxisFault(e.getMessage(), e);
+            throw new AxisFault(e);
         }
     }
 

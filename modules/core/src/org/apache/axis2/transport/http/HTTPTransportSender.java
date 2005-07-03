@@ -184,7 +184,6 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     if(opContext != null){
                         opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,contentType);
                     }
-                    
                 }
             }
         } catch (AxisFault e) {
