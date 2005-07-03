@@ -37,7 +37,7 @@
         
         <!-- MTOM enabled Repository -->
         <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
-        <copy file="test/org/apache/axis2/engine/MTOM-enabled-axis2.xml"
+        <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
         tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>         
     </postGoal>
 
