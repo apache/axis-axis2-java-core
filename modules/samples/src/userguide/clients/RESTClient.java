@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.axis2rest;
+package userguide.clients;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -30,7 +30,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * This is a Client progam that accesses 'MyService' web service in Axis2 samples 
  */
-public class MyServiceClient {
+public class RESTClient {
 
 	private static String toEpr = "http://localhost:8080/axis2/services/MyService";
 	
