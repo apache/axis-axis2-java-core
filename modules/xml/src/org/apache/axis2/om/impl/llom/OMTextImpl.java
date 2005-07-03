@@ -351,7 +351,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	{
 //		 We can use a UUID, taken using Apache commons id project.
 		// TODO change to UUID
-		this.contentID = String.valueOf(rnd.nextLong());
+		this.contentID = "2"+String.valueOf(rnd.nextLong())+"@schemas.xmlsoap.org";
 	}
 
 

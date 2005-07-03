@@ -84,6 +84,8 @@ public class MIMEHelper {
 	 * <code>partIndex</code>- Number of Mime parts parsed
 	 */
 	int partIndex = 0;
+	
+	String firstPartId=null;
 
 	boolean fileCacheEnable = false;
 
@@ -172,10 +174,21 @@ public class MIMEHelper {
 	 */
 	public InputStream getSOAPPartInputStream() throws OMException {
 		String rootContentID = contentType.getParameter("start");
+		// to handle the Start parameter not mentioned situation
+		if (rootContentID==null)
+		{
+			if (partIndex==0)
+			{
+			getNextPart();
+			}
+			rootContentID=firstPartId;			
+		}
+		else
+		{
 		rootContentID.trim();
 		rootContentID = rootContentID
 				.substring(1, (rootContentID.length() - 1));
-
+		}
 		DataHandler dh;
 		try {
 			dh = getDataHandler(rootContentID);
@@ -246,20 +259,9 @@ public class MIMEHelper {
 	private MimeBodyPart getMimeBodyPart() throws OMException {
 		MimeBodyPart mimeBodyPart = null;
 
-		//String Line = pushbackInStream.readLine();
 		MimeBodyPartInputStream partStream;
-//		try {
-			//if (pushbackInStream.available() > 0) {
 				partStream = new MimeBodyPartInputStream(pushbackInStream,
 						boundary);
-			//} else {
-			//	throw new OMException(
-			//			"Attachment not found. End of Stream reached");
-			//}
-//		} catch (IOException e1) {
-//			throw new OMException("Attachement not found. Problem with Stream");
-//		}
-
 		try {
 			mimeBodyPart = new MimeBodyPart(partStream);
 		} catch (MessagingException e) {
@@ -295,6 +297,16 @@ public class MIMEHelper {
 			String partContentID;
 			try {
 				partContentID = nextMimeBodyPart.getContentID();
+				if (partContentID==null & partIndex==1)
+				{
+					bodyPartsMap.put("firstPart", nextMimeBodyPart);
+					firstPartId = "firstPart";
+					return nextMimeBodyPart;
+				}
+				else  if (partIndex==1)
+				{
+					firstPartId = partContentID;
+				}
 				if (fileCacheEnable)
 				{
 					PartOnFile part = new PartOnFile(nextMimeBodyPart,partContentID,attachmentRepoDir);

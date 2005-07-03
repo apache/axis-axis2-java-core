@@ -32,7 +32,7 @@ public class MIMEOutputUtils {
 	
 	private static byte[] CRLF = { 13, 10 };
 	
-	static String SOAP_PART_CONTENT_ID = "<SOAPPart>";
+	static String SOAP_PART_CONTENT_ID = "<http://apache.org/soappart>";
 	
 	public static void complete(OutputStream outStream,
 			OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
@@ -44,7 +44,10 @@ public class MIMEOutputUtils {
 			"text/xml");
 			MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
 			rootMimeBodyPart.setDataHandler(dh);
-			rootMimeBodyPart.addHeader("Content-Type", "application/xop+xml");
+			ContentType partContentType = new ContentType("application/xop+xml");
+			partContentType.setParameter("charset","UTF-8");
+			partContentType.setParameter("type","application/soap+xml");
+			rootMimeBodyPart.addHeader("Content-Type",partContentType.toString() );
 			rootMimeBodyPart.addHeader("Content-Transfer-Encoding", "8bit");
 			rootMimeBodyPart.addHeader("Content-ID", SOAP_PART_CONTENT_ID);
 			
@@ -58,10 +61,9 @@ public class MIMEOutputUtils {
 			}
 			finishWritingMime(outStream);
 		} catch (IOException e) {
-			throw new OMException("Problem with the OutputStream."
-					+ e.toString());
+			throw new OMException("Problem with the OutputStream.",e);
 		} catch (MessagingException e) {
-			throw new OMException("Problem writing Mime Parts." + e.toString());
+			throw new OMException("Problem writing Mime Parts." ,e);
 		}
 	}
 	
@@ -130,7 +132,7 @@ public class MIMEOutputUtils {
 		contentType.setParameter("type", "application/xop+xml");
 		//TODO theres something called action that can be set with
 		// following. May be SOAPAction. Better check.
-		contentType.setParameter("startinfo", "application/xop+xml");
+		contentType.setParameter("start-info", "application/soap+xml");
 		return contentType.toString();
 	}
 	

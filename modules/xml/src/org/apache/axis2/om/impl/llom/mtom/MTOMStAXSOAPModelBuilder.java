@@ -94,15 +94,18 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 				"Href attribute not found in XOP:Include element");
 			}
 			
-			if (lastNode.isComplete()) {
-				node = new OMTextImpl(contentID, (OMElement) lastNode.getParent(), this);
-				lastNode.setNextSibling(node);
-				node.setPreviousSibling(lastNode);
-			} else {
+			// This cannot happen. XOP:Include is always the only child of an parent element
+			// cause it is same as having some text
+//			if (lastNode.isComplete()) {
+//				node = new OMTextImpl(contentID, (OMElement) lastNode.getParent(), this);
+//				lastNode.setNextSibling(node);
+//				node.setPreviousSibling(lastNode);
+			//} else {
 				OMElement e = (OMElement) lastNode;
 				node = new OMTextImpl(contentID, (OMElement) lastNode, this);
 				e.setFirstChild(node);
-			}
+				node.setComplete(true);
+			//}
 			return node;
 			
 		} else {
