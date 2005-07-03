@@ -22,6 +22,7 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
@@ -60,30 +61,22 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         final String URI_ID_STRING = "/services";
-            OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
-            OMNamespace ns = bodyFirstChild.getNamespace();
-            if (ns != null) {
-                String filePart = ns.getName();
+        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        OMNamespace ns = bodyFirstChild.getNamespace();
+        if (ns != null) {
+            String filePart = ns.getName();
 
-                int index = filePart.lastIndexOf(URI_ID_STRING);
-                String serviceStr = null;
-                if (-1 != index) {
-                    serviceStr = filePart.substring(index + URI_ID_STRING.length() + 1);
-
-                    ConfigurationContext engineContext = messageContext.getSystemContext();
-
-                    if ((index = serviceStr.indexOf('/')) > 0) {
-                        serviceName = new QName(serviceStr.substring(0, index));
-                        operatoinName = new QName(serviceStr.substring(index + 1));
-                    } else {
-                        serviceName = new QName(serviceStr);
-                    }
-
-                    AxisConfiguration registry =
-                        messageContext.getSystemContext().getAxisConfiguration();
-                    return registry.getService(serviceName);
-                }
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            if (values[1] != null) {
+                operatoinName = new QName(values[1]);
             }
+            if (values[0] != null) {
+                serviceName = new QName(values[0]);
+                AxisConfiguration registry =
+                    messageContext.getSystemContext().getAxisConfiguration();
+                return registry.getService(serviceName);
+            }
+        }
         return null;
 
     }

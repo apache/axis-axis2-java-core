@@ -40,7 +40,7 @@ public class TCPClient {
 			Call  call = new Call();
 			call.setTo(new EndpointReference(AddressingConstants.WSA_TO,toEpr));
 			call.setTransportInfo(Constants.TRANSPORT_TCP,Constants.TRANSPORT_TCP,false);
-			call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+			//call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 			
 			OMElement result = call.invokeBlocking("echo", getPayload());
 		
@@ -59,7 +59,7 @@ public class TCPClient {
 	private static OMElement getPayload() {
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace omNs = fac.createOMNamespace(
-				"http://example1.org/example1", "example1");
+				"tcp://localhost:8080/axis2/services/MyService", "example1");
 		OMElement method = fac.createOMElement("echo", omNs);
 		OMElement value = fac.createOMElement("Text", omNs);
 		value.addChild(fac.createText(value, "Axis2 Echo String "));
