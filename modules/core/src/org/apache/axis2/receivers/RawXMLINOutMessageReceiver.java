@@ -88,7 +88,8 @@ public class RawXMLINOutMessageReceiver
                     } else if (WSDLService.STYLE_RPC.equals(style)) {
                         OMElement operationElement = msgContext.getEnvelope().getBody().getFirstElement();
                         if (operationElement != null) {
-                            if (method.getName().equals(operationElement.getLocalName())) {
+                            if (method.getName().equals(operationElement.getLocalName()) 
+                               || operationElement.getLocalName() != null && operationElement.getLocalName().startsWith(method.getName()) ) {
                                 omElement = operationElement.getFirstElement();
                             } else {
                                 throw new AxisFault("Operation Name does not match the immediate child name, expected "+ method.getName() + " but get " + operationElement.getLocalName());
