@@ -104,6 +104,14 @@
         </dependency>
         <dependency>
             <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-javamail</artifactId>
+            <version>1.3.1-rc3</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
             <version>1.0.2-rc3</version>
             <properties>
@@ -130,6 +138,7 @@
 		<exclude>**/*EchoRawXMLChunckedTest.java</exclude> 
 		<!-- <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>  -->
 		<exclude>**/*EchoRawMTOMTest.java</exclude>
+<exclude>**/*EchoRawMTOMLoadTest.java</exclude>
 		<exclude>**/*EchoRawMTOMToBase64Test.java</exclude> 
       </excludes>
      <includes>
@@ -168,6 +177,12 @@
         <includes>
           <include>**/*.properties</include>
           <include>**/*.xml</include>
+        </includes>
+      </resource>
+ 	<resource>
+        <directory>test</directory>
+        <includes>
+          <include>**/*.jpg</include>
         </includes>
       </resource>
     </resources>
