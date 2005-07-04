@@ -36,10 +36,10 @@ First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec
 <p>AXIOM has the ability to hold binary data. It has been given that ability by allowing OMText to hold binary content.  OMText has been chosen for this purpose with two reasons. One is that MTOM can be enabled only for 
 
 
- <code>xs:base64Binary</code>
+ <source>xs:base64Binary</source>
 
 representations and the other one is to preserve the infoset in both sender and receiver. The option of optimising or not can be given at the constructing time or later.</p>
-<pre><code>        OMElement image = fac.createOMElement("image", omNs);
+<source><pre>        OMElement image = fac.createOMElement("image", omNs);
 
 		  //creating the Data Handler for the image
         Image image;
@@ -53,26 +53,25 @@ representations and the other one is to preserve the infoset in both sender and 
         image.addChild(textData);
 
 		 //to set optimised to false uncomment the following
-		 //textData.doOptimize(false);</code></pre>
+		 //textData.doOptimize(false);</pre></source>
 <p>Also a user can create an optimizable content node even with a base64 encoded string which contains binary content given with the mime type of the actual binary representation</p>
-<pre><code>			String base64String = "xxxxxxxx";
-			OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</code></pre>
+<source><pre>			String base64String = "xxxxxxxx";
+			OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</pre></source>
 <p>Axis2 uses javax.activation.DataHandler to handle the binary data. </p>
 <h3>Sending MTOM optimised messages from  client side </h3>
-<p>First of all you need to have the above mentioned jars in the classpath. Then set the <code>&quot;enableMTOM&quot;</code> property <code>in the call to true, when sending messages.</code></p>
-<pre>
-   <code>Call call = new Call();
+<p>First of all you need to have the above mentioned jars in the classpath. Then set the <source>&quot;enableMTOM&quot;</source> property in the call to true, when sending messages.</p>
+<source>
+   <pre>Call call = new Call();
     call.setTo(targetEPR);
-    call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</code></pre>
+    call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</pre></source>
 <p> When this property is set to true any message which contains optimisable content will be serialised as MTOM optimised messages. If this the message contains optimizable binary content nodes and the above property is not set then the optimisable content will be serialized and sent as Base64 strings.<code></code></p>
 <h3>Enabling MTOM in the Server side </h3>
 <p>Axis 2 server accepts incoming MTOM optimised incoming messages when the above jars are present. One can enable  MTOM optimisation globally on the server side by setting the &quot;enableMTOM&quot; parameter to true in the Axis2.xml. When it is set, any outgoing message which contains optimizable content will be serialized and send as a MTOM optimized message. If not they will be serialized as Base64 strings.</p>
 <p>1. Copy the new jars to the Axis 2 lib folder  and delete the above mentioned Gerenimo jars from there.  If the Axis2 server is running in Tomcat Axis 2 lib is &lt;CATALINA_HOME&gt;/webapps/axis2/WEB-INF/lib.</p>
 <p>2. Add the following parameter entries to Axis2.xml file which can be found in &lt;AXIS2_HOME&gt;/WEB_INF folder. </p>
- <code><pre>
+ <source><pre>
          &lt;parameter name=&quot;enableMTOM&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt;
-  </pre></code>
+  </pre></source>
 <p>3. Restart the Server.</p>
-<h3>&nbsp;</h3>
 </body>
 </html>
