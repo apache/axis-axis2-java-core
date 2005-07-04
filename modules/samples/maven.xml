@@ -54,6 +54,7 @@
         <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
+        <attainGoal name="mtomSample"/>
     </goal>
 
   <!-- ================================================================ -->
@@ -208,6 +209,32 @@
         </jar>
     </goal>
     
+  <!-- ================================================================ -->
+  <!--- Google MTOM Sample -->
+  <!-- ================================================================ -->
+
+    <goal name="mtomSample">
+        <mkdir dir="${samples.dir}/mtom"/>
+        <mkdir dir="${samples.dir}/mtom/src"/>
+        <ant:copy todir="${samples.dir}/mtom/src">
+        	<ant:fileset dir="src">
+        		<ant:include name="sample/mtom/**"/>
+        	</ant:fileset> 
+	</ant:copy> 
+	 <jar destfile="${samples.dir}/mtom/mtomSample.aar">
+            <fileset dir="src/sample/mtom/">
+                <include name="META-INF/**"/>
+            </fileset>           
+            <fileset dir="target/classes">
+                <include name="sample/mtom/*.class"/>
+            </fileset>           
+        </jar>
+        <jar destfile="${samples.dir}/mtom/mtomClient.jar">
+            <fileset dir="target/classes">
+                <include name="sample/mtom/**"/>
+            </fileset>           
+        </jar>
+    </goal>
     
     <goal name="test-mtom">
     		<echo message="running MTOM tests"/>
