@@ -220,7 +220,7 @@ public class DeploymentEngine implements DeploymentConstants {
         InputStream in = null;
         axis2repository = clientHome;
         boolean isRepositoryExist = false;
-        if (clientHome != null) {
+        if (!(clientHome == null ||clientHome.trim().equals(""))) {
             checkClientHome(clientHome);
             isRepositoryExist = true;
             try {
