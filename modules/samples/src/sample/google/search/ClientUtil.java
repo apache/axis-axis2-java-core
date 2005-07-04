@@ -70,7 +70,7 @@ public class ClientUtil {
         operation.addChild(getOMElement(omFactory, defNs, "key", "xsd:string", asyncClient.getKey()));
         operation.addChild(getOMElement(omFactory, defNs, "q", "xsd:string", asyncClient.getSearch()));
         operation.addChild(getOMElement(omFactory, defNs, "start", "xsd:int", str_ST_index));
-        operation.addChild(getOMElement(omFactory, defNs, "maxResults", "xsd:int", "10"));
+        operation.addChild(getOMElement(omFactory, defNs, "maxResults", "xsd:int", asyncClient.getMaxResults()));
         operation.addChild(getOMElement(omFactory, defNs, "filter", "xsd:boolean", "true"));
         operation.addChild(getOMElement(omFactory, defNs, "restrict", "xsd:string", ""));
         operation.addChild(getOMElement(omFactory, defNs, "safeSearch", "xsd:boolean", "false"));

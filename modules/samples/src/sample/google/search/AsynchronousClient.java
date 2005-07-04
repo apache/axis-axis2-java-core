@@ -54,7 +54,7 @@ public class AsynchronousClient {
     protected String key;
 
     /** maximum results per page */
-    protected String maxResults = String.valueOf(2);
+    protected String maxResults = String.valueOf(10);
 
 
     private GUIHandler gui;

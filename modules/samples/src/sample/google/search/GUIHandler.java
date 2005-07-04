@@ -306,6 +306,7 @@ public class GUIHandler {
         }else{
             try {
                 asyncClient.setMaxResults(Integer.parseInt(maxResults) +"");
+                asyncClient.setPrevSearch("");
             } catch (NumberFormatException e) {
                 return;
             }
