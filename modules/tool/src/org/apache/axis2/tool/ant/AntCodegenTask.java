@@ -1,22 +1,24 @@
-package org.apache.axis.tool.ant;
+package org.apache.axis2.tool.ant;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.axis.wsdl.codegen.CommandLineOption;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis.wsdl.util.URLProcessor;
-
-import javax.wsdl.WSDLException;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.wsdl.WSDLException;
+
+import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.URLProcessor;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.apache.wsdl.WSDLDescription;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -116,7 +118,8 @@ public class AntCodegenTask extends Task{
     private WSDLDescription getWOM(String wsdlLocation) throws WSDLException ,
             IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+        WSDLVersionWrapper wsdlvWrap =  WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+        return wsdlvWrap.getDescription();
     }
 
     private String[] getStringArray(String value) {

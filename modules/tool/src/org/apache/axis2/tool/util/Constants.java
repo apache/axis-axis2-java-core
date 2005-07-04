@@ -1,4 +1,4 @@
-package org.apache.axis.tool.util;
+package org.apache.axis2.tool.util;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

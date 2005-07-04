@@ -47,6 +47,11 @@
             <artifactId>addressing</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis2-tools</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <!-- external JARs -->
         <dependency>

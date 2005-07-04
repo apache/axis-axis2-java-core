@@ -43,6 +43,7 @@
 
     <postGoal name="test:test">
         <attainGoal name="create-samples"/>
+       <!-- <attainGoal name="doInterop-test"/> -->
     </postGoal>
 
     <goal name="create-samples">
@@ -210,10 +211,18 @@
     
     <goal name="test-mtom">
     		<echo message="running MTOM tests"/>
+    		<echo message="${maven.repo.local}"/>
 			<junit printsummary="yes" haltonfailure="yes">
 					<classpath>
 					      <fileset dir="${maven.repo.local}">
         						<include name="j2ee/jars/***.jar"/>
+        						<include name="axis/jars/axis2-core-0.9.jar"/>
+        						<include name="axis/jars/axis2-xml-0.9.jar"/>
+        						<include name="axis/jars/axis2-wsdl-0.9.jar"/>
+        						<include name="axis/jars/axis-wsdl4j-1.2.jar"/>
+        						<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+        						<include name="stax/jars/stax-1.1.1-dev.jar"/>
+        						<include name="stax/jars/stax-api-1.0.jar"/>
 					      </fileset>
 					      <pathelement location="target/test-classes" />
 				          <path refid="maven.dependency.classpath"/>
@@ -221,12 +230,65 @@
 				   <formatter type="plain"/>
 				   <test name="org.apache.axis2.engine.EchoRawMTOMToBase64Test" />
   				   <test name="org.apache.axis2.engine.EchoRawMTOMTest" />
-				   <!--
-				  <batchtest fork="yes" todir="${reports.tests}">
-					    <fileset dir="test">
-						      <include name="**MTOM*.java"/>
-     				    </fileset>
-				  </batchtest> -->
 			</junit>
+    </goal>
+
+    <goal name="test-mail">
+    		<echo message="running Mail tests"/>
+    		<echo message="${maven.repo.local}"/>
+			<junit printsummary="yes" haltonfailure="yes">
+					<classpath>
+					      <fileset dir="${maven.repo.local}">
+        						<include name="j2ee/jars/***.jar"/>
+        						<include name="axis/jars/axis2-core-0.9.jar"/>
+        						<include name="axis/jars/axis2-xml-0.9.jar"/>
+        						<include name="axis/jars/axis2-wsdl-0.9.jar"/>
+        						<include name="axis/jars/axis-wsdl4j-1.2.jar"/>
+        						<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+        						<include name="stax/jars/stax-1.1.1-dev.jar"/>
+        						<include name="stax/jars/stax-api-1.0.jar"/>
+					      </fileset>
+					      <pathelement location="target/test-classes" />
+				          <path refid="maven.dependency.classpath"/>
+					 </classpath>
+				   <formatter type="plain"/>
+				   <test name="org.apache.axis2.mail.MailetRequestResponceRawXMLTest" />
+  				   <test name="org.apache.axis2.mail.MailOneWayRawXMLTest" />
+  				   <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest" />  				   
+			</junit>
+    </goal>
+
+    
+    <goal name="doInterop-test">
+             <taskdef name="wsdl2java"
+                classname="org.apache.axis2.tool.ant.AntCodegenTask"
+                    classpathref="maven.dependency.classpath"/>
+               <j:set var="interop3.dir" value="target/interop3"/>
+               <j:set var="work.dir" value="${interop3.dir}/work"/>
+               <j:set var="calss.dir" value="${interop3.dir}/classes"/>
+                <j:set var="wsdl.dir" value="test-resources/wsdl"/>
+                       
+		       <wsdl2java WSDLFileName="test-resources/wsdl/compound2.wsdl" output="${work.dir}"/>
+		       <copy file="${wsdl.dir}/Client.java" todir="${work.dir}" overwrite="true" />
+               <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true" />
+               
+                <move todir="${classes.dir}/schema">
+            		<fileset dir="${work.dir}/schema"/>
+               </move>   
+    	
+              <javac srcdir="${work.dir}" destdir="${classes.dir}" debug="on">
+                  <classpath refid="maven.dependency.classpath" />
+              </javac>
+    	
+    	     <!-- Run the interop test -->
+    	     <java classname="Client">
+                <classpath refid="maven.dependency.classpath" />
+   		     </java>
+    	
+		    <junit dir="${classes.dir}" printsummary="yes" haltonfailure="yes">
+			    <classpath refid="maven.dependency.classpath" />
+			    <formatter type="plain"/>
+			    <test name="InteropClient2" />
+		    </junit>
     </goal>
  </project>

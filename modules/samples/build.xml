@@ -20,8 +20,6 @@
 	<property name="AXIS_HOME" value="${env.AXIS_HOME}" />
 	<property name="axis.serverJarDrop.dir" value="${AXIS_HOME}/WEB-INF/services" />
 
-
-
 	<property name="conf.dir" value="conf"/>
 	
 	<path id="classpath.library">
