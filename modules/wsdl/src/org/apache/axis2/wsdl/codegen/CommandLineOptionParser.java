@@ -26,6 +26,9 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
 
 	private Map commandLineOptions;
 
+    public CommandLineOptionParser(Map commandLineOptions){
+        this.commandLineOptions = commandLineOptions;
+    }
 	public CommandLineOptionParser(String[] args) {
 		this.commandLineOptions = this.parse(args);
 
@@ -110,5 +113,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
 
 		return faultList;
 	}
+
+    
 
 }

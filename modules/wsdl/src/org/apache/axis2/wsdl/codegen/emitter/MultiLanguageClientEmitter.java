@@ -416,8 +416,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
     private Element getInputParamElement(XmlDocument doc, WSDLOperation operation) {
         //todo this should go in a loop
         Element param = doc.createElement("param");
-        addAttribute(doc,"name",this.mapper.getParameterName(operation.getInputMessage().getElement()),param);
-        String typeMapping = this.mapper.getTypeMapping(operation.getInputMessage().getElement());
+        MessageReference inputMessage = operation.getInputMessage();
+        addAttribute(doc,"name",this.mapper.getParameterName(inputMessage.getElement()),param);
+        String typeMapping = this.mapper.getTypeMapping(inputMessage.getElement());
         String typeMappingStr  =typeMapping==null?"":typeMapping;
         addAttribute(doc,"type",typeMappingStr,param);
         return param;

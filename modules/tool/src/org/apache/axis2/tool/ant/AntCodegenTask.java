@@ -2,8 +2,12 @@ package org.apache.axis2.tool.ant;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +19,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -131,12 +136,10 @@ public class AntCodegenTask extends Task{
 
     public void execute() throws BuildException {
         try {
-            WSDLDescription wom = this.getWOM(WSDLFileName);
-            Map optionsMap = fillOptionMap();
-            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(wom,
-                    optionsMap);
-            new CodeGenerationEngine(codegenConfig).generate();
-        } catch (Exception e) {
+            
+            CommandLineOptionParser parser = new CommandLineOptionParser(this.fillOptionMap());
+            new CodeGenerationEngine(parser).generate();
+        } catch (Throwable e) {
             throw new BuildException(e);
         }
 
@@ -176,6 +179,13 @@ public class AntCodegenTask extends Task{
 
     public void setGenerateServerXml(boolean generateServerXml) {
         this.generateServerXml = generateServerXml;
+    }
+    
+    public static void main(String[] args){
+        AntCodegenTask task = new AntCodegenTask();
+        task.setWSDLFileName("modules/samples/test-resources/wsdl/compound2.wsdl");
+        task.setOutput("temp");
+        task.execute();
     }
 
 

@@ -43,7 +43,7 @@
 
     <postGoal name="test:test">
         <attainGoal name="create-samples"/>
-       <!-- <attainGoal name="doInterop-test"/> -->
+         <!-- <attainGoal name="doInterop-test"/>   -->
     </postGoal>
 
     <goal name="create-samples">
@@ -267,9 +267,22 @@
                <j:set var="work.dir" value="${interop3.dir}/work"/>
                <j:set var="calss.dir" value="${interop3.dir}/classes"/>
                 <j:set var="wsdl.dir" value="test-resources/wsdl"/>
-                       
-		       <wsdl2java WSDLFileName="test-resources/wsdl/compound2.wsdl" output="${work.dir}"/>
-		       <copy file="${wsdl.dir}/Client.java" todir="${work.dir}" overwrite="true" />
+                     
+                 <mkdir dir="${interop3.dir}"/>  
+				<mkdir dir="${work.dir}"/>  
+				<mkdir dir="${calss.dir}"/>                       
+				
+		       <wsdl2java WSDLFileName="test-resources/wsdl/compound2.wsdl" output="${work.dir}"/> 
+		       <!--
+		       <java classname="org.apache.axis2.wsdl.WSDL2Java">
+                  <classpath refid="maven.dependency.classpath"/>
+                  <arg value="-uri"/>
+                  <arg file="${wsdl.dir}/compound2.wsdl"/>
+                  <arg value="-o"/>
+                   <arg file="${work.dir}"/>
+               </java>
+               -->
+		       <copy file="${wsdl.dir}/InteropClient2.java" todir="${work.dir}" overwrite="true" />
                <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true" />
                
                 <move todir="${classes.dir}/schema">
