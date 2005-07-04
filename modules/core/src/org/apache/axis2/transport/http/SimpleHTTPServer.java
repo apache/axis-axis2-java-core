@@ -239,8 +239,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         Thread thread = new Thread(reciver);
         thread.setDaemon(true);
         try {
-            System.out.println("[Axis2] Using the Repository " + new File(args[1]).getAbsolutePath());
-            System.out.println("[Axis2] Starting the SimpleHTTPServer on port "+ args[0]);
+            System.out.println("[Axis2] Using the Repository " + new File(args[0]).getAbsolutePath());
+            System.out.println("[Axis2] Starting the SimpleHTTPServer on port "+ args[1]);
             thread.start();
              System.out.println("[Axis2] SimpleHTTPServer started");
             System.in.read();
