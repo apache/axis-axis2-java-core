@@ -11,7 +11,7 @@ cd ..
 set AXIS_HOME=%cd%
 
 :gotHome
-if EXIST "%AXIS_HOME%\lib\axis2-M2.jar" goto okHome
+if EXIST "%AXIS_HOME%\lib\axis2-0.9.jar" goto okHome
 echo The AXIS_HOME environment variable seems not to point to the correct location!
 echo This environment variable is needed to run this program
 pause
@@ -21,7 +21,7 @@ exit
 rem set the classes
 set AXIS2_CLASS_PATH="%AXIS_HOME%"
 AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%"
-AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis2-M2.jar"
+AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis2-0.9.jar"
 AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis-wsdl4j-1.2.jar"
 AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\commons-logging-1.0.3.jar"
 AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\log4j-1.2.8.jar"

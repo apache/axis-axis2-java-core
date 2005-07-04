@@ -21,7 +21,7 @@ exit
 rem set the classes
 set AXIS2_CLASS_PATH="%AXIS_HOME%"
 set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%"
-set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis2-M2.jar"
+set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis2-0.9.jar"
 set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\axis-wsdl4j-1.2.jar"
 set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\commons-logging-1.0.3.jar"
 set AXIS2_CLASS_PATH="%CLASS_PATH";"%AXIS_HOME%\lib\log4j-1.2.8.jar"
