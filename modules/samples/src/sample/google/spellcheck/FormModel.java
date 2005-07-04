@@ -1,5 +1,10 @@
 package sample.google.spellcheck;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
@@ -12,11 +17,8 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import sample.google.common.util.PropertyLoader;
 
-import javax.xml.namespace.QName;
-import java.net.MalformedURLException;
-import java.net.URL;
+import sample.google.common.util.PropertyLoader;
 
 /**
  *  class sample.google.spellcheck.FormModel
@@ -51,8 +53,8 @@ public class FormModel {
         value2.addAttribute("xsi:type","xsd:string",null);
         value1.addChild(omfactory.createText(value1,PropertyLoader.getGoogleKey() ));
         value2.addChild(omfactory.createText(value2,word));
-        method.addChild(value2);
-        method.addChild(value1);
+
+        method.addChild(value1);method.addChild(value2);
         return method;
     }
 
@@ -69,6 +71,7 @@ public class FormModel {
         URL url = null;
         try {
             url = new URL(PROTOCOL,PropertyLoader.getGoogleEndpointURL(),PropertyLoader.getGoogleEndpointServiceName());
+            //url=new URL( "http","127.0.0.1",7070,"/search/beta2");
         } catch (MalformedURLException e) {
             observer.updateError(e.getMessage());;
         }
@@ -94,6 +97,7 @@ public class FormModel {
         URL url = null;
         try {
             url = new URL(PROTOCOL,PropertyLoader.getGoogleEndpointURL(),PropertyLoader.getGoogleEndpointServiceName());
+            //url=new URL( "http","127.0.0.1",7070,"/search/beta2");
         } catch (MalformedURLException e) {
             observer.updateError(e.getMessage());
         }
@@ -131,7 +135,8 @@ public class FormModel {
             OMElement root = body.getFirstChildWithName(qName1);
             OMElement val =null;
             if (root!=null){
-                 val = root.getFirstChildWithName(qName2);
+                // val = root.getFirstChildWithName(qName2);
+                val = root.getFirstElement();
             }else{
                 observer.updateError("Correct response not received!");
                 return  null;
