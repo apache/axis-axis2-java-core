@@ -91,7 +91,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
 
     /**
-     * WSA 1.0 specification mandates all the reference parameters to have a attribute as wsa:Type=’parameter’. So
+     * WSA 1.0 specification mandates all the reference parameters to have a attribute as wsa:Type=ï¿½parameterï¿½. So
      * here this will check for header blocks with the above attribute and will put them in message information header collection
      *
      * @param header
@@ -150,7 +150,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 epr = messageInformationHeadersCollection.getFaultTo();
                 if (epr == null) {
                     epr = new EndpointReference(AddressingConstants.WSA_FAULT_TO, "");
-                    messageInformationHeadersCollection.setTo(epr);
+                    messageInformationHeadersCollection.setFaultTo(epr);
                 }
                 extractEPRAddressInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
