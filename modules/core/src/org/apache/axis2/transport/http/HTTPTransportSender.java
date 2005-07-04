@@ -149,6 +149,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             if(chuncked || msgContext.isDoingMTOM()){
                 if (chuncked) {
                     ((ChunkedOutputStream) out).eos();
+                    in = new ChunkedInputStream(transportInfo.in);
                 } 
                 in = transportInfo.in;
             }else{                
@@ -191,12 +192,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     }
                 }
             }
-        } catch (AxisFault e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        }catch (IOException e) {
+            throw new AxisFault(e);
         }
 
     }
