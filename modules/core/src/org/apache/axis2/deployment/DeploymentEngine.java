@@ -526,6 +526,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 ArchiveReader archiveReader = new ArchiveReader();
                 String serviceStatus = "";
+                StringWriter errorWriter= new StringWriter();
                 switch (type) {
                     case SERVICE:
                         try {
@@ -537,15 +538,21 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException de) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + de);
-                            serviceStatus = "Error:\n" + de.getMessage();
+                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                            de.printStackTrace(error_ptintWriter);
+                            serviceStatus = "Error:\n" + errorWriter.toString();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
-                            serviceStatus = "Error:\n" + axisFault.getMessage();
+                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                            axisFault.printStackTrace(error_ptintWriter);
+                            serviceStatus = "Error:\n" + errorWriter.toString();
                         } catch (Exception e) {
                             log.info("Invalid service" + currentArchiveFile.getName());
                             log.info("Exception  " + e);
-                            serviceStatus = "Error:\n" + e.getMessage();
+                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                            e.printStackTrace(error_ptintWriter);
+                            serviceStatus = "Error:\n" + errorWriter.toString();
                         } finally {
                             if (serviceStatus.startsWith("Error:")) {
                                 axisConfig.getFaulytServices().put(getAxisServiceName(currentArchiveFile.getName()), serviceStatus);
@@ -563,11 +570,15 @@ public class DeploymentEngine implements DeploymentConstants {
                         } catch (DeploymentException e) {
                             log.info("Invalid module" + currentArchiveFile.getName());
                             log.info("DeploymentException  " + e);
-                            moduleStatus = "Error:\n" + e.getMessage();
+                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                            e.printStackTrace(error_ptintWriter);
+                            moduleStatus = "Error:\n" + errorWriter.toString();
                         } catch (AxisFault axisFault) {
                             log.info("Invalid module" + currentArchiveFile.getName());
                             log.info("AxisFault  " + axisFault);
-                            moduleStatus = "Error:\n" + axisFault.getMessage();
+                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                            axisFault.printStackTrace(error_ptintWriter);
+                            moduleStatus = "Error:\n" + errorWriter.toString();
                         } finally {
                             if (moduleStatus.startsWith("Error:")) {
                                 axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()), moduleStatus);

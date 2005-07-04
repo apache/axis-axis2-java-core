@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -74,20 +75,20 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(
-        HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse)
-        throws ServletException, IOException {
-            httpServletResponse.setContentType("text/xml; charset=utf-8");
-            MessageContext msgContext  = null;
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse)
+            throws ServletException, IOException {
+        httpServletResponse.setContentType("text/xml; charset=utf-8");
+        MessageContext msgContext  = null;
+        OutputStream out =null;
         try {
-
             Object sessionContext =
-                httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+                    httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
                 httpServletRequest.getSession().setAttribute(
-                    Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
+                        Constants.SESSION_CONTEXT_PROPERTY,
+                        sessionContext);
             }
 
             Enumeration enu = httpServletRequest.getParameterNames();
@@ -99,34 +100,34 @@ public class AxisServlet extends HttpServlet {
             }
 
             msgContext =
-                new MessageContext(
-                    configContext,
-                    (SessionContext) sessionContext,
-                    configContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_HTTP)),
-                    configContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP)));
-                    msgContext.setDoingREST(true);
+                    new MessageContext(
+                            configContext,
+                            (SessionContext) sessionContext,
+                            configContext.getAxisConfiguration().getTransportIn(
+                                    new QName(Constants.TRANSPORT_HTTP)),
+                            configContext.getAxisConfiguration().getTransportOut(
+                                    new QName(Constants.TRANSPORT_HTTP)));
+            msgContext.setDoingREST(true);
             msgContext.setServerSide(true);
             msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new ServletBasedOutTransportInfo(httpServletResponse));
-
+            out = httpServletResponse.getOutputStream();
             boolean processed =
-                HTTPTransportUtils.processHTTPGetRequest(
-                    msgContext,
-                    httpServletRequest.getInputStream(),
-                    httpServletResponse.getOutputStream(),
-                    httpServletRequest.getContentType(),
-                    httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                    httpServletRequest.getRequestURL().toString(),
-                    configContext,
-                    map);
+                    HTTPTransportUtils.processHTTPGetRequest(
+                            msgContext,
+                            httpServletRequest.getInputStream(),
+                            out,
+                            httpServletRequest.getContentType(),
+                            httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                            httpServletRequest.getRequestURL().toString(),
+                            configContext,
+                            map);
             if (!processed) {
-                lister.handle(httpServletRequest, httpServletResponse);
+                lister.handle(httpServletRequest, httpServletResponse,out);
             }
         } catch (Exception e) {
             AxisEngine engine = new AxisEngine(configContext);
             if(msgContext!= null){
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT, httpServletResponse.getOutputStream());
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                 engine.handleFault(msgContext,e);            
             }
         }
@@ -147,33 +148,33 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
-            MessageContext msgContext = null;
+            throws ServletException, IOException {
+        MessageContext msgContext = null;
         try {
             Object sessionContext =
-                req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+                    req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
                 req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
             }
             msgContext =
-                new MessageContext(
-                    configContext,
-                    (SessionContext) sessionContext,
-                    configContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_HTTP)),
-                    configContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP)));
+                    new MessageContext(
+                            configContext,
+                            (SessionContext) sessionContext,
+                            configContext.getAxisConfiguration().getTransportIn(
+                                    new QName(Constants.TRANSPORT_HTTP)),
+                            configContext.getAxisConfiguration().getTransportOut(
+                                    new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,new ServletBasedOutTransportInfo(res));
             res.setContentType("text/xml; charset=utf-8");
             HTTPTransportUtils.processHTTPPostRequest(
-                msgContext,
-                req.getInputStream(),
-                res.getOutputStream(),
-                req.getContentType(),
-                req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                req.getRequestURL().toString(),
-                configContext);
+                    msgContext,
+                    req.getInputStream(),
+                    res.getOutputStream(),
+                    req.getContentType(),
+                    req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                    req.getRequestURL().toString(),
+                    configContext);
             Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
             if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);

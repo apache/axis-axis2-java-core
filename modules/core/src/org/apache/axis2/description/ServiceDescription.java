@@ -548,7 +548,12 @@ public class ServiceDescription
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
             if(wsdlDefinition !=null){
-                wsdlDefinition.removeService(this.getName());
+                Iterator sreviceitr =  wsdlDefinition.getServices().keySet().iterator();
+                while (sreviceitr.hasNext()) {
+                     wsdlDefinition.removeService((QName)sreviceitr.next());
+                }
+
+              //  wsdlDefinition.removeService(this.getName());
 
                 Service service = wsdlDefinition.createService();
                 service.setQName(this.getName());

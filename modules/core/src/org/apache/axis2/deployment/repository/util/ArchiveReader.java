@@ -25,6 +25,7 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -80,12 +81,13 @@ public class ArchiveReader implements DeploymentConstants {
         boolean foundservice = false;
         try {
             if(in!= null){
-                WSDLVersionWrapper wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory());
+                WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
+                WSDLVersionWrapper wsdlVersionWrapper = builder.build(in, new AxisDescWSDLComponentFactory());
                 WSDLDescription  womDescription = wsdlVersionWrapper.getDescription();
                 Iterator iterator = womDescription.getServices().keySet().iterator();
                 if(iterator.hasNext()){
                     foundservice = true;
-                    service = (ServiceDescription)iterator.next();
+                    service = (ServiceDescription)womDescription.getServices().get(iterator.next());
                 }
                 if(!foundservice){
                     service = new ServiceDescription();

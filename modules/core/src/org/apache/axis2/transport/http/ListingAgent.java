@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -80,11 +82,13 @@ public class ListingAgent {
      * Field allowListSingleService
      */
     private final boolean allowListSingleService = true;
+    private OutputStream out = null;
 
     public void handle(
             HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse)
+            HttpServletResponse httpServletResponse,OutputStream out)
             throws IOException {
+        this.out = out;
         String filePart = httpServletRequest.getRequestURL().toString();
         if ((filePart != null) && filePart.endsWith(Constants.ADMIN_LISTSERVICES)) {
             listAdminServices(httpServletRequest, httpServletResponse);
@@ -376,14 +380,23 @@ public class ListingAgent {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
                 if(wsdl != null){
-                    StringWriter writer = new StringWriter();
-                    ((ServiceDescription)serviceObj).printWSDL(writer,filePart);
-                    String wsdl_value = writer.toString().trim() ;
-                    if(wsdl_value == null || wsdl_value.trim().equals("")){
-                        wsdl_value = "WSDL is not available!!!";
-                    } 
+                    // StringWriter writer = new StringWriter();
                     res.setContentType("xml");
-                    req.getSession().setAttribute(Constants.WSDL_CONTENT, wsdl_value);
+                    PrintWriter out_writer = new PrintWriter(out);
+                    ((ServiceDescription)serviceObj).printWSDL(out_writer,filePart);
+                    //  String wsdl_value = writer.toString().trim() ;
+                    //  if(wsdl_value == null || wsdl_value.trim().equals("")){
+                    //      wsdl_value = "WSDL is not available!!!";
+                    // }
+                    
+                    // req.getSession().setAttribute(Constants.WSDL_CONTENT, wsdl_value);
+                    // PrintWriter out_writer = new PrintWriter(out);
+                    //  System.out.println("wsdl_value = " + wsdl_value);
+                    //  out_writer.write(wsdl_value);
+                    out.flush();
+                    out.close();
+                    wsdl = null;
+                    return;
                 }   else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
                 }
