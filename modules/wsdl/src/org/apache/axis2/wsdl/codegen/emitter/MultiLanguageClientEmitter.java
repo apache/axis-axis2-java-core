@@ -495,12 +495,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         loadOperations(boundInterface, doc, rootElement, binding);
         doc.appendChild(rootElement);
 
-        try {
-            doc.write(System.out);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
         return doc;
     }
@@ -673,14 +667,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter{
         loadOperations(boundInterface, doc, rootElement,binding);
         doc.appendChild(rootElement);
 
-//        //////////////////////////
-        try {
-            doc.write(System.out);
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-//
-//        ///////////////////////////////
 
 
         return doc;

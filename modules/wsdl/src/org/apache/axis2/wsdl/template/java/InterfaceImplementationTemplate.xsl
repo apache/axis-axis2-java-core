@@ -38,9 +38,7 @@
         */
         public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
 
-          if(targetEndpoint.charAt(targetEndpoint.length()-1)!='/')
-        		targetEndpoint = targetEndpoint+"/";
-           this.toEPR = targetEndpoint;
+			this.toEPR = new org.apache.axis2.addressing.EndpointReference(org.apache.axis2.addressing.AddressingConstants.WSA_TO, targetEndpoint);
 		    //creating the configuration
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
            _configurationContext.getAxisConfiguration().addService(_service);
@@ -78,7 +76,7 @@
 
 		    org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            _call.setTo(new org.apache.axis2.addressing.EndpointReference(org.apache.axis2.addressing.AddressingConstants.WSA_TO, toEPR+"<xsl:value-of select="@name"/>"));
+            _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
             org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
@@ -153,7 +151,7 @@
         public  void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of>,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
              org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);<!-- this needs to change -->
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             _call.setTo(new org.apache.axis2.addressing.EndpointReference(org.apache.axis2.addressing.AddressingConstants.WSA_TO, toEPR+"<xsl:value-of select="@name"/>"));
+             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>

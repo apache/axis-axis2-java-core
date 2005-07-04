@@ -16,6 +16,7 @@
 
 package org.apache.axis2.clientapi;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -47,7 +48,7 @@ public abstract class Stub {
     protected ConfigurationContext _configurationContext;
     protected static ServiceDescription _service;
     protected ServiceContext _serviceContext;
-    protected String toEPR ;
+    protected EndpointReference toEPR ;
 
 
 
