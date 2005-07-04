@@ -153,8 +153,10 @@ public class ServiceDescription
      * @return
      */
     public OperationDescription getOperation(QName operationName) {
-
-        return (OperationDescription) this.getServiceInterface().getAllOperations().get(operationName.getLocalPart());
+        String opStr = operationName.getLocalPart();
+        
+        HashMap allOperations = this.getServiceInterface().getAllOperations();
+        return (OperationDescription) allOperations.get(opStr);
     }
 
     /*

@@ -50,9 +50,14 @@ public class HTTPTransportSender extends AbstractTransportSender {
         int contentLength)
         throws AxisFault {
         try {
-            Object soapAction = msgContext.getWSAAction();
-            String soapActionString =
-                soapAction == null ? "" : soapAction.toString();
+             
+            String soapActionString = msgContext.getSoapAction();
+            if(soapActionString == null || soapActionString.length() == 0){
+                soapActionString = msgContext.getWSAAction();
+            }
+            if(soapActionString == null){
+                soapActionString = "";
+            }
             
             boolean doMTOM = msgContext.isDoingMTOM();
             StringBuffer buf = new StringBuffer();

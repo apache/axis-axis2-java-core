@@ -44,6 +44,9 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
         String action = (String) messageContext.getSoapAction();
         if (action != null) {
             OperationDescription op = service.getOperationBySOAPAction(action);
+            if(op == null){
+                op = service.getOperation(new QName(action));
+            }
             return op;
         }
         return null;

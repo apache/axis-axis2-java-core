@@ -53,6 +53,9 @@ public class HTTPTransportUtils {
 			String soapAction, String requestURI,
 			ConfigurationContext configurationContext) throws AxisFault {
 		try {
+            if(soapAction != null && soapAction.startsWith("\"") && soapAction.endsWith("\"")){
+                soapAction = soapAction.substring(1,soapAction.length() -1);
+            }                
 			msgContext.setWSAAction(soapAction);
 			msgContext.setSoapAction(soapAction);
 			msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
@@ -111,6 +114,9 @@ public class HTTPTransportUtils {
 			String soapAction, String requestURI,
 			ConfigurationContext configurationContext, Map requestParameters)
 			throws AxisFault {
+        if(soapAction != null && soapAction.startsWith("\"") && soapAction.endsWith("\"")){
+            soapAction = soapAction.substring(1,soapAction.length() -1);
+        }                
 		msgContext.setWSAAction(soapAction);
 		msgContext.setSoapAction(soapAction);
 		msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
