@@ -5,6 +5,10 @@ package org.apache.axis2.transport.mail.server;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,6 +18,7 @@ public class POP3Worker extends Thread{
     private Socket socket;
     private Storage st;
     boolean doneProcess = false;
+    protected static Log log = LogFactory.getLog(POP3Server.class.getName());
     int numDeleted = 0 ; //This is a small hack to get the deleting working with the ArrayList. To keep it simple.
     public POP3Worker(Socket socket, Storage st) {
     		this.socket = socket;
@@ -36,7 +41,7 @@ public class POP3Worker extends Thread{
             }
             socket.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
     }

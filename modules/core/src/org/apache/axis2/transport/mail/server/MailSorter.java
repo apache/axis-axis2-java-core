@@ -95,7 +95,6 @@ public class MailSorter {
             // invoke the Axis engine
             engine.receive(msgContext);
         } catch (Exception e) {
-            e.printStackTrace();
             AxisFault af;
             if (e instanceof AxisFault) {
                 af = (AxisFault) e;
