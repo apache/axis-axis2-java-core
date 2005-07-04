@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Mail transport</title>
+
+</head>
+
+<body>
+<h1>MTOM with Axis2 </h1>
+<h2>Introduction</h2>
+<p>Despite the flexibility, interoperability and global acceptance of XML, there are times when serializing data into XML does not make sense. Web services users may need to transmit binary attachments of various sorts like images, drawings, xml docs, etc together with SOAP message. Such data are often in a particular binary format.<br>
+  Traditionally, two techniques for dealing with opaque data in XML have been used; &quot;by value&quot; or &quot;by reference&quot;. The former is achieved by embedding opaque data(ofcource after some form of encoding) as element or attribute content. XML supports opaque data as content through the use of either base64 or hexadecimal text encoding. It is well-known that base64 encoded data expands by a factor of 1.33x original size, and that hexadecimal encoded data expands by a factor of 2x, assuming an underlying UTF-8 text encoding. Also of concern is the overhead in processing costs (both real and perceived) for these formats, especially when decoding back into raw binary. The latter &quot;by reference&quot; is achieved by attaching the pure binary data 
+
+
+ as external unparsed general entities
+
+outside of the XML and then embedding a reference URI  as an element or attribute value. This prevents the uneccesary bloating of data and wasted processing power.
+
+
+The primary obstacle to using unparsed entities is their heavy reliance on DTDs, which impedes modularity as well as use of XML namespaces. </p>
+<p>There were several specifications introduced in the SOAP world to deal with this binary attachment problem. <a href="http://www.w3.org/TR/SOAP-attachments">SOAP with attachment</a> is one such example.It uses &quot;by reference&quot; methode. Since SOAP prohibits document type declarations (DTD) in messages, this leads to the  problem of not  representing data as part of the message infoset, creating two data models. This scenerio is like sending attachments with an e-mail message. Even though those attachements are related to the message content they are not inside the message.  This causes the technologies 
+
+
+ for processing and description of data based on XML component of the data, to malfunction. One example is  WS-Security.message. </p>
+<p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM 
+
+
+(SOAP Message Transmission Optimization Mechanism)</a> is a futuristic solution  for the above problems created by merging the above two techniques.MTOM is actually a &quot;by reference&quot; methode. Wire format of a MTOM optimised message is same as the Soap with Attachments message , which also makes it backward compatible with SwA endpoints. Most notable feature of MTOM is the use of XOP:Include element which is decalred in <a href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized Packaging (XOP)</a> specification to refer to the binary attachments of the message.With the use of this exclusive element the attached binary content logically become inline(by value) with the SOAP document even though actually it is attached seperately. This merges the two realms by making it possible to work only with one data model. With this the it becomes trivial to idetify the data by looking at XML making reliance on DTDs obsolute. With this the technologies which works based XML component of the data can work with one data model. </p>
+<h2>Using MTOM </h2>
+First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec-activation-1.0.2-rc3.jar jars by following  dependencies in the classpath, they can be  downloaded from Sun web site. 
+<ol>
+  <LI><a href="http://java.sun.com/products/javamail/">Java Mail API (mail.jar)</a></LI>
+  <LI><a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">Java Activation Framework (activation.jar)</a></LI>
+</ol>
+
+<h3>How to create optimizable content programatically</h3>
+<p>AXIOM has the ability to hold binary data. It has been given that ability by allowing OMText to hold binary content.  OMText has been chosen for this purpose with two reasons. One is that MTOM can be enabled only for 
+
+
+ <code>xs:base64Binary</code>
+
+representations and the other one is to preserve the infoset in both sender and receiver. The option of optimising or not can be given at the constructing time or later.</p>
+<pre><code>        OMElement image = fac.createOMElement("image", omNs);
+
+		  //creating the Data Handler for the image
+        Image image;
+        image = new JDK13IO()
+                .loadImage(new FileInputStream(inputImageFileName));
+        ImageDataSource dataSource = new ImageDataSource("test.jpg",expectedImage);
+        DataHandler dataHandler = new DataHandler(dataSource);
+
+		  //create a OMText node with the above DataHandler and set optimised to true
+        OMText textData = new OMTextImpl(dataHandler, true);
+        image.addChild(textData);
+
+		 //to set optimised to false uncomment the following
+		 //textData.doOptimize(false);</code></pre>
+<p>Also a user can create an optimizable content node even with a base64 encoded string which contains binary content given with the mime type of the actual binary representation</p>
+<pre><code>			String base64String = "xxxxxxxx";
+			OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</code></pre>
+<p>Axis2 uses javax.activation.DataHandler to handle the binary data. </p>
+<h3>Sending MTOM optimised messages from  client side </h3>
+<p>First of all you need to have the above mentioned jars in the classpath. Then set the <code>&quot;enableMTOM&quot;</code> property <code>in the call to true, when sending messages.</code></p>
+<pre>
+   <code>Call call = new Call();
+    call.setTo(targetEPR);
+    call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</code></pre>
+<p> When this property is set to true any message which contains optimisable content will be serialised as MTOM optimised messages. If this the message contains optimizable binary content nodes and the above property is not set then the optimisable content will be serialized and sent as Base64 strings.<code></code></p>
+<h3>Enabling MTOM in the Server side </h3>
+<p>Axis 2 server accepts incoming MTOM optimised incoming messages when the above jars are present. One can enable  MTOM optimisation globally on the server side by setting the &quot;enableMTOM&quot; parameter to true in the Axis2.xml. When it is set, any outgoing message which contains optimizable content will be serialized and send as a MTOM optimized message. If not they will be serialized as Base64 strings.</p>
+<p>1. Copy the new jars to the Axis 2 lib folder  and delete the above mentioned Gerenimo jars from there.  If the Axis2 server is running in Tomcat Axis 2 lib is &lt;CATALINA_HOME&gt;/webapps/axis2/WEB-INF/lib.</p>
+<p>2. Add the following parameter entries to Axis2.xml file which can be found in &lt;AXIS2_HOME&gt;/WEB_INF folder. </p>
+ <code><pre>
+         &lt;parameter name=&quot;enableMTOM&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt;
+  </pre></code>
+<p>3. Restart the Server.</p>
+<h3>&nbsp;</h3>
+</body>
+</html>
