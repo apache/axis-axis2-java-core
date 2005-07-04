@@ -337,8 +337,7 @@ public class InOutMEPClient extends MEPClient {
                 msgctx.setServiceContext(serviceContext);
                 MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
                 SOAPEnvelope resenvelope = response.getEnvelope();
-                AsyncResult asyncResult = new AsyncResult();
-                asyncResult.setResult(resenvelope);
+                AsyncResult asyncResult = new AsyncResult(response);
                 callback.onComplete(asyncResult);
                 callback.setComplete(true);
             } catch (Exception e) {

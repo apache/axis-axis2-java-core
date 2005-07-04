@@ -37,6 +37,7 @@ public class Call extends InOutMEPClient {
 
     private HashMap properties;
     protected static OperationDescription operationTemplate;
+    private MessageContext lastResponseMessage;
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
      * @throws AxisFault
@@ -91,8 +92,8 @@ public class Call extends InOutMEPClient {
 //        }
         MessageContext msgctx = prepareTheSystem(toSend);
 
-        MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
-        SOAPEnvelope resEnvelope = responseContext.getEnvelope();
+        this.lastResponseMessage = super.invokeBlocking(axisConfig, msgctx);
+        SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
     }
     /**
@@ -161,4 +162,11 @@ public class Call extends InOutMEPClient {
     public void set(String key, Object value) {
         serviceContext.getEngineContext().setProperty(key, value);
     }
+    /**
+     * @return
+     */
+    public MessageContext getLastResponseMessage() {
+        return lastResponseMessage;
+    }
+
 }

@@ -15,28 +15,36 @@
  */
 package org.apache.axis2.clientapi;
 
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 /**
  * Class AsyncResult
  */
 public class AsyncResult {
+    
+    public AsyncResult(MessageContext result){
+        this.result = result;
+    }
     /**
      * Field result
      */
-    private SOAPEnvelope result;
+    private MessageContext result;
 
-    /**
-     * @param result
-     */
-    public void setResult(SOAPEnvelope result) {
-        this.result = result;
-    }
+ 
 
     /**
      * @return SOAPEnvelope
      */
     public SOAPEnvelope getResponseEnvelope() {
+        if(result != null){
+            return result.getEnvelope();
+        }else{
+            return null;
+        }
+        
+    }
+    public MessageContext getResponseMessageContext(){
         return result;
     }
 }

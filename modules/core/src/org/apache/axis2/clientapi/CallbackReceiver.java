@@ -34,9 +34,7 @@ public class CallbackReceiver implements MessageReceiver {
 
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackstore.get(messageID);
-        AsyncResult result = new AsyncResult();
-        result.setResult(messgeCtx.getEnvelope());
-
+        AsyncResult result = new AsyncResult(messgeCtx);
         if (callback != null) {
             callback.onComplete(result);
             callback.setComplete(true);
