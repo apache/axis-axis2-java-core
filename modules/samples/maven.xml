@@ -47,8 +47,12 @@
     </postGoal>
 
     <goal name="create-samples">
-	<mkdir dir="target/samples"/>
-        <mkdir dir="${samples.dir}/userguide"/>
+	     <mkdir dir="target/samples"/>
+         <mkdir dir="${samples.dir}/userguide"/>
+         <mkdir dir="target/samples/wsdl"/>
+         <copy todir="target/samples/wsdl">
+			<ant:fileset dir="wsdl"/>
+		</copy>
         <attainGoal name="userguide"/>
         <attainGoal name="amazonQS"/>
         <attainGoal name="googleSearch"/>
