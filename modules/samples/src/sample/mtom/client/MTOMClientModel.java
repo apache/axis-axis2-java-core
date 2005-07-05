@@ -1,3 +1,18 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package sample.mtom.client;
 
 import org.apache.axis2.Constants;
@@ -16,17 +31,16 @@ import java.io.File;
 import java.io.FileInputStream;
 
 
-public class EchoRawMTOMTest {
+public class MTOMClientModel {
     private File inputFile = null;
 
     private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
             "http://127.0.0.1:8080/axis2/services/MyService");
 
+    private QName operationName = new QName("mtomSample");
 
-    private QName operationName = new QName("echoOMElement");
 
-
-    public EchoRawMTOMTest() {
+    public MTOMClientModel() {
 
     }
 
@@ -45,7 +59,7 @@ public class EchoRawMTOMTest {
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
-        OMText textData = new OMTextImpl(expectedDH, true);
+        OMText textData = fac.createText(expectedDH, true);
         image.addChild(textData);
 
         OMElement imageName = fac.createOMElement("fileName", omNs);
@@ -65,10 +79,10 @@ public class EchoRawMTOMTest {
 
         Call call = new Call();
         call.setTo(targetEPR);
+        // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
-
         OMElement result = (OMElement) call.invokeBlocking(operationName
                 .getLocalPart(), payload);
 

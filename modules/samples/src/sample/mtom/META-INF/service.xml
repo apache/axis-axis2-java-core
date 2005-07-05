@@ -1,12 +1,9 @@
-<service name="MyService">
+<service name="MTOMService">
     <description>
         This is a sample Web Service with two operations,echo and ping.
     </description>
-    <parameter name="ServiceClass" locked="xsd:false">userguide.example1.MyService</parameter>
-    <operation name="echo">
+    <parameter name="ServiceClass" locked="xsd:false">sample.mtom.MTOMService</parameter>
+    <operation name="mtomSample">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
-     <operation name="ping">
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
-    </operation>
-  </service>
+</service>
