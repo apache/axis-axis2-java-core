@@ -1,3 +1,4 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
 <html>
 <head>
 <title>Mail transport</title>
@@ -5,14 +6,15 @@
 </head>
 
 <body><h1>Mail transport</h1>
-<p>The inner workings of the mail transport has two parts the transport Sender and the transport Listener. Here the transport Listener is a basic email client which will be on a loop checking for new messages for a particular email address. When an email comes in it will be tunnelled into the Axis engine.</p>
-<p>When you think in terms of usage the mail transport in Axis2 can be used in two ways. It can be used against a generic mail server or it can be used like a mailet. The simple mailet provided will direct any message that is comming to a particular address into the Axis engine. The engine will process the message and will use the Transport sender to send the reply.</p>
+<p>The inner workings of the mail transport has two parts the transport Sender and the transport Listener. Here the transport Listener is a basic email client which will be on a loop checking for new messages for a particular email address. When an email comes in it will be tunneled into the Axis engine.</p>
+<p>When you think in terms of usage the mail transport in Axis2 can be used in two ways. It can be used against a generic mail server or it can be used like a mailet. The simple mailet provided will direct any message that is coming to a particular address into the Axis engine. The engine will process the message and will use the Transport sender to send the reply.</p>
 <p></p>
- <a>First you need following additional jar dependencies in the classpath, they can be found by downloading the <a href="http://java.sun.com/products/javamail/">JavaMail API</a> ans <a href="http://java.sun.com/products/javabeans/jaf/">JavaBeans Activation Framework</a>.</p>
+<p>To get started on the mail transport you need the following additional jar dependencies on the classpath.</p>
   <ol>
-  <LI>mail.jar&nbsp;(This contains com.sun.mail.* and javax.mail.*)</LI>
-  <LI>activation.jar</LI>
+  <li>mail.jar&nbsp;(This contains com.sun.mail.* and javax.mail.*)</li>
+  <li>activation.jar</li>
   </ol>
+<p>These can be downloaded from <a href="http://java.sun.com/products/javamail/">JavaMail API</a> and <a href="http://java.sun.com/products/javabeans/jaf/">JavaBeans Activation Framework</a>.</p>
 
 <h2>Transport Sender</h2>
 <p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
@@ -96,8 +98,8 @@ Connection closed by foreign host.
 
   <h2>Using the included mail server</h2>
 
-  <p>The inbuilt mail server has to be started from code by providing a ConfigurationContext for the time being, because the standalone and the mailet functionality is tightly bound with the mailet functionality.</p>
-  <p>This server itself does not need any configuration or tinkering to work. A configurationContext and the ports to operate on are the only details needed. The server will store the mails in memory against the recipient till the recipient pops it from the server. To facilitate the use in *nix environments as a non root user the pop and smtp ports used by default config/test cases are (1024 + 25) and (1024 + 110).</p>
+  <p>The inbuilt mail server has to be started from code by providing a ConfigurationContext for the time being, because the standalone and the mailet functionalities are tightly bound.</p>
+  <p>The server itself does not need any configuration or tinkering to work. A ConfigurationContext and the ports to operate on are the only details needed. The server will store the mails in memory against the recipient till the recipient pops it from the server. To facilitate the use in *nix environments as a non root user the pop and smtp ports used by default config/test cases are (1024 + 25) and (1024 + 110).</p>
 
   <hr/>
 
