@@ -104,7 +104,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 				OMElement e = (OMElement) lastNode;
 				node = new OMTextImpl(contentID, (OMElement) lastNode, this);
 				e.setFirstChild(node);
-				node.setComplete(true);
+				//node.setComplete(true);
 			//}
 			return node;
 			

@@ -171,7 +171,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 		this.optimize = true;
 		this.isBinary = true;
 		this.builder = builder;
-        done = true;
+        //done = true;
         
 	}
 
@@ -305,7 +305,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	}
 
 	public boolean isComplete() {
-		return true;
+		return done;
 	}
 
 	public void serialize(OMOutput omOutput) throws XMLStreamException {
