@@ -212,7 +212,7 @@ public class HTTPTransportUtils {
 	private static boolean isOptimised(OMElement element) {
 		Iterator childrenIter = element.getChildren();
         boolean isOptimized = false;
-		while (childrenIter.hasNext()) {
+		while (childrenIter.hasNext()&& !isOptimized) {
 			OMNode node = (OMNode) childrenIter.next();
 			if (OMNode.TEXT_NODE == node.getType()
 					&& ((OMText) node).isOptimized()) {
