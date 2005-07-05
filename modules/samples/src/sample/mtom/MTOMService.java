@@ -32,15 +32,17 @@ import org.apache.axis2.om.OMText;
 public class MTOMService {
 	public OMElement mtomSample(OMElement element) throws Exception {
 		OMElement imageEle = element.getFirstElement();
-		OMElement imageName = (OMElement) imageEle.getNextSibling();
+		System.out.println(imageEle.getLocalName());
+		//OMElement imageName = (OMElement) imageEle.getNextSibling();
+		//System.out.println(imageName.getLocalName());
 		OMText binaryNode = (OMText) imageEle.getFirstChild();
-		String nameNode = imageName.getText();
+		//String nameNode = imageName.getText();
 		//Extracting the data and saving 
 		DataHandler actualDH;
 		actualDH = binaryNode.getDataHandler();
 		Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
 				.getInputStream());
-		FileOutputStream imageOutStream = new FileOutputStream(nameNode);
+		FileOutputStream imageOutStream = new FileOutputStream("test.jpg");
 		new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
 		
 		//setting response

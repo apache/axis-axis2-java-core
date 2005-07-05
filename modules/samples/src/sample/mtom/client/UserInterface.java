@@ -104,7 +104,7 @@ public class UserInterface extends JPanel implements ActionListener {
 
 		if (e.getSource() == browse) {
 
-			int returnVal = jFileChooser.showDialog(this, "OK");
+			int returnVal = jFileChooser.showDialog(this, "Choose the Image to Send");
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				file = jFileChooser.getSelectedFile();
@@ -148,6 +148,8 @@ public class UserInterface extends JPanel implements ActionListener {
 			mtomTest.setTargetEPR(EPRName);
 			OMElement result = (OMElement) mtomTest.testEchoXMLSync(fileName);
 			jTextArea.setText(result.toString());
+			JOptionPane.showMessageDialog(parent, "Sent & saved Image Succesfully",
+					" Success", JOptionPane.PLAIN_MESSAGE);
 		} catch (Exception e) {
 			e.printStackTrace(); //To change body of catch statement use File |
 								 // Settings | File Templates.
