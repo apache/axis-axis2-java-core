@@ -17,16 +17,16 @@ outside of the XML and then embedding a reference URI  as an element or attribut
 
 
 The primary obstacle to using unparsed entities is their heavy reliance on DTDs, which impedes modularity as well as use of XML namespaces. </p>
-<p>There were several specifications introduced in the SOAP world to deal with this binary attachment problem. <a href="http://www.w3.org/TR/SOAP-attachments">SOAP with attachment</a> is one such example.It uses &quot;by reference&quot; methode. Since SOAP prohibits document type declarations (DTD) in messages, this leads to the  problem of not  representing data as part of the message infoset, creating two data models. This scenerio is like sending attachments with an e-mail message. Even though those attachements are related to the message content they are not inside the message.  This causes the technologies 
+<p>There were several specifications introduced in the SOAP world to deal with this binary attachment problem. <a href="http://www.w3.org/TR/SOAP-attachments">SOAP with Attachments</a> is one such example.It uses &quot;by reference&quot; method. Since SOAP prohibits document type declarations (DTD) in messages, this leads to the  problem of not  representing data as part of the message infoset, creating two data models. This scenerio is like sending attachments with an e-mail message. Even though those attachements are related to the message content they are not inside the message.  This causes the technologies 
 
 
- for processing and description of data based on XML component of the data, to malfunction. One example is  WS-Security.message. </p>
+ for processing and description of data based on XML component of the data, to malfunction. One example is  WS-Security. </p>
 <p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM 
 
 
-(SOAP Message Transmission Optimization Mechanism)</a> is a futuristic solution  for the above problems created by merging the above two techniques.MTOM is actually a &quot;by reference&quot; methode. Wire format of a MTOM optimised message is same as the Soap with Attachments message , which also makes it backward compatible with SwA endpoints. Most notable feature of MTOM is the use of XOP:Include element which is decalred in <a href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized Packaging (XOP)</a> specification to refer to the binary attachments of the message.With the use of this exclusive element the attached binary content logically become inline(by value) with the SOAP document even though actually it is attached seperately. This merges the two realms by making it possible to work only with one data model. With this the it becomes trivial to idetify the data by looking at XML making reliance on DTDs obsolute. With this the technologies which works based XML component of the data can work with one data model. </p>
+(SOAP Message Transmission Optimization Mechanism)</a> is a elegent solution  for the above problems created by merging the above two techniques. MTOM is actually a &quot;by reference&quot; method. Wire format of a MTOM optimised message is same as the Soap with Attachments message , which also makes it backward compatible with SwA endpoints. Most notable feature of MTOM is the use of XOP:Include element which is declared in <a href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized Packaging (XOP)</a> specification to refer to the binary attachments of the message.With the use of this exclusive element the attached binary content logically become inline(by value) with the SOAP document even though actually it is attached seperately. This merges the two realms by making it possible to work only with one data model. With this the it becomes trivial to idetify the data by looking at XML making reliance on DTDs obsolute. With this the technologies which works based XML component of the data can work with one data model. </p>
 <h2>Using MTOM </h2>
-First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec-activation-1.0.2-rc3.jar jars by following  dependencies in the classpath, they can be  downloaded from Sun web site. 
+First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec-activation-1.0.2-rc3.jar jars by following  dependencies in the classpath, they can be  downloaded from the Sun web site. 
 <ol>
   <LI><a href="http://java.sun.com/products/javamail/">Java Mail API (mail.jar)</a></LI>
   <LI><a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">Java Activation Framework (activation.jar)</a></LI>
@@ -37,18 +37,18 @@ First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec
 
 representations and the other one is to preserve the infoset in both sender and receiver. The option of serializing as optimised or not can be given at the constructing time or later.</p>
 <source>
-<pre>        OMElement image = fac.createOMElement("image", omNs);
+<pre>        OMElement imageElement = fac.createOMElement("image", omNs);
 
 		  //creating the Data Handler for the image
         Image image;
         image = new JDK13IO()
                 .loadImage(new FileInputStream(inputImageFileName));
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",expectedImage);
+        ImageDataSource dataSource = new ImageDataSource("test.jpg",image);
         DataHandler dataHandler = new DataHandler(dataSource);
 
 		  //create a OMText node with the above DataHandler and set optimised to true
         OMText textData = fac.createText(dataHandler, true);
-        image.addChild(textData);
+        imageElement.addChild(textData);
 
 		  //to set optimized to false uncomment the following
 		  //textData.doOptimize(false);</pre>
@@ -81,7 +81,7 @@ representations and the other one is to preserve the infoset in both sender and 
   </pre></source>
 <p>3. Restart the Server.</p>
 <h2>Using SOAP with Attachments (SwA) </h2>
-<p>MTOM specification is designed to be backward compatible with the SOAP with Attachements specification. Even though the representation is different, both technologies have the same wire format. We can safely assume that any SOAP with Attachments endpoint can accept a MTOM optimized messages and  treat them as SOAP with Attachment messages - Any MTOM optimised message is a valid SwA message. Because of that Axis2 does not define a seperate programming model or serialization for SwA. Users can use the MTOM programming model and serialisation to send messages to SwA endpoints.</p>
+<p>MTOM specification is designed to be backward compatible with the SOAP with Attachements specification. Even though the representation is different, both technologies have the same wire format. We can safely assume that any SOAP with Attachments endpoint can accept a MTOM optimized messages and  treat them as SOAP with Attachment messages - Any MTOM optimised message is a valid SwA message. Because of that Axis2 does not define a seperate programming model or serialization for SwA. Users can use the MTOM programming model and serialization to send messages to SwA endpoints.</p>
 <p>In the receiving side Axis2 automatically identifies and de-serilizes SOAP with Attachments messages by looking at the content type of the message. Reference to the received attachments will be put in to the message context. </p>
 </body>
 </html>
