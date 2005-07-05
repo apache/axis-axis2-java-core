@@ -23,6 +23,7 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
@@ -479,8 +480,8 @@ public class ServiceDescription
             WSDLBindingOperation bindingOperation = (WSDLBindingOperation)bindingOperations.get(operationKeySetIterator.next());
             Iterator extIterator = bindingOperation.getExtensibilityElements().iterator();
             while(extIterator.hasNext()){
-                ExtensibilityElement element = (ExtensibilityElement)extIterator.next();
-                if(element.getElementType().equals(ExtensionConstants.SOAP_OPERATION)){
+            	WSDLExtensibilityElement element = (WSDLExtensibilityElement)extIterator.next();
+                if(element.getType().equals(ExtensionConstants.SOAP_OPERATION)){
                     if(((SOAPOperation)element).getSoapAction().equals(soapAction)){
                         operation = (OperationDescription)bindingOperation.getOperation();
                         count++;
