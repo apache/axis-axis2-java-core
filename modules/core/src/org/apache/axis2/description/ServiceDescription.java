@@ -449,7 +449,7 @@ public class ServiceDescription
     public OperationDescription getOperationBySOAPAction(String soapAction){
         Iterator iterator = this.getEndpoints().keySet().iterator();
         if(iterator.hasNext()){
-            WSDLEndpoint endpoint = (WSDLEndpoint)iterator.next();
+            WSDLEndpoint endpoint = (WSDLEndpoint)this.getEndpoints().get(iterator.next());
             return this.getOperationBySOAPAction(soapAction, endpoint.getName());
         }
 
