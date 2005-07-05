@@ -32,14 +32,12 @@ First you need to replace geronimo-spec-javamail-1.3.1-rc3.jar and geronimo-spec
   <LI><a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">Java Activation Framework (activation.jar)</a></LI>
 </ol>
 
-<h3>How to create optimizable content programatically</h3>
-<p>AXIOM has the ability to hold binary data. It has been given that ability by allowing OMText to hold binary content.  OMText has been chosen for this purpose with two reasons. One is that MTOM can be enabled only for 
+<h3>Programming model </h3>
+<p>AXIOM has the ability to hold binary data. It has been given this ability by allowing OMText to hold binary content in the form of javax.activation.DataHandler.  OMText has been chosen for this purpose with two reasons. One is that MTOM can be enabled only for content which has <source>xs:base64Binary</source>
 
-
- <source>xs:base64Binary</source>
-
-representations and the other one is to preserve the infoset in both sender and receiver. The option of optimising or not can be given at the constructing time or later.</p>
-<source><pre>        OMElement image = fac.createOMElement("image", omNs);
+representations and the other one is to preserve the infoset in both sender and receiver. The option of serializing as optimised or not can be given at the constructing time or later.</p>
+<source>
+<pre>        OMElement image = fac.createOMElement("image", omNs);
 
 		  //creating the Data Handler for the image
         Image image;
@@ -49,29 +47,41 @@ representations and the other one is to preserve the infoset in both sender and 
         DataHandler dataHandler = new DataHandler(dataSource);
 
 		  //create a OMText node with the above DataHandler and set optimised to true
-        OMText textData = new OMTextImpl(dataHandler, true);
+        OMText textData = fac.createText(dataHandler, true);
         image.addChild(textData);
 
-		 //to set optimised to false uncomment the following
-		 //textData.doOptimize(false);</pre></source>
-<p>Also a user can create an optimizable content node even with a base64 encoded string which contains binary content given with the mime type of the actual binary representation</p>
-<source><pre>			String base64String = "xxxxxxxx";
-			OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</pre></source>
-<p>Axis2 uses javax.activation.DataHandler to handle the binary data. </p>
+		  //to set optimized to false uncomment the following
+		  //textData.doOptimize(false);</pre>
+</source>
+<p>Also a user can create an optimizable binary content node even with a base64 encoded string which contains binary content given with the mime type of the actual binary representation</p>
+<source>
+<pre>		   String base64String = "xxxxxxxx";
+		   OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</pre>
+</source>
+<p>Axis2 uses javax.activation.DataHandler to handle the binary data. All optimised binary content nodes will be serialised as Base64 Strings if MTOM is not enabled. One can also create binary content nodes which will not be optimised at any case. They will be serialised and send as Base64 Strings. </p>
+<source>
+<pre>			//create a OMText node with the above DataHandler and set optimised to true 
+			OMText textData = fac.createText(dataHandler, false); 
+			image.addChild(textData);</pre>
+</source>
 <h3>Sending MTOM optimised messages from  client side </h3>
 <p>First of all you need to have the above mentioned jars in the classpath. Then set the <source>&quot;enableMTOM&quot;</source> property in the call to true, when sending messages.</p>
 <source>
-   <pre>Call call = new Call();
-    call.setTo(targetEPR);
-    call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</pre></source>
-<p> When this property is set to true any message which contains optimisable content will be serialised as MTOM optimised messages. If this the message contains optimizable binary content nodes and the above property is not set then the optimisable content will be serialized and sent as Base64 strings.<code></code></p>
+   <pre>	  		Call call = new Call();
+    		call.setTo(targetEPR);
+    		call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</pre>
+</source>
+<p> When this property is set to true any message which contains optimisable content will be serialised as MTOM optimised messages. If this the message contains optimizable binary content nodes and the above property is *not* set then the optimizable binary content will be serialized and sent as Base64 strings.Axis2 will automatically identify and de-serilize any MTOM messge it receives. </p>
 <h3>Enabling MTOM in the Server side </h3>
-<p>Axis 2 server accepts incoming MTOM optimised incoming messages when the above jars are present. One can enable  MTOM optimisation globally on the server side by setting the &quot;enableMTOM&quot; parameter to true in the Axis2.xml. When it is set, any outgoing message which contains optimizable content will be serialized and send as a MTOM optimized message. If not they will be serialized as Base64 strings.</p>
+<p>When the above jars are present Axis 2 server automatically identifies MTOM optimsed messages based on the content-type and de-serializes. When serializing and sending the messages user can specify whether to enable MTOM optimization or not. One can enable  MTOM optimisation globally on the server side by setting the &quot;enableMTOM&quot; parameter to true in the Axis2.xml. When it is set,  outgoing messages *which contains optimizable content* will be serialized and send as a MTOM optimized messages. If it is not set all the binary content nodes will be serialized as Base64 encoded strings. </p>
 <p>1. Copy the new jars to the Axis 2 lib folder  and delete the above mentioned Gerenimo jars from there.  If the Axis2 server is running in Tomcat Axis 2 lib is &lt;CATALINA_HOME&gt;/webapps/axis2/WEB-INF/lib.</p>
 <p>2. Add the following parameter entries to Axis2.xml file which can be found in &lt;AXIS2_HOME&gt;/WEB_INF folder. </p>
  <source><pre>
          &lt;parameter name=&quot;enableMTOM&quot; locked=&quot;xsd:false&quot;&gt;true&lt;/parameter&gt;
   </pre></source>
 <p>3. Restart the Server.</p>
+<h2>Using SOAP with Attachments (SwA) </h2>
+<p>MTOM specification is designed to be backward compatible with the SOAP with Attachements specification. Even though the representation is different, both technologies have the same wire format. We can safely assume that any SOAP with Attachments endpoint can accept a MTOM optimized messages and  treat them as SOAP with Attachment messages - Any MTOM optimised message is a valid SwA message. Because of that Axis2 does not define a seperate programming model or serialization for SwA. Users can use the MTOM programming model and serialisation to send messages to SwA endpoints.</p>
+<p>In the receiving side Axis2 automatically identifies and de-serilizes SOAP with Attachments messages by looking at the content type of the message. Reference to the received attachments will be put in to the message context. </p>
 </body>
 </html>
