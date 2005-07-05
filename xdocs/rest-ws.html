@@ -26,15 +26,15 @@ RESTful Message. Else they are treated as usual SOAP Messages.</p>
 from the client API or by deployment descriptor of the client.</p>
 <ol>   
 <li> By adding an entry in the client.xml file similar to that of the axis.xml.</li>
-<li>Through client API e.g. <code>call.setDoREST(true);</code>;</li>
+<li>Through client API e.g. <source><pre>call.setDoREST(true);</pre></source>;</li>
 </ol>
 
 <h3>Sample REST - HTTP POST Client</h3>
 <p>There's a userguide.clients.RESTClient.java which demonstrates the usage of the above, using 
-the <code>echo</code> operation of the <code>userguide.example1.MyService</code> of the samples. 
+the <source><pre>echo</pre></source> operation of the <source><pre>userguide.example1.MyService</pre></source> of the samples. 
 And the class source will be as follows
+<source>
 <pre>
-<code>
 public class MyServiceClient {
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
     public static void main(String[] args) throws AxisFault {
@@ -49,24 +49,26 @@ public class MyServiceClient {
 		call.close();
 	}
 }
-</code>
 </pre>
+</source>
 
   <h2>Access a REST Web Service Via HTTP GET</h2>   
   <p>Axis2 let the users access Web Service that has simple type parameters via the HTTP GET. 
   For example following URL requests the version service Via HTTP GET. But the Web Services 
   arrived via GET assumes REST . Other parameter are converted in to the XML and put them in to the SOAP Body.</p> 
-    <code>http://127.0.0.1:8080/axis2/services/Version/getVersion</code>   
+    <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre></source>
     <p>Result can be shown in the browser as follows.</p>   
     <img src="images/userguide/http-get-ws.png"/>         
     
-    <p>For an example  request <code>http://127.0.0.1:8080/axis2/services/Version/getVersion/code> 
+    <p>For an example  request <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre></source> 
     will be converted to the following SOAP Message for processing by Axis2</p>   
-    <pre> 
+<source>    
+<pre> 
    &lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
       &lt;soapenv:Body&gt;   
           &lt;axis2:getVersion xmlns:axis2="http://ws.apache.org/goGetWithREST" /&gt;
       &lt;/soapenv:Body&gt;
    &lt;/soapenv:Envelope&gt;
     </pre>
+</source>
   </body></html>

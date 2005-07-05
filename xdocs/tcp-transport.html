@@ -27,8 +27,7 @@ jars in the classapth. New Services can be added in the usual way by droping the
 <h2>How send SOAP Messages with TCP transport</h2>
 
 <p>The TCP transport can be enabled very easily from the call API, following code segment demonstrate how it can be done.</p>
-<code>
-<pre>
+<source><pre>
 OMElement payload = ...
 
 org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
@@ -40,7 +39,7 @@ OMElement result =
         (OMElement) call.invokeBlocking("echo", payload);
 call.close();
 </pre>
-</code>
+</source>
 <p>The method to note is setTransportInfo that accepts sender transport, Listener transport and should the return path of the TCP Channel need to be used. It is good Idea to engage the addressing module to make the SOAP Message self contained. Only other option I can think of is to use the URI of the first child of the SOAP Body to dispatch the service. The
 Parameter is of the type <a href="faq.html#a2">OMElement</a>, the XML represntation of Axis2.</p>
 
@@ -55,17 +54,14 @@ to send the SOAP Messages. Axis2 installation has both the components built in t
 In the axis2.xml configuration file the two would look like follows. </p>
 <p>If the TCP server is started manually this configuration does not take effect, this affect the transport 
 Listeners starts by Axis2. (e.g. Listener started by the Complete Async interaction)</p>
-<code>
-<pre>
+<source><pre>
 &lt;transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer"&gt;
     &lt;parameter name="port" locked="xsd:false"&gt:6060&lt;/parameter&gt;
 &lt;/transportReceiver&gt;
 </pre>
-</code>
-
+</source>
 <p>Following add the TCPtransport Sender</p>
-<code>
-&lt;transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/&gt;
-</code>
+<source><pre>&lt;transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/&gt;
+</pre></source>
 </body>
 </html>
