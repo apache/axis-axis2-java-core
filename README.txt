@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 milestone 2 build  (June 07, 2005)
+Apache Axis2 0.9 build  (July 05, 2005)
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
@@ -8,7 +8,7 @@ ___________________
 Documentation
 ===================
  
-Documentation can be found in the docs/ directory included with both the 
+Documentation can be found in the xdocs/docs directory included with both the 
 source and binary distributions.
 
 ___________________
