@@ -297,13 +297,13 @@
                <j:set var="interop3.dir" value="target/interop3"/>
                <j:set var="work.dir" value="${interop3.dir}/work"/>
                <j:set var="calss.dir" value="${interop3.dir}/classes"/>
-                <j:set var="wsdl.dir" value="test-resources/wsdl"/>
+                 <j:set var="wsdl.dir" value="${basedir}/../wsdl/test-resources/"/>
                      
                  <mkdir dir="${interop3.dir}"/>  
 				<mkdir dir="${work.dir}"/>  
 				<mkdir dir="${calss.dir}"/>                       
 				
-		       <wsdl2java WSDLFileName="test-resources/wsdl/compound2.wsdl" output="${work.dir}"/> 
+		       <wsdl2java WSDLFileName="${wsdl.dir}compound2.wsdl" output="${work.dir}"/> 
 		       <!--
 		       <java classname="org.apache.axis2.wsdl.WSDL2Java">
                   <classpath refid="maven.dependency.classpath"/>

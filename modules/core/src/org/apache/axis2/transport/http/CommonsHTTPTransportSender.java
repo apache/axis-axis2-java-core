@@ -99,14 +99,19 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             PostMethod postMethod = new PostMethod();
             postMethod.setPath(url.getFile());
             msgContext.setProperty(HTTP_METHOD,postMethod);
-            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked));
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,msgContext.isDoingMTOM()));
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
                 ((PostMethod) postMethod).setContentChunked(true);
             }
 
-            postMethod.setRequestHeader(
-                HTTPConstants.HEADER_CONTENT_TYPE,
-                "text/xml; charset=utf-8");
+            if(msgContext.isDoingMTOM()){
+                postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                            OMOutput.getContentType(true));
+            }else{
+                postMethod.setRequestHeader(
+                    HTTPConstants.HEADER_CONTENT_TYPE,
+                    "text/xml; charset=utf-8");
+            }
             postMethod.setRequestHeader(
                 HTTPConstants.HEADER_ACCEPT,
                 HTTPConstants.HEADER_ACCEPT_APPL_SOAP
@@ -178,10 +183,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         private OMElement element;
         private boolean chuncked;
         private byte[] bytes;
+        private boolean doingMTOM = false;
 
-        public AxisRequestEntity(OMElement element, boolean chuncked) {
+        public AxisRequestEntity(OMElement element, boolean chuncked,boolean doingMTOM) {
             this.element = element;
             this.chuncked = chuncked;
+            this.doingMTOM = doingMTOM;
         }
         public boolean isRepeatable() {
             return false;
@@ -206,11 +213,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         public void writeRequest(OutputStream out) throws IOException {
             try {
                 if (chuncked) {
-                    XMLStreamWriter outputWriter = null;
-                    outputWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
-                    OMOutput output = new OMOutput(outputWriter);
+                    OMOutput output = new OMOutput(out,doingMTOM);
                     element.serialize(output);
-                    outputWriter.flush();
+                    output.flush();
                     out.flush();
                 } else {
                     if (bytes == null) {

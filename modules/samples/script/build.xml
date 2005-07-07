@@ -25,4 +25,7 @@
 		<java classname="userguide.clients.ClientForWebServiceWithModule" classpathref="axis.classpath"/>
 </target>
 
+<target name="testEchoNonBlockingClient">
+		<java classname="userguide.clients.EchoNonBlockingClient" classpathref="axis.classpath"/>
+</target>
 </project>
