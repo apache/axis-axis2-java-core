@@ -17,10 +17,12 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -97,7 +99,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 return obj;
             }
         } else if (scopeParam != null &&  Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
-            SessionContext globalContext = msgContext.getSessionContext();
+            ConfigurationContext globalContext = msgContext.getSystemContext();
             synchronized(globalContext){
                 Object obj = globalContext.getProperty(serviceName.getLocalPart());
                 if (obj == null) {
