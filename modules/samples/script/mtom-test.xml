@@ -47,6 +47,8 @@
 			<junit printsummary="yes" haltonfailure="yes">
 				   <formatter type="plain"/>
 				   <test name="org.apache.axis2.mtom.EchoRawMTOMTest" todir="${report.dir}" />
+				   <test name="org.apache.axis2.mtom.EchoRawMTOMLoadTest" todir="${report.dir}" />
+				   <test name="org.apache.axis2.mtom.EchoRawMTOMToBase64Test" todir="${report.dir}" />
 				   <classpath>
 		                <pathelement location="${class.dir}"/>
     	                 <path refid="test.classpath"/>
