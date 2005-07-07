@@ -25,6 +25,8 @@ import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,8 @@ public class ConfigurationContext extends AbstractContext{
     private Map sessionContextMap;
     private Map moduleContextMap;
     private ThreadPool threadPool;
+    private File rootDir;
+    
 
     /**
      * Map containing <code>MessageID</code> to
@@ -128,6 +132,19 @@ public class ConfigurationContext extends AbstractContext{
             threadPool = new ThreadPool();
         }
         return threadPool;
+    }
+    public File getRealPath(String path){
+        if(rootDir == null){
+            return new File(path);
+        }else{
+            return new File(rootDir,path);
+        }
+    }
+    /**
+     * @param file
+     */
+    public void setRootDir(File file) {
+        rootDir = file;
     }
 
 }

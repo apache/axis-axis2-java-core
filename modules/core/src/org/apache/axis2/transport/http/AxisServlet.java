@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
@@ -60,6 +62,7 @@ public class AxisServlet extends HttpServlet {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             configContext = erfac.buildConfigurationContext(repoDir);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
+            configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
             lister = new ListingAgent(configContext);
         } catch (Exception e) {
             throw new ServletException(e);
