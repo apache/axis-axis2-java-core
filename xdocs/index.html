@@ -1,10 +1,129 @@
-<title>:: Welcome ::</title><h2>News</h2>
+<title>Apache Axis2 - Next Generation Web Services</title>
+<h2>Welcome to Apache Axis2</h2>
+
+<p>
+Apache Axis2 is an implementation of the 
+<a href="http://www.w3.org/TR/soap/">Simple Object Access Protocol (SOAP) 
+Recommendation</a> from the <a href="http://www.w3.org">W3C</a>.  Axis2 can be used
+to provide and consume Web Services.
+</p>
+
+<p>From the <a href="http://www.w3.org/TR/soap/">W3C recommendation</a>:
+<div style="padding-left: 20px; padding-top: 5px; font-style:italic;">"SOAP is a lightweight protocol for exchange of information in a decentralized, 
+distributed environment. It is an XML based protocol that consists of three parts: 
+an envelope that defines a framework for describing what is in a message and how to 
+process it, a set of encoding rules for expressing instances of application-defined 
+datatypes, and a convention for representing remote procedure calls and responses."
+</div>
+</p>
+
+<p>
+Apache Axis2 is an effort to re-implement both Axis/Java and 
+Axis/C++ on a new architecture.  Building upon the &quot;handler chain&quot; model 
+developed in Axis1, Axis2 introduces a more 
+flexible pipeline architecture which lends itself to greater modularity
+and extensibility.  This extensibility will allow Axis2 to act as a
+foundation for a growing constellation of associated Web Services protocols including:
 <ul>
-  <li>02-07-2005 : 0.9 Released. [<a href="releases.html#M2">Download</a>] <img src="images/new.gif" width="35" height="10"></li>
-  <li>07-06-2005 : M2 Released. [<a href="releases.html#M2">Download</a>] </li>
-  <li>24-02-2005 : M1 Released. [<a href="releases.html#M1">Download</a>] </li>
+  <li><a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm">WS-ReliableMessaging</a></li>
+  <li><a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss">WS-Security</a></li>
+  <li><a href="http://www.w3.org/Submission/ws-addressing/">WS-Addressing</a>
 </ul>
-<h2>Introduction
-</h2>
-<p align="justify">Axis2 is an effort to re-design and totally re-implement both Axis/Java and (eventually) Axis/C++ on a new architecture. Evolving from the now standard &quot;handler chain&quot; model which Axis1 pioneered, Axis2 is developing a more flexible pipeline architecture which can yet be managed and packaged in a more organized manner. This new design acknowledges the maturing of the Web services space in terms of new protocols such as WS-ReliableMessaging, WS-Security and WS-Addressing that are built on top of the base SOAP system. At the time Axis1 was designed, while it was fully expected that other protocols such as WS-ReliableMessaging would be built on top of it, there was not a proper extension architecture defined to enable clean composition of such layers. Thus, one of the key motivations for Axis2 is to provide a clean and simple environment for like Apache Sandesha and Apache WSS4J to layer on top of the base SOAP system. Another driving force for Axis2 as well as the move away from RPC oriented Web services towards more document-oriented, message style asynchronous service interactions. The Axis2 project is centered on a new representation for SOAP messages called AXIOM (AXIs Object Model). AXIOM consists of two parts: a complete XML Infoset representation and a SOAP Infoset representation on top of that. The XML Infoset representation provides a JDOM-like simple API but is built on a deferred model via a StAX-based (Streaming API for XML) pull parsing API. A key feature of AXIOM is that it allows one to stop building the XML tree and just access the pull stream directly; thus enabling both maximum flexibility and maximum performance. This approach allows us to support multiple levels of abstraction for consuming and offering Web services: using plain AXIOM, using generated code and statically data-bound data types and so on. At the time of Axis1's design, RPC-style, synchronous, request-response interactions were the order of the day for Web services. Today service interactions are much more message-oriented and exploit many different message exchange patterns. The Axis2 engine architecture is careful to not build in any assumptions of request-response patterns to ensure that it can be used easily to support arbitrary message exchange patterns.</p>
-<p>&nbsp;</p>
+</p>
+
+<h2>Latest Release</h2>
+
+<p><b>02 July 2005 - Apache Axis2 Version 0.9 Released!</b> <a href="releases.html#0.9">(Download 0.9)</a><p>
+
+<p>Axis2 is taking shape. <a href="releases.html#0.9">Download it!</a>  This 0.9 release is a glimpse of 1.0 
+that should be comming soon. This 0.9 release contains the following additional
+features:
+<ul>
+  <li>XML Beans based data binding support</li>
+  <li>Support for WS-Addressing, both the submission and final versions</li>
+  <li>REST Web Service Support</li>
+  <li>MTOM/SWA attachments support</li>
+  <li>SAAJ implementation</li>
+</ul>
+We are getting closer to a 1.0 release, the remaining tasks to be completed 
+before a 1.0 release include: SOAP 1.1 and 1.2 validation, JAX-RPC 1.1/2.0 compliance,
+Complete XML infoset support for AXIOM, implementation of JMS transport, and Web
+Service Policy support.</p>
+
+<h2>Axis2 Background and Motivation</h2>
+
+<p>
+Axis1 was built under the assumption that other protocols such as WS-ReliableMessaging
+would be integrated into Axis1's handler chain.  Axis1 had the concept of a 
+MessageContext and a chain of transport, service, and global message handlers, but 
+Axis1 lacked a clear extension architecture to enable clean composition of 
+such layers. One of the key motivations for Axis2 is to provide a clean and 
+simple environment for implementations of associated WS standards such as
+<a href="http://ws.apache.org/sandesha/">Apache Sandesha</a> and 
+<a href="http://ws.apache.org/wss4j/">Apache WSS4J</a>.  Implementations of
+associated standards should be able to easily interface with the base 
+SOAP Message handling system.   In summary, Axis2 has a more modular and
+flexible message handling pipeline, it focuses on the details of message handling 
+and provides clear hooks for implementations of associated Web Services 
+standards and protocols.  This evolution will allow Axis to be a foundational 
+technology for next generation Web Services.
+</p>
+ 
+<p>
+Axis2 introduces a representation for SOAP messages called 
+<b>AXIOM (AXIs Object Model)</b>. AXIOM consists of two parts: a complete XML Infoset 
+representation and a SOAP Infoset representation. The XML Infoset 
+representation provides a JDOM-esque API built atop a deferred model 
+via a StAX-based (Streaming API for XML) pull parsing API. A key feature of AXIOM 
+is that it allows one to stop building the XML tree and just access the pull stream 
+directly; thus enabling both maximum flexibility and maximum performance. This 
+approach allows Axis2 to support multiple levels of abstraction for consuming and 
+offering Web services: using plain AXIOM, using generated code and statically 
+data-bound data types and so on.  Developers with demanding performance 
+requirements will be able to use AXIOM to create highly scaleable Web Services.
+</p>
+
+<p>
+A third shift in Axis 2 is the de-emphasis of RPC-oriented Web 
+Services and a shift towards more document-oriented, message style asynchronous 
+service interactions.  With Axis2, clients can interact with servers in a number of 
+ways, and the client API provides both a blocking and non-blocking API.  At the time of Axis1's design, RPC-style, 
+synchronous, request-response interactions were the order of the day for Web 
+services. Today service interactions are much more message-oriented and exploit 
+many different message exchange patterns. The Axis2 engine architecture is careful 
+to not build in any assumptions of request-response patterns to ensure that it can 
+be used easily to support arbitrary message exchange patterns.
+Don't worry,you'll still be able to use Axis2 like you used Axis1, you'll just have a richer set
+of options for client-server interaction.
+</p>
+
+<h2>Archived News</h2>
+
+<p><b>07 June 2005 - Apache Axis2 Milestone 2 (M2) Released</b> <a href="releases.html#M2">(Download M2)</a><p>
+
+<p>Apache Axis2 is starting to take shape, features implemented in this 
+second milestone release are:
+<ul>
+    <li>Modules - a mechanism to extend the SOAP Processing Model</li>  
+    <li>Support for WS-Addressing</li> 
+    <li>Axis2 Client API - Blocking and Non-Blocking API</li> 
+    <li>Support for One-Way Messaging and Request Response Messaging</li> 
+    <li>WSDL Code Generation Tool.</li> 
+    <li>HTTP, SMTP, and TCP transport Support</li> 
+</ul>
+This release also includes tools such as an administraion web application, and three Eclipse 
+plug-ins: WSDL2WS, Service Archive Wizard, and Module Archive Wizard.</p>
+
+<p><b>24 February 2005 - Apache Axis2 Milestone 1 (M1) Released</b> <a href="releases.html#M1">(Download M1)</a><p>
+
+<p>This first milestone release of Axis2 includes the following features:
+<ul>
+    <li>AXIOM, a SOAP specific streaming XML infoset model for SOAP 1.1/1.2 Messages</li> 
+    <li>WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</li> 
+    <li>Handler framework with the support to specify the location of the Handler in a 
+      specific Phase</li> 
+    <li>Support to bundle and enable the Handlers as Modules</li> 
+    <li>Support for the Synchronous and Asynchronous IN-OUT messaging over HTTP transport</li> 
+    <li>Hot deployment of Web Services</li> 
+</ul>
+
