@@ -23,6 +23,8 @@ import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -44,7 +46,7 @@ public class WOMBuilderTest extends AbstractTestCase {
 
     	WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(getTestResourceFile("InteropTest.wsdl"));
+            InputStream in = new FileInputStream(new File("E:/temp/service.wsdl"));
             wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
 			this.womDescription = wsdlVersionWrapper.getDescription();
         }

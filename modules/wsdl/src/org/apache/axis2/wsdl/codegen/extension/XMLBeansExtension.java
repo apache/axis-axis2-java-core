@@ -29,7 +29,7 @@ import java.util.List;
 *
 *
 */
-public class XMLBeansExtension extends AbstractCodeGenerationExtension implements CodeGenExtension {
+public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFUALT_STS_NAME = "foo";
 
 
@@ -54,6 +54,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
                     Element schemaElement = ((Schema)extensiblityElt).getElelment();
 //                    //add the namespaces
                     XmlOptions options = new XmlOptions();
+                    options.setCompileDownloadUrls();
                     options.setLoadAdditionalNamespaces(configuration.getWom().getNamespaces());
                     //options.
                     xmlObjects[i] = XmlObject.Factory.parse(schemaElement,options);
@@ -66,6 +67,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension implement
         final File outputFolder =  configuration.getOutputLocation();
 
         try {
+        	
             SchemaTypeSystem sts = XmlBeans.compileXmlBeans(DEFUALT_STS_NAME, null,
                     xmlObjects,
                     new BindingConfig(), XmlBeans.getContextTypeLoader(),

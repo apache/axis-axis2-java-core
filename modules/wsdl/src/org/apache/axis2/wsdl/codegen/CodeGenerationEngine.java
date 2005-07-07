@@ -23,9 +23,12 @@ import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.codegen.extension.PackageFinder;
+import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.extensions.Schema;
+import org.w3c.dom.NamedNodeMap;
 
 import javax.wsdl.WSDLException;
 import java.io.File;
@@ -49,7 +52,7 @@ public class CodeGenerationEngine {
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException{
         WSDLDescription wom ;
         try {
-            wom = this.getWOM(parser);
+            wom = this.getWOM(parser);            
         }
         catch (WSDLException e) {
             throw new CodeGenerationException("Error parsing WSDL", e);
@@ -63,9 +66,15 @@ public class CodeGenerationEngine {
         axisBindingBuilder.init(this.configuration);
         axisBindingBuilder.engage();
 
+        WSDLValidatorExtension validatorExtension = new WSDLValidatorExtension();
+        validatorExtension.init(this.configuration);
+        this.moduleEndpoints.add(validatorExtension);
+        
         PackageFinder packageFinder = new PackageFinder();
         packageFinder.init(this.configuration);
         this.moduleEndpoints.add(packageFinder);
+        
+        
 
         XMLBeansExtension xmlBeanExtension = new XMLBeansExtension();
         xmlBeanExtension.init(this.configuration);

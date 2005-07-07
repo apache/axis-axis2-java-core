@@ -28,8 +28,7 @@ import java.util.Map;
  * @author chathura@opensource.lk
  *  
  */
-public class PackageFinder extends AbstractCodeGenerationExtension implements
-		CodeGenExtension {
+public class PackageFinder extends AbstractCodeGenerationExtension {
 
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
