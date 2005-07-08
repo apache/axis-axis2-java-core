@@ -21,7 +21,7 @@ public class SMTPWorker extends Thread {
 
     BufferedWriter writer = null;
     
-    ArrayList recivers = new ArrayList(); 
+    ArrayList receivers = new ArrayList();
 
     Storage st = null;
     boolean runThread = true;
@@ -75,10 +75,10 @@ public class SMTPWorker extends Thread {
                		}
                 }
             }
-            for (int idx = 0; idx < recivers.size();idx++){
+            for (int idx = 0; idx < receivers.size();idx++){
             	try {
             	    MailSorter mSort = new MailSorter(this.st,this.configurationContext);
-            	    mSort.sort((String)recivers.get(idx), new MimeMessage(mail));
+            	    mSort.sort((String)receivers.get(idx), new MimeMessage(mail));
                 } catch (MessagingException e1) {
                     e1.printStackTrace();
                 }
@@ -163,7 +163,7 @@ public class SMTPWorker extends Thread {
             
             try {
 				mail.addRecipient(Message.RecipientType.TO, new MailAddress(toStr));
-				recivers.add(toStr);
+				receivers.add(toStr);
 			} catch (MessagingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

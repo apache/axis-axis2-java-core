@@ -24,7 +24,7 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 /**
- * This is the Absract IN-OUT MEP MessageReciver. The
+ * This is the Absract IN-OUT MEP MessageReceiver. The
  * protected abstract methods are only for the sake of breaking down the logic
  */
 public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageReceiver {

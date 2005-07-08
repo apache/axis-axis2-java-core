@@ -27,7 +27,7 @@ import java.io.File;
 
 public class UtilsTCPServer {
     private static int count = 0;
-    private static TCPServer reciver;
+    private static TCPServer receiver;
 
     private static ConfigurationContext configurationContext;
     public static final int TESTING_PORT = 5555;
@@ -66,9 +66,9 @@ public class UtilsTCPServer {
             }
             configurationContext.getAxisConfiguration().engageModule(
                 new QName("addressing"));
-            reciver =
+            receiver =
                 new TCPServer(UtilServer.TESTING_PORT, configurationContext);
-            reciver.start();
+            receiver.start();
 
         }
         count++;
@@ -77,7 +77,7 @@ public class UtilsTCPServer {
     public static synchronized void stop() {
         try {
             if (count == 1) {
-                reciver.stop();
+                receiver.stop();
                 count = 0;
                 System.out.print("Server stopped .....");
             } else {

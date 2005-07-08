@@ -120,8 +120,8 @@ public class AxisEngine {
             paused = msgContext.isPaused();
             if (msgContext.isServerSide() && !paused) {
                 // add invoke Phase
-                MessageReceiver reciver = operationDescription.getMessageReciever();
-                reciver.recieve(msgContext);
+                MessageReceiver receiver = operationDescription.getMessageReciever();
+                receiver.recieve(msgContext);
             }
         } catch (Throwable e) {
             handleFault(msgContext, e);

@@ -174,7 +174,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
             transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "1134"));
             transportIn.addParameter(
                 new ParameterImpl("transport.mail.replyToAddress", "foo@127.0.0.1"));
-            transportIn.setReciver(new SimpleMailListener());
+            transportIn.setReceiver(new SimpleMailListener());
             transportIn.getReciever().init(configContext,transportIn);
 
             TransportOutDescription transportOut =
@@ -205,7 +205,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
             transportIn.addParameter(new ParameterImpl("transport.mail.pop3.port", "1134"));
             transportIn.addParameter(
                 new ParameterImpl("transport.mail.replyToAddress", "client@127.0.0.1"));
-            transportIn.setReciver(new SimpleMailListener());
+            transportIn.setReceiver(new SimpleMailListener());
             transportIn.getReciever().init(configContext,transportIn);
 
             TransportOutDescription transportOut =

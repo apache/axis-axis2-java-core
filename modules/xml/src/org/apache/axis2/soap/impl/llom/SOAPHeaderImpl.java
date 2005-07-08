@@ -163,7 +163,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
         throw new UnsupportedOperationException(); // TODO implement this
     }
 
-    public ArrayList getHeaderBolcksWithNSURI(String nsURI) {
+    public ArrayList getHeaderBlocksWithNSURI(String nsURI) {
         ArrayList headers = null;
         OMNode node = null;
         OMElement header = this.getFirstElement();

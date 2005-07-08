@@ -56,7 +56,6 @@ public abstract class SOAPFaultImpl extends SOAPElement
     /**
      * Constructor SOAPFaultImpl
      *
-     * @param ns
      * @param parent
      * @param builder
      */

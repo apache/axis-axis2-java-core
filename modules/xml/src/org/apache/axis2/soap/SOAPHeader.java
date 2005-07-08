@@ -121,5 +121,5 @@ public interface SOAPHeader extends OMElement {
      * @param nsURI
      * @return
      */
-    public ArrayList getHeaderBolcksWithNSURI(String nsURI);
+    public ArrayList getHeaderBlocksWithNSURI(String nsURI);
 }

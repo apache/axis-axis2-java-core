@@ -41,7 +41,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertNotNull(er);
         ServiceDescription service = er.getService(new QName("service2"));
         assertNotNull(service);
-        //commentd since there is no service based messgeRecivers
+        //commentd since there is no service based messgeReceivers
         /*MessageReceiver provider = service.getMessageReceiver();
         assertNotNull(provider);
         assertTrue(provider instanceof RawXMLINOutMessageReceiver);*/

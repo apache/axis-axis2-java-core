@@ -132,7 +132,7 @@ public class TransportInDescription
     /**
      * @param receiver
      */
-    public void setReciver(TransportListener receiver) {
+    public void setReceiver(TransportListener receiver) {
         reciever = receiver;
     }
 

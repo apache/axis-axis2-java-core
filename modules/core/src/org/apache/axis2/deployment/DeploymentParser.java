@@ -144,13 +144,13 @@ public class DeploymentParser implements DeploymentConstants {
                                         }
                                     } catch (ClassNotFoundException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " , e);
+                                                "Error in loading messageReceivers " , e);
                                     } catch (IllegalAccessException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " , e);
+                                                "Error in loading messageReceivers " , e);
                                     } catch (InstantiationException e) {
                                         throw new DeploymentException(
-                                                "Error in loading messageRecivers " , e);
+                                                "Error in loading messageReceivers " , e);
                                     }
                                 } else
                                     throw new UnsupportedOperationException(
@@ -232,15 +232,15 @@ public class DeploymentParser implements DeploymentConstants {
             if (ATTNAME.equals(attname)) {
                 transportin = new TransportInDescription(new QName(attvalue));
             } else if (transportin != null && CLASSNAME.equals(attname)) {
-                Class reciever = null;
+                Class receiverClass = null;
                 try {
-                    reciever =
+                    receiverClass =
                             Class.forName(
                                     attvalue,
                                     true,
                                     Thread.currentThread().getContextClassLoader());
-                    TransportListener trnsrecievr = (TransportListener) reciever.newInstance();
-                    transportin.setReciver(trnsrecievr);
+                    TransportListener receiver = (TransportListener) receiverClass.newInstance();
+                    transportin.setReceiver(receiver);
                 } catch (ClassNotFoundException e) {
                     throw new DeploymentException(e);
                 } catch (IllegalAccessException e) {
@@ -431,13 +431,13 @@ public class DeploymentParser implements DeploymentConstants {
                                         (MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageReceivers " + e.getMessage());
                             } catch (IllegalAccessException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageReceivers " + e.getMessage());
                             } catch (InstantiationException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " + e.getMessage());
+                                        "Error in loading messageReceivers " + e.getMessage());
                             }
                         }
                         axisService.addOperation(operation);
@@ -772,13 +772,13 @@ public class DeploymentParser implements DeploymentConstants {
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " , e);
+                                            "Error in loading messageReceivers " , e);
                                 } catch (IllegalAccessException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " , e);
+                                            "Error in loading messageReceivers " , e);
                                 } catch (InstantiationException e) {
                                     throw new DeploymentException(
-                                            "Error in loading messageRecivers " , e);
+                                            "Error in loading messageReceivers " , e);
                                 }
                             } else {
                                 throw new UnsupportedOperationException(
@@ -913,13 +913,13 @@ public class DeploymentParser implements DeploymentConstants {
                                         (MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " , e);
+                                        "Error in loading messageReceivers " , e);
                             } catch (IllegalAccessException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " , e);
+                                        "Error in loading messageReceivers " , e);
                             } catch (InstantiationException e) {
                                 throw new DeploymentException(
-                                        "Error in loading messageRecivers " , e);
+                                        "Error in loading messageReceivers " , e);
                             }
                         }
                         module.addOperation(operation);

@@ -17,7 +17,6 @@ package org.apache.axis2.addressing.om;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.soap.SOAPHeader;
 
 /**
  * Class AddressingHeaders

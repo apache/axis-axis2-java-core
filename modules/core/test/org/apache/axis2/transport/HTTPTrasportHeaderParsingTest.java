@@ -46,9 +46,9 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Content-Length: 73507\n\nee rwewebtewbeww";
 
         InputStream reader = new ByteArrayInputStream(message.getBytes());
-        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
+        HTTPTransportReceiver receiver = new HTTPTransportReceiver();
 
-        Map map = reciver.parseTheHeaders(reader, true);
+        Map map = receiver.parseTheHeaders(reader, true);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.0");
         assertEquals(map.get(HTTPConstants.REQUEST_URI),
                 "/axis2/services/echo");
@@ -70,9 +70,9 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                 + "Server: Apache-Coyote/1.1\n"
                 + "Connection: close\n\nA";
         InputStream reader = new ByteArrayInputStream(message.getBytes());
-        HTTPTransportReceiver reciver = new HTTPTransportReceiver();
+        HTTPTransportReceiver receiver = new HTTPTransportReceiver();
 
-        Map map = reciver.parseTheHeaders(reader, false);
+        Map map = receiver.parseTheHeaders(reader, false);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.1");
         assertEquals(map.get(HTTPConstants.RESPONSE_CODE), "200");
         assertEquals(map.get(HTTPConstants.RESPONSE_WORD), "OK");
@@ -92,9 +92,9 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
                     + "Server: Apache-Coyote/1.1\n"
                     + "Connection: close";
             InputStream reader = new ByteArrayInputStream(message.getBytes());
-            HTTPTransportReceiver reciver = new HTTPTransportReceiver();
+            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
             BufferedInputStream br = new BufferedInputStream(reader);
-            Map map = reciver.parseTheHeaders(br, false);
+            Map map = receiver.parseTheHeaders(br, false);
             fail("test must failed as \n\n is missing");
         } catch (AxisFault e) {
         }

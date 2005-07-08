@@ -66,8 +66,8 @@ public class HTTPWorker implements AxisWorker {
                 msgContext.setServerSide(true);
 
                 //parse the Transport Headers
-                HTTPTransportReceiver reciver = new HTTPTransportReceiver();
-                Map map = reciver.parseTheHeaders(inStream, true);
+                HTTPTransportReceiver receiver = new HTTPTransportReceiver();
+                Map map = receiver.parseTheHeaders(inStream, true);
 
                 //build a way to write the respone if the Axis choose to do so
 

@@ -93,11 +93,11 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
 //    }
 
 
-    public void testSOAP11GetHeaderBolcksWithNSURI() {
+    public void testSOAP11getHeaderBlocksWithNSURI() {
         soap11Header.addHeaderBlock("echoOk1", namespace);
         soap11Header.addHeaderBlock("echoOk2", omFactory.createOMNamespace("http://www.test1.org", "test1"));
-        ArrayList arrayList = soap11Header.getHeaderBolcksWithNSURI("http://www.test1.org");
-        assertTrue("SOAP 1.1 Header Test : - getHeaderBolcksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
+        ArrayList arrayList = soap11Header.getHeaderBlocksWithNSURI("http://www.test1.org");
+        assertTrue("SOAP 1.1 Header Test : - getHeaderBlocksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
         assertTrue("SOAP 1.1 Header Test : - headerBlock of given namespace uri mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getNamespace().getName().equals("http://www.test1.org"));
     }
 
@@ -172,11 +172,11 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
 //
 //    }
 
-    public void testSOAP12GetHeaderBolcksWithNSURI() {
+    public void testSOAP12getHeaderBlocksWithNSURI() {
         soap12Header.addHeaderBlock("echoOk1", namespace);
         soap12Header.addHeaderBlock("echoOk2", omFactory.createOMNamespace("http://www.test1.org", "test1"));
-        ArrayList arrayList = soap12Header.getHeaderBolcksWithNSURI("http://www.test1.org");
-        assertTrue("SOAP 1.2 Header Test : - getHeaderBolcksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
+        ArrayList arrayList = soap12Header.getHeaderBlocksWithNSURI("http://www.test1.org");
+        assertTrue("SOAP 1.2 Header Test : - getHeaderBlocksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
         assertTrue("SOAP 1.2 Header Test : - headerBlock of given namespace uri, mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getNamespace().getName().equals("http://www.test1.org"));
     }
 
@@ -220,9 +220,9 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
         assertFalse("SOAP 1.1 Header Test With Parser : - examineAllHeaderBlocks method returns an iterator with more than three objects", iterator.hasNext());
     }
 
-    public void testSOAP11GetHeaderBolcksWithNSURIWithParser() {
-        ArrayList arrayList = soap11HeaderWithParser.getHeaderBolcksWithNSURI("http://example.org/ts-tests");
-        assertTrue("SOAP 1.1 Header Test With Parser : - getHeaderBolcksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
+    public void testSOAP11getHeaderBlocksWithNSURIWithParser() {
+        ArrayList arrayList = soap11HeaderWithParser.getHeaderBlocksWithNSURI("http://example.org/ts-tests");
+        assertTrue("SOAP 1.1 Header Test With Parser : - getHeaderBlocksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
         assertTrue("SOAP 1.1 Header Test With Parser : - headerBlock of given namespace uri, local name mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getLocalName().equals("MessageID"));
         assertTrue("SOAP 1.1 Header Test With Parser : - headerBlock of given namespace uri, mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getNamespace().getName().equals("http://example.org/ts-tests"));
     }
@@ -272,9 +272,9 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
             assertFalse("SOAP 1.2 Header Test With Parser : - examineAllHeaderBlocks method returns an iterator with more than three objects", iterator.hasNext());
     }
 
-    public void testSOAP12GetHeaderBolcksWithNSURIWithParser() {
-        ArrayList arrayList = soap12HeaderWithParser.getHeaderBolcksWithNSURI("http://example.org/ts-tests");
-        assertTrue("SOAP 1.2 Header Test With Parser : - getHeaderBolcksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
+    public void testSOAP12getHeaderBlocksWithNSURIWithParser() {
+        ArrayList arrayList = soap12HeaderWithParser.getHeaderBlocksWithNSURI("http://example.org/ts-tests");
+        assertTrue("SOAP 1.2 Header Test With Parser : - getHeaderBlocksWithNSURI returns an arrayList of incorrect size", arrayList.size() == 1);
         assertTrue("SOAP 1.2 Header Test With Parser : - headerBlock of given namespace uri, local name mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getLocalName().equals("echoOk"));
         assertTrue("SOAP 1.2 Header Test With Parser : - headerBlock of given namespace uri, mismatch", ((SOAPHeaderBlock) arrayList.get(0)).getNamespace().getName().equals("http://example.org/ts-tests"));
     }

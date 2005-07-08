@@ -33,17 +33,17 @@ import java.net.ServerSocket;
 
 public class UtilServer {
     private static int count = 0;
-    private static SimpleHTTPServer reciver;
+    private static SimpleHTTPServer receiver;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
-        reciver.getSystemContext().getAxisConfiguration().addService(service);
-        Utils.resolvePhases(reciver.getSystemContext().getAxisConfiguration(), service);
+        receiver.getSystemContext().getAxisConfiguration().addService(service);
+        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(), service);
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
-        reciver.getSystemContext().getAxisConfiguration().removeService(service);
+        receiver.getSystemContext().getAxisConfiguration().removeService(service);
     }
     
     public static synchronized void start() throws Exception {
@@ -66,8 +66,8 @@ public class UtilServer {
 
             ServerSocket serverSoc = null;
             serverSoc = new ServerSocket(Constants.TESTING_PORT);
-            reciver = new SimpleHTTPServer(er, serverSoc);
-            Thread thread = new Thread(reciver);
+            receiver = new SimpleHTTPServer(er, serverSoc);
+            Thread thread = new Thread(receiver);
             thread.setDaemon(true);
 
             try {
@@ -82,7 +82,7 @@ public class UtilServer {
 
     public static synchronized void stop() {
         if (count == 1) {
-            reciver.stop();
+            receiver.stop();
             count = 0;
             System.out.print("Server stopped .....");
         } else {
@@ -91,7 +91,7 @@ public class UtilServer {
     }
 
     public static ConfigurationContext getConfigurationContext() {
-        return reciver.getSystemContext();
+        return receiver.getSystemContext();
     }
 
     public static ServiceContext createAdressedEnabledClientSide(ServiceDescription service)

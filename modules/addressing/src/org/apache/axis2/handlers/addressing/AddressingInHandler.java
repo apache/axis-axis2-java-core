@@ -7,7 +7,6 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.handlers.addressing.AddressingException;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPHeader;
@@ -63,12 +62,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
         ArrayList addressingHeaders = null;
         try {
-            addressingHeaders = header.getHeaderBolcksWithNSURI(Submission.WSA_NAMESPACE);
+            addressingHeaders = header.getHeaderBlocksWithNSURI(Submission.WSA_NAMESPACE);
             if (addressingHeaders != null) {
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 extractAddressingSubmissionInformationFromHeaders(header, msgContext.getMessageInformationHeaders(), addressingHeaders);
             } else {
-                addressingHeaders = header.getHeaderBolcksWithNSURI(Final.WSA_NAMESPACE);
+                addressingHeaders = header.getHeaderBlocksWithNSURI(Final.WSA_NAMESPACE);
                 if (addressingHeaders != null) {
                     addressingNamespace = Final.WSA_NAMESPACE;
                     extractAddressingFinalInformationFromHeaders(header, msgContext.getMessageInformationHeaders(), addressingHeaders);
@@ -107,17 +106,28 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         }
     }
 
-    private void extractAddressingFinalInformationFromHeaders(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeaders, ArrayList addressingHeaders) throws AddressingException {
+    private void extractAddressingFinalInformationFromHeaders(SOAPHeader header,
+                                                              MessageInformationHeadersCollection messageInformationHeaders,
+                                                              ArrayList addressingHeaders)
+            throws AddressingException
+    {
         extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Final.WSA_NAMESPACE);
-
     }
 
-    private void extractAddressingSubmissionInformationFromHeaders(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeaders, ArrayList addressingHeaders) throws AddressingException {
+    private void extractAddressingSubmissionInformationFromHeaders(SOAPHeader header,
+                                                                   MessageInformationHeadersCollection messageInformationHeaders,
+                                                                   ArrayList addressingHeaders)
+            throws AddressingException
+    {
         extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Submission.WSA_NAMESPACE);
-
     }
 
-    public MessageInformationHeadersCollection extractCommonAddressingParameters(SOAPHeader header, MessageInformationHeadersCollection messageInformationHeadersCollection, ArrayList addressingHeaders, String addressingNamespace) {
+    public MessageInformationHeadersCollection extractCommonAddressingParameters(SOAPHeader header,
+                                                                                 MessageInformationHeadersCollection messageInformationHeadersCollection,
+                                                                                 ArrayList addressingHeaders,
+                                                                                 String addressingNamespace)
+            throws AddressingException
+    {
         if (messageInformationHeadersCollection == null) {
             messageInformationHeadersCollection = new MessageInformationHeadersCollection();
         }

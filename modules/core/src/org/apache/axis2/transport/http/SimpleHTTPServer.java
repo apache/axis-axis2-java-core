@@ -229,14 +229,14 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         }
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
-        SimpleHTTPServer reciver = new SimpleHTTPServer(args[0], serverSoc);
+        SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], serverSoc);
         System.out.println(
             "starting SimpleHTTPServer in port "
                 + args[1]
                 + " using the repository "
                 + new File(args[0]).getAbsolutePath());
-        reciver.setServerSocket(serverSoc);
-        Thread thread = new Thread(reciver);
+        receiver.setServerSocket(serverSoc);
+        Thread thread = new Thread(receiver);
         thread.setDaemon(true);
         try {
             System.out.println("[Axis2] Using the Repository " + new File(args[0]).getAbsolutePath());
@@ -245,7 +245,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
              System.out.println("[Axis2] SimpleHTTPServer started");
             System.in.read();
         } finally {
-            reciver.stop();
+            receiver.stop();
         }
     }
     /* (non-Javadoc)
