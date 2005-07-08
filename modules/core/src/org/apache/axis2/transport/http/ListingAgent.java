@@ -19,7 +19,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.util.DeploymentData;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -348,17 +347,16 @@ public class ListingAgent {
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
-        DeploymentData depdata = DeploymentData.getInstance();
-        phaselist.add(depdata.getINPhases());
-        phaselist.add(depdata.getIN_FaultPhases());
-        phaselist.add(depdata.getOUTPhases());
-        phaselist.add(depdata.getOUT_FaultPhases());
+        PhasesInfo info = ((AxisConfigurationImpl)configContext.getAxisConfiguration()).getPhasesinfo();
+        phaselist.add(info.getINPhases());
+        phaselist.add(info.getIN_FaultPhases());
+        phaselist.add(info.getOUTPhases());
+        phaselist.add(info.getOUT_FaultPhases());
 
-        phaselist.add(depdata.getOperationInPhases());
-        phaselist.add(depdata.getOperationInFaultPhases());
-        phaselist.add(depdata.getOperationOutPhases());
-        phaselist.add(depdata.getOperationOutFaultPhases());
-
+        phaselist.add(info.getOperationInPhases());
+        phaselist.add(info.getOperationInFaultPhases());
+        phaselist.add(info.getOperationOutPhases());
+        phaselist.add(info.getOperationOutFaultPhases());
         req.getSession().setAttribute(Constants.PHASE_LIST, phaselist);
         res.sendRedirect(LIST_PHASES_JSP_NAME);
     }

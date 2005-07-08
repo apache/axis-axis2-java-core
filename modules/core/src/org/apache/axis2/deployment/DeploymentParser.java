@@ -16,7 +16,7 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.deployment.util.DeploymentData;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.AxisFault;
@@ -170,26 +170,27 @@ public class DeploymentParser implements DeploymentConstants {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (REF.equals(attname)) {
-                                    DeploymentData.getInstance().addModule(new QName(attvalue));
+                                    dpengine.addModule(new QName(attvalue));
+                                    //   DeploymentData.getInstance().addModule(new QName(attvalue));
                                 }
                             }
                         }
                     } else if (PHASE_ORDER.equals(ST)) {
                         int attribCount = pullparser.getAttributeCount();
-                        DeploymentData tempdata = DeploymentData.getInstance();
+                        PhasesInfo info = dpengine.getPhasesinfo();
                         if (attribCount > 0) {
                             for (int i = 0; i < attribCount; i++) {
                                 String attname = pullparser.getAttributeLocalName(i);
                                 String attvalue = pullparser.getAttributeValue(i);
                                 if (TYPE.equals(attname)) {
                                     if (INFLOWST.equals(attvalue)) {
-                                        tempdata.setINPhases(processPhaseOrder());
+                                        info.setINPhases(processPhaseOrder());
                                     } else if (OUTFLOWST.equals(attvalue)) {
-                                        tempdata.setOUTPhases(processPhaseOrder());
+                                        info.setOUTPhases(processPhaseOrder());
                                     } else if (IN_FAILTFLOW.equals(attvalue)) {
-                                        tempdata.setIN_FaultPhases(processPhaseOrder());
+                                        info.setIN_FaultPhases(processPhaseOrder());
                                     } else if (OUT_FAILTFLOW.equals(attvalue)) {
-                                        tempdata.setOUT_FaultPhases(processPhaseOrder());
+                                        info.setOUT_FaultPhases(processPhaseOrder());
                                     } else {
                                         throw new DeploymentException(
                                                 "un defined flow type  " + ST);
@@ -411,7 +412,9 @@ public class DeploymentParser implements DeploymentConstants {
                         // processBeanMapping();
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation(axisService);
-                        DeploymentData.getInstance().setOperationPhases(operation);
+                        PhasesInfo info = dpengine.getPhasesinfo();
+                        info.setOperationPhases(operation);
+//                        DeploymentData.getInstance().setOperationPhases(operation);
                         if (operation.getMessageReciever() == null) {
                             try {
                                 /**
@@ -891,7 +894,9 @@ public class DeploymentParser implements DeploymentConstants {
                         module.setOutFlow(outFlow);
                     } else if (OPRATIONST.equals(ST)) {
                         OperationDescription operation = processOperation(null);
-                        DeploymentData.getInstance().setOperationPhases(operation);
+                        PhasesInfo info= dpengine.getPhasesinfo();
+                        info.setOperationPhases(operation);
+//                        DeploymentData.getInstance().setOperationPhases(operation);
                         if (operation.getMessageReciever() == null) {
                             try {
                                 /**

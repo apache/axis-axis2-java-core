@@ -1,10 +1,9 @@
 package org.apache.axis2.deployment.util;
 
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.description.OperationDescription;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /*
@@ -27,14 +26,10 @@ import java.util.ArrayList;
 
 /**
  * Author : Deepal Jayasinghe
- * Date: May 12, 2005
- * Time: 7:14:26 PM
+ * Date: Jul 8, 2005
+ * Time: 3:49:28 PM
  */
-public class DeploymentData {
-
-    private static DeploymentData deploymentData;
-
-    private ArrayList modules ;
+public class PhasesInfo {
 
     private ArrayList INPhases;
     private ArrayList OUTPhases;
@@ -45,18 +40,6 @@ public class DeploymentData {
     private ArrayList oprationOUTPhases;
     private ArrayList oprationIN_FaultPhases;
     private ArrayList oprationOUT_FaultPhases;
-
-    private DeploymentData() {
-        modules = new ArrayList();
-    }
-
-    public static DeploymentData getInstance() {
-        if (deploymentData == null) {
-            deploymentData = new DeploymentData();
-        }
-        return deploymentData;
-    }
-
 
     public void setINPhases(ArrayList INPhases) {
         this.INPhases = INPhases;
@@ -148,13 +131,5 @@ public class DeploymentData {
             operation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
         }
     }
-
-    public void addModule(QName moduleName){
-        modules.add(moduleName);
-    }
-
-    public ArrayList getModules(){
-        return modules;
-    }
-
+    
 }

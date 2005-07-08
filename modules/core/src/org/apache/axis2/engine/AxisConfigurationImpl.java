@@ -16,6 +16,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.*;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -69,6 +70,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Field paramInclude
      */
     protected final ParameterInclude paramInclude;
+
+
+    protected PhasesInfo phasesinfo;
 
     /**
      * Field modules
@@ -339,6 +343,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     
     public boolean isEngaged(QName moduleName){
         return engagedModules.contains(moduleName);
+    }
+
+    public PhasesInfo getPhasesinfo() {
+        return phasesinfo;
+    }
+
+    public void setPhasesinfo(PhasesInfo phasesinfo) {
+        this.phasesinfo = phasesinfo;
     }
 
 }

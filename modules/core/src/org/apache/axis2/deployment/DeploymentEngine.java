@@ -16,7 +16,6 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -24,7 +23,7 @@ import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
-import org.apache.axis2.deployment.util.DeploymentData;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
@@ -86,7 +85,14 @@ public class DeploymentEngine implements DeploymentConstants {
     private ArchiveFileData currentArchiveFile;
 
     //tobuild chains
-    private ConfigurationContextFactory factory;
+//    private ConfigurationContextFactory factory;
+
+    /**
+     * To store the module specified in the server.xml at the document parsing time
+     */
+    private ArrayList modulelist = new ArrayList();
+
+    private PhasesInfo phasesinfo = new PhasesInfo(); //to store phases list in axis2.xml
 
     /**
      * Default constructor is need to deploye module and service programatically
@@ -146,7 +152,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        factory = new ConfigurationContextFactory();
+//        factory = new ConfigurationContextFactory();
         this.engineConfigName = RepositaryName + '/' + serverXMLFile;
     }
 
@@ -208,6 +214,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             engagdeModules();
             validateSystemPredefinedPhases();
+            ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault);
@@ -246,6 +253,7 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListenerImpl(folderName, this);
             try {
                 engagdeModules();
+                ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
             } catch (AxisFault axisFault) {
                 log.info("Module validation failed" + axisFault.getMessage());
                 throw new DeploymentException(axisFault);
@@ -292,7 +300,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
         }
-        factory = new ConfigurationContextFactory();
+//        factory = new ConfigurationContextFactory();
         this.engineConfigName = clientHome + '/' + clientXML;
     }
 
@@ -301,9 +309,9 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void engagdeModules() throws AxisFault {
-        ArrayList modules = DeploymentData.getInstance().getModules();
+       // ArrayList modules = DeploymentData.getInstance().getModules();
         // PhaseResolver resolver = new PhaseResolver(axisConfig);
-        for (Iterator iterator = modules.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
             ((AxisConfigurationImpl) axisConfig).engageModule(name);
         }
@@ -316,8 +324,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
     private void validateSystemPredefinedPhases() throws DeploymentException {
-        DeploymentData tempdata = DeploymentData.getInstance();
-        ArrayList inPhases = tempdata.getINPhases();
+        ArrayList inPhases = phasesinfo.getINPhases();
         //TODO condition checking should be otherway since null value can occur
         if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
                 ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
@@ -326,7 +333,7 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
                     " support\n recheck axis2.xml");
         }
-        //  ArrayList outPhaes = tempdata.getOUTPhases();
+        //  ArrayList outPhaes = tempdata.getOutphases();
         //TODO do the validation code here
         //ArrayList systemDefaultPhases =((AxisConfigurationImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
     }
@@ -530,7 +537,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 switch (type) {
                     case SERVICE:
                         try {
-                           // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                            // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
                             ServiceDescription service = archiveReader.createService(currentArchiveFile);
                             archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(), this, service);
                             addnewService(service);
@@ -634,6 +641,23 @@ public class DeploymentEngine implements DeploymentConstants {
             return value;
         }
         return fileName;
+    }
+
+    /**
+     * while parsing the axis2.xml the module refferences have to be store some where , since at that
+     * time none of module availble (they load after parsing the document)
+     * @param moduleName <code>QName</code>
+     */
+    public void addModule(QName moduleName){
+        modulelist.add(moduleName);
+    }
+
+    public PhasesInfo getPhasesinfo() {
+        return phasesinfo;
+    }
+
+    public void setPhasesinfo(PhasesInfo phasesinfo) {
+        this.phasesinfo = phasesinfo;
     }
 
     /* public ServiceDescription deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
