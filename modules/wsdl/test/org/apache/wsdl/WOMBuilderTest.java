@@ -46,7 +46,8 @@ public class WOMBuilderTest extends AbstractTestCase {
 
     	WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(new File("E:/temp/service.wsdl"));
+            InputStream in = new FileInputStream(getTestResourceFile("InteropTest.wsdl"));
+//            InputStream in = new FileInputStream(new File("E:/temp/service.wsdl"));
             wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
 			this.womDescription = wsdlVersionWrapper.getDescription();
         }
