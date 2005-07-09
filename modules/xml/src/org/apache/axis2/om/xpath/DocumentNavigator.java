@@ -1,23 +1,25 @@
 package org.apache.axis2.om.xpath;
 
-import org.jaxen.DefaultNavigator;
-import org.jaxen.*;
-import org.jaxen.util.SingleObjectIterator;
-import org.jaxen.saxpath.SAXPathException;
-import org.apache.axis2.om.impl.llom.OMDocument;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.impl.llom.OMDocument;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.jaxen.BaseXPath;
+import org.jaxen.DefaultNavigator;
+import org.jaxen.FunctionCallException;
+import org.jaxen.JaxenConstants;
+import org.jaxen.UnsupportedAxisException;
+import org.jaxen.XPath;
+import org.jaxen.saxpath.SAXPathException;
+import org.jaxen.util.SingleObjectIterator;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
-import java.util.Iterator;
+import javax.xml.stream.XMLStreamReader;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.Iterator;
 
 public class DocumentNavigator extends DefaultNavigator {
 
@@ -35,8 +37,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *      correct XPath expression
      */
     public XPath parseXPath(String xpath) throws SAXPathException {
-        XPath path = new BaseXPath(xpath, this);
-        return path;
+        return (XPath)new BaseXPath(xpath, this);
     }
 
     /**
