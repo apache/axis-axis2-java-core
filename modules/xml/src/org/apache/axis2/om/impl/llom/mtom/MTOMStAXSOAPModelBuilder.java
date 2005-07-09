@@ -96,16 +96,15 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 			
 			// This cannot happen. XOP:Include is always the only child of an parent element
 			// cause it is same as having some text
-//			if (lastNode.isComplete()) {
-//				node = new OMTextImpl(contentID, (OMElement) lastNode.getParent(), this);
-//				lastNode.setNextSibling(node);
-//				node.setPreviousSibling(lastNode);
-			//} else {
+			try{
 				OMElement e = (OMElement) lastNode;
 				node = new OMTextImpl(contentID, (OMElement) lastNode, this);
 				e.setFirstChild(node);
-				//node.setComplete(true);
-			//}
+			}catch(ClassCastException e)
+				{
+					throw new OMException("Last Node & Parent of an OMText should be an Element"+e);
+				}
+				
 			return node;
 			
 		} else {
