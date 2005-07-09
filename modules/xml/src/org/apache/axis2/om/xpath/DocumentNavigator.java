@@ -21,6 +21,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.net.URL;
 import java.util.Iterator;
+import java.io.FileInputStream;
 
 public class DocumentNavigator extends DefaultNavigator {
     /**
@@ -464,10 +465,15 @@ public class DocumentNavigator extends DefaultNavigator {
     public Object getDocument(String uri)
             throws FunctionCallException {
         try {
-            URL url = new URL(uri);
-            XMLStreamReader parser =
-                    XMLInputFactory.newInstance().createXMLStreamReader(
-                            url.openStream());
+            XMLStreamReader parser;
+            if(uri.indexOf(':')==-1) {
+                parser = XMLInputFactory.newInstance().createXMLStreamReader(
+                        new FileInputStream(uri));
+            }  else {
+                URL url = new URL(uri);
+                parser = XMLInputFactory.newInstance().createXMLStreamReader(
+                        url.openStream());
+            }
             StAXOMBuilder builder =
                     new StAXOMBuilder(parser);
             return builder.getDocumentElement();
