@@ -113,6 +113,16 @@
         </dependency>
 
 	    <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1-beta-6</version>
+            <properties>
+                <module>true</module>
+            </properties>
+		<url>http://www.ibiblio.org/maven/jaxen/jars/</url>
+        </dependency>
+
+	    <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
