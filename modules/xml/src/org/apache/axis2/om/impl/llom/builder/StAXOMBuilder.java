@@ -67,6 +67,7 @@ public class StAXOMBuilder extends StAXBuilder{
         if (lastNode == null) {
             node = omfactory.createOMElement(elementName, null, null, this);
             document.setRootElement(node);
+            document.addChild(node);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
                     lastNode.getParent(), this);

@@ -76,7 +76,6 @@ public class OMDocument implements OMContainer {
         while (rootElement == null) {
             parserWrapper.next();
         }
-        rootElement.setParent(this);
         return rootElement;
     }
 
@@ -113,7 +112,8 @@ public class OMDocument implements OMContainer {
      * This will force the parser to proceed, if parser has not yet finished with the XML input
      */
     public void buildNext() {
-        parserWrapper.next();
+        if(!parserWrapper.isCompleted())
+            parserWrapper.next();
     }
 
     /**

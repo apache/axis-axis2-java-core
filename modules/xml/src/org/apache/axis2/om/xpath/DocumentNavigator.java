@@ -5,6 +5,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.impl.llom.OMDocument;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.jaxen.BaseXPath;
@@ -33,7 +34,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @see XPath
      */
     public XPath parseXPath(String xpath) throws SAXPathException {
-        return (XPath) new BaseXPath(xpath, this);
+        return new BaseXPath(xpath, this);
     }
 
     /**
@@ -286,8 +287,8 @@ public class DocumentNavigator extends DefaultNavigator {
      *                                  not supported by this object model
      */
     public Iterator getChildAxisIterator(Object contextNode) throws UnsupportedAxisException {
-        if (isElement(contextNode)) {
-            return ((OMElement) contextNode).getChildren();
+        if (contextNode instanceof OMContainer) {
+            return ((OMContainer) contextNode).getChildren();
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -578,6 +579,8 @@ public class DocumentNavigator extends DefaultNavigator {
      * @see #isElement
      */
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
+        if(contextNode instanceof OMDocument)
+            return null;
         return getDocumentNode(((OMNode) contextNode).getParent());
     }
 }
