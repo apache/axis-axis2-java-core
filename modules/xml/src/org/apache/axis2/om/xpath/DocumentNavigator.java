@@ -22,30 +22,25 @@ import java.net.URL;
 import java.util.Iterator;
 
 public class DocumentNavigator extends DefaultNavigator {
-
     /**
      * Returns a parsed form of the given xpath string, which will be suitable
-     *  for queries on documents that use the same navigator as this one.
+     * for queries on documents that use the same navigator as this one.
      *
-     *  @see XPath
-     *
-     *  @param xpath the XPath expression
-     *
-     *  @return a new XPath expression object
-     *
-     *  @throws SAXPathException if the string is not a syntactically
-     *      correct XPath expression
+     * @param xpath the XPath expression
+     * @return a new XPath expression object
+     * @throws SAXPathException if the string is not a syntactically
+     *                          correct XPath expression
+     * @see XPath
      */
     public XPath parseXPath(String xpath) throws SAXPathException {
-        return (XPath)new BaseXPath(xpath, this);
+        return (XPath) new BaseXPath(xpath, this);
     }
 
     /**
      * Retrieve the namespace URI of the given element node.
      *
-     *  @param object the context element node
-     *
-     *  @return the namespace URI of the element node
+     * @param object the context element node
+     * @return the namespace URI of the element node
      */
     public String getElementNamespaceUri(Object object) {
         OMElement attr = (OMElement) object;
@@ -55,9 +50,8 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Retrieve the name of the given element node.
      *
-     *  @param object the context element node
-     *
-     *  @return the name of the element node
+     * @param object the context element node
+     * @return the name of the element node
      */
     public String getElementName(Object object) {
         OMElement attr = (OMElement) object;
@@ -67,9 +61,8 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Retrieve the QName of the given element node.
      *
-     *  @param object the context element node
-     *
-     *  @return the QName of the element node
+     * @param object the context element node
+     * @return the QName of the element node
      */
     public String getElementQName(Object object) {
         OMElement attr = (OMElement) object;
@@ -83,9 +76,8 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Retrieve the namespace URI of the given attribute node.
      *
-     *  @param object the context attribute node
-     *
-     *  @return the namespace URI of the attribute node
+     * @param object the context attribute node
+     * @return the namespace URI of the attribute node
      */
     public String getAttributeNamespaceUri(Object object) {
         OMAttribute attr = (OMAttribute) object;
@@ -95,9 +87,8 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Retrieve the name of the given attribute node.
      *
-     *  @param object the context attribute node
-     *
-     *  @return the name of the attribute node
+     * @param object the context attribute node
+     * @return the name of the attribute node
      */
     public String getAttributeName(Object object) {
         OMAttribute attr = (OMAttribute) object;
@@ -107,9 +98,8 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Retrieve the QName of the given attribute node.
      *
-     *  @param object the context attribute node
-     *
-     *  @return the qualified name of the attribute node
+     * @param object the context attribute node
+     * @return the qualified name of the attribute node
      */
     public String getAttributeQName(Object object) {
         OMAttribute attr = (OMAttribute) object;
@@ -122,12 +112,11 @@ public class DocumentNavigator extends DefaultNavigator {
 
     /**
      * Returns whether the given object is a document node. A document node
-     *  is the node that is selected by the xpath expression <code>/</code>.
+     * is the node that is selected by the xpath expression <code>/</code>.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is a document node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is a document node,
+     *         else <code>false</code>
      */
     public boolean isDocument(Object object) {
         return object instanceof OMDocument;
@@ -136,10 +125,9 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Returns whether the given object is an element node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is an element node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is an element node,
+     *         else <code>false</code>
      */
     public boolean isElement(Object object) {
         return object instanceof OMElement;
@@ -148,10 +136,9 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Returns whether the given object is an attribute node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is an attribute node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is an attribute node,
+     *         else <code>false</code>
      */
     public boolean isAttribute(Object object) {
         return object instanceof OMAttribute;
@@ -160,10 +147,9 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Returns whether the given object is a namespace node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is a namespace node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is a namespace node,
+     *         else <code>false</code>
      */
     public boolean isNamespace(Object object) {
         return object instanceof OMNamespace;
@@ -172,36 +158,33 @@ public class DocumentNavigator extends DefaultNavigator {
     /**
      * Returns whether the given object is a comment node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is a comment node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is a comment node,
+     *         else <code>false</code>
      */
     public boolean isComment(Object object) {
         return (object instanceof OMNode) &&
-            (((OMText)object).getType() == OMNode.COMMENT_NODE);
+                (((OMText) object).getType() == OMNode.COMMENT_NODE);
     }
 
     /**
      * Returns whether the given object is a text node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is a text node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is a text node,
+     *         else <code>false</code>
      */
     public boolean isText(Object object) {
         return (object instanceof OMNode) &&
-            (((OMText)object).getType() == OMNode.TEXT_NODE);
+                (((OMText) object).getType() == OMNode.TEXT_NODE);
     }
 
     /**
      * Returns whether the given object is a processing-instruction node.
      *
-     *  @param object the object to test
-     *
-     *  @return <code>true</code> if the object is a processing-instruction node,
-     *          else <code>false</code>
+     * @param object the object to test
+     * @return <code>true</code> if the object is a processing-instruction node,
+     *         else <code>false</code>
      */
     public boolean isProcessingInstruction(Object object) {
         //TODO: Fix this?
@@ -213,12 +196,11 @@ public class DocumentNavigator extends DefaultNavigator {
      * This may be the empty string if the comment is empty,
      * but must not be null.
      *
-     *  @param object the comment node
-     *
-     *  @return the string-value of the node
+     * @param object the comment node
+     * @return the string-value of the node
      */
     public String getCommentStringValue(Object object) {
-        return ((OMText)object).getText();
+        return ((OMText) object).getText();
     }
 
     /**
@@ -226,23 +208,21 @@ public class DocumentNavigator extends DefaultNavigator {
      * This may be the empty string if the element is empty,
      * but must not be null.
      *
-     *  @param object the comment node.
-     *
-     *  @return the string-value of the node.
+     * @param object the comment node.
+     * @return the string-value of the node.
      */
     public String getElementStringValue(Object object) {
         if (isElement(object)) {
-            return getStringValue((OMElement)object, new StringBuffer()).toString();
+            return getStringValue((OMElement) object, new StringBuffer()).toString();
         }
         return null;
     }
 
-    private StringBuffer getStringValue (OMNode node, StringBuffer buffer)
-    {
+    private StringBuffer getStringValue(OMNode node, StringBuffer buffer) {
         if (isText(node)) {
-            buffer.append(((OMText)node).getText());
-        } else if(node instanceof OMElement) {
-            Iterator children = ((OMElement)node).getChildren();
+            buffer.append(((OMText) node).getText());
+        } else if (node instanceof OMElement) {
+            Iterator children = ((OMElement) node).getChildren();
             while (children.hasNext()) {
                 getStringValue((OMNode) children.next(), buffer);
             }
@@ -252,15 +232,14 @@ public class DocumentNavigator extends DefaultNavigator {
 
     /**
      * Retrieve the string-value of an attribute node.
-     *  This should be the XML 1.0 normalized attribute value.
-     *  This may be the empty string but must not be null.
+     * This should be the XML 1.0 normalized attribute value.
+     * This may be the empty string but must not be null.
      *
-     *  @param object the attribute node
-     *
-     *  @return the string-value of the node
+     * @param object the attribute node
+     * @return the string-value of the node
      */
     public String getAttributeStringValue(Object object) {
-        return ((OMAttribute)object).getValue();
+        return ((OMAttribute) object).getValue();
     }
 
     /**
@@ -268,12 +247,11 @@ public class DocumentNavigator extends DefaultNavigator {
      * This is generally the namespace URI.
      * This may be the empty string but must not be null.
      *
-     *  @param object the namespace node
-     *
-     *  @return the string-value of the node
+     * @param object the namespace node
+     * @return the string-value of the node
      */
     public String getNamespaceStringValue(Object object) {
-        return ((OMNamespace)object).getName();
+        return ((OMNamespace) object).getName();
     }
 
     /**
@@ -281,35 +259,31 @@ public class DocumentNavigator extends DefaultNavigator {
      * This must not be null and should not be the empty string.
      * The XPath data model does not allow empty text nodes.
      *
-     *  @param object the text node
-     *
-     *  @return the string-value of the node
+     * @param object the text node
+     * @return the string-value of the node
      */
     public String getTextStringValue(Object object) {
-        return ((OMText)object).getText();
+        return ((OMText) object).getText();
     }
 
     /**
      * Retrieve the namespace prefix of a namespace node.
      *
-     *  @param object the namespace node
-     *
-     *  @return the prefix associated with the node
+     * @param object the namespace node
+     * @return the prefix associated with the node
      */
     public String getNamespacePrefix(Object object) {
-        return ((OMNamespace)object).getPrefix();
+        return ((OMNamespace) object).getPrefix();
     }
 
     /**
      * Retrieve an <code>Iterator</code> matching the <code>child</code>
-     *  XPath axis.
+     * XPath axis.
      *
-     *  @param contextNode the original context node
-     *
-     *  @return an Iterator capable of traversing the axis, not null
-     *
-     *  @throws UnsupportedAxisException if the semantics of the child axis are
-     *          not supported by this object model
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the child axis are
+     *                                  not supported by this object model
      */
     public Iterator getChildAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (isElement(contextNode)) {
@@ -318,33 +292,90 @@ public class DocumentNavigator extends DefaultNavigator {
         return JaxenConstants.EMPTY_ITERATOR;
     }
 
+    public Iterator getDescendantAxisIterator(Object object) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getDescendantAxisIterator(object);
+    }
+
     /**
      * Retrieve an <code>Iterator</code> matching the <code>attribute</code>
-     *  XPath axis.
+     * XPath axis.
      *
-     *  @param contextNode the original context node
-     *
-     *  @return an Iterator capable of traversing the axis, not null
-     *
-     *  @throws UnsupportedAxisException if the semantics of the attribute axis are
-     *          not supported by this object model
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the attribute axis are
+     *                                  not supported by this object model
      */
     public Iterator getAttributeAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (isElement(contextNode)) {
-            return ((OMElement)contextNode).getAttributes();
+            return ((OMElement) contextNode).getAttributes();
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
 
     /**
+     * Retrieve an <code>Iterator</code> matching the <code>namespace</code>
+     * XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the namespace axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getNamespaceAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getNamespaceAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the <code>self</code> xpath
+     * axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the self axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getSelfAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getSelfAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the
+     * <code>descendant-or-self</code> XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the descendant-or-self axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getDescendantOrSelfAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getDescendantOrSelfAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the
+     * <code>ancestor-or-self</code> XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the ancestor-or-self axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getAncestorOrSelfAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getAncestorOrSelfAxisIterator(contextNode);
+    }
+
+    /**
      * Retrieve an <code>Iterator</code> matching the <code>parent</code> XPath axis.
      *
-     *  @param contextNode the original context node
-     *
-     *  @return an Iterator capable of traversing the axis, not null
-     *
-     *  @throws UnsupportedAxisException if the semantics of the parent axis are
-     *          not supported by this object model
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the parent axis are
+     *                                  not supported by this object model
      */
     public Iterator getParentAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (contextNode instanceof OMNode) {
@@ -354,21 +385,88 @@ public class DocumentNavigator extends DefaultNavigator {
     }
 
     /**
+     * Retrieve an <code>Iterator</code> matching the <code>ancestor</code>
+     * XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the ancestor axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getAncestorAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getAncestorAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the
+     * <code>following-sibling</code> XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the following-sibling axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getFollowingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getFollowingSiblingAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the
+     * <code>preceding-sibling</code> XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the preceding-sibling axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getPrecedingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getPrecedingSiblingAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the <code>following</code>
+     * XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the following axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getFollowingAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getFollowingAxisIterator(contextNode);
+    }
+
+    /**
+     * Retrieve an <code>Iterator</code> matching the <code>preceding</code> XPath axis.
+     *
+     * @param contextNode the original context node
+     * @return an Iterator capable of traversing the axis, not null
+     * @throws UnsupportedAxisException if the semantics of the preceding axis are
+     *                                  not supported by this object model
+     */
+    public Iterator getPrecedingAxisIterator(Object contextNode) throws UnsupportedAxisException {
+        //TODO: Fix this better?
+        return super.getPrecedingAxisIterator(contextNode);
+    }
+
+    /**
      * Loads a document from the given URI
      *
-     *  @param uri the URI of the document to load
-     *
-     *  @return the document
-     *
-      * @throws FunctionCallException if the document could not be loaded
+     * @param uri the URI of the document to load
+     * @return the document
+     * @throws FunctionCallException if the document could not be loaded
      */
     public Object getDocument(String uri)
-        throws FunctionCallException {
+            throws FunctionCallException {
         try {
             URL url = new URL(uri);
             XMLStreamReader parser =
-                XMLInputFactory.newInstance().createXMLStreamReader(
-                                            url.openStream());
+                    XMLInputFactory.newInstance().createXMLStreamReader(
+                            url.openStream());
             StAXOMBuilder builder =
                     new StAXOMBuilder(parser);
             return builder.getDocumentElement();
@@ -378,41 +476,109 @@ public class DocumentNavigator extends DefaultNavigator {
     }
 
     /**
+     * Returns the element whose ID is given by elementId.
+     * If no such element exists, returns null.
+     * Attributes with the name "ID" are not of type ID unless so defined.
+     * Implementations that do not know whether attributes are of type ID or
+     * not are expected to return null.
+     *
+     * @param contextNode a node from the document in which to look for the
+     *                    id
+     * @param elementId   id to look for
+     * @return element whose ID is given by elementId, or null if no such
+     *         element exists in the document or if the implementation
+     *         does not know about attribute types
+     */
+    public Object getElementById(Object contextNode, String elementId) {
+        //TODO: Fix this better?
+        return super.getElementById(contextNode, elementId);
+    }
+
+    /**
      * Returns the document node that contains the given context node.
      *
-     *  @see #isDocument(Object)
-     *
-     *  @param contextNode the context node
-     *
-     *  @return the document of the context node
+     * @param contextNode the context node
+     * @return the document of the context node
+     * @see #isDocument(Object)
      */
     public Object getDocumentNode(Object contextNode) {
-        if(contextNode instanceof OMDocument) {
+        if (contextNode instanceof OMDocument) {
             return contextNode;
         }
-        return getDocumentNode(((OMNode)contextNode).getParent());
+        return getDocumentNode(((OMNode) contextNode).getParent());
+    }
+
+    /**
+     * Translate a namespace prefix to a namespace URI, <b>possibly</b>
+     * considering a particular element node.
+     * <p/>
+     * <p/>
+     * Strictly speaking, prefix-to-URI translation should occur
+     * irrespective of any element in the document.  This method
+     * is provided to allow a non-conforming ease-of-use enhancement.
+     * </p>
+     *
+     * @param prefix  the prefix to translate
+     * @param element the element to consider during translation
+     * @return the namespace URI associated with the prefix
+     */
+    public String translateNamespacePrefixToUri(String prefix, Object element) {
+        //TODO: Fix this better?
+        return super.translateNamespacePrefixToUri(prefix, prefix);
+    }
+
+    /**
+     * Retrieve the target of a processing-instruction.
+     *
+     * @param object the context processing-instruction node
+     * @return the target of the processing-instruction node
+     */
+    public String getProcessingInstructionTarget(Object object) {
+        //TODO: Fix this better?
+        return super.getProcessingInstructionTarget(object);
+    }
+
+    /**
+     * Retrieve the data of a processing-instruction.
+     *
+     * @param object the context processing-instruction node
+     * @return the data of the processing-instruction node
+     */
+    public String getProcessingInstructionData(Object object) {
+        //TODO: Fix this better?
+        return super.getProcessingInstructionData(object);
+    }
+
+    /**
+     * Returns a number that identifies the type of node that the given
+     * object represents in this navigator.
+     *
+     * @param node ????
+     * @return ????
+     * @see org.jaxen.pattern.Pattern
+     */
+    public short getNodeType(Object node) {
+        //TODO: Fix this better?
+        return super.getNodeType(node);
     }
 
     /**
      * Returns the parent of the given context node.
+     * <p/>
+     * <p/>
+     * The parent of any node must either be a document
+     * node or an element node.
+     * </p>
      *
-     *  <p>
-     *  The parent of any node must either be a document
-     *  node or an element node.
-     *  </p>
-     *
-     *  @see #isDocument
-     *  @see #isElement
-     *
-     *  @param contextNode the context node
-     *
-     *  @return the parent of the context node, or null if this is a document node.
-     *
-     *  @throws UnsupportedAxisException if the parent axis is not
-     *          supported by the model
+     * @param contextNode the context node
+     * @return the parent of the context node, or null if this is a document node.
+     * @throws UnsupportedAxisException if the parent axis is not
+     *                                  supported by the model
+     * @see #isDocument
+     * @see #isElement
      */
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
-        return getDocumentNode(((OMNode)contextNode).getParent());
+        return getDocumentNode(((OMNode) contextNode).getParent());
     }
 }
 
