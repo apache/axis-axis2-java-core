@@ -42,7 +42,15 @@ public interface OMNode {
      */
     public static final short COMMENT_NODE = 8;
 
-    public static final short BLOB_NODE = 8;
+    /**
+     * This node is a <code>DTD</code>.
+     */
+    public static final short DTD_NODE = 9;
+
+    /**
+     * This node is a <code>ProcessingInstruction</code>.
+     */
+    public static final short PI_NODE = 10;
 
     /**
      * This method should return the immediate parent of the node.

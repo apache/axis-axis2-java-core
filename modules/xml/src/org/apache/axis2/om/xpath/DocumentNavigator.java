@@ -68,7 +68,10 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public String getElementQName(Object object) {
         OMElement attr = (OMElement) object;
-        String prefix = attr.getNamespace().getPrefix();
+        String prefix = null;
+        if(attr.getNamespace()!=null) {
+            prefix = attr.getNamespace().getPrefix();
+        }
         if (prefix == null || "".equals(prefix)) {
             return attr.getQName().getLocalPart();
         }
@@ -178,7 +181,7 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public boolean isText(Object object) {
         return (object instanceof OMNode) &&
-                (((OMText) object).getType() == OMNode.TEXT_NODE);
+                (((OMNode) object).getType() == OMNode.TEXT_NODE);
     }
 
     /**

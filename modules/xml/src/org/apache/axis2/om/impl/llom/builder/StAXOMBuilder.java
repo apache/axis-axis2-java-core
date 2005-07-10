@@ -145,6 +145,14 @@ public class StAXOMBuilder extends StAXBuilder{
                 case XMLStreamConstants.SPACE:
                     next();
                     break;
+                case XMLStreamConstants.COMMENT:
+                    lastNode = createOMText();
+                    lastNode.setType(OMNode.COMMENT_NODE);
+                    break;
+                case XMLStreamConstants.DTD:
+                    lastNode = createOMText();
+                    lastNode.setType(OMNode.DTD_NODE);
+                    break;
                 default :
                     throw new OMException();
             }
