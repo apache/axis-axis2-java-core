@@ -588,7 +588,9 @@ public class DocumentNavigator extends DefaultNavigator {
      * @see #isElement
      */
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
-        if(contextNode instanceof OMDocument)
+        if (contextNode == null ||
+                contextNode instanceof OMDocument ||
+                contextNode instanceof OMAttribute)
             return null;
         return getDocumentNode(((OMNode) contextNode).getParent());
     }
