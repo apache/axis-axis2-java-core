@@ -127,6 +127,32 @@ public class StAXOMBuilder extends StAXBuilder{
         return node;
     }
 
+    protected OMNode createPI() throws OMException {
+        OMNode node;
+        String target = parser.getPITarget();
+        String data = parser.getPIData();
+        if (lastNode == null) {
+            node = omfactory.createText("<?" + target + " " + data + "?>");
+            node.setType(OMNode.PI_NODE);
+            document.addChild(node);
+        } else if (lastNode.isComplete()) {
+            node = omfactory.createText((OMElement)lastNode.getParent(), "<?" + target + " " + data + "?>");
+            node.setType(OMNode.PI_NODE);
+            lastNode.setNextSibling(node);
+            node.setPreviousSibling(lastNode);
+        } else if (lastNode instanceof OMText) {
+            node = omfactory.createText("<?" + target + " " + data + "?>");
+            node.setType(OMNode.PI_NODE);
+            lastNode.getParent().addChild(node);
+        } else {
+            OMElement e = (OMElement) lastNode;
+            node = omfactory.createText(e, "<?" + target + " " + data + "?>");
+            node.setType(OMNode.PI_NODE);
+            e.setFirstChild(node);
+        }
+        return node;
+    }
+
     /**
      * Method getOMEnvelope
      *
@@ -191,7 +217,7 @@ public class StAXOMBuilder extends StAXBuilder{
                     createDTD();
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    next();
+                    createPI();
                     break;
                 default :
                     throw new OMException();
