@@ -1,11 +1,11 @@
 package org.apache.axis2.om.xpath;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.impl.llom.OMDocument;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -20,14 +20,12 @@ import org.jaxen.util.SingleObjectIterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import java.io.FileInputStream;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Arrays;
-import java.util.Collection;
-import java.io.FileInputStream;
+import java.util.Iterator;
+import java.util.List;
 
 public class DocumentNavigator extends DefaultNavigator {
     /**
@@ -513,7 +511,7 @@ public class DocumentNavigator extends DefaultNavigator {
             }
             StAXOMBuilder builder =
                     new StAXOMBuilder(parser);
-            return builder.getDocumentElement();
+            return builder.getDocumentElement().getParent();
         } catch (Exception e) {
             throw new FunctionCallException(e);
         }
