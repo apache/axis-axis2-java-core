@@ -89,6 +89,30 @@ public class StAXOMBuilder extends StAXBuilder{
     }
 
     /**
+     * Method createOMText
+     *
+     * @return
+     * @throws OMException
+     */
+    protected OMNode createComment() throws OMException {
+        OMNode node;
+        if (lastNode == null) {
+            node = omfactory.createText(parser.getText());
+            document.addChild(node);
+        } else if (lastNode.isComplete()) {
+            node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
+            lastNode.setNextSibling(node);
+            node.setPreviousSibling(lastNode);
+        } else {
+            OMElement e = (OMElement) lastNode;
+            node = omfactory.createText(e, parser.getText());
+            e.setFirstChild(node);
+        }
+        node.setType(OMNode.COMMENT_NODE);
+        return node;
+    }
+
+    /**
      * Method createDTD
      *
      * @return
@@ -161,14 +185,14 @@ public class StAXOMBuilder extends StAXBuilder{
                     next();
                     break;
                 case XMLStreamConstants.COMMENT:
-                    lastNode = createOMText();
-                    lastNode.setType(OMNode.COMMENT_NODE);
+                    createComment();
                     break;
                 case XMLStreamConstants.DTD:
                     createDTD();
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    throw new OMException();
+                    next();
+                    break;
                 default :
                     throw new OMException();
             }
