@@ -7,6 +7,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.impl.llom.OMDocument;
+import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.jaxen.BaseXPath;
 import org.jaxen.DefaultNavigator;
@@ -21,6 +22,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collection;
 import java.io.FileInputStream;
 
 public class DocumentNavigator extends DefaultNavigator {
@@ -328,8 +334,36 @@ public class DocumentNavigator extends DefaultNavigator {
      *                                  not supported by this object model
      */
     public Iterator getNamespaceAxisIterator(Object contextNode) throws UnsupportedAxisException {
-        //TODO: Fix this better?
-        return super.getNamespaceAxisIterator(contextNode);
+        if (! (contextNode instanceof OMContainer && contextNode instanceof OMElement)) {
+            return JaxenConstants.EMPTY_ITERATOR;
+        }
+        List nsList = new ArrayList();
+        HashSet prefixes = new HashSet();
+        for (OMContainer context = (OMContainer) contextNode; context != null && !(context instanceof OMDocument); context = ((OMElement) context).getParent()) {
+            OMElement element = (OMElement) context;
+            ArrayList declaredNS = new ArrayList();
+            Iterator i = element.getAllDeclaredNamespaces();
+            while (i != null && i.hasNext()) {
+                declaredNS.add(i.next());
+            }
+            declaredNS.add(element.getNamespace());
+            for (Iterator iter = element.getAttributes(); iter != null && iter.hasNext();) {
+                OMAttribute attr = (OMAttribute) iter.next();
+                declaredNS.add(attr.getNamespace());
+            }
+            for (Iterator iter = declaredNS.iterator(); iter != null && iter.hasNext();) {
+                OMNamespace namespace = (OMNamespace) iter.next();
+                if(namespace != null) {
+                    String prefix = namespace.getPrefix();
+                    if (prefix != null && ! prefixes.contains(prefix)) {
+                        prefixes.add(prefix);
+                        nsList.add(namespace);
+                    }
+                }
+            }
+        }
+        nsList.add(new OMNamespaceImpl("http://www.w3.org/XML/1998/namespace", "xml"));
+        return nsList.iterator();
     }
 
     /**
@@ -590,7 +624,8 @@ public class DocumentNavigator extends DefaultNavigator {
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
         if (contextNode == null ||
                 contextNode instanceof OMDocument ||
-                contextNode instanceof OMAttribute)
+                contextNode instanceof OMAttribute ||
+                contextNode instanceof OMNamespace)
             return null;
         return getDocumentNode(((OMNode) contextNode).getParent());
     }
