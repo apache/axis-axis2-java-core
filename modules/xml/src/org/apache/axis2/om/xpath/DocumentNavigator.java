@@ -173,7 +173,7 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public boolean isComment(Object object) {
         return (object instanceof OMNode) &&
-                (((OMText) object).getType() == OMNode.COMMENT_NODE);
+                (((OMNode) object).getType() == OMNode.COMMENT_NODE);
     }
 
     /**
@@ -196,8 +196,8 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isProcessingInstruction(Object object) {
-        //TODO: Fix this?
-        return false;
+        return (object instanceof OMNode) &&
+                (((OMNode) object).getType() == OMNode.PI_NODE);
     }
 
     /**

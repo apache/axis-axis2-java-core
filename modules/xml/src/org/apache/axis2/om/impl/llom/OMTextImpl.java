@@ -183,18 +183,22 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	 */
 	public void setTextType(short type) {
 		if ((type == TEXT_NODE) || (type == COMMENT_NODE)
-				|| (type == CDATA_SECTION_NODE)) {
+				|| (type == CDATA_SECTION_NODE
+                || (type == PI_NODE))) {
 			this.textType = type;
 		} else {
 			throw new UnsupportedOperationException("Attempt to set wrong type");
 		}
 	}
 
-	public int getType() throws OMException {
-		return textType;
-	}
+    public int getType() throws OMException {
+        int type = super.getType();
+        if (type == COMMENT_NODE || type == CDATA_SECTION_NODE || type == PI_NODE)
+            return type;
+        return textType;
+    }
 
-	/**
+    /**
 	 * @param writer
 	 * @throws XMLStreamException
 	 */
