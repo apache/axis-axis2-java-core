@@ -19,6 +19,16 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
+
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPFaultNode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultText;
+import org.apache.axis2.soap.SOAPFaultValue;
+
 import java.util.Locale;
 
 /**
@@ -35,7 +45,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	/**
 	 * Field fault   The omSOAPFault field
 	 */
-	org.apache.axis2.soap.SOAPFault fault;
+	protected org.apache.axis2.soap.SOAPFault fault;
 	
 	/**
 	 * Constructor SOAPFaultImpl
@@ -45,6 +55,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 		this.fault = fault;
 	}
 
+	public org.apache.axis2.soap.SOAPFault getOMFault(){
+		return fault;
+	}
+	
 	/**
 	 * Method setFaultCode
 	 * 
@@ -53,9 +67,13 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 * @see javax.xml.soap.SOAPFault#setFaultCode(java.lang.String)
 	 */
 	public void setFaultCode(String faultCode) throws SOAPException {
-		//QName qName = new QName(faultCode);
-		//fault.setFaultCode(qName);
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		// No direct mapping of SOAP 1.1 faultCode to SOAP 1.2, Mapping it to 
+		// (Fault Value of FaultCode) in OM impl
+		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFaultCode fCode = soapFactory.createSOAPFaultCode(fault);
+		SOAPFaultValue value = soapFactory.createSOAPFaultValue(fCode);
+		fCode.setValue(value);
+		value.setText(faultCode);
 	}
 
 	/**
@@ -66,9 +84,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public String getFaultCode() {
 	
-		//QName qName = fault.getFaultCode();
-		//return qName.getLocalPart();
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		//FaultCode mapped to Fault.FaultCode.FaultValue in OM
+		return fault.getCode().getValue().getText();
 	}
 
 	/**
@@ -80,8 +97,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public void setFaultActor(String faultActor) throws SOAPException {
 		
-		//fault.setFaultActor(faultActor);
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		//faultActor mapped to SOAPFaultNode in OM
+		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFaultNode fNode = soapFactory.createSOAPFaultNode(fault);
+		fNode.setNodeValue(faultActor);
 	}
 
 	/**
@@ -92,8 +111,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public String getFaultActor() {
 	
-		//return fault.getFaultActor();
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		// return the text value in SOAPFaultNode of OM
+		return fault.getNode().getNodeValue();
 	}
 
 	/**
@@ -105,8 +124,12 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public void setFaultString(String faultString) throws SOAPException {
 	
-		//fault.setFaultString(faultString);
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		//FaultString mapped to text elemtnt of SOAPFaultReason->SOAPFaultText in OM
+		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
+		SOAPFaultText text = soapFactory.createSOAPFaultText(fReason);
+		text.setText(faultString);
+		fReason.setSOAPText(text);
 	}
 
 	/**
@@ -117,8 +140,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public String getFaultString() {
 	
-		//return fault.getFaultString();
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		//return text elemtnt of SOAPFaultReason->SOAPFaultText in OM
+		return fault.getReason().getSOAPText().getText();
 	}
 
 	/**
@@ -128,14 +151,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 * @see javax.xml.soap.SOAPFault#getDetail()
 	 */
 	public Detail getDetail() {
-		// May need to change after w have detail and detail entry implementation
-		//in SoapEnvelope of OM
-		/*QName detailName = new QName("detail");
-		DetailImpl detail = new DetailImpl(detailName, fault);
-		OMNode entry = fault.getDetailInformation();
-		detail.addDetailEntry(entry);
-		return detail;*/
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		
+		SOAPFaultDetail detail =  fault.getDetail();
+		return new DetailImpl(detail);
 	}
 
 	/**
@@ -146,12 +164,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 * @see javax.xml.soap.SOAPFault#addDetail()
 	 */
 	public Detail addDetail() throws SOAPException {
-		// Not sure what detail information to add
-		//May need to change later
-		/*QName detailName = new QName("detail");
-		DetailImpl detail = new DetailImpl(detailName, fault);
-		return detail;*/
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		
+		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFaultDetail detail = soapFactory.createSOAPFaultDetail(fault);
+		return new DetailImpl(detail);
 	}
 
 	/**
@@ -192,9 +208,13 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 	 */
 	public void setFaultString(String faultString, Locale locale)
 			throws SOAPException {
-	
-		//fault.setFaultString(faultString);
-		throw new UnsupportedOperationException("No supoprted for M2 release");
+		//FaultString mapped to text elemtnt of SOAPFaultReason->SOAPFaultText in OM
+		// Not using Locale information
+		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+		SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
+		SOAPFaultText text = soapFactory.createSOAPFaultText(fReason);
+		text.setText(faultString);
+		fReason.setSOAPText(text);	
 	}
 
 	/**
