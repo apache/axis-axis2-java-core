@@ -18,6 +18,7 @@ package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.engine.AxisFault;
 
 import javax.xml.namespace.QName;
@@ -115,55 +116,57 @@ public class ArchiveFileData {
                 }
                 URLs.add(file.toURL());
                 urlsToLoadFrom = new URL[]{file.toURL()};
-                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
+                classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent);
+//                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
             } catch (Exception e) {
                 throw new AxisFault(e);
             }
-            try {
-                ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
-                ZipEntry entry;
-                String entryName = "";
-                int BUFFER = 2048;
-                while ((entry = zin.getNextEntry()) != null) {
-                    entryName = entry.getName();
-                    if (entryName != null && entryName.startsWith("lib/") && entryName.endsWith(".jar")) {
-                        //extarcting jar file form the orignial jar file and copy it to the axis2 lib
-                        File libFile = new File(DeploymentEngine.axis2repository, entryName);
-                        FileOutputStream dest = new FileOutputStream(libFile);
-                        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-                        byte data[] = new byte[BUFFER];
-                        InputStream in = classLoader.getResourceAsStream(entryName);
-                        ZipInputStream jar_zin = null;
-                        jar_zin = new ZipInputStream(in);
-                        ZipEntry jarentry;
-                        while ((jarentry = jar_zin.getNextEntry()) != null) {
-                            ZipEntry zip = new ZipEntry(jarentry);
-                            out.putNextEntry(zip);
-                            int count;
-                            while ((count = jar_zin.read(data, 0, BUFFER)) != -1) {
-                                out.write(data, 0, count);
-                            }
-                        }
-                        out.close();
-                        jar_zin.close();
-                        URLs.add(libFile.toURL());
-                        tobeRecreated = true;
-                    }
-                }
-                zin.close();
-                if (tobeRecreated) {
-                    URL[] urlstobeload = new URL[URLs.size()];
-                    for (int i = 0; i < URLs.size(); i++) {
-                        URL url = (URL) URLs.get(i);
-                        urlstobeload[i] = url;
-                    }
-                    //recreating the classLoader
-                    classLoader = new URLClassLoader(urlstobeload, parent);
-                }
-            } catch (IOException e) {
-                throw new DeploymentException(e);
-            }
         }
+//            try {
+//                ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
+//                ZipEntry entry;
+//                String entryName = "";
+//                int BUFFER = 2048;
+//                while ((entry = zin.getNextEntry()) != null) {
+//                    entryName = entry.getName();
+//                    if (entryName != null && entryName.startsWith("lib/") && entryName.endsWith(".jar")) {
+//                        //extarcting jar file form the orignial jar file and copy it to the axis2 lib
+//                        File libFile = new File(DeploymentEngine.axis2repository, entryName);
+//                        FileOutputStream dest = new FileOutputStream(libFile);
+//                        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+//                        byte data[] = new byte[BUFFER];
+//                        InputStream in = classLoader.getResourceAsStream(entryName);
+//                        ZipInputStream jar_zin = null;
+//                        jar_zin = new ZipInputStream(in);
+//                        ZipEntry jarentry;
+//                        while ((jarentry = jar_zin.getNextEntry()) != null) {
+//                            ZipEntry zip = new ZipEntry(jarentry);
+//                            out.putNextEntry(zip);
+//                            int count;
+//                            while ((count = jar_zin.read(data, 0, BUFFER)) != -1) {
+//                                out.write(data, 0, count);
+//                            }
+//                        }
+//                        out.close();
+//                        jar_zin.close();
+//                        URLs.add(libFile.toURL());
+//                        tobeRecreated = true;
+//                    }
+//                }
+//                zin.close();
+//                if (tobeRecreated) {
+//                    URL[] urlstobeload = new URL[URLs.size()];
+//                    for (int i = 0; i < URLs.size(); i++) {
+//                        URL url = (URL) URLs.get(i);
+//                        urlstobeload[i] = url;
+//                    }
+//                    //recreating the classLoader
+//                    classLoader = new URLClassLoader(urlstobeload, parent);
+//                }
+//            } catch (IOException e) {
+//                throw new DeploymentException(e);
+//            }
+//        }
     }
 
     public void addModule(QName moduleName) {
