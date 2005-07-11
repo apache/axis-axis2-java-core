@@ -41,7 +41,9 @@ class FactoryFinder {
      */
 
 
-    private static Object findFactory(ClassLoader loader, String factoryClass, String systemPropertyName)
+    private static Object findFactory(ClassLoader loader,
+                                      String factoryClass,
+                                      String systemPropertyName)
             throws OMFactoryException {
 
         String factoryClassName = factoryClass;
@@ -78,7 +80,9 @@ class FactoryFinder {
      */
     public static SOAPFactory findSOAP11Factory(ClassLoader loader)
             throws OMFactoryException {
-        return (SOAPFactory) findFactory(loader, DEFAULT_SOAP11_FACTORY_CLASS_NAME, SOAP11_FACTORY_NAME_PROPERTY);
+        return (SOAPFactory) findFactory(loader,
+                DEFAULT_SOAP11_FACTORY_CLASS_NAME,
+                SOAP11_FACTORY_NAME_PROPERTY);
     }
 
     /**
@@ -94,7 +98,9 @@ class FactoryFinder {
      */
     public static SOAPFactory findSOAP12Factory(ClassLoader loader)
             throws OMFactoryException {
-        return (SOAPFactory) findFactory(loader, DEFAULT_SOAP12_FACTORY_CLASS_NAME, SOAP12_FACTORY_NAME_PROPERTY);
+        return (SOAPFactory) findFactory(loader,
+                DEFAULT_SOAP12_FACTORY_CLASS_NAME,
+                SOAP12_FACTORY_NAME_PROPERTY);
     }
 
     /**
@@ -110,6 +116,8 @@ class FactoryFinder {
      */
     public static OMFactory findOMFactory(ClassLoader loader)
             throws OMFactoryException {
-        return (OMFactory) findFactory(loader, DEFAULT_OM_FACTORY_CLASS_NAME, OM_FACTORY_NAME_PROPERTY);
+        return (OMFactory) findFactory(loader,
+                DEFAULT_OM_FACTORY_CLASS_NAME,
+                OM_FACTORY_NAME_PROPERTY);
     }
 }

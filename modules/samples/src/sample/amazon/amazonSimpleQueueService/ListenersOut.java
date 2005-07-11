@@ -20,14 +20,21 @@ import sample.amazon.amazonSimpleQueueService.util.RunnableListMyQueues;
 import sample.amazon.amazonSimpleQueueService.util.RunnableReadQueue;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 /**
  * This will create the OMElement needed to be used in invokeNonBlocking() method
  *
  * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
-public class ListenersOut implements KeyListener, ActionListener, MouseMotionListener {
+public class ListenersOut implements KeyListener,
+        ActionListener,
+        MouseMotionListener {
     JTextField createQueue;
     JTextArea result;
     JTextField queueCode;
@@ -37,8 +44,12 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
     Runnable runableCodeListMyQueues;
     Runnable runnableCodeDequeue;
 
-    public ListenersOut(JTextField createQueue, JTextField queueCode, JTextField read,
-                        JTextArea result, JButton buttonLoad, JButton buttonDelete) {
+    public ListenersOut(JTextField createQueue,
+                        JTextField queueCode,
+                        JTextField read,
+                        JTextArea result,
+                        JButton buttonLoad,
+                        JButton buttonDelete) {
         this.queueCode = queueCode;
         this.createQueue = createQueue;
         this.read = read;
@@ -51,8 +62,9 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             this.result.setText("");
             this.createQueue.setEditable(false);
-            this.runableCodeListMyQueues = new RunnableReadQueue(this.createQueue,
-                                                                 this.queueCode, this.read, this.result);
+            this.runableCodeListMyQueues =
+                    new RunnableReadQueue(this.createQueue,
+                            this.queueCode, this.read, this.result);
             Thread thread = new Thread(this.runableCodeListMyQueues);
             thread.start();
         }
@@ -68,8 +80,9 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("1")) {
-            this.runableCodeListMyQueues = new RunnableListMyQueues(this.createQueue, this.queueCode, this.read,
-                                                                    this.result, this.buttonLoad);
+            this.runableCodeListMyQueues =
+                    new RunnableListMyQueues(this.createQueue, this.queueCode, this.read,
+                            this.result, this.buttonLoad);
             Thread thread1 = new Thread(this.runableCodeListMyQueues);
             thread1.start();
             this.createQueue.setEditable(true);
@@ -77,8 +90,9 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
         }
         if (e.getActionCommand().equals("2")) {
             this.buttonDelete.setText("Running");
-            this.runnableCodeDequeue = new RunnableDeleteQueue(this.createQueue, this.queueCode, this.read,
-                                                               this.result, this.buttonDelete);
+            this.runnableCodeDequeue =
+                    new RunnableDeleteQueue(this.createQueue, this.queueCode, this.read,
+                            this.result, this.buttonDelete);
             Thread thread2 = new Thread(this.runnableCodeDequeue);
             thread2.start();
         }

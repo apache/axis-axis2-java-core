@@ -15,7 +15,11 @@
 */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
@@ -57,7 +61,8 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      *                     if a SOAP error occurs
      * @throws OMException
      */
-    public abstract SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
+    public abstract SOAPHeaderBlock addHeaderBlock(String localName,
+                                                   OMNamespace ns)
             throws OMException;
 
     /**
@@ -129,7 +134,8 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
                 SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
                 String role = soapHeaderBlock.getRole();
                 boolean mustUnderstand = soapHeaderBlock.getMustUnderstand();
-                if ((role != null) && role.equalsIgnoreCase(actor) && mustUnderstand) {
+                if ((role != null) && role.equalsIgnoreCase(actor) &&
+                        mustUnderstand) {
                     mustUnderstandHeadersWithGivenActor.add(soapHeaderBlock);
                 }
             }
@@ -191,7 +197,8 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAPEnvelopeImpl)) {
-            throw new SOAPProcessingException("Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
         }
     }
 

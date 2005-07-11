@@ -30,7 +30,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -81,13 +85,18 @@ public class ArchiveReader implements DeploymentConstants {
         boolean foundservice = false;
         try {
             if (in != null) {
-                WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
-                WSDLVersionWrapper wsdlVersionWrapper = builder.build(in, new AxisDescWSDLComponentFactory());
+                WOMBuilder builder = WOMBuilderFactory.getBuilder(
+                        WOMBuilderFactory.WSDL11);
+                WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
+                        new AxisDescWSDLComponentFactory());
                 WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
-                Iterator iterator = womDescription.getServices().keySet().iterator();
+                Iterator iterator = womDescription.getServices().keySet()
+                        .iterator();
                 if (iterator.hasNext()) {
                     foundservice = true;
-                    service = (ServiceDescription) womDescription.getServices().get(iterator.next());
+                    service =
+                            (ServiceDescription) womDescription.getServices()
+                            .get(iterator.next());
                 }
                 if (!foundservice) {
                     service = new ServiceDescription();
@@ -96,7 +105,9 @@ public class ArchiveReader implements DeploymentConstants {
                 in.close();
             } else {
                 service = new ServiceDescription();
-                log.info("WSDL file not found for the service :  " + file.getName());
+                log.info(
+                        "WSDL file not found for the service :  " +
+                        file.getName());
             }
         } catch (Exception e) {
             throw new DeploymentException(e);
@@ -113,7 +124,9 @@ public class ArchiveReader implements DeploymentConstants {
      * @param engine
      */
 
-    public void readServiceArchive(String filename, DeploymentEngine engine, ServiceDescription service) throws DeploymentException {
+    public void readServiceArchive(String filename,
+                                   DeploymentEngine engine,
+                                   ServiceDescription service) throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
         String strArchive = filename;
@@ -138,7 +151,9 @@ public class ArchiveReader implements DeploymentConstants {
         }
     }
 
-    public void readModuleArchive(String filename, DeploymentEngine engine, ModuleDescription module) throws DeploymentException {
+    public void readModuleArchive(String filename,
+                                  DeploymentEngine engine,
+                                  ModuleDescription module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
         String strArchive = filename;
@@ -157,7 +172,9 @@ public class ArchiveReader implements DeploymentConstants {
             //  zin.closeEntry();
             zin.close();
             if (!foundmoduleXML) {
-                throw new DeploymentException("module.xml not found  for the module :  " + strArchive);
+                throw new DeploymentException(
+                        "module.xml not found  for the module :  " +
+                        strArchive);
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());
@@ -173,7 +190,8 @@ public class ArchiveReader implements DeploymentConstants {
      * @return
      * @throws DeploymentException
      */
-    public File creatModuleArchivefromResource(String moduleName, String axis2repository) throws DeploymentException {
+    public File creatModuleArchivefromResource(String moduleName,
+                                               String axis2repository) throws DeploymentException {
         File modulearchiveFile = null;
         File modules = null;
         try {
@@ -208,12 +226,14 @@ public class ArchiveReader implements DeploymentConstants {
             byte data[] = new byte[BUFFER];
 
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
+            InputStream in = cl.getResourceAsStream(
+                    "modules/" + moduleName + ".mar");
             if (in == null) {
                 in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
             }
             if (in == null) {
-                throw new DeploymentException(moduleName + " module is not found");
+                throw new DeploymentException(
+                        moduleName + " module is not found");
             }
             ZipInputStream zin = null;
             zin = new ZipInputStream(in);

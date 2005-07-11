@@ -22,7 +22,11 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPFaultDetail;
 
-import javax.xml.soap.*;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -67,7 +71,8 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 
         String localName = name.getLocalName();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
+        OMNamespace ns = omFactory.createOMNamespace(name.getURI(),
+                name.getPrefix());
         OMElement detailEntry = omFactory.createOMElement(localName, ns);
         detail.addDetailEntry(detailEntry);
         return (new DetailEntryImpl(detailEntry));
@@ -79,7 +84,8 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      * @param detailEntry
      * @return
      */
-    protected DetailEntry addDetailEntry(org.apache.axis2.om.OMElement detailEntry) {
+    protected DetailEntry addDetailEntry(
+            org.apache.axis2.om.OMElement detailEntry) {
         detail.addDetailEntry(detailEntry);
         return (new DetailEntryImpl(detailEntry));
     }

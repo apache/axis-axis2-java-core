@@ -43,7 +43,8 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     public void send(String opName, OMElement toSend) throws AxisFault {
-        OperationDescription axisOp = serviceContext.getServiceConfig().getOperation(opName);
+        OperationDescription axisOp = serviceContext.getServiceConfig()
+                .getOperation(opName);
         if (axisOp == null) {
             axisOp = new OperationDescription(new QName(opName));
             serviceContext.getServiceConfig().addOperation(axisOp);
@@ -62,9 +63,11 @@ public class MessageSender extends InOnlyMEPClient {
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
-        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        ServiceDescription axisService = new ServiceDescription(
+                assumedServiceName);
         sysContext.getAxisConfiguration().addService(axisService);
-        ServiceContext service = sysContext.createServiceContext(assumedServiceName);
+        ServiceContext service = sysContext.createServiceContext(
+                assumedServiceName);
         return service;
     }
 }

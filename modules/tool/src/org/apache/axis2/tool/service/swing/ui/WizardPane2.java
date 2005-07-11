@@ -93,14 +93,18 @@ public class WizardPane2 extends WizardPane {
         this.setSize(width, height);
 
         initDescription("\n Select either the service xml file or the class that you want to \n " +
-                        " expose as the service to auto generate a service.xml. \n " +
-                        " Only the class files that are in the previously selected location can\n" +
-                        " be laded from here");
+                " expose as the service to auto generate a service.xml. \n " +
+                " Only the class files that are in the previously selected location can\n" +
+                " be laded from here");
 
         ButtonGroup group = new ButtonGroup();
 
-        this.selectManualFileRadioButton = new JRadioButton("Select a file manually");
-        this.selectManualFileRadioButton.setBounds(hgap, descHeight, Constants.UIConstants.RADIO_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.selectManualFileRadioButton =
+                new JRadioButton("Select a file manually");
+        this.selectManualFileRadioButton.setBounds(hgap,
+                descHeight,
+                Constants.UIConstants.RADIO_BUTTON_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.add(this.selectManualFileRadioButton);
         group.add(selectManualFileRadioButton);
         this.selectManualFileRadioButton.addActionListener(new ActionListener() {
@@ -108,8 +112,12 @@ public class WizardPane2 extends WizardPane {
                 changeSelectionScreen();
             }
         });
-        this.createAutomaticFileRadioButton = new JRadioButton("Create a file automatically");
-        this.createAutomaticFileRadioButton.setBounds(hgap, descHeight + vgap + Constants.UIConstants.GENERAL_COMP_HEIGHT, Constants.UIConstants.RADIO_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.createAutomaticFileRadioButton =
+                new JRadioButton("Create a file automatically");
+        this.createAutomaticFileRadioButton.setBounds(hgap,
+                descHeight + vgap + Constants.UIConstants.GENERAL_COMP_HEIGHT,
+                Constants.UIConstants.RADIO_BUTTON_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.add(this.createAutomaticFileRadioButton);
         group.add(createAutomaticFileRadioButton);
         this.createAutomaticFileRadioButton.addActionListener(new ActionListener() {
@@ -120,7 +128,11 @@ public class WizardPane2 extends WizardPane {
 
         this.selectionPanel = new JPanel();
         this.selectionPanel.setLayout(null);
-        this.selectionPanel.setBounds(0, descHeight + 2 * Constants.UIConstants.GENERAL_COMP_HEIGHT + 2 * vgap, width, 100);
+        this.selectionPanel.setBounds(0,
+                descHeight + 2 * Constants.UIConstants.GENERAL_COMP_HEIGHT +
+                2 * vgap,
+                width,
+                100);
         this.add(this.selectionPanel);
 
         //select manual option by default
@@ -169,7 +181,8 @@ public class WizardPane2 extends WizardPane {
         public ManualSelectionPanel(boolean loadVals) {
             init();
             if (loadVals) {
-                this.serverXMLFileLocationTextBox.setText(myBean.getManualFileName());
+                this.serverXMLFileLocationTextBox.setText(
+                        myBean.getManualFileName());
             }
         }
 
@@ -179,11 +192,18 @@ public class WizardPane2 extends WizardPane {
 
             this.serverXMLFileLocationLabel = new JLabel("Service File");
             this.add(this.serverXMLFileLocationLabel);
-            this.serverXMLFileLocationLabel.setBounds(hgap, vgap, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.serverXMLFileLocationLabel.setBounds(hgap,
+                    vgap,
+                    Constants.UIConstants.LABEL_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
             this.serverXMLFileLocationTextBox = new JTextField();
             this.add(this.serverXMLFileLocationTextBox);
-            this.serverXMLFileLocationTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, vgap, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.serverXMLFileLocationTextBox.setBounds(
+                    Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                    vgap,
+                    Constants.UIConstants.TEXT_BOX_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.serverXMLFileLocationTextBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     setOutFileName();
@@ -203,7 +223,12 @@ public class WizardPane2 extends WizardPane {
 
             this.browseButton = new JButton(".");
             this.add(this.browseButton);
-            this.browseButton.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap + Constants.UIConstants.TEXT_BOX_WIDTH, vgap, Constants.UIConstants.BROWSE_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.browseButton.setBounds(
+                    Constants.UIConstants.LABEL_WIDTH + 2 * hgap +
+                    Constants.UIConstants.TEXT_BOX_WIDTH,
+                    vgap,
+                    Constants.UIConstants.BROWSE_BUTTON_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     serverXMLFileLocationTextBox.setText(browseForAFile("xml"));
@@ -234,8 +259,10 @@ public class WizardPane2 extends WizardPane {
         public AutomaticSelectionPanel(boolean loadVals) {
             init();
             if (loadVals) {
-                this.classFileNameTextBox.setText(myBean.getAutomaticClassName());
-                this.providerClassNameTextBox.setText(myBean.getProviderClassName());
+                this.classFileNameTextBox.setText(
+                        myBean.getAutomaticClassName());
+                this.providerClassNameTextBox.setText(
+                        myBean.getProviderClassName());
             }
         }
 
@@ -245,11 +272,18 @@ public class WizardPane2 extends WizardPane {
 
             this.classFileListLable = new JLabel("Class Name");
             this.add(this.classFileListLable);
-            this.classFileListLable.setBounds(hgap, vgap, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.classFileListLable.setBounds(hgap,
+                    vgap,
+                    Constants.UIConstants.LABEL_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
             this.classFileNameTextBox = new JTextField();
             this.add(this.classFileNameTextBox);
-            this.classFileNameTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, vgap, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.classFileNameTextBox.setBounds(
+                    Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                    vgap,
+                    Constants.UIConstants.TEXT_BOX_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.classFileNameTextBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     setClassName();
@@ -269,11 +303,18 @@ public class WizardPane2 extends WizardPane {
 
             this.providerClassLable = new JLabel("Provider Class Name");
             this.add(this.providerClassLable);
-            this.providerClassLable.setBounds(hgap, (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap), Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.providerClassLable.setBounds(hgap,
+                    (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap),
+                    Constants.UIConstants.LABEL_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
             this.providerClassNameTextBox = new JTextField();
             this.add(this.providerClassNameTextBox);
-            this.providerClassNameTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap * 2), Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.providerClassNameTextBox.setBounds(
+                    Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                    (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap * 2),
+                    Constants.UIConstants.TEXT_BOX_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.providerClassNameTextBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     setProviderClassName();
@@ -293,9 +334,12 @@ public class WizardPane2 extends WizardPane {
 
             this.loadButton = new JButton("Load");
             this.add(this.loadButton);
-            this.loadButton.setBounds(hgap, (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap) * 2 + vgap,
-                                      Constants.UIConstants.GENERAL_BUTTON_WIDTH,
-                                      Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.loadButton.setBounds(hgap, (Constants.UIConstants.GENERAL_COMP_HEIGHT +
+                    vgap) *
+                    2 +
+                    vgap,
+                    Constants.UIConstants.GENERAL_BUTTON_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.loadButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     loadAllMethods();
@@ -305,10 +349,12 @@ public class WizardPane2 extends WizardPane {
 
             this.advancedButton = new JButton("Advanced");
             this.add(this.advancedButton);
-            this.advancedButton.setBounds(2 * hgap + Constants.UIConstants.GENERAL_BUTTON_WIDTH
-                                          , (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap) * 2 + vgap,
-                                          Constants.UIConstants.GENERAL_BUTTON_WIDTH,
-                                          Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.advancedButton.setBounds(
+                    2 * hgap + Constants.UIConstants.GENERAL_BUTTON_WIDTH
+                    , (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap) * 2 +
+                    vgap,
+                    Constants.UIConstants.GENERAL_BUTTON_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.advancedButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     openDialog();
@@ -319,7 +365,8 @@ public class WizardPane2 extends WizardPane {
 
         private void loadAllMethods() {
             try {
-                ArrayList methodList = new Controller().getMethodList(parentBean);
+                ArrayList methodList = new Controller().getMethodList(
+                        parentBean);
                 myBean.setSelectedMethodNames(methodList);
                 loadButton.setEnabled(false);
                 advancedButton.setEnabled(true);
@@ -361,7 +408,8 @@ public class WizardPane2 extends WizardPane {
         private ArrayList completeMethodList;
 
 
-        public AdvancedSelectionDialog() throws HeadlessException, ProcessException {
+        public AdvancedSelectionDialog() throws HeadlessException,
+                ProcessException {
             super();
             super.setModal(true);
             super.setTitle("Select Methods");
@@ -371,9 +419,11 @@ public class WizardPane2 extends WizardPane {
 
         private void init() throws ProcessException {
             //load the class file list
-            this.completeMethodList = new Controller().getMethodList(parentBean);
+            this.completeMethodList =
+                    new Controller().getMethodList(parentBean);
             int methodCount = this.completeMethodList.size();
-            int panelHeight = methodCount * (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap);
+            int panelHeight = methodCount *
+                    (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap);
 
             this.lablePanel = new JPanel();
             this.lablePanel.setLayout(null);
@@ -387,14 +437,20 @@ public class WizardPane2 extends WizardPane {
             this.selectedValues = new boolean[methodCount];
 
             for (int i = 0; i < methodCount; i++) {
-                tempCheckBox = new JCheckBox(this.completeMethodList.get(i).toString());
-                currentSelection = currentSelectedList.contains(this.completeMethodList.get(i));
+                tempCheckBox =
+                        new JCheckBox(
+                                this.completeMethodList.get(i).toString());
+                currentSelection =
+                        currentSelectedList.contains(
+                                this.completeMethodList.get(i));
                 tempCheckBox.setSelected(currentSelection);
                 selectedValues[i] = currentSelection;
-                tempCheckBox.setBounds(hgap, vgap + (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap) * i,
-                                       Constants.UIConstants.LABEL_WIDTH * 3,
-                                       Constants.UIConstants.GENERAL_COMP_HEIGHT);
-                tempCheckBox.addActionListener(new CheckBoxActionListner(tempCheckBox, i));
+                tempCheckBox.setBounds(hgap, vgap +
+                        (Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap) * i,
+                        Constants.UIConstants.LABEL_WIDTH * 3,
+                        Constants.UIConstants.GENERAL_COMP_HEIGHT);
+                tempCheckBox.addActionListener(
+                        new CheckBoxActionListner(tempCheckBox, i));
                 this.lablePanel.add(tempCheckBox);
 
             }
@@ -402,8 +458,8 @@ public class WizardPane2 extends WizardPane {
             okButton = new JButton("OK");
             this.getContentPane().add(this.okButton);
             this.okButton.setBounds(hgap, panelHeight + vgap,
-                                    Constants.UIConstants.GENERAL_BUTTON_WIDTH,
-                                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
+                    Constants.UIConstants.GENERAL_BUTTON_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.okButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     loadValuesToBean();
@@ -413,16 +469,21 @@ public class WizardPane2 extends WizardPane {
 
             cancelButton = new JButton("Cancel");
             this.getContentPane().add(this.cancelButton);
-            this.cancelButton.setBounds(hgap * 2 + Constants.UIConstants.GENERAL_BUTTON_WIDTH, panelHeight + vgap,
-                                        Constants.UIConstants.GENERAL_BUTTON_WIDTH,
-                                        Constants.UIConstants.GENERAL_COMP_HEIGHT);
+            this.cancelButton.setBounds(
+                    hgap * 2 + Constants.UIConstants.GENERAL_BUTTON_WIDTH, panelHeight +
+                    vgap,
+                    Constants.UIConstants.GENERAL_BUTTON_WIDTH,
+                    Constants.UIConstants.GENERAL_COMP_HEIGHT);
             this.cancelButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     closeMe();
                 }
             });
 
-            this.setSize(width, panelHeight + 2 * Constants.UIConstants.GENERAL_COMP_HEIGHT + 30);
+            this.setSize(width,
+                    panelHeight +
+                    2 * Constants.UIConstants.GENERAL_COMP_HEIGHT +
+                    30);
             this.setResizable(false);
         }
 

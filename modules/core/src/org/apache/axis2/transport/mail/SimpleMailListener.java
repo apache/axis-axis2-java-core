@@ -55,7 +55,8 @@ import java.io.File;
 
 public class SimpleMailListener extends TransportListener implements Runnable {
 
-    protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
+    protected static Log log = LogFactory.getLog(
+            SimpleMailListener.class.getName());
 
     private String host;
 
@@ -88,7 +89,8 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             e.printStackTrace();
         }
         try {
-            System.out.println("Sleeping for a bit to let the engine start up.");
+            System.out.println(
+                    "Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.debug(e1.getMessage(), e1);
@@ -144,7 +146,10 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         while (!stopped) {
             try {
 
-                EmailReceiver receiver = new EmailReceiver(user, host, port, password);
+                EmailReceiver receiver = new EmailReceiver(user,
+                        host,
+                        port,
+                        password);
                 receiver.connect();
                 Message[] msgs = receiver.receive();
 
@@ -153,7 +158,8 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         if (msg != null) {
-                            MailWorker worker = new MailWorker(msg, configurationContext);
+                            MailWorker worker = new MailWorker(msg,
+                                    configurationContext);
                             worker.doWork();
                         }
                         msg.setFlag(Flags.Flag.DELETED, true);
@@ -168,7 +174,10 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             } catch (Exception e) {
                 //log.debug(Messages.getMessage("exception00"), e); TODO Issue
                 // #1 CT 07-Feb-2005.
-                log.debug("An error occured when running the mail listner." + e.getMessage(), e);
+                log.debug(
+                        "An error occured when running the mail listner." +
+                        e.getMessage(),
+                        e);
                 e.printStackTrace();
                 break;
             }
@@ -229,17 +238,20 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             System.out.println("java SimpleMailListener <repository>");
         } else {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ConfigurationContext configurationContext = builder.buildConfigurationContext(args[0]);
+            ConfigurationContext configurationContext = builder.buildConfigurationContext(
+                    args[0]);
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
-                    configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+                    configurationContext.getAxisConfiguration().getTransportIn(
+                            new QName(Constants.TRANSPORT_MAIL));
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 System.out.println("Starting the SimpleMailListener with repository "
-                                   + new File(args[0]).getAbsolutePath());
+                        + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
-                System.out.println("Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
+                System.out.println(
+                        "Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
             }
         }
     }
@@ -247,25 +259,36 @@ public class SimpleMailListener extends TransportListener implements Runnable {
     /* (non-Javadoc)
      * @see org.apache.axis2.transport.TransportListener#init(org.apache.axis2.context.ConfigurationContext, org.apache.axis2.description.TransportInDescription)
      */
-    public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
+    public void init(ConfigurationContext configurationContext,
+                     TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
 
-        user = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_USER));
-        host = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_HOST));
-        password = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_PASSWORD));
-        port = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_PORT));
-        replyTo = Utils.getParameterValue(transportIn.getParameter(MailConstants.RAPLY_TO));
+        user =
+                Utils.getParameterValue(
+                        transportIn.getParameter(MailConstants.POP3_USER));
+        host =
+                Utils.getParameterValue(
+                        transportIn.getParameter(MailConstants.POP3_HOST));
+        password =
+                Utils.getParameterValue(
+                        transportIn.getParameter(MailConstants.POP3_PASSWORD));
+        port =
+                Utils.getParameterValue(
+                        transportIn.getParameter(MailConstants.POP3_PORT));
+        replyTo =
+                Utils.getParameterValue(
+                        transportIn.getParameter(MailConstants.RAPLY_TO));
         if (user == null || host == null || password == null || port == null) {
             throw new AxisFault("user, port, host or password not set, "
-                                + "   [user null = "
-                                + (user == null)
-                                + ", password null= "
-                                + (password == null)
-                                + ", host null "
-                                + (host == null)
-                                + ",port null "
-                                + (port == null));
+                    + "   [user null = "
+                    + (user == null)
+                    + ", password null= "
+                    + (password == null)
+                    + ", host null "
+                    + (host == null)
+                    + ",port null "
+                    + (port == null));
         }
 
     }
@@ -275,7 +298,8 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         // TODO Auto-generated method stub
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo + "/services/" + serviceName);
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
+                replyTo + "/services/" + serviceName);
     }
 
 }

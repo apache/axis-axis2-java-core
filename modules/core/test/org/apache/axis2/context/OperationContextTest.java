@@ -39,23 +39,32 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-        ServiceContext sessionContext = new ServiceContext(new ServiceDescription(), new ConfigurationContext(null));
+        ServiceContext sessionContext = new ServiceContext(
+                new ServiceDescription(), new ConfigurationContext(null));
         MessageContext messageContext1 = this.getBasicMessageContext();
 
-        messageContext1.setMessageID(new Long(System.currentTimeMillis()).toString());
-        OperationDescription axisOperation = new OperationDescription(new QName("test"));
-        OperationContext operationContext1 = axisOperation.findOperationContext(messageContext1, sessionContext);
+        messageContext1.setMessageID(
+                new Long(System.currentTimeMillis()).toString());
+        OperationDescription axisOperation = new OperationDescription(
+                new QName("test"));
+        OperationContext operationContext1 = axisOperation.findOperationContext(
+                messageContext1, sessionContext);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
-        messageContext2.setMessageID(new Long(System.currentTimeMillis()).toString());
-        messageContext2.getMessageInformationHeaders().setRelatesTo(new RelatesTo(messageContext1.getMessageID()));
-        OperationContext operationContext2 = axisOperation.findOperationContext(messageContext2, sessionContext);
+        messageContext2.setMessageID(
+                new Long(System.currentTimeMillis()).toString());
+        messageContext2.getMessageInformationHeaders().setRelatesTo(
+                new RelatesTo(messageContext1.getMessageID()));
+        OperationContext operationContext2 = axisOperation.findOperationContext(
+                messageContext2, sessionContext);
         assertEquals(operationContext1, operationContext2);
     }
 
     public MessageContext getBasicMessageContext() throws AxisFault {
 
-        return new MessageContext(engineCtx, new TransportInDescription(new QName("axis")), new TransportOutDescription(new QName("axis")));
+        return new MessageContext(engineCtx,
+                new TransportInDescription(new QName("axis")),
+                new TransportOutDescription(new QName("axis")));
 
     }
 

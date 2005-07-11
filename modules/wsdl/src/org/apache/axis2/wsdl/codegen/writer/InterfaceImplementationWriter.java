@@ -27,7 +27,8 @@ public class InterfaceImplementationWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public InterfaceImplementationWriter(File outputFileLocation, int language) {
+    public InterfaceImplementationWriter(File outputFileLocation,
+                                         int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -39,10 +40,14 @@ public class InterfaceImplementationWriter extends ClassWriter {
         Class clazz = this.getClass();
         switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceImplementationTemplates.JAVA_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTInterfaceImplementationTemplates.JAVA_TEMPLATE);
                 break;
             case XSLTConstants.LanguageTypes.C_SHARP:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceImplementationTemplates.CSHARP_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTInterfaceImplementationTemplates.CSHARP_TEMPLATE);
                 break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
             case XSLTConstants.LanguageTypes.VB_DOT_NET:

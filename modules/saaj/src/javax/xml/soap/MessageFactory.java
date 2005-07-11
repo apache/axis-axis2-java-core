@@ -117,11 +117,12 @@ public abstract class MessageFactory {
     public static MessageFactory newInstance() throws SOAPException {
 
         try {
-            return (MessageFactory) FactoryFinder.find(MESSAGE_FACTORY_PROPERTY,
-                                                       DEFAULT_MESSAGE_FACTORY);
+            return (MessageFactory) FactoryFinder.find(
+                    MESSAGE_FACTORY_PROPERTY,
+                    DEFAULT_MESSAGE_FACTORY);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create message factory for SOAP: "
-                                    + exception.getMessage());
+                    + exception.getMessage());
         }
     }
 
@@ -162,7 +163,8 @@ public abstract class MessageFactory {
      *                       problem in reading data from the input stream
      * @throws SOAPException if the message is invalid
      */
-    public abstract SOAPMessage createMessage(MimeHeaders mimeheaders, InputStream inputstream)
+    public abstract SOAPMessage createMessage(MimeHeaders mimeheaders,
+                                              InputStream inputstream)
             throws IOException, SOAPException;
 
     private static final String DEFAULT_MESSAGE_FACTORY =

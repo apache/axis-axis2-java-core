@@ -107,7 +107,9 @@ public interface SOAPEnvelope extends SOAPElement {
      *         local name, namespace prefix, and namespace URI
      * @throws SOAPException if there is a SOAP error
      */
-    public abstract Name createName(String localName, String prefix, String uri)
+    public abstract Name createName(String localName,
+                                    String prefix,
+                                    String uri)
             throws SOAPException;
 
     /**

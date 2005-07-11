@@ -36,7 +36,8 @@ import java.io.Reader;
 public class TransportUtils {
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
 
-        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
+        InputStream inStream = (InputStream) msgContext.getProperty(
+                MessageContext.TRANSPORT_IN);
         msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
         if (inStream == null) {
             throw new AxisFault("Input stream is Null");
@@ -44,13 +45,16 @@ public class TransportUtils {
         return createSOAPMessage(msgContext, inStream);
     }
 
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream)
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
+                                                 InputStream inStream)
             throws AxisFault {
         try {
             Object contentType = null;
             OperationContext opContext = msgContext.getOperationContext();
             if (opContext != null) {
-                contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
+                contentType =
+                        opContext.getProperty(
+                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
             } else {
                 throw new AxisFault("Operation Context can not be Null");
             }
@@ -60,12 +64,16 @@ public class TransportUtils {
 
             if (contentType != null) {
                 msgContext.setDoingMTOM(true);
-                builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream, (String) contentType);
+                builder =
+                        HTTPTransportUtils.selectBuilderForMIME(msgContext,
+                                inStream,
+                                (String) contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (msgContext.isDoingREST()) {
                 Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(reader);
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                reader);
                 SOAPFactory soapFactory = new SOAP11Factory();
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);
@@ -74,7 +82,8 @@ public class TransportUtils {
             } else {
                 Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(reader);
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                reader);
                 builder = new StAXSOAPModelBuilder(xmlreader);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }

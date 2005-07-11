@@ -91,8 +91,9 @@ public class AsynchronousClient {
         prop = new Properties();
         try {
             String workingDir = System.getProperty("user.dir");
-            propertyFile = new File(workingDir + File.separator + "samples" + File.separator +
-                                    "key.properties");
+            propertyFile = new File(workingDir + File.separator + "samples" +
+                    File.separator +
+                    "key.properties");
             propertyFile.createNewFile();
             prop.load(new FileInputStream(propertyFile));
             amazonkey = prop.getProperty("amazonKey");
@@ -139,7 +140,10 @@ public class AsynchronousClient {
         Call call = new Call();
         URL url = null;
         try {
-            url = new URL("http", "soap.amazon.com", "/onca/soap?Service=AlexaWebInfoService");
+            url =
+                    new URL("http",
+                            "soap.amazon.com",
+                            "/onca/soap?Service=AlexaWebInfoService");
 
             /** Uncomment the folowing to use TCP Monitor, and comment the above */
 
@@ -148,28 +152,36 @@ public class AsynchronousClient {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        url.toString()));
         MessageContext requestContext = ClientUtil.getMessageContext();
         try {
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
 
             System.out.println("Sending the Async message ....");
 
-            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter
-                                             (System.out));
+            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter
+                    (System.out));
             requestContext.getEnvelope().serialize(omOutput);
             omOutput.flush();
 
             System.out.println();
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             OperationDescription opdesc = new OperationDescription(opName);
-            call.invokeNonBlocking(opdesc, requestContext, new ClientCallbackHandler());
+            call.invokeNonBlocking(opdesc,
+                    requestContext,
+                    new ClientCallbackHandler());
         } catch (AxisFault e1) {
             e1.printStackTrace();
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
-        System.out.println("Message sent and the client thread is returned....");
+        System.out.println(
+                "Message sent and the client thread is returned....");
     }
 }
 

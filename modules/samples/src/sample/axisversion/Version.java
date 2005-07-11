@@ -34,7 +34,9 @@ public class Version {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement version = fac.createOMElement("Version", omNs);
-        version.addChild(fac.createText(version, "Hello I am Axis2 versionning service , My version is Axis2 M2 !! "));
+        version.addChild(
+                fac.createText(version,
+                        "Hello I am Axis2 versionning service , My version is Axis2 M2 !! "));
         return version;
     }
 }

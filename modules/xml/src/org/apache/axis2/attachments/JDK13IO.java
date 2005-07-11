@@ -51,7 +51,10 @@ public class JDK13IO extends Component implements ImageIO {
             MediaTracker tracker = new MediaTracker(this);
             tracker.addImage(image, 0);
             tracker.waitForAll();
-            rendImage = new BufferedImage(image.getWidth(null), image.getHeight(null), 1);
+            rendImage =
+                    new BufferedImage(image.getWidth(null),
+                            image.getHeight(null),
+                            1);
             Graphics g = rendImage.createGraphics();
             g.drawImage(image, 0, 0, null);
         }

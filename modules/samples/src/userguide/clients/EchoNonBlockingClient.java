@@ -21,8 +21,9 @@ import java.io.StringWriter;
  * Time: 5:08:44 PM
  */
 public class EchoNonBlockingClient {
-    private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                                                                       "http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {
@@ -30,14 +31,19 @@ public class EchoNonBlockingClient {
 
             Call call = new Call();
             call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
 
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+                        result.getResponseEnvelope().serializeWithCache(
+                                new OMOutput(
+                                        XMLOutputFactory.newInstance()
+                                .createXMLStreamWriter(writer)));
                         writer.flush();
 
                         System.out.println(writer.toString());

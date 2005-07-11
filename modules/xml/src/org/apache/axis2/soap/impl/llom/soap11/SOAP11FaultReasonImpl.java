@@ -47,14 +47,16 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
         if (!(soapFaultText instanceof SOAP11FaultTextImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Text. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Text. But received some other implementation");
         }
         super.setSOAPText(soapFaultText);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 
@@ -67,7 +69,8 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(omOutput));
         }
 
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
@@ -75,9 +78,10 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
             String prefix = this.getNamespace().getPrefix();
             String nameSpaceName = this.getNamespace().getName();
             writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME,
-                                     nameSpaceName);
+                    nameSpaceName);
         } else {
-            writer.writeStartElement(SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME);
+            writer.writeStartElement(
+                    SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME);
         }
         OMSerializerUtil.serializeAttributes(this, omOutput);
         OMSerializerUtil.serializeNamespaces(this, omOutput);

@@ -35,29 +35,44 @@ public class SOAPFaultNodeTest extends SOAPFaultTestCase {
     //SOAP 1.1 Fault Node Test (Programaticaly Created)
     public void testSOAP11SetNodeValue() {
         soap11FaultNode.setNodeValue("This is only a test");
-        assertTrue("SOAP 1.1 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value", soap11FaultNode.getNodeValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.1 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value",
+                soap11FaultNode.getNodeValue().equals("This is only a test"));
     }
 
     public void testSOAP11GetNodeValue() {
-        assertTrue("SOAP 1.1 Fault Node Test : - After creating SOAPFaultNode, it has a value", soap11FaultNode.getNodeValue().equals(""));
+        assertTrue(
+                "SOAP 1.1 Fault Node Test : - After creating SOAPFaultNode, it has a value",
+                soap11FaultNode.getNodeValue().equals(""));
         soap11FaultNode.setNodeValue("This is only a test");
-        assertTrue("SOAP 1.1 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value", soap11FaultNode.getNodeValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.1 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value",
+                soap11FaultNode.getNodeValue().equals("This is only a test"));
     }
 
     //SOAP 1.2 Fault Node Test (Programaticaly Created)
     public void testSOAP12SetNodeValue() {
         soap12FaultNode.setNodeValue("This is only a test");
-        assertTrue("SOAP 1.2 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value", soap12FaultNode.getNodeValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.2 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value",
+                soap12FaultNode.getNodeValue().equals("This is only a test"));
     }
 
     public void testSOAP12GetNodeValue() {
-        assertTrue("SOAP 1.2 Fault Node Test : - After creating SOAPFaultNode, it has a value", soap12FaultNode.getNodeValue().equals(""));
+        assertTrue(
+                "SOAP 1.2 Fault Node Test : - After creating SOAPFaultNode, it has a value",
+                soap12FaultNode.getNodeValue().equals(""));
         soap12FaultNode.setNodeValue("This is only a test");
-        assertTrue("SOAP 1.2 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value", soap12FaultNode.getNodeValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.2 Fault Node Test : - After calling setNodeValue method, getNodeValue method returns incorrect value",
+                soap12FaultNode.getNodeValue().equals("This is only a test"));
     }
 
     //SOAP 1.2 Fault Node Test (With Parser)
     public void testSOAP12GetNodeValueWithParser() {
-        assertTrue("SOAP 1.2 Fault Node Test With Parser : - getNodeValue method returns incorrect value", soap12FaultNodeWithParser.getNodeValue().equals("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
+        assertTrue(
+                "SOAP 1.2 Fault Node Test With Parser : - getNodeValue method returns incorrect value",
+                soap12FaultNodeWithParser.getNodeValue().equals(
+                        "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
     }
 }

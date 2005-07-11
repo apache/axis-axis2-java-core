@@ -54,15 +54,18 @@ public class LocalTransportReceiver {
     public void processMessage(InputStream in, EndpointReference to) throws AxisFault {
         try {
             TransportInDescription tIn =
-                    confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_LOCAL));
+                    confContext.getAxisConfiguration().getTransportIn(
+                            new QName(Constants.TRANSPORT_LOCAL));
             TransportOutDescription tOut =
-                    confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_LOCAL));
+                    confContext.getAxisConfiguration().getTransportOut(
+                            new QName(Constants.TRANSPORT_LOCAL));
             MessageContext msgCtx = new MessageContext(confContext, tIn, tOut);
             msgCtx.setTo(to);
             msgCtx.setServerSide(true);
 
             XMLStreamReader reader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(new BufferedReader(new InputStreamReader(in)));
+                    XMLInputFactory.newInstance().createXMLStreamReader(
+                            new BufferedReader(new InputStreamReader(in)));
 
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
             msgCtx.setEnvelope((SOAPEnvelope) builder.getDocumentElement());

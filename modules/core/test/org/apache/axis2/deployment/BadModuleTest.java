@@ -33,11 +33,13 @@ public class BadModuleTest extends AbstractTestCase {
 
     public void testBadModuleXML() {
         try {
-            InputStream in = new FileInputStream(getTestResourceFile("deployment/Badmodule.xml"));
+            InputStream in = new FileInputStream(
+                    getTestResourceFile("deployment/Badmodule.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
             AxisConfigurationImpl glabl = new AxisConfigurationImpl();
             parser.processGlobalConfig(glabl, DeploymentConstants.AXIS2CONFIG);
-            fail("this must failed gracefully with DeploymentException or FileNotFoundException");
+            fail(
+                    "this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
             return;
         } catch (DeploymentException e) {

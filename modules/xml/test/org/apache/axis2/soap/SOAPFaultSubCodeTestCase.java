@@ -39,17 +39,24 @@ public class SOAPFaultSubCodeTestCase extends SOAPFaultCodeTestCase {
         super.setUp();
         soap11FaultValue = soap11Factory.createSOAPFaultValue(soap11FaultCode);
 
-        soap12FaultValueInFaultCode = soap12Factory.createSOAPFaultValue(soap12FaultCode);
-        soap12FaultSubCodeInCode = soap12Factory.createSOAPFaultSubCode(soap12FaultCode);
+        soap12FaultValueInFaultCode =
+                soap12Factory.createSOAPFaultValue(soap12FaultCode);
+        soap12FaultSubCodeInCode =
+                soap12Factory.createSOAPFaultSubCode(soap12FaultCode);
 
 
-        soap12FaultSubCodeInSubCode = soap12Factory.createSOAPFaultSubCode(soap12FaultSubCodeInCode);
+        soap12FaultSubCodeInSubCode =
+                soap12Factory.createSOAPFaultSubCode(soap12FaultSubCodeInCode);
 
         soap11FaultValueWithParser = soap11FaultCodeWithParser.getValue();
-        soap12FaultValueInFaultCodeWithParser = soap12FaultCodeWithParser.getValue();
-        soap12FaultSubCodeInFaultCodeWithParser = soap12FaultCodeWithParser.getSubCode();
+        soap12FaultValueInFaultCodeWithParser =
+                soap12FaultCodeWithParser.getValue();
+        soap12FaultSubCodeInFaultCodeWithParser =
+                soap12FaultCodeWithParser.getSubCode();
 
-        soap12FaultValueInFaultSubCodeWithParser = soap12FaultSubCodeInFaultCodeWithParser.getValue();
-        soap12FaultSubCodeInSubCodeWithParser = soap12FaultSubCodeInFaultCodeWithParser.getSubCode();
+        soap12FaultValueInFaultSubCodeWithParser =
+                soap12FaultSubCodeInFaultCodeWithParser.getValue();
+        soap12FaultSubCodeInSubCodeWithParser =
+                soap12FaultSubCodeInFaultCodeWithParser.getSubCode();
     }
 }

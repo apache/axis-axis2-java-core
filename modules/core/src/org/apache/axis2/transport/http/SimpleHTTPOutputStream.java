@@ -68,10 +68,12 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     public void writeHeader() throws IOException {
         StringBuffer buf = new StringBuffer();
         if (chuncked) {
-            buf.append(new String(HTTPConstants.HEADER_PROTOCOL_11)).append(" ");
+            buf.append(new String(HTTPConstants.HEADER_PROTOCOL_11)).append(
+                    " ");
             buf.append(new String(HTTPConstants.OK)).append("\n");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ");
-            buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append("\n");
+            buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append(
+                    "\n");
             if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");

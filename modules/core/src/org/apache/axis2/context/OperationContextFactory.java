@@ -24,7 +24,8 @@ import org.apache.wsdl.WSDLConstants;
 public class OperationContextFactory implements WSDLConstants {
 
     public static OperationContext createMEPContext(int mepURI,
-                                                    OperationDescription axisOp, ServiceContext serviceContext)
+                                                    OperationDescription axisOp,
+                                                    ServiceContext serviceContext)
             throws AxisFault {
         if (MEP_CONSTANT_IN_OUT == mepURI || MEP_CONSTANT_IN_ONLY == mepURI
                 || MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI
@@ -37,7 +38,7 @@ public class OperationContextFactory implements WSDLConstants {
 
         } else {
             throw new AxisFault("Cannot handle the MEP " + mepURI
-                                + " for the current invocation of Operation ");
+                    + " for the current invocation of Operation ");
         }
     }
 

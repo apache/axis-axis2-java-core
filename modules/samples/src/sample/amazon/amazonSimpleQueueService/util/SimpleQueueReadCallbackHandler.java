@@ -37,7 +37,8 @@ public class SimpleQueueReadCallbackHandler extends Callback {
     public SimpleQueueReadCallbackHandler() {
     }//defalut handler
 
-    public SimpleQueueReadCallbackHandler(JTextField queueCode, JTextArea results) {
+    public SimpleQueueReadCallbackHandler(JTextField queueCode,
+                                          JTextArea results) {
         super();
         this.queueCode = queueCode;
         this.results = results;

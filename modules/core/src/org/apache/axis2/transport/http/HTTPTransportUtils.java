@@ -25,7 +25,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -42,24 +46,33 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
 
 public class HTTPTransportUtils {
 
     public static void processHTTPPostRequest(MessageContext msgContext,
-                                              InputStream in, OutputStream out, String contentType,
-                                              String soapAction, String requestURI,
+                                              InputStream in,
+                                              OutputStream out,
+                                              String contentType,
+                                              String soapAction,
+                                              String requestURI,
                                               ConfigurationContext configurationContext) throws AxisFault {
         try {
-            if (soapAction != null && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
+            if (soapAction != null && soapAction.startsWith("\"") &&
+                    soapAction.endsWith("\"")) {
                 soapAction = soapAction.substring(1, soapAction.length() - 1);
             }
             msgContext.setWSAAction(soapAction);
             msgContext.setSoapAction(soapAction);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                                                   requestURI));
+                    requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
 
@@ -67,14 +80,19 @@ public class HTTPTransportUtils {
             StAXBuilder builder = null;
 
 
-            if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0) {
+            if (contentType.indexOf(
+                    HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >=
+                    0) {
                 builder = selectBuilderForMIME(msgContext, in, contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (contentType != null
-                    && contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                    &&
+                    contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >
+                    -1) {
 //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
 //the SOAP Action is absent it is rest !!
-                Object enable = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
+                Object enable = msgContext.getProperty(
+                        Constants.Configuration.ENABLE_REST);
                 if ((soapAction == null || soapAction.length() == 0)
                         && Constants.VALUE_TRUE.equals(enable)) {
                     msgContext.setDoingREST(true);
@@ -110,22 +128,28 @@ public class HTTPTransportUtils {
     }
 
     public static boolean processHTTPGetRequest(MessageContext msgContext,
-                                                InputStream in, OutputStream out, String contentType,
-                                                String soapAction, String requestURI,
-                                                ConfigurationContext configurationContext, Map requestParameters)
+                                                InputStream in,
+                                                OutputStream out,
+                                                String contentType,
+                                                String soapAction,
+                                                String requestURI,
+                                                ConfigurationContext configurationContext,
+                                                Map requestParameters)
             throws AxisFault {
-        if (soapAction != null && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
+        if (soapAction != null && soapAction.startsWith("\"") &&
+                soapAction.endsWith("\"")) {
             soapAction = soapAction.substring(1, soapAction.length() - 1);
         }
         msgContext.setWSAAction(soapAction);
         msgContext.setSoapAction(soapAction);
         msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                                               requestURI));
+                requestURI));
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
         msgContext.setServerSide(true);
         try {
             SOAPEnvelope envelope = HTTPTransportUtils
-                    .createEnvelopeFromGetRequest(requestURI, requestParameters);
+                    .createEnvelopeFromGetRequest(requestURI,
+                            requestParameters);
             if (envelope == null) {
                 return false;
             } else {
@@ -140,7 +164,8 @@ public class HTTPTransportUtils {
         }
     }
 
-    public static final SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map) {
+    public static final SOAPEnvelope createEnvelopeFromGetRequest(
+            String requestUrl, Map map) {
         String[] values = Utils
                 .parseRequestURLForServiceAndOperation(requestUrl);
 
@@ -150,7 +175,7 @@ public class HTTPTransportUtils {
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
 
             OMNamespace omNs = soapFactory.createOMNamespace(values[0],
-                                                             "services");
+                    "services");
             OMNamespace defualtNs = new OMNamespaceImpl("", null);
 
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
@@ -172,20 +197,31 @@ public class HTTPTransportUtils {
     }
 
     public static StAXBuilder selectBuilderForMIME(MessageContext msgContext,
-                                                   InputStream inStream, String contentTypeString) throws OMException,
+                                                   InputStream inStream,
+                                                   String contentTypeString) throws OMException,
             XMLStreamException, FactoryConfigurationError {
         StAXBuilder builder = null;
 
-        boolean fileCacheForAttachments = (Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.CACHE_ATTACHMENTS)));
+        boolean fileCacheForAttachments = (Constants.VALUE_TRUE.equals(
+                msgContext.getProperty(
+                        Constants.Configuration.CACHE_ATTACHMENTS)));
         String attachmentRepoDir = null;
         if (fileCacheForAttachments) {
-            attachmentRepoDir = (String) msgContext.getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+            attachmentRepoDir =
+                    (String) msgContext.getProperty(
+                            Constants.Configuration.ATTACHMENT_TEMP_DIR);
         }
 
-        MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString, fileCacheForAttachments, attachmentRepoDir);
+        MIMEHelper mimeHelper = new MIMEHelper(inStream,
+                contentTypeString,
+                fileCacheForAttachments,
+                attachmentRepoDir);
         XMLStreamReader reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(new BufferedReader(new InputStreamReader(mimeHelper
-                                                                                .getSOAPPartInputStream())));
+                .createXMLStreamReader(
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        mimeHelper
+                .getSOAPPartInputStream())));
         /*
          * put a reference to Attachments in to the message context
          */
@@ -195,7 +231,8 @@ public class HTTPTransportUtils {
              * Creates the MTOM specific MTOMStAXSOAPModelBuilder
              */
             builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
-        } else if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.SWA_TYPE)) {
+        } else if (mimeHelper.getAttachmentSpecType().equals(
+                MIMEHelper.SWA_TYPE)) {
             builder = new StAXSOAPModelBuilder(reader);
         }
         return builder;
@@ -222,9 +259,12 @@ public class HTTPTransportUtils {
 
     public static boolean doWriteMTOM(MessageContext msgContext) {
         boolean enableMTOM = false;
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
-            enableMTOM = Constants.VALUE_TRUE.equals(msgContext
-                                                     .getProperty(Constants.Configuration.ENABLE_MTOM));
+        if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) !=
+                null) {
+            enableMTOM =
+                    Constants.VALUE_TRUE.equals(
+                            msgContext
+                    .getProperty(Constants.Configuration.ENABLE_MTOM));
         }
         boolean envelopeContainsOptimise = HTTPTransportUtils
                 .checkEnvelopeForOptimise(msgContext.getEnvelope());

@@ -56,19 +56,23 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        ServiceDescription service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+        ServiceDescription service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
 
 
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
-        ModuleDescription m1 = new ModuleDescription(new QName("", "A Mdoule 1"));
+        ModuleDescription m1 = new ModuleDescription(
+                new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         service.engageModule(m1);
 
-        OperationDescription operation = new OperationDescription(operationName);
+        OperationDescription operation = new OperationDescription(
+                operationName);
         service.addOperation(operation);
 
         UtilServer.deployService(service);

@@ -39,7 +39,8 @@ public class WizardPane1 extends WizardPage {
     public WizardPane1() {
         super("page1");
         this.setTitle(ServiceArchiver.getResourceString("page1.title"));
-        this.setDescription(ServiceArchiver.getResourceString("page1.welcometext"));
+        this.setDescription(
+                ServiceArchiver.getResourceString("page1.welcometext"));
         this.setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
     }
 
@@ -54,7 +55,8 @@ public class WizardPane1 extends WizardPage {
         container.setLayout(layout);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label lable = new Label(container, SWT.NULL);
-        lable.setText(ServiceArchiver.getResourceString("page1.fileLocationLabel"));
+        lable.setText(
+                ServiceArchiver.getResourceString("page1.fileLocationLabel"));
 
         classFileLocationText = new Text(container, SWT.BORDER);
         classFileLocationText.setLayoutData(gd);
@@ -65,7 +67,8 @@ public class WizardPane1 extends WizardPage {
         });
 
         browseButton = new Button(container, SWT.PUSH);
-        browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
+        browseButton.setText(
+                ServiceArchiver.getResourceString("general.browse"));
         browseButton.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
                 handleBrowse();
@@ -79,7 +82,8 @@ public class WizardPane1 extends WizardPage {
 
     private void handleBrowse() {
         DirectoryDialog dirDialog = new DirectoryDialog(this.getShell());
-        dirDialog.setMessage(ServiceArchiver.getResourceString("page1.filedialogTitle"));
+        dirDialog.setMessage(
+                ServiceArchiver.getResourceString("page1.filedialogTitle"));
         String returnText = dirDialog.open();
         if (returnText != null) {
             this.classFileLocationText.setText(returnText);

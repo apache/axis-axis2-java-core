@@ -63,8 +63,9 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
 
                 // check the current node for the criteria
                 if ((currentChild instanceof OMElementImpl)
-                        && (isQNamesMatch(((OMElementImpl) currentChild).getQName(),
-                                          this.givenQName))) {
+                        && (isQNamesMatch(
+                                ((OMElementImpl) currentChild).getQName(),
+                                this.givenQName))) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {
@@ -120,13 +121,19 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
         boolean localNameMatch =
                 (qNameToBeMatched.getLocalPart() == null)
                 || (qNameToBeMatched.getLocalPart() == "")
-                || ((elementQName != null)
-                && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
+                ||
+                ((elementQName != null)
+                &&
+                elementQName.getLocalPart().equalsIgnoreCase(
+                        qNameToBeMatched.getLocalPart()));
         boolean namespaceURIMatch =
                 (qNameToBeMatched.getNamespaceURI() == null)
                 || (qNameToBeMatched.getNamespaceURI() == "")
-                || ((elementQName != null)
-                && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
+                ||
+                ((elementQName != null)
+                &&
+                elementQName.getNamespaceURI().equalsIgnoreCase(
+                        qNameToBeMatched.getNamespaceURI()));
         return localNameMatch && namespaceURIMatch;
     }
 }

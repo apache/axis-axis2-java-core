@@ -80,13 +80,17 @@ public class Call extends InOutMEPClient {
     public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
 
         OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(
+                        new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setRemainingPhasesInFlow(
+                    operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setPhasesInFaultFlow(
+                    operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(
+                    operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
 
@@ -111,16 +115,22 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
 
-    public void invokeNonBlocking(String axisop, OMElement toSend, Callback callback)
+    public void invokeNonBlocking(String axisop,
+                                  OMElement toSend,
+                                  Callback callback)
             throws AxisFault {
         OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(
+                        new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setRemainingPhasesInFlow(
+                    operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setPhasesInFaultFlow(
+                    operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(
+                    operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
         MessageContext msgctx = prepareTheSystem(toSend);
@@ -145,11 +155,14 @@ public class Call extends InOutMEPClient {
 
         //create new service
         QName assumedServiceName = new QName("AnonnoymousService");
-        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
-        operationTemplate = new OperationDescription(new QName("TemplateOperatin"));
+        ServiceDescription axisService = new ServiceDescription(
+                assumedServiceName);
+        operationTemplate =
+                new OperationDescription(new QName("TemplateOperatin"));
         axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
-        ServiceContext service = sysContext.createServiceContext(assumedServiceName);
+        ServiceContext service = sysContext.createServiceContext(
+                assumedServiceName);
         return service;
     }
 

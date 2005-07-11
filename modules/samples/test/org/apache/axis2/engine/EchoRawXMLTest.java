@@ -41,13 +41,14 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -70,11 +71,12 @@ public class EchoRawXMLTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
     }
 
@@ -90,11 +92,14 @@ public class EchoRawXMLTest extends TestCase {
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
-                TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
+                TestingUtils.campareWithCreatedOMElement(
+                        result.getResponseEnvelope().getBody().getFirstElement());
                 finish = true;
             }
 
@@ -104,13 +109,16 @@ public class EchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
+        call.invokeNonBlocking(operationName.getLocalPart(),
+                payload,
+                callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
             index++;
             if (index > 10) {
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                throw new AxisFault(
+                        "Server is shutdown as the Async response take too longs time");
             }
         }
         call.close();
@@ -127,10 +135,13 @@ public class EchoRawXMLTest extends TestCase {
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                        payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }
@@ -142,9 +153,12 @@ public class EchoRawXMLTest extends TestCase {
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        OMElement result = (OMElement) call.invokeBlocking(
+                operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }

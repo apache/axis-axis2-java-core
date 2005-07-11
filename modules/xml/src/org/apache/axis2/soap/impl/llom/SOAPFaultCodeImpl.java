@@ -43,8 +43,11 @@ public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFault
      * @param parent
      * @param parent
      */
-    public SOAPFaultCodeImpl(SOAPFault parent, boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, extractNamespaceFromParent);
+    public SOAPFaultCodeImpl(SOAPFault parent,
+                             boolean extractNamespaceFromParent) throws SOAPProcessingException {
+        super(parent,
+                SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME,
+                extractNamespaceFromParent);
     }
 
     /**
@@ -55,7 +58,8 @@ public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFault
     }
 
     public SOAPFaultValue getValue() {
-        return (SOAPFaultValue) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
+        return (SOAPFaultValue) UtilProvider.getChildWithName(this,
+                SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
     }
 
     public void setSubCode(SOAPFaultSubCode value) throws SOAPProcessingException {
@@ -63,6 +67,7 @@ public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFault
     }
 
     public SOAPFaultSubCode getSubCode() {
-        return (SOAPFaultSubCode) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
+        return (SOAPFaultSubCode) UtilProvider.getChildWithName(this,
+                SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
     }
 }

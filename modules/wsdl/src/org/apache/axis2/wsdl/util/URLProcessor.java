@@ -43,7 +43,9 @@ public class URLProcessor {
             String[] arrayOfItems = s.split("\\.");
             int length = arrayOfItems.length;
             for (int i = length; i > 0; i--) {
-                returnPackageName = returnPackageName.concat((i == length ? "" : ".") + arrayOfItems[i - 1]);
+                returnPackageName =
+                        returnPackageName.concat(
+                                (i == length ? "" : ".") + arrayOfItems[i - 1]);
             }
         } else {
             returnPackageName = DEFAULT_PACKAGE;

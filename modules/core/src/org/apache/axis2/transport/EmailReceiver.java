@@ -19,7 +19,14 @@ package org.apache.axis2.transport;
 
 import org.apache.axis2.engine.AxisFault;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Store;
 import java.util.Properties;
 
 /**
@@ -37,7 +44,10 @@ public class EmailReceiver {
     private Store store;
     private Folder inbox;
 
-    public EmailReceiver(String user, String host, String popPort, String password) {
+    public EmailReceiver(String user,
+                         String host,
+                         String popPort,
+                         String password) {
         this.user = user;
         this.host = host;
         this.popPort = popPort;

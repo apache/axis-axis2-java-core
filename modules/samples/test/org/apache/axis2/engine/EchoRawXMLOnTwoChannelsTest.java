@@ -41,13 +41,14 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -67,15 +68,17 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getAxisConfiguration().engageModule(new QName("addressing"));
+        UtilServer.getConfigurationContext().getAxisConfiguration()
+                .engageModule(new QName("addressing"));
 
         ServiceDescription service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
     }
 
@@ -88,10 +91,11 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     public void testEchoXMLCompleteASync() throws Exception {
         ServiceDescription service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
 
-        ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(service);
+        ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(
+                service);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -101,15 +105,20 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                serviceContext);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
         try {
             call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    true);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
+                    TestingUtils.campareWithCreatedOMElement(
+                            result.getResponseEnvelope().getBody()
+                            .getFirstElement());
                     finish = true;
                 }
 
@@ -119,13 +128,16 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
                 }
             };
 
-            call.invokeNonBlocking(operationName.getLocalPart(), method, callback);
+            call.invokeNonBlocking(operationName.getLocalPart(),
+                    method,
+                    callback);
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
                 index++;
                 if (index > 10) {
-                    throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                    throw new AxisFault(
+                            "Server is shutdown as the Async response take too longs time");
                 }
             }
             log.info("send the reqest");

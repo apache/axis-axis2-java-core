@@ -34,7 +34,9 @@ public abstract class AbstractRobustInMessageReceiver
         try {
             invokeBusinessLogic(messgeCtx);
         } catch (AxisFault e) {
-            AxisEngine engine = new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+            AxisEngine engine = new AxisEngine(
+                    messgeCtx.getOperationContext().getServiceContext()
+                    .getEngineContext());
             engine.handleFault(messgeCtx, e);
         }
     }

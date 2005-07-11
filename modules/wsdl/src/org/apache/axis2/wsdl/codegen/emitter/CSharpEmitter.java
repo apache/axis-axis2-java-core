@@ -31,7 +31,8 @@ public class CSharpEmitter extends MultiLanguageClientEmitter {
 
     }
 
-    public CSharpEmitter(CodeGenConfiguration configuration, TypeMapper mapper) {
+    public CSharpEmitter(CodeGenConfiguration configuration,
+                         TypeMapper mapper) {
         this.configuration = configuration;
         this.mapper = mapper;
 

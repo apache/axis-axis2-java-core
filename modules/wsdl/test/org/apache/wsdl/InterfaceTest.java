@@ -35,11 +35,14 @@ public class InterfaceTest extends AbstractTestCase {
         for (int j = 0; j < interfaceCounter; j++) {
             intfc = new WSDLInterfaceImpl();
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE, "inteface"
-                                                                     + j));
+                    + j));
             for (int i = 0; i < operationCounter; i++) {
                 op = new WSDLOperationImpl();
-                op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE, "op" + i
-                                                                      + "of inteface" + j));
+                op.setName(
+                        new QName(WSDLConstants.WSDL1_1_NAMESPACE,
+                                "op" + i
+                        + "of inteface" +
+                        j));
                 assertNotNull(op.getName());
                 intfc.setOperation(op);
             }
@@ -49,24 +52,29 @@ public class InterfaceTest extends AbstractTestCase {
             array[j] = intfc;
         }
         assertEquals(((WSDLOperation) array[0].getOperation("op0of inteface0"))
-                     .getName().getLocalPart(), "op0of inteface0");
+                .getName().getLocalPart(), "op0of inteface0");
         assertEquals(((WSDLOperation) array[0].getOperation("op1of inteface0"))
-                     .getName().getLocalPart(), "op1of inteface0");
+                .getName().getLocalPart(), "op1of inteface0");
         assertEquals(array[interfaceCounter - 1].getAllOperations().size(),
-                     interfaceCounter * operationCounter);
+                interfaceCounter * operationCounter);
         assertEquals(interfaceCounter * operationCounter,
-                     array[interfaceCounter - 1].getAllOperations().size());
+                array[interfaceCounter - 1].getAllOperations().size());
         Iterator iter = array[1].getAllOperations().keySet().iterator();
         while (iter.hasNext()) {
-            assertNotNull(((WSDLOperation) array[interfaceCounter - 1]
-                                           .getAllOperations().get(iter.next())).getName());
+            assertNotNull(
+                    ((WSDLOperation) array[interfaceCounter - 1]
+                    .getAllOperations()
+                    .get(iter.next())).getName());
         }
         for (int j = 0; j < interfaceCounter; j++) {
             for (int i = 0; i < operationCounter; i++) {
-                WSDLOperation operation = (WSDLOperation) array[interfaceCounter - 1]
+                WSDLOperation operation = (WSDLOperation) array[interfaceCounter -
+                        1]
                         .getAllOperations().get("op" + j + "of inteface" + i);
-                assertEquals((operation).getName().getLocalPart(), "op" + j
-                                                                   + "of inteface" + i);
+                assertEquals((operation).getName().getLocalPart(),
+                        "op" + j
+                        + "of inteface" +
+                        i);
             }
         }
 
@@ -87,11 +95,11 @@ public class InterfaceTest extends AbstractTestCase {
             for (int j = 0; j < operationCounter; j++) {
                 op = new WSDLOperationImpl();
                 op.setName(new QName(WSDLConstants.WSDL1_1_NAMESPACE,
-                                     "operation" + j));
+                        "operation" + j));
                 intfc.setOperation(op);
             }
             intfc.setName(new QName(WSDLConstants.WSDL2_0_NAMESPACE,
-                                    "Interface" + i));
+                    "Interface" + i));
             array[i] = intfc;
         }
         WSDLInterface inheritedInterface = new WSDLInterfaceImpl();

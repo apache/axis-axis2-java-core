@@ -21,7 +21,12 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.TransportSender;
@@ -66,7 +71,8 @@ public class AxisEngine {
             verifyContextBuilt(msgContext);
             OperationContext operationContext = msgContext.getOperationContext();
 
-            ArrayList phases = operationContext.getAxisOperation().getPhasesOutFlow();
+            ArrayList phases = operationContext.getAxisOperation()
+                    .getPhasesOutFlow();
             if (msgContext.isPaused()) {
                 resumeInvocationPhases(phases, msgContext);
             } else {
@@ -99,7 +105,8 @@ public class AxisEngine {
         try {
             ConfigurationContext sysCtx = msgContext.getSystemContext();
             ArrayList phases =
-                    sysCtx.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+                    sysCtx.getAxisConfiguration()
+                    .getInPhasesUptoAndIncludingPostDispatch();
 
             if (paused) {
                 resumeInvocationPhases(phases, msgContext);
@@ -153,9 +160,11 @@ public class AxisEngine {
             if (context.getFaultTo() != null) {
                 faultContext.setFaultTo(context.getFaultTo());
             } else {
-                Object writer = context.getProperty(MessageContext.TRANSPORT_OUT);
+                Object writer = context.getProperty(
+                        MessageContext.TRANSPORT_OUT);
                 if (writer != null) {
-                    faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
+                    faultContext.setProperty(MessageContext.TRANSPORT_OUT,
+                                             writer);
                 } else {
                     //TODO Opps there are no place to send this, we will log and should we throw the exception? 
                     log.error("Error in fault flow", e);
@@ -170,10 +179,15 @@ public class AxisEngine {
 
             try {
 
-                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(context.getEnvelope().getNamespace().getName())) {
-                    envelope = OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                        context.getEnvelope().getNamespace().getName())) {
+                    envelope =
+                            OMAbstractFactory.getSOAP12Factory()
+                            .getDefaultFaultEnvelope();
                 } else {
-                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultFaultEnvelope();
+                    envelope =
+                            OMAbstractFactory.getSOAP11Factory()
+                            .getDefaultFaultEnvelope();
                 }
             } catch (SOAPProcessingException e1) {
                 throw new AxisFault(e1);
@@ -184,7 +198,9 @@ public class AxisEngine {
             
 //            body.addFault(new AxisFault(e.getMessage(), e));
             body.getFault().setException(new AxisFault(e.getMessage(), e));
-            extractFaultInformationFromMessageContext(context, envelope.getBody().getFault());
+            extractFaultInformationFromMessageContext(context,
+                                                      envelope.getBody()
+                                                      .getFault());
 
             faultContext.setEnvelope(envelope);
 
@@ -206,28 +222,34 @@ public class AxisEngine {
         }
     }
 
-    private void extractFaultInformationFromMessageContext(MessageContext context, SOAPFault fault) {
-        Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
+    private void extractFaultInformationFromMessageContext(
+            MessageContext context, SOAPFault fault) {
+        Object faultCode = context.getProperty(
+                SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         if (faultCode != null) {
             fault.setCode((SOAPFaultCode) faultCode);
         }
 
-        Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
+        Object faultReason = context.getProperty(
+                SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
         if (faultReason != null) {
             fault.setReason((SOAPFaultReason) faultReason);
         }
 
-        Object faultRole = context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
+        Object faultRole = context.getProperty(
+                SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
         if (faultRole != null) {
             fault.getRole().setText((String) faultRole);
         }
 
-        Object faultNode = context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
+        Object faultNode = context.getProperty(
+                SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
         if (faultNode != null) {
             fault.getNode().setText((String) faultNode);
         }
 
-        Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
+        Object faultDetail = context.getProperty(
+                SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
         }
@@ -253,7 +275,8 @@ public class AxisEngine {
         }
     }
 
-    public void resumeInvocationPhases(ArrayList phases, MessageContext msgctx) throws AxisFault {
+    public void resumeInvocationPhases(ArrayList phases,
+                                       MessageContext msgctx) throws AxisFault {
         msgctx.setPausedFalse();
         int count = phases.size();
         boolean foudMatch = false;
@@ -262,7 +285,8 @@ public class AxisEngine {
             Phase phase = (Phase) phases.get(i);
             if (phase.getPhaseName().equals(msgctx.getPausedPhaseName())) {
                 foudMatch = true;
-                phase.invokeStartFromHandler(msgctx.getPausedHandlerName(), msgctx);
+                phase.invokeStartFromHandler(msgctx.getPausedHandlerName(),
+                                             msgctx);
             } else {
                 if (foudMatch) {
                     phase.invoke(msgctx);

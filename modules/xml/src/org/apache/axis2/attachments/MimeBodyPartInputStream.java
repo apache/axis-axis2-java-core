@@ -32,7 +32,8 @@ public class MimeBodyPartInputStream extends InputStream {
 
     byte[] boundary;
 
-    public MimeBodyPartInputStream(PushbackInputStream inStream, byte[] boundary) {
+    public MimeBodyPartInputStream(PushbackInputStream inStream,
+                                   byte[] boundary) {
         super();
         this.inStream = inStream;
         this.boundary = boundary;

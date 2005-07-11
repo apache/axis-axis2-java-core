@@ -40,7 +40,8 @@ import javax.xml.namespace.QName;
 public class CallUnregisteredServiceTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoXMLService");
-    private QName operationName = new QName("http://localhost/my", "echoOMElement");
+    private QName operationName = new QName("http://localhost/my",
+            "echoOMElement");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -68,27 +69,34 @@ public class CallUnregisteredServiceTest extends TestCase {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
             SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
-            OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+            OMNamespace omNs = fac.createOMNamespace("http://localhost/my",
+                    "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
-            value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+            value.addChild(
+                    fac.createText(value,
+                            "Isaac Assimov, the foundation Sega"));
             method.addChild(value);
             reqEnv.getBody().addChild(method);
 
             Call call = new Call();
             EndpointReference targetEPR =
                     new EndpointReference(AddressingConstants.WSA_TO,
-                                          "http://127.0.0.1:"
-                                          + (UtilServer.TESTING_PORT)
-                                          + "/axis/services/EchoXMLService1");
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+                            "http://127.0.0.1:"
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService1");
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
             call.setTo(targetEPR);
             SOAPEnvelope resEnv =
-                    (SOAPEnvelope) call.invokeBlocking(operationName.getLocalPart(), reqEnv);
+                    (SOAPEnvelope) call.invokeBlocking(
+                            operationName.getLocalPart(), reqEnv);
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
-                throw new AxisFault(sb.getFault().getReason().getSOAPText().getText());
+                throw new AxisFault(
+                        sb.getFault().getReason().getSOAPText().getText());
             }
             fail("The test must fail due to wrong service Name");
 

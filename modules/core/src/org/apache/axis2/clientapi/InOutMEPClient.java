@@ -107,7 +107,8 @@ public class InOutMEPClient extends MEPClient {
     //        throw new UnsupportedOperationException();
     //    }
 
-    public MessageContext invokeBlocking(OperationDescription axisop, final MessageContext msgctx)
+    public MessageContext invokeBlocking(OperationDescription axisop,
+                                         final MessageContext msgctx)
             throws AxisFault {
         verifyInvocation(axisop, msgctx);
         if (useSeparateListener) {
@@ -126,7 +127,8 @@ public class InOutMEPClient extends MEPClient {
                 }
             }
             if (callback.envelope != null) {
-                MessageContext resMsgctx = new MessageContext(serviceContext.getEngineContext());
+                MessageContext resMsgctx = new MessageContext(
+                        serviceContext.getEngineContext());
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -147,15 +149,19 @@ public class InOutMEPClient extends MEPClient {
             ConfigurationContext sysContext = serviceContext.getEngineContext();
             AxisConfiguration registry = sysContext.getAxisConfiguration();
 
-            msgctx.setOperationContext(OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-                                                                                axisop,
-                                                                                serviceContext));
-            MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
+            msgctx.setOperationContext(
+                    OperationContextFactory.createMEPContext(
+                            WSDLConstants.MEP_CONSTANT_IN_OUT,
+                            axisop,
+                            serviceContext));
+            MessageContext response = TwoChannelBasedSender.send(msgctx,
+                    listenerTransport);
 
             SOAPEnvelope resenvelope = response.getEnvelope();
 
             if (resenvelope.getBody().hasFault()) {
-                throw new AxisFault(resenvelope.getBody().getFault().getException());
+                throw new AxisFault(
+                        resenvelope.getBody().getFault().getException());
             }
             return response;
         }
@@ -180,15 +186,22 @@ public class InOutMEPClient extends MEPClient {
                 msgctx.setMessageID(messageID);
                 axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
-                msgctx.setReplyTo(ListenerManager.replyToEPR(serviceContext.getServiceConfig().getName().getLocalPart()
-                                                             + "/"
-                                                             + axisop.getName().getLocalPart(),
-                                                             listenerTransport.getName().getLocalPart()));
-                msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
+                msgctx.setReplyTo(
+                        ListenerManager.replyToEPR(
+                                serviceContext.getServiceConfig().getName()
+                        .getLocalPart()
+                        + "/"
+                        + axisop.getName().getLocalPart(),
+                                listenerTransport.getName().getLocalPart()));
+                msgctx.setOperationContext(
+                        axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
                 engine.send(msgctx);
             } else {
-                serviceContext.getEngineContext().getThreadPool().addWorker(new NonBlockingInvocationWorker(callback, axisop, msgctx));
+                serviceContext.getEngineContext().getThreadPool().addWorker(
+                        new NonBlockingInvocationWorker(callback,
+                                axisop,
+                                msgctx));
             }
 
         } catch (OMException e) {
@@ -228,23 +241,32 @@ public class InOutMEPClient extends MEPClient {
             throws AxisFault {
 
         if (!useSeparateListener) {
-            boolean isTransportsEqual = senderTransport.equals(listenerTransport);
-            boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(senderTransport)
+            boolean isTransportsEqual = senderTransport.equals(
+                    listenerTransport);
+            boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(
+                    senderTransport)
                     || Constants.TRANSPORT_TCP.equals(senderTransport)
-                    || Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
-            boolean isCommonsAndHTTP = Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport)
+                    ||
+                    Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
+            boolean isCommonsAndHTTP = Constants.TRANSPORT_COMMONS_HTTP.equals(
+                    senderTransport)
                     && Constants.TRANSPORT_HTTP.equals(listenerTransport);
-            if (!isCommonsAndHTTP && (!isTransportsEqual || !isATwoWaytransport)) {
-                throw new AxisFault("useSeparateListener = false is only supports by the htpp/tcp and tcp commons transport set as the sender and receiver");
+            if (!isCommonsAndHTTP &&
+                    (!isTransportsEqual || !isATwoWaytransport)) {
+                throw new AxisFault(
+                        "useSeparateListener = false is only supports by the htpp/tcp and tcp commons transport set as the sender and receiver");
             }
         } else {
             this.useSeparateListener = useSeparateListener;
 
         }
 
-        AxisConfiguration axisConfig = serviceContext.getEngineContext().getAxisConfiguration();
-        this.listenerTransport = axisConfig.getTransportIn(new QName(listenerTransport));
-        this.senderTransport = axisConfig.getTransportOut(new QName(senderTransport));
+        AxisConfiguration axisConfig = serviceContext.getEngineContext()
+                .getAxisConfiguration();
+        this.listenerTransport =
+                axisConfig.getTransportIn(new QName(listenerTransport));
+        this.senderTransport =
+                axisConfig.getTransportOut(new QName(senderTransport));
         if (this.senderTransport == null) {
             throw new AxisFault("Unknown transport " + senderTransport);
         }
@@ -258,9 +280,11 @@ public class InOutMEPClient extends MEPClient {
                     .getEngineContext()
                     .getAxisConfiguration()
                     .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
-                throw new AxisFault("to do two Transport Channels the Addressing Modules must be engeged");
+                throw new AxisFault(
+                        "to do two Transport Channels the Addressing Modules must be engeged");
             }
-            ListenerManager.makeSureStarted(listenerTransport, serviceContext.getEngineContext());
+            ListenerManager.makeSureStarted(listenerTransport,
+                    serviceContext.getEngineContext());
         }
     }
 
@@ -270,7 +294,8 @@ public class InOutMEPClient extends MEPClient {
         }
         if (listenerTransport == null) {
             listenerTransport =
-                    serviceContext.getEngineContext().getAxisConfiguration().getTransportIn(senderTransport.getName());
+                    serviceContext.getEngineContext().getAxisConfiguration()
+                    .getTransportIn(senderTransport.getName());
         }
 
         if (msgctx.getTransportIn() == null) {
@@ -299,7 +324,8 @@ public class InOutMEPClient extends MEPClient {
     }
 
     public void engageModule(QName moduleName) throws AxisFault {
-        serviceContext.getEngineContext().getAxisConfiguration().engageModule(moduleName);
+        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
+                moduleName);
     }
 
     public void close() throws AxisFault {
@@ -323,11 +349,14 @@ public class InOutMEPClient extends MEPClient {
 
         public void doWork() {
             try {
-                msgctx.setOperationContext(OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-                                                                                    axisop,
-                                                                                    serviceContext));
+                msgctx.setOperationContext(
+                        OperationContextFactory.createMEPContext(
+                                WSDLConstants.MEP_CONSTANT_IN_OUT,
+                                axisop,
+                                serviceContext));
                 msgctx.setServiceContext(serviceContext);
-                MessageContext response = TwoChannelBasedSender.send(msgctx, listenerTransport);
+                MessageContext response = TwoChannelBasedSender.send(msgctx,
+                        listenerTransport);
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 AsyncResult asyncResult = new AsyncResult(response);
                 callback.onComplete(asyncResult);

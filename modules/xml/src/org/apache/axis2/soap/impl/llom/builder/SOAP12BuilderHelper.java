@@ -3,7 +3,11 @@ package org.apache.axis2.soap.impl.llom.builder;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
@@ -50,182 +54,264 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
         factory = OMAbstractFactory.getSOAP12Factory();
     }
 
-    public OMElement handleEvent(XMLStreamReader parser, OMElement parent, int elementLevel) throws SOAPProcessingException {
+    public OMElement handleEvent(XMLStreamReader parser,
+                                 OMElement parent,
+                                 int elementLevel) throws SOAPProcessingException {
 
         this.parser = parser;
         OMElement element = null;
 
         if (elementLevel == 4) {
-            if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) {
+            if (parser.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) {
                 if (codePresent) {
-                    throw new OMBuilderException("Multiple Code element encountered");
+                    throw new OMBuilderException(
+                            "Multiple Code element encountered");
                 } else {
-                    element = factory.createSOAPFaultCode((SOAPFault) parent, builder);
+                    element =
+                            factory.createSOAPFaultCode((SOAPFault) parent,
+                                    builder);
                     codePresent = true;
                     codeprocessing = true;
                 }
-            } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
+            } else if (parser.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
                 if (!codeprocessing && !subCodeProcessing) {
                     if (codePresent) {
                         if (reasonPresent) {
-                            throw new OMBuilderException("Multiple Reason Element encountered");
+                            throw new OMBuilderException(
+                                    "Multiple Reason Element encountered");
                         } else {
-                            element = factory.createSOAPFaultReason((SOAPFault) parent, builder);
+                            element =
+                                    factory.createSOAPFaultReason(
+                                            (SOAPFault) parent, builder);
                             reasonPresent = true;
                             reasonProcessing = true;
                         }
                     } else {
-                        throw new OMBuilderException("Wrong element order encountred at " + parser.getLocalName());
+                        throw new OMBuilderException(
+                                "Wrong element order encountred at " +
+                                parser.getLocalName());
                     }
                 } else {
                     if (codeprocessing) {
-                        throw new OMBuilderException("Code doesn't have a value");
+                        throw new OMBuilderException(
+                                "Code doesn't have a value");
                     } else {
-                        throw new OMBuilderException("A subcode doesn't have a Value");
+                        throw new OMBuilderException(
+                                "A subcode doesn't have a Value");
                     }
                 }
 
-            } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME)) {
+            } else if (parser.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME)) {
                 if (!reasonProcessing) {
                     if (reasonPresent && !rolePresent && !detailPresent) {
                         if (nodePresent) {
-                            throw new OMBuilderException("Multiple Node element encountered");
+                            throw new OMBuilderException(
+                                    "Multiple Node element encountered");
                         } else {
-                            element = factory.createSOAPFaultNode((SOAPFault) parent, builder);
+                            element =
+                                    factory.createSOAPFaultNode(
+                                            (SOAPFault) parent, builder);
                             nodePresent = true;
                         }
                     } else {
-                        throw new OMBuilderException("wrong element order encountered at " + parser.getLocalName());
+                        throw new OMBuilderException(
+                                "wrong element order encountered at " +
+                                parser.getLocalName());
                     }
                 } else {
-                    throw new OMBuilderException("Reason element Should have a text");
+                    throw new OMBuilderException(
+                            "Reason element Should have a text");
                 }
-            } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME)) {
+            } else if (parser.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME)) {
                 if (!reasonProcessing) {
                     if (reasonPresent && !detailPresent) {
                         if (rolePresent) {
-                            throw new OMBuilderException("Multiple Role element encountered");
+                            throw new OMBuilderException(
+                                    "Multiple Role element encountered");
                         } else {
-                            element = factory.createSOAPFaultRole((SOAPFault) parent, builder);
+                            element =
+                                    factory.createSOAPFaultRole(
+                                            (SOAPFault) parent, builder);
                             rolePresent = true;
                         }
                     } else {
-                        throw new OMBuilderException("Wrong element order encountered at " + parser.getLocalName());
+                        throw new OMBuilderException(
+                                "Wrong element order encountered at " +
+                                parser.getLocalName());
                     }
                 } else {
-                    throw new OMBuilderException("Reason element should have a text");
+                    throw new OMBuilderException(
+                            "Reason element should have a text");
                 }
-            } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+            } else if (parser.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
                 if (!reasonProcessing) {
                     if (reasonPresent) {
                         if (detailPresent) {
-                            throw new OMBuilderException("Multiple detail element encountered");
+                            throw new OMBuilderException(
+                                    "Multiple detail element encountered");
                         } else {
-                            element = factory.createSOAPFaultDetail((SOAPFault) parent, builder);
+                            element =
+                                    factory.createSOAPFaultDetail(
+                                            (SOAPFault) parent, builder);
                             detailPresent = true;
                         }
                     } else {
-                        throw new OMBuilderException("wrong element order encountered at " + parser.getLocalName());
+                        throw new OMBuilderException(
+                                "wrong element order encountered at " +
+                                parser.getLocalName());
                     }
                 } else {
-                    throw new OMBuilderException("Reason element should have a text");
+                    throw new OMBuilderException(
+                            "Reason element should have a text");
                 }
             } else {
-                throw new OMBuilderException(parser.getLocalName() + " unsupported element in SOAPFault element");
+                throw new OMBuilderException(
+                        parser.getLocalName() +
+                        " unsupported element in SOAPFault element");
             }
 
         } else if (elementLevel == 5) {
-            if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) {
-                if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME)) {
+            if (parent.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) {
+                if (parser.getLocalName().equals(
+                        SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME)) {
                     if (!valuePresent) {
-                        element = factory.createSOAPFaultValue((SOAPFaultCode) parent, builder);
+                        element =
+                                factory.createSOAPFaultValue(
+                                        (SOAPFaultCode) parent, builder);
                         valuePresent = true;
                         codeprocessing = false;
                     } else {
-                        throw new OMBuilderException("Multiple value Encountered in code element");
+                        throw new OMBuilderException(
+                                "Multiple value Encountered in code element");
                     }
 
-                } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
+                } else if (parser.getLocalName().equals(
+                        SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
                     if (!subcodePresent) {
                         if (valuePresent) {
-                            element = factory.createSOAPFaultSubCode((SOAPFaultCode) parent, builder);
+                            element =
+                                    factory.createSOAPFaultSubCode(
+                                            (SOAPFaultCode) parent, builder);
                             subcodePresent = true;
                             subCodeProcessing = true;
                         } else {
-                            throw new OMBuilderException("Value should present before the subcode");
+                            throw new OMBuilderException(
+                                    "Value should present before the subcode");
                         }
 
                     } else {
-                        throw new OMBuilderException("multiple subcode Encountered in code element");
+                        throw new OMBuilderException(
+                                "multiple subcode Encountered in code element");
                     }
                 } else {
-                    throw new OMBuilderException(parser.getLocalName() + " is not supported inside the code element");
+                    throw new OMBuilderException(
+                            parser.getLocalName() +
+                            " is not supported inside the code element");
                 }
 
-            } else if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
-                if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME)) {
-                    element = factory.createSOAPFaultText((SOAPFaultReason) parent, builder);
+            } else if (parent.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
+                if (parser.getLocalName().equals(
+                        SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME)) {
+                    element =
+                            factory.createSOAPFaultText(
+                                    (SOAPFaultReason) parent, builder);
                     element.setComplete(false);
                     reasonProcessing = false;
                     builder.setBooleanProcessingMandatoryFaultElements(false);
                 } else {
-                    throw new OMBuilderException(parser.getLocalName() + " is not supported inside the reason");
+                    throw new OMBuilderException(
+                            parser.getLocalName() +
+                            " is not supported inside the reason");
                 }
-            } else if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
-                element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, builder);
+            } else if (parent.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+                element =
+                        OMAbstractFactory.getOMFactory().createOMElement(
+                                parser.getLocalName(), null, parent, builder);
                 builder.setProcessingDetailElements(true);
                 detailElementNames = new Vector();
                 detailElementNames.add(parser.getLocalName());
 
             } else {
-                throw new OMBuilderException(parent.getLocalName() + " should not have child element");
+                throw new OMBuilderException(
+                        parent.getLocalName() +
+                        " should not have child element");
             }
 
 
         } else if (elementLevel > 5) {
-            if (parent.getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
-                if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME)) {
+            if (parent.getLocalName().equals(
+                    SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
+                if (parser.getLocalName().equals(
+                        SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME)) {
                     if (subcodeValuePresent) {
-                        throw new OMBuilderException("multiple subCode value encountered");
+                        throw new OMBuilderException(
+                                "multiple subCode value encountered");
                     } else {
-                        element = factory.createSOAPFaultValue((SOAPFaultSubCode) parent, builder);
+                        element =
+                                factory.createSOAPFaultValue(
+                                        (SOAPFaultSubCode) parent, builder);
                         subcodeValuePresent = true;
                         subSubcodePresent = false;
                         subCodeProcessing = false;
                     }
-                } else if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
+                } else if (parser.getLocalName().equals(
+                        SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME)) {
                     if (subcodeValuePresent) {
                         if (!subSubcodePresent) {
-                            element = factory.createSOAPFaultSubCode((SOAPFaultSubCode) parent, builder);
+                            element =
+                                    factory.createSOAPFaultSubCode(
+                                            (SOAPFaultSubCode) parent,
+                                            builder);
                             subcodeValuePresent = false;
                             subSubcodePresent = true;
                             subCodeProcessing = true;
                         } else {
-                            throw new OMBuilderException("multiple subcode encountered");
+                            throw new OMBuilderException(
+                                    "multiple subcode encountered");
                         }
                     } else {
-                        throw new OMBuilderException("Value should present before the subcode");
+                        throw new OMBuilderException(
+                                "Value should present before the subcode");
                     }
                 } else {
-                    throw new OMBuilderException(parser.getLocalName() + " is not supported inside the subCode element");
+                    throw new OMBuilderException(
+                            parser.getLocalName() +
+                            " is not supported inside the subCode element");
                 }
             } else if (builder.isProcessingDetailElements()) {
                 int detailElementLevel = 0;
                 boolean localNameExist = false;
                 for (int i = 0; i < detailElementNames.size(); i++) {
-                    if (parent.getLocalName().equals((String) detailElementNames.get(i))) {
+                    if (parent.getLocalName().equals(
+                            (String) detailElementNames.get(i))) {
                         localNameExist = true;
                         detailElementLevel = i + 1;
                     }
                 }
                 if (localNameExist) {
                     detailElementNames.setSize(detailElementLevel);
-                    element = OMAbstractFactory.getOMFactory().createOMElement(parser.getLocalName(), null, parent, builder);
+                    element =
+                            OMAbstractFactory.getOMFactory().createOMElement(
+                                    parser.getLocalName(),
+                                    null,
+                                    parent,
+                                    builder);
                     detailElementNames.add(parser.getLocalName());
                 }
 
             } else {
-                throw new OMBuilderException(parent.getLocalName() + " should not have child at element level " + elementLevel);
+                throw new OMBuilderException(
+                        parent.getLocalName() +
+                        " should not have child at element level " +
+                        elementLevel);
             }
         }
 

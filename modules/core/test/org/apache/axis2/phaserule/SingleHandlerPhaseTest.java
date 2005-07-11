@@ -47,7 +47,8 @@ public class SingleHandlerPhaseTest extends TestCase {
             Phase p2 = new Phase("PhaseB");
             phases.add(p2);
 
-            MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
+            MessageContext msg = new MessageContext(
+                    new ConfigurationContext(new AxisConfigurationImpl()));
 
             PhaseHolder ph = new PhaseHolder(phases);
             HandlerDescription hm = new HandlerDescription();
@@ -78,7 +79,7 @@ public class SingleHandlerPhaseTest extends TestCase {
             ph.addHandler(hm1);
             p1.invoke(msg);
             fail("This should fail with : can only have one handler, since there is a " +
-                 "handler with both phaseFirst and PhaseLast true ");
+                    "handler with both phaseFirst and PhaseLast true ");
         } catch (AxisFault axisFault) {
             return;
         }

@@ -39,7 +39,8 @@ public interface SOAPHeader extends OMElement {
      * @throws org.apache.axis2.om.OMException
      *          if a SOAP error occurs
      */
-    public abstract SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns) throws OMException;
+    public abstract SOAPHeaderBlock addHeaderBlock(String localName,
+                                                   OMNamespace ns) throws OMException;
 
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>

@@ -127,21 +127,22 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page5.inputwsdl.label"));
+                .getResourceString("page5.inputwsdl.label"));
 
         inputWSDLNameTextBox = new Text(container, SWT.BORDER | SWT.SINGLE);
         inputWSDLNameTextBox.setLayoutData(gd);
         inputWSDLNameTextBox.setText(settings.get(PREF_JAVA_INPUT_WSDL_NAME));
         inputWSDLNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_INPUT_WSDL_NAME, inputWSDLNameTextBox.getText());
+                settings.put(PREF_JAVA_INPUT_WSDL_NAME,
+                        inputWSDLNameTextBox.getText());
                 //dialogChanged();
             }
         });
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page5.servicelocation.label"));
+                .getResourceString("page5.servicelocation.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         serviceLocationURLTextBox = new Text(container, SWT.BORDER);
@@ -149,14 +150,15 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         serviceLocationURLTextBox.setText(settings.get(PREF_JAVA_LOCATION));
         serviceLocationURLTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_LOCATION, serviceLocationURLTextBox.getText());
+                settings.put(PREF_JAVA_LOCATION,
+                        serviceLocationURLTextBox.getText());
                 //dialogChanged();
             }
         });
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page5.binding.label"));
+                .getResourceString("page5.binding.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         bindingTextBox = new Text(container, SWT.BORDER);
@@ -171,7 +173,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page5.porttype.label"));
+                .getResourceString("page5.porttype.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         portTypeNameTextBox = new Text(container, SWT.BORDER);
@@ -179,7 +181,8 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         portTypeNameTextBox.setText(settings.get(PREF_JAVA_PORTYPE_NAME));
         portTypeNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_PORTYPE_NAME, portTypeNameTextBox.getText());
+                settings.put(PREF_JAVA_PORTYPE_NAME,
+                        portTypeNameTextBox.getText());
                 //dialogChanged();
             }
         });
@@ -188,16 +191,19 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                         .getResourceString("page5.mode.label"));
+                .getResourceString("page5.mode.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        modeSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        modeSelectionCombo =
+                new Combo(container,
+                        SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         modeSelectionCombo.setLayoutData(gd);
         // modeSelectionCombo.
         populateModeCombo();
         modeSelectionCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_JAVA_MODE_INDEX, modeSelectionCombo.getSelectionIndex());
+                settings.put(PREF_JAVA_MODE_INDEX,
+                        modeSelectionCombo.getSelectionIndex());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -208,15 +214,18 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                         .getResourceString("page5.style.label"));
+                .getResourceString("page5.style.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        styleSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        styleSelectionCombo =
+                new Combo(container,
+                        SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         styleSelectionCombo.setLayoutData(gd);
         populateStyleCombo();
         styleSelectionCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_JAVA_STYLE_INDEX, styleSelectionCombo.getSelectionIndex());
+                settings.put(PREF_JAVA_STYLE_INDEX,
+                        styleSelectionCombo.getSelectionIndex());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -245,7 +254,8 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     }
 
     public int getMode() {
-        String selectedOption = modeSelectionCombo.getItem(modeSelectionCombo.getSelectionIndex());
+        String selectedOption = modeSelectionCombo.getItem(
+                modeSelectionCombo.getSelectionIndex());
         if (WSDL_ALL.equals(selectedOption)) {
             return Emitter.MODE_ALL;
         } else if (WSDL_INTERFACE_ONLY.equals(selectedOption)) {
@@ -259,7 +269,9 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
 
     public String getStyle() {
-        return this.styleSelectionCombo.getItem(styleSelectionCombo.getSelectionIndex()).toUpperCase();
+        return this.styleSelectionCombo.getItem(
+                styleSelectionCombo.getSelectionIndex())
+                .toUpperCase();
     }
 
     public String getLocationURL() {

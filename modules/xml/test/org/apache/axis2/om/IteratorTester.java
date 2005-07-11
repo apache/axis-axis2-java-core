@@ -30,7 +30,12 @@ public class IteratorTester extends AbstractTestCase {
     }
 
     protected void setUp() throws Exception {
-        envelope = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")))).getSOAPEnvelope();
+        envelope =
+                new StAXSOAPModelBuilder(
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                new FileReader(
+                                        getTestResourceFile(
+                                                "soap/soapmessage1.xml")))).getSOAPEnvelope();
     }
 
     protected void tearDown() throws Exception {
@@ -126,7 +131,9 @@ public class IteratorTester extends AbstractTestCase {
             assertNotNull((OMNode) iter.next());
             secondChildrenCount++;
         }
-        assertEquals("children count must reduce from 1", firstChildrenCount - 1, secondChildrenCount);
+        assertEquals("children count must reduce from 1",
+                firstChildrenCount - 1,
+                secondChildrenCount);
 
     }
 

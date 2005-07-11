@@ -15,7 +15,12 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
@@ -56,7 +61,8 @@ public class SOAPEnvelopeImpl extends SOAPElement
      * @throws OMException
      */
     public SOAPHeader getHeader() throws OMException {
-        return (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
+        return (SOAPHeader) getFirstChildWithName(
+                new QName(SOAPConstants.HEADER_LOCAL_NAME));
     }
 
     /**
@@ -84,10 +90,13 @@ public class SOAPEnvelopeImpl extends SOAPElement
                 }
                 element = (OMElement) node;
 
-                if (node != null && SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                if (node != null &&
+                        SOAPConstants.BODY_LOCAL_NAME.equals(
+                                element.getLocalName())) {
                     return (SOAPBody) element;
                 } else {
-                    throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
+                    throw new OMException(
+                            "SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
                 }
             }
         }

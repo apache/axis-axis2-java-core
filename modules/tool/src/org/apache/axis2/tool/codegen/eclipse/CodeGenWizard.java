@@ -47,7 +47,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         super();
         setNeedsProgressMonitor(true);
         this.setWindowTitle(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                            .getResourceString("general.name"));
+                .getResourceString("general.name"));
     }
 
     /**
@@ -96,7 +96,8 @@ public class CodeGenWizard extends Wizard implements INewWizard {
 
     public IWizardPage getNextPage(IWizardPage page) {
         AbstractWizardPage currentPage = (AbstractWizardPage) page;
-        AbstractWizardPage pageout = (AbstractWizardPage) super.getNextPage(page);
+        AbstractWizardPage pageout = (AbstractWizardPage) super.getNextPage(
+                page);
 
         while (pageout != null && selectedWizardType != pageout.getPageType()) {
             AbstractWizardPage temp = pageout;
@@ -126,11 +127,14 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                     throw new RuntimeException("Invalid state!");
             }
         } catch (Exception e) {
-            MessageDialog.openError(getShell(), CodegenWizardPlugin.getResourceString("general.Error"), e.getMessage());
+            MessageDialog.openError(getShell(),
+                    CodegenWizardPlugin.getResourceString("general.Error"),
+                    e.getMessage());
             return false;
         }
-        MessageDialog.openInformation(this.getShell(), CodegenWizardPlugin.getResourceString("general.name"),
-                                      CodegenWizardPlugin.getResourceString("wizard.success"));
+        MessageDialog.openInformation(this.getShell(), CodegenWizardPlugin.getResourceString(
+                "general.name"),
+                CodegenWizardPlugin.getResourceString("wizard.success"));
         return true;
     }
 
@@ -147,7 +151,10 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                 /*
                  * "3" is the total amount of steps, see below monitor.worked(amount)
                  */
-                monitor.beginTask(CodegenWizardPlugin.getResourceString("generator.generating"), 3);
+                monitor.beginTask(
+                        CodegenWizardPlugin.getResourceString(
+                                "generator.generating"),
+                        3);
 
                 try {
                     /*
@@ -158,23 +165,30 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                      * we will be informed by Axis2 about the progress of code generation.
                      */
                     WSDL2JavaGenerator generator = new WSDL2JavaGenerator();
-                    monitor.subTask(CodegenWizardPlugin.getResourceString("generator.readingWOM"));
-                    WSDLDescription wom = generator.getWOM(wsdlSelectionPage.getFileName());
+                    monitor.subTask(
+                            CodegenWizardPlugin.getResourceString(
+                                    "generator.readingWOM"));
+                    WSDLDescription wom = generator.getWOM(
+                            wsdlSelectionPage.getFileName());
                     monitor.worked(1);
 
-                    Map optionsMap = generator.fillOptionMap(optionsPage.isAsyncOnlyOn(),
-                                                             optionsPage.isSyncOnlyOn(),
-                                                             optionsPage.isServerside(),
-                                                             optionsPage.isServerXML(),
-                                                             optionsPage.isGenerateTestCase(),
-                                                             wsdlSelectionPage.getFileName(),
-                                                             optionsPage.getPackageName(),
-                                                             optionsPage.getSelectedLanguage(),
-                                                             outputPage.getOutputLocation());
-                    CodeGenConfiguration codegenConfig = new CodeGenConfiguration(wom, optionsMap);
+                    Map optionsMap = generator.fillOptionMap(
+                            optionsPage.isAsyncOnlyOn(),
+                            optionsPage.isSyncOnlyOn(),
+                            optionsPage.isServerside(),
+                            optionsPage.isServerXML(),
+                            optionsPage.isGenerateTestCase(),
+                            wsdlSelectionPage.getFileName(),
+                            optionsPage.getPackageName(),
+                            optionsPage.getSelectedLanguage(),
+                            outputPage.getOutputLocation());
+                    CodeGenConfiguration codegenConfig = new CodeGenConfiguration(
+                            wom, optionsMap);
                     monitor.worked(1);
 
-                    monitor.subTask(CodegenWizardPlugin.getResourceString("generator.generating"));
+                    monitor.subTask(
+                            CodegenWizardPlugin.getResourceString(
+                                    "generator.generating"));
                     new CodeGenerationEngine(codegenConfig).generate();
                     monitor.worked(1);
                 } catch (Exception e) {
@@ -211,21 +225,25 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                 /*
                  * "2" is the total amount of steps, see below monitor.worked(amount)
                  */
-                monitor.beginTask(CodegenWizardPlugin.getResourceString("generator.generating"), 2);
+                monitor.beginTask(
+                        CodegenWizardPlugin.getResourceString(
+                                "generator.generating"),
+                        2);
 
                 try {
                     monitor.worked(1);
 
-                    new Java2WSDLGenerator().emit(javaSourceSelectionPage.getClassLocation(),
-                                                  javaSourceSelectionPage.getClassName(),
-                                                  java2wsdlOptionsPage.getLocationURL(),
-                                                  java2wsdlOptionsPage.getInputWSDLName(),
-                                                  java2wsdlOptionsPage.getBindingName(),
-                                                  java2wsdlOptionsPage.getPortypeName(),
-                                                  java2wsdlOptionsPage.getStyle(),
-                                                  java2wsdlOutputLocationPage.getFullFileName(),
-                                                  java2wsdlOptionsPage.getMode(),
-                                                  javaSourceSelectionPage.getSelectedMethods());
+                    new Java2WSDLGenerator().emit(
+                            javaSourceSelectionPage.getClassLocation(),
+                            javaSourceSelectionPage.getClassName(),
+                            java2wsdlOptionsPage.getLocationURL(),
+                            java2wsdlOptionsPage.getInputWSDLName(),
+                            java2wsdlOptionsPage.getBindingName(),
+                            java2wsdlOptionsPage.getPortypeName(),
+                            java2wsdlOptionsPage.getStyle(),
+                            java2wsdlOutputLocationPage.getFullFileName(),
+                            java2wsdlOptionsPage.getMode(),
+                            javaSourceSelectionPage.getSelectedMethods());
                     monitor.worked(1);
                 } catch (Throwable e) {
                     throw new RuntimeException(e);

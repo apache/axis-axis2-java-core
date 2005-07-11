@@ -31,7 +31,8 @@ public class DispatchPostConditionsEvaluator extends AbstractHandler implements 
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "DispatchPostConditionsEvaluator");
+            new QName("http://axis.ws.apache.org",
+                    "DispatchPostConditionsEvaluator");
 
     /**
      * Constructor Dispatcher
@@ -51,11 +52,18 @@ public class DispatchPostConditionsEvaluator extends AbstractHandler implements 
     public final void invoke(MessageContext msgctx) throws AxisFault {
         EndpointReference toEPR = msgctx.getTo();
         if (msgctx.getServiceContext() == null) {
-            throw new AxisFault("Service Not found EPR is " + ((toEPR != null) ? toEPR.getAddress() : ""));
+            throw new AxisFault(
+                    "Service Not found EPR is " +
+                    ((toEPR != null) ? toEPR.getAddress() : ""));
         }
 
-        if (msgctx.getServiceContext() != null && msgctx.getOperationContext() == null) {
-            throw new AxisFault("Operation Not found EPR is " + ((toEPR != null) ? toEPR.getAddress() : "") + " and WSA Action = " + msgctx.getWSAAction());
+        if (msgctx.getServiceContext() != null &&
+                msgctx.getOperationContext() == null) {
+            throw new AxisFault(
+                    "Operation Not found EPR is " +
+                    ((toEPR != null) ? toEPR.getAddress() : "") +
+                    " and WSA Action = " +
+                    msgctx.getWSAAction());
         }
 
     }

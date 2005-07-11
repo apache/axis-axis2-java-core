@@ -68,16 +68,23 @@ public class WizardPane3 extends WizardPane {
         this.setSize(width, height);
 
         initDescription("\nInput the location for the output file and the name for \n" +
-                        "the compiled jar file ");
+                "the compiled jar file ");
 
 
         this.outputFileLocationLabel = new JLabel("Output Folder");
         this.add(this.outputFileLocationLabel);
-        this.outputFileLocationLabel.setBounds(hgap, descHeight, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.outputFileLocationLabel.setBounds(hgap,
+                descHeight,
+                Constants.UIConstants.LABEL_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
         this.outputFileLocationTextBox = new JTextField();
         this.add(this.outputFileLocationTextBox);
-        this.outputFileLocationTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, descHeight, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.outputFileLocationTextBox.setBounds(
+                Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                descHeight,
+                Constants.UIConstants.TEXT_BOX_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.outputFileLocationTextBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleLocationChange();
@@ -98,7 +105,12 @@ public class WizardPane3 extends WizardPane {
 
         this.browseButton = new JButton(".");
         this.add(this.browseButton);
-        this.browseButton.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap + Constants.UIConstants.TEXT_BOX_WIDTH, descHeight, Constants.UIConstants.BROWSE_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.browseButton.setBounds(
+                Constants.UIConstants.LABEL_WIDTH + 2 * hgap +
+                Constants.UIConstants.TEXT_BOX_WIDTH,
+                descHeight,
+                Constants.UIConstants.BROWSE_BUTTON_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 outputFileLocationTextBox.setText(browseForAFolder());
@@ -110,11 +122,18 @@ public class WizardPane3 extends WizardPane {
 
         this.outputFileNameLabel = new JLabel("Out File Name");
         this.add(this.outputFileNameLabel);
-        this.outputFileNameLabel.setBounds(hgap, descHeight + Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.outputFileNameLabel.setBounds(hgap,
+                descHeight + Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap,
+                Constants.UIConstants.LABEL_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
         this.outputFileNameTextBox = new JTextField();
         this.add(this.outputFileNameTextBox);
-        this.outputFileNameTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, descHeight + Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.outputFileNameTextBox.setBounds(
+                Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                descHeight + Constants.UIConstants.GENERAL_COMP_HEIGHT + vgap,
+                Constants.UIConstants.TEXT_BOX_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.outputFileNameTextBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleFileNameChange();

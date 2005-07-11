@@ -86,7 +86,8 @@ public class EndpointReference {
      *
      * @param messageInformationHeaderType
      */
-    public void setMessageInformationHeaderType(String messageInformationHeaderType) {
+    public void setMessageInformationHeaderType(
+            String messageInformationHeaderType) {
         this.messageInformationHeaderType = messageInformationHeaderType;
     }
 

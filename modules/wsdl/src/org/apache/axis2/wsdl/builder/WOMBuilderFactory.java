@@ -43,7 +43,8 @@ public class WOMBuilderFactory {
         if (wsdlDocumentType == wsdl20) {
             return new WSDL2ToWOMBuilder();
         }
-        throw new WSDLException(WSDLException.INVALID_WSDL, "The document type specified is not valid");
+        throw new WSDLException(WSDLException.INVALID_WSDL,
+                "The document type specified is not valid");
     }
 
 
@@ -53,11 +54,17 @@ public class WOMBuilderFactory {
         try {
             doc = Utils.newDocument(in);
         } catch (ParserConfigurationException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Configuration Exception", e);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser Configuration Exception",
+                    e);
         } catch (IOException e1) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "WSDL Document read error", e1);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "WSDL Document read error",
+                    e1);
         } catch (SAXException e2) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Exception", e2);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser Exception",
+                    e2);
         }
         
         
@@ -70,7 +77,8 @@ public class WOMBuilderFactory {
             return (WOMBuilder) new WSDL2ToWOMBuilder();
         }
 
-        throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
+        throw new WSDLException(WSDLException.OTHER_ERROR,
+                "Unable to Figure out the WSDL vesion of the Document");
     }
 
     /**
@@ -83,12 +91,15 @@ public class WOMBuilderFactory {
      */
     private static int getWSDLVersion(Document doc) throws WSDLException {
         //TODO check weather the namespaces are correct and the / problem too
-        if (WSDLConstants.WSDL2_0_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())) {
+        if (WSDLConstants.WSDL2_0_NAMESPACE.equals(
+                doc.getDocumentElement().getNamespaceURI())) {
             return wsdl20;
-        } else if (WSDLConstants.WSDL1_1_NAMESPACE.equals(doc.getDocumentElement().getNamespaceURI())) {
+        } else if (WSDLConstants.WSDL1_1_NAMESPACE.equals(
+                doc.getDocumentElement().getNamespaceURI())) {
             return WSDL11;
         }
 
-        throw new WSDLException(WSDLException.OTHER_ERROR, "Unable to Figure out the WSDL vesion of the Document");
+        throw new WSDLException(WSDLException.OTHER_ERROR,
+                "Unable to Figure out the WSDL vesion of the Document");
     }
 }

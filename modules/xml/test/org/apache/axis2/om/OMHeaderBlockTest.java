@@ -41,12 +41,14 @@ public class OMHeaderBlockTest extends OMTestCase {
         String newActorURI = "http://newActor.org";
         soapHeaderElement.setRole(newActorURI);
         System.out.println("ActorURI = " + soapHeaderElement.getRole());
-        assertTrue("Actor was not properly set", soapHeaderElement.getRole().equalsIgnoreCase(newActorURI));
+        assertTrue("Actor was not properly set",
+                soapHeaderElement.getRole().equalsIgnoreCase(newActorURI));
     }
 
     public void testSetAndGetMustUnderstand() {
         soapHeaderElement.setMustUnderstand(false);
-        assertTrue("MustUnderstand was not properly set", !soapHeaderElement.getMustUnderstand());
+        assertTrue("MustUnderstand was not properly set",
+                !soapHeaderElement.getMustUnderstand());
     }
 
     public void testGetMustUnderstand() {

@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.engine;
 
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

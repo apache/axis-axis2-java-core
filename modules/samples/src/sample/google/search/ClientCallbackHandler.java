@@ -137,11 +137,13 @@ public class ClientCallbackHandler extends Callback {
                                     iterator2 = elem.getChildren();
                                     while (iterator2.hasNext()) {
                                         node = (OMNode) iterator2.next();
-                                        if (node.getType() == OMNode.ELEMENT_NODE) {
+                                        if (node.getType() ==
+                                                OMNode.ELEMENT_NODE) {
                                             elem = (OMElement) node;
                                             String str3 = elem.getLocalName();
                                             System.out.println(str3);
-                                            if (elem.getLocalName().equals("snippet")) {
+                                            if (elem.getLocalName().equals(
+                                                    "snippet")) {
                                                 //System.out.println("Got the snippet");
                                                 tempStr = elem.getText();
 
@@ -149,14 +151,18 @@ public class ClientCallbackHandler extends Callback {
                                                 snippet = snippet + tempStr;
                                             }
 
-                                            if (elem.getLocalName().equals("URL")) {
+                                            if (elem.getLocalName().equals(
+                                                    "URL")) {
                                                 //System.out.println("Got the URL");
                                                 strURL = elem.getText();
                                             }
                                         }
                                     }
                                 }
-                                snippet = snippet + "<br> URL:-<a href=" + strURL + ">" + strURL +
+                                snippet = snippet + "<br> URL:-<a href=" +
+                                        strURL +
+                                        ">" +
+                                        strURL +
                                         "</a\n\n> <br><br>";
                             }
                         }

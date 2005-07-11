@@ -36,12 +36,16 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
 
     public void engage() {
         Map allOptions = this.configuration.getParser().getAllOptions();
-        CommandLineOption packageOption = (CommandLineOption) (allOptions.get(CommandLineOptionConstants.PACKAGE_OPTION));
-        String packageName = packageOption == null ? null : packageOption.getOptionValue();
+        CommandLineOption packageOption = (CommandLineOption) (allOptions.get(
+                CommandLineOptionConstants.PACKAGE_OPTION));
+        String packageName = packageOption == null ?
+                null : packageOption.getOptionValue();
 
         if (packageName == null) {
-            WSDLBinding binding = configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
-            String temp = binding.getBoundInterface().getName().getNamespaceURI();
+            WSDLBinding binding = configuration.getWom().getBinding(
+                    AxisBindingBuilder.AXIS_BINDING_QNAME);
+            String temp = binding.getBoundInterface().getName()
+                    .getNamespaceURI();
             packageName = URLProcessor.getNameSpaceFromURL(temp);
         }
 

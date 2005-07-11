@@ -69,7 +69,8 @@ public class OMChildrenIterator implements Iterator {
      */
     public void remove() {
         if (!nextCalled) {
-            throw new IllegalStateException("next method has not yet being called");
+            throw new IllegalStateException(
+                    "next method has not yet being called");
         }
         if (removeCalled) {
             throw new IllegalStateException("remove has already being called");

@@ -41,10 +41,14 @@ public class InterfaceWriter extends ClassWriter {
         Class clazz = this.getClass();
         switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceTemplates.JAVA_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTInterfaceTemplates.JAVA_TEMPLATE);
                 break;
             case XSLTConstants.LanguageTypes.C_SHARP:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceTemplates.CSHARP_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTInterfaceTemplates.CSHARP_TEMPLATE);
                 break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
             case XSLTConstants.LanguageTypes.VB_DOT_NET:

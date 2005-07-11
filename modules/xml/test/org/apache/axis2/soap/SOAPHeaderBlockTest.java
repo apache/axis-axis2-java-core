@@ -34,8 +34,14 @@ public class SOAPHeaderBlockTest extends SOAPHeaderTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        soap11HeaderBlock = soap11Factory.createSOAPHeaderBlock("testHeaderBlock", namespace, soap11Header);
-        soap12HeaderBlock = soap12Factory.createSOAPHeaderBlock("testHeaderBlock", namespace, soap12Header);
+        soap11HeaderBlock =
+                soap11Factory.createSOAPHeaderBlock("testHeaderBlock",
+                        namespace,
+                        soap11Header);
+        soap12HeaderBlock =
+                soap12Factory.createSOAPHeaderBlock("testHeaderBlock",
+                        namespace,
+                        soap12Header);
         Iterator iterator = soap11HeaderWithParser.examineAllHeaderBlocks();
         iterator.next();
         soap11HeaderBlock1WithParser = (SOAPHeaderBlock) iterator.next();
@@ -55,76 +61,124 @@ public class SOAPHeaderBlockTest extends SOAPHeaderTestCase {
 
     //SOAP 1.1 SOAPHeaderBlock Test (Programaticaly Created)
     public void testSOAP11SetRole() {
-        soap11HeaderBlock.setRole("http://schemas.xmlsoap.org/soap/envelope/actor/next");
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value", soap11HeaderBlock.getRole().equals("http://schemas.xmlsoap.org/soap/envelope/actor/next"));
+        soap11HeaderBlock.setRole(
+                "http://schemas.xmlsoap.org/soap/envelope/actor/next");
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value",
+                soap11HeaderBlock.getRole().equals(
+                        "http://schemas.xmlsoap.org/soap/envelope/actor/next"));
         try {
             soap11HeaderBlock.setRole("Any Value");
         } catch (Exception e) {
-            fail("SOAP 1.1 HeaderBlock Test : - role value can not be set to any value");
+            fail(
+                    "SOAP 1.1 HeaderBlock Test : - role value can not be set to any value");
         }
     }
 
     public void testSOAP11GetRole() {
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After creating SOAPHeaderBlock, it has a role", soap11HeaderBlock.getRole() == null);
-        soap11HeaderBlock.setRole("http://schemas.xmlsoap.org/soap/envelope/actor/next");
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value", soap11HeaderBlock.getRole().equals("http://schemas.xmlsoap.org/soap/envelope/actor/next"));
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After creating SOAPHeaderBlock, it has a role",
+                soap11HeaderBlock.getRole() == null);
+        soap11HeaderBlock.setRole(
+                "http://schemas.xmlsoap.org/soap/envelope/actor/next");
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value",
+                soap11HeaderBlock.getRole().equals(
+                        "http://schemas.xmlsoap.org/soap/envelope/actor/next"));
     }
 
     public void testSOAP11SetMustUnderstand() {
         soap11HeaderBlock.setMustUnderstand(true);
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false", soap11HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap11HeaderBlock.getMustUnderstand());
         soap11HeaderBlock.setMustUnderstand(false);
-        assertFalse("SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand false calling setMustUnderstand method , getMustUnderstand method returns true", soap11HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand false calling setMustUnderstand method , getMustUnderstand method returns true",
+                soap11HeaderBlock.getMustUnderstand());
         soap11HeaderBlock.setMustUnderstand("1");
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand \"1\" calling setMustUnderstand method , getMustUnderstand method returns false", soap11HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand \"1\" calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap11HeaderBlock.getMustUnderstand());
         soap11HeaderBlock.setMustUnderstand("0");
-        assertFalse("SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand \"0\" calling setMustUnderstand method , getMustUnderstand method returns true", soap11HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand \"0\" calling setMustUnderstand method , getMustUnderstand method returns true",
+                soap11HeaderBlock.getMustUnderstand());
         try {
             soap11HeaderBlock.setMustUnderstand("true");
         } catch (Exception e) {
-            fail("SOAP 1.1 HeaderBlock Test : - MustUnderstatnd value can not be set to any value rather than 1 or 0");
+            fail(
+                    "SOAP 1.1 HeaderBlock Test : - MustUnderstatnd value can not be set to any value rather than 1 or 0");
         }
     }
 
     public void testSOAP11GetMustUnderstand() {
-        assertFalse("SOAP 1.1 HeaderBlock Test : - After creating SOAPHeaderBlock, default MustUnderstand value true", soap11HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.1 HeaderBlock Test : - After creating SOAPHeaderBlock, default MustUnderstand value true",
+                soap11HeaderBlock.getMustUnderstand());
         soap11HeaderBlock.setMustUnderstand(true);
-        assertTrue("SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false", soap11HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap11HeaderBlock.getMustUnderstand());
     }
 
     //SOAP 1.2 SOAPHeaderBlock Test (Programaticaly Created)
     public void testSOAP12SetRole() {
-        soap12HeaderBlock.setRole("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver");
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value", soap12HeaderBlock.getRole().equals("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
+        soap12HeaderBlock.setRole(
+                "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver");
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value",
+                soap12HeaderBlock.getRole().equals(
+                        "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
         try {
             soap12HeaderBlock.setRole("Any Value");
         } catch (Exception e) {
-            fail("SOAP 1.2 HeaderBlock Test : - role value can not be set to any value");
+            fail(
+                    "SOAP 1.2 HeaderBlock Test : - role value can not be set to any value");
         }
     }
 
     public void testSOAP12GetRole() {
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After creating SOAPHeaderBlock, it has a role", soap12HeaderBlock.getRole() == null);
-        soap12HeaderBlock.setRole("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver");
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value", soap12HeaderBlock.getRole().equals("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After creating SOAPHeaderBlock, it has a role",
+                soap12HeaderBlock.getRole() == null);
+        soap12HeaderBlock.setRole(
+                "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver");
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After calling setRole method, getRole method returns incorrect role value",
+                soap12HeaderBlock.getRole().equals(
+                        "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
     }
 
     public void testSOAP12SetMustUnderstand() {
         soap12HeaderBlock.setMustUnderstand(true);
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false", soap12HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand(false);
-        assertFalse("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand false calling setMustUnderstand method , getMustUnderstand method returns true", soap12HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand false calling setMustUnderstand method , getMustUnderstand method returns true",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand("true");
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"true\" calling setMustUnderstand method , getMustUnderstand method returns false", soap12HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"true\" calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand("false");
-        assertFalse("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"false\" calling setMustUnderstand method , getMustUnderstand method returns true", soap12HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"false\" calling setMustUnderstand method , getMustUnderstand method returns true",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand("1");
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"1\" calling setMustUnderstand method , getMustUnderstand method returns false", soap12HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"1\" calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand("0");
-        assertFalse("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"0\" calling setMustUnderstand method , getMustUnderstand method returns true", soap12HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand \"0\" calling setMustUnderstand method , getMustUnderstand method returns true",
+                soap12HeaderBlock.getMustUnderstand());
         try {
             soap12HeaderBlock.setMustUnderstand("otherValue");
-            fail("SOAP 1.2 HeaderBlock Test : - MustUnderstatnd value can not be set to any value rather than 1 , 0 , true , false");
+            fail(
+                    "SOAP 1.2 HeaderBlock Test : - MustUnderstatnd value can not be set to any value rather than 1 , 0 , true , false");
 
         } catch (Exception e) {
             assertTrue(true);
@@ -132,34 +186,53 @@ public class SOAPHeaderBlockTest extends SOAPHeaderTestCase {
     }
 
     public void testSOAP12GetMustUnderstand() {
-        assertFalse("SOAP 1.2 HeaderBlock Test : - After creating SOAPHeaderBlock, default MustUnderstand value true", soap12HeaderBlock.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.2 HeaderBlock Test : - After creating SOAPHeaderBlock, default MustUnderstand value true",
+                soap12HeaderBlock.getMustUnderstand());
         soap12HeaderBlock.setMustUnderstand(true);
-        assertTrue("SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false", soap12HeaderBlock.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test : - After setting MustUnderstand true calling setMustUnderstand method , getMustUnderstand method returns false",
+                soap12HeaderBlock.getMustUnderstand());
     }
 
     //SOAP 1.1 SOAPHeaderBlock Test (With Parser)
     public void testSOAP11GetRoleWithParser() {
-        assertTrue("SOAP 1.1 HeaderBlock Test Wiht Parser : - getRole method returns incorrect role value", soap11HeaderBlock1WithParser.getRole().equals("http://schemas.xmlsoap.org/soap/actor/next"));
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test Wiht Parser : - getRole method returns incorrect role value",
+                soap11HeaderBlock1WithParser.getRole().equals(
+                        "http://schemas.xmlsoap.org/soap/actor/next"));
     }
 
     public void testSOAP11GetMustUnderstandWithParser() {
-        assertTrue("SOAP 1.1 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value", soap11HeaderBlock2WithParser.getMustUnderstand());
-        assertFalse("SOAP 1.1 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value", soap11HeaderBlock3WithParser.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.1 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value",
+                soap11HeaderBlock2WithParser.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.1 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value",
+                soap11HeaderBlock3WithParser.getMustUnderstand());
 
     }
 
     //SOAP 1.2 SOAPHeaderBlock Test (With Parser)
     public void testSOAP12GetRoleWithParser() {
-        assertTrue("SOAP 1.2 HeaderBlock Test Wiht Parser : - getRole method returns incorrect role value", soap12HeaderBlock1WithParser.getRole().equals("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test Wiht Parser : - getRole method returns incorrect role value",
+                soap12HeaderBlock1WithParser.getRole().equals(
+                        "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
     }
 
     public void testSOAP12GetMustUnderstandWithParser() {
-        assertTrue("SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value", soap12HeaderBlock1WithParser.getMustUnderstand());
-        assertFalse("SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value", soap12HeaderBlock2WithParser.getMustUnderstand());
+        assertTrue(
+                "SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value",
+                soap12HeaderBlock1WithParser.getMustUnderstand());
+        assertFalse(
+                "SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method returns incorrect value",
+                soap12HeaderBlock2WithParser.getMustUnderstand());
         try {
             soap12HeaderBlock3WithParser.getMustUnderstand();
         } catch (Exception e) {
-            fail("SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method should returns exception when mustunderstand value is incorrect");
+            fail(
+                    "SOAP 1.2 HeaderBlock Test Wiht Parser : - getMustUnderstatnd method should returns exception when mustunderstand value is incorrect");
         }
     }
 }

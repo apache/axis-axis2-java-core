@@ -44,8 +44,11 @@ public class SOAPActionTest extends AbstractTestCase {
         super.setUp();
         WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(getTestResourceFile("InteropTestDocLit2.wsdl"));
-            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            InputStream in = new FileInputStream(
+                    getTestResourceFile("InteropTestDocLit2.wsdl"));
+            wsdlVersionWrapper =
+                    WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+                    .build(in);
             this.womDescription = wsdlVersionWrapper.getDescription();
 
         }
@@ -56,8 +59,9 @@ public class SOAPActionTest extends AbstractTestCase {
 
     public void testSOAPActionPopulation() {
         WSDLBindingOperation bindingOperation = womDescription
-                .getFirstBinding().getBindingOperation(new QName("http://soapinterop.org/WSDLInteropTestDocLit",
-                                                                 "echoVoid"));
+                .getFirstBinding().getBindingOperation(new QName(
+                        "http://soapinterop.org/WSDLInteropTestDocLit",
+                        "echoVoid"));
         Iterator iterator = bindingOperation.getExtensibilityElements()
                 .iterator();
         while (iterator.hasNext()) {
@@ -71,7 +75,7 @@ public class SOAPActionTest extends AbstractTestCase {
                 fail();
             } else {
                 assertEquals(soapOperation.getSoapAction(),
-                             "http://soapinterop.org/");
+                        "http://soapinterop.org/");
             }
         }
     }

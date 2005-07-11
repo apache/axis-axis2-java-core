@@ -47,7 +47,8 @@ public class InvalidPhaseLastRuleTest extends TestCase {
             Phase p2 = new Phase("PhaseB");
             phases.add(p2);
 
-            MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
+            MessageContext msg = new MessageContext(
+                    new ConfigurationContext(new AxisConfigurationImpl()));
 
             PhaseHolder ph = new PhaseHolder(phases);
             HandlerDescription hm = new HandlerDescription();
@@ -75,7 +76,8 @@ public class InvalidPhaseLastRuleTest extends TestCase {
             rule1.setPhaseName("PhaseA");
             hm1.setRules(rule1);
             ph.addHandler(hm1);
-            fail("Handler with PhaseFirst can not have any before or after proprty error in ");
+            fail(
+                    "Handler with PhaseFirst can not have any before or after proprty error in ");
         } catch (AxisFault axisFault) {
             return;
         }

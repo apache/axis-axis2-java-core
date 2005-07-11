@@ -40,15 +40,18 @@ public class BindingOperationTest extends AbstractTestCase {
     public void testBindingOperation() throws Exception {
         WSDLDescription womDescription;
 
-        InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
+        InputStream in = new FileInputStream(
+                getTestResourceFile("BookQuote.wsdl"));
         womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
                 .build(in).getDescription();
 
         assertNotNull(womDescription);
         if (null != womDescription) {
             String ns = "http://www.Monson-Haefel.com/jwsbook/BookQuote";
-            WSDLBinding binding = womDescription.getBinding(new QName(ns, "BookQuoteBinding"));
-            WSDLBindingOperation bindingOperation = binding.getBindingOperation(new QName(ns, "getBookPrice"));
+            WSDLBinding binding = womDescription.getBinding(
+                    new QName(ns, "BookQuoteBinding"));
+            WSDLBindingOperation bindingOperation = binding.getBindingOperation(
+                    new QName(ns, "getBookPrice"));
             assertNotNull(bindingOperation.getInput());
             assertNull(bindingOperation.getOutput());
         }

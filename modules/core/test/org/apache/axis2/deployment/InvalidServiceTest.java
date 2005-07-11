@@ -38,11 +38,13 @@ public class InvalidServiceTest extends TestCase {
         try {
             String filename = "./target/test-resources/InvalidDeployment";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er = builder.buildConfigurationContext(filename).getAxisConfiguration();
+            er =
+                    builder.buildConfigurationContext(filename)
+                    .getAxisConfiguration();
             String msg = (String) er.getFaulytServices().get("invalidService");
             if (msg == null || msg.equals("")) {
                 fail("this must failed gracefully with AxisFault ervice specifi module can not" +
-                     "refer system pre defined phases");
+                        "refer system pre defined phases");
             }
         } catch (DeploymentException e) {
             return;

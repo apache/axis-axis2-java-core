@@ -4,7 +4,12 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultText;
+import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 
@@ -41,7 +46,9 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
         factory = OMAbstractFactory.getSOAP11Factory();
     }
 
-    public OMElement handleEvent(XMLStreamReader parser, OMElement parent, int elementLevel) throws SOAPProcessingException {
+    public OMElement handleEvent(XMLStreamReader parser,
+                                 OMElement parent,
+                                 int elementLevel) throws SOAPProcessingException {
         this.parser = parser;
 
         OMElement element = null;
@@ -53,7 +60,8 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 if (faultstringPresent) {
                     builder.setBooleanProcessingMandatoryFaultElements(false);
                 }
-                SOAPFaultCode code = factory.createSOAPFaultCode((SOAPFault) parent, builder);
+                SOAPFaultCode code = factory.createSOAPFaultCode(
+                        (SOAPFault) parent, builder);
                 SOAPFaultValue value = factory.createSOAPFaultValue(code);
                 processNamespaceData(code, true);
                 processAttributes(code);
@@ -70,7 +78,8 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 }
 
 
-                SOAPFaultReason reason = factory.createSOAPFaultReason((SOAPFault) parent, builder);
+                SOAPFaultReason reason = factory.createSOAPFaultReason(
+                        (SOAPFault) parent, builder);
                 SOAPFaultText faultText = factory.createSOAPFaultText(reason);
                 processNamespaceData(reason, true);
                 processAttributes(reason);
@@ -83,15 +92,21 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
 
                 faultstringPresent = true;
             } else if (SOAP_FAULT_ACTOR_LOCAL_NAME.equals(localName)) {
-                element = factory.createSOAPFaultRole((SOAPFault) parent, builder);
+                element =
+                        factory.createSOAPFaultRole((SOAPFault) parent,
+                                builder);
                 processNamespaceData(element, true);
                 processAttributes(element);
             } else if (SOAP_FAULT_DETAIL_LOCAL_NAME.equals(localName)) {
-                element = factory.createSOAPFaultDetail((SOAPFault) parent, builder);
+                element =
+                        factory.createSOAPFaultDetail((SOAPFault) parent,
+                                builder);
                 processNamespaceData(element, true);
                 processAttributes(element);
             } else {
-                element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
+                element =
+                        OMAbstractFactory.getOMFactory().createOMElement(
+                                localName, null, parent, builder);
                 processNamespaceData(element, false);
                 processAttributes(element);
             }
@@ -99,19 +114,30 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
         } else if (elementLevel == 5) {
 
             if (parent.getLocalName().equals(SOAP_FAULT_CODE_LOCAL_NAME)) {
-                throw new OMBuilderException("faultcode element should not have children");
-            } else if (parent.getLocalName().equals(SOAP_FAULT_STRING_LOCAL_NAME)) {
-                throw new OMBuilderException("faultstring element should not have children");
-            } else if (parent.getLocalName().equals(SOAP_FAULT_ACTOR_LOCAL_NAME)) {
-                throw new OMBuilderException("faultactor element should not have children");
+                throw new OMBuilderException(
+                        "faultcode element should not have children");
+            } else if (parent.getLocalName().equals(
+                    SOAP_FAULT_STRING_LOCAL_NAME)) {
+                throw new OMBuilderException(
+                        "faultstring element should not have children");
+            } else if (parent.getLocalName().equals(
+                    SOAP_FAULT_ACTOR_LOCAL_NAME)) {
+                throw new OMBuilderException(
+                        "faultactor element should not have children");
             } else {
-                element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
+                element =
+                        OMAbstractFactory.getOMFactory().createOMElement(
+                                localName, null, parent, builder);
                 processNamespaceData(element, false);
                 processAttributes(element);
             }
 
         } else if (elementLevel > 5) {
-            element = OMAbstractFactory.getOMFactory().createOMElement(localName, null, parent, builder);
+            element =
+                    OMAbstractFactory.getOMFactory().createOMElement(localName,
+                            null,
+                            parent,
+                            builder);
             processNamespaceData(element, false);
             processAttributes(element);
         }
@@ -127,7 +153,8 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                     OMText text = factory.createText(value, parser.getText());
                     value.addChild(text);
                 } else {
-                    throw new SOAPProcessingException("Only Characters are allowed here");
+                    throw new SOAPProcessingException(
+                            "Only Characters are allowed here");
                 }
                 token = parser.next();
             }

@@ -40,13 +40,14 @@ import javax.xml.namespace.QName;
 public class OneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -67,11 +68,13 @@ public class OneWayRawXMLTest extends TestCase {
         UtilServer.start();
 
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(operationName);
+        OperationDescription operation = new OperationDescription(
+                operationName);
         operation.setMessageReciever(new MessageReceiver() {
             public void recieve(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
-                TestingUtils.campareWithCreatedOMElement(envelope.getBody().getFirstElement());
+                TestingUtils.campareWithCreatedOMElement(
+                        envelope.getBody().getFirstElement());
             }
         });
         service.addOperation(operation);

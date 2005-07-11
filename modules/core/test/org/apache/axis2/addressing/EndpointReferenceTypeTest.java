@@ -40,37 +40,56 @@ public class EndpointReferenceTypeTest extends TestCase {
     }
 
     public void testGetAndSetMessageInformationHeaderType() {
-        assertEquals("MessageInformationHeaderType not set properly in the constructor", headerType, endpointReference.getMessageInformationHeaderType());
+        assertEquals(
+                "MessageInformationHeaderType not set properly in the constructor",
+                headerType,
+                endpointReference.getMessageInformationHeaderType());
 
-        endpointReference.setMessageInformationHeaderType(AddressingConstants.WSA_REPLY_TO);
-        assertEquals("MessageInformationHeaderType not set properly in the setter method", AddressingConstants.WSA_REPLY_TO, endpointReference.getMessageInformationHeaderType());
+        endpointReference.setMessageInformationHeaderType(
+                AddressingConstants.WSA_REPLY_TO);
+        assertEquals(
+                "MessageInformationHeaderType not set properly in the setter method",
+                AddressingConstants.WSA_REPLY_TO,
+                endpointReference.getMessageInformationHeaderType());
     }
 
     public void testGetAndSetAddress() {
-        assertEquals("Address not set properly in the constructor", address, endpointReference.getAddress());
+        assertEquals("Address not set properly in the constructor",
+                address,
+                endpointReference.getAddress());
 
         String newAddress = "http://www.axis2.com";
         endpointReference.setAddress(newAddress);
-        assertEquals("Address not set properly in the setter method", newAddress, endpointReference.getAddress());
+        assertEquals("Address not set properly in the setter method",
+                newAddress,
+                endpointReference.getAddress());
     }
 
     public void testGetAndSetPortType() {
         QName portType = new QName("www.someport.com", "port");
         endpointReference.setInterfaceName(portType);
-        assertEquals("PortType not set/get properly", portType, endpointReference.getInterfaceName());
+        assertEquals("PortType not set/get properly",
+                portType,
+                endpointReference.getInterfaceName());
     }
 
     public void testGetAndSetReferenceProperties() {
         AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 10; i++) {
-            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i), "value " + i * 100);
+            anyContentType.addReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i),
+                    "value " + i * 100);
         }
         endpointReference.setReferenceProperties(anyContentType);
 
         AnyContentType retrievedAnyContentType = endpointReference.getReferenceProperties();
         for (int i = 0; i < 10; i++) {
-            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i));
-            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value " + i * 100);
+            String value = retrievedAnyContentType.getReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i));
+            assertEquals(
+                    "Input value differs from what is taken out from AnyContentType",
+                    value,
+                    "value " + i * 100);
         }
 
     }
@@ -78,28 +97,44 @@ public class EndpointReferenceTypeTest extends TestCase {
     public void testGetAndSetReferenceParameters() {
         AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 10; i++) {
-            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i), "value " + i * 50);
+            anyContentType.addReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i),
+                    "value " + i * 50);
         }
         endpointReference.setReferenceParameters(anyContentType);
 
         AnyContentType retrievedAnyContentType = endpointReference.getReferenceParameters();
         for (int i = 0; i < 10; i++) {
-            String value = retrievedAnyContentType.getReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i));
-            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value " + i * 50);
+            String value = retrievedAnyContentType.getReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i));
+            assertEquals(
+                    "Input value differs from what is taken out from AnyContentType",
+                    value,
+                    "value " + i * 50);
         }
     }
 
     public void testGetAndSetServiceName() {
-        ServiceName serviceName = new ServiceName(new QName("www.someservicename.org", "service"));
+        ServiceName serviceName = new ServiceName(
+                new QName("www.someservicename.org", "service"));
         endpointReference.setServiceName(serviceName);
         ServiceName retrievedServiceName = endpointReference.getServiceName();
-        assertEquals("ServiceName name has not been get/set properly", serviceName.getName(), retrievedServiceName.getName());
+        assertEquals("ServiceName name has not been get/set properly",
+                serviceName.getName(),
+                retrievedServiceName.getName());
 
-        serviceName = new ServiceName(new QName("www.someservicename.org", "service"), "portName");
+        serviceName =
+                new ServiceName(
+                        new QName("www.someservicename.org", "service"),
+                        "portName");
         endpointReference.setServiceName(serviceName);
         retrievedServiceName = endpointReference.getServiceName();
-        assertEquals("ServiceName name has not been get/set properly", serviceName.getName(), retrievedServiceName.getName());
-        assertEquals("ServiceName portName has not been get/set properly", serviceName.getEndpointName(), retrievedServiceName.getEndpointName());
+        assertEquals("ServiceName name has not been get/set properly",
+                serviceName.getName(),
+                retrievedServiceName.getName());
+        assertEquals("ServiceName portName has not been get/set properly",
+                serviceName.getEndpointName(),
+                retrievedServiceName.getEndpointName());
     }
 
 }

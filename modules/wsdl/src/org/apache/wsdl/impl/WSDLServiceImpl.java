@@ -106,7 +106,8 @@ public class WSDLServiceImpl extends ComponentImpl implements WSDLService {
      */
     public String getNamespace() {
         if (null == this.name) {
-            throw new WSDLProcessingException("Target Namespace not set and the Service Name is null");
+            throw new WSDLProcessingException(
+                    "Target Namespace not set and the Service Name is null");
         }
         return this.name.getNamespaceURI();
     }

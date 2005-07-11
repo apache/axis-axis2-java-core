@@ -68,7 +68,7 @@ public class OutputPage extends AbstractWizardPage {
         Label label = new Label(container, SWT.NULL);
         label
                 .setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                         .getResourceString("page3.output.caption"));
+                .getResourceString("page3.output.caption"));
 
         outputLocation = new Text(container, SWT.BORDER);
         outputLocation.setLayoutData(gd);
@@ -83,7 +83,7 @@ public class OutputPage extends AbstractWizardPage {
         browseButton = new Button(container, SWT.PUSH);
         browseButton
                 .setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                         .getResourceString("page3.outselection.browse"));
+                .getResourceString("page3.outselection.browse"));
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleBrowse();
@@ -119,7 +119,7 @@ public class OutputPage extends AbstractWizardPage {
         String text = this.outputLocation.getText();
         if ((text == null) || (text.trim().equals(""))) {
             updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                         .getResourceString("page3.error.nolocation"));
+                    .getResourceString("page3.error.nolocation"));
             return;
         }
         updateStatus(null);
@@ -139,11 +139,12 @@ public class OutputPage extends AbstractWizardPage {
                 outputLocation.setText(returnString);
             }
         } else {
-            ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-                                                                           ResourcesPlugin.getWorkspace().getRoot(),
-                                                                           false,
-                                                                           org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                                                                           .getResourceString("page3.containerbox.title"));
+            ContainerSelectionDialog dialog = new ContainerSelectionDialog(
+                    getShell(),
+                    ResourcesPlugin.getWorkspace().getRoot(),
+                    false,
+                    org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+                    .getResourceString("page3.containerbox.title"));
             if (dialog.open() == ContainerSelectionDialog.OK) {
                 Object[] result = dialog.getResult();
                 if (result.length == 1) {

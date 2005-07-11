@@ -29,7 +29,8 @@ import java.util.Iterator;
  */
 public class ConfigurationContextFactory {
 
-    public ConfigurationContext buildConfigurationContext(String RepositaryName)
+    public ConfigurationContext buildConfigurationContext(
+            String RepositaryName)
             throws DeploymentException {
         ConfigurationContext configurationContext = null;
         try {
@@ -46,7 +47,8 @@ public class ConfigurationContextFactory {
         return configurationContext;
     }
 
-    public ConfigurationContext buildClientConfigurationContext(String axis2home)
+    public ConfigurationContext buildClientConfigurationContext(
+            String axis2home)
             throws DeploymentException {
         ConfigurationContext engineContext = null;
         try {

@@ -41,7 +41,8 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 
@@ -54,7 +55,8 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(omOutput));
         }
 
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
@@ -62,9 +64,10 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
             String prefix = this.getNamespace().getPrefix();
             String nameSpaceName = this.getNamespace().getName();
             writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME,
-                                     nameSpaceName);
+                    nameSpaceName);
         } else {
-            writer.writeStartElement(SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME);
+            writer.writeStartElement(
+                    SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME);
         }
         OMSerializerUtil.serializeAttributes(this, omOutput);
         OMSerializerUtil.serializeNamespaces(this, omOutput);

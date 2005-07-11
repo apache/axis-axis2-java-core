@@ -49,7 +49,8 @@ public class MIMEOutputUtilsTest extends TestCase {
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);
 
-        DataHandler dataHandler2 = new DataHandler("Apache Software Foundation", "text/plain");
+        DataHandler dataHandler2 = new DataHandler(
+                "Apache Software Foundation", "text/plain");
         OMText text = factory.createText(dataHandler2, true);
         outStream = new ByteArrayOutputStream();
         outStream.write(("Content-Type: " + contentType).getBytes());
@@ -73,8 +74,9 @@ public class MIMEOutputUtilsTest extends TestCase {
                 .getInstance(props, null);
         MimeMessage mimeMessage = new MimeMessage(session, inStream);
         DataHandler dh = mimeMessage.getDataHandler();
-        MimeMultipart multiPart = new MimeMultipart((MimePartDataSource) dh
-                                                                         .getDataSource());
+        MimeMultipart multiPart = new MimeMultipart(
+                (MimePartDataSource) dh
+                .getDataSource());
         MimeBodyPart mimeBodyPart2 = (MimeBodyPart) multiPart.getBodyPart(0);
         Object object = mimeBodyPart2.getContent();
         MimeBodyPart mimeBodyPart1 = (MimeBodyPart) multiPart.getBodyPart(0);

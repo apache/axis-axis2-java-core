@@ -23,7 +23,8 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 /**
  * @author chathura@opensource.lk
  */
-public class SOAPBindingImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPBinding {
+public class SOAPBindingImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants,
+        SOAPBinding {
 
     protected String style;
     protected String transportURI;

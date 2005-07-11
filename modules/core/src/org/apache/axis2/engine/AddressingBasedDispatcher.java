@@ -31,7 +31,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
+            new QName("http://axis.ws.apache.org",
+                    "AddressingBasedDispatcher");
 
     public AddressingBasedDispatcher() {
         init(new HandlerDescription(NAME));
@@ -60,7 +61,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
         if (toEPR != null) {
             QName serviceName = new QName(toEPR.getAddress());
             service =
-                    messageContext.getSystemContext().getAxisConfiguration().getService(serviceName);
+                    messageContext.getSystemContext().getAxisConfiguration()
+                    .getService(serviceName);
         }
         return service;
     }

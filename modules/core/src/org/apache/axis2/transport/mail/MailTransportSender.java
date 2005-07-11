@@ -39,17 +39,30 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
+    public void finalizeSendWithToAddress(MessageContext msgContext,
+                                          OutputStream out)
             throws AxisFault {
         try {
             TransportOutDescription transportOut = msgContext.getTransportOut();
-            user = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_USER));
-            host = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_HOST));
+            user =
+                    Utils.getParameterValue(
+                            transportOut.getParameter(MailConstants.SMTP_USER));
+            host =
+                    Utils.getParameterValue(
+                            transportOut.getParameter(MailConstants.SMTP_HOST));
             password =
-                    Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PASSWORD));
-            smtpPort = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PORT));
-            if (user != null && host != null && password != null && smtpPort != null) {
-                EMailSender sender = new EMailSender(user, host, smtpPort, password);
+                    Utils.getParameterValue(
+                            transportOut.getParameter(
+                                    MailConstants.SMTP_PASSWORD));
+            smtpPort =
+                    Utils.getParameterValue(
+                            transportOut.getParameter(MailConstants.SMTP_PORT));
+            if (user != null && host != null && password != null &&
+                    smtpPort != null) {
+                EMailSender sender = new EMailSender(user,
+                        host,
+                        smtpPort,
+                        password);
 
                 //TODO this is just a temporary hack, fix this to use input streams
 
@@ -70,17 +83,19 @@ public class MailTransportSender extends AbstractTransportSender {
                 System.out.println(subject);
                 System.out.println(email);
 
-                sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()));
+                sender.send(subject,
+                        email,
+                        new String(byteArrayOutputStream.toByteArray()));
             } else {
                 throw new AxisFault("user, port, host or password not set, "
-                                    + "   [user null = "
-                                    + (user == null)
-                                    + ", password null= "
-                                    + (password == null)
-                                    + ", host null "
-                                    + (host == null)
-                                    + ",port null "
-                                    + (smtpPort == null));
+                        + "   [user null = "
+                        + (user == null)
+                        + ", password null= "
+                        + (password == null)
+                        + ", host null "
+                        + (host == null)
+                        + ",port null "
+                        + (smtpPort == null));
 
             }
         } catch (IOException e) {
@@ -90,24 +105,28 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
+    public OutputStream startSendWithToAddress(MessageContext msgContext,
+                                               OutputStream out) throws AxisFault {
         return out;
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgContext) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference epr,
+                                             MessageContext msgContext) throws AxisFault {
         byteArrayOutputStream = new ByteArrayOutputStream();
         return byteArrayOutputStream;
     }
 
     //Output Stream based cases are not supported 
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                        OutputStream out)
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext,
+            OutputStream out)
             throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out)
+    public void finalizeSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext, OutputStream out)
             throws AxisFault {
     }
 

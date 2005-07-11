@@ -18,7 +18,12 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.transport.http.HTTPConstants;
 
-import javax.xml.soap.*;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLOutputFactory;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,9 +49,15 @@ public class SOAPMessageImpl extends SOAPMessage {
         }
     }
 
-    public SOAPMessageImpl(Object initialContents, boolean bodyInStream, javax.xml.soap.MimeHeaders headers) {
+    public SOAPMessageImpl(Object initialContents,
+                           boolean bodyInStream,
+                           javax.xml.soap.MimeHeaders headers) {
         try {
-            setup(initialContents, bodyInStream, null, null, (MimeHeaders) headers);
+            setup(initialContents,
+                    bodyInStream,
+                    null,
+                    null,
+                    (MimeHeaders) headers);
         } catch (SOAPException e) {
             e.printStackTrace();
         }
@@ -60,7 +71,8 @@ public class SOAPMessageImpl extends SOAPMessage {
         else
             mSOAPPart.setMessage(this);
 
-        headers = (mimeHeaders == null) ? new MimeHeaders() : new MimeHeaders(mimeHeaders);
+        headers = (mimeHeaders == null) ?
+                new MimeHeaders() : new MimeHeaders(mimeHeaders);
     }
 
     /**
@@ -73,7 +85,8 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @see #setContentDescription(java.lang.String) setContentDescription(java.lang.String)
      */
     public String getContentDescription() {
-        String values[] = headers.getHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION);
+        String values[] = headers.getHeader(
+                HTTPConstants.HEADER_CONTENT_DESCRIPTION);
         if (values != null && values.length > 0)
             return values[0];
         return null;
@@ -88,7 +101,8 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @see #getContentDescription() getContentDescription()
      */
     public void setContentDescription(String description) {
-        headers.setHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION, description);
+        headers.setHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION,
+                description);
     }
 
     /* (non-Javadoc)
@@ -191,8 +205,10 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public void writeTo(OutputStream out) throws SOAPException, IOException {
         try {
-            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(out));
-            ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope().serialize(omOutput);
+            OMOutput omOutput = new OMOutput(
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(out));
+            ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
+                    .serialize(omOutput);
             omOutput.flush();
         } catch (Exception e) {
             throw new SOAPException(e);

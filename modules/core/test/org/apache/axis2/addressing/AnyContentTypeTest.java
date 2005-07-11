@@ -37,14 +37,21 @@ public class AnyContentTypeTest extends TestCase {
     }
 
     public void testAddAndGetReferenceValue() {
-        System.out.println("Testing by putting more than 5 values in this. (this is initialized for 5)");
+        System.out.println(
+                "Testing by putting more than 5 values in this. (this is initialized for 5)");
         for (int i = 0; i < 10; i++) {
-            anyContentType.addReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i), "value " + i * 100);
+            anyContentType.addReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i),
+                    "value " + i * 100);
         }
 
         for (int i = 0; i < 10; i++) {
-            String value = anyContentType.getReferenceValue(new QName("http://www.opensouce.lk/" + i, "" + i));
-            assertEquals("Input value differs from what is taken out from AnyContentType", value, "value " + i * 100);
+            String value = anyContentType.getReferenceValue(
+                    new QName("http://www.opensouce.lk/" + i, "" + i));
+            assertEquals(
+                    "Input value differs from what is taken out from AnyContentType",
+                    value,
+                    "value " + i * 100);
         }
 
     }

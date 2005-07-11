@@ -44,10 +44,10 @@ public abstract class SOAPConnectionFactory {
 
         try {
             return (SOAPConnectionFactory) FactoryFinder.find(SF_PROPERTY,
-                                                              DEFAULT_SOAP_CONNECTION_FACTORY);
+                    DEFAULT_SOAP_CONNECTION_FACTORY);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP connection factory: "
-                                    + exception.getMessage());
+                    + exception.getMessage());
         }
     }
 

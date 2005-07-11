@@ -11,7 +11,8 @@ import java.awt.event.ActionListener;
  *
  * @author Nadana Gunarathna
  */
-public class SyncPanel extends javax.swing.JPanel implements Observer, ActionListener {
+public class SyncPanel extends javax.swing.JPanel implements Observer,
+        ActionListener {
     FormModel formModel;
     JTextArea writingTextArea;
     JTextArea displayTextArea;

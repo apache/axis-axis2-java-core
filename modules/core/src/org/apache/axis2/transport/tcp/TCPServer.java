@@ -51,7 +51,8 @@ public class TCPServer extends TransportListener implements Runnable {
     public TCPServer(int port, String dir) throws AxisFault {
         try {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = erfac.buildConfigurationContext(dir);
+            ConfigurationContext configContext = erfac.buildConfigurationContext(
+                    dir);
             this.configContext = configContext;
             Thread.sleep(3000);
             serversocket = new ServerSocket(port);
@@ -85,7 +86,8 @@ public class TCPServer extends TransportListener implements Runnable {
                     break;
                 }
                 if (socket != null) {
-                    configContext.getThreadPool().addWorker(new TCPWorker(configContext, socket));
+                    configContext.getThreadPool().addWorker(
+                            new TCPWorker(configContext, socket));
                 }
             } catch (AxisFault e) {
                 log.error(e);
@@ -109,7 +111,9 @@ public class TCPServer extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                                     "tcp://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
+                "tcp://127.0.0.1:" + (serversocket.getLocalPort()) +
+                "/axis/services/" +
+                serviceName);
     }
 
     /* (non-Javadoc)
@@ -124,7 +128,8 @@ public class TCPServer extends TransportListener implements Runnable {
         }
     }
 
-    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+    public void init(ConfigurationContext axisConf,
+                     TransportInDescription transprtIn)
             throws AxisFault {
         this.configContext = axisConf;
         Parameter param = transprtIn.getParameter(PARAM_PORT);
@@ -134,17 +139,23 @@ public class TCPServer extends TransportListener implements Runnable {
 
     }
 
-    public static void main(String[] args) throws AxisFault, NumberFormatException {
+    public static void main(String[] args) throws AxisFault,
+            NumberFormatException {
         if (args.length != 2) {
             System.out.println("TCPServer repositoryLocation port");
         } else {
             File repository = new File(args[0]);
             if (!repository.exists()) {
-                System.out.print("Repository file does not exists .. initializing repository");
+                System.out.print(
+                        "Repository file does not exists .. initializing repository");
             }
-            TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]), repository.getAbsolutePath());
-            System.out.println("[Axis2] Using the Repository " + repository.getAbsolutePath());
-            System.out.println("[Axis2] Starting the TCP Server on port " + args[1]);
+            TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]),
+                    repository.getAbsolutePath());
+            System.out.println(
+                    "[Axis2] Using the Repository " +
+                    repository.getAbsolutePath());
+            System.out.println(
+                    "[Axis2] Starting the TCP Server on port " + args[1]);
             tcpServer.start();
         }
     }

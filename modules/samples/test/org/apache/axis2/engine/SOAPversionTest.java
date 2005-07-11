@@ -9,7 +9,11 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
@@ -42,13 +46,14 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -63,11 +68,12 @@ public class SOAPversionTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
     }
 
@@ -76,13 +82,19 @@ public class SOAPversionTest extends TestCase {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
-        inOutMEPClient.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        inOutMEPClient.setSoapVersionURI(
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
-        assertEquals("SOAP Version received is not compatible", SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(
+                        operationName.getLocalPart(), payload);
+        assertEquals("SOAP Version received is not compatible",
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                result.getNamespace().getName());
         inOutMEPClient.close();
     }
 
@@ -91,13 +103,19 @@ public class SOAPversionTest extends TestCase {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
-        inOutMEPClient.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        inOutMEPClient.setSoapVersionURI(
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
-        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(
+                        operationName.getLocalPart(), payload);
+        assertEquals("SOAP Version received is not compatible",
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                result.getNamespace().getName());
 
 
         inOutMEPClient.close();
@@ -108,13 +126,17 @@ public class SOAPversionTest extends TestCase {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
-        inOutMEPClient.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        inOutMEPClient.setSoapVersionURI(
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(
+                        operationName.getLocalPart(), payload);
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
         try {
             OMOutput output = new OMOutput(System.out, false);
@@ -132,7 +154,8 @@ public class SOAPversionTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
 
         return method;

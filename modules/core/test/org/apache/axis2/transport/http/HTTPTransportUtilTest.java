@@ -40,21 +40,29 @@ public class HTTPTransportUtilTest extends TestCase {
     public void testOptimizedEnvelope() {
         SOAPEnvelope soapEnvelope = factory.getDefaultEnvelope();
 
-        OMElement element = factory.createOMElement(new QName("MyFirstBodyElement"), soapEnvelope.getBody());
-        OMElement element11 = factory.createOMElement(new QName("MyFirstBodyElement"), element);
+        OMElement element = factory.createOMElement(
+                new QName("MyFirstBodyElement"), soapEnvelope.getBody());
+        OMElement element11 = factory.createOMElement(
+                new QName("MyFirstBodyElement"), element);
         OMText optimizedText = factory.createText("Hi", "text/plain", true);
         element11.addChild(optimizedText);
-        assertTrue("optmization check has not performed correctly in SOAPEnvelope", httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
+        assertTrue(
+                "optmization check has not performed correctly in SOAPEnvelope",
+                httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
 
     public void testNonOptimizedEnvelope() {
         SOAPEnvelope soapEnvelope = factory.getDefaultEnvelope();
 
-        OMElement element = factory.createOMElement(new QName("MyFirstBodyElement"), soapEnvelope.getBody());
-        OMElement element11 = factory.createOMElement(new QName("MyFirstBodyElement"), element);
+        OMElement element = factory.createOMElement(
+                new QName("MyFirstBodyElement"), soapEnvelope.getBody());
+        OMElement element11 = factory.createOMElement(
+                new QName("MyFirstBodyElement"), element);
         OMText optimizedText = factory.createText("Hi", "text/plain", false);
         element11.addChild(optimizedText);
-        assertFalse("optmization check has not performed correctly in SOAPEnvelope", httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
+        assertFalse(
+                "optmization check has not performed correctly in SOAPEnvelope",
+                httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
 
 

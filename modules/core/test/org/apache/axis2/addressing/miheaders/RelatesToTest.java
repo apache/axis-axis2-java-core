@@ -37,27 +37,40 @@ public class RelatesToTest extends TestCase {
     public void testGetAddress() {
         relatesTo = new RelatesTo(address, relationshipType);
 
-        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getValue(), address);
+        assertEquals(
+                "RelatesTo address has not been set properly in the constructor",
+                relatesTo.getValue(),
+                address);
 
         String newAddress = "www.newRelation.org";
         relatesTo.setValue(newAddress);
-        assertEquals("RelatesTo address has not been get/set properly", relatesTo.getValue(), newAddress);
+        assertEquals("RelatesTo address has not been get/set properly",
+                relatesTo.getValue(),
+                newAddress);
 
     }
 
     public void testGetRelationshipType() {
         relatesTo = new RelatesTo(address, relationshipType);
 
-        assertEquals("RelatesTo RelationshipType has not been set properly in the constructor", relatesTo.getRelationshipType(), relationshipType);
+        assertEquals(
+                "RelatesTo RelationshipType has not been set properly in the constructor",
+                relatesTo.getRelationshipType(),
+                relationshipType);
 
         String newRelationshipType = "AnyOtherType";
         relatesTo.setRelationshipType(newRelationshipType);
-        assertEquals("RelatesTo address has not been get/set properly", relatesTo.getRelationshipType(), newRelationshipType);
+        assertEquals("RelatesTo address has not been get/set properly",
+                relatesTo.getRelationshipType(),
+                newRelationshipType);
     }
 
     public void testSingleArgumentConstructor() {
         relatesTo = new RelatesTo(address);
-        assertEquals("RelatesTo address has not been set properly in the constructor", relatesTo.getValue(), address);
+        assertEquals(
+                "RelatesTo address has not been set properly in the constructor",
+                relatesTo.getValue(),
+                address);
 
     }
 

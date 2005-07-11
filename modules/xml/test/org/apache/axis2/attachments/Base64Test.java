@@ -45,7 +45,8 @@ public class Base64Test extends TestCase {
         objectOutStream.writeObject(expectedObject);
         expectedBase64 = Base64.encode(byteStream.toByteArray());
         byte[] tempa = Base64.decode(expectedBase64);
-        ObjectInputStream objectInStream = new ObjectInputStream(new ByteArrayInputStream(tempa));
+        ObjectInputStream objectInStream = new ObjectInputStream(
+                new ByteArrayInputStream(tempa));
         actualObject = objectInStream.readObject();
         assertEquals("Base64 Encoding Check", expectedObject, actualObject);
     }

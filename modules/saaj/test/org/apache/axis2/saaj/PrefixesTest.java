@@ -17,7 +17,12 @@ package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.*;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -35,10 +40,12 @@ public class PrefixesTest extends TestCase {
         SOAPPart sp = msg.getSOAPPart();
         SOAPEnvelope se = sp.getEnvelope();
         SOAPBody sb = se.getBody();
-        SOAPElement el1 = sb.addBodyElement(se.createName
-                                            ("element1", "prefix1", "http://www.sun.com"));
-        SOAPElement el2 = el1.addChildElement(se.createName
-                                              ("element2", "prefix2", "http://www.apache.org"));
+        SOAPElement el1 = sb.addBodyElement(
+                se.createName
+                ("element1", "prefix1", "http://www.sun.com"));
+        SOAPElement el2 = el1.addChildElement(
+                se.createName
+                ("element2", "prefix2", "http://www.apache.org"));
 
         org.apache.axis2.soap.SOAPEnvelope omEnv = ((SOAPEnvelopeImpl) se).getOMEnvelope();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

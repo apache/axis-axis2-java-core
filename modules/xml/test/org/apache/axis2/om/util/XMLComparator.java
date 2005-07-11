@@ -38,25 +38,36 @@ public class XMLComparator {
             return true;
         }
         if (elementOne == null && elementTwo != null) {
-            throw new XMLComparisonException("Element One is null and Element Two is not null");
+            throw new XMLComparisonException(
+                    "Element One is null and Element Two is not null");
         }
         if (elementOne != null && elementTwo == null) {
-            throw new XMLComparisonException("Element Two is null and Element One is not null");
+            throw new XMLComparisonException(
+                    "Element Two is null and Element One is not null");
         }
 
-        log.info("Now Checking " + elementOne.getLocalName() + " and " + elementTwo.getLocalName() + "=============================");
+        log.info(
+                "Now Checking " + elementOne.getLocalName() + " and " +
+                elementTwo.getLocalName() +
+                "=============================");
 
         log.info("Comparing Element Names .......");
-        compare("Elements names are not equal. ", elementOne.getLocalName(), elementTwo.getLocalName());
+        compare("Elements names are not equal. ",
+                elementOne.getLocalName(),
+                elementTwo.getLocalName());
 
         log.info("Comparing Namespaces .........");
-        compare("Element namespaces are not equal", elementOne.getNamespace(), elementTwo.getNamespace());
+        compare("Element namespaces are not equal",
+                elementOne.getNamespace(),
+                elementTwo.getNamespace());
 
         log.info("Comparing attributes .....");
         compareAllAttributes(elementOne, elementTwo);
 
         log.info("Comparing texts .....");
-        compare("Elements texts are not equal ", elementOne.getText(), elementTwo.getText());
+        compare("Elements texts are not equal ",
+                elementOne.getText(),
+                elementTwo.getText());
 
         log.info("Comparing Children ......");
         compareAllChildren(elementOne, elementTwo);
@@ -65,12 +76,14 @@ public class XMLComparator {
         return true;
     }
 
-    private void compareAllAttributes(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
+    private void compareAllAttributes(OMElement elementOne,
+                                      OMElement elementTwo) throws XMLComparisonException {
         compareAttibutes(elementOne, elementTwo);
         compareAttibutes(elementTwo, elementOne);
     }
 
-    private void compareAllChildren(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
+    private void compareAllChildren(OMElement elementOne,
+                                    OMElement elementTwo) throws XMLComparisonException {
         compareChildren(elementOne, elementTwo);
         compareChildren(elementTwo, elementOne);
     }
@@ -81,9 +94,13 @@ public class XMLComparator {
             OMNode omNode = (OMNode) elementOneChildren.next();
             if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
-                OMElement elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());
+                OMElement elementTwoChild = elementTwo.getFirstChildWithName(
+                        elementOneChild.getQName());
                 if (elementTwoChild == null) {
-                    throw new XMLComparisonException(" There is no " + elementOneChild.getLocalName() + " element under " + elementTwo.getLocalName());
+                    throw new XMLComparisonException(
+                            " There is no " + elementOneChild.getLocalName() +
+                            " element under " +
+                            elementTwo.getLocalName());
                 }
                 compare(elementOneChild, elementTwoChild);
             }
@@ -95,30 +112,40 @@ public class XMLComparator {
         Iterator attributes = elementOne.getAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
-            OMAttribute attr = elementTwo.getFirstAttribute(omAttribute.getQName());
+            OMAttribute attr = elementTwo.getFirstAttribute(
+                    omAttribute.getQName());
             if (attr == null) {
-                throw new XMLComparisonException("Attributes are not the same in two elements. Attribute " + omAttribute.getLocalName() + " != ");
+                throw new XMLComparisonException(
+                        "Attributes are not the same in two elements. Attribute " +
+                        omAttribute.getLocalName() +
+                        " != ");
             }
         }
     }
 
     private void compare(String failureNotice, String one, String two) throws XMLComparisonException {
         if (!one.equals(two)) {
-            throw new XMLComparisonException(failureNotice + one + " != " + two);
+            throw new XMLComparisonException(
+                    failureNotice + one + " != " + two);
         }
     }
 
-    private void compare(String failureNotice, OMNamespace one, OMNamespace two) throws XMLComparisonException {
+    private void compare(String failureNotice,
+                         OMNamespace one,
+                         OMNamespace two) throws XMLComparisonException {
         if (one == null && two == null) {
             return;
         } else if (one != null && two == null) {
-            throw new XMLComparisonException("First Namespace is NOT null. But the second is null");
+            throw new XMLComparisonException(
+                    "First Namespace is NOT null. But the second is null");
         } else if (one == null && two != null) {
-            throw new XMLComparisonException("First Namespace is null. But the second is NOT null");
+            throw new XMLComparisonException(
+                    "First Namespace is null. But the second is NOT null");
         }
 
         if (!one.getName().equals(two.getName())) {
-            throw new XMLComparisonException(failureNotice + one + " != " + two);
+            throw new XMLComparisonException(
+                    failureNotice + one + " != " + two);
         }
 
         // Do we need to compare prefixes as well

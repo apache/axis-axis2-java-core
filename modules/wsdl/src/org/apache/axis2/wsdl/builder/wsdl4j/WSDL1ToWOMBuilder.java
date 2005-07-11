@@ -48,11 +48,14 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
     }
 
-    public WSDLVersionWrapper build(InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
+    public WSDLVersionWrapper build(InputStream in,
+                                    WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
         WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
         Definition wsdl1Definition = this.readInTheWSDLFile(in);
-        WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition, wsdlComponentFactory);
+        WSDLPump pump = new WSDLPump(wsdlDescription,
+                wsdl1Definition,
+                wsdlComponentFactory);
         pump.pump();
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
@@ -67,9 +70,13 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         try {
             doc = Utils.newDocument(in);
         } catch (ParserConfigurationException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser Configuration Error", e);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser Configuration Error",
+                    e);
         } catch (SAXException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR, "Parser SAX Error", e);
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser SAX Error",
+                    e);
 
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);

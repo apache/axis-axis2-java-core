@@ -39,11 +39,13 @@ public class UtilServer {
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
-        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(), service);
+        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
+                service);
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
-        receiver.getSystemContext().getAxisConfiguration().removeService(service);
+        receiver.getSystemContext().getAxisConfiguration().removeService(
+                service);
     }
 
     public static synchronized void start() throws Exception {
@@ -55,9 +57,12 @@ public class UtilServer {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             File file = new File(repositry);
             if (!file.exists()) {
-                throw new Exception("repository directory " + file.getAbsolutePath() + " does not exists");
+                throw new Exception(
+                        "repository directory " + file.getAbsolutePath() +
+                        " does not exists");
             }
-            ConfigurationContext er = erfac.buildConfigurationContext(file.getAbsolutePath());
+            ConfigurationContext er = erfac.buildConfigurationContext(
+                    file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
@@ -72,7 +77,9 @@ public class UtilServer {
 
             try {
                 thread.start();
-                System.out.print("Server started on port " + Constants.TESTING_PORT + ".....");
+                System.out.print(
+                        "Server started on port " + Constants.TESTING_PORT +
+                        ".....");
             } finally {
 
             }
@@ -94,22 +101,27 @@ public class UtilServer {
         return receiver.getSystemContext();
     }
 
-    public static ServiceContext createAdressedEnabledClientSide(ServiceDescription service)
+    public static ServiceContext createAdressedEnabledClientSide(
+            ServiceDescription service)
             throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY + "/modules/addressing.mar");
+        File file = new File(
+                org.apache.axis2.Constants.TESTING_REPOSITORY +
+                "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
+        ConfigurationContext sysContext = efac.buildClientConfigurationContext(
+                null);
 
         sysContext.getAxisConfiguration().addMdoule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         sysContext.getAxisConfiguration().addService(service);
         //Utils.resolvePhases(sysContext.getEngineConfig(), service);
-        ServiceContext serviceContext = sysContext.createServiceContext(service.getName());
+        ServiceContext serviceContext = sysContext.createServiceContext(
+                service.getName());
         return serviceContext;
 
     }

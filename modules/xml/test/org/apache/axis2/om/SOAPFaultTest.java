@@ -35,7 +35,7 @@ public class SOAPFaultTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                                createXMLStreamWriter(System.out));
+                createXMLStreamWriter(System.out));
     }
 
     public void testSOAPFault() throws Exception {

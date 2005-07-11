@@ -39,12 +39,17 @@ public class OMNavigatorTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml")));
+                createXMLStreamReader(
+                        new FileReader(
+                                getTestResourceFile("soap/soapmessage1.xml")));
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         builder = new StAXSOAPModelBuilder(xmlStreamReader);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
-        omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile)));
+        omOutput =
+                new OMOutput(
+                        XMLOutputFactory.newInstance().createXMLStreamWriter(
+                                new FileOutputStream(tempFile)));
         //        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 
 

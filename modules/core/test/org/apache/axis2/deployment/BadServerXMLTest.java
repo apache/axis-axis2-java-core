@@ -33,11 +33,13 @@ public class BadServerXMLTest extends AbstractTestCase {
 
     public void testBadServerXML() {
         try {
-            InputStream in = new FileInputStream(getTestResourceFile("deployment/BadServer.xml"));
+            InputStream in = new FileInputStream(
+                    getTestResourceFile("deployment/BadServer.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
             AxisConfigurationImpl glabl = new AxisConfigurationImpl();
             parser.processGlobalConfig(glabl, DeploymentConstants.AXIS2CONFIG);
-            fail("this must failed gracefully with DeploymentException or FileNotFoundException");
+            fail(
+                    "this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
             return;
         } catch (DeploymentException e) {

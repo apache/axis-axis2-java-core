@@ -1,6 +1,10 @@
 package org.apache.axis2.deployment;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -77,7 +81,8 @@ public class DeploymentClassLoader extends URLClassLoader {
                  * then those entry name will be added to the arraylist
                  */
                 if (entryName != null && (entryName.startsWith("lib/") ||
-                        entryName.startsWith("Lib/")) && entryName.endsWith(".jar")) {
+                        entryName.startsWith("Lib/")) &&
+                        entryName.endsWith(".jar")) {
                     lib_jars_list.add(entryName);
                 }
             }
@@ -157,7 +162,8 @@ public class DeploymentClassLoader extends URLClassLoader {
                 String entryName = "";
                 while ((entry = zin.getNextEntry()) != null) {
                     entryName = entry.getName();
-                    if (entryName != null && entryName.endsWith(completeFileName)) {
+                    if (entryName != null &&
+                            entryName.endsWith(completeFileName)) {
                         byte data[] = new byte[2048];
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         int count;

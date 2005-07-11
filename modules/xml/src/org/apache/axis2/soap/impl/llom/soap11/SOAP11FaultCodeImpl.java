@@ -56,21 +56,24 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
 
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
         if (!(subCode instanceof SOAP11FaultSubCodeImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Sub Code. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Sub Code. But received some other implementation");
         }
         super.setSubCode(subCode);
     }
 
     public void setValue(SOAPFaultValue value) throws SOAPProcessingException {
         if (!(value instanceof SOAP11FaultValueImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Value. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Value. But received some other implementation");
         }
         super.setValue(value);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 
@@ -83,7 +86,8 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(omOutput));
         }
 
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
@@ -91,9 +95,10 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
             String prefix = this.getNamespace().getPrefix();
             String nameSpaceName = this.getNamespace().getName();
             writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME,
-                                     nameSpaceName);
+                    nameSpaceName);
         } else {
-            writer.writeStartElement(SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME);
+            writer.writeStartElement(
+                    SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         }
 
         OMSerializerUtil.serializeAttributes(this, omOutput);

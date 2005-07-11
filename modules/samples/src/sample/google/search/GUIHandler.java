@@ -103,7 +103,8 @@ public class GUIHandler {
         });
         settingsMenu.add(maxResultsMenuItem);
         maxResultsMenuItem.setEnabled(true);
-        maxResultsMenuItem.setToolTipText("This feature is currently disabled!");
+        maxResultsMenuItem.setToolTipText(
+                "This feature is currently disabled!");
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem mnuItemHelp = new JMenuItem("Show Help");
@@ -119,7 +120,7 @@ public class GUIHandler {
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
         // Set the position to screen center & size to half screen size
         frame.setBounds(wndSize.width / 6, wndSize.height / 10, // Position
-                        wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
+                wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         nextButton = new JButton("More Results");
@@ -144,7 +145,7 @@ public class GUIHandler {
         textEditorPane.setContentType("text/html");
         textEditorPane.addHyperlinkListener(new LinkFollower());
         JScrollPane scroll = new JScrollPane(textEditorPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         pane.add(scroll);
 
 
@@ -163,7 +164,8 @@ public class GUIHandler {
 
         pane.add(textBox);
 
-        SpringLayout.Constraints textBoxConstraints = layout.getConstraints(textBox);
+        SpringLayout.Constraints textBoxConstraints = layout.getConstraints(
+                textBox);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(0); // Spring we値l use for Y
         wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we値l use for width
@@ -173,7 +175,8 @@ public class GUIHandler {
         textBoxConstraints.setX(xSpring); // Set the WEST edge constraint
         textBoxConstraints.setY(ySpring);
 
-        SpringLayout.Constraints scrollConstraints = layout.getConstraints(scroll);
+        SpringLayout.Constraints scrollConstraints = layout.getConstraints(
+                scroll);
 //        SpringLayout.Constraints scrollConstraints = layout.getConstraints(textEditorPane);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(30); // Spring we値l use for Y
@@ -184,7 +187,8 @@ public class GUIHandler {
         scrollConstraints.setX(xSpring); // Set the WEST edge constraint
         scrollConstraints.setY(ySpring); // Set the NORTH edge constraint
 
-        SpringLayout.Constraints backBtnConstraints = layout.getConstraints(backButton);
+        SpringLayout.Constraints backBtnConstraints = layout.getConstraints(
+                backButton);
         xSpring = Spring.constant(50); // Spring we値l use for X
         ySpring = Spring.constant(480); // Spring we値l use for Y
         wSpring = Spring.constant(200); // Spring we値l use for width
@@ -194,7 +198,8 @@ public class GUIHandler {
         backBtnConstraints.setX(xSpring); // Set the WEST edge constraint
         backBtnConstraints.setY(ySpring);
 
-        SpringLayout.Constraints nextBtnConstraints = layout.getConstraints(nextButton);
+        SpringLayout.Constraints nextBtnConstraints = layout.getConstraints(
+                nextButton);
         xSpring = Spring.constant(250); // Spring we値l use for X
         ySpring = Spring.constant(480); // Spring we値l use for Y
         wSpring = Spring.constant(200); // Spring we値l use for width
@@ -222,7 +227,9 @@ public class GUIHandler {
      * store it in the properties file
      */
     protected void setKey() {
-        String key = JOptionPane.showInputDialog(null, "Set the Google Key", PropertyLoader.getGoogleKey());
+        String key = JOptionPane.showInputDialog(null,
+                "Set the Google Key",
+                PropertyLoader.getGoogleKey());
         if (key != null && !key.trim().equals("")) {
             PropertyLoader.setGoogleKey(key);
         }
@@ -263,7 +270,7 @@ public class GUIHandler {
         JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(screenSize.width / 5,
-                          screenSize.height / 5);
+                screenSize.height / 5);
         frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
@@ -286,7 +293,10 @@ public class GUIHandler {
         try {
             jep.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Help file not detected", "Help file error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Help file not detected",
+                    "Help file error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);
@@ -303,7 +313,8 @@ public class GUIHandler {
     private void setMaxResults() {
         String maxResults =
                 JOptionPane.showInputDialog(null,
-                                            "Enter the number of maximum results per page (Maximum allowed is 10)", asyncClient.getMaxResults());
+                        "Enter the number of maximum results per page (Maximum allowed is 10)",
+                        asyncClient.getMaxResults());
         if (maxResults == null) {
             return;
         } else {

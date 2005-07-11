@@ -38,7 +38,9 @@ public class TestSkeletonImplWriter extends ClassWriter {
         Class clazz = this.getClass();
         switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTTestSkeletonImplTemplates.JAVA_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTTestSkeletonImplTemplates.JAVA_TEMPLATE);
                 break;
             default:
                 throw new UnsupportedOperationException();

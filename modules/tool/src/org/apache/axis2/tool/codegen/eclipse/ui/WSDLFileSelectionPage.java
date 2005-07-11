@@ -54,7 +54,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page1.fileselection.label"));
+                .getResourceString("page1.fileselection.label"));
 
         fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
         fileText.setLayoutData(gd);
@@ -68,7 +68,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
         Button button = new Button(container, SWT.PUSH);
         button.setText(CodegenWizardPlugin
-                       .getResourceString("page1.fileselection.browse"));
+                .getResourceString("page1.fileselection.browse"));
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleBrowse();
@@ -96,13 +96,13 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
         if (fileName.length() == 0) {
             updateStatus(CodegenWizardPlugin
-                         .getResourceString("page1.error.filemissingerror"));
+                    .getResourceString("page1.error.filemissingerror"));
             return;
         }
 
         if (!fileName.matches(".*\\.wsdl")) {
             updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                         .getResourceString("page1.error.wrongextension"));
+                    .getResourceString("page1.error.wrongextension"));
             return;
         }
 

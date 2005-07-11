@@ -3,7 +3,19 @@ package org.apache.axis2.soap.impl.llom.soap12;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPFaultNode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultRole;
+import org.apache.axis2.soap.SOAPFaultSubCode;
+import org.apache.axis2.soap.SOAPFaultText;
+import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.factory.SOAPLinkedListImplFactory;
@@ -30,22 +42,31 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
      */
 
     public SOAPEnvelope createSOAPEnvelope() {
-        return new SOAPEnvelopeImpl(new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX));
+        return new SOAPEnvelopeImpl(
+                new OMNamespaceImpl(
+                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX));
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
         return new SOAP12HeaderImpl(envelope);
     }
 
-    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
+                                       OMXMLParserWrapper builder) {
         return new SOAP12HeaderImpl(envelope, builder);
     }
 
-    public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, SOAPHeader parent) throws SOAPProcessingException {
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
+                                                 OMNamespace ns,
+                                                 SOAPHeader parent) throws SOAPProcessingException {
         return new SOAP12HeaderBlockImpl(localName, ns, parent);
     }
 
-    public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, SOAPHeader parent, OMXMLParserWrapper builder) throws SOAPProcessingException {
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
+                                                 OMNamespace ns,
+                                                 SOAPHeader parent,
+                                                 OMXMLParserWrapper builder) throws SOAPProcessingException {
         return new SOAP12HeaderBlockImpl(localName, ns, parent, builder);
     }
 
@@ -57,7 +78,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultImpl(parent);
     }
 
-    public SOAPFault createSOAPFault(SOAPBody parent, OMXMLParserWrapper builder) {
+    public SOAPFault createSOAPFault(SOAPBody parent,
+                                     OMXMLParserWrapper builder) {
         return new SOAP12FaultImpl(parent, builder);
     }
 
@@ -65,7 +87,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12BodyImpl(envelope);
     }
 
-    public SOAPBody createSOAPBody(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope,
+                                   OMXMLParserWrapper builder) {
         return new SOAP12BodyImpl(envelope, builder);
     }
 
@@ -73,7 +96,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultCodeImpl(parent);
     }
 
-    public SOAPFaultCode createSOAPFaultCode(SOAPFault parent, OMXMLParserWrapper builder) {
+    public SOAPFaultCode createSOAPFaultCode(SOAPFault parent,
+                                             OMXMLParserWrapper builder) {
         return new SOAP12FaultCodeImpl(parent, builder);
     }
 
@@ -81,7 +105,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultValueImpl(parent);
     }
 
-    public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent, OMXMLParserWrapper builder) {
+    public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent,
+                                               OMXMLParserWrapper builder) {
         return new SOAP12FaultValueImpl(parent, builder);
     }
 
@@ -91,7 +116,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
     }
 
     //added
-    public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent, OMXMLParserWrapper builder) {
+    public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent,
+                                               OMXMLParserWrapper builder) {
         return new SOAP12FaultValueImpl(parent, builder);
     }
 
@@ -101,7 +127,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
     }
 
     //changed
-    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent, OMXMLParserWrapper builder) {
+    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent,
+                                                   OMXMLParserWrapper builder) {
         return new SOAP12FaultSubCodeImpl(parent, builder);
     }
 
@@ -109,7 +136,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultSubCodeImpl(parent);
     }
 
-    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent, OMXMLParserWrapper builder) {
+    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent,
+                                                   OMXMLParserWrapper builder) {
         return new SOAP12FaultSubCodeImpl(parent, builder);
     }
 
@@ -117,7 +145,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultReasonImpl(parent);
     }
 
-    public SOAPFaultReason createSOAPFaultReason(SOAPFault parent, OMXMLParserWrapper builder) {
+    public SOAPFaultReason createSOAPFaultReason(SOAPFault parent,
+                                                 OMXMLParserWrapper builder) {
         return new SOAP12FaultReasonImpl(parent, builder);
     }
 
@@ -125,7 +154,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultTextImpl(parent);
     }
 
-    public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent, OMXMLParserWrapper builder) {
+    public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent,
+                                             OMXMLParserWrapper builder) {
         return new SOAP12FaultTextImpl(parent, builder);
     }
 
@@ -133,7 +163,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultNodeImpl(parent);
     }
 
-    public SOAPFaultNode createSOAPFaultNode(SOAPFault parent, OMXMLParserWrapper builder) {
+    public SOAPFaultNode createSOAPFaultNode(SOAPFault parent,
+                                             OMXMLParserWrapper builder) {
         return new SOAP12FaultNodeImpl(parent, builder);
     }
 
@@ -141,7 +172,8 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultRoleImpl(parent);
     }
 
-    public SOAPFaultRole createSOAPFaultRole(SOAPFault parent, OMXMLParserWrapper builder) {
+    public SOAPFaultRole createSOAPFaultRole(SOAPFault parent,
+                                             OMXMLParserWrapper builder) {
         return new SOAP12FaultRoleImpl(parent, builder);
     }
 
@@ -149,14 +181,16 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
         return new SOAP12FaultDetailImpl(parent);
     }
 
-    public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent, OMXMLParserWrapper builder) {
+    public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent,
+                                                 OMXMLParserWrapper builder) {
         return new SOAP12FaultDetailImpl(parent, builder);
     }
 
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
-                new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                                    SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                new OMNamespaceImpl(
+                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
         SOAPHeader headerImpl = createSOAPHeader(env);
         SOAPBody bodyImpl = createSOAPBody(env);

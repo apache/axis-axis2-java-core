@@ -38,7 +38,9 @@ public class TestUtil {
         if (fileName == "" || fileName == null) {
             fileName = IN_FILE_NAME;
         }
-        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
+        XMLStreamReader parser = XMLInputFactory.newInstance()
+                .createXMLStreamReader(
+                        new FileReader(getTestResourceFile(fileName)));
         builder = new StAXSOAPModelBuilder(parser);
         return builder;
     }

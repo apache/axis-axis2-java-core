@@ -22,7 +22,12 @@ import org.apache.axis2.engine.AxisFault;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Class HTTPTransportReceiver
@@ -180,7 +185,8 @@ public class HTTPTransportReceiver {
                     index = 4;
 
                 } else {
-                    throw new AxisFault("Unsupported HTTP request type: Only GET and POST is supported");
+                    throw new AxisFault(
+                            "Unsupported HTTP request type: Only GET and POST is supported");
                 }
 
                 value = readFirstLineArg(' ');
@@ -244,7 +250,8 @@ public class HTTPTransportReceiver {
                             // case END:
                             // break;
                         default :
-                            throw new AxisFault("Error Occured Unknown state " + state);
+                            throw new AxisFault(
+                                    "Error Occured Unknown state " + state);
                     }
                 }
                 state = BEFORE_SEPERATOR;
@@ -429,7 +436,8 @@ public class HTTPTransportReceiver {
             }
         }
         if (c == -1) {
-            throw new AxisFault("Every line should ends with the \\n, unexpected End of stream");
+            throw new AxisFault(
+                    "Every line should ends with the \\n, unexpected End of stream");
         } else {
             return (count > 0) ? count : -1;
         }
@@ -443,7 +451,8 @@ public class HTTPTransportReceiver {
      *
      * @return
      */
-    public static String getServicesHTML(ConfigurationContext configurationContext) {
+    public static String getServicesHTML(
+            ConfigurationContext configurationContext) {
         String temp = "";
         Map services =
                 configurationContext.getAxisConfiguration().getServices();
@@ -462,7 +471,8 @@ public class HTTPTransportReceiver {
                 operations = axisService.getOperations();
                 operationsList = operations.values();
 
-                temp += "<h3>" + axisService.getName().getLocalPart() + "</h3>";
+                temp += "<h3>" + axisService.getName().getLocalPart() +
+                        "</h3>";
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";
                     for (Iterator iterator1 = operationsList.iterator();

@@ -35,8 +35,10 @@ public class HeadersTest extends TestCase {
     }
 
     public void testAddingHeaderElements() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage = javax.xml.soap.MessageFactory.newInstance().createMessage();
-        javax.xml.soap.SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPMessage soapMessage = javax.xml.soap.MessageFactory.newInstance()
+                .createMessage();
+        javax.xml.soap.SOAPEnvelope soapEnv = soapMessage.getSOAPPart()
+                .getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
         header.addChildElement("ebxmlms");
         

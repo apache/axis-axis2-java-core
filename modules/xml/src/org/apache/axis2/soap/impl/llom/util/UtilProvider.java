@@ -24,7 +24,9 @@ import java.util.Iterator;
  */
 
 public class UtilProvider {
-    public static void setNewElement(OMElement parent, OMElement myElement, OMElement newElement) {
+    public static void setNewElement(OMElement parent,
+                                     OMElement myElement,
+                                     OMElement newElement) {
         if (myElement != null) {
             myElement.discard();
         }
@@ -32,11 +34,13 @@ public class UtilProvider {
         myElement = newElement;
     }
 
-    public static OMElement getChildWithName(OMElement parent, String childName) {
+    public static OMElement getChildWithName(OMElement parent,
+                                             String childName) {
         Iterator childrenIter = parent.getChildren();
         while (childrenIter.hasNext()) {
             OMNode node = (OMNode) childrenIter.next();
-            if (node.getType() == OMNode.ELEMENT_NODE && childName.equals(((OMElement) node).getLocalName())) {
+            if (node.getType() == OMNode.ELEMENT_NODE &&
+                    childName.equals(((OMElement) node).getLocalName())) {
                 return (OMElement) node;
             }
         }

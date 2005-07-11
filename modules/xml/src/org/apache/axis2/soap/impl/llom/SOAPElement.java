@@ -33,10 +33,14 @@ public abstract class SOAPElement extends OMElementImpl {
      * @param parent
      * @param parent
      */
-    protected SOAPElement(OMElement parent, String localName, boolean extractNamespaceFromParent) throws SOAPProcessingException {
+    protected SOAPElement(OMElement parent,
+                          String localName,
+                          boolean extractNamespaceFromParent) throws SOAPProcessingException {
         super(parent);
         if (parent == null) {
-            throw new SOAPProcessingException(" Can not create " + localName + " element without a parent !!");
+            throw new SOAPProcessingException(
+                    " Can not create " + localName +
+                    " element without a parent !!");
         }
         checkParent(parent);
 
@@ -47,7 +51,9 @@ public abstract class SOAPElement extends OMElementImpl {
     }
 
 
-    protected SOAPElement(OMElement parent, String localName, OMXMLParserWrapper builder) {
+    protected SOAPElement(OMElement parent,
+                          String localName,
+                          OMXMLParserWrapper builder) {
         super(localName, null, parent, builder);
     }
 

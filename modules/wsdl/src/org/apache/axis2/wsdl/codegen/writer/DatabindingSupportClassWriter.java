@@ -30,7 +30,9 @@ public class DatabindingSupportClassWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public DatabindingSupportClassWriter(File outputFileLocation, int language, int databindingFramework) {
+    public DatabindingSupportClassWriter(File outputFileLocation,
+                                         int language,
+                                         int databindingFramework) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
         this.databindingFramework = databindingFramework;
@@ -41,11 +43,14 @@ public class DatabindingSupportClassWriter extends ClassWriter {
     }
 
     public void loadTemplate() {
-        if (this.databindingFramework == XSLTConstants.DataBindingTypes.XML_BEANS) {
+        if (this.databindingFramework ==
+                XSLTConstants.DataBindingTypes.XML_BEANS) {
             Class clazz = this.getClass();
             switch (language) {
                 case XSLTConstants.LanguageTypes.JAVA:
-                    this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTDatabindingSupporterTemplates.JAVA_TEMPLATE);
+                    this.xsltStream =
+                            clazz.getResourceAsStream(
+                                    XSLTConstants.XSLTDatabindingSupporterTemplates.JAVA_TEMPLATE);
                     break;
                 case XSLTConstants.LanguageTypes.C_SHARP:
                 case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
@@ -54,7 +59,8 @@ public class DatabindingSupportClassWriter extends ClassWriter {
                     throw new UnsupportedOperationException();
             }
         } else {
-            throw new UnsupportedOperationException("Unsupported Data binding Framework!");
+            throw new UnsupportedOperationException(
+                    "Unsupported Data binding Framework!");
         }
     }
 }

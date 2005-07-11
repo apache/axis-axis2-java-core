@@ -74,7 +74,9 @@ public abstract class SOAPFactory {
      * @throws SOAPException if there is an error in creating the
      *                       <code>SOAPElement</code> object
      */
-    public abstract SOAPElement createElement(String localName, String prefix, String uri)
+    public abstract SOAPElement createElement(String localName,
+                                              String prefix,
+                                              String uri)
             throws SOAPException;
 
     /**
@@ -105,7 +107,9 @@ public abstract class SOAPFactory {
      *         local name, namespace prefix, and namespace URI
      * @throws SOAPException if there is a SOAP error
      */
-    public abstract Name createName(String localName, String prefix, String uri)
+    public abstract Name createName(String localName,
+                                    String prefix,
+                                    String uri)
             throws SOAPException;
 
     /**
@@ -136,7 +140,7 @@ public abstract class SOAPFactory {
             return (SOAPFactory) FactoryFinder.find(SF_PROPERTY, DEFAULT_SF);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP Factory: "
-                                    + exception.getMessage());
+                    + exception.getMessage());
         }
     }
 

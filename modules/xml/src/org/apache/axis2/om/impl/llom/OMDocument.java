@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 
@@ -168,7 +172,7 @@ public class OMDocument implements OMContainer {
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
         return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                                           elementQName);
+                elementQName);
     }
 
     /**
@@ -193,13 +197,14 @@ public class OMDocument implements OMContainer {
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
                 new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                                            elementQName);
+                        elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
         }
 
-        return ((omNode != null) && (OMNode.ELEMENT_NODE == omNode.getType())) ? (OMElement) omNode : null;
+        return ((omNode != null) && (OMNode.ELEMENT_NODE == omNode.getType())) ?
+                (OMElement) omNode : null;
 
     }
 

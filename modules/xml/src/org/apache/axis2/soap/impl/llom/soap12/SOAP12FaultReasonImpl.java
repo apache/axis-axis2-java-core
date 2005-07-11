@@ -40,14 +40,16 @@ public class SOAP12FaultReasonImpl extends SOAPFaultReasonImpl {
 
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
         if (!(soapFaultText instanceof SOAP12FaultTextImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault Text. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Text. But received some other implementation");
         }
         super.setSOAPText(soapFaultText);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 }

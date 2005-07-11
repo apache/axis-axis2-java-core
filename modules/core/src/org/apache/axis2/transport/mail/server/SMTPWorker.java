@@ -2,9 +2,17 @@ package org.apache.axis2.transport.mail.server;
 
 import org.apache.axis2.context.ConfigurationContext;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -35,15 +43,23 @@ public class SMTPWorker extends Thread {
 
     boolean bodyData = false;
 
-    public SMTPWorker(Socket socket, Storage st, ConfigurationContext configurationContext) {
+    public SMTPWorker(Socket socket,
+                      Storage st,
+                      ConfigurationContext configurationContext) {
         try {
             this.st = st;
             this.configurationContext = configurationContext;
             //get the streams from the socket and save in instance variables.
-            reader = new BufferedReader(new InputStreamReader(socket
-                                                              .getInputStream()));
-            writer = new BufferedWriter(new OutputStreamWriter(socket
-                                                               .getOutputStream()));
+            reader =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    socket
+                    .getInputStream()));
+            writer =
+                    new BufferedWriter(
+                            new OutputStreamWriter(
+                                    socket
+                    .getOutputStream()));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -77,8 +93,10 @@ public class SMTPWorker extends Thread {
             }
             for (int idx = 0; idx < receivers.size(); idx++) {
                 try {
-                    MailSorter mSort = new MailSorter(this.st, this.configurationContext);
-                    mSort.sort((String) receivers.get(idx), new MimeMessage(mail));
+                    MailSorter mSort = new MailSorter(this.st,
+                            this.configurationContext);
+                    mSort.sort((String) receivers.get(idx),
+                            new MimeMessage(mail));
                 } catch (MessagingException e1) {
                     e1.printStackTrace();
                 }
@@ -163,7 +181,8 @@ public class SMTPWorker extends Thread {
             String toStr = input.substring(start, end);
 
             try {
-                mail.addRecipient(Message.RecipientType.TO, new MailAddress(toStr));
+                mail.addRecipient(Message.RecipientType.TO,
+                        new MailAddress(toStr));
                 receivers.add(toStr);
             } catch (MessagingException e) {
                 // TODO Auto-generated catch block
@@ -191,7 +210,9 @@ public class SMTPWorker extends Thread {
                 if (bodyData) {
                     temp += input;
                     mail.setContent(temp, "text/plain");
-                    System.out.println("\n\n\n---------------" + temp + "---------------\n\n\n");
+                    System.out.println(
+                            "\n\n\n---------------" + temp +
+                            "---------------\n\n\n");
                 } else {
                     mail.addHeaderLine(input);
                 }

@@ -31,7 +31,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -61,25 +65,36 @@ public class HTTPTransportSender extends AbstractTransportSender {
             boolean doMTOM = msgContext.isDoingMTOM();
             StringBuffer buf = new StringBuffer();
             buf.append(HTTPConstants.HEADER_POST).append(" ");
-            buf.append(url.getFile()).append(" ").append(httpVersion).append("\n");
+            buf.append(url.getFile()).append(" ").append(httpVersion).append(
+                    "\n");
             if (doMTOM) {
-                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(OMOutput.getContentType(true)).append("\n");
+                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
+                        .append(OMOutput.getContentType(true))
+                        .append("\n");
             } else {
                 String nsURI = msgContext.getEnvelope().getNamespace().getName();
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
+                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
+                            .append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
                     buf.append("; charset=utf-8\n");
-                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": text/xml; charset=utf-8\n");
+                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                        nsURI)) {
+                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(
+                            ": text/xml; charset=utf-8\n");
                 } else {
-                    throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+                    throw new AxisFault(
+                            "Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
                 }
 
             }
 
-            buf.append(HTTPConstants.HEADER_ACCEPT).append(": application/soap+xml, application/dime, multipart/related, text/*\n");
-            buf.append(HTTPConstants.HEADER_HOST).append(": ").append(url.getHost()).append("\n");
-            buf.append(HTTPConstants.HEADER_CACHE_CONTROL).append(": no-cache\n");
+            buf.append(HTTPConstants.HEADER_ACCEPT).append(
+                    ": application/soap+xml, application/dime, multipart/related, text/*\n");
+            buf.append(HTTPConstants.HEADER_HOST).append(": ").append(
+                    url.getHost())
+                    .append("\n");
+            buf.append(HTTPConstants.HEADER_CACHE_CONTROL).append(
+                    ": no-cache\n");
             buf.append(HTTPConstants.HEADER_PRAGMA).append(": no-cache\n");
             if (chuncked) {
                 buf
@@ -89,7 +104,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
                         .append("\n");
             }
             if (!chuncked && !msgContext.isDoingMTOM()) {
-                buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(": " + contentLength + "\n");
+                buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(
+                        ": " + contentLength + "\n");
             }
             if (!msgContext.isDoingREST()) {
                 buf.append("SOAPAction: \"" + soapActionString + "\"\n");
@@ -101,14 +117,16 @@ public class HTTPTransportSender extends AbstractTransportSender {
         }
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                   OutputStream out) {
+    public void finalizeSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext,
+            OutputStream out) {
     }
 
     private OutputStream openSocket(MessageContext msgContext)
             throws AxisFault {
         TransportSenderInfo transportInfo =
-                (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
+                (TransportSenderInfo) msgContext.getProperty(
+                        TRANSPORT_SENDER_INFO);
 
         EndpointReference toURL = msgContext.getTo();
         if (toURL != null) {
@@ -116,7 +134,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 URL url = new URL(toURL.getAddress());
                 SocketAddress add =
                         new InetSocketAddress(url.getHost(),
-                                              url.getPort() == -1 ? 80 : url.getPort());
+                                url.getPort() == -1 ? 80 : url.getPort());
                 Socket socket = new Socket();
                 socket.connect(add);
                 transportInfo.url = url;
@@ -139,7 +157,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
             throws AxisFault {
         try {
             TransportSenderInfo transportInfo =
-                    (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
+                    (TransportSenderInfo) msgContext.getProperty(
+                            TRANSPORT_SENDER_INFO);
             InputStream in = null;
             if (chuncked || msgContext.isDoingMTOM()) {
                 if (chuncked) {
@@ -155,9 +174,9 @@ public class HTTPTransportSender extends AbstractTransportSender {
 
                 //write header to the out put stream
                 writeTransportHeaders(outS,
-                                      transportInfo.url,
-                                      msgContext,
-                                      bytes.length);
+                        transportInfo.url,
+                        msgContext,
+                        bytes.length);
                 outS.flush();
                 //write the content to the real output stream
                 outS.write(bytes);
@@ -170,18 +189,27 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     .RESPONSE_ACK_CODE_VAL
                     .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
                 String transferEncoding =
-                        (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                        (String) map.get(
+                                HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
-                        && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
+                        &&
+                        HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
+                                transferEncoding)) {
                     in = new ChunkedInputStream(transportInfo.in);
                 }
                 msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
 
-                String contentType = (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE);
-                if (contentType != null && contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0) {
+                String contentType = (String) map.get(
+                        HTTPConstants.HEADER_CONTENT_TYPE);
+                if (contentType != null &&
+                        contentType.indexOf(
+                                HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >=
+                        0) {
                     OperationContext opContext = msgContext.getOperationContext();
                     if (opContext != null) {
-                        opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE, contentType);
+                        opContext.setProperty(
+                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+                                contentType);
                     }
                 }
             }
@@ -200,21 +228,27 @@ public class HTTPTransportSender extends AbstractTransportSender {
             return openSocket(msgctx);
         } else {
             TransportSenderInfo transportInfo =
-                    (TransportSenderInfo) msgctx.getProperty(TRANSPORT_SENDER_INFO);
+                    (TransportSenderInfo) msgctx.getProperty(
+                            TRANSPORT_SENDER_INFO);
             transportInfo.outputStream = new ByteArrayOutputStream();
             return transportInfo.outputStream;
         }
     }
 
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                        OutputStream out)
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext,
+            OutputStream out)
             throws AxisFault {
         if (msgContext.isDoingMTOM()) {
-            HTTPOutTransportInfo httpOutTransportInfo = (HTTPOutTransportInfo) msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo);
+            HTTPOutTransportInfo httpOutTransportInfo = (HTTPOutTransportInfo) msgContext.getProperty(
+                    HTTPConstants.HTTPOutTransportInfo);
             if (httpOutTransportInfo != null) {
-                httpOutTransportInfo.setContentType(OMOutput.getContentType(true));
+                httpOutTransportInfo.setContentType(
+                        OMOutput.getContentType(true));
             } else {
-                throw new AxisFault("Property " + HTTPConstants.HTTPOutTransportInfo + " not set by the Server");
+                throw new AxisFault(
+                        "Property " + HTTPConstants.HTTPOutTransportInfo +
+                        " not set by the Server");
             }
 
         }
@@ -227,7 +261,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
         try {
             if (msgContext.isDoingMTOM() || chuncked) {
                 TransportSenderInfo transportInfo =
-                        (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
+                        (TransportSenderInfo) msgContext.getProperty(
+                                TRANSPORT_SENDER_INFO);
                 writeTransportHeaders(out, transportInfo.url, msgContext, -1);
                 out.flush();
                 if (chuncked) {
@@ -249,7 +284,8 @@ public class HTTPTransportSender extends AbstractTransportSender {
      */
     public void cleanUp(MessageContext msgContext) throws AxisFault {
         TransportSenderInfo transportInfo =
-                (TransportSenderInfo) msgContext.getProperty(TRANSPORT_SENDER_INFO);
+                (TransportSenderInfo) msgContext.getProperty(
+                        TRANSPORT_SENDER_INFO);
         try {
             if (transportInfo.socket != null) {
                 transportInfo.socket.close();
@@ -274,18 +310,22 @@ public class HTTPTransportSender extends AbstractTransportSender {
             if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
                 this.httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
                 Parameter transferEncoding =
-                        transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                        transportOut.getParameter(
+                                HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
-                        && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding.getValue())) {
+                        &&
+                        HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
+                                transferEncoding.getValue())) {
                     this.chuncked = true;
                 }
             } else if (
                     HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
                 //TODO HTTP1.0 specific parameters
             } else {
-                throw new AxisFault("Parameter "
-                                    + HTTPConstants.PROTOCOL_VERSION
-                                    + " Can have values only HTTP/1.0 or HTTP/1.1");
+                throw new AxisFault(
+                        "Parameter "
+                        + HTTPConstants.PROTOCOL_VERSION
+                        + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
 

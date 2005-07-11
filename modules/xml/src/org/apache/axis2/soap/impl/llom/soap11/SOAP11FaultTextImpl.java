@@ -29,13 +29,15 @@ public class SOAP11FaultTextImpl extends SOAPFaultTextImpl {
         super(parent);
     }
 
-    public SOAP11FaultTextImpl(SOAPFaultReason parent, OMXMLParserWrapper builder) {
+    public SOAP11FaultTextImpl(SOAPFaultReason parent,
+                               OMXMLParserWrapper builder) {
         super(parent, builder);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultReasonImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP FaultReason as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.1 implementation of SOAP FaultReason as the parent. But received some other implementation");
         }
     }
 }

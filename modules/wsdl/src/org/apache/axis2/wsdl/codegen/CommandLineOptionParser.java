@@ -16,7 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
@@ -64,8 +68,10 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                     optionType = args[i];
                 } else if (2 == state || 1 == state) {
                     // new one but old one should be saved
-                    commandLineOption = new CommandLineOption(optionType, optionBundle);
-                    commandLineOptions.put(commandLineOption.getType(), commandLineOption);
+                    commandLineOption =
+                            new CommandLineOption(optionType, optionBundle);
+                    commandLineOptions.put(commandLineOption.getType(),
+                            commandLineOption);
                     state = 1;
                     optionType = args[i];
                     optionBundle = null;
@@ -73,8 +79,12 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                 }
             } else {
                 if (0 == state) {
-                    commandLineOption = new CommandLineOption(CommandLineOptionConstants.SOLE_INPUT, args);
-                    commandLineOptions.put(commandLineOption.getType(), commandLineOption);
+                    commandLineOption =
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.SOLE_INPUT,
+                                    args);
+                    commandLineOptions.put(commandLineOption.getType(),
+                            commandLineOption);
                     return commandLineOptions;
 
                 } else if (1 == state) {

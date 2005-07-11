@@ -24,7 +24,8 @@ import org.w3c.dom.Element;
 /**
  * @author chathura@opensource.lk
  */
-public class SchemaImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, Schema {
+public class SchemaImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants,
+        Schema {
 
     private Element elelment;
 

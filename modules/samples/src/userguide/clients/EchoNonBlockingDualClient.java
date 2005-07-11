@@ -22,8 +22,9 @@ import java.io.StringWriter;
  * Time: 5:30:52 PM
  */
 public class EchoNonBlockingDualClient {
-    private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                                                                       "http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {
@@ -35,14 +36,19 @@ public class EchoNonBlockingDualClient {
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    true);
 
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+                        result.getResponseEnvelope().serializeWithCache(
+                                new OMOutput(
+                                        XMLOutputFactory.newInstance()
+                                .createXMLStreamWriter(writer)));
                         writer.flush();
 
                         System.out.println(writer.toString());

@@ -50,9 +50,12 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
     /* (non-Javadoc)
      * @see javax.xml.soap.SOAPFactory#createElement(java.lang.String, java.lang.String, java.lang.String)
      */
-    public SOAPElement createElement(String localName, String prefix, String uri)
+    public SOAPElement createElement(String localName,
+                                     String prefix,
+                                     String uri)
             throws SOAPException {
-        OMElement newOMElement = OMAbstractFactory.getOMFactory().createOMElement(localName, uri, prefix);
+        OMElement newOMElement = OMAbstractFactory.getOMFactory()
+                .createOMElement(localName, uri, prefix);
         return new SOAPElementImpl(newOMElement);
     }
 

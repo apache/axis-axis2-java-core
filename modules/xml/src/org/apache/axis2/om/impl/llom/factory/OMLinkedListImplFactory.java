@@ -15,7 +15,14 @@
  */
 package org.apache.axis2.om.impl.llom.factory;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMAttributeImpl;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
@@ -58,7 +65,7 @@ public class OMLinkedListImplFactory implements OMFactory {
                                      OMContainer parent,
                                      OMXMLParserWrapper builder) {
         OMElementImpl element = new OMElementImpl(localName, ns, parent,
-                                                  builder);
+                builder);
         return element;
     }
 
@@ -73,8 +80,8 @@ public class OMLinkedListImplFactory implements OMFactory {
     public OMElement createOMElement(String localName, String namespaceURI,
                                      String namespacePrefix) {
         return this.createOMElement(localName,
-                                    this.createOMNamespace(namespaceURI,
-                                                           namespacePrefix));
+                this.createOMNamespace(namespaceURI,
+                        namespacePrefix));
     }
 
     /**
@@ -133,11 +140,16 @@ public class OMLinkedListImplFactory implements OMFactory {
         return new OMTextImpl(dataHandler, optimize);
     }
 
-    public OMText createText(OMElement parent, String s, String mimeType, boolean optimize) {
+    public OMText createText(OMElement parent,
+                             String s,
+                             String mimeType,
+                             boolean optimize) {
         return new OMTextImpl(parent, s, mimeType, optimize);
     }
 
-    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
+    public OMAttribute createOMAttribute(String localName,
+                                         OMNamespace ns,
+                                         String value) {
         return new OMAttributeImpl(localName, ns, value);
     }
 

@@ -57,10 +57,12 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineRegistry = new AxisConfigurationImpl();
         engineContext = new ConfigurationContext(engineRegistry);
 
-        TransportOutDescription transport = new TransportOutDescription(new QName("null"));
+        TransportOutDescription transport = new TransportOutDescription(
+                new QName("null"));
         transport.setSender(new HTTPTransportSender());
 
-        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
+        TransportInDescription transportIn = new TransportInDescription(
+                new QName("null"));
         axisOp = new OperationDescription(opearationName);
 
         service = new ServiceDescription(serviceName);
@@ -74,14 +76,19 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         service.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
 
-        ServiceContext serviceContext = engineContext.createServiceContext(serviceName);
+        ServiceContext serviceContext = engineContext.createServiceContext(
+                serviceName);
 
         mc =
                 new MessageContext(engineContext,
-                                   transportIn,
-                                   transport);
+                        transportIn,
+                        transport);
 
-        mc.setOperationContext(OperationContextFactory.createMEPContext(WSDLConstants.MEP_CONSTANT_IN_OUT, axisOp, serviceContext));
+        mc.setOperationContext(
+                OperationContextFactory.createMEPContext(
+                        WSDLConstants.MEP_CONSTANT_IN_OUT,
+                        axisOp,
+                        serviceContext));
         mc.setTransportOut(transport);
         mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         mc.setServerSide(true);
@@ -110,7 +117,9 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 //    }
 
     public void testServerReceive() throws Exception {
-        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService"));
+        mc.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        "axis/services/NullService"));
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
         engine.receive(mc);

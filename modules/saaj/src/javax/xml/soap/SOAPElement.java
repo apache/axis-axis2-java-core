@@ -68,7 +68,8 @@ public interface SOAPElement extends Node, org.w3c.dom.Element {
      * @throws SOAPException if there is an error in creating the
      *                       <code>SOAPElement</code> object
      */
-    public abstract SOAPElement addChildElement(String localName, String prefix)
+    public abstract SOAPElement addChildElement(String localName,
+                                                String prefix)
             throws SOAPException;
 
     /**
@@ -86,7 +87,9 @@ public interface SOAPElement extends Node, org.w3c.dom.Element {
      * @throws SOAPException if there is an error in creating the
      *                       <code>SOAPElement</code> object
      */
-    public abstract SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException;
+    public abstract SOAPElement addChildElement(String localName,
+                                                String prefix,
+                                                String uri) throws SOAPException;
 
     /**
      * Add a <code>SOAPElement</code> as a child of this
@@ -160,7 +163,8 @@ public interface SOAPElement extends Node, org.w3c.dom.Element {
      * @throws SOAPException if there is an error in creating the
      *                       namespace
      */
-    public abstract SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException;
+    public abstract SOAPElement addNamespaceDeclaration(String prefix,
+                                                        String uri) throws SOAPException;
 
     /**
      * Returns the value of the attribute with the specified

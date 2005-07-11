@@ -45,8 +45,11 @@ public class CreateSchemaTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
-            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            InputStream in = new FileInputStream(
+                    getTestResourceFile("BookQuote.wsdl"));
+            wsdlVersionWrapper =
+                    WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+                    .build(in);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
@@ -73,7 +76,7 @@ public class CreateSchemaTest extends AbstractTestCase {
             if (item instanceof Element
                     && "complexType".equals(((Element) item).getTagName())
                     && "BookQuote_getBookPrice".equals(((Element) item)
-                                                       .getAttribute("name"))) {
+                    .getAttribute("name"))) {
                 insertedElementForMessageReference = (Element) item;
             }
         }

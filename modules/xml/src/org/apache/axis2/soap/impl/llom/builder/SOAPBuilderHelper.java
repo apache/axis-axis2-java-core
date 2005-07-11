@@ -35,13 +35,15 @@ public abstract class SOAPBuilderHelper {
         this.builder = builder;
     }
 
-    public abstract OMElement handleEvent(XMLStreamReader parser, OMElement element, int elementLevel) throws SOAPProcessingException;
+    public abstract OMElement handleEvent(XMLStreamReader parser,
+                                          OMElement element,
+                                          int elementLevel) throws SOAPProcessingException;
 
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.declareNamespace(parser.getNamespaceURI(i),
-                                  parser.getNamespacePrefix(i));
+                    parser.getNamespacePrefix(i));
         }
 
         // set the own namespace
@@ -71,7 +73,11 @@ public abstract class SOAPBuilderHelper {
         // throw new OMException("All elements must be namespace qualified!");
         // }
         if (isSOAPElement) {
-            if (node.getNamespace() != null && !node.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) && !node.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            if (node.getNamespace() != null &&
+                    !node.getNamespace().getName().equals(
+                            SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
+                    !node.getNamespace().getName().equals(
+                            SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw new OMBuilderException("invalid SOAP namespace URI");
             }
         }
@@ -85,13 +91,13 @@ public abstract class SOAPBuilderHelper {
             String uri = parser.getAttributeNamespace(i);
             if (uri.hashCode() != 0) {
                 ns = node.findNamespace(uri,
-                                        parser.getAttributePrefix(i));
+                        parser.getAttributePrefix(i));
             }
 
             // todo if the attributes are supposed to namespace qualified all the time
             // todo then this should throw an exception here
             node.addAttribute(parser.getAttributeLocalName(i),
-                              parser.getAttributeValue(i), ns);
+                    parser.getAttributeValue(i), ns);
         }
     }
 }

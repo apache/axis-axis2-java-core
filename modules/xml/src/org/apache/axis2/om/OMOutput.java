@@ -64,10 +64,14 @@ public class OMOutput {
         this.outStream = outStream;
         if (doOptimise) {
             bufferedSoapOutStream = new ByteArrayOutputStream();
-            xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(bufferedSoapOutStream);
+            xmlWriter =
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(
+                            bufferedSoapOutStream);
             binaryNodeList = new LinkedList();
         } else {
-            xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream);
+            xmlWriter =
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(
+                            outStream);
 
         }
 
@@ -115,7 +119,7 @@ public class OMOutput {
         if (doOptimise) {
             xmlWriter.flush();
             MIMEOutputUtils.complete(outStream, bufferedSoapOutStream,
-                                     binaryNodeList, mimeBoundary);
+                    binaryNodeList, mimeBoundary);
         }
     }
 

@@ -35,21 +35,29 @@ public class TextImpl extends NodeImpl implements Text {
 
     public TextImpl(String s) {
         //super();
-        omNode = omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(s);
+        omNode =
+                omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(s);
     }
 
     public TextImpl(SOAPElementImpl parent, String s) throws SOAPException {
         //super();
         //super.setParentElement(parent);
         OMElement par = parent.getOMElement();
-        omNode = omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(par, s);
+        omNode =
+                omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(par, s);
     }
 
     public TextImpl(org.w3c.dom.CharacterData data) {
         if (data == null) {
             throw new IllegalArgumentException("Text value may not be null.");
         }
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(data.getData());
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(data.getData());
     }
 
     /*Overridden Method*/
@@ -89,7 +97,9 @@ public class TextImpl extends NodeImpl implements Text {
         int length = temp.length();
         String tailData = temp.substring(offset);
         temp = temp.substring(0, offset);
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(temp);
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(temp);
         TextImpl tailText = new TextImpl(tailData);
         org.w3c.dom.Node myParent = getParentNode();
         if (myParent != null) {
@@ -118,7 +128,9 @@ public class TextImpl extends NodeImpl implements Text {
         if (temp.length() - offset >= count - offset)
             subString = subString.append(temp.substring(offset + count));
         temp = subString.toString();
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(temp);
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(temp);
 
     }
 
@@ -145,7 +157,9 @@ public class TextImpl extends NodeImpl implements Text {
         deleteData(offset, count);
         StringBuffer temp = new StringBuffer(omText.getText());
         temp.append(arg);
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(temp.toString());
     }
 
 
@@ -153,9 +167,12 @@ public class TextImpl extends NodeImpl implements Text {
 
         if (offset < 0 || offset > omText.getText().length())
             throw new DOMException(DOMException.INDEX_SIZE_ERR, "");
-        StringBuffer temp = new StringBuffer(omText.getText().substring(0, offset));
+        StringBuffer temp = new StringBuffer(
+                omText.getText().substring(0, offset));
         temp = temp.append(arg);
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(temp.toString());
     }
 
 
@@ -163,14 +180,18 @@ public class TextImpl extends NodeImpl implements Text {
 
         StringBuffer temp = new StringBuffer(omText.getText());
         temp = temp.append(arg);
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(temp.toString());
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(temp.toString());
 
     }
 
 
     public void setData(String arg) throws DOMException {
 
-        omText = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(arg);
+        omText =
+                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createText(arg);
     }
 
 }

@@ -31,7 +31,8 @@ public class CallbackReceiver implements MessageReceiver {
      */
     public void recieve(MessageContext messgeCtx) throws AxisFault {
         //TODO find the related message ID and call the callback
-        RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders().getRelatesTo();
+        RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders()
+                .getRelatesTo();
 
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackstore.get(messageID);
@@ -40,7 +41,9 @@ public class CallbackReceiver implements MessageReceiver {
             callback.onComplete(result);
             callback.setComplete(true);
         } else {
-            throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
+            throw new AxisFault(
+                    "The Callback realtes to MessageID " + messageID +
+                    " is not found");
         }
     }
 

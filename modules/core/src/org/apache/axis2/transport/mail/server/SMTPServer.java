@@ -17,7 +17,9 @@ public class SMTPServer extends Thread {
     private ConfigurationContext configurationContext;
     private int port;
 
-    public SMTPServer(Storage st, ConfigurationContext configurationContext, int port) {
+    public SMTPServer(Storage st,
+                      ConfigurationContext configurationContext,
+                      int port) {
         this.st = st;
         this.configurationContext = configurationContext;
         this.port = port;
@@ -41,7 +43,9 @@ public class SMTPServer extends Thread {
                 //wait for a client
                 Socket socket = ss.accept();
 
-                SMTPWorker thread = new SMTPWorker(socket, st, configurationContext);
+                SMTPWorker thread = new SMTPWorker(socket,
+                        st,
+                        configurationContext);
                 thread.start();
 
             } catch (IOException ex) {

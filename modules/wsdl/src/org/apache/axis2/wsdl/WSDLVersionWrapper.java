@@ -34,7 +34,8 @@ public class WSDLVersionWrapper {
      * @param description WSDL 2.0 WOM description
      * @param definition  WSDL 1.1 WSDL4J based <code>Definition</code>
      */
-    public WSDLVersionWrapper(WSDLDescription description, Definition definition) {
+    public WSDLVersionWrapper(WSDLDescription description,
+                              Definition definition) {
         this.definition = definition;
         this.description = description;
     }

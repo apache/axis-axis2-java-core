@@ -52,12 +52,13 @@ public class ContextHierarchyTest extends TestCase {
         ConfigurationContext configurationContext =
                 new ConfigurationContext(axisConfiguration);
         ServiceContext serviceCOntext =
-                configurationContext.createServiceContext(serviceDescription.getName());
+                configurationContext.createServiceContext(
+                        serviceDescription.getName());
         MessageContext msgctx =
                 new MessageContext(configurationContext);
         OperationContext opContext =
                 operationDescription.findOperationContext(msgctx,
-                                                          serviceCOntext);
+                        serviceCOntext);
         msgctx.setServiceContext(serviceCOntext);
 
         //test the complte Hisracy built

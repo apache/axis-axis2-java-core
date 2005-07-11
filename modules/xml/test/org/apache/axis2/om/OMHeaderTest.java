@@ -41,9 +41,16 @@ public class OMHeaderTest extends OMTestCase {
 
     public void testAddHeaderElement() {
         String newElementName = "MyHeaderElement";
-        SOAPHeaderBlock soapHeaderElement = soapHeader.addHeaderBlock(newElementName, new OMNamespaceImpl("http://opensource.lk", "lsf"));
-        assertTrue("Header Element added has different parent than it should have", soapHeaderElement.getParent() == soapHeader);
-        assertTrue("Header Element added has different localname than it was given", soapHeaderElement.getLocalName().equalsIgnoreCase(newElementName));
+        SOAPHeaderBlock soapHeaderElement = soapHeader.addHeaderBlock(
+                newElementName,
+                new OMNamespaceImpl("http://opensource.lk", "lsf"));
+        assertTrue(
+                "Header Element added has different parent than it should have",
+                soapHeaderElement.getParent() == soapHeader);
+        assertTrue(
+                "Header Element added has different localname than it was given",
+                soapHeaderElement.getLocalName().equalsIgnoreCase(
+                        newElementName));
     }
 
     public void testExamineHeaderElements() {
@@ -64,7 +71,9 @@ public class OMHeaderTest extends OMTestCase {
             iterator.next();
             headerElementCount++;
         }
-        assertTrue("Number of header elements in the header differs from expected value of 3", headerElementCount == 3);
+        assertTrue(
+                "Number of header elements in the header differs from expected value of 3",
+                headerElementCount == 3);
     }
 
     public void testExtractAllHeaderElements() {

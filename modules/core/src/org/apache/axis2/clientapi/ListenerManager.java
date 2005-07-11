@@ -37,15 +37,19 @@ public class ListenerManager {
     public static final void makeSureStarted(String transport,
                                              ConfigurationContext configurationContext)
             throws AxisFault {
-        if (ListenerManager.configurationContext != null && configurationContext != ListenerManager.configurationContext) {
-            throw new AxisFault("Only One ConfigurationContext Instance we support at the Client Side");
+        if (ListenerManager.configurationContext != null &&
+                configurationContext != ListenerManager.configurationContext) {
+            throw new AxisFault(
+                    "Only One ConfigurationContext Instance we support at the Client Side");
         }
 
         ListenerManager.configurationContext = configurationContext;
-        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        TransportListnerState tsState = (TransportListnerState) listeners.get(
+                transport);
         if (tsState == null) {
             TransportInDescription tranportIn =
-                    configurationContext.getAxisConfiguration().getTransportIn(new QName(transport));
+                    configurationContext.getAxisConfiguration().getTransportIn(
+                            new QName(transport));
             TransportListener listener = tranportIn.getReciever();
 //            listener.init(configurationContext, tranportIn);
             listener.start();
@@ -56,7 +60,8 @@ public class ListenerManager {
     }
 
     public static final void stop(String transport) throws AxisFault {
-        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        TransportListnerState tsState = (TransportListnerState) listeners.get(
+                transport);
         if (tsState != null) {
             tsState.waitingCalls--;
             if (tsState.waitingCalls == 0) {
@@ -65,14 +70,16 @@ public class ListenerManager {
         }
     }
 
-    public static EndpointReference replyToEPR(String serviceName, String transport)
+    public static EndpointReference replyToEPR(String serviceName,
+                                               String transport)
             throws AxisFault {
-        TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
+        TransportListnerState tsState = (TransportListnerState) listeners.get(
+                transport);
         if (tsState != null) {
             return tsState.listener.replyToEPR(serviceName);
         } else {
             throw new AxisFault("Calling method before starting the with makeSureStarted(..) Listener transport =  "
-                                + transport);
+                    + transport);
 
         }
 

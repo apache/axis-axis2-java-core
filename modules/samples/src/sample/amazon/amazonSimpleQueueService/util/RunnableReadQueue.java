@@ -46,9 +46,12 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement readQueueElement = OMElementCreator.read(this.createQueue.getText(), getKey());
-        this.axis2EngineRuns("Read", readQueueElement,
-                             new SimpleQueueReadCallbackHandler(this.queueCode, this.result));
+        OMElement readQueueElement = OMElementCreator.read(
+                this.createQueue.getText(), getKey());
+        this.axis2EngineRuns("Read",
+                readQueueElement,
+                new SimpleQueueReadCallbackHandler(this.queueCode,
+                        this.result));
     }
 
     private void axis2EngineRuns(String operation, OMElement element,
@@ -58,7 +61,9 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
         try {
             Call call = new Call();
             call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

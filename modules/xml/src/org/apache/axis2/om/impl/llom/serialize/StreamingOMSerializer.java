@@ -50,7 +50,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     public void serialize(Object obj, OMOutput omOutput)
             throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
-            throw new UnsupportedOperationException("Unsupported input object. Must be of the the type XMLStreamReader");
+            throw new UnsupportedOperationException(
+                    "Unsupported input object. Must be of the the type XMLStreamReader");
         }
         XMLStreamReader node = (XMLStreamReader) obj;
         serializeNode(node, omOutput);
@@ -102,7 +103,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void serializeElement(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeElement(XMLStreamReader reader,
+                                    XMLStreamWriter writer)
             throws XMLStreamException {
         String prefix = reader.getPrefix();
         String nameSpaceName = reader.getNamespaceURI();
@@ -113,12 +115,12 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
             } else {
                 if (prefix != null) {
                     writer.writeStartElement(prefix, reader.getLocalName(),
-                                             nameSpaceName);
+                            nameSpaceName);
                     writer.writeNamespace(prefix, nameSpaceName);
                     writer.setPrefix(prefix, nameSpaceName);
                 } else {
                     writer.writeStartElement(nameSpaceName,
-                                             reader.getLocalName());
+                            reader.getLocalName());
                     writer.writeDefaultNamespace(nameSpaceName);
                     writer.setDefaultNamespace(nameSpaceName);
                 }
@@ -135,7 +137,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
         int count = reader.getNamespaceCount();
         for (int i = 0; i < count; i++) {
             serializeNamespace(reader.getNamespacePrefix(i),
-                               reader.getNamespaceURI(i), writer);
+                    reader.getNamespaceURI(i), writer);
         }
     }
 
@@ -155,7 +157,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void serializeText(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeText(XMLStreamReader reader,
+                                 XMLStreamWriter writer)
             throws XMLStreamException {
         writer.writeCharacters(reader.getText());
     }
@@ -167,7 +170,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void serializeCData(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeCData(XMLStreamReader reader,
+                                  XMLStreamWriter writer)
             throws XMLStreamException {
         writer.writeCData(reader.getText());
     }
@@ -179,7 +183,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void serializeComment(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeComment(XMLStreamReader reader,
+                                    XMLStreamWriter writer)
             throws XMLStreamException {
         writer.writeComment(reader.getText());
     }
@@ -189,7 +194,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void serializeAttributes(XMLStreamReader reader, XMLStreamWriter writer)
+    protected void serializeAttributes(XMLStreamReader reader,
+                                       XMLStreamWriter writer)
             throws XMLStreamException {
         int count = reader.getAttributeCount();
         String prefix = null;
@@ -199,11 +205,11 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
             namespaceName = reader.getAttributeNamespace(i);
             if ((prefix != null) && !namespaceName.equals("")) {
                 writer.writeAttribute(prefix, namespaceName,
-                                      reader.getAttributeLocalName(i),
-                                      reader.getAttributeValue(i));
+                        reader.getAttributeLocalName(i),
+                        reader.getAttributeValue(i));
             } else {
                 writer.writeAttribute(reader.getAttributeLocalName(i),
-                                      reader.getAttributeValue(i));
+                        reader.getAttributeValue(i));
             }
         }
     }
@@ -216,7 +222,9 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param writer
      * @throws XMLStreamException
      */
-    private void serializeNamespace(String prefix, String URI, XMLStreamWriter writer)
+    private void serializeNamespace(String prefix,
+                                    String URI,
+                                    XMLStreamWriter writer)
             throws XMLStreamException {
         String prefix1 = writer.getPrefix(URI);
         if (prefix1 == null) {

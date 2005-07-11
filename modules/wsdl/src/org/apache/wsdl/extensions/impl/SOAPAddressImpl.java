@@ -25,7 +25,8 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
  *         This Extensibility Element is extended to handle particularly the
  *         SOAP Adress or the Endpoint URL.
  */
-public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPAddress {
+public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants,
+        SOAPAddress {
     /**
      * Location of the Endpoint
      */

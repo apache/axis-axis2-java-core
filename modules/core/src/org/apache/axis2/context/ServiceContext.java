@@ -29,7 +29,8 @@ public class ServiceContext extends AbstractContext {
 
     private String serviceInstanceID;
 
-    public ServiceContext(ServiceDescription serviceConfig, ConfigurationContext engineContext) {
+    public ServiceContext(ServiceDescription serviceConfig,
+                          ConfigurationContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
 

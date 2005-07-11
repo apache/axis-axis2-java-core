@@ -64,10 +64,10 @@ public class OMSerializerUtil {
             namespaceName = ns.getName();
             if (prefix != null) {
                 writer.writeAttribute(prefix, namespaceName,
-                                      attr.getLocalName(), attr.getValue());
+                        attr.getLocalName(), attr.getValue());
             } else {
                 writer.writeAttribute(namespaceName, attr.getLocalName(),
-                                      attr.getValue());
+                        attr.getValue());
             }
         } else {
             writer.writeAttribute(attr.getLocalName(), attr.getValue());
@@ -116,16 +116,16 @@ public class OMSerializerUtil {
             if (nameSpaceName != null) {
                 if (writer_prefix != null) {
                     writer.writeStartElement(nameSpaceName,
-                                             element.getLocalName());
+                            element.getLocalName());
                 } else {
                     if (prefix != null) {
                         writer.writeStartElement(prefix, element.getLocalName(),
-                                                 nameSpaceName);
+                                nameSpaceName);
                         writer.writeNamespace(prefix, nameSpaceName);
                         writer.setPrefix(prefix, nameSpaceName);
                     } else {
                         writer.writeStartElement(nameSpaceName,
-                                                 element.getLocalName());
+                                element.getLocalName());
                         writer.writeDefaultNamespace(nameSpaceName);
                         writer.setDefaultNamespace(nameSpaceName);
                     }
@@ -148,7 +148,8 @@ public class OMSerializerUtil {
         serializeNamespaces(element, omOutput);
     }
 
-    public static void serializeNamespaces(OMElementImpl element, OMOutput omOutput) throws XMLStreamException {
+    public static void serializeNamespaces(OMElementImpl element,
+                                           OMOutput omOutput) throws XMLStreamException {
         Iterator namespaces = element.getAllDeclaredNamespaces();
         if (namespaces != null) {
             while (namespaces.hasNext()) {
@@ -157,11 +158,13 @@ public class OMSerializerUtil {
         }
     }
 
-    public static void serializeAttributes(OMElementImpl element, OMOutput omOutput) throws XMLStreamException {
+    public static void serializeAttributes(OMElementImpl element,
+                                           OMOutput omOutput) throws XMLStreamException {
         if (element.getAttributes() != null) {
             Iterator attributesList = element.getAttributes();
             while (attributesList.hasNext()) {
-                serializeAttribute((OMAttribute) attributesList.next(), omOutput);
+                serializeAttribute((OMAttribute) attributesList.next(),
+                        omOutput);
             }
         }
     }
@@ -174,7 +177,9 @@ public class OMSerializerUtil {
      * @param cache
      * @throws XMLStreamException
      */
-    static void serializeNormal(OMElementImpl element, OMOutput omOutput, boolean cache)
+    static void serializeNormal(OMElementImpl element,
+                                OMOutput omOutput,
+                                boolean cache)
             throws XMLStreamException {
 
         if (cache) {
@@ -193,10 +198,12 @@ public class OMSerializerUtil {
         serializeEndpart(omOutput);
     }
 
-    static void serializeByPullStream(OMElementImpl element, OMOutput omOutput) throws XMLStreamException {
+    static void serializeByPullStream(OMElementImpl element,
+                                      OMOutput omOutput) throws XMLStreamException {
         StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
-        streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
-                                        omOutput);
+        streamingOMSerializer.serialize(
+                element.getXMLStreamReaderWithoutCaching(),
+                omOutput);
         return;
     }
 }

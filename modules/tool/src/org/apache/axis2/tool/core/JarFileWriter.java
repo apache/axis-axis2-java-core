@@ -33,7 +33,10 @@ public class JarFileWriter extends Jar {
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void writeJarFile(File outputFolder, String outputFileName, File inputFileFolder) throws IOException, Exception {
+    public void writeJarFile(File outputFolder,
+                             String outputFileName,
+                             File inputFileFolder) throws IOException,
+            Exception {
 
         if (!outputFolder.exists()) {
             outputFolder.mkdir(); //create the output path

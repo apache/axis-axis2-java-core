@@ -24,7 +24,8 @@ import org.apache.axis2.transport.TransportUtils;
 
 
 public class TwoChannelBasedSender {
-    public static MessageContext send(MessageContext msgctx, TransportInDescription transportIn) throws AxisFault {
+    public static MessageContext send(MessageContext msgctx,
+                                      TransportInDescription transportIn) throws AxisFault {
 
         AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
 
@@ -33,11 +34,11 @@ public class TwoChannelBasedSender {
 
         MessageContext response =
                 new MessageContext(msgctx.getSystemContext(),
-                                   msgctx.getSessionContext(),
-                                   msgctx.getTransportIn(),
-                                   msgctx.getTransportOut());
+                        msgctx.getSessionContext(),
+                        msgctx.getTransportIn(),
+                        msgctx.getTransportOut());
         response.setProperty(MessageContext.TRANSPORT_IN,
-                             msgctx.getProperty(MessageContext.TRANSPORT_IN));
+                msgctx.getProperty(MessageContext.TRANSPORT_IN));
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());

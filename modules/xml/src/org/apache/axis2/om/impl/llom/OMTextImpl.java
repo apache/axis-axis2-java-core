@@ -18,7 +18,15 @@ package org.apache.axis2.om.impl.llom;
 import org.apache.axis2.attachments.Base64;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.attachments.IOUtils;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 
 import javax.activation.DataHandler;
@@ -60,7 +68,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /**
      * Field nameSpace used when serialising Binary stuff as MTOM optimised
      */
-    protected OMNamespace ns = new OMNamespaceImpl("http://www.w3.org/2004/08/xop/Include", "xop");
+    protected OMNamespace ns = new OMNamespaceImpl(
+            "http://www.w3.org/2004/08/xop/Include", "xop");
 
     /**
      * Field localName used when serialising Binary stuff as MTOM optimised
@@ -172,13 +181,15 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 || (type == PI_NODE))) {
             this.textType = type;
         } else {
-            throw new UnsupportedOperationException("Attempt to set wrong type");
+            throw new UnsupportedOperationException(
+                    "Attempt to set wrong type");
         }
     }
 
     public int getType() throws OMException {
         int type = super.getType();
-        if (type == COMMENT_NODE || type == CDATA_SECTION_NODE || type == PI_NODE)
+        if (type == COMMENT_NODE || type == CDATA_SECTION_NODE ||
+                type == PI_NODE)
             return type;
         return textType;
     }
@@ -218,7 +229,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 return Base64.encode(data);
             } catch (Exception e) {
                 throw new OMException("Cannot read from Stream taken form the Data Handler"
-                                      + e);
+                        + e);
             }
         }
 
@@ -280,7 +291,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             try {
                 inStream = dataHandler.getDataSource().getInputStream();
             } catch (IOException e) {
-                throw new OMException("Cannot get InputStream from DataHandler." + e);
+                throw new OMException(
+                        "Cannot get InputStream from DataHandler." + e);
             }
             return inStream;
         } else {
@@ -304,9 +316,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         } else {
             if (omOutput.doOptimise()) {
                 // send binary as MTOM optimised
-                this.attribute = new OMAttributeImpl("href",
-                                                     new OMNamespaceImpl("", ""), "cid:"
-                                                                                  + this.contentID.trim());
+                this.attribute =
+                        new OMAttributeImpl("href",
+                                new OMNamespaceImpl("", ""),
+                                "cid:"
+                        + this.contentID.trim());
 
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimised(this);
@@ -339,7 +353,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     private void createContentID() {
 //		 We can use a UUID, taken using Apache commons id project.
         // TODO change to UUID
-        this.contentID = "2" + String.valueOf(rnd.nextLong()) + "@schemas.xmlsoap.org";
+        this.contentID = "2" + String.valueOf(rnd.nextLong()) +
+                "@schemas.xmlsoap.org";
     }
 
 
@@ -360,17 +375,17 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             if (nameSpaceName != null) {
                 if (writer_prefix != null) {
                     writer.writeStartElement(nameSpaceName,
-                                             this.getLocalName());
+                            this.getLocalName());
                 } else {
                     if (prefix != null) {
                         writer.writeStartElement(prefix, this.getLocalName(),
-                                                 nameSpaceName);
+                                nameSpaceName);
 //TODO FIX ME
 //writer.writeNamespace(prefix, nameSpaceName);
                         writer.setPrefix(prefix, nameSpaceName);
                     } else {
                         writer.writeStartElement(nameSpaceName,
-                                                 this.getLocalName());
+                                this.getLocalName());
                         writer.writeDefaultNamespace(nameSpaceName);
                         writer.setDefaultNamespace(nameSpaceName);
                     }
@@ -414,11 +429,16 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             prefix = ns.getPrefix();
             namespaceName = ns.getName();
             if (prefix != null) {
-                writer.writeAttribute(prefix, namespaceName, attr
-                                                             .getLocalName(), attr.getValue());
+                writer.writeAttribute(prefix,
+                        namespaceName,
+                        attr
+                        .getLocalName(),
+                        attr.getValue());
             } else {
-                writer.writeAttribute(namespaceName, attr.getLocalName(), attr
-                                                                          .getValue());
+                writer.writeAttribute(namespaceName,
+                        attr.getLocalName(),
+                        attr
+                        .getValue());
             }
         } else {
             writer.writeAttribute(attr.getLocalName(), attr.getValue());

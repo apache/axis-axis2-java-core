@@ -43,9 +43,12 @@ public class MessageFactoryImpl extends MessageFactory {
      * @see javax.xml.soap.MessageFactory#createMessage(javax.xml.soap.MimeHeaders, java.io.InputStream)
      */
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
-                                     InputStream inputstream) throws IOException, SOAPException {
+                                     InputStream inputstream) throws IOException,
+            SOAPException {
         // TODO Auto-generated method stub
-        SOAPMessageImpl message = new SOAPMessageImpl(inputstream, false, mimeheaders);
+        SOAPMessageImpl message = new SOAPMessageImpl(inputstream,
+                false,
+                mimeheaders);
         return message;
     }
 

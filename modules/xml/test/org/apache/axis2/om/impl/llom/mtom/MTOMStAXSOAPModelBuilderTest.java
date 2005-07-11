@@ -54,11 +54,15 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         inFileName = "mtom/MTOMBuilderTestIn.txt";
-        InputStream inStream = new FileInputStream(getTestResourceFile(inFileName));
+        InputStream inStream = new FileInputStream(
+                getTestResourceFile(inFileName));
         mimeHelper = new MIMEHelper(inStream, contentTypeString);
         XMLStreamReader reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(new BufferedReader(new InputStreamReader(mimeHelper
-                                                                                .getSOAPPartInputStream())));
+                .createXMLStreamReader(
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        mimeHelper
+                .getSOAPPartInputStream())));
         builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
 
     }
@@ -66,14 +70,14 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
     public void testCreateOMElement() throws Exception {
         OMElement root = (OMElement) builder.getDocumentElement();
         System.out.println(root.getLocalName() + " : "
-                           + root.getNamespace().getName());
+                + root.getNamespace().getName());
         OMElement body = (OMElement) root.getFirstChild();
         System.out.println(body.getLocalName() + " : "
-                           + body.getNamespace().getName());
+                + body.getNamespace().getName());
 
         OMElement data = (OMElement) body.getFirstChild();
         System.out.println(data.getLocalName() + " : "
-                           + data.getNamespace().getName());
+                + data.getNamespace().getName());
         Iterator childIt = data.getChildren();
         //while (childIt.hasNext()) {
         OMElement child = (OMElement) childIt.next();

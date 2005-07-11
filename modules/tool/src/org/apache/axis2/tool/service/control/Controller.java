@@ -34,14 +34,19 @@ public class Controller {
     public ArrayList getMethodList(WizardBean bean) throws ProcessException {
         ArrayList returnList = null;
         try {
-            returnList = new ClassFileHandler().getMethodNamesFromClass(bean.getPage2bean().getAutomaticClassName(),
-                                                                        bean.getPage1bean().getFileLocation());
+            returnList =
+                    new ClassFileHandler().getMethodNamesFromClass(
+                            bean.getPage2bean().getAutomaticClassName(),
+                            bean.getPage1bean().getFileLocation());
         } catch (IOException e) {
-            throw new ProcessException("IO Error, The class file location may be faulty!", e);
+            throw new ProcessException(
+                    "IO Error, The class file location may be faulty!", e);
         } catch (ClassNotFoundException e) {
-            throw new ProcessException(" The specified class does not exist!!!");
+            throw new ProcessException(
+                    " The specified class does not exist!!!");
         } catch (Exception e) {
-            throw new ProcessException("Unknown Error! See whether all parameters are available");
+            throw new ProcessException(
+                    "Unknown Error! See whether all parameters are available");
         }
         return returnList;
     }
@@ -62,26 +67,32 @@ public class Controller {
         //see if the class file location is valid
         classFileFolder = new File(page1Bean.getFileLocation());
         if (!classFileFolder.exists()) {
-            throw new ProcessException("Specified Class file location is empty!!");
+            throw new ProcessException(
+                    "Specified Class file location is empty!!");
         }
         if (!classFileFolder.isDirectory()) {
-            throw new ProcessException("The class file location must be a folder!");
+            throw new ProcessException(
+                    "The class file location must be a folder!");
         }
 
         //see if the  service.xml file is valid
         if (page2Bean.isManual()) {
             serviceFile = new File(page2Bean.getManualFileName());
             if (!serviceFile.exists()) {
-                throw new ProcessException("Specified Service XML file is missing!");
+                throw new ProcessException(
+                        "Specified Service XML file is missing!");
             }
         } else {
             ArrayList methodList = page2Bean.getSelectedMethodNames();
             if (methodList.isEmpty()) {
-                throw new ProcessException("There are no methods selected to generate the service!!");
+                throw new ProcessException(
+                        "There are no methods selected to generate the service!!");
             }
-            serviceFile = new ServiceFileCreator().createServiceFile(page2Bean.getProviderClassName(),
-                                                                     page2Bean.getAutomaticClassName(),
-                                                                     page2Bean.getSelectedMethodNames());//create the file here
+            serviceFile =
+                    new ServiceFileCreator().createServiceFile(
+                            page2Bean.getProviderClassName(),
+                            page2Bean.getAutomaticClassName(),
+                            page2Bean.getSelectedMethodNames());//create the file here
             isServiceCreated = true;
         }
 
@@ -104,7 +115,9 @@ public class Controller {
             new FileCopier().copyFiles(serviceFile, metaInfFolder);
 
             //jar the temp directory. the output folder will be created if missing
-            new JarFileWriter().writeJarFile(outputFolder, outputFileName, tempFileFolder);
+            new JarFileWriter().writeJarFile(outputFolder,
+                    outputFileName,
+                    tempFileFolder);
         } catch (Exception e) {
             throw new ProcessException(e);
         } finally {

@@ -51,19 +51,24 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             String nsURI = msgContext.getEnvelope().getNamespace().getName();
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
                 fac = OMAbstractFactory.getSOAP12Factory();
-            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                    nsURI)) {
                 fac = OMAbstractFactory.getSOAP11Factory();
             } else {
-                throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+                throw new AxisFault(
+                        "Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
             }
 
             ServiceDescription service =
-                    msgContext.getOperationContext().getServiceContext().getServiceConfig();
+                    msgContext.getOperationContext().getServiceContext()
+                    .getServiceConfig();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if (implInfoParam != null) {
                 Class implClass =
-                        Class.forName((String) implInfoParam.getValue(), true, classLoader);
+                        Class.forName((String) implInfoParam.getValue(),
+                                true,
+                                classLoader);
                 return implClass.newInstance();
             } else {
                 throw new AxisFault("SERVICE_CLASS parameter is not specified");
@@ -83,24 +88,30 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
         ServiceDescription service =
-                msgContext.getOperationContext().getServiceContext().getServiceConfig();
+                msgContext.getOperationContext().getServiceContext()
+                .getServiceConfig();
 
         Parameter scopeParam = service.getParameter(SCOPE);
         QName serviceName = service.getName();
-        if (scopeParam != null && Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
+        if (scopeParam != null &&
+                Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
             SessionContext sessionContext = msgContext.getSessionContext();
             synchronized (sessionContext) {
-                Object obj = sessionContext.getProperty(serviceName.getLocalPart());
+                Object obj = sessionContext.getProperty(
+                        serviceName.getLocalPart());
                 if (obj == null) {
                     obj = makeNewServiceObject(msgContext);
-                    sessionContext.setProperty(serviceName.getLocalPart(), obj);
+                    sessionContext.setProperty(serviceName.getLocalPart(),
+                            obj);
                 }
                 return obj;
             }
-        } else if (scopeParam != null && Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
+        } else if (scopeParam != null &&
+                Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
             ConfigurationContext globalContext = msgContext.getSystemContext();
             synchronized (globalContext) {
-                Object obj = globalContext.getProperty(serviceName.getLocalPart());
+                Object obj = globalContext.getProperty(
+                        serviceName.getLocalPart());
                 if (obj == null) {
                     obj = makeNewServiceObject(msgContext);
                     globalContext.setProperty(serviceName.getLocalPart(), obj);

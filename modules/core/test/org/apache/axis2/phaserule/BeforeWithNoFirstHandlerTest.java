@@ -45,7 +45,8 @@ public class BeforeWithNoFirstHandlerTest extends TestCase {
         Phase p2 = new Phase("PhaseB");
         phases.add(p2);
 
-        MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
+        MessageContext msg = new MessageContext(
+                new ConfigurationContext(new AxisConfigurationImpl()));
 
         PhaseHolder ph = new PhaseHolder(phases);
 

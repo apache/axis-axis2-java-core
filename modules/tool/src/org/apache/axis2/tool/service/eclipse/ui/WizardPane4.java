@@ -36,7 +36,8 @@ public class WizardPane4 extends WizardPage {
     public WizardPane4() {
         super("Page4");
         this.setTitle(ServiceArchiver.getResourceString("page4.title"));
-        this.setDescription(ServiceArchiver.getResourceString("page4.welcometext"));
+        this.setDescription(
+                ServiceArchiver.getResourceString("page4.welcometext"));
         this.setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
 
     }
@@ -54,7 +55,8 @@ public class WizardPane4 extends WizardPage {
         gd.grabExcessHorizontalSpace = true;
 
         Label lable = new Label(container, SWT.NULL);
-        lable.setText(ServiceArchiver.getResourceString("page4.outputlocation.label"));
+        lable.setText(
+                ServiceArchiver.getResourceString("page4.outputlocation.label"));
 
         outputFileLocationTextBox = new Text(container, SWT.BORDER);
         outputFileLocationTextBox.setLayoutData(gd);
@@ -67,7 +69,8 @@ public class WizardPane4 extends WizardPage {
         gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 
         browseButton = new Button(container, SWT.PUSH);
-        browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
+        browseButton.setText(
+                ServiceArchiver.getResourceString("general.browse"));
         browseButton.setLayoutData(gd);
         browseButton.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
@@ -76,7 +79,8 @@ public class WizardPane4 extends WizardPage {
         });
 
         lable = new Label(container, SWT.NULL);
-        lable.setText(ServiceArchiver.getResourceString("page4.outputname.label"));
+        lable.setText(
+                ServiceArchiver.getResourceString("page4.outputname.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
@@ -98,7 +102,8 @@ public class WizardPane4 extends WizardPage {
 
     private void handleBrowse() {
         DirectoryDialog dirDialog = new DirectoryDialog(this.getShell());
-        dirDialog.setMessage(ServiceArchiver.getResourceString("page4.dirdialog.caption"));
+        dirDialog.setMessage(
+                ServiceArchiver.getResourceString("page4.dirdialog.caption"));
         String returnText = dirDialog.open();
         if (returnText != null) {
             this.outputFileLocationTextBox.setText(returnText);
@@ -111,7 +116,8 @@ public class WizardPane4 extends WizardPage {
         String outputFilenameText = outputFileNameTextbox.getText();
         if (outputLocationText == null || outputLocationText.trim().equals("")) {
             this.updateMessage("");
-        } else if (outputLocationText == null || outputLocationText.trim().equals("")) {
+        } else if (outputLocationText == null ||
+                outputLocationText.trim().equals("")) {
             this.updateMessage("");
         } else {
             updateMessage(null);
@@ -125,7 +131,8 @@ public class WizardPane4 extends WizardPage {
 
     public Page3Bean getBean() {
         Page3Bean pageBean = new Page3Bean();
-        pageBean.setOutputFolderName(this.outputFileLocationTextBox.getText().trim());
+        pageBean.setOutputFolderName(
+                this.outputFileLocationTextBox.getText().trim());
         pageBean.setOutputFileName(this.outputFileNameTextbox.getText().trim());
         return pageBean;
     }

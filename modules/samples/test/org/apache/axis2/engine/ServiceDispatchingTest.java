@@ -40,13 +40,14 @@ import javax.xml.namespace.QName;
 public class ServiceDispatchingTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -67,10 +68,14 @@ public class ServiceDispatchingTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+        service =
+                Utils.createSimpleService(serviceName,
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
     }
 
@@ -83,10 +88,14 @@ public class ServiceDispatchingTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                                         "http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        "http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        OMElement result = (OMElement) call.invokeBlocking(
+                operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }
@@ -96,14 +105,19 @@ public class ServiceDispatchingTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://dummyURL", "my");
         OMElement payload = fac.createOMElement("echoOMElementRequest", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                                         "http://127.0.0.1:5555/axis/services/EchoXMLService/"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        "http://127.0.0.1:5555/axis/services/EchoXMLService/"));
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
         call.setSoapAction("echoOMElement");
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        OMElement result = (OMElement) call.invokeBlocking(
+                operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }
@@ -111,18 +125,24 @@ public class ServiceDispatchingTest extends TestCase {
     public void testDispatchWithSOAPBody() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://127.0.0.1:5555/axis/services/EchoXMLService", "my");
+        OMNamespace omNs = fac.createOMNamespace(
+                "http://127.0.0.1:5555/axis/services/EchoXMLService", "my");
         OMElement payload = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
 
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
-                                         "http://127.0.0.1:5555/axis/services/"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        "http://127.0.0.1:5555/axis/services/"));
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        OMElement result = (OMElement) call.invokeBlocking(
+                operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }

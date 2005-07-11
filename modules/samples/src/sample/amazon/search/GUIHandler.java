@@ -24,7 +24,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Build and desplay the GUI
@@ -91,7 +95,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
         // Set the position to screen center and appropriate size
         frame.setBounds(wndSize.width / 6, wndSize.height / 10, // Position
-                        wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
+                wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         text = new JEditorPane();
@@ -100,14 +104,15 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         text.addHyperlinkListener(new LinkFollower());
 
         JScrollPane scroll = new JScrollPane(text, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         pane.add(scroll);
 
         textBox = new JTextField();
         textBox.addKeyListener(this);
         pane.add(textBox);
 
-        SpringLayout.Constraints textBoxConstraints = layout.getConstraints(textBox);
+        SpringLayout.Constraints textBoxConstraints = layout.getConstraints(
+                textBox);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(0); // Spring we値l use for Y
         wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
@@ -117,7 +122,8 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         textBoxConstraints.setX(xSpring); // Set the WEST edge constraint
         textBoxConstraints.setY(ySpring);
 
-        SpringLayout.Constraints scrollConstraints = layout.getConstraints(scroll);
+        SpringLayout.Constraints scrollConstraints = layout.getConstraints(
+                scroll);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(30); // Spring we値l use for Y
         wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
@@ -146,18 +152,22 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
      * store it in the properties file
      */
     protected void setKey() {
-        AsynchronousClient.amazonkey = JOptionPane.showInputDialog(null, "Enter the license Key");
+        AsynchronousClient.amazonkey =
+                JOptionPane.showInputDialog(null, "Enter the license Key");
         if (AsynchronousClient.amazonkey == null) {
             setKey();
         }
         OutputStream propOut;
         try {
             String workingDir = System.getProperty("user.dir");
-            File propertyFile = new File(workingDir + File.separator + "samples" + File.separator +
-                                         "/key.properties");
+            File propertyFile = new File(workingDir + File.separator +
+                    "samples" +
+                    File.separator +
+                    "/key.properties");
             propOut = new FileOutputStream(propertyFile);
 
-            AsynchronousClient.prop.setProperty("amazonKey", AsynchronousClient.amazonkey);
+            AsynchronousClient.prop.setProperty("amazonKey",
+                    AsynchronousClient.amazonkey);
             AsynchronousClient.prop.store(propOut, "License Key");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -181,7 +191,8 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
             AsynchronousClient.search = textBox.getText().trim();
             AsynchronousClient.search.trim();
             System.out.println(textBox.getText());
-            if (!AsynchronousClient.prevSearch.equals(AsynchronousClient.search)) {
+            if (!AsynchronousClient.prevSearch.equals(
+                    AsynchronousClient.search)) {
                 AsynchronousClient.doSearch = true;
             }
         }
@@ -205,7 +216,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
                 System.out.println("come to the place");
                 AsynchronousClient.maxResults =
                         JOptionPane.showInputDialog(null,
-                                                    "Enter the number of maximum results per page (Maximum allowed is 1000)");
+                                "Enter the number of maximum results per page (Maximum allowed is 1000)");
                 //JOptionPane.get
 
             } while (Integer.parseInt(AsynchronousClient.maxResults) > 1000 ||

@@ -39,8 +39,10 @@ public class SimpleQueueCreateQueueCallbackHandler extends Callback {
     public SimpleQueueCreateQueueCallbackHandler() {
     }//defaultConstructor
 
-    public SimpleQueueCreateQueueCallbackHandler(JTextField createQueue, JTextField queueCode,
-                                                 JTextField enqueue, JTextArea result) {
+    public SimpleQueueCreateQueueCallbackHandler(JTextField createQueue,
+                                                 JTextField queueCode,
+                                                 JTextField enqueue,
+                                                 JTextArea result) {
         super();
         this.createQueue = createQueue;
         this.queueCode = queueCode;
@@ -83,7 +85,8 @@ public class SimpleQueueCreateQueueCallbackHandler extends Callback {
             this.result.setText(element.getText() + ".......");
             if (element.getText().equals("Success")) {
                 this.enqueue.setEditable(true);
-                returnString = returnString + "Successfully Added the new Queue.." +
+                returnString = returnString +
+                        "Successfully Added the new Queue.." +
                         "[" + this.createQueue.getText() + "]" + "\n";
                 this.result.setText(returnString);
             }
@@ -91,7 +94,8 @@ public class SimpleQueueCreateQueueCallbackHandler extends Callback {
                 this.enqueue.setEditable(true);
                 this.createQueue.setEditable(false);
                 returnString = returnString + "Enque the existing queue.." +
-                        "[" + this.createQueue.getText() + "]" + "..Allow Enquring data";
+                        "[" + this.createQueue.getText() + "]" +
+                        "..Allow Enquring data";
                 this.result.setText(returnString);
             }
         }

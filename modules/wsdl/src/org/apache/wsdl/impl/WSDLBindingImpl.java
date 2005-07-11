@@ -137,7 +137,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     public void addBindingOperation(WSDLBindingOperation bindingOperation) {
         if (null != bindingOperation) {
             this.bindingOperations.put(bindingOperation.getName(),
-                                       bindingOperation);
+                    bindingOperation);
         }
     }
 

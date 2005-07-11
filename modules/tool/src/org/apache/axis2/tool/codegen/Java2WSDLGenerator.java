@@ -41,7 +41,9 @@ public class Java2WSDLGenerator {
                      Vector listOfIncludedMethods) throws Throwable {
         try {
 
-            ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(classPath, this.getClass().getClassLoader()));
+            ClassUtils.setDefaultClassLoader(
+                    ClassUtils.createClassLoader(classPath,
+                            this.getClass().getClassLoader()));
 
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -50,7 +52,8 @@ public class Java2WSDLGenerator {
             emitter.setCls(implementationClassName);
 
             //service location
-            if (serviceLocationUrl != null && !serviceLocationUrl.trim().equals(""))
+            if (serviceLocationUrl != null &&
+                    !serviceLocationUrl.trim().equals(""))
                 emitter.setLocationUrl(serviceLocationUrl);
             
             //input wsdl

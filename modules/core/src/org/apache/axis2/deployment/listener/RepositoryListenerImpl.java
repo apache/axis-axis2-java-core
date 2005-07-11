@@ -24,7 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepositoryListenerImpl implements RepositoryListener, DeploymentConstants {
+public class RepositoryListenerImpl implements RepositoryListener,
+        DeploymentConstants {
 
     /**
      * to store curreently checking jars
@@ -49,7 +50,8 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * @param folderName    path to parent directory that the listener should listent
      * @param deploy_engine refearnce to engine registry  inorder to inform the updates
      */
-    public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
+    public RepositoryListenerImpl(String folderName,
+                                  DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsinfoList = new WSInfoList(deploy_engine);
         init();

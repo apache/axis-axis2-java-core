@@ -23,7 +23,12 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -71,7 +76,9 @@ public class PartOnFile implements Part {
         } catch (FileNotFoundException e) {
             throw new OMException("File Not Found" + e.toString());
         } catch (MessagingException e1) {
-            throw new OMException("Cannot create MimePart from the Part read from file" + e1.toString());
+            throw new OMException(
+                    "Cannot create MimePart from the Part read from file" +
+                    e1.toString());
         }
         return part;
     }

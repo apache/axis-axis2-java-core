@@ -62,18 +62,21 @@ public class OMOutputTest extends AbstractTestCase {
         outMTOMFile = getTestResourceFile(outFileName);
         outBase64File = getTestResourceFile(outBase64FileName);
 
-        OMNamespaceImpl soap = new OMNamespaceImpl("http://schemas.xmlsoap.org/soap/envelope/", "soap");
+        OMNamespaceImpl soap = new OMNamespaceImpl(
+                "http://schemas.xmlsoap.org/soap/envelope/", "soap");
         envelope = new OMElementImpl("Envelope", soap);
         OMElement body = new OMElementImpl("Body", soap);
 
-        OMNamespaceImpl dataName = new OMNamespaceImpl("http://www.example.org/stuff", "m");
+        OMNamespaceImpl dataName = new OMNamespaceImpl(
+                "http://www.example.org/stuff", "m");
         OMElement data = new OMElementImpl("data", dataName);
 
-        OMNamespaceImpl mime = new OMNamespaceImpl("http://www.w3.org/2003/06/xmlmime", "m");
+        OMNamespaceImpl mime = new OMNamespaceImpl(
+                "http://www.w3.org/2003/06/xmlmime", "m");
 
         OMElement text = new OMElementImpl("name", dataName);
         OMAttribute cType1 = new OMAttributeImpl("contentType", mime,
-                                                 "text/plain");
+                "text/plain");
         text.addAttribute(cType1);
         byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
                                       98};
@@ -101,8 +104,10 @@ public class OMOutputTest extends AbstractTestCase {
 
     public void testComplete() throws Exception {
 
-        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile), true);
-        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File), false);
+        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile),
+                true);
+        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File),
+                false);
 
         envelope.serialize(baseOutput);
         baseOutput.flush();

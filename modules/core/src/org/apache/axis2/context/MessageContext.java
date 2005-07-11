@@ -18,7 +18,11 @@ package org.apache.axis2.context;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeadersCollection;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -497,7 +501,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @param collection
      */
-    public void setMessageInformationHeaders(MessageInformationHeadersCollection collection) {
+    public void setMessageInformationHeaders(
+            MessageInformationHeadersCollection collection) {
         messageInformationHeaders = collection;
     }
 

@@ -71,18 +71,26 @@ public class WSInfoList implements DeploymentConstants {
             case SERVICE:
                 {
                     if (!isFileExist(file.getName())) { // chacking whether the file is already deployed
-                        WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), SERVICE);
+                        WSInfo wsInfo = new WSInfo(file.getName(),
+                                file.lastModified(),
+                                SERVICE);
                         jarlist.add(wsInfo);
-                        ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                        ArchiveFileData archiveFileData = new ArchiveFileData(
+                                file, SERVICE);
                         deplorer.addtowsToDeploy(archiveFileData);//to inform that new web service is deployed
                     } else {
                         if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {  // caheck whether file is updated
-                                tempWSInfo.setLastmodifieddate(file.lastModified());
-                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), SERVICE);
+                                tempWSInfo.setLastmodifieddate(
+                                        file.lastModified());
+                                WSInfo wsInfo = new WSInfo(
+                                        tempWSInfo.getFilename(),
+                                        tempWSInfo.getLastmodifieddate(),
+                                        SERVICE);
                                 deplorer.addtowstoUnDeploy(wsInfo);  // add entry to undeploy list
-                                ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                                ArchiveFileData archiveFileData = new ArchiveFileData(
+                                        file, SERVICE);
                                 deplorer.addtowsToDeploy(archiveFileData);   // add entry to deploylist
 
                             }
@@ -93,18 +101,26 @@ public class WSInfoList implements DeploymentConstants {
             case MODULE:
                 {
                     if (!isFileExist(file.getName())) {  // chacking whether the file is already deployed
-                        WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), MODULE);
+                        WSInfo wsInfo = new WSInfo(file.getName(),
+                                file.lastModified(),
+                                MODULE);
                         jarlist.add(wsInfo);
-                        ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+                        ArchiveFileData archiveFileData = new ArchiveFileData(
+                                file, MODULE);
                         deplorer.addtowsToDeploy(archiveFileData);//to inform that new web service is deployed
                     } else {
                         if (deplorer.isHotUpdate()) {
                             WSInfo tempWSInfo = getFileItem(file.getName());
                             if (isModified(file, tempWSInfo)) {
-                                tempWSInfo.setLastmodifieddate(file.lastModified());
-                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFilename(), tempWSInfo.getLastmodifieddate(), MODULE);
+                                tempWSInfo.setLastmodifieddate(
+                                        file.lastModified());
+                                WSInfo wsInfo = new WSInfo(
+                                        tempWSInfo.getFilename(),
+                                        tempWSInfo.getLastmodifieddate(),
+                                        MODULE);
                                 deplorer.addtowstoUnDeploy(wsInfo);   // add entry to undeploy list
-                                ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+                                ArchiveFileData archiveFileData = new ArchiveFileData(
+                                        file, MODULE);
                                 deplorer.addtowsToDeploy(archiveFileData); // add entry to deploylist
 
                             }
@@ -187,7 +203,8 @@ public class WSInfoList implements DeploymentConstants {
 
             if (!exist) {
                 tempvector.add(fileitem);
-                WSInfo wsInfo = new WSInfo(fileitem.getFilename(), fileitem.getLastmodifieddate());
+                WSInfo wsInfo = new WSInfo(fileitem.getFilename(),
+                        fileitem.getLastmodifieddate());
                 deplorer.addtowstoUnDeploy(wsInfo);//this is to be undeploye
             }
 

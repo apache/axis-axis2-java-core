@@ -15,7 +15,13 @@
 */
 package org.apache.axis2.om.impl.llom.builder;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMDocument;
 import org.apache.axis2.soap.SOAPEnvelope;
 
@@ -70,13 +76,13 @@ public class StAXOMBuilder extends StAXBuilder {
             document.addChild(node);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
-                                             lastNode.getParent(), this);
+                    lastNode.getParent(), this);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createOMElement(elementName, null,
-                                             (OMElement) lastNode, this);
+                    (OMElement) lastNode, this);
             e.setFirstChild(node);
         }
 
@@ -100,7 +106,9 @@ public class StAXOMBuilder extends StAXBuilder {
             node = omfactory.createText(parser.getText());
             document.addChild(node);
         } else if (lastNode.isComplete()) {
-            node = omfactory.createText((OMElement) lastNode.getParent(), parser.getText());
+            node =
+                    omfactory.createText((OMElement) lastNode.getParent(),
+                            parser.getText());
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -136,7 +144,9 @@ public class StAXOMBuilder extends StAXBuilder {
             node.setType(OMNode.PI_NODE);
             document.addChild(node);
         } else if (lastNode.isComplete()) {
-            node = omfactory.createText((OMElement) lastNode.getParent(), "<?" + target + " " + data + "?>");
+            node =
+                    omfactory.createText((OMElement) lastNode.getParent(),
+                            "<?" + target + " " + data + "?>");
             node.setType(OMNode.PI_NODE);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
@@ -252,7 +262,7 @@ public class StAXOMBuilder extends StAXBuilder {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.declareNamespace(parser.getNamespaceURI(i),
-                                  parser.getNamespacePrefix(i));
+                    parser.getNamespacePrefix(i));
         }
 
         // set the own namespace
@@ -272,7 +282,8 @@ public class StAXOMBuilder extends StAXBuilder {
             } else {
                 namespace = node.findNamespace(namespaceURI, prefix);
                 if (namespace == null) {
-                    node.setNamespace(omfactory.createOMNamespace(namespaceURI, prefix));
+                    node.setNamespace(
+                            omfactory.createOMNamespace(namespaceURI, prefix));
                 } else {
                     node.setNamespace(namespace);
                 }

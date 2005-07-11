@@ -69,18 +69,22 @@ public abstract class Stub {
     public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
         if (!_maintainSession) {
             //TODO Comeup with a Exception
-            throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
+            throw new java.lang.Exception(
+                    "Client is running the session OFF mode: Start session before saving to a session ");
         }
-        _configurationContext.getServiceContext(_currentSessionId).setProperty(key, value);
+        _configurationContext.getServiceContext(_currentSessionId).setProperty(
+                key, value);
     }
 
 
     public Object _getSessionInfo(String key) throws java.lang.Exception {
         if (!_maintainSession) {
             //TODO Comeup with a Exception
-            throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
+            throw new java.lang.Exception(
+                    "Client is running the session OFF mode: Start session before saving to a session ");
         }
-        return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
+        return _configurationContext.getServiceContext(_currentSessionId)
+                .getProperty(key);
     }
 
     public void _startSession() {
@@ -110,11 +114,16 @@ public abstract class Stub {
         return env;
     }
 
-    protected void setValueRPC(SOAPEnvelope env, String methodNamespaceURI, String methodName, String[] paramNames, Object[] values) {
+    protected void setValueRPC(SOAPEnvelope env,
+                               String methodNamespaceURI,
+                               String methodName,
+                               String[] paramNames,
+                               Object[] values) {
         SOAPBody body = env.getBody();
         OMFactory fac = this.getFactory();
 
-        OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI, "ns1");
+        OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,
+                "ns1");
         OMElement elt = fac.createOMElement(methodName, methodNamespace);
         if (paramNames != null) {
             //find the relevant object here, convert it and add it to the elt
@@ -122,9 +131,9 @@ public abstract class Stub {
                 String paramName = paramNames[i];
                 Object value = values[i];
                 elt.addChild(StubSupporter.createRPCMappedElement(paramName,
-                                                                  fac.createOMNamespace("", null), //empty namespace
-                                                                  value,
-                                                                  fac));
+                        fac.createOMNamespace("", null), //empty namespace
+                        value,
+                        fac));
             }
         }
         body.addChild(elt);
@@ -132,7 +141,8 @@ public abstract class Stub {
 
 
     protected OMElement getElementFromReader(XMLStreamReader reader) {
-        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(), reader);
+        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getOMFactory(), reader);
         return builder.getDocumentElement();
     }
 

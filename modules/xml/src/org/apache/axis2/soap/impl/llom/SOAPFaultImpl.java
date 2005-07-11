@@ -15,9 +15,19 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPFaultNode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultRole;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.xml.namespace.QName;
@@ -73,7 +83,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
     }
 
     public SOAPFaultCode getCode() {
-        return (SOAPFaultCode) this.getChildWithName(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
+        return (SOAPFaultCode) this.getChildWithName(
+                SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
     }
 
     public void setReason(SOAPFaultReason reason) throws SOAPProcessingException {
@@ -81,7 +92,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
     }
 
     public SOAPFaultReason getReason() {
-        return (SOAPFaultReason) this.getChildWithName(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
+        return (SOAPFaultReason) this.getChildWithName(
+                SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
     }
 
     public void setNode(SOAPFaultNode node) throws SOAPProcessingException {
@@ -89,7 +101,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
     }
 
     public SOAPFaultNode getNode() {
-        return (SOAPFaultNode) this.getChildWithName(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
+        return (SOAPFaultNode) this.getChildWithName(
+                SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
     }
 
     public void setRole(SOAPFaultRole role) throws SOAPProcessingException {
@@ -97,7 +110,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
     }
 
     public SOAPFaultRole getRole() {
-        return (SOAPFaultRoleImpl) this.getChildWithName(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
+        return (SOAPFaultRoleImpl) this.getChildWithName(
+                SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
     }
 
     public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException {
@@ -105,7 +119,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
     }
 
     public SOAPFaultDetail getDetail() {
-        return (SOAPFaultDetail) this.getChildWithName(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
+        return (SOAPFaultDetail) this.getChildWithName(
+                SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
     }
 
 
@@ -114,14 +129,17 @@ public abstract class SOAPFaultImpl extends SOAPElement
     public Exception getException() throws OMException {
         getDetail();
         if (getDetail() == null) {
-            return new Exception("No Exception element found in the SOAP Detail element");
+            return new Exception(
+                    "No Exception element found in the SOAP Detail element");
         }
 
-        OMElement exceptionElement = getDetail().getFirstChildWithName(new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
+        OMElement exceptionElement = getDetail().getFirstChildWithName(
+                new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
         if (exceptionElement != null) {
             return new Exception(exceptionElement.getText());
         }
-        return new Exception("No Exception element found in the SOAP Detail element");
+        return new Exception(
+                "No Exception element found in the SOAP Detail element");
     }
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
@@ -133,7 +151,9 @@ public abstract class SOAPFaultImpl extends SOAPElement
             setDetail(getNewSOAPFaultDetail(this));
 
         }
-        OMElement faultDetailEnty = new OMElementImpl(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY, this.getNamespace());
+        OMElement faultDetailEnty = new OMElementImpl(
+                SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY,
+                this.getNamespace());
         faultDetailEnty.setText(sw.getBuffer().toString());
         getDetail().addChild(faultDetailEnty);
     }
@@ -153,7 +173,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
         Iterator childrenIter = getChildren();
         while (childrenIter.hasNext()) {
             OMNode node = (OMNode) childrenIter.next();
-            if (node.getType() == OMNode.ELEMENT_NODE && childName.equals(((OMElement) node).getLocalName())) {
+            if (node.getType() == OMNode.ELEMENT_NODE &&
+                    childName.equals(((OMElement) node).getLocalName())) {
                 return (OMElement) node;
             }
         }

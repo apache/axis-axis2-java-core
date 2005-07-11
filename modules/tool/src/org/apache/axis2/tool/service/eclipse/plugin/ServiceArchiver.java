@@ -39,7 +39,9 @@ public class ServiceArchiver extends AbstractUIPlugin {
         super();
         plugin = this;
         try {
-            resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.service.resource.ServiceResources");
+            resourceBundle =
+                    ResourceBundle.getBundle(
+                            "org.apache.axis.tool.service.resource.ServiceResources");
         } catch (MissingResourceException x) {
             resourceBundle = null;
         }
@@ -88,7 +90,9 @@ public class ServiceArchiver extends AbstractUIPlugin {
 
     public static ImageDescriptor getWizardImageDescriptor() {
         if (wizardImageDescriptor == null) {
-            wizardImageDescriptor = ServiceArchiver.imageDescriptorFromPlugin("Axis_Service_Archiver", "icons/asf-feather.gif");
+            wizardImageDescriptor =
+                    ServiceArchiver.imageDescriptorFromPlugin(
+                            "Axis_Service_Archiver", "icons/asf-feather.gif");
         }
         return wizardImageDescriptor;
     }

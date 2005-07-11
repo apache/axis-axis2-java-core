@@ -52,7 +52,8 @@ public class MailSorter {
         }
     }
 
-    public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
+    public void processMail(ConfigurationContext confContext,
+                            MimeMessage mimeMessage) {
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
         MessageContext msgContext = null;
@@ -60,12 +61,17 @@ public class MailSorter {
         try {
             msgContext =
                     new MessageContext(confContext,
-                                       confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
-                                       confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+                            confContext.getAxisConfiguration().getTransportIn(
+                                    new QName(Constants.TRANSPORT_MAIL)),
+                            confContext.getAxisConfiguration().getTransportOut(
+                                    new QName(Constants.TRANSPORT_MAIL)));
             msgContext.setServerSide(true);
 
-            msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
+            msgContext.setProperty(MailConstants.CONTENT_TYPE,
+                    mimeMessage.getContentType());
+            msgContext.setWSAAction(
+                    getMailHeader(MailConstants.HEADER_SOAP_ACTION,
+                            mimeMessage));
 
             String serviceURL = mimeMessage.getSubject();
             if (serviceURL == null) {
@@ -74,14 +80,18 @@ public class MailSorter {
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
-                msgContext.setReplyTo(new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                msgContext.setReplyTo(
+                        new EndpointReference(AddressingConstants.WSA_REPLY_TO,
+                                replyTo));
             }
 
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
 
 
             if (recepainets != null) {
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets + "/" + serviceURL));
+                msgContext.setTo(
+                        new EndpointReference(AddressingConstants.WSA_FROM,
+                                recepainets + "/" + serviceURL));
             }
 
             // add the SOAPEnvelope
@@ -89,7 +99,8 @@ public class MailSorter {
             System.out.println("message[" + message + "]");
             ByteArrayInputStream bais =
                     new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
+            XMLStreamReader reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(bais);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
             // invoke the Axis engine
@@ -98,7 +109,8 @@ public class MailSorter {
             AxisFault af;
             if (e instanceof AxisFault) {
                 af = (AxisFault) e;
-                log.debug("Error occured while trying to process the mail.", af);
+                log.debug("Error occured while trying to process the mail.",
+                        af);
             } else {
                 af = AxisFault.makeFault(e);
             }

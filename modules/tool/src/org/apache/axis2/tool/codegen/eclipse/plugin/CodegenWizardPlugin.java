@@ -24,7 +24,9 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
         super();
         plugin = this;
         try {
-            resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.codegen.resource.Codegen");
+            resourceBundle =
+                    ResourceBundle.getBundle(
+                            "org.apache.axis.tool.codegen.resource.Codegen");
         } catch (MissingResourceException x) {
             resourceBundle = null;
         }
@@ -56,7 +58,8 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
      * or 'key' if not found.
      */
     public static String getResourceString(String key) {
-        ResourceBundle bundle = CodegenWizardPlugin.getDefault().getResourceBundle();
+        ResourceBundle bundle = CodegenWizardPlugin.getDefault()
+                .getResourceBundle();
         try {
             return (bundle != null) ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {
@@ -73,7 +76,9 @@ public class CodegenWizardPlugin extends AbstractUIPlugin {
 
     public static ImageDescriptor getWizardImageDescriptor() {
         if (wizardImageDescriptor == null) {
-            wizardImageDescriptor = CodegenWizardPlugin.imageDescriptorFromPlugin("Axis2_Codegen_Wizard", "icons/asf-feather.gif");
+            wizardImageDescriptor =
+                    CodegenWizardPlugin.imageDescriptorFromPlugin(
+                            "Axis2_Codegen_Wizard", "icons/asf-feather.gif");
         }
         return wizardImageDescriptor;
     }

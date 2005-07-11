@@ -29,7 +29,8 @@ public class WSDL2ToWOMBuilder implements WOMBuilder {
         throw new UnsupportedOperationException("Not Implemented");
     }
 
-    public WSDLVersionWrapper build(InputStream in, WSDLComponentFactory wsdlComponenetFactory) throws WSDLException {
+    public WSDLVersionWrapper build(InputStream in,
+                                    WSDLComponentFactory wsdlComponenetFactory) throws WSDLException {
         throw new UnsupportedOperationException("Not Implemented");
 
     }

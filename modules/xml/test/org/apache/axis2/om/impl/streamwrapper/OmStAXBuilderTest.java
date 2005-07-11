@@ -41,15 +41,20 @@ public class OmStAXBuilderTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         factory = OMAbstractFactory.getSOAP11Factory();
         XMLStreamReader reader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory, reader);
+                createXMLStreamReader(
+                        new FileReader(
+                                getTestResourceFile("soap/soapmessage.xml")));
+        builder =
+                OMXMLBuilderFactory.createStAXSOAPModelBuilder(factory,
+                        reader);
         tempFile = File.createTempFile("temp", "xml");
     }
 
     public void testStaxBuilder() throws Exception {
         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
         assertNotNull(envelope);
-        OMOutput omOutput = new OMOutput(new FileOutputStream(tempFile), false);
+        OMOutput omOutput = new OMOutput(new FileOutputStream(tempFile),
+                false);
         //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
         envelope.serializeWithCache(omOutput);
 

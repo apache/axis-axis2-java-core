@@ -27,10 +27,15 @@ import javax.xml.stream.XMLStreamException;
 public class DeploymentTotalTest extends TestCase {
     AxisConfiguration er;
 
-    public void testparseService1() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
+    public void testparseService1() throws PhaseException,
+            DeploymentException,
+            AxisFault,
+            XMLStreamException {
         String filename = "./target/test-resources/deployment";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        er = builder.buildConfigurationContext(filename).getAxisConfiguration();
+        er =
+                builder.buildConfigurationContext(filename)
+                .getAxisConfiguration();
     }
 
 }

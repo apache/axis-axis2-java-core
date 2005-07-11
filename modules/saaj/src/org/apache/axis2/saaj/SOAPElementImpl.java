@@ -84,7 +84,12 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 
         //Since a <code>Name</code> object is given as parameter we should try to create an OMElement
         //and register it with the contents of the <code>name</code> element
-        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMElement(new QName(name.getURI(), name.getLocalName(), name.getPrefix()), omElement);
+        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMElement(
+                        new QName(name.getURI(),
+                                name.getLocalName(),
+                                name.getPrefix()),
+                        omElement);
         omElement.addChild(newOMElement);
         return new SOAPElementImpl(newOMElement);
     }
@@ -101,7 +106,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         //We will create a new OMElement and add that as a child to the OMElement datamember that
         //we are carrying along. And return back a wrapped SOAPElement corresponding to the
         //created OMElement
-        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMElement(new QName(localName), omElement);
+        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMElement(new QName(localName), omElement);
         omElement.addChild(newOMElement);
         return new SOAPElementImpl(newOMElement);
     }
@@ -117,7 +123,9 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      */
     public SOAPElement addChildElement(String localName, String prefix)
             throws SOAPException {
-        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMElement(new QName(null, localName, prefix), omElement);
+        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMElement(new QName(null, localName, prefix),
+                        omElement);
         omElement.addChild(newOMElement);
         return new SOAPElementImpl(newOMElement);
     }
@@ -133,7 +141,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      */
     public SOAPElement addChildElement(String localName, String prefix,
                                        String uri) throws SOAPException {
-        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMElement(new QName(uri, localName, prefix), omElement);
+        org.apache.axis2.om.OMElement newOMElement = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMElement(new QName(uri, localName, prefix), omElement);
         omElement.addChild(newOMElement);
         return new SOAPElementImpl(newOMElement);
     }
@@ -187,7 +196,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      */
     public SOAPElement addAttribute(Name name, String value)
             throws SOAPException {
-        org.apache.axis2.om.OMNamespace omNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMNamespace(name.getURI(), name.getPrefix());
+        org.apache.axis2.om.OMNamespace omNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMNamespace(name.getURI(), name.getPrefix());
         //TODO:
         //The namespace of the attribute must be within the scope of the SOAPElement
         //That check should be performed here.
@@ -220,7 +230,11 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public String getAttributeValue(Name name) {
         //This method is waiting on the finalization of the name for a method
         //in OMElement that returns a OMAttribute from an input QName
-        return omElement.getFirstAttribute(new QName(name.getURI(), name.getLocalName(), name.getPrefix())).getValue();
+        return omElement.getFirstAttribute(
+                new QName(name.getURI(),
+                        name.getLocalName(),
+                        name.getPrefix()))
+                .getValue();
     }
 
     /**
@@ -236,7 +250,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             Object o = attrIter.next();
             if (o instanceof org.apache.axis2.om.OMAttribute) {
                 //we need to create a SOAPNode for this and add to the arrayList
-                javax.xml.soap.Node soapNode = new NodeImpl((org.apache.axis2.om.OMAttribute) o);
+                javax.xml.soap.Node soapNode = new NodeImpl(
+                        (org.apache.axis2.om.OMAttribute) o);
                 arrayList.add(soapNode);
             }
         }
@@ -296,7 +311,9 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      */
     public Name getElementName() {
         QName qName = omElement.getQName();
-        return (Name) (new PrefixedQName(qName.getNamespaceURI(), qName.getLocalPart(), qName.getPrefix()));
+        return (Name) (new PrefixedQName(qName.getNamespaceURI(),
+                qName.getLocalPart(),
+                qName.getPrefix()));
     }
 
     /**
@@ -311,7 +328,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public boolean removeAttribute(Name name) {
         //get the OMAttribute with the given Name first, and call a removeAttribute(OMAttribute)
         //method on the omElement datamember this SOAPElement has in it.
-        org.apache.axis2.om.OMAttribute attr = omElement.getFirstAttribute(new QName(name.getURI(), name.getLocalName(), name.getPrefix()));
+        org.apache.axis2.om.OMAttribute attr = omElement.getFirstAttribute(
+                new QName(name.getURI(),
+                        name.getLocalName(),
+                        name.getPrefix()));
         if (attr != null) {
             omElement.removeAttribute(attr);
             return true;
@@ -348,10 +368,12 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             Object o = childIter.next();
             if (o instanceof org.apache.axis2.om.OMNode) {
                 if (o instanceof org.apache.axis2.om.OMText) {
-                    javax.xml.soap.Text childText = new TextImpl(((org.apache.axis2.om.OMText) o).getText());
+                    javax.xml.soap.Text childText = new TextImpl(
+                            ((org.apache.axis2.om.OMText) o).getText());
                     arrayList.add(childText);
                 } else {
-                    SOAPElement childElement = new SOAPElementImpl((org.apache.axis2.om.OMElement) o);
+                    SOAPElement childElement = new SOAPElementImpl(
+                            (org.apache.axis2.om.OMElement) o);
                     arrayList.add(childElement);
                 }
                 //javax.xml.soap.Node childElement = new NodeImpl((org.apache.axis2.om.OMNode)o);
@@ -375,7 +397,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         while (childIter.hasNext()) {
             Object o = childIter.next();
             if (o instanceof org.apache.axis2.om.OMNode) {
-                SOAPElement childElement = new SOAPElementImpl((org.apache.axis2.om.OMElement) o);
+                SOAPElement childElement = new SOAPElementImpl(
+                        (org.apache.axis2.om.OMElement) o);
                 arrayList.add(childElement);
             }
         }
@@ -438,7 +461,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         while (namespacesIter.hasNext()) {
             Object o = namespacesIter.next();
             if (o instanceof org.apache.axis2.om.OMNamespace) {
-                javax.xml.soap.Node soapNode = new NodeImpl((org.apache.axis2.om.OMNamespace) o);
+                javax.xml.soap.Node soapNode = new NodeImpl(
+                        (org.apache.axis2.om.OMNamespace) o);
                 returnList.add(soapNode);
             }
         }//taken care of adding namespaces of this node.
@@ -450,7 +474,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             while (parentScopeNamespacesIter.hasNext()) {
                 Object o = parentScopeNamespacesIter.next();
                 if (o instanceof org.apache.axis2.om.OMNamespace) {
-                    javax.xml.soap.Node soapNode = new NodeImpl((org.apache.axis2.om.OMNamespace) o);
+                    javax.xml.soap.Node soapNode = new NodeImpl(
+                            (org.apache.axis2.om.OMNamespace) o);
                     returnList.add(soapNode);
                 }
             }
@@ -478,7 +503,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         //just got a localName, so assuming the namespace to be that of element
         Name elementQualifiedName = this.getElementName();
         //now try to remove that Attribute from this SOAPElement
-        this.removeAttribute(new PrefixedQName(elementQualifiedName.getURI(), localName, elementQualifiedName.getPrefix()));
+        this.removeAttribute(
+                new PrefixedQName(elementQualifiedName.getURI(),
+                        localName,
+                        elementQualifiedName.getPrefix()));
     }
 
     /**
@@ -544,7 +572,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public void setAttribute(String localName, String value) throws DOMException {
         //We will create a OMAttribute for the given input params, add it
         //to the omElement datamemeber
-        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute(localName, omElement.getNamespace(), value);
+        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMAttribute(localName, omElement.getNamespace(), value);
         omElement.addAttribute(omAttr);
     }
 
@@ -563,7 +592,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         Iterator attrIter = omElement.getAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
-            if (omAttr.getLocalName().equals(localName) && omAttr.getNamespace().getName().equals(namespaceURI)) {
+            if (omAttr.getLocalName().equals(localName) &&
+                    omAttr.getNamespace().getName().equals(namespaceURI)) {
                 return true;
             }
         }
@@ -604,8 +634,13 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         //create a OMAttribute with the input object's localName, namespace (URI + prefix), value
         //remove from underlying omElement such an attribute
         //wrap the OMAttribute used for removing, into a dom Attr object and return.
-        org.apache.axis2.om.OMNamespace oldAttrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMNamespace(oldAttr.getNamespaceURI(), oldAttr.getPrefix());
-        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute(oldAttr.getName(), oldAttrNS, oldAttr.getValue());
+        org.apache.axis2.om.OMNamespace oldAttrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMNamespace(oldAttr.getNamespaceURI(),
+                        oldAttr.getPrefix());
+        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMAttribute(oldAttr.getName(),
+                        oldAttrNS,
+                        oldAttr.getValue());
         omElement.removeAttribute(omAttr);
         return (new org.apache.axis2.saaj.AttrImpl(omAttr, this));
     }
@@ -622,7 +657,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public Attr setAttributeNode(Attr attr) throws DOMException {
         //Create a OMAttribute out of the supplied Attr, add this to the
         //omElement and now wrap the created OMAttribute into a Attr and return
-        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute(attr.getName(), omElement.getNamespace(), attr.getValue());
+        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMAttribute(attr.getName(),
+                        omElement.getNamespace(),
+                        attr.getValue());
         omElement.addAttribute(omAttr);
         return (new org.apache.axis2.saaj.AttrImpl(omAttr, this));
     }
@@ -637,8 +675,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
      */
     public Attr setAttributeNodeNS(Attr attr) throws DOMException {
-        org.apache.axis2.om.OMNamespace attrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMNamespace(attr.getNamespaceURI(), attr.getPrefix());
-        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute(attr.getName(), attrNS, attr.getValue());
+        org.apache.axis2.om.OMNamespace attrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMNamespace(attr.getNamespaceURI(), attr.getPrefix());
+        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMAttribute(attr.getName(), attrNS, attr.getValue());
         omElement.addAttribute(omAttr);
         return (new org.apache.axis2.saaj.AttrImpl(omAttr, this));
     }
@@ -663,7 +703,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         else {
             returnList = new NodeListImpl();
             while (childIter.hasNext()) {
-                NodeList list = getElementsByTagNamePreOrder((SOAPElement) childIter.next(), localName);
+                NodeList list = getElementsByTagNamePreOrder(
+                        (SOAPElement) childIter.next(), localName);
                 //should *append* this list to the existing list. Remember, we are doing preorder
                 returnList.addNodeList(list);
             }
@@ -671,7 +712,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         return (NodeList) returnList;
     }
 
-    private NodeList getElementsByTagNamePreOrder(SOAPElement child, String localName) {
+    private NodeList getElementsByTagNamePreOrder(SOAPElement child,
+                                                  String localName) {
         NodeListImpl returnList = new NodeListImpl();
         //We are doing preorder, so see if root itself is a match and place it first in the order
         if (child.getLocalName().equals(localName)) {
@@ -695,7 +737,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         Iterator attrIter = omElement.getAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
-            if (omAttr.getLocalName().equals(localName) && omAttr.getNamespace().getName().equals(namespaceURI)) {
+            if (omAttr.getLocalName().equals(localName) &&
+                    omAttr.getNamespace().getName().equals(namespaceURI)) {
                 return omAttr.getValue();
             }
         }
@@ -712,11 +755,15 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @return
      * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void setAttributeNS(String namespaceURI, String localName, String value)
+    public void setAttributeNS(String namespaceURI,
+                               String localName,
+                               String value)
             throws DOMException {
         //since no prefix is given, we create a OMNamespace with given URI and null prefix. How good is it???
-        org.apache.axis2.om.OMNamespace attrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMNamespace(namespaceURI, null);
-        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute(localName, attrNS, value);
+        org.apache.axis2.om.OMNamespace attrNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMNamespace(namespaceURI, null);
+        org.apache.axis2.om.OMAttribute omAttr = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                .createOMAttribute(localName, attrNS, value);
         omElement.addAttribute(omAttr);
     }
 
@@ -733,7 +780,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         Iterator attrIter = omElement.getAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
-            if (omAttr.getLocalName().equals(localName) && omAttr.getNamespace().getName().equals(namespaceURI)) {
+            if (omAttr.getLocalName().equals(localName) &&
+                    omAttr.getNamespace().getName().equals(namespaceURI)) {
                 return (new org.apache.axis2.saaj.AttrImpl(omAttr, this));
             }
         }
@@ -753,7 +801,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @return NodeList
      * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
      */
-    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+    public NodeList getElementsByTagNameNS(String namespaceURI,
+                                           String localName) {
         Iterator childIter = this.getChildElements();
         NodeListImpl returnList;
         if (childIter == null)
@@ -761,7 +810,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         else {
             returnList = new NodeListImpl();
             while (childIter.hasNext()) {
-                NodeList list = getElementsByTagNameNSPreOrder((SOAPElement) childIter.next(), namespaceURI, localName);
+                NodeList list = getElementsByTagNameNSPreOrder(
+                        (SOAPElement) childIter.next(),
+                        namespaceURI,
+                        localName);
                 //should *append* this list to the existing list. Remember, we are doing preorder
                 returnList.addNodeList(list);
             }
@@ -769,14 +821,18 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         return (NodeList) returnList;
     }
 
-    private NodeList getElementsByTagNameNSPreOrder(SOAPElement child, String namespaceURI, String localName) {
+    private NodeList getElementsByTagNameNSPreOrder(SOAPElement child,
+                                                    String namespaceURI,
+                                                    String localName) {
         NodeListImpl returnList = new NodeListImpl();
         //We are doing preorder, so see if root itself is a match and place it first in the order
-        if (child.getNamespaceURI().equals(namespaceURI) && child.getLocalName().equals(localName)) {
+        if (child.getNamespaceURI().equals(namespaceURI) &&
+                child.getLocalName().equals(localName)) {
             //so this must be first in the returnList
             returnList.addNode((org.w3c.dom.Node) child);
         }
-        returnList.addNodeList(child.getElementsByTagNameNS(namespaceURI, localName));
+        returnList.addNodeList(
+                child.getElementsByTagNameNS(namespaceURI, localName));
         return returnList;
     }
 

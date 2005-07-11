@@ -64,12 +64,17 @@ public class ToolSelectionPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
         Label label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin.getResourceString("page0.options.desc"));
+        label.setText(
+                CodegenWizardPlugin.getResourceString("page0.options.desc"));
 
         wsdl2JavaRadioButton = new Button(container, SWT.RADIO);
-        wsdl2JavaRadioButton.setText(CodegenWizardPlugin.getResourceString("page0.wsdl2java.caption"));
-        wsdl2JavaRadioButton.setToolTipText(CodegenWizardPlugin.getResourceString("page0.wsdl2java.desc"));
-        wsdl2JavaRadioButton.setSelection(settings.getBoolean(PREF_TOOL_SELECTION_WSDL2JAVA));
+        wsdl2JavaRadioButton.setText(
+                CodegenWizardPlugin.getResourceString(
+                        "page0.wsdl2java.caption"));
+        wsdl2JavaRadioButton.setToolTipText(
+                CodegenWizardPlugin.getResourceString("page0.wsdl2java.desc"));
+        wsdl2JavaRadioButton.setSelection(
+                settings.getBoolean(PREF_TOOL_SELECTION_WSDL2JAVA));
         wsdl2JavaRadioButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleCheckboxSelection();
@@ -77,9 +82,13 @@ public class ToolSelectionPage extends AbstractWizardPage {
         });
 
         java2WSDLRadioButton = new Button(container, SWT.RADIO);
-        java2WSDLRadioButton.setText(CodegenWizardPlugin.getResourceString("page0.java2wsdl.caption"));
-        java2WSDLRadioButton.setToolTipText(CodegenWizardPlugin.getResourceString("page0.java2wsdl.desc"));
-        java2WSDLRadioButton.setSelection(settings.getBoolean(PREF_TOOL_SELECTION_JAVA2WSDL));
+        java2WSDLRadioButton.setText(
+                CodegenWizardPlugin.getResourceString(
+                        "page0.java2wsdl.caption"));
+        java2WSDLRadioButton.setToolTipText(
+                CodegenWizardPlugin.getResourceString("page0.java2wsdl.desc"));
+        java2WSDLRadioButton.setSelection(
+                settings.getBoolean(PREF_TOOL_SELECTION_JAVA2WSDL));
         java2WSDLRadioButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleCheckboxSelection();

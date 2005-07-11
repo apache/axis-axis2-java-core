@@ -76,9 +76,11 @@ public class RawXMLINOnlyMessageReceiver
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinussLogicProvider(obj, msgContext);
 
-            OperationDescription op = msgContext.getOperationContext().getAxisOperation();
+            OperationDescription op = msgContext.getOperationContext()
+                    .getAxisOperation();
             if (op == null) {
-                throw new AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
+                throw new AxisFault(
+                        "Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
             }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
@@ -91,13 +93,17 @@ public class RawXMLINOnlyMessageReceiver
             Class[] parameters = method.getParameterTypes();
             if ((parameters != null)
                     && (parameters.length == 1)
-                    && OMElement.class.getName().equals(parameters[0].getName())) {
-                OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
+                    &&
+                    OMElement.class.getName().equals(parameters[0].getName())) {
+                OMElement methodElement = msgContext.getEnvelope().getBody()
+                        .getFirstElement();
 
                 OMElement parmeter = null;
                 SOAPEnvelope envelope = null;
 
-                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
+                String style = msgContext.getOperationContext()
+                        .getAxisOperation()
+                        .getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;
@@ -105,7 +111,9 @@ public class RawXMLINOnlyMessageReceiver
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+                    envelope =
+                            OMAbstractFactory.getSOAP11Factory()
+                            .getDefaultEnvelope();
                     envelope.getBody().setFirstChild(result);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
@@ -117,8 +125,10 @@ public class RawXMLINOnlyMessageReceiver
                     SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
                     envelope = fac.getDefaultEnvelope();
 
-                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                    OMElement responseMethodName = fac.createOMElement(methodName + "Response", ns);
+                    OMNamespace ns = fac.createOMNamespace("http://soapenc/",
+                            "res");
+                    OMElement responseMethodName = fac.createOMElement(
+                            methodName + "Response", ns);
                     if (result != null) {
                         responseMethodName.addChild(result);
                     }
@@ -129,8 +139,10 @@ public class RawXMLINOnlyMessageReceiver
                     throw new AxisFault("Unknown style ");
                 }
             } else {
-                throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
-                                    + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                throw new AxisFault(
+                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                        +
+                        "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

@@ -50,7 +50,8 @@ public class InOnlyMEPClient extends MEPClient {
         ConfigurationContext syscontext = serviceContext.getEngineContext();
 
         if (senderTransport == null) {
-            senderTransport = inferTransport(messageInformationHeaders.getTo());
+            senderTransport =
+                    inferTransport(messageInformationHeaders.getTo());
         }
 
         msgctx.setTransportOut(senderTransport);
@@ -59,7 +60,8 @@ public class InOnlyMEPClient extends MEPClient {
         AxisConfiguration registry = sysContext.getAxisConfiguration();
 
         AxisEngine engine = new AxisEngine(sysContext);
-        msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
+        msgctx.setOperationContext(
+                axisop.findOperationContext(msgctx, serviceContext));
 
         engine.send(msgctx);
     }
@@ -114,10 +116,13 @@ public class InOnlyMEPClient extends MEPClient {
     }
 
     public void engageModule(QName name) throws AxisFault {
-        serviceContext.getEngineContext().getAxisConfiguration().engageModule(name);
+        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
+                name);
     }
 
     public void setSenderTransport(String senderTransport) throws AxisFault {
-        this.senderTransport = serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(new QName(senderTransport));
+        this.senderTransport =
+                serviceContext.getEngineContext().getAxisConfiguration()
+                .getTransportOut(new QName(senderTransport));
     }
 }

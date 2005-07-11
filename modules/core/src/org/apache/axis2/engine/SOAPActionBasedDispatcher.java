@@ -30,7 +30,8 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "SOAPActionBasedDispatcher");
+            new QName("http://axis.ws.apache.org",
+                    "SOAPActionBasedDispatcher");
 
     public SOAPActionBasedDispatcher() {
         init(new HandlerDescription(NAME));

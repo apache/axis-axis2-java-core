@@ -30,7 +30,8 @@ public class Scheduler {
         private DeploymentIterator iterator;
 
 
-        public SchedulerTimerTask(SchedulerTask schedulerTask, DeploymentIterator iterator) {
+        public SchedulerTimerTask(SchedulerTask schedulerTask,
+                                  DeploymentIterator iterator) {
             this.schedulerTask = schedulerTask;
             this.iterator = iterator;
         }
@@ -52,7 +53,8 @@ public class Scheduler {
      *                               scheduler was cancelled, or scheduler thread terminated.
      */
 
-    public void schedule(SchedulerTask schedulerTask, DeploymentIterator iterator) {
+    public void schedule(SchedulerTask schedulerTask,
+                         DeploymentIterator iterator) {
 
         Date time = iterator.next();
         if (time == null) {
@@ -67,7 +69,8 @@ public class Scheduler {
         }
     }
 
-    private void reschedule(SchedulerTask schedulerTask, DeploymentIterator iterator) {
+    private void reschedule(SchedulerTask schedulerTask,
+                            DeploymentIterator iterator) {
         Date time = iterator.next();
         if (time == null) {
             schedulerTask.cancel();

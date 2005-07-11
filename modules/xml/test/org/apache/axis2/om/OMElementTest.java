@@ -39,12 +39,16 @@ public class OMElementTest extends OMTestCase implements OMConstants {
 
     public void testGetText() {
         try {
-            StAXSOAPModelBuilder soapBuilder = getOMBuilder("soap/OMElementTest.xml");
+            StAXSOAPModelBuilder soapBuilder = getOMBuilder(
+                    "soap/OMElementTest.xml");
             SOAPEnvelope soapEnvelope = (SOAPEnvelope) soapBuilder.getDocumentElement();
-            OMElement wsaTo = soapEnvelope.getHeader().getFirstChildWithName(new QName(WSA_URI, WSA_TO));
+            OMElement wsaTo = soapEnvelope.getHeader().getFirstChildWithName(
+                    new QName(WSA_URI, WSA_TO));
 
             String expectedString = "http://localhost:8081/axis/services/BankPort";
-            assertEquals("getText is not returning the correct value", wsaTo.getText().trim(), expectedString);
+            assertEquals("getText is not returning the correct value",
+                    wsaTo.getText().trim(),
+                    expectedString);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

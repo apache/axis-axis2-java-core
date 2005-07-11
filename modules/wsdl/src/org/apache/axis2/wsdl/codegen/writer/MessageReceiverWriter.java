@@ -38,7 +38,9 @@ public class MessageReceiverWriter extends ClassWriter {
         Class clazz = this.getClass();
         switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTMessageReceiverTemplates.JAVA_TEMPLATE);
+                this.xsltStream =
+                        clazz.getResourceAsStream(
+                                XSLTConstants.XSLTMessageReceiverTemplates.JAVA_TEMPLATE);
                 break;
             default:
                 throw new UnsupportedOperationException();

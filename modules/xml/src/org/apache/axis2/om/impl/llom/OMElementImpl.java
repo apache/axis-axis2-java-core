@@ -15,7 +15,17 @@
 */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
@@ -147,7 +157,7 @@ public class OMElementImpl extends OMNodeImpl
         String namespaceURI = qname.getNamespaceURI();
         if (!"".equals(namespaceURI)) {
             ns = findNamespace(qname.getNamespaceURI(),
-                               qname.getPrefix());
+                    qname.getPrefix());
 //        } else {
 //            if (parent != null) {
 //                ns = parent.getNamespace();
@@ -166,7 +176,9 @@ public class OMElementImpl extends OMNodeImpl
                 if (!"".equals(prefix)) {
                     ns = declareNamespace(namespaceURI, prefix);
                 } else {
-                    ns = declareNamespace(namespaceURI, getNextNamespacePrefix());
+                    ns =
+                            declareNamespace(namespaceURI,
+                                    getNextNamespacePrefix());
                 }
             }
             if (ns != null) {
@@ -185,7 +197,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     private OMNamespace handleNamespace(OMNamespace ns) {
         OMNamespace namespace = findNamespace(ns.getName(),
-                                              ns.getPrefix());
+                ns.getPrefix());
         if (namespace == null) {
             namespace = declareNamespace(ns);
         }
@@ -215,7 +227,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
         return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                                           elementQName);
+                elementQName);
     }
 
     /**
@@ -228,13 +240,14 @@ public class OMElementImpl extends OMNodeImpl
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
                 new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                                            elementQName);
+                        elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
         }
 
-        return ((omNode != null) && (OMNode.ELEMENT_NODE == omNode.getType())) ? (OMElement) omNode : null;
+        return ((omNode != null) && (OMNode.ELEMENT_NODE == omNode.getType())) ?
+                (OMElement) omNode : null;
 
     }
 
@@ -459,10 +472,12 @@ public class OMElementImpl extends OMNodeImpl
         if (ns != null) {
             namespace = findNamespace(ns.getName(), ns.getPrefix());
             if (namespace == null) {
-                throw new OMException("Given OMNamespace(" + ns.getName() + ns.getPrefix()
-                                      + ") for "
-                                      + "this attribute is not declared in the scope of this element. First declare the namespace"
-                                      + " and then use it with the attribute");
+                throw new OMException("Given OMNamespace(" + ns.getName() +
+                        ns.getPrefix()
+                        + ") for "
+                        +
+                        "this attribute is not declared in the scope of this element. First declare the namespace"
+                        + " and then use it with the attribute");
             }
         }
         return addAttribute(new OMAttributeImpl(attributeName, ns, value));
@@ -573,7 +588,8 @@ public class OMElementImpl extends OMNodeImpl
      */
     private XMLStreamReader getXMLStreamReader(boolean cache) {
         if ((builder == null) && !cache) {
-            throw new UnsupportedOperationException("This element was not created in a manner to be switched");
+            throw new UnsupportedOperationException(
+                    "This element was not created in a manner to be switched");
         }
         return new OMStAXWrapper(builder, this, cache);
     }
@@ -611,7 +627,8 @@ public class OMElementImpl extends OMNodeImpl
         while (child != null) {
             if (child.getType() == OMNode.TEXT_NODE) {
                 textNode = (OMText) child;
-                if (textNode.getText() != null && !"".equals(textNode.getText().trim())) {
+                if (textNode.getText() != null &&
+                        !"".equals(textNode.getText().trim())) {
                     childText += textNode.getText().trim();
                 }
             }
@@ -643,7 +660,8 @@ public class OMElementImpl extends OMNodeImpl
         }
         if ((builderType == PUSH_TYPE_BUILDER)
                 && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(omOutput));
         }
 
 
@@ -780,7 +798,8 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void setNamespace(OMNamespace namespace) {
         if (ns != null) {
-            OMNamespace ns = this.findNamespace(namespace.getName(), namespace.getPrefix());
+            OMNamespace ns = this.findNamespace(namespace.getName(),
+                    namespace.getPrefix());
             if (ns == null) {
                 ns = this.declareNamespace(namespace);
             }

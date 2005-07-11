@@ -18,7 +18,11 @@ package org.apache.axis2.om;
 import junit.framework.TestCase;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -28,8 +32,10 @@ import java.util.Iterator;
 
 public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
-        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser);
+        XMLStreamReader parser = XMLInputFactory.newInstance()
+                .createXMLStreamReader(new FileReader(file));
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                OMAbstractFactory.getSOAP11Factory(), parser);
         return builder;
     }
 
@@ -38,7 +44,8 @@ public class OMTestUtils {
         if (attibIt != null) {
             while (attibIt.hasNext()) {
                 TestCase.assertNotNull("once the has next is not null, the " +
-                                       "element should not be null", attibIt.next());
+                        "element should not be null",
+                        attibIt.next());
             }
         }
         Iterator it = omEle.getChildren();
@@ -46,7 +53,7 @@ public class OMTestUtils {
             while (it.hasNext()) {
                 OMNode ele = (OMNode) it.next();
                 TestCase.assertNotNull("once the has next is not null, the " +
-                                       "element should not be null", ele);
+                        "element should not be null", ele);
                 if (ele instanceof OMElement) {
                     walkThrough((OMElement) ele);
                 }
@@ -58,9 +65,13 @@ public class OMTestUtils {
         if (ele == null && omele == null) {
             return;
         } else if (ele != null && omele != null) {
-            TestCase.assertEquals("Element name not correct", ele.getLocalName(), omele.getLocalName());
+            TestCase.assertEquals("Element name not correct",
+                    ele.getLocalName(),
+                    omele.getLocalName());
             if (omele.getNamespace() != null) {
-                TestCase.assertEquals("Namespace URI not correct", ele.getNamespaceURI(), omele.getNamespace().getName());
+                TestCase.assertEquals("Namespace URI not correct",
+                        ele.getNamespaceURI(),
+                        omele.getNamespace().getName());
 
             }
 
@@ -72,10 +83,13 @@ public class OMTestUtils {
             String DOMAttrName;
             while (attIterator != null && attIterator.hasNext() && map == null) {
                 omattribute = (OMAttribute) attIterator.next();
-                Node node = map.getNamedItemNS(omattribute.getNamespace().getName(), omattribute.getLocalName());
+                Node node = map.getNamedItemNS(
+                        omattribute.getNamespace().getName(),
+                        omattribute.getLocalName());
                 if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
                     Attr attr = (Attr) node;
-                    TestCase.assertEquals(attr.getValue(), omattribute.getValue());
+                    TestCase.assertEquals(attr.getValue(),
+                            omattribute.getValue());
                 } else {
                     throw new OMException("return type is not a Attribute");
                 }

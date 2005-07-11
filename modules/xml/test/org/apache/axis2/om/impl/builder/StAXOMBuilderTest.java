@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.om.impl.builder;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.AbstractTestCase;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
@@ -37,13 +41,18 @@ public class StAXOMBuilderTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         testFile = new FileReader(getTestResourceFile("non_soap.xml"));
-        stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(), XMLInputFactory.newInstance().createXMLStreamReader(testFile));
+        stAXOMBuilder =
+                OMXMLBuilderFactory.createStAXOMBuilder(
+                        OMAbstractFactory.getSOAP11Factory(),
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                testFile));
     }
 
     public void testGetRootElement() throws Exception {
         rootElement = stAXOMBuilder.getDocumentElement();
         assertTrue("Root element can not be null", rootElement != null);
-        assertTrue(" Name of the root element is wrong", rootElement.getLocalName().equalsIgnoreCase("Root"));
+        assertTrue(" Name of the root element is wrong",
+                rootElement.getLocalName().equalsIgnoreCase("Root"));
         // get the first OMElement child
         OMNode omnode = rootElement.getFirstChild();
         while (omnode instanceof OMText) {

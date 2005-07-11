@@ -190,7 +190,7 @@ public class MimeHeaders {
             if (mimeheader.getName().equalsIgnoreCase(name)) {
                 if (!flag) {
                     headers.setElementAt(new MimeHeader(mimeheader
-                                                        .getName(), value), i);
+                            .getName(), value), i);
 
                     flag = true;
                 } else {

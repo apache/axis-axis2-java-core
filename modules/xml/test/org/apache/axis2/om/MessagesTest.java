@@ -24,23 +24,36 @@ public class MessagesTest extends OMTestCase {
         super(testName);
     }
 
-    public void testMessageWithLotOfWhiteSpaces() throws OMException, Exception {
-        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/whitespacedMessage.xml")).getDocumentElement();
+    public void testMessageWithLotOfWhiteSpaces() throws OMException,
+            Exception {
+        soapEnvelope =
+                (SOAPEnvelope) OMTestUtils.getOMBuilder(
+                        getTestResourceFile("soap/whitespacedMessage.xml"))
+                .getDocumentElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 
     public void testMinimalMessage() throws OMException, Exception {
-        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/minimalMessage.xml")).getDocumentElement();
+        soapEnvelope =
+                (SOAPEnvelope) OMTestUtils.getOMBuilder(
+                        getTestResourceFile("soap/minimalMessage.xml"))
+                .getDocumentElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 
     public void testReallyBigMessage() throws OMException, Exception {
-        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/reallyReallyBigMessage.xml")).getDocumentElement();
+        soapEnvelope =
+                (SOAPEnvelope) OMTestUtils.getOMBuilder(
+                        getTestResourceFile("soap/reallyReallyBigMessage.xml"))
+                .getDocumentElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 
     public void testEmptyBodiedMessage() throws OMException, Exception {
-        soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(getTestResourceFile("soap/emtyBodymessage.xml")).getDocumentElement();
+        soapEnvelope =
+                (SOAPEnvelope) OMTestUtils.getOMBuilder(
+                        getTestResourceFile("soap/emtyBodymessage.xml"))
+                .getDocumentElement();
         OMTestUtils.walkThrough(soapEnvelope);
     }
 

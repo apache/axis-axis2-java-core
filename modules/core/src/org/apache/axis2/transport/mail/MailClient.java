@@ -1,6 +1,14 @@
 package org.apache.axis2.transport.mail;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Properties;
@@ -24,7 +32,10 @@ public class MailClient
         this(user, host, password, false);
     }
 
-    public MailClient(String user, String host, String password, boolean debug) {
+    public MailClient(String user,
+                      String host,
+                      String password,
+                      boolean debug) {
         from = user + '@' + host;
         authentication = new PasswordAuthentication(user, password);
         Properties props = new Properties();
@@ -40,7 +51,10 @@ public class MailClient
         return authentication;
     }
 
-    public void sendMessage(String to, String subject, String content, String soapAction)
+    public void sendMessage(String to,
+                            String subject,
+                            String content,
+                            String soapAction)
             throws MessagingException {
         System.out.println("SENDING message from " + from + " to " + to);
         System.out.println();

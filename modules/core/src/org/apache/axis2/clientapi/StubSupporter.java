@@ -25,28 +25,40 @@ import org.apache.axis2.om.OMNamespace;
 
 class StubSupporter {
 
-    public static OMElement createRPCMappedElement(String elementName, OMNamespace ns, Object value, OMFactory fac) {
+    public static OMElement createRPCMappedElement(String elementName,
+                                                   OMNamespace ns,
+                                                   Object value,
+                                                   OMFactory fac) {
         OMElement returnElement = fac.createOMElement(elementName, ns);
         Class inputParamClass = value.getClass();
 
         if (inputParamClass.equals(String.class)) {
-            returnElement.addChild(fac.createText(returnElement, value.toString()));
+            returnElement.addChild(
+                    fac.createText(returnElement, value.toString()));
         } else if (inputParamClass.equals(Integer.class)) {
-            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Integer) value).intValue())));
+            returnElement.addChild(
+                    fac.createText(returnElement,
+                            String.valueOf(((Integer) value).intValue())));
         } else if (inputParamClass.equals(Float.class)) {
-            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Float) value).floatValue())));
+            returnElement.addChild(
+                    fac.createText(returnElement,
+                            String.valueOf(((Float) value).floatValue())));
         } else if (inputParamClass.equals(Double.class)) {
-            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Double) value).doubleValue())));
+            returnElement.addChild(
+                    fac.createText(returnElement,
+                            String.valueOf(((Double) value).doubleValue())));
             //todo this seems to be a long list... need to complete this
         } else if (inputParamClass.equals(OMElement.class)) {
             returnElement.addChild((OMElement) value);
         } else {
-            returnElement.addChild(fac.createText(returnElement, value.toString()));
+            returnElement.addChild(
+                    fac.createText(returnElement, value.toString()));
         }
         return returnElement;
     }
 
-    public static Object getRPCMappedElementValue(OMElement elt, Class outputTypeClass) {
+    public static Object getRPCMappedElementValue(OMElement elt,
+                                                  Class outputTypeClass) {
         Object outputObj = null;
         if (outputTypeClass.equals(String.class)) {
             outputObj = elt.getText();

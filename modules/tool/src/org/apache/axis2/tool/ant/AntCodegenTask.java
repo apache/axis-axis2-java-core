@@ -57,46 +57,56 @@ public class AntCodegenTask extends Task {
         Map optionMap = new HashMap();
 
         optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                      new CommandLineOption(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                                            getStringArray(WSDLFileName)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                        getStringArray(WSDLFileName)));
 
         if (asyncOnly) {
             optionMap
                     .put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                         new CommandLineOption(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                                               new String[0]));
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                                    new String[0]));
         }
         if (syncOnly) {
             optionMap
                     .put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                         new CommandLineOption(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                                               new String[0]));
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                                    new String[0]));
         }
         optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION,
-                      new CommandLineOption(CommandLineOptionConstants.PACKAGE_OPTION,
-                                            getStringArray(packageName)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.PACKAGE_OPTION,
+                        getStringArray(packageName)));
         optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                      new CommandLineOption(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                                            getStringArray(language)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                        getStringArray(language)));
         optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                      new CommandLineOption(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                                            getStringArray(output)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                        getStringArray(output)));
         if (serverSide) {
             optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                          new CommandLineOption(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                                                new String[0]));
+                    new CommandLineOption(
+                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                            new String[0]));
 
             if (generateServerXml) {
-                optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                              new CommandLineOption(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                                    new String[0]));
+                optionMap.put(
+                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                        new CommandLineOption(
+                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                                new String[0]));
             }
         }
         if (testcase) {
             optionMap
                     .put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                         new CommandLineOption(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                                               new String[0]));
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                                    new String[0]));
         }
         //System.out.println(page3.getOutputLocation());
         return optionMap;
@@ -105,7 +115,9 @@ public class AntCodegenTask extends Task {
     private WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
             IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        WSDLVersionWrapper wsdlvWrap = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+        WSDLVersionWrapper wsdlvWrap = WOMBuilderFactory.getBuilder(
+                WOMBuilderFactory.WSDL11)
+                .build(in);
         return wsdlvWrap.getDescription();
     }
 
@@ -119,7 +131,8 @@ public class AntCodegenTask extends Task {
     public void execute() throws BuildException {
         try {
 
-            CommandLineOptionParser parser = new CommandLineOptionParser(this.fillOptionMap());
+            CommandLineOptionParser parser = new CommandLineOptionParser(
+                    this.fillOptionMap());
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
             throw new BuildException(e);
@@ -165,7 +178,8 @@ public class AntCodegenTask extends Task {
 
     public static void main(String[] args) {
         AntCodegenTask task = new AntCodegenTask();
-        task.setWSDLFileName("modules/samples/test-resources/wsdl/compound2.wsdl");
+        task.setWSDLFileName(
+                "modules/samples/test-resources/wsdl/compound2.wsdl");
         task.setOutput("temp");
         task.execute();
     }

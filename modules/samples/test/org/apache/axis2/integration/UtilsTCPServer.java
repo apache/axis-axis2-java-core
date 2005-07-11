@@ -64,9 +64,11 @@ public class UtilsTCPServer {
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            configurationContext.getAxisConfiguration().engageModule(new QName("addressing"));
+            configurationContext.getAxisConfiguration().engageModule(
+                    new QName("addressing"));
             receiver =
-                    new TCPServer(UtilServer.TESTING_PORT, configurationContext);
+                    new TCPServer(UtilServer.TESTING_PORT,
+                            configurationContext);
             receiver.start();
 
         }

@@ -29,7 +29,12 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -91,7 +96,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 OMOutput output = new OMOutput(out, false);
                 dataOut.serialize(output);
             }
-            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
+            msgContext.getOperationContext().setProperty(
+                    Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
@@ -105,7 +111,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     public void writeMessageWithCommons(MessageContext msgContext,
-                                        EndpointReference toURL, OMElement dataout) throws AxisFault {
+                                        EndpointReference toURL,
+                                        OMElement dataout) throws AxisFault {
         try {
             URL url = new URL(toURL.getAddress());
             //Configure the transport
@@ -117,8 +124,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             PostMethod postMethod = new PostMethod();
             postMethod.setPath(url.getFile());
             msgContext.setProperty(HTTP_METHOD, postMethod);
-            postMethod.setRequestEntity(new AxisRequestEntity(dataout,
-                                                              chuncked, msgContext.isDoingMTOM()));
+            postMethod.setRequestEntity(
+                    new AxisRequestEntity(dataout,
+                            chuncked, msgContext.isDoingMTOM()));
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
                     && chuncked) {
                 ((PostMethod) postMethod).setContentChunked(true);
@@ -126,20 +134,20 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
             if (msgContext.isDoingMTOM()) {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                                            OMOutput.getContentType(true));
+                        OMOutput.getContentType(true));
             } else {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                                            "text/xml; charset=utf-8");
+                        "text/xml; charset=utf-8");
             }
             postMethod.setRequestHeader(HTTPConstants.HEADER_ACCEPT,
-                                        HTTPConstants.HEADER_ACCEPT_APPL_SOAP
-                                        + HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME
-                                        + HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED
-                                        + HTTPConstants.HEADER_ACCEPT_TEXT_ALL);
+                    HTTPConstants.HEADER_ACCEPT_APPL_SOAP
+                    + HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME
+                    + HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED
+                    + HTTPConstants.HEADER_ACCEPT_TEXT_ALL);
             postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url
-                                                                   .getHost());
+                    .getHost());
             postMethod.setRequestHeader(HTTPConstants.HEADER_CACHE_CONTROL,
-                                        "no-cache");
+                    "no-cache");
             postMethod
                     .setRequestHeader(HTTPConstants.HEADER_PRAGMA, "no-cache");
             //content length is not set yet
@@ -150,25 +158,28 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     //postMethod.setHttp11(false); todo method to findout the
                     // transport version...
                     //allowing keep-alive for 1.0
-                    postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                                                HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                    postMethod.setRequestHeader(
+                            HTTPConstants.HEADER_CONNECTION,
+                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
                 } else {
                     // allowing keep-alive for 1.1
-                    postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                                                HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                    postMethod.setRequestHeader(
+                            HTTPConstants.HEADER_CONNECTION,
+                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
                 }
             }
             // othervise assumes HTTP 1.1 and keep-alive is default.
             if (!msgContext.isDoingREST()) {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION,
-                                            soapActionString);
+                        soapActionString);
             }
 
             //execuite the HtttpMethodBase - a connection manager can be given
             // for handle multiple
             httpClient = new HttpClient();
             //hostConfig handles the socket functions..
-            HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
+            HostConfiguration hostConfig = getHostConfiguration(msgContext,
+                    url);
 
             //code that wirte the stream to the wire
 
@@ -178,19 +189,24 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 if (in == null) {
                     throw new AxisFault("Input Stream can not be Null");
                 }
-                msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
+                msgContext.getOperationContext().setProperty(
+                        MessageContext.TRANSPORT_IN, in);
                 Header contentTypeHeader = postMethod
                         .getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
                 if (contentTypeHeader != null) {
                     String contentType = contentTypeHeader.getValue();
                     if (contentType != null
-                            && contentType
-                            .indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >= 0) {
+                            &&
+                            contentType
+                            .indexOf(
+                                    HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >=
+                            0) {
                         OperationContext opContext = msgContext
                                 .getOperationContext();
                         if (opContext != null) {
-                            opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
-                                                  contentType);
+                            opContext.setProperty(
+                                    HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+                                    contentType);
                         }
                     }
                 }
@@ -199,8 +215,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 return;
             } else {
                 throw new AxisFault("Error " + postMethod.getStatusCode()
-                                    + "  Error Message is "
-                                    + postMethod.getResponseBodyAsString());
+                        + "  Error Message is "
+                        + postMethod.getResponseBodyAsString());
             }
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
@@ -217,7 +233,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         //TODO cheaking wheather the host is a proxy
         HostConfiguration config = new HostConfiguration();
         config.setHost(targetURL.getHost(), targetURL.getPort() == -1 ? 80
-                                            : targetURL.getPort());
+                : targetURL.getPort());
         return config;
     }
 
@@ -334,12 +350,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     this.chuncked = true;
                 }
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
-                                                               .getValue())) {
+                    .getValue())) {
                 //TODO HTTP1.0 specific parameters
             } else {
-                throw new AxisFault("Parameter "
-                                    + HTTPConstants.PROTOCOL_VERSION
-                                    + " Can have values only HTTP/1.0 or HTTP/1.1");
+                throw new AxisFault(
+                        "Parameter "
+                        + HTTPConstants.PROTOCOL_VERSION
+                        + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
 

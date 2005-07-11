@@ -47,8 +47,11 @@ public class MessageReuseTest extends AbstractTestCase {
 
         WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
-            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            InputStream in = new FileInputStream(
+                    getTestResourceFile("BookQuote.wsdl"));
+            wsdlVersionWrapper =
+                    WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+                    .build(in);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
@@ -59,16 +62,19 @@ public class MessageReuseTest extends AbstractTestCase {
 
     public void testMultipartmessageReuse() throws Exception {
 
-        WSDLInterface interface1 = this.womDescription.getInterface(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote",
-                                                                              "BookQuote"));
+        WSDLInterface interface1 = this.womDescription.getInterface(
+                new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote",
+                        "BookQuote"));
         WSDLOperation operation1 = (WSDLOperation) interface1.getAllOperations()
                 .get("getBookPrice");
         QName element1 = operation1.getInputMessage().getElement();
-        WSDLOperation operation2 = (WSDLOperation) interface1.getAllOperations().get("getBookPriceNonRobust");
+        WSDLOperation operation2 = (WSDLOperation) interface1.getAllOperations()
+                .get("getBookPriceNonRobust");
         QName element2 = operation2.getInputMessage().getElement();
         assertEquals(element1, element2);
 
-        Iterator iterator = womDescription.getTypes().getExtensibilityElements().iterator();
+        Iterator iterator = womDescription.getTypes().getExtensibilityElements()
+                .iterator();
         Schema types = null;
         while (iterator.hasNext()) {
             WSDLExtensibilityElement temp = (WSDLExtensibilityElement) iterator.next();
@@ -83,7 +89,8 @@ public class MessageReuseTest extends AbstractTestCase {
             if (item instanceof Element) {
                 Element temp = (Element) item;
                 if ("complexType".equals(temp.getNodeName()) &&
-                        "BookQuote_getBookPrice".equals(temp.getAttribute("name"))) {
+                        "BookQuote_getBookPrice".equals(
+                                temp.getAttribute("name"))) {
                     numberOfBookQuote_getBookPrice++;
                 }
 

@@ -65,9 +65,12 @@ public class ClientCallbackHandler extends Callback {
      * @param result
      */
     public void onComplete(AsyncResult result) {
-        System.out.println("Responce message received to the ClientCallbackHandler ...");
+        System.out.println(
+                "Responce message received to the ClientCallbackHandler ...");
         try {
-            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
+            OMOutput omOutput = new OMOutput(
+                    XMLOutputFactory.newInstance().createXMLStreamWriter(
+                            System.out));
             result.getResponseEnvelope().serialize(omOutput);
             omOutput.flush();
         } catch (XMLStreamException e) {
@@ -100,7 +103,8 @@ public class ClientCallbackHandler extends Callback {
 
         String opLocalName = operation.getLocalName();
         if (opLocalName.equals("Fault")) {
-            System.out.println("A Fault message recieved, Check your Licence key");
+            System.out.println(
+                    "A Fault message recieved, Check your Licence key");
             strURL =
                     strURL +
                     "A Fault message recieved, Check your Licence key. Else you have reached the " +
@@ -128,41 +132,55 @@ public class ClientCallbackHandler extends Callback {
                                     System.out.println("Got Alexa");
                                     elem = elem.getFirstElement(); //elem -> websearch
                                     System.out.println("Should be WebSearch " +
-                                                       elem.getLocalName());
+                                            elem.getLocalName());
                                     iterator2 = elem.getChildren();
                                     while (iterator2.hasNext()) {
                                         node = (OMNode) iterator2.next();
-                                        if (node.getType() == OMNode.ELEMENT_NODE) {
+                                        if (node.getType() ==
+                                                OMNode.ELEMENT_NODE) {
                                             elem = (OMElement) node;
                                             String str3 = elem.getLocalName();
                                             System.out.println(str3);
                                             if (str3.equals("Results")) {
-                                                System.out.println("Got Results");
+                                                System.out.println(
+                                                        "Got Results");
                                                 iterator3 = elem.getChildren();
                                                 while (iterator3.hasNext()) {
-                                                    node = (OMNode) iterator3.next();
-                                                    if (node.getType() == OMNode.ELEMENT_NODE) {
-                                                        elem = (OMElement) node;
+                                                    node =
+                                                            (OMNode) iterator3.next();
+                                                    if (node.getType() ==
+                                                            OMNode.ELEMENT_NODE) {
+                                                        elem =
+                                                                (OMElement) node;
                                                         String str4 = elem.getLocalName();
-                                                        System.out.println(str4);
-                                                        if (str4.equals("Result")) {
-                                                            iterator4 = elem.getChildren();
+                                                        System.out.println(
+                                                                str4);
+                                                        if (str4.equals(
+                                                                "Result")) {
+                                                            iterator4 =
+                                                                    elem.getChildren();
                                                             while (iterator4.hasNext()) {
-                                                                node = (OMNode) iterator4.next();
+                                                                node =
+                                                                        (OMNode) iterator4.next();
                                                                 if (node.getType() ==
                                                                         OMNode.ELEMENT_NODE) {
-                                                                    elem = (OMElement) node;
+                                                                    elem =
+                                                                            (OMElement) node;
                                                                     String str5 = elem.getLocalName();
-                                                                    System.out.println(str5);
-                                                                    if (str5.equals("NavigableUrl")) {
+                                                                    System.out.println(
+                                                                            str5);
+                                                                    if (str5.equals(
+                                                                            "NavigableUrl")) {
                                                                         String txt = elem.getText();
-                                                                        strURL = strURL +
+                                                                        strURL =
+                                                                                strURL +
                                                                                 "<a href= " +
                                                                                 txt +
                                                                                 ">" +
                                                                                 txt +
                                                                                 "</a><br>";
-                                                                        System.out.println(strURL);
+                                                                        System.out.println(
+                                                                                strURL);
                                                                     }
                                                                 }
                                                             }

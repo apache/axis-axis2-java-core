@@ -57,14 +57,20 @@ public class SOAPTestCase extends AbstractTestCase {
         soap11Envelope = soap11Factory.createSOAPEnvelope();
         soap12Envelope = soap12Factory.createSOAPEnvelope();
 
-        soap11EnvelopeWithParser = (SOAPEnvelope) this.getSOAPBuilder(SOAP11_FILE_NAME).getDocumentElement();
-        soap12EnvelopeWithParser = (SOAPEnvelope) this.getSOAPBuilder(SOAP12_FILE_NAME).getDocumentElement();
+        soap11EnvelopeWithParser =
+                (SOAPEnvelope) this.getSOAPBuilder(SOAP11_FILE_NAME)
+                .getDocumentElement();
+        soap12EnvelopeWithParser =
+                (SOAPEnvelope) this.getSOAPBuilder(SOAP12_FILE_NAME)
+                .getDocumentElement();
     }
 
     protected StAXSOAPModelBuilder getSOAPBuilder(String fileName) {
         XMLStreamReader parser = null;
         try {
-            parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
+            parser =
+                    XMLInputFactory.newInstance().createXMLStreamReader(
+                            new FileReader(getTestResourceFile(fileName)));
         } catch (XMLStreamException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

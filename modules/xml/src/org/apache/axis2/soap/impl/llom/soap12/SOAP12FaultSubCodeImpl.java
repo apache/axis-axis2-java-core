@@ -33,7 +33,8 @@ public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
     }
 
     //changed
-    public SOAP12FaultSubCodeImpl(SOAPFaultCode parent, OMXMLParserWrapper builder) {
+    public SOAP12FaultSubCodeImpl(SOAPFaultCode parent,
+                                  OMXMLParserWrapper builder) {
         super(parent, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME, builder);
     }
 
@@ -41,26 +42,31 @@ public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
         super(parent, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
     }
 
-    public SOAP12FaultSubCodeImpl(SOAPFaultSubCode parent, OMXMLParserWrapper builder) {
+    public SOAP12FaultSubCodeImpl(SOAPFaultSubCode parent,
+                                  OMXMLParserWrapper builder) {
         super(parent, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME, builder);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
-        if (!((parent instanceof SOAP12FaultSubCodeImpl) || (parent instanceof SOAP12FaultCodeImpl))) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP FaultSubCode or SOAP FaultCodeValue as the parent. But received some other implementation");
+        if (!((parent instanceof SOAP12FaultSubCodeImpl) ||
+                (parent instanceof SOAP12FaultCodeImpl))) {
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP FaultSubCode or SOAP FaultCodeValue as the parent. But received some other implementation");
         }
     }
 
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
         if (!(subCode instanceof SOAP12FaultSubCodeImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault Sub Code. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Sub Code. But received some other implementation");
         }
         super.setSubCode(subCode);
     }
 
     public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException {
         if (!(soapFaultSubCodeValue instanceof SOAP12FaultValueImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault Value. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Value. But received some other implementation");
         }
         super.setValue(soapFaultSubCodeValue);
     }

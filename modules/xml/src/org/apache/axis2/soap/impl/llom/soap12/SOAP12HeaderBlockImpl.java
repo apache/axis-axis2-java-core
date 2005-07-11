@@ -32,7 +32,9 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
      * @param localName
      * @param ns
      */
-    public SOAP12HeaderBlockImpl(String localName, OMNamespace ns, SOAPHeader parent) throws SOAPProcessingException {
+    public SOAP12HeaderBlockImpl(String localName,
+                                 OMNamespace ns,
+                                 SOAPHeader parent) throws SOAPProcessingException {
         super(localName, ns, parent);
         checkParent(parent);
     }
@@ -45,49 +47,75 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
      * @param parent
      * @param builder
      */
-    public SOAP12HeaderBlockImpl(String localName, OMNamespace ns, SOAPHeader parent, OMXMLParserWrapper builder) {
+    public SOAP12HeaderBlockImpl(String localName,
+                                 OMNamespace ns,
+                                 SOAPHeader parent,
+                                 OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
 
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12HeaderImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Body as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Body as the parent. But received some other implementation");
         }
     }
 
     public void setRole(String roleURI) {
-        setAttribute(SOAP12Constants.SOAP_ROLE, roleURI, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        setAttribute(SOAP12Constants.SOAP_ROLE,
+                roleURI,
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
     }
 
     public String getRole() {
-        return getAttribute(SOAP12Constants.SOAP_ROLE, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        return getAttribute(SOAP12Constants.SOAP_ROLE,
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
     }
 
     public void setMustUnderstand(boolean mustUnderstand) {
-        setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand ? "1" : "0", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
+                mustUnderstand ? "1" : "0",
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
     }
 
     public void setMustUnderstand(String mustUnderstand) throws SOAPProcessingException {
-        if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equals(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equals(mustUnderstand)) {
-            setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, mustUnderstand, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equals(mustUnderstand) ||
+                SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equals(mustUnderstand) ||
+                SOAPConstants.ATTR_MUSTUNDERSTAND_0.equals(mustUnderstand) ||
+                SOAPConstants.ATTR_MUSTUNDERSTAND_1.equals(mustUnderstand)) {
+            setAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
+                    mustUnderstand,
+                    SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         } else {
-            throw new SOAPProcessingException("mustUndertand should be one of \"true\", \"false\", \"0\" or \"1\" ");
+            throw new SOAPProcessingException(
+                    "mustUndertand should be one of \"true\", \"false\", \"0\" or \"1\" ");
         }
     }
 
     public boolean getMustUnderstand() throws SOAPProcessingException {
         String mustUnderstand = "";
-        if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI))
+        if ((mustUnderstand =
+                getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
+                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI))
                 != null) {
-            if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand)) {
+            if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(
+                    mustUnderstand) ||
+                    SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(
+                            mustUnderstand)) {
                 return true;
-            } else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(mustUnderstand)) {
+            } else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(
+                    mustUnderstand) ||
+                    SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(
+                            mustUnderstand)) {
                 return false;
             } else {
-                throw new SOAPProcessingException("Invalid value found in mustUnderstand value of " + this.getLocalName() + " header block");
+                throw new SOAPProcessingException(
+                        "Invalid value found in mustUnderstand value of " +
+                        this.getLocalName() +
+                        " header block");
             }
         }
         return false;

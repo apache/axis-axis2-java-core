@@ -24,8 +24,11 @@ import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apache.axis2.soap.SOAPFaultRole {
 
-    public SOAPFaultRoleImpl(SOAPFault parent, boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, extractNamespaceFromParent);
+    public SOAPFaultRoleImpl(SOAPFault parent,
+                             boolean extractNamespaceFromParent) throws SOAPProcessingException {
+        super(parent,
+                SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME,
+                extractNamespaceFromParent);
     }
 
     public SOAPFaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {

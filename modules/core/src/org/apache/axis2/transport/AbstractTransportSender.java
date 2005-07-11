@@ -52,7 +52,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      * Field NAME
      */
     public static final QName NAME = new QName("http://axis.ws.apache.org",
-                                               "TransportSender");
+            "TransportSender");
 
     /**
      * Constructor AbstractTransportSender
@@ -101,18 +101,21 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             out = (OutputStream) msgContext
                     .getProperty(MessageContext.TRANSPORT_OUT);
             if (out != null) {
-                startSendWithOutputStreamFromIncomingConnection(msgContext, out);
+                startSendWithOutputStreamFromIncomingConnection(msgContext,
+                        out);
                 writeMessage(msgContext, out);
                 finalizeSendWithOutputStreamFromIncomingConnection(msgContext,
-                                                                   out);
+                        out);
             } else {
-                throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
+                throw new AxisFault(
+                        "Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
             }
         }
         //TODO fix this, we do not set the value if the operation context is
         // not avalible
         if (msgContext.getOperationContext() != null) {
-            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
+            msgContext.getOperationContext().setProperty(
+                    Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
         }
     }
 
@@ -149,14 +152,17 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
     }
 
-    public abstract OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault;
+    public abstract OutputStream startSendWithToAddress(
+            MessageContext msgContext, OutputStream out) throws AxisFault;
 
     public abstract void finalizeSendWithToAddress(MessageContext msgContext,
                                                    OutputStream out) throws AxisFault;
 
-    public abstract OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault;
+    public abstract OutputStream startSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext, OutputStream out) throws AxisFault;
 
-    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault;
+    public abstract void finalizeSendWithOutputStreamFromIncomingConnection(
+            MessageContext msgContext, OutputStream out) throws AxisFault;
 
     protected abstract OutputStream openTheConnection(EndpointReference epr,
                                                       MessageContext msgctx) throws AxisFault;

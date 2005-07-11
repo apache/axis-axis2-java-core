@@ -41,11 +41,16 @@ public class ServiceXMLWriter extends ClassWriter {
      */
     public void loadTemplate() {
         Class clazz = this.getClass();
-        this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTServiceXMLTemplates.GENERAL_SERVICE_TEMPLATE);
+        this.xsltStream =
+                clazz.getResourceAsStream(
+                        XSLTConstants.XSLTServiceXMLTemplates.GENERAL_SERVICE_TEMPLATE);
     }
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, "service", ".xml");
+        File outputFile = FileWriter.createClassFile(outputFileLocation,
+                packageName,
+                "service",
+                ".xml");
         this.stream = new FileOutputStream(outputFile);
     }
 }

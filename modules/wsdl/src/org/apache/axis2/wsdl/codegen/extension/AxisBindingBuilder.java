@@ -17,7 +17,11 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.wsdl.*;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLInterface;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -29,7 +33,9 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
 
     public static final String AXIS_NAMESPACE = "http://ws.apache.org/axis2/";
 
-    public static final QName AXIS_BINDING_QNAME = new QName(AXIS_NAMESPACE, "codeGenerationBinding", "axis");
+    public static final QName AXIS_BINDING_QNAME = new QName(AXIS_NAMESPACE,
+            "codeGenerationBinding",
+            "axis");
 
 
     public AxisBindingBuilder() {
@@ -53,12 +59,15 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
         newBinding.setBindingOperations(binding.getBindingOperations());
         Iterator elementIterator = binding.getExtensibilityElements().iterator();
         while (elementIterator.hasNext()) {
-            newBinding.addExtensibilityElement((WSDLExtensibilityElement) elementIterator.next());
+            newBinding.addExtensibilityElement(
+                    (WSDLExtensibilityElement) elementIterator.next());
         }
 
-        Iterator attributeIterator = binding.getExtensibilityAttributes().iterator();
+        Iterator attributeIterator = binding.getExtensibilityAttributes()
+                .iterator();
         while (attributeIterator.hasNext()) {
-            newBinding.addExtensibleAttributes((WSDLExtensibilityAttribute) attributeIterator.next());
+            newBinding.addExtensibleAttributes(
+                    (WSDLExtensibilityAttribute) attributeIterator.next());
         }
 
         wom.addBinding(newBinding);

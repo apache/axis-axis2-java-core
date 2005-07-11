@@ -31,7 +31,11 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
@@ -42,9 +46,11 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 public class EchoRawMTOMLoadTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:"
-                                                                                            + (UtilServer.TESTING_PORT)
-                                                                                            + "/axis/services/EchoXMLService/echoOMElement");
+    private EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -53,7 +59,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
     private QName operationName = new QName("echoOMElement");
 
     private QName transportName = new QName("http://localhost/my",
-                                            "NullTransport");
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
 
@@ -76,7 +82,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                                            operationName);
+                operationName);
         UtilServer.deployService(service);
         serviceContext = UtilServer.getConfigurationContext()
                 .createServiceContext(service.getName());
@@ -97,7 +103,8 @@ public class EchoRawMTOMLoadTest extends TestCase {
                                       98};
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
-            DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
+            DataHandler dataHandler = new DataHandler(
+                    new ByteArrayDataSource(byteArray));
             OMText textData = new OMTextImpl(dataHandler, true);
             //OMText textData = new OMTextImpl("Thilina Gunarathne");
             subData.addChild(textData);
@@ -117,12 +124,14 @@ public class EchoRawMTOMLoadTest extends TestCase {
 
             org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
             call.setTo(targetEPR);
-            call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+            call.set(Constants.Configuration.ENABLE_MTOM,
+                    Constants.VALUE_TRUE);
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                                  Constants.TRANSPORT_HTTP, false);
+                    Constants.TRANSPORT_HTTP, false);
 
             OMElement result = (OMElement) call.invokeBlocking(operationName
-                                                               .getLocalPart(), payload);
+                    .getLocalPart(),
+                    payload);
             OMElement ele = (OMElement) result.getFirstChild();
             OMElement ele1 = (OMElement) ele.getFirstChild();
             OMText binaryNode = (OMText) ele1.getFirstChild();

@@ -57,19 +57,21 @@ public abstract class MEPClient {
         this.mep = mep;
     }
 
-    protected void verifyInvocation(OperationDescription axisop, MessageContext msgCtx) throws AxisFault {
+    protected void verifyInvocation(OperationDescription axisop,
+                                    MessageContext msgCtx) throws AxisFault {
         if (axisop == null) {
             throw new AxisFault("OperationDescription can not be null");
         }
 
         if (mep.equals(axisop.getMessageExchangePattern())) {
             throw new AxisFault("This mepClient supports only "
-                                + mep
-                                + " And the Axis Operations suppiled supports "
-                                + axisop.getMessageExchangePattern());
+                    + mep
+                    + " And the Axis Operations suppiled supports "
+                    + axisop.getMessageExchangePattern());
         }
 
-        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
+        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) ==
+                null) {
             serviceContext.getServiceConfig().addOperation(axisop);
         }
         msgCtx.setDoingREST(doREST);
@@ -79,7 +81,8 @@ public abstract class MEPClient {
     }
 
     protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(
+                serviceContext.getEngineContext());
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         envelope.getBody().addChild(toSend);
@@ -98,7 +101,8 @@ public abstract class MEPClient {
         }
 
         if (transport != null) {
-            return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(new QName(transport));
+            return serviceContext.getEngineContext().getAxisConfiguration()
+                    .getTransportOut(new QName(transport));
 
         } else {
             throw new AxisFault("Cannot Infer transport from the URL");
@@ -110,10 +114,12 @@ public abstract class MEPClient {
         SOAPFactory fac = null;
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             fac = OMAbstractFactory.getSOAP12Factory();
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                soapVersionURI)) {
             fac = OMAbstractFactory.getSOAP11Factory();
         } else {
-            throw new AxisFault("Invalid SOAP URI. Axis2 only supports SOAP 1.1 and 1.2");
+            throw new AxisFault(
+                    "Invalid SOAP URI. Axis2 only supports SOAP 1.1 and 1.2");
         }
         return fac.getDefaultEnvelope();
     }

@@ -53,25 +53,37 @@ public class ClientUtil {
 
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omFactory.getDefaultEnvelope();
-        namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/",
-                                            "SOAP-ENV");
-        namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/",
-                                            "SOAP-ENC");
-        namespace = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
-        namespace = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/",
-                                            "soap");
+        namespace = reqEnv.declareNamespace(
+                "http://schemas.xmlsoap.org/soap/envelope/",
+                "SOAP-ENV");
+        namespace = reqEnv.declareNamespace(
+                "http://schemas.xmlsoap.org/soap/encoding/",
+                "SOAP-ENC");
+        namespace =
+                reqEnv.declareNamespace(
+                        "http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+        namespace =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema",
+                        "xsd");
+        namespace = reqEnv.declareNamespace(
+                "http://schemas.xmlsoap.org/wsdl/soap/",
+                "soap");
         namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/",
-                                            "wsdl");
-        namespace = reqEnv.declareNamespace("http://webservices.amazon.com/AWSAlexa/2005-02-01",
-                                            "tns");
+                "wsdl");
+        namespace = reqEnv.declareNamespace(
+                "http://webservices.amazon.com/AWSAlexa/2005-02-01",
+                "tns");
 
         nulNS = omFactory.createOMNamespace("", "");
 
-        operation = omFactory.createOMElement("Search",
-                                              "http://webservices.amazon.com/AWSAlexa/2005-02-01", "ns1");
+        operation =
+                omFactory.createOMElement("Search",
+                        "http://webservices.amazon.com/AWSAlexa/2005-02-01",
+                        "ns1");
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("encordingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("encordingStyle",
+                "http://schemas.xmlsoap.org/soap/encoding/",
+                null);
 
 
         value1 = omFactory.createOMElement("SubscriptionId", nulNS);

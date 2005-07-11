@@ -29,7 +29,12 @@ import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
@@ -79,19 +84,26 @@ public class ImageSampleTest extends AbstractTestCase {
 
         outMTOMFile = getTestResourceFile(outFileName);
         outBase64File = getTestResourceFile(outBase64FileName);
-        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile), true);
-        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File), false);
+        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile),
+                true);
+        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File),
+                false);
 
-        OMNamespaceImpl soap = new OMNamespaceImpl("http://schemas.xmlsoap.org/soap/envelope/", "soap");
+        OMNamespaceImpl soap = new OMNamespaceImpl(
+                "http://schemas.xmlsoap.org/soap/envelope/", "soap");
         OMElement envelope = new OMElementImpl("Envelope", soap);
         OMElement body = new OMElementImpl("Body", soap);
 
-        OMNamespaceImpl dataName = new OMNamespaceImpl("http://www.example.org/stuff", "m");
+        OMNamespaceImpl dataName = new OMNamespaceImpl(
+                "http://www.example.org/stuff", "m");
         OMElement data = new OMElementImpl("data", dataName);
 
-        expectedImage = new JDK13IO().loadImage(new FileInputStream(getTestResourceFile(imageInFileName)));
+        expectedImage =
+                new JDK13IO().loadImage(
+                        new FileInputStream(
+                                getTestResourceFile(imageInFileName)));
         ImageDataSource dataSource = new ImageDataSource("WaterLilies.jpg",
-                                                         expectedImage);
+                expectedImage);
         expectedDH = new DataHandler(dataSource);
         OMText binaryNode = new OMTextImpl(expectedDH, true);
 
@@ -108,11 +120,15 @@ public class ImageSampleTest extends AbstractTestCase {
     }
 
     public void testImageSampleDeserialize() throws Exception {
-        InputStream inStream = new FileInputStream(getTestResourceFile(inMimeFileName));
+        InputStream inStream = new FileInputStream(
+                getTestResourceFile(inMimeFileName));
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString);
         XMLStreamReader reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(new BufferedReader(new InputStreamReader(mimeHelper
-                                                                                .getSOAPPartInputStream())));
+                .createXMLStreamReader(
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        mimeHelper
+                .getSOAPPartInputStream())));
         builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
         OMElement root = (OMElement) builder.getDocumentElement();
         OMElement body = (OMElement) root.getFirstChild();
@@ -128,8 +144,9 @@ public class ImageSampleTest extends AbstractTestCase {
         DataHandler actualDH;
         actualDH = blob.getDataHandler();
         Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
-                                                     .getInputStream());
-        FileOutputStream imageOutStream = new FileOutputStream(getTestResourceFile(imageOutFileName));
+                .getInputStream());
+        FileOutputStream imageOutStream = new FileOutputStream(
+                getTestResourceFile(imageOutFileName));
         new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
 
     }

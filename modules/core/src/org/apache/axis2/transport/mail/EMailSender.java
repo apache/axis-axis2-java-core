@@ -20,7 +20,13 @@ package org.apache.axis2.transport.mail;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.EmailReceiver;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -38,7 +44,10 @@ public class EMailSender {
     private String smtpPort;
     private String password;
 
-    public EMailSender(String user, String host, String smtpPort, String password) {
+    public EMailSender(String user,
+                       String host,
+                       String smtpPort,
+                       String password) {
         this.user = user;
         this.host = host;
         this.smtpPort = smtpPort;
@@ -63,7 +72,8 @@ public class EMailSender {
 
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress((user)));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
+            msg.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress(targetEmail));
             msg.setSubject(subject);
 
             msg.addHeaderLine("Content-Type: text/plain; charset=us-ascii");
@@ -86,9 +96,14 @@ public class EMailSender {
         String password = "hemapani";
         EMailSender sender = new EMailSender(user, host, smtpPort, password);
 
-        sender.send("Testing mail sending", "hemapani@127.0.0.1", "Hellp, testing");
+        sender.send("Testing mail sending",
+                "hemapani@127.0.0.1",
+                "Hellp, testing");
 
-        EmailReceiver receiver = new EmailReceiver(user, host, "110", password);
+        EmailReceiver receiver = new EmailReceiver(user,
+                host,
+                "110",
+                password);
         receiver.connect();
         Message[] msgs = receiver.receive();
         if (msgs != null) {

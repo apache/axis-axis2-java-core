@@ -31,8 +31,10 @@ public class PhaseValidator {
     public static int SERVICE_MODULE = 1;
 
     public static boolean isSystemPhases(String phaseName) {
-        if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) || PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
-                PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName) || PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName)) {
+        if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
+                PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
+                PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName) ||
+                PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName)) {
             return true;
         }
         return false;

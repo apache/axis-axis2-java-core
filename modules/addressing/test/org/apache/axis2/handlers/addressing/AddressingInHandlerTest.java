@@ -53,17 +53,27 @@ public class AddressingInHandlerTest extends TestCase {
 
     public void testExtractAddressingInformationFromHeaders() {
         try {
-            StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testFileName);
+            StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(
+                    testFileName);
 
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             MessageInformationHeadersCollection messageInformationHeadersCollection =
-                    inHandler.extractCommonAddressingParameters(header, null, header.getHeaderBlocksWithNSURI(AddressingConstants.Submission.WSA_NAMESPACE), AddressingConstants.Submission.WSA_NAMESPACE);
+                    inHandler.extractCommonAddressingParameters(header,
+                            null,
+                            header.getHeaderBlocksWithNSURI(
+                                    AddressingConstants.Submission.WSA_NAMESPACE),
+                            AddressingConstants.Submission.WSA_NAMESPACE);
 
             if (messageInformationHeadersCollection == null) {
-                fail("Addressing Information Headers have not been retrieved properly");
+                fail(
+                        "Addressing Information Headers have not been retrieved properly");
             }
-            assertEquals("action header is not correct", messageInformationHeadersCollection.getAction(), action);
-            assertEquals("action header is not correct", messageInformationHeadersCollection.getMessageId(), messageID);
+            assertEquals("action header is not correct",
+                    messageInformationHeadersCollection.getAction(),
+                    action);
+            assertEquals("action header is not correct",
+                    messageInformationHeadersCollection.getMessageId(),
+                    messageID);
 
             assertFromEPR(messageInformationHeadersCollection.getFrom());
 
@@ -74,7 +84,9 @@ public class AddressingInHandlerTest extends TestCase {
     }
 
     private void assertFromEPR(EndpointReference fromEPR) {
-        assertEquals("Address in EPR is not valid", fromEPR.getAddress(), fromAddress);
+        assertEquals("Address in EPR is not valid",
+                fromEPR.getAddress(),
+                fromAddress);
     }
 
 

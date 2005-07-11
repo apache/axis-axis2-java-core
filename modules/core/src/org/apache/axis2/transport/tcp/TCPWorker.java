@@ -54,20 +54,24 @@ public class TCPWorker implements AxisWorker {
         try {
             Reader in = new InputStreamReader(socket.getInputStream());
             TransportOutDescription transportOut =
-                    configurationContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_TCP));
+                    configurationContext.getAxisConfiguration()
+                    .getTransportOut(new QName(Constants.TRANSPORT_TCP));
             msgContext =
                     new MessageContext(configurationContext,
-                                       configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_TCP)),
-                                       transportOut);
+                            configurationContext.getAxisConfiguration()
+                    .getTransportIn(new QName(Constants.TRANSPORT_TCP)),
+                            transportOut);
             msgContext.setServerSide(true);
             OutputStream out = socket.getOutputStream();
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
             AxisEngine engine = new AxisEngine(configurationContext);
             try {
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance()
+                        .createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-                msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
+                msgContext.setEnvelope(
+                        (SOAPEnvelope) builder.getDocumentElement());
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }
@@ -77,7 +81,8 @@ public class TCPWorker implements AxisWorker {
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
                 if (msgContext != null) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, socket.getOutputStream());
+                    msgContext.setProperty(MessageContext.TRANSPORT_OUT,
+                            socket.getOutputStream());
                     engine.handleFault(msgContext, e);
                 }
             } catch (Exception e1) {

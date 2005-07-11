@@ -27,7 +27,8 @@ public class SOAPHeaderTestCase extends SOAPTestCase {
 
     public SOAPHeaderTestCase(String testName) {
         super(testName);
-        namespace = omFactory.createOMNamespace("http://www.example.org", "test");
+        namespace =
+                omFactory.createOMNamespace("http://www.example.org", "test");
     }
 
     protected void setUp() throws Exception {

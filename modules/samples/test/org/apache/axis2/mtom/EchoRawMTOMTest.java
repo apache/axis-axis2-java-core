@@ -32,7 +32,11 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
@@ -46,9 +50,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:"
-                                                                                            + (UtilServer.TESTING_PORT)
-                                                                                            + "/axis/services/EchoXMLService/echoOMElement");
+    private EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -57,7 +63,7 @@ public class EchoRawMTOMTest extends TestCase {
     private QName operationName = new QName("echoOMElement");
 
     private QName transportName = new QName("http://localhost/my",
-                                            "NullTransport");
+            "NullTransport");
 
     private String imageInFileName = "img/test.jpg";
 
@@ -84,7 +90,7 @@ public class EchoRawMTOMTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                                            operationName);
+                operationName);
         UtilServer.deployService(service);
         serviceContext = UtilServer.getConfigurationContext()
                 .createServiceContext(service.getName());
@@ -103,11 +109,13 @@ public class EchoRawMTOMTest extends TestCase {
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
         Image expectedImage;
-        expectedImage = new JDK13IO()
-                .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
+        expectedImage =
+                new JDK13IO()
+                .loadImage(
+                        getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
 
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                                                         expectedImage);
+                expectedImage);
         expectedDH = new DataHandler(dataSource);
         OMTextImpl textData = new OMTextImpl(expectedDH, true);
         data.addChild(textData);
@@ -127,10 +135,11 @@ public class EchoRawMTOMTest extends TestCase {
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                              Constants.TRANSPORT_HTTP, false);
+                Constants.TRANSPORT_HTTP, false);
 
         OMElement result = (OMElement) call.invokeBlocking(operationName
-                                                           .getLocalPart(), payload);
+                .getLocalPart(),
+                payload);
         // result.serializeWithCache(new
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstChild();
@@ -138,7 +147,7 @@ public class EchoRawMTOMTest extends TestCase {
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
         Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
-                                                     .getInputStream());
+                .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream("testout.jpg");
         new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
 

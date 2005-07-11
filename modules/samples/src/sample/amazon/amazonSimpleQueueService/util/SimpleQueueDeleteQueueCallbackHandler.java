@@ -37,7 +37,8 @@ public class SimpleQueueDeleteQueueCallbackHandler extends Callback {
     public SimpleQueueDeleteQueueCallbackHandler() {
     }//defalut handler
 
-    public SimpleQueueDeleteQueueCallbackHandler(JTextArea results, JButton button) {
+    public SimpleQueueDeleteQueueCallbackHandler(JTextArea results,
+                                                 JButton button) {
         super();
         this.results = results;
         this.button = button;
@@ -70,7 +71,8 @@ public class SimpleQueueDeleteQueueCallbackHandler extends Callback {
 
     private void readTheQueue(OMElement element) {
         if (element.getText().equals("Errors")) {
-            returnString += "Queue can't be deleted, it has to be dequeued first" + "\n";
+            returnString += "Queue can't be deleted, it has to be dequeued first" +
+                    "\n";
         } else {
             returnString += "Queue is deleted" + "\n";
         }

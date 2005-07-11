@@ -52,9 +52,14 @@ public class MainWindow extends JFrame {
     private void init() {
         this.getContentPane().setLayout(null);
 
-        this.setBounds((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2 - 400 / 2,
-                       (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2 - 360 / 2,
-                       400, 360);
+        this.setBounds(
+                (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() /
+                2 -
+                400 / 2,
+                (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() /
+                2 -
+                360 / 2,
+                400, 360);
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -79,7 +84,10 @@ public class MainWindow extends JFrame {
 //
         this.nextButton = new JButton("Next");
         this.getContentPane().add(this.nextButton);
-        this.nextButton.setBounds(hgap + bWidth + hgap, 300 + vgap, bWidth, bHeight);
+        this.nextButton.setBounds(hgap + bWidth + hgap,
+                300 + vgap,
+                bWidth,
+                bHeight);
         this.nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 moveForward();
@@ -88,7 +96,10 @@ public class MainWindow extends JFrame {
 
         this.cancelButton = new JButton("Close");
         this.getContentPane().add(this.cancelButton);
-        this.cancelButton.setBounds(hgap + (bWidth + hgap) * 2, 300 + vgap, bWidth, bHeight);
+        this.cancelButton.setBounds(hgap + (bWidth + hgap) * 2,
+                300 + vgap,
+                bWidth,
+                bHeight);
         this.cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (confirmExit())
@@ -98,7 +109,10 @@ public class MainWindow extends JFrame {
 
         this.finishButton = new JButton("Finish");
         this.getContentPane().add(this.finishButton);
-        this.finishButton.setBounds(hgap + (bWidth + hgap) * 3, 300 + vgap, bWidth, bHeight);
+        this.finishButton.setBounds(hgap + (bWidth + hgap) * 3,
+                300 + vgap,
+                bWidth,
+                bHeight);
         this.finishButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processFinish();
@@ -111,24 +125,33 @@ public class MainWindow extends JFrame {
     }
 
     private void showErrorMessage() {
-        JOptionPane.showMessageDialog(this, "Required Value Not set!!!", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                "Required Value Not set!!!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     private void showSuccessMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private boolean confirmExit() {
         int returnType = JOptionPane.showOptionDialog(this,
-                                                      "Are you sure you want to exit?",
-                                                      "Exit service builder",
-                                                      JOptionPane.YES_NO_OPTION,
-                                                      JOptionPane.WARNING_MESSAGE,
-                                                      null, null, null);
+                "Are you sure you want to exit?",
+                "Exit service builder",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null, null, null);
         return (returnType == JOptionPane.YES_OPTION);
     }
 
@@ -150,13 +173,22 @@ public class MainWindow extends JFrame {
     private void moveToPage(int page) {
         switch (page) {
             case PAGE_1:
-                processPage(new WizardPane1(this.wizardBean, this), false, true, false);
+                processPage(new WizardPane1(this.wizardBean, this),
+                        false,
+                        true,
+                        false);
                 break;
             case PAGE_2:
-                processPage(new WizardPane2(this.wizardBean, this), true, true, false);
+                processPage(new WizardPane2(this.wizardBean, this),
+                        true,
+                        true,
+                        false);
                 break;
             case PAGE_3:
-                processPage(new WizardPane3(this.wizardBean, this), true, false, true);
+                processPage(new WizardPane3(this.wizardBean, this),
+                        true,
+                        false,
+                        true);
                 break;
             default:
                 return;
@@ -178,7 +210,10 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void processPage(WizardPane pane, boolean prevButtonState, boolean nextButtonState, boolean finishButtonState) {
+    private void processPage(WizardPane pane,
+                             boolean prevButtonState,
+                             boolean nextButtonState,
+                             boolean finishButtonState) {
         this.wizardPaneContainer.removeAll();
         currentWizardPane = pane;
         this.wizardPaneContainer.add(pane);

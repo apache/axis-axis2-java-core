@@ -49,7 +49,8 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
      * @see org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, System.getProperty("user.dir"));
+        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION,
+                System.getProperty("user.dir"));
         settings.put(JAVA_OUTPUT_WSDL_NAME, "service.wsdl");
 
     }
@@ -74,11 +75,12 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page6.output.label"));
+                .getResourceString("page6.output.label"));
 
         outputFolderTextBox = new Text(container, SWT.BORDER);
         outputFolderTextBox.setLayoutData(gd);
-        outputFolderTextBox.setText(settings.get(PREF_JAVA_OUTPUT_WSDL_LOCATION));
+        outputFolderTextBox.setText(
+                settings.get(PREF_JAVA_OUTPUT_WSDL_LOCATION));
         outputFolderTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 handleFolderTextChange();
@@ -87,7 +89,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 
         Button browseButton = new Button(container, SWT.PUSH);
         browseButton.setText(CodegenWizardPlugin
-                             .getResourceString("general.browse"));
+                .getResourceString("general.browse"));
         browseButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 handleBrowse();
@@ -99,7 +101,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page6.outputname.label"));
+                .getResourceString("page6.outputname.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         outputFileNameTextBox = new Text(container, SWT.BORDER);

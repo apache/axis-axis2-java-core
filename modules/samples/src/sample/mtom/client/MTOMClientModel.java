@@ -21,7 +21,11 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ImageDataSource;
 import org.apache.axis2.attachments.JDK13IO;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -33,8 +37,9 @@ import java.io.FileInputStream;
 public class MTOMClientModel {
     private File inputFile = null;
 
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                                                                "http://127.0.0.1:8080/axis2/services/MyService");
+    private EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:8080/axis2/services/MyService");
 
     private QName operationName = new QName("mtomSample");
 
@@ -56,7 +61,7 @@ public class MTOMClientModel {
                 .loadImage(new FileInputStream(inputFile));
 
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                                                         expectedImage);
+                expectedImage);
         expectedDH = new DataHandler(dataSource);
         OMText textData = fac.createText(expectedDH, true);
         image.addChild(textData);
@@ -81,9 +86,10 @@ public class MTOMClientModel {
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                              Constants.TRANSPORT_HTTP, false);
+                Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName
-                                                           .getLocalPart(), payload);
+                .getLocalPart(),
+                payload);
 
         return result;
     }
@@ -91,7 +97,7 @@ public class MTOMClientModel {
 
     public void setTargetEPR(String targetEPR) {
         this.targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                                               targetEPR);
+                targetEPR);
 
     }
 

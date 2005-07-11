@@ -34,14 +34,16 @@ public class MailClient {
 
     public static void main(String[] args) throws AxisFault {
         MessageSender msgSender = new MessageSender();
-        msgSender.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+        msgSender.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO, toEpr));
         msgSender.setSenderTransport(Constants.TRANSPORT_MAIL);
         msgSender.send("echo", getPayload());
     }
 
     private static OMElement getPayload() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
+        OMNamespace omNs = fac.createOMNamespace(
+                "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
         value.addChild(fac.createText(value, "Axis2 Echo String "));

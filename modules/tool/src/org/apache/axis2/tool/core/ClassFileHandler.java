@@ -52,7 +52,9 @@ public class ClassFileHandler {
 
     }
 
-    public ArrayList getMethodNamesFromClass(String classFileName, String location) throws IOException, ClassNotFoundException {
+    public ArrayList getMethodNamesFromClass(String classFileName,
+                                             String location) throws IOException,
+            ClassNotFoundException {
         ArrayList returnList = new ArrayList();
         File fileEndpoint = new File(location);
         if (!fileEndpoint.exists())

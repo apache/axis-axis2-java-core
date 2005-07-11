@@ -326,7 +326,8 @@ public abstract class SOAPMessage {
      *                       retrieved
      */
     public SOAPBody getSOAPBody() throws SOAPException {
-        throw new UnsupportedOperationException("getSOAPBody must be overridden in subclasses of SOAPMessage");
+        throw new UnsupportedOperationException(
+                "getSOAPBody must be overridden in subclasses of SOAPMessage");
     }
 
     /**
@@ -338,7 +339,8 @@ public abstract class SOAPMessage {
      *                       retrieved
      */
     public SOAPHeader getSOAPHeader() throws SOAPException {
-        throw new UnsupportedOperationException("getSOAPHeader must be overridden in subclasses of SOAPMessage");
+        throw new UnsupportedOperationException(
+                "getSOAPHeader must be overridden in subclasses of SOAPMessage");
     }
 
     /**
@@ -371,7 +373,8 @@ public abstract class SOAPMessage {
      */
     public void setProperty(String property, Object value)
             throws SOAPException {
-        throw new UnsupportedOperationException("setProperty must be overridden in subclasses of SOAPMessage");
+        throw new UnsupportedOperationException(
+                "setProperty must be overridden in subclasses of SOAPMessage");
     }
 
     /**
@@ -383,7 +386,8 @@ public abstract class SOAPMessage {
      * @throws SOAPException if the property name is not recognized
      */
     public Object getProperty(String property) throws SOAPException {
-        throw new UnsupportedOperationException("getProperty must be overridden in subclasses of SOAPMessage");
+        throw new UnsupportedOperationException(
+                "getProperty must be overridden in subclasses of SOAPMessage");
     }
 
     /**

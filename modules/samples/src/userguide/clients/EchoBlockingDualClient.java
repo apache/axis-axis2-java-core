@@ -19,8 +19,9 @@ import java.io.StringWriter;
  * Time: 5:47:37 PM
  */
 public class EchoBlockingDualClient {
-    private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                                                                       "http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
+            "http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {
@@ -32,13 +33,19 @@ public class EchoBlockingDualClient {
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    true);
 
             //Blocking Invocation
-            OMElement result = (OMElement) call.invokeBlocking("echo", payload);
+            OMElement result = (OMElement) call.invokeBlocking("echo",
+                    payload);
 
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+            result.serializeWithCache(
+                    new OMOutput(
+                            XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(writer)));
             writer.flush();
 
             System.out.println(writer.toString());

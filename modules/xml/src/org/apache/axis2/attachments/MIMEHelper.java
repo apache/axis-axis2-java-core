@@ -100,7 +100,7 @@ public class MIMEHelper {
             contentType = new ContentType(contentTypeString);
         } catch (ParseException e) {
             throw new OMException("Invalid Content Type Field in the Mime Message"
-                                  + e.toString());
+                    + e.toString());
         }
         // Boundary always have the prefix "--".
         this.boundary = ("--" + contentType.getParameter("boundary"))
@@ -109,7 +109,7 @@ public class MIMEHelper {
         //TODO do we need to wrap InputStream from a BufferedInputStream before
         // wrapping from PushbackStream
         pushbackInStream = new PushbackInputStream(inStream,
-                                                   (this.boundary.length + 2));
+                (this.boundary.length + 2));
 
         // Move the read pointer to the begining of the first part
         // read till the end of first boundary
@@ -123,7 +123,8 @@ public class MIMEHelper {
                             && ((byte) value == boundary[boundaryIndex])) {
                         value = pushbackInStream.read();
                         if (value == -1)
-                            throw new OMException("Unexpected End of Stream while searching for first Mime Boundary");
+                            throw new OMException(
+                                    "Unexpected End of Stream while searching for first Mime Boundary");
                         boundaryIndex++;
                     }
                     if (boundaryIndex == boundary.length) { // boundary found
@@ -131,7 +132,8 @@ public class MIMEHelper {
                         break;
                     }
                 } else if ((byte) value == -1) {
-                    throw new OMException("Mime parts not found. Stream ended while searching for the boundary");
+                    throw new OMException(
+                            "Mime parts not found. Stream ended while searching for the boundary");
                 }
             } catch (IOException e1) {
                 throw new OMException("Stream Error" + e1.toString());
@@ -156,7 +158,8 @@ public class MIMEHelper {
             } else if (applicationType.equalsIgnoreCase(SWA_TYPE)) {
                 this.applicationType = SWA_TYPE;
             } else {
-                throw new OMException("Invalid Application type. Support available for MTOM & SwA only.");
+                throw new OMException(
+                        "Invalid Application type. Support available for MTOM & SwA only.");
             }
         }
         return this.applicationType;
@@ -184,11 +187,13 @@ public class MIMEHelper {
         try {
             dh = getDataHandler(rootContentID);
             if (dh == null) {
-                throw new OMException("Mandatory Root MIME part containing the SOAP Envelope is missing");
+                throw new OMException(
+                        "Mandatory Root MIME part containing the SOAP Envelope is missing");
             }
             return dh.getInputStream();
         } catch (IOException e) {
-            throw new OMException("Problem with DataHandler of the Root Mime Part. " + e);
+            throw new OMException(
+                    "Problem with DataHandler of the Root Mime Part. " + e);
         }
     }
 
@@ -215,7 +220,7 @@ public class MIMEHelper {
                 dh = bodyPart.getDataHandler();
             } catch (MessagingException e) {
                 throw new OMException("Problem with Mime Body Part No "
-                                      + partIndex + ".  " + e);
+                        + partIndex + ".  " + e);
             }
             return dh;
         } else {
@@ -249,12 +254,12 @@ public class MIMEHelper {
 
         MimeBodyPartInputStream partStream;
         partStream = new MimeBodyPartInputStream(pushbackInStream,
-                                                 boundary);
+                boundary);
         try {
             mimeBodyPart = new MimeBodyPart(partStream);
         } catch (MessagingException e) {
             throw new OMException("Problem reading Mime Part No "
-                                  + (partIndex + 1) + ". " + e);
+                    + (partIndex + 1) + ". " + e);
         }
 
         partIndex++;
@@ -293,7 +298,9 @@ public class MIMEHelper {
                     firstPartId = partContentID;
                 }
                 if (fileCacheEnable) {
-                    PartOnFile part = new PartOnFile(nextMimeBodyPart, partContentID, attachmentRepoDir);
+                    PartOnFile part = new PartOnFile(nextMimeBodyPart,
+                            partContentID,
+                            attachmentRepoDir);
                     return part;
                 } else {
                     bodyPartsMap.put(partContentID, nextMimeBodyPart);
@@ -301,10 +308,10 @@ public class MIMEHelper {
                 }
             } catch (MessagingException e) {
                 throw new OMException("Error Reading Content-ID from Mime Part No "
-                                      + partIndex + ". " + e);
+                        + partIndex + ". " + e);
             } catch (Exception e) {
                 throw new OMException("Error Creating File  Storage Part"
-                                      + partIndex + ". " + e);
+                        + partIndex + ". " + e);
             }
         } else
             return null;

@@ -96,7 +96,8 @@ public class CommandLineOption implements CommandLineOptionConstants {
                 (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
                 (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
                 (PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
-                (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType) ||
+                (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(
+                        optionType) ||
                 (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
                 (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
     }

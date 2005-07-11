@@ -32,7 +32,8 @@ public class NodeListImpl implements NodeList {
 
     List mNodes;
 
-    public static final NodeList EMPTY_NODELIST = new NodeListImpl(Collections.EMPTY_LIST);
+    public static final NodeList EMPTY_NODELIST = new NodeListImpl(
+            Collections.EMPTY_LIST);
 
     /**
      * Constructor and Setter is intensionally made package access only.

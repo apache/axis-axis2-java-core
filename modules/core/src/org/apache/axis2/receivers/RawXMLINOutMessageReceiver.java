@@ -58,7 +58,8 @@ public class RawXMLINOutMessageReceiver
         scope = Constants.APPLICATION_SCOPE;
     }
 
-    public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
+    public void invokeBusinessLogic(MessageContext msgContext,
+                                    MessageContext newmsgContext)
             throws AxisFault {
         try {
 
@@ -71,10 +72,13 @@ public class RawXMLINOutMessageReceiver
             //Inject the Message Context if it is asked for
             DependencyManager.configureBusinussLogicProvider(obj, msgContext);
 
-            OperationDescription opDesc = msgContext.getOperationContext().getAxisOperation();
+            OperationDescription opDesc = msgContext.getOperationContext()
+                    .getAxisOperation();
             Method method = findOperation(opDesc, ImplClass);
             if (method != null) {
-                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
+                String style = msgContext.getOperationContext()
+                        .getAxisOperation()
+                        .getStyle();
 
                 Class[] parameters = method.getParameterTypes();
                 Object[] args = null;
@@ -84,35 +88,52 @@ public class RawXMLINOutMessageReceiver
                 } else if (parameters.length == 1) {
                     OMElement omElement = null;
                     if (WSDLService.STYLE_DOC.equals(style)) {
-                        omElement = msgContext.getEnvelope().getBody().getFirstElement();
+                        omElement =
+                                msgContext.getEnvelope().getBody()
+                                .getFirstElement();
                     } else if (WSDLService.STYLE_RPC.equals(style)) {
-                        OMElement operationElement = msgContext.getEnvelope().getBody().getFirstElement();
+                        OMElement operationElement = msgContext.getEnvelope()
+                                .getBody()
+                                .getFirstElement();
                         if (operationElement != null) {
-                            if (method.getName().equals(operationElement.getLocalName())
-                                    || operationElement.getLocalName() != null && operationElement.getLocalName().startsWith(method.getName())) {
+                            if (method.getName().equals(
+                                    operationElement.getLocalName())
+                                    ||
+                                    operationElement.getLocalName() != null &&
+                                    operationElement.getLocalName().startsWith(
+                                            method.getName())) {
                                 omElement = operationElement.getFirstElement();
                             } else {
-                                throw new AxisFault("Operation Name does not match the immediate child name, expected " + method.getName() + " but get " + operationElement.getLocalName());
+                                throw new AxisFault(
+                                        "Operation Name does not match the immediate child name, expected " +
+                                        method.getName() +
+                                        " but get " +
+                                        operationElement.getLocalName());
                             }
                         } else {
-                            throw new AxisFault("rpc style expect the immediate child of the SOAP body ");
+                            throw new AxisFault(
+                                    "rpc style expect the immediate child of the SOAP body ");
                         }
                     } else {
                         throw new AxisFault("Unknown style ");
                     }
                     args = new Object[]{omElement};
                 } else {
-                    throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
-                                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                    throw new AxisFault(
+                            "Raw Xml provider supports only the methods bearing the signature public OMElement "
+                            +
+                            "&lt;method-name&gt;(OMElement) where the method name is anything");
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
 
                 OMElement bodyContent = null;
                 if (WSDLService.STYLE_RPC.equals(style)) {
-                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
+                    OMNamespace ns = getSOAPFactory().createOMNamespace(
+                            "http://soapenc/", "res");
                     bodyContent =
-                            getSOAPFactory().createOMElement(method.getName() + "Response", ns);
+                            getSOAPFactory().createOMElement(
+                                    method.getName() + "Response", ns);
                     bodyContent.addChild(result);
                 } else {
                     bodyContent = result;
@@ -124,7 +145,9 @@ public class RawXMLINOutMessageReceiver
                 }
                 newmsgContext.setEnvelope(envelope);
             } else {
-                throw new AxisFault("Implementation class does not define a method called" + opDesc.getName());
+                throw new AxisFault(
+                        "Implementation class does not define a method called" +
+                        opDesc.getName());
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

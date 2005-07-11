@@ -35,7 +35,8 @@ public class SOAP12FaultRoleImpl extends SOAPFaultRoleImpl {
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
-            throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 }

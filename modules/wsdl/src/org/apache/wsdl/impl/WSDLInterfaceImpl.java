@@ -92,9 +92,11 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
                     tobeAdded = true;
                     while (thisIterator.hasNext()) {
                         thisOperation = (WSDLOperation) thisIterator.next();
-                        if ((thisOperation.getName() == superInterfaceOperation.getName())
+                        if ((thisOperation.getName() ==
+                                superInterfaceOperation.getName())
                                 && !tobeAdded) {
-                            if (thisOperation.getTargetnamespace().equals(superInterfaceOperation.getTargetnamespace())) {
+                            if (thisOperation.getTargetnamespace().equals(
+                                    superInterfaceOperation.getTargetnamespace())) {
 
                                 // Both are the same Operation; the one inherited and
                                 // the one that is already in the map(may or maynot be inherited)
@@ -103,15 +105,18 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
 
                                 // same name but target namespces dont match
                                 // TODO Think this is an error
-                                throw new WSDLProcessingException("The Interface " + this.getName()
-                                                                  + " has more than one Operation that has the same name but not the same interface ");
+                                throw new WSDLProcessingException(
+                                        "The Interface " + this.getName()
+                                        +
+                                        " has more than one Operation that has the same name but not the same interface ");
                             }
                         }
                     }
                     if (tobeAdded) {
 
                         // This one is not in the list already developped
-                        all.put(superInterfaceOperation.getName().getLocalPart(),
+                        all.put(
+                                superInterfaceOperation.getName().getLocalPart(),
                                 superInterfaceOperation);
                     }
                 }
@@ -215,7 +220,8 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
             return;
         }
         if (null == operation.getName()) {
-            throw new WSDLProcessingException("The Operation name cannot be null (required)");
+            throw new WSDLProcessingException(
+                    "The Operation name cannot be null (required)");
         }
         this.operations.put(operation.getName().getLocalPart(), operation);
     }
@@ -235,7 +241,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      */
     public void addSuperInterface(WSDLInterface interfaceComponent) {
         this.superInterfaces.put(interfaceComponent.getName(),
-                                 interfaceComponent);
+                interfaceComponent);
     }
 
     /**

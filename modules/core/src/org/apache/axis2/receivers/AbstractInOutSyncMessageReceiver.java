@@ -35,32 +35,39 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
     public final void recieve(MessageContext messgeCtx) throws AxisFault {
         MessageContext newmsgCtx =
                 new MessageContext(messgeCtx.getSystemContext(),
-                                   messgeCtx.getSessionContext(),
-                                   messgeCtx.getTransportIn(),
-                                   messgeCtx.getTransportOut());
+                        messgeCtx.getSessionContext(),
+                        messgeCtx.getTransportIn(),
+                        messgeCtx.getTransportOut());
 
-        newmsgCtx.setMessageInformationHeaders(new MessageInformationHeadersCollection());
+        newmsgCtx.setMessageInformationHeaders(
+                new MessageInformationHeadersCollection());
         MessageInformationHeadersCollection oldMessageInfoHeaders =
                 messgeCtx.getMessageInformationHeaders();
         MessageInformationHeadersCollection messageInformationHeaders =
                 new MessageInformationHeadersCollection();
         messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
-        messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
+        messageInformationHeaders.setFaultTo(
+                oldMessageInfoHeaders.getFaultTo());
         messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId(),
-                                                             AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        messageInformationHeaders.setRelatesTo(
+                new RelatesTo(oldMessageInfoHeaders.getMessageId(),
+                        AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
         newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
         newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
-        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT, messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
-        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo, messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
+                messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
+        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
         newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
         newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
 
         invokeBusinessLogic(messgeCtx, newmsgCtx);
 
         AxisEngine engine =
-                new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+                new AxisEngine(
+                        messgeCtx.getOperationContext().getServiceContext()
+                .getEngineContext());
         engine.send(newmsgCtx);
     }
 }

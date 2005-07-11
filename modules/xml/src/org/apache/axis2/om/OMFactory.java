@@ -95,7 +95,9 @@ public interface OMFactory {
     public OMText createText(OMElement parent, String s, String mimeType,
                              boolean optimize);
 
-    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
+    public OMAttribute createOMAttribute(String localName,
+                                         OMNamespace ns,
+                                         String value);
 
 
 

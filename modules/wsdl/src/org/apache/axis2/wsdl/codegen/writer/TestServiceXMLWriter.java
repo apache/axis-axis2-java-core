@@ -35,7 +35,10 @@ public class TestServiceXMLWriter extends ServiceXMLWriter {
     }
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, "testservice", ".xml");
+        File outputFile = FileWriter.createClassFile(outputFileLocation,
+                packageName,
+                "testservice",
+                ".xml");
         this.stream = new FileOutputStream(outputFile);
     }
 }

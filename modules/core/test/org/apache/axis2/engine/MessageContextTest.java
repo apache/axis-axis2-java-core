@@ -29,7 +29,8 @@ public class MessageContextTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testMesssageContext() throws AxisFault, SOAPProcessingException {
+    public void testMesssageContext() throws AxisFault,
+            SOAPProcessingException {
         AxisConfiguration er = new AxisConfigurationImpl();
         ServiceDescription servicesDesc = new ServiceDescription();
         er.addService(servicesDesc);

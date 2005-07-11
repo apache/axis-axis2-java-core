@@ -20,7 +20,11 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
-import org.apache.axis2.wsdl.codegen.extension.*;
+import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
+import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
+import org.apache.axis2.wsdl.codegen.extension.PackageFinder;
+import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
 
@@ -104,10 +108,13 @@ public class CodeGenerationEngine {
     }
 
 
-    private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException, IOException {
-        String uri = ((CommandLineOption) parser.getAllOptions().get(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
+    private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException,
+            IOException {
+        String uri = ((CommandLineOption) parser.getAllOptions().get(
+                CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
         InputStream in = new FileInputStream(new File(uri));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
+        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in)
+                .getDescription();
     }
 
 

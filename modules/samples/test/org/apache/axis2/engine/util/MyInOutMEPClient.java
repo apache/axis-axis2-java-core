@@ -33,15 +33,20 @@ public class MyInOutMEPClient extends Call {
         super(assumeServiceContext(null));
     }
 
-    public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop, OMElement toSend) throws AxisFault {
+    public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
+                                                      OMElement toSend) throws AxisFault {
         OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(
+                        new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setRemainingPhasesInFlow(
+                    operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setPhasesInFaultFlow(
+                    operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(
+                    operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
 
@@ -51,7 +56,8 @@ public class MyInOutMEPClient extends Call {
 //        }
         MessageContext msgctx = prepareTheSystem(toSend);
 
-        MessageContext responseContext = super.invokeBlocking(axisConfig, msgctx);
+        MessageContext responseContext = super.invokeBlocking(axisConfig,
+                msgctx);
         SOAPEnvelope envelope = responseContext.getEnvelope();
         return envelope;
     }

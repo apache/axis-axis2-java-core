@@ -28,11 +28,15 @@ import java.util.Iterator;
 
 public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail {
 
-    protected SOAPFaultDetailImpl(SOAPFault parent, boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, extractNamespaceFromParent);
+    protected SOAPFaultDetailImpl(SOAPFault parent,
+                                  boolean extractNamespaceFromParent) throws SOAPProcessingException {
+        super(parent,
+                SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME,
+                extractNamespaceFromParent);
     }
 
-    protected SOAPFaultDetailImpl(SOAPFault parent, OMXMLParserWrapper builder) {
+    protected SOAPFaultDetailImpl(SOAPFault parent,
+                                  OMXMLParserWrapper builder) {
         super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, builder);
     }
 

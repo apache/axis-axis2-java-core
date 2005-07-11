@@ -16,7 +16,13 @@
 package org.apache.axis2.util;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
@@ -31,7 +37,9 @@ import javax.xml.namespace.QName;
 
 public class Utils {
 
-    public static void addHandler(Flow flow, Handler handler, String phaseName) {
+    public static void addHandler(Flow flow,
+                                  Handler handler,
+                                  String phaseName) {
         HandlerDescription handlerDesc = new HandlerDescription();
         PhaseRule rule = new PhaseRule(phaseName);
         handlerDesc.setRules(rule);
@@ -78,7 +86,9 @@ public class Utils {
                                                          QName opName) {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
+        service.addParameter(
+                new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
+                        className));
 
         OperationDescription axisOp = new OperationDescription(opName);
         axisOp.setMessageReciever(messageReceiver);
@@ -100,9 +110,9 @@ public class Utils {
                                                          String className,
                                                          QName opName) {
         return createSimpleService(serviceName,
-                                   new RawXMLINOutMessageReceiver(),
-                                   className,
-                                   opName);
+                new RawXMLINOutMessageReceiver(),
+                className,
+                opName);
     }
 
     //    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
@@ -113,7 +123,8 @@ public class Utils {
     //            }
     //        }
     //    }
-    public static void resolvePhases(AxisConfiguration axisconfig, ServiceDescription serviceDesc)
+    public static void resolvePhases(AxisConfiguration axisconfig,
+                                     ServiceDescription serviceDesc)
             throws AxisFault, PhaseException {
         PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
         pr.buildchains();
@@ -128,13 +139,16 @@ public class Utils {
     }
 
 
-    public static String[] parseRequestURLForServiceAndOperation(String filePart) {
+    public static String[] parseRequestURLForServiceAndOperation(
+            String filePart) {
         String[] values = new String[2];
 
         int index = filePart.lastIndexOf(Constants.REQUEST_URL_PREFIX);
         String serviceStr = null;
         if (-1 != index) {
-            serviceStr = filePart.substring(index + Constants.REQUEST_URL_PREFIX.length() + 1);
+            serviceStr =
+                    filePart.substring(
+                            index + Constants.REQUEST_URL_PREFIX.length() + 1);
             if ((index = serviceStr.indexOf('/')) > 0) {
                 values[0] = serviceStr.substring(0, index);
                 int lastIndex = serviceStr.indexOf('?');

@@ -62,8 +62,10 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         //to SOAPHeader
         String localName = name.getLocalName();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
-        org.apache.axis2.soap.SOAPHeaderBlock headerBlock = omHeader.addHeaderBlock(localName, ns);
+        OMNamespace ns = omFactory.createOMNamespace(name.getURI(),
+                name.getPrefix());
+        org.apache.axis2.soap.SOAPHeaderBlock headerBlock = omHeader.addHeaderBlock(
+                localName, ns);
         return (new SOAPHeaderElementImpl(headerBlock));
     }
 
@@ -83,7 +85,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             Object o = headerElementsIter.next();
             if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
                 org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock));
+                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
+                        headerBlock));
                 aList.add(element);
             }
         }
@@ -106,7 +109,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             Object o = headerElementsIter.next();
             if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
                 org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock));
+                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
+                        headerBlock));
                 aList.add(element);
             }
         }
@@ -123,13 +127,15 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator examineMustUnderstandHeaderElements(String actor) {
         // Get all the om specific header elements in an iterator and wrap it
         // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.examineMustUnderstandHeaderBlocks(actor);
+        Iterator headerElementsIter = omHeader.examineMustUnderstandHeaderBlocks(
+                actor);
         ArrayList aList = new ArrayList();
         while (headerElementsIter.hasNext()) {
             Object o = headerElementsIter.next();
             if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
                 org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock));
+                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
+                        headerBlock));
                 aList.add(element);
             }
         }
@@ -151,7 +157,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             Object o = headerElementsIter.next();
             if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
                 org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock));
+                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
+                        headerBlock));
                 aList.add(element);
             }
         }
@@ -173,7 +180,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             Object o = headerElementsIter.next();
             if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
                 org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock));
+                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
+                        headerBlock));
                 aList.add(element);
             }
         }

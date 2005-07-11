@@ -35,7 +35,9 @@ public class XMLComparatorTest extends OMTestCase {
     public void testCompare() throws Exception {
         StAXSOAPModelBuilder omBuilder = getOMBuilder("");
         XMLComparator xmlComparator = new XMLComparator();
-        assertTrue(xmlComparator.compare(omBuilder.getDocumentElement(), omBuilder.getDocumentElement()));
+        assertTrue(
+                xmlComparator.compare(omBuilder.getDocumentElement(),
+                        omBuilder.getDocumentElement()));
 
 
     }

@@ -31,7 +31,11 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
@@ -45,13 +49,14 @@ import javax.xml.stream.XMLOutputFactory;
 public class EchoRawMTOMToBase64Test extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoMTOMtoBase64");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoMTOMtoBase64");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoMTOMtoBase64");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -74,11 +79,12 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
     }
 
     protected void tearDown() throws Exception {
@@ -94,7 +100,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         OMElement data = fac.createOMElement("data", omNs);
         byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
                                       98};
-        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
+        DataHandler dataHandler = new DataHandler(
+                new ByteArrayDataSource(byteArray));
         OMTextImpl textData = new OMTextImpl(dataHandler, true);
         data.addChild(textData);
         rpcWrapEle.addChild(data);
@@ -111,12 +118,19 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
 
             call.setTo(targetEPR);
-            call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.set(Constants.Configuration.ENABLE_MTOM,
+                    Constants.VALUE_TRUE);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
 
             OMElement result =
-                    (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
-            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+                    (OMElement) call.invokeBlocking(
+                            operationName.getLocalPart(), payload);
+            result.serializeWithCache(
+                    new OMOutput(
+                            XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(System.out)));
             call.close();
             System.out.println(i);
         }

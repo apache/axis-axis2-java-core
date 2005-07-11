@@ -36,7 +36,12 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     OMChildrenQNameIterator omChildrenQNameIterator;
 
     protected void setUp() throws Exception {
-        stAXSOAPModelBuilder = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage1.xml"))));
+        stAXSOAPModelBuilder =
+                new StAXSOAPModelBuilder(
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                new FileReader(
+                                        getTestResourceFile(
+                                                "soap/soapmessage1.xml"))));
         envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
     }
 
@@ -47,8 +52,8 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     private QName getBodyQname() {
 
         return new QName(stAXSOAPModelBuilder.getEnvelopeNamespace().getName(),
-                         SOAPConstants.BODY_LOCAL_NAME,
-                         stAXSOAPModelBuilder.getEnvelopeNamespace().getPrefix());
+                SOAPConstants.BODY_LOCAL_NAME,
+                stAXSOAPModelBuilder.getEnvelopeNamespace().getPrefix());
     }
 
     public void testIterator() {
@@ -140,7 +145,9 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
             assertNotNull((OMNode) iter.next());
             secondChildrenCount++;
         }
-        assertEquals("children count must reduce from 1", firstChildrenCount - 1, secondChildrenCount);
+        assertEquals("children count must reduce from 1",
+                firstChildrenCount - 1,
+                secondChildrenCount);
 
     }
 

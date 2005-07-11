@@ -41,13 +41,19 @@ public class SOAPConnectionImpl extends SOAPConnection {
     public SOAPMessage call(SOAPMessage request, Object endpoint)
             throws SOAPException {
         try {
-            org.apache.axis2.soap.SOAPEnvelope envelope = ((SOAPEnvelopeImpl) request.getSOAPPart().getEnvelope()).getOMEnvelope();
+            org.apache.axis2.soap.SOAPEnvelope envelope = ((SOAPEnvelopeImpl) request.getSOAPPart()
+                    .getEnvelope()).getOMEnvelope();
 
             Call call = new Call();
             URL url = new URL(endpoint.toString());
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
-            call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-            org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking("echo", envelope);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    true);
+            call.setTo(
+                    new EndpointReference(AddressingConstants.WSA_TO,
+                            url.toString()));
+            org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking(
+                    "echo", envelope);
             SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
             return new SOAPMessageImpl(response);
 

@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.util.Dom2OmUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -169,14 +173,20 @@ public class NodeImpl implements Node {
         if (omNode.getType() == OMNode.TEXT_NODE) {
             OMElement parent = (OMElement) omNode.getParent();
             ((OMText) omNode).discard();
-            omNode = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(parent, value);
+            omNode =
+                    org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                    .createText(parent, value);
         } else if (omNode.getType() == OMNode.ELEMENT_NODE) {
             OMNode firstChild = ((OMElement) omNode).getFirstChild();
             if (firstChild == null) {
-                firstChild = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText((OMElement) omNode, value);
+                firstChild =
+                        org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                        .createText((OMElement) omNode, value);
             } else if (firstChild.getType() == OMNode.TEXT_NODE) {
                 ((OMText) firstChild).discard();
-                firstChild = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText((OMElement) omNode, value);
+                firstChild =
+                        org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                        .createText((OMElement) omNode, value);
             }
         } else {
             throw new IllegalStateException();
@@ -309,7 +319,9 @@ public class NodeImpl implements Node {
         if (omNode.getType() == OMNode.TEXT_NODE) {
             OMElement parent = (OMElement) omNode.getParent();
             ((OMText) omNode).discard();
-            omNode = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createText(parent, value);
+            omNode =
+                    org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                    .createText(parent, value);
         }
     }
 
@@ -323,7 +335,8 @@ public class NodeImpl implements Node {
         if (omNode.getType() == OMNode.ELEMENT_NODE /*|| Attribute Node*/) {
             OMNamespace ns = ((OMElement) omNode).getNamespace();
             String uri = ns.getName();
-            OMNamespace newNs = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMNamespace(uri, prefix);
+            OMNamespace newNs = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
+                    .createOMNamespace(uri, prefix);
             ((OMElement) omNode).setNamespace(newNs);
         }
 
@@ -500,7 +513,8 @@ public class NodeImpl implements Node {
             Iterator iter = ((OMElement) omNode).getChildren();
             while (iter.hasNext()) {
                 Object nextChild = iter.next();
-                if (nextChild instanceof OMNode && nextChild.equals(refOmChild)) {
+                if (nextChild instanceof OMNode &&
+                        nextChild.equals(refOmChild)) {
 
                 }
             }

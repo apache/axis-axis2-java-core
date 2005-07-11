@@ -114,16 +114,20 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         gd.horizontalSpan = 2;
 
         Label label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin.getResourceString("page2.language.caption"));
+        label.setText(
+                CodegenWizardPlugin.getResourceString("page2.language.caption"));
 
-        languageSelectionComboBox = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        languageSelectionComboBox =
+                new Combo(container,
+                        SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         // fill the combo
         this.fillLanguageCombo();
         languageSelectionComboBox.setLayoutData(gd);
         languageSelectionComboBox.select(settings.getInt(PREF_LANGUAGE_INDEX));
         languageSelectionComboBox.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_LANGUAGE_INDEX, languageSelectionComboBox.getSelectionIndex());
+                settings.put(PREF_LANGUAGE_INDEX,
+                        languageSelectionComboBox.getSelectionIndex());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -131,11 +135,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         });
 
         syncAndAsyncRadioButton = new Button(container, SWT.RADIO);
-        syncAndAsyncRadioButton.setText(CodegenWizardPlugin.getResourceString("page2.syncAsync.caption"));
-        syncAndAsyncRadioButton.setSelection(settings.getBoolean(PREF_RADIO_SYNC_AND_ASYNC));
+        syncAndAsyncRadioButton.setText(
+                CodegenWizardPlugin.getResourceString(
+                        "page2.syncAsync.caption"));
+        syncAndAsyncRadioButton.setSelection(
+                settings.getBoolean(PREF_RADIO_SYNC_AND_ASYNC));
         syncAndAsyncRadioButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_RADIO_SYNC_AND_ASYNC, syncAndAsyncRadioButton.getSelection());
+                settings.put(PREF_RADIO_SYNC_AND_ASYNC,
+                        syncAndAsyncRadioButton.getSelection());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -143,11 +151,14 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         });
 
         syncOnlyRadioButton = new Button(container, SWT.RADIO);
-        syncOnlyRadioButton.setText(CodegenWizardPlugin.getResourceString("page2.sync.caption"));
-        syncOnlyRadioButton.setSelection(settings.getBoolean(PREF_RADIO_SYNC_ONLY));
+        syncOnlyRadioButton.setText(
+                CodegenWizardPlugin.getResourceString("page2.sync.caption"));
+        syncOnlyRadioButton.setSelection(
+                settings.getBoolean(PREF_RADIO_SYNC_ONLY));
         syncOnlyRadioButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_RADIO_SYNC_ONLY, syncOnlyRadioButton.getSelection());
+                settings.put(PREF_RADIO_SYNC_ONLY,
+                        syncOnlyRadioButton.getSelection());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -156,11 +167,13 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
         asyncOnlyRadioButton = new Button(container, SWT.RADIO);
         asyncOnlyRadioButton.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                                     .getResourceString("page2.async.caption"));
-        asyncOnlyRadioButton.setSelection(settings.getBoolean(PREF_RADIO_ASYNC_ONLY));
+                .getResourceString("page2.async.caption"));
+        asyncOnlyRadioButton.setSelection(
+                settings.getBoolean(PREF_RADIO_ASYNC_ONLY));
         asyncOnlyRadioButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_RADIO_ASYNC_ONLY, asyncOnlyRadioButton.getSelection());
+                settings.put(PREF_RADIO_ASYNC_ONLY,
+                        asyncOnlyRadioButton.getSelection());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -168,7 +181,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         });
 
         label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin.getResourceString("page2.package.caption"));
+        label.setText(
+                CodegenWizardPlugin.getResourceString("page2.package.caption"));
 
         packageText = new Text(container, SWT.BORDER);
         gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -194,12 +208,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         gd.horizontalSpan = 3;
         testCaseCheckBoxButton = new Button(container, SWT.CHECK);
         testCaseCheckBoxButton.setLayoutData(gd);
-        testCaseCheckBoxButton.setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                                       .getResourceString("page2.testcase.caption"));
-        testCaseCheckBoxButton.setSelection(settings.getBoolean(PREF_CHECK_GENERATE_TESTCASE));
+        testCaseCheckBoxButton.setText(
+                org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+                .getResourceString("page2.testcase.caption"));
+        testCaseCheckBoxButton.setSelection(
+                settings.getBoolean(PREF_CHECK_GENERATE_TESTCASE));
         testCaseCheckBoxButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_CHECK_GENERATE_TESTCASE, testCaseCheckBoxButton.getEnabled());
+                settings.put(PREF_CHECK_GENERATE_TESTCASE,
+                        testCaseCheckBoxButton.getEnabled());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -207,12 +224,16 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         });
 
         serverSideCheckBoxButton = new Button(container, SWT.CHECK);
-        serverSideCheckBoxButton.setText(CodegenWizardPlugin.getResourceString("page2.serverside.caption"));
-        serverSideCheckBoxButton.setSelection(settings.getBoolean(PREF_CHECK_GENERATE_SERVERSIDE));
+        serverSideCheckBoxButton.setText(
+                CodegenWizardPlugin.getResourceString(
+                        "page2.serverside.caption"));
+        serverSideCheckBoxButton.setSelection(
+                settings.getBoolean(PREF_CHECK_GENERATE_SERVERSIDE));
         serverSideCheckBoxButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 handleServersideSelection();
-                settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton.getEnabled());
+                settings.put(PREF_CHECK_GENERATE_SERVERSIDE,
+                        serverSideCheckBoxButton.getEnabled());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -220,11 +241,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         });
 
         serverXMLCheckBoxButton = new Button(container, SWT.CHECK);
-        serverXMLCheckBoxButton.setSelection(settings.getBoolean(PREF_CHECK_GENERATE_SERVERCONFIG));
-        serverXMLCheckBoxButton.setText(CodegenWizardPlugin.getResourceString("page2.serviceXML.caption"));
+        serverXMLCheckBoxButton.setSelection(
+                settings.getBoolean(PREF_CHECK_GENERATE_SERVERCONFIG));
+        serverXMLCheckBoxButton.setText(
+                CodegenWizardPlugin.getResourceString(
+                        "page2.serviceXML.caption"));
         serverXMLCheckBoxButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_CHECK_GENERATE_SERVERCONFIG, serverXMLCheckBoxButton.getEnabled());
+                settings.put(PREF_CHECK_GENERATE_SERVERCONFIG,
+                        serverXMLCheckBoxButton.getEnabled());
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -273,7 +298,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
      * @return a string containing the name of the target language
      */
     public String getSelectedLanguage() {
-        return languageSelectionComboBox.getItem(languageSelectionComboBox.getSelectionIndex());
+        return languageSelectionComboBox.getItem(
+                languageSelectionComboBox.getSelectionIndex());
     }
 
     /**

@@ -26,7 +26,8 @@ public class ClientUtil {
 
     public static OMElement getEchoOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
+        OMNamespace omNs = fac.createOMNamespace(
+                "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
         value.addChild(fac.createText(value, "Axis2 Echo String "));
@@ -37,7 +38,8 @@ public class ClientUtil {
 
     public static OMElement getPingOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
+        OMNamespace omNs = fac.createOMNamespace(
+                "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("ping", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
         value.addChild(fac.createText(value, "Axis2 Ping String "));

@@ -20,7 +20,11 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutput;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -38,13 +42,16 @@ public class RESTClient {
 
         Call call = new Call();
         call.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
         call.setDoREST(true);
 
         OMElement result = call.invokeBlocking("echo", getPayload());
 
         try {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+            XMLStreamWriter writer = XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(System.out);
             result.serializeWithCache(new OMOutput(writer));
             writer.flush();
         } catch (XMLStreamException e) {
@@ -57,7 +64,8 @@ public class RESTClient {
 
     private static OMElement getPayload() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
+        OMNamespace omNs = fac.createOMNamespace(
+                "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
         value.addChild(fac.createText(value, "Axis2 Echo String "));

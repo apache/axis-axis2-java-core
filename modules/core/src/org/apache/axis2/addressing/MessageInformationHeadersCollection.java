@@ -70,7 +70,8 @@ public class MessageInformationHeadersCollection {
      * @param wsaTo
      * @param action
      */
-    public MessageInformationHeadersCollection(EndpointReference wsaTo, String action) {
+    public MessageInformationHeadersCollection(EndpointReference wsaTo,
+                                               String action) {
         this.to = wsaTo;
         this.action = action;
     }

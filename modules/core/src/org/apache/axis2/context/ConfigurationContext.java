@@ -85,7 +85,8 @@ public class ConfigurationContext extends AbstractContext {
         axisConfiguration = configuration;
     }
 
-    public synchronized void registerOperationContext(String messageID, OperationContext mepContext) {
+    public synchronized void registerOperationContext(String messageID,
+                                                      OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
 
@@ -97,7 +98,8 @@ public class ConfigurationContext extends AbstractContext {
         return this.operationContextMap;
     }
 
-    public synchronized void registerServiceContext(String serviceInstanceID, ServiceContext serviceContext) {
+    public synchronized void registerServiceContext(String serviceInstanceID,
+                                                    ServiceContext serviceContext) {
         this.serviceContextMap.put(serviceInstanceID, serviceContext);
     }
 
@@ -119,7 +121,8 @@ public class ConfigurationContext extends AbstractContext {
             ServiceContext serviceContext = new ServiceContext(service, this);
             return serviceContext;
         } else {
-            throw new AxisFault("Service not found service name = " + serviceName);
+            throw new AxisFault(
+                    "Service not found service name = " + serviceName);
         }
     }
 

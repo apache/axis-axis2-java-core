@@ -16,7 +16,12 @@
 
 package org.apache.axis2.om.impl.llom.builder;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNode;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -52,13 +57,13 @@ public class SAXOMBuilder extends DefaultHandler {
             root = e = factory.createOMElement(localName, null, null, null);
         } else if (lastNode.isComplete()) {
             e = factory.createOMElement(localName, null, lastNode.getParent(),
-                                        null);
+                    null);
             lastNode.setNextSibling(e);
             e.setPreviousSibling(lastNode);
         } else {
             OMElement parent = (OMElement) lastNode;
             e = factory.createOMElement(localName, null, (OMElement) lastNode,
-                                        null);
+                    null);
             parent.setFirstChild(e);
         }
         return e;
@@ -99,7 +104,7 @@ public class SAXOMBuilder extends DefaultHandler {
         int j = atts.getLength();
         for (int i = 0; i < j; i++)
             nextElem.addAttribute(atts.getLocalName(i), atts.getValue(i),
-                                  nextElem.findNamespace(atts.getURI(i), null));
+                    nextElem.findNamespace(atts.getURI(i), null));
         lastNode = nextElem;
         nextElem = null;
     }
@@ -134,8 +139,10 @@ public class SAXOMBuilder extends DefaultHandler {
         }
         OMNode node;
         if (lastNode.isComplete()) {
-            node = factory.createText((OMElement) lastNode.getParent(), new String(ch,
-                                                                                   start, length));
+            node =
+                    factory.createText((OMElement) lastNode.getParent(),
+                            new String(ch,
+                                    start, length));
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {

@@ -30,7 +30,11 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
@@ -42,12 +46,13 @@ import javax.xml.stream.XMLStreamException;
 public class TCPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "tcp://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "tcp://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private MessageContext mc;
     private SimpleHTTPServer sas;
@@ -71,14 +76,14 @@ public class TCPEchoRawXMLTest extends TestCase {
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilsTCPServer.deployService(service);
 
         ServiceDescription service =
                 Utils.createSimpleService(serviceName,
-                                          org.apache.axis2.engine.Echo.class.getName(),
-                                          operationName);
+                        org.apache.axis2.engine.Echo.class.getName(),
+                        operationName);
         serviceContext = UtilServer.createAdressedEnabledClientSide(service);
     }
 
@@ -91,7 +96,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
 
         return method;
@@ -100,16 +106,22 @@ public class TCPEchoRawXMLTest extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                serviceContext);
 
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+        call.setTransportInfo(Constants.TRANSPORT_TCP,
+                Constants.TRANSPORT_TCP,
+                false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+                    result.getResponseEnvelope().serializeWithCache(
+                            new OMOutput(
+                                    XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(System.out)));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {
@@ -123,13 +135,16 @@ public class TCPEchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
+        call.invokeNonBlocking(operationName.getLocalPart(),
+                payload,
+                callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
             index++;
             if (index > 10) {
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                throw new AxisFault(
+                        "Server is shutdown as the Async response take too longs time");
             }
         }
         call.close();
@@ -140,23 +155,30 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                serviceContext);
 
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+        call.setTransportInfo(Constants.TRANSPORT_TCP,
+                Constants.TRANSPORT_TCP,
+                false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                        payload);
+        result.serializeWithCache(
+                new OMOutput(
+                        XMLOutputFactory.newInstance().createXMLStreamWriter(
+                                System.out)));
         call.close();
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
         ServiceDescription service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -166,13 +188,20 @@ public class TCPEchoRawXMLTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                serviceContext);
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, true);
+        call.setTransportInfo(Constants.TRANSPORT_TCP,
+                Constants.TRANSPORT_TCP,
+                true);
 
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), method);
-        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+        OMElement result = (OMElement) call.invokeBlocking(
+                operationName.getLocalPart(), method);
+        result.serializeWithCache(
+                new OMOutput(
+                        XMLOutputFactory.newInstance().createXMLStreamWriter(
+                                System.out)));
         call.close();
 
     }

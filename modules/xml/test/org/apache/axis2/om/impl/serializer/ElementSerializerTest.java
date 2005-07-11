@@ -15,7 +15,15 @@
  */
 package org.apache.axis2.om.impl.serializer;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.AbstractTestCase;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -38,12 +46,19 @@ public class ElementSerializerTest extends AbstractTestCase {
     }
 
     protected void setUp() throws Exception {
-        reader = XMLInputFactory.newInstance().
-                createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
+        reader =
+                XMLInputFactory.newInstance().
+                createXMLStreamReader(
+                        new FileReader(
+                                getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
-        omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                                createXMLStreamWriter(new FileOutputStream(tempFile)));
-        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
+        omOutput =
+                new OMOutput(
+                        XMLOutputFactory.newInstance().
+                createXMLStreamWriter(new FileOutputStream(tempFile)));
+        builder =
+                OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                        OMAbstractFactory.getSOAP11Factory(), reader);
     }
 
     public void testElementSerilization() throws Exception {

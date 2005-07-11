@@ -84,19 +84,44 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         cons.weightx = 0;
         cons.weighty = 0;
         this.add(buttonPannel, cons, 0, 6, 2, 1);
-        this.createQueue.addKeyListener(new ListenersOut(this.createQueue, this.queueCode,
-                                                         this.read, this.resuts, this.loadButton, this.deleteButton));
-        this.loadButton.addActionListener(new ListenersOut(this.createQueue, this.queueCode,
-                                                           this.read, this.resuts, this.loadButton, this.deleteButton));
-        this.resuts.addMouseMotionListener(new ListenersOut(this.createQueue, this.queueCode,
-                                                            this.read, this.resuts, this.loadButton, this.deleteButton));
-        this.deleteButton.addActionListener(new ListenersOut(this.createQueue, this.queueCode,
-                                                             this.read, this.resuts, this.loadButton, this.deleteButton));
+        this.createQueue.addKeyListener(
+                new ListenersOut(this.createQueue,
+                        this.queueCode,
+                        this.read,
+                        this.resuts,
+                        this.loadButton,
+                        this.deleteButton));
+        this.loadButton.addActionListener(
+                new ListenersOut(this.createQueue,
+                        this.queueCode,
+                        this.read,
+                        this.resuts,
+                        this.loadButton,
+                        this.deleteButton));
+        this.resuts.addMouseMotionListener(
+                new ListenersOut(this.createQueue,
+                        this.queueCode,
+                        this.read,
+                        this.resuts,
+                        this.loadButton,
+                        this.deleteButton));
+        this.deleteButton.addActionListener(
+                new ListenersOut(this.createQueue,
+                        this.queueCode,
+                        this.read,
+                        this.resuts,
+                        this.loadButton,
+                        this.deleteButton));
 
         AddMenuItems();
     }
 
-    private void add(Component c, GridBagConstraints cons, int x, int y, int w, int h) {
+    private void add(Component c,
+                     GridBagConstraints cons,
+                     int x,
+                     int y,
+                     int w,
+                     int h) {
         cons.gridx = x;
         cons.gridy = y;
         cons.gridheight = h;
@@ -109,8 +134,10 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.setMnemonic(KeyEvent.VK_S);
-        JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key", KeyEvent.VK_G);
-        amazonKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+        JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key",
+                KeyEvent.VK_G);
+        amazonKeyMenu.setAccelerator(
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
         amazonKeyMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setKey();
@@ -134,7 +161,9 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
     }
 
     private void setKey() {
-        String key = JOptionPane.showInputDialog(this, "Set the Amazon Key", QueueManager.getKey());
+        String key = JOptionPane.showInputDialog(this,
+                "Set the Amazon Key",
+                QueueManager.getKey());
         if (key != null && !key.trim().equals("")) {
             QueueManager.setKey(key);
         }
@@ -148,7 +177,7 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(screenSize.width / 5,
-                          screenSize.height / 5);
+                screenSize.height / 5);
         frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
@@ -171,7 +200,10 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         try {
             jep.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Help file not detected", "Help file error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Help file not detected",
+                    "Help file error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);

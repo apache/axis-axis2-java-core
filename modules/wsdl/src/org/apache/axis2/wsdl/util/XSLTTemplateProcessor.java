@@ -1,7 +1,12 @@
 package org.apache.axis2.wsdl.util;
 
 
-import javax.xml.transform.*;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
@@ -39,12 +44,15 @@ public class XSLTTemplateProcessor {
      *
      * @throws TransformerException
      */
-    public static void parse(OutputStream out, InputStream xmlStream, InputStream xsltStream)
+    public static void parse(OutputStream out,
+                             InputStream xmlStream,
+                             InputStream xsltStream)
             throws TransformerFactoryConfigurationError, TransformerException {
         Source xmlSource = new StreamSource(xmlStream);
         Source xsltSource = new StreamSource(xsltStream);
         Result result = new StreamResult(out);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer(xsltSource);
+        Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer(xsltSource);
         transformer.transform(xmlSource, result);
 
     }

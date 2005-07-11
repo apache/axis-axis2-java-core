@@ -92,15 +92,21 @@ public class AsynchronousClient {
             System.exit(0);
         }
 
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        url.toString()));
 
         MessageContext requestContext = ClientUtil.getMessageContext(this);
         try {
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             OperationDescription opdesc = new OperationDescription(opName);
             //   OperationDescription opdesc = new OperationDescription(new QName("viewVersion"));
-            call.invokeNonBlocking(opdesc, requestContext, new ClientCallbackHandler(this.gui));
+            call.invokeNonBlocking(opdesc,
+                    requestContext,
+                    new ClientCallbackHandler(this.gui));
 
         } catch (AxisFault e1) {
             e1.printStackTrace();

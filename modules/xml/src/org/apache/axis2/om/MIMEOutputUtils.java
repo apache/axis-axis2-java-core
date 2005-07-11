@@ -41,13 +41,15 @@ public class MIMEOutputUtils {
             startWritingMime(outStream, boundary);
 
             DataHandler dh = new DataHandler(bufferedSoapOutStream.toString(),
-                                             "text/xml");
+                    "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
-            ContentType partContentType = new ContentType("application/xop+xml");
+            ContentType partContentType = new ContentType(
+                    "application/xop+xml");
             partContentType.setParameter("charset", "UTF-8");
             partContentType.setParameter("type", "application/soap+xml");
-            rootMimeBodyPart.addHeader("Content-Type", partContentType.toString());
+            rootMimeBodyPart.addHeader("Content-Type",
+                    partContentType.toString());
             rootMimeBodyPart.addHeader("Content-Transfer-Encoding", "8bit");
             rootMimeBodyPart.addHeader("Content-ID", SOAP_PART_CONTENT_ID);
 
@@ -57,7 +59,7 @@ public class MIMEOutputUtils {
             while (binaryNodeIterator.hasNext()) {
                 OMText binaryNode = (OMText) binaryNodeIterator.next();
                 writeBodyPart(outStream, createMimeBodyPart(binaryNode),
-                              boundary);
+                        boundary);
             }
             finishWritingMime(outStream);
         } catch (IOException e) {
@@ -89,7 +91,8 @@ public class MIMEOutputUtils {
     /**
      * @throws IOException This will write the boundary with CRLF
      */
-    protected static void startWritingMime(OutputStream outStream, String boundary)
+    protected static void startWritingMime(OutputStream outStream,
+                                           String boundary)
             throws IOException {
         writeMimeBoundary(outStream, boundary);
         //outStream.write(CRLF);
@@ -125,7 +128,8 @@ public class MIMEOutputUtils {
         contentType.setPrimaryType("multipart");
         contentType.setSubType("related");
         contentType.setParameter("boundary", boundary);
-        contentType.setParameter("start", MIMEOutputUtils.SOAP_PART_CONTENT_ID);
+        contentType.setParameter("start",
+                MIMEOutputUtils.SOAP_PART_CONTENT_ID);
         contentType.setParameter("type", "application/xop+xml");
         //TODO theres something called action that can be set with
         // following. May be SOAPAction. Better check.

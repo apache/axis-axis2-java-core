@@ -11,7 +11,8 @@ import java.awt.event.KeyListener;
  *
  * @author Nadana Gunarathna
  */
-public class AsyncPanel extends javax.swing.JPanel implements Observer, KeyListener {
+public class AsyncPanel extends javax.swing.JPanel implements Observer,
+        KeyListener {
     FormModel formModel;
     JTextArea writingTextArea;
     JTextArea displayTextArea;

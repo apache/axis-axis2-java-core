@@ -17,7 +17,11 @@
 package org.apache.axis2.om.impl.llom.mtom;
 
 import org.apache.axis2.attachments.MIMEHelper;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -43,7 +47,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
     int partIndex = 0;
 
     public MTOMStAXSOAPModelBuilder(XMLStreamReader parser,
-                                    SOAPFactory factory, MIMEHelper mimeHelper) {
+                                    SOAPFactory factory,
+                                    MIMEHelper mimeHelper) {
         super(parser, factory);
         this.mimeHelper = mimeHelper;
     }
@@ -75,7 +80,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
             OMAttribute Attr;
             if (lastNode == null) {
                 // Decide whether to ckeck the level >3 or not
-                throw new OMException("XOP:Include element is not supported here");
+                throw new OMException(
+                        "XOP:Include element is not supported here");
             }
             if (parser.getAttributeCount() > 0) {
                 contentID = parser.getAttributeValue(0);
@@ -85,10 +91,12 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
                         & contentID.substring(0, 3).equalsIgnoreCase("cid")) {
                     contentID = contentID.substring(4);
                 } else {
-                    throw new OMException("contentID not Found in XOP:Include element");
+                    throw new OMException(
+                            "contentID not Found in XOP:Include element");
                 }
             } else {
-                throw new OMException("Href attribute not found in XOP:Include element");
+                throw new OMException(
+                        "Href attribute not found in XOP:Include element");
             }
 
             // This cannot happen. XOP:Include is always the only child of an parent element
@@ -98,7 +106,9 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
                 node = new OMTextImpl(contentID, (OMElement) lastNode, this);
                 e.setFirstChild(node);
             } catch (ClassCastException e) {
-                throw new OMException("Last Node & Parent of an OMText should be an Element" + e);
+                throw new OMException(
+                        "Last Node & Parent of an OMText should be an Element" +
+                        e);
             }
 
             return node;
@@ -108,7 +118,10 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
             if (lastNode == null) {
                 node = constructNode(null, elementName, true);
             } else if (lastNode.isComplete()) {
-                node = constructNode((OMElement) lastNode.getParent(), elementName, false);
+                node =
+                        constructNode((OMElement) lastNode.getParent(),
+                                elementName,
+                                false);
                 lastNode.setNextSibling(node);
                 node.setPreviousSibling(lastNode);
             } else {

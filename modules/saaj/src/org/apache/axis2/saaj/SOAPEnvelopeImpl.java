@@ -18,7 +18,11 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 
-import javax.xml.soap.*;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 
 
 /**
@@ -105,7 +109,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 
         org.apache.axis2.soap.SOAPHeader omSOAPHeader;
         try {
-            omSOAPHeader = (org.apache.axis2.soap.SOAPHeader) omSOAPEnvelope.getHeader();
+            omSOAPHeader =
+                    (org.apache.axis2.soap.SOAPHeader) omSOAPEnvelope.getHeader();
         } catch (Exception e) {
             throw new SOAPException(e);
         }
@@ -155,7 +160,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
                 omSOAPEnvelope.addChild(header);
                 return (new SOAPHeaderImpl(header));
             } else {
-                throw new SOAPException("Header already present, can't set body again without deleting the existing header");
+                throw new SOAPException(
+                        "Header already present, can't set body again without deleting the existing header");
             }
         } catch (Exception e) {
             throw new SOAPException(e);
@@ -181,7 +187,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
                 omSOAPEnvelope.addChild(body);
                 return (new SOAPBodyImpl(body));
             } else {
-                throw new SOAPException("Body already present, can't set body again without deleting the existing body");
+                throw new SOAPException(
+                        "Body already present, can't set body again without deleting the existing body");
             }
         } catch (Exception e) {
             throw new SOAPException(e);

@@ -48,7 +48,8 @@ public class SOAP11HeaderImpl extends SOAPHeaderImpl {
 
     public SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns) throws OMException {
         if (ns == null || ns.getName() == null || "".equals(ns.getName())) {
-            throw new OMException("All the SOAP Header blocks should be namespace qualified");
+            throw new OMException(
+                    "All the SOAP Header blocks should be namespace qualified");
         }
 
         OMNamespace namespace = findNamespace(ns.getName(), ns.getPrefix());
@@ -68,10 +69,10 @@ public class SOAP11HeaderImpl extends SOAPHeaderImpl {
 
     public Iterator extractHeaderBlocks(String role) {
         return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
-                                                           new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                                                                     SOAP11Constants.ATTR_ACTOR),
-                                                           role,
-                                                           true);
+                new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP11Constants.ATTR_ACTOR),
+                role,
+                true);
 
     }
 

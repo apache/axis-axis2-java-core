@@ -15,7 +15,23 @@
  */
 package org.apache.wsdl.impl;
 
-import org.apache.wsdl.*;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingFault;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLFaultReference;
+import org.apache.wsdl.WSDLFeature;
+import org.apache.wsdl.WSDLImport;
+import org.apache.wsdl.WSDLInclude;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLProperty;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 
@@ -119,7 +135,8 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == binding.getName()) {
-            throw new WSDLProcessingException("The WSDLBinding name cannot be null(Required)");
+            throw new WSDLProcessingException(
+                    "The WSDLBinding name cannot be null(Required)");
         }
         this.bindings.put(binding.getName(), binding);
     }
@@ -147,10 +164,11 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == interfaceComponent.getName()) {
-            throw new WSDLProcessingException("PortType/Interface name cannot be null(Required) ");
+            throw new WSDLProcessingException(
+                    "PortType/Interface name cannot be null(Required) ");
         }
         this.wsdlInterfaces.put(interfaceComponent.getName(),
-                                interfaceComponent);
+                interfaceComponent);
     }
 
     /**
@@ -205,7 +223,8 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == service.getName()) {
-            throw new WSDLProcessingException("The WSDLService name cannot be null (Required)");
+            throw new WSDLProcessingException(
+                    "The WSDLService name cannot be null (Required)");
         }
         this.services.put(service.getName(), service);
     }
@@ -478,7 +497,8 @@ public class WSDLDescriptionImpl extends ComponentImpl
         if (bindingIterator.hasNext()) {
             return (WSDLBinding) bindingIterator.next();
         }
-        throw new WSDLProcessingException("No Binding Components are available");
+        throw new WSDLProcessingException(
+                "No Binding Components are available");
     }
 
     public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute() {

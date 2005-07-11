@@ -64,10 +64,12 @@ public class PhaseHolder {
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
-            throw new PhaseException("Invalid Phase ," + phaseName
-                                     + "for the handler "
-                                     + handler.getName()
-                                     + " dose not exit in axis2.xml or refering to phase in diffrent flow");
+            throw new PhaseException(
+                    "Invalid Phase ," + phaseName
+                    + "for the handler "
+                    + handler.getName()
+                    +
+                    " dose not exit in axis2.xml or refering to phase in diffrent flow");
         }
     }
 
@@ -100,9 +102,12 @@ public class PhaseHolder {
             Class handlerClass = null;
             Handler handler;
             for (int i = 0; i < handlers.size(); i++) {
-                HandlerDescription description = (HandlerDescription) handlers.get(i);
-                handlerClass = Class.forName(description.getClassName(), true,
-                                             Thread.currentThread().getContextClassLoader());
+                HandlerDescription description = (HandlerDescription) handlers.get(
+                        i);
+                handlerClass =
+                        Class.forName(description.getClassName(),
+                                true,
+                                Thread.currentThread().getContextClassLoader());
                 handler =
                         (Handler) handlerClass.newInstance();
                 handler.init(description);

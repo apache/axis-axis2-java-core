@@ -34,14 +34,19 @@ public class TransportDeploymentTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testTransports() throws AxisFault, PhaseException, DeploymentException, XMLStreamException {
-        DeploymentEngine engine = new DeploymentEngine(testResourceDir + "/deployment", "server-transport.xml");
+    public void testTransports() throws AxisFault,
+            PhaseException,
+            DeploymentException,
+            XMLStreamException {
+        DeploymentEngine engine = new DeploymentEngine(
+                testResourceDir + "/deployment", "server-transport.xml");
         engine.load();
         AxisConfiguration er = engine.getAxisConfig();
         TransportInDescription transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
         //  assertNotNull(transport.getInFlow());
-        TransportOutDescription transport1 = er.getTransportOut(new QName("http"));
+        TransportOutDescription transport1 = er.getTransportOut(
+                new QName("http"));
         assertNotNull(transport1);
         //  assertNotNull(transport1.getOutFlow());
     }

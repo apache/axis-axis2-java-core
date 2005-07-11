@@ -22,7 +22,11 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.*;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
 import java.util.Locale;
 
 /**
@@ -60,7 +64,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         try {
             //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
             SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(omSOAPBody, new Exception("No explicit faultstring available"));
+            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
+                    omSOAPBody,
+                    new Exception("No explicit faultstring available"));
             omSOAPBody.addFault(omSoapFault);
             return (new SOAPFaultImpl(omSoapFault));
         } catch (Exception e) {
@@ -100,8 +106,11 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
         try {
             OMFactory omFactory = OMAbstractFactory.getOMFactory();
-            QName qname = new QName(name.getURI(), name.getLocalName(), name.getPrefix());
-            OMElement bodyElement = omFactory.createOMElement(qname, omSOAPBody);
+            QName qname = new QName(name.getURI(),
+                    name.getLocalName(),
+                    name.getPrefix());
+            OMElement bodyElement = omFactory.createOMElement(qname,
+                    omSOAPBody);
             omSOAPBody.addChild(bodyElement);
             return (new SOAPBodyElementImpl(bodyElement));
         } catch (Exception e) {
@@ -118,7 +127,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException
      * @see javax.xml.soap.SOAPBody#addFault(javax.xml.soap.Name, java.lang.String, java.util.Locale)
      */
-    public SOAPFault addFault(Name faultCode, String faultString, Locale locale)
+    public SOAPFault addFault(Name faultCode,
+                              String faultString,
+                              Locale locale)
             throws SOAPException {
         try {
             //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
@@ -127,7 +138,8 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             //So am deferring it.
             //even locale param is dropped, don't know how to handle it at the moment. so dropped it.
             SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(omSOAPBody, new Exception(faultString));
+            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
+                    omSOAPBody, new Exception(faultString));
             omSOAPBody.addFault(omSoapFault);
             return (new SOAPFaultImpl(omSoapFault));
         } catch (Exception e) {
@@ -152,7 +164,8 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             //a work around can be possible but would be confusing as there is no straight forward soapfault constructor in om.
             //So am deferring it.
             SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(omSOAPBody, new Exception(faultString));
+            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
+                    omSOAPBody, new Exception(faultString));
             omSOAPBody.addFault(omSoapFault);
             return (new SOAPFaultImpl(omSoapFault));
         } catch (Exception e) {

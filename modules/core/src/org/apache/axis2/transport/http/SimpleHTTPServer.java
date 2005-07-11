@@ -74,7 +74,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      *
      * @param systemContext
      */
-    public SimpleHTTPServer(ConfigurationContext systemContext, ServerSocket serverSoc) {
+    public SimpleHTTPServer(ConfigurationContext systemContext,
+                            ServerSocket serverSoc) {
         this.configurationContext = systemContext;
         this.serverSocket = serverSoc;
     }
@@ -124,7 +125,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                     break;
                 }
                 if (socket != null) {
-                    configurationContext.getThreadPool().addWorker(new HTTPWorker(configurationContext, socket));
+                    configurationContext.getThreadPool().addWorker(
+                            new HTTPWorker(configurationContext, socket));
                 }
             }
         } catch (IOException e) {
@@ -231,15 +233,18 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));
         SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], serverSoc);
         System.out.println("starting SimpleHTTPServer in port "
-                           + args[1]
-                           + " using the repository "
-                           + new File(args[0]).getAbsolutePath());
+                + args[1]
+                + " using the repository "
+                + new File(args[0]).getAbsolutePath());
         receiver.setServerSocket(serverSoc);
         Thread thread = new Thread(receiver);
         thread.setDaemon(true);
         try {
-            System.out.println("[Axis2] Using the Repository " + new File(args[0]).getAbsolutePath());
-            System.out.println("[Axis2] Starting the SimpleHTTPServer on port " + args[1]);
+            System.out.println(
+                    "[Axis2] Using the Repository " +
+                    new File(args[0]).getAbsolutePath());
+            System.out.println(
+                    "[Axis2] Starting the SimpleHTTPServer on port " + args[1]);
             thread.start();
             System.out.println("[Axis2] SimpleHTTPServer started");
             System.in.read();
@@ -253,10 +258,13 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) {
         return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                                     "http://127.0.0.1:" + (serverSocket.getLocalPort()) + "/axis/services/" + serviceName);
+                "http://127.0.0.1:" + (serverSocket.getLocalPort()) +
+                "/axis/services/" +
+                serviceName);
     }
 
-    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+    public void init(ConfigurationContext axisConf,
+                     TransportInDescription transprtIn)
             throws AxisFault {
         this.configurationContext = axisConf;
         Parameter param = transprtIn.getParameter(PARAM_PORT);

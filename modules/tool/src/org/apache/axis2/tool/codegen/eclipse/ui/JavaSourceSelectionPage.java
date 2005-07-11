@@ -74,11 +74,12 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
 
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page4.javafilelocation.label"));
+                .getResourceString("page4.javafilelocation.label"));
 
         javaClassFileLocationBox = new Text(container, SWT.BORDER);
         javaClassFileLocationBox.setLayoutData(gd);
-        javaClassFileLocationBox.setText(settings.get(JAVA_CLASS_LOCATION_NAME));
+        javaClassFileLocationBox.setText(
+                settings.get(JAVA_CLASS_LOCATION_NAME));
         javaClassFileLocationBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 handleLocationTextChange();
@@ -88,7 +89,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
 
         Button browseButton = new Button(container, SWT.PUSH);
         browseButton.setText(CodegenWizardPlugin
-                             .getResourceString("general.browse"));
+                .getResourceString("general.browse"));
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleDirectoryBrowse();
@@ -97,7 +98,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                      .getResourceString("page4.classname.label"));
+                .getResourceString("page4.classname.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         javaClassNameBox = new Text(container, SWT.BORDER);
@@ -111,7 +112,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
 
         Button searchButton = new Button(container, SWT.PUSH);
         searchButton.setText(CodegenWizardPlugin
-                             .getResourceString("general.search"));
+                .getResourceString("general.search"));
         searchButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateTable();
@@ -136,7 +137,9 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
         gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 3;
         gd.verticalSpan = 5;
-        table = new Table(container, SWT.SINGLE | SWT.FULL_SELECTION | SWT.CHECK);
+        table =
+                new Table(container,
+                        SWT.SINGLE | SWT.FULL_SELECTION | SWT.CHECK);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
         table.setLayoutData(gd);
@@ -241,7 +244,8 @@ public class JavaSourceSelectionPage extends AbstractWizardPage {
                     items[i] = new TableItem(table, SWT.NONE);
                     items[i].setText(1, methods[i].getName());
                     items[i].setText(2, methods[i].getReturnType().getName());
-                    items[i].setText(3, methods[i].getParameterTypes().length + "");
+                    items[i].setText(3,
+                            methods[i].getParameterTypes().length + "");
                     items[i].setChecked(true);//check them all by default
                 }
                 table.setVisible(true);

@@ -40,8 +40,11 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
     /**
      * @param parent
      */
-    public SOAPFaultReasonImpl(OMElement parent, boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, extractNamespaceFromParent);
+    public SOAPFaultReasonImpl(OMElement parent,
+                               boolean extractNamespaceFromParent) throws SOAPProcessingException {
+        super(parent,
+                SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME,
+                extractNamespaceFromParent);
     }
 
     /**
@@ -52,6 +55,7 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
     }
 
     public SOAPFaultText getSOAPText() {
-        return (SOAPFaultText) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
+        return (SOAPFaultText) UtilProvider.getChildWithName(this,
+                SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
     }
 }

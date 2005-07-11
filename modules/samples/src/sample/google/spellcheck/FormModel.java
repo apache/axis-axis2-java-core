@@ -35,20 +35,26 @@ public class FormModel {
 
     private OMElement getElement(String word) {
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = omfactory.createOMNamespace("urn:GoogleSearch", "ns1");
+        OMNamespace opN = omfactory.createOMNamespace("urn:GoogleSearch",
+                "ns1");
         OMNamespace emptyNs = omfactory.createOMNamespace("", null);
 
-        OMElement method = omfactory.createOMElement("doSpellingSuggestion", opN);
-        method.declareNamespace("http://www.w3.org/1999/XMLSchema-instance", "xsi");
+        OMElement method = omfactory.createOMElement("doSpellingSuggestion",
+                opN);
+        method.declareNamespace("http://www.w3.org/1999/XMLSchema-instance",
+                "xsi");
         method.declareNamespace("http://www.w3.org/1999/XMLSchema", "xsd");
 
         //reqEnv.getBody().addChild(method);
-        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        method.addAttribute("soapenv:encodingStyle",
+                "http://schemas.xmlsoap.org/soap/encoding/",
+                null);
         OMElement value1 = omfactory.createOMElement("key", emptyNs);
         OMElement value2 = omfactory.createOMElement("phrase", emptyNs);
         value1.addAttribute("xsi:type", "xsd:string", null);
         value2.addAttribute("xsi:type", "xsd:string", null);
-        value1.addChild(omfactory.createText(value1, PropertyLoader.getGoogleKey()));
+        value1.addChild(
+                omfactory.createText(value1, PropertyLoader.getGoogleKey()));
         value2.addChild(omfactory.createText(value2, word));
 
         method.addChild(value1);
@@ -67,16 +73,23 @@ public class FormModel {
         }
         URL url = null;
         try {
-            url = new URL(PROTOCOL, PropertyLoader.getGoogleEndpointURL(), PropertyLoader.getGoogleEndpointServiceName());
+            url =
+                    new URL(PROTOCOL,
+                            PropertyLoader.getGoogleEndpointURL(),
+                            PropertyLoader.getGoogleEndpointServiceName());
             //url=new URL( "http","127.0.0.1",7070,"/search/beta2");
         } catch (MalformedURLException e) {
             observer.updateError(e.getMessage());
             ;
         }
 
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        url.toString()));
         try {
-            call.invokeNonBlocking("doGoogleSpellingSugg", requestElement, new GoogleCallBack(word));
+            call.invokeNonBlocking("doGoogleSpellingSugg",
+                    requestElement,
+                    new GoogleCallBack(word));
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());
         }
@@ -94,15 +107,22 @@ public class FormModel {
         }
         URL url = null;
         try {
-            url = new URL(PROTOCOL, PropertyLoader.getGoogleEndpointURL(), PropertyLoader.getGoogleEndpointServiceName());
+            url =
+                    new URL(PROTOCOL,
+                            PropertyLoader.getGoogleEndpointURL(),
+                            PropertyLoader.getGoogleEndpointServiceName());
             //url=new URL( "http","127.0.0.1",7070,"/search/beta2");
         } catch (MalformedURLException e) {
             observer.updateError(e.getMessage());
         }
 
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+        call.setTo(
+                new EndpointReference(AddressingConstants.WSA_TO,
+                        url.toString()));
         try {
-            responseElement = (OMElement) call.invokeBlocking("doGoogleSpellingSugg", requestElement);
+            responseElement =
+                    (OMElement) call.invokeBlocking("doGoogleSpellingSugg",
+                            requestElement);
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());
         }
@@ -121,7 +141,8 @@ public class FormModel {
 
 
     public String getResponse(SOAPEnvelope responseEnvelope) {
-        QName qName1 = new QName("urn:GoogleSearch", "doSpellingSuggestionResponse");
+        QName qName1 = new QName("urn:GoogleSearch",
+                "doSpellingSuggestionResponse");
         QName qName2 = new QName("urn:GoogleSearch", "return");
 
 
@@ -161,7 +182,8 @@ public class FormModel {
             String suggestion = getResponse(result.getResponseEnvelope());
             if (suggestion == null) {
                 observer.update(originalWord);
-                observer.updateError("No suggestions found for " + originalWord);
+                observer.updateError(
+                        "No suggestions found for " + originalWord);
             } else {
                 observer.update(suggestion);
             }

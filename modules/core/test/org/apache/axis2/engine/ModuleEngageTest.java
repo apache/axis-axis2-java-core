@@ -37,16 +37,22 @@ import javax.xml.stream.XMLStreamException;
 public class ModuleEngageTest extends TestCase {
     AxisConfiguration ac;
 
-    public void testModuleEngageMent() throws PhaseException, DeploymentException, AxisFault, XMLStreamException {
+    public void testModuleEngageMent() throws PhaseException,
+            DeploymentException,
+            AxisFault,
+            XMLStreamException {
         String filename = "./target/test-resources/deployment";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ac = builder.buildConfigurationContext(filename).getAxisConfiguration();
+        ac =
+                builder.buildConfigurationContext(filename)
+                .getAxisConfiguration();
         ModuleDescription module = ac.getModule(new QName("module1"));
         assertNotNull(module);
         ac.engageModule(new QName("module1"));
         ServiceDescription service = ac.getService(new QName("service2"));
         assertNotNull(service);
-        OperationDescription moduleOperation = service.getOperation(new QName("creatSeq"));
+        OperationDescription moduleOperation = service.getOperation(
+                new QName("creatSeq"));
         assertNotNull(moduleOperation);
     }
 

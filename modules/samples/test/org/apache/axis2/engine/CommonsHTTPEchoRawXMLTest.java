@@ -41,9 +41,9 @@ import javax.xml.namespace.QName;
 public class CommonsHTTPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -70,11 +70,12 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
     }
 
@@ -86,14 +87,18 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_PATH + "commons-http-enabledRepository");
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
-                TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
+                TestingUtils.campareWithCreatedOMElement(
+                        result.getResponseEnvelope().getBody().getFirstElement());
                 finish = true;
             }
 
@@ -103,13 +108,16 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
+        call.invokeNonBlocking(operationName.getLocalPart(),
+                payload,
+                callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
             index++;
             if (index > 10) {
-                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+                throw new AxisFault(
+                        "Server is shutdown as the Async response take too longs time");
             }
         }
         call.close();
@@ -123,13 +131,17 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_PATH + "commons-http-enabledRepository");
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                        payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }

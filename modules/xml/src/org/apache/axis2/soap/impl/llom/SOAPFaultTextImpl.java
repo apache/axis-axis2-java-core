@@ -29,27 +29,39 @@ import javax.xml.namespace.QName;
  */
 public abstract class SOAPFaultTextImpl extends SOAPElement implements SOAPFaultText {
     protected OMAttribute langAttr;
-    protected OMNamespace langNamespace = OMAbstractFactory.getOMFactory().createOMNamespace(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI, SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX);
+    protected OMNamespace langNamespace = OMAbstractFactory.getOMFactory()
+            .createOMNamespace(
+                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI,
+                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX);
 
     protected SOAPFaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true);
     }
 
-    protected SOAPFaultTextImpl(SOAPFaultReason parent, OMXMLParserWrapper builder) {
+    protected SOAPFaultTextImpl(SOAPFaultReason parent,
+                                OMXMLParserWrapper builder) {
         super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder);
     }
 
 
     public void setLang(String lang) {
         //langAttr = new OMAttributeImpl(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, parent.getNamespace(), lang);
-        langAttr = new OMAttributeImpl(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, langNamespace, lang);
+        langAttr =
+                new OMAttributeImpl(
+                        SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME,
+                        langNamespace,
+                        lang);
         this.addAttribute(langAttr);
     }
 
     public String getLang() {
         if (langAttr == null) {
             //langAttr = this.getFirstAttribute(new QName(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, parent.getNamespace().getName()));
-            langAttr = this.getFirstAttribute(new QName(langNamespace.getName(), SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX));
+            langAttr =
+                    this.getFirstAttribute(
+                            new QName(langNamespace.getName(),
+                                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME,
+                                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX));
         }
 
         return langAttr == null ? null : langAttr.getValue();

@@ -46,7 +46,8 @@ import javax.xml.namespace.QName;
 
 public class MessageContextInjectionTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO, "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO,
+                    "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -68,17 +69,24 @@ public class MessageContextInjectionTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        ConfigurationContext configContext = new ConfigurationContext(new AxisConfigurationImpl());
+        ConfigurationContext configContext = new ConfigurationContext(
+                new AxisConfigurationImpl());
         LocalTransportReceiver.CONFIG_CONTEXT = configContext;
 
         ServiceDescription service = new ServiceDescription(serviceName);
-        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, MessageContextEnabledEcho.class.getName()));
-        OperationDescription operation = new OperationDescription(operationName);
+        service.addParameter(
+                new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
+                        MessageContextEnabledEcho.class.getName()));
+        OperationDescription operation = new OperationDescription(
+                operationName);
         operation.setMessageReciever(new RawXMLINOnlyMessageReceiver());
         service.addOperation(operation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration(), service);
+        LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
+                .addService(service);
+        Utils.resolvePhases(
+                LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration(),
+                service);
     }
 
     protected void tearDown() throws Exception {
@@ -89,7 +97,8 @@ public class MessageContextInjectionTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
 
         return method;

@@ -13,7 +13,8 @@ import org.apache.commons.logging.LogFactory;
 public class MailServer {
     Storage st = null;
     public ConfigurationContext configurationContext = null;
-    protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
+    protected static Log log = LogFactory.getLog(
+            SimpleMailListener.class.getName());
 
     public MailServer(String dir, int popPort, int smtpPort) throws AxisFault {
         try {
@@ -23,24 +24,30 @@ public class MailServer {
             log.error(e);
         }
         try {
-            System.out.println("Sleeping for a bit to let the engine start up.");
+            System.out.println(
+                    "Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
         }
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st, configurationContext, smtpPort);
+        SMTPServer smtpServer = new SMTPServer(st,
+                configurationContext,
+                smtpPort);
         smtpServer.start();
         POP3Server pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
 
     }
 
-    public MailServer(ConfigurationContext configurationContext, int popPort, int smtpPort) throws AxisFault {
+    public MailServer(ConfigurationContext configurationContext,
+                      int popPort,
+                      int smtpPort) throws AxisFault {
         this.configurationContext = configurationContext;
         try {
-            System.out.println("Sleeping for a bit to let the engine start up.");
+            System.out.println(
+                    "Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
@@ -48,7 +55,9 @@ public class MailServer {
 
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st, configurationContext, smtpPort);
+        SMTPServer smtpServer = new SMTPServer(st,
+                configurationContext,
+                smtpPort);
         smtpServer.start();
         POP3Server pop3Server = new POP3Server(st, popPort);
         pop3Server.start();

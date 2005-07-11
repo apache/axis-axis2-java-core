@@ -37,7 +37,8 @@ public class WizardPane2 extends WizardPage {
     public WizardPane2() {
         super("page2");
         this.setTitle(ServiceArchiver.getResourceString("page2.title"));
-        this.setDescription(ServiceArchiver.getResourceString("page2.welcometext"));
+        this.setDescription(
+                ServiceArchiver.getResourceString("page2.welcometext"));
         this.setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
     }
 
@@ -51,7 +52,9 @@ public class WizardPane2 extends WizardPage {
         container.setLayout(layout);
 
         manualSelectionLabel = new Label(container, SWT.NULL);
-        manualSelectionLabel.setText(ServiceArchiver.getResourceString("page2.selectservicexml.caption"));
+        manualSelectionLabel.setText(
+                ServiceArchiver.getResourceString(
+                        "page2.selectservicexml.caption"));
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         serviceXMLText = new Text(container, SWT.BORDER);
@@ -63,7 +66,8 @@ public class WizardPane2 extends WizardPage {
         });
 
         browseButton = new Button(container, SWT.PUSH);
-        browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
+        browseButton.setText(
+                ServiceArchiver.getResourceString("general.browse"));
         browseButton.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
                 handleBrowse();
@@ -74,7 +78,8 @@ public class WizardPane2 extends WizardPage {
         gd.horizontalSpan = 2;
         selectAutoFileGenerationCheckBox = new Button(container, SWT.CHECK);
         selectAutoFileGenerationCheckBox.setLayoutData(gd);
-        selectAutoFileGenerationCheckBox.setText(ServiceArchiver.getResourceString("page2.generateauto.caption"));
+        selectAutoFileGenerationCheckBox.setText(
+                ServiceArchiver.getResourceString("page2.generateauto.caption"));
         selectAutoFileGenerationCheckBox.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 handleSelection();
@@ -122,9 +127,13 @@ public class WizardPane2 extends WizardPage {
     private void handleModify() {
         String serviceXMLString = serviceXMLText.getText().trim().toLowerCase();
         if (serviceXMLString.equals("")) {
-            this.updateMessage(ServiceArchiver.getResourceString("page2.error.servicenameempty"));
+            this.updateMessage(
+                    ServiceArchiver.getResourceString(
+                            "page2.error.servicenameempty"));
         } else if (!serviceXMLString.endsWith("service.xml")) {
-            this.updateMessage(ServiceArchiver.getResourceString("page2.error.servicenamewrong"));
+            this.updateMessage(
+                    ServiceArchiver.getResourceString(
+                            "page2.error.servicenamewrong"));
         } else {
             this.updateMessage(null);
         }

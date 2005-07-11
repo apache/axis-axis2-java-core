@@ -33,7 +33,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "SOAPMessageBodyBasedDispatcher");
+            new QName("http://axis.ws.apache.org",
+                    "SOAPMessageBodyBasedDispatcher");
     QName serviceName = null;
     QName operatoinName = null;
 
@@ -47,7 +48,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
             throws AxisFault {
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
+                .getFirstElement();
         operatoinName = new QName(bodyFirstChild.getLocalName());
 
         OperationDescription axisOp = service.getOperation(operatoinName);
@@ -59,12 +61,14 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         final String URI_ID_STRING = "/services";
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
+                .getFirstElement();
         OMNamespace ns = bodyFirstChild.getNamespace();
         if (ns != null) {
             String filePart = ns.getName();
 
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            String[] values = Utils.parseRequestURLForServiceAndOperation(
+                    filePart);
             if (values[1] != null) {
                 operatoinName = new QName(values[1]);
             }

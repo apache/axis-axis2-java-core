@@ -39,13 +39,14 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLChunckedTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "http://127.0.0.1:"
-                                  + (UtilServer.TESTING_PORT)
-                                  + "/axis/services/EchoXMLService/echoOMElement");
+                    "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my", "NullTransport");
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -68,11 +69,12 @@ public class EchoRawXMLChunckedTest extends TestCase {
         UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
         service =
                 Utils.createSimpleService(serviceName,
-                                          Echo.class.getName(),
-                                          operationName);
+                        Echo.class.getName(),
+                        operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(
+                        service.getName());
 
 
     }
@@ -128,13 +130,17 @@ public class EchoRawXMLChunckedTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_PATH + "chuncked-enabledRepository");
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                Constants.TESTING_PATH + "chuncked-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                        payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }

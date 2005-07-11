@@ -15,7 +15,11 @@
  */
 package javax.xml.soap;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -55,9 +59,15 @@ class FactoryFinder {
             }
             return factory.newInstance();
         } catch (ClassNotFoundException classnotfoundexception) {
-            throw new SOAPException("Provider " + factoryClassName + " not found", classnotfoundexception);
+            throw new SOAPException(
+                    "Provider " + factoryClassName + " not found",
+                    classnotfoundexception);
         } catch (Exception exception) {
-            throw new SOAPException("Provider " + factoryClassName + " could not be instantiated: " + exception, exception);
+            throw new SOAPException(
+                    "Provider " + factoryClassName +
+                    " could not be instantiated: " +
+                    exception,
+                    exception);
         }
     }
 
@@ -70,7 +80,8 @@ class FactoryFinder {
      * @return a factory object
      * @throws SOAPException
      */
-    static Object find(String factoryPropertyName, String defaultFactoryClassName) throws SOAPException {
+    static Object find(String factoryPropertyName,
+                       String defaultFactoryClassName) throws SOAPException {
         try {
             String factoryClassName = System.getProperty(factoryPropertyName);
             if (factoryClassName != null) {
@@ -89,7 +100,8 @@ class FactoryFinder {
                 Properties properties = new Properties();
                 properties.load(fileInput);
                 fileInput.close();
-                String factoryClassName = properties.getProperty(factoryPropertyName);
+                String factoryClassName = properties.getProperty(
+                        factoryPropertyName);
                 return newInstance(factoryClassName);
             }
         } catch (Exception exception1) {
@@ -100,7 +112,8 @@ class FactoryFinder {
         try {
             InputStream inputstream = getResource(factoryResource);
             if (inputstream != null) {
-                BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+                BufferedReader bufferedreader = new BufferedReader(
+                        new InputStreamReader(inputstream, "UTF-8"));
                 String factoryClassName = bufferedreader.readLine();
                 bufferedreader.close();
                 if ((factoryClassName != null) && !"".equals(factoryClassName)) {
@@ -111,7 +124,9 @@ class FactoryFinder {
         }
 
         if (defaultFactoryClassName == null) {
-            throw new SOAPException("Provider for " + factoryPropertyName + " cannot be found", null);
+            throw new SOAPException(
+                    "Provider for " + factoryPropertyName + " cannot be found",
+                    null);
         } else {
             return newInstance(defaultFactoryClassName);
         }
@@ -140,13 +155,16 @@ class FactoryFinder {
 
         InputStream inputstream;
         if (classloader == null) {
-            inputstream = ClassLoader.getSystemResourceAsStream(factoryResource);
+            inputstream =
+                    ClassLoader.getSystemResourceAsStream(factoryResource);
         } else {
             inputstream = classloader.getResourceAsStream(factoryResource);
         }
 
         if (inputstream == null) {
-            inputstream = FactoryFinder.class.getClassLoader().getResourceAsStream(factoryResource);
+            inputstream =
+                    FactoryFinder.class.getClassLoader().getResourceAsStream(
+                            factoryResource);
         }
         return inputstream;
     }

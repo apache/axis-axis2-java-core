@@ -32,7 +32,8 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-            new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
+            new QName("http://axis.ws.apache.org",
+                    "RequestURIBasedDispatcher");
     QName serviceName = null;
     QName operatoinName = null;
 
@@ -61,7 +62,8 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         EndpointReference toEPR = messageContext.getTo();
         if (toEPR != null) {
             String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            String[] values = Utils.parseRequestURLForServiceAndOperation(
+                    filePart);
             if (values[1] != null) {
                 operatoinName = new QName(values[1]);
             }

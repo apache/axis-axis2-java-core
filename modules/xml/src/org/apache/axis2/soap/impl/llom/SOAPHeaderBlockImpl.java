@@ -39,7 +39,9 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      * @param localName
      * @param ns
      */
-    public SOAPHeaderBlockImpl(String localName, OMNamespace ns, SOAPHeader parent) throws SOAPProcessingException {
+    public SOAPHeaderBlockImpl(String localName,
+                               OMNamespace ns,
+                               SOAPHeader parent) throws SOAPProcessingException {
         super(localName, ns, parent);
         this.setNamespace(ns);
     }
@@ -62,14 +64,18 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      * @param attributeName
      * @param attrValue
      */
-    protected void setAttribute(String attributeName, String attrValue, String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(new QName(soapEnvelopeNamespaceURI, attributeName));
+    protected void setAttribute(String attributeName,
+                                String attrValue,
+                                String soapEnvelopeNamespaceURI) {
+        OMAttribute omAttribute = this.getFirstAttribute(
+                new QName(soapEnvelopeNamespaceURI, attributeName));
         if (omAttribute != null) {
             omAttribute.setValue(attrValue);
         } else {
             OMAttribute attribute = new OMAttributeImpl(attributeName,
-                                                        new OMNamespaceImpl(soapEnvelopeNamespaceURI,
-                                                                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX), attrValue);
+                    new OMNamespaceImpl(soapEnvelopeNamespaceURI,
+                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+                    attrValue);
             this.addAttribute(attribute);
         }
     }
@@ -80,8 +86,10 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      * @param attrName
      * @return
      */
-    protected String getAttribute(String attrName, String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(new QName(soapEnvelopeNamespaceURI, attrName));
+    protected String getAttribute(String attrName,
+                                  String soapEnvelopeNamespaceURI) {
+        OMAttribute omAttribute = this.getFirstAttribute(
+                new QName(soapEnvelopeNamespaceURI, attrName));
         return (omAttribute != null)
                 ? omAttribute.getValue()
                 : null;

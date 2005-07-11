@@ -18,13 +18,24 @@ package org.apache.axis2.engine;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class EngineRegistryImpl
@@ -98,8 +109,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         errornesModules = new Hashtable();
 
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
-        inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
+        inPhasesUptoAndIncludingPostDispatch.add(
+                new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
+        inPhasesUptoAndIncludingPostDispatch.add(
+                new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
 
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         dispatch.addHandler(new AddressingBasedDispatcher(), 0);
@@ -280,7 +293,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     ////////////////////////// Form Axis Global
 
-    public void addMessageReceiver(String key, MessageReceiver messageReceiver) {
+    public void addMessageReceiver(String key,
+                                   MessageReceiver messageReceiver) {
         messagRecievers.put(key, messageReceiver);
     }
 
@@ -320,22 +334,27 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
         if (module == null) {
-            File file = new ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart(), getRepository());
+            File file = new ArchiveReader().creatModuleArchivefromResource(
+                    moduleref.getLocalPart(), getRepository());
             module = new DeploymentEngine().buildModule(file);
             isNewmodule = true;
         }
         if (module != null) {
-            for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = engagedModules.iterator();
+                 iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if (moduleref.equals(qName)) {
-                    throw new AxisFault(moduleref.getLocalPart() + " module has alredy engaged globally" +
-                                        "  operation terminated !!!");
+                    throw new AxisFault(moduleref.getLocalPart() +
+                            " module has alredy engaged globally" +
+                            "  operation terminated !!!");
                 }
             }
             new PhaseResolver(this).engageModuleGlobally(module);
         } else {
-            throw new AxisFault(this + " Refer to invalid module "
-                                + moduleref.getLocalPart() + " has not bean deployed yet !");
+            throw new AxisFault(
+                    this + " Refer to invalid module "
+                    + moduleref.getLocalPart() +
+                    " has not bean deployed yet !");
         }
         engagedModules.add(moduleref);
         if (isNewmodule) {

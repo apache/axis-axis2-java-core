@@ -17,7 +17,13 @@ package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.*;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import java.util.Iterator;
 
 /**
@@ -65,15 +71,23 @@ public class SOAPBodyTest extends TestCase {
         SOAPPart soapPart = message.getSOAPPart();
         SOAPEnvelopeImpl env = (SOAPEnvelopeImpl) soapPart.getEnvelope();
         SOAPHeader header = env.getHeader();
-        Name hns = env.createName("Hello", "shw", "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+        Name hns = env.createName("Hello",
+                "shw",
+                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement headElmnt = header.addHeaderElement(hns);
-        Name hns1 = env.createName("Myname", "shw", "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+        Name hns1 = env.createName("Myname",
+                "shw",
+                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement myName = headElmnt.addChildElement(hns1);
         myName.addTextNode("Tony");
-        Name ns = env.createName("Address", "shw", "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+        Name ns = env.createName("Address",
+                "shw",
+                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPBody body = env.getBody();
         SOAPElement bodyElmnt = body.addBodyElement(ns);
-        Name ns1 = env.createName("City", "shw", "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+        Name ns1 = env.createName("City",
+                "shw",
+                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement city = bodyElmnt.addChildElement(ns1);
         city.addTextNode("GENT");
 
@@ -86,7 +100,7 @@ public class SOAPBodyTest extends TestCase {
             Name name = el.getElementName();
             System.out.println("Element:" + el);
             System.out.println("BODY ELEMENT NAME:" + name.getPrefix() + ":"
-                               + name.getLocalName() + " " + name.getURI());
+                    + name.getLocalName() + " " + name.getURI());
         }
         assertTrue(count == 1);
     }

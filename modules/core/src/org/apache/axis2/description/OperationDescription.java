@@ -1,6 +1,10 @@
 package org.apache.axis2.description;
 
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.OperationContextFactory;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
@@ -40,7 +44,8 @@ public class OperationDescription extends WSDLOperationImpl implements
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
 
         remainingPhasesInFlow = new ArrayList();
-        remainingPhasesInFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        remainingPhasesInFlow.add(
+                new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
 
         phasesOutFlow = new ArrayList();
         phasesOutFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
@@ -67,24 +72,30 @@ public class OperationDescription extends WSDLOperationImpl implements
             return;
         }
         if (moduleref != null) {
-            Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
-            for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+            Collection collectionModule = (Collection) this.getComponentProperty(
+                    MODULEREF_KEY);
+            for (Iterator iterator = collectionModule.iterator();
+                 iterator.hasNext();) {
                 ModuleDescription modu = (ModuleDescription) iterator.next();
                 if (modu.getName().equals(moduleref.getName())) {
-                    throw new AxisFault(moduleref.getName().getLocalPart() + " module has alredy engaged to the operation" +
-                                        "  operation terminated !!!");
+                    throw new AxisFault(moduleref.getName().getLocalPart() +
+                            " module has alredy engaged to the operation" +
+                            "  operation terminated !!!");
                 }
 
             }
         }
         new PhaseResolver().engageModuleToOperation(this, moduleref);
-        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        Collection collectionModule = (Collection) this.getComponentProperty(
+                MODULEREF_KEY);
         collectionModule.add(moduleref);
     }
 
     public void addToEngageModuleList(ModuleDescription moduleName) {
-        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+        Collection collectionModule = (Collection) this.getComponentProperty(
+                MODULEREF_KEY);
+        for (Iterator iterator = collectionModule.iterator();
+             iterator.hasNext();) {
             ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
             if (moduleName.getName().equals(moduleDescription.getName())) {
                 return;
@@ -166,25 +177,30 @@ public class OperationDescription extends WSDLOperationImpl implements
         if (null == msgContext.getRelatesTo()) {
             //Its a new incomming message so get the factory to create a new
             // one
-            operationContext = OperationContextFactory.createMEPContext(getAxisSpecifMEPConstant(), this,
-                                                                        serviceContext);
+            operationContext =
+                    OperationContextFactory.createMEPContext(
+                            getAxisSpecifMEPConstant(), this,
+                            serviceContext);
 
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =
             ConfigurationContext configContext = msgContext.getSystemContext();
-            operationContext = configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+            operationContext =
+                    configContext.getOperationContext(
+                            msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault("Cannot relate the message in the operation :"
-                                    + this.getName()
-                                    + " :Unrelated RelatesTO value "
-                                    + msgContext.getRelatesTo().getValue());
+                        + this.getName()
+                        + " :Unrelated RelatesTO value "
+                        + msgContext.getRelatesTo().getValue());
             }
 
         }
 
-        msgContext.getSystemContext().registerOperationContext(msgContext.getMessageID(), operationContext);
+        msgContext.getSystemContext().registerOperationContext(
+                msgContext.getMessageID(), operationContext);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
         if (operationContext.isComplete()) {
@@ -237,7 +253,8 @@ public class OperationDescription extends WSDLOperationImpl implements
         }
 
         if (temp == MEP_CONSTANT_INVALID) {
-            throw new AxisError("Could not Map the MEP URI to a axis MEP constant value");
+            throw new AxisError(
+                    "Could not Map the MEP URI to a axis MEP constant value");
         }
         this.mep = temp;
         return this.mep;

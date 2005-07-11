@@ -75,7 +75,8 @@ public class PhasesInfo {
 
     public ArrayList getOperationInPhases() {
         oprationINPhases = new ArrayList();
-        oprationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        oprationINPhases.add(
+                new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         for (int i = 0; i < INPhases.size(); i++) {
             String phaseName = (String) INPhases.get(i);
             if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
@@ -100,7 +101,8 @@ public class PhasesInfo {
                 oprationOUTPhases.add(new Phase(phaseName));
             }
         }
-        oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        oprationOUTPhases.add(
+                new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
         return oprationOUTPhases;
     }

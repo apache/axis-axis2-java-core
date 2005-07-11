@@ -47,7 +47,8 @@ public class InvalidPhaselastTest extends TestCase {
             Phase p2 = new Phase("PhaseB");
             phases.add(p2);
 
-            MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
+            MessageContext msg = new MessageContext(
+                    new ConfigurationContext(new AxisConfigurationImpl()));
 
             PhaseHolder ph = new PhaseHolder(phases);
             HandlerDescription hm = new HandlerDescription();
@@ -76,7 +77,7 @@ public class InvalidPhaselastTest extends TestCase {
             hm1.setRules(rule1);
             ph.addHandler(hm1);
             fail("This should be faild with Phaselast alredy has been set, cannot have two " +
-                 "phaseFirst Handler for same phase ");
+                    "phaseFirst Handler for same phase ");
         } catch (AxisFault axisFault) {
             return;
         }

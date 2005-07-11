@@ -27,5 +27,6 @@ import org.apache.axis2.engine.Handler;
 public interface TransportSender extends Handler {
     public void cleanUp(MessageContext msgContext) throws AxisFault;
 
-    public void init(ConfigurationContext confContext, TransportOutDescription transportOut) throws AxisFault;
+    public void init(ConfigurationContext confContext,
+                     TransportOutDescription transportOut) throws AxisFault;
 }

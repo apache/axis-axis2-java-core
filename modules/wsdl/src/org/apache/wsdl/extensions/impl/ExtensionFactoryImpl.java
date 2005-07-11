@@ -25,7 +25,8 @@ import javax.xml.namespace.QName;
 /**
  * @author chathura@opensource.lk
  */
-public class ExtensionFactoryImpl implements ExtensionFactory, ExtensionConstants {
+public class ExtensionFactoryImpl implements ExtensionFactory,
+        ExtensionConstants {
     /**
      * Returns the correct "Specific" ExtensibilityElement given the
      * <code>QName</code>

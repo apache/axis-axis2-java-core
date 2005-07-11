@@ -70,8 +70,12 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
                             return totalread;
                     }
                 }
-                bytesread = in.read(b, off + totalread, Math.min(len - totalread,
-                                                                 (int) Math.min(chunkSize, Integer.MAX_VALUE)));
+                bytesread =
+                        in.read(b,
+                                off + totalread,
+                                Math.min(len - totalread,
+                                        (int) Math.min(chunkSize,
+                                                Integer.MAX_VALUE)));
                 if (bytesread > 0) {
                     totalread += bytesread;
                     chunkSize -= bytesread;
@@ -129,7 +133,9 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
 
         if (bufsz > maxCharLong) {
             closed = true;
-            throw new IOException("Chunked input stream failed to receive valid chunk size:" + sbuf);
+            throw new IOException(
+                    "Chunked input stream failed to receive valid chunk size:" +
+                    sbuf);
         }
         try {
             chunkSize = Long.parseLong(sbuf, 16);
@@ -140,11 +146,12 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
         if (chunkSize < 1L) closed = true;
         if (chunkSize != 0L && c < 0) {
             //If chunk size is zero try and be tolerant that there maybe no cr or lf at the end.
-            throw new IOException("HTTP Chunked stream closed in middle of chunk.");
+            throw new IOException(
+                    "HTTP Chunked stream closed in middle of chunk.");
         }
         if (chunkSize < 0L)
             throw new IOException("HTTP Chunk size received " +
-                                  chunkSize + " is less than zero.");
+                    chunkSize + " is less than zero.");
         return chunkSize;
     }
 

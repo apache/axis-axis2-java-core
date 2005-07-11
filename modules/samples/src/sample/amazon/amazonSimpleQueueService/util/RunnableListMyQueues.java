@@ -48,10 +48,12 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
     }
 
     public void run() {
-        OMElement listMyQueuesElement = OMElementCreator.queueListElement(getKey());
-        this.axis2EngineRuns("ListMyQueues", listMyQueuesElement,
-                             new SimpleQueueListMyQueuesCallbackHandler(this.createQueue, this.queueCode,
-                                                                        this.read, this.result, this.button));
+        OMElement listMyQueuesElement = OMElementCreator.queueListElement(
+                getKey());
+        this.axis2EngineRuns("ListMyQueues",
+                listMyQueuesElement,
+                new SimpleQueueListMyQueuesCallbackHandler(this.createQueue, this.queueCode,
+                        this.read, this.result, this.button));
     }
 
     private void axis2EngineRuns(String operation, OMElement element,
@@ -61,7 +63,9 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
         try {
             Call call = new Call();
             call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

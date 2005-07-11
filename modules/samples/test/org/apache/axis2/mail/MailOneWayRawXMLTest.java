@@ -48,12 +48,14 @@ import javax.xml.namespace.QName;
 import java.io.File;
 
 public class MailOneWayRawXMLTest extends TestCase {
-    private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH = Constants.TESTING_PATH + "mail-transport-enabledRepository";
+    private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH = Constants.TESTING_PATH +
+            "mail-transport-enabledRepository";
 
 
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                                  "axis2@127.0.0.1" + "/axis/services/EchoXMLService/echoOMElement");
+                    "axis2@127.0.0.1" +
+            "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -76,15 +78,19 @@ public class MailOneWayRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         configContext = createNewConfigurationContext();  
         //start the mail server      
-        MailServer server = new MailServer(configContext, MailConstants.POP_SERVER_PORT, MailConstants.SMTP_SERVER_PORT);
+        MailServer server = new MailServer(configContext,
+                MailConstants.POP_SERVER_PORT,
+                MailConstants.SMTP_SERVER_PORT);
 
         SimpleMailListener ml = new SimpleMailListener();
         ml.init(configContext,
-                configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+                configContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
 
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(operationName);
+        OperationDescription operation = new OperationDescription(
+                operationName);
         operation.setMessageReciever(new MessageReceiver() {
             public void recieve(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
@@ -93,7 +99,8 @@ public class MailOneWayRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(serviceName);
+        ServiceContext serviceContext = configContext.createServiceContext(
+                serviceName);
     }
 
     protected void tearDown() throws Exception {
@@ -104,7 +111,8 @@ public class MailOneWayRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
+        value.addChild(
+                fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
 
         return method;
@@ -112,7 +120,8 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     public void testOneWay() throws Exception {
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(operationName);
+        OperationDescription operation = new OperationDescription(
+                operationName);
         operation.setMessageReciever(new MessageReceiver() {
             public void recieve(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
@@ -121,7 +130,8 @@ public class MailOneWayRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(serviceName);
+        ServiceContext serviceContext = configContext.createServiceContext(
+                serviceName);
 
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
@@ -146,7 +156,10 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     public ConfigurationContext createNewConfigurationContext() throws Exception {
         File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
-        assertTrue("Mail repository directory " + file.getAbsolutePath() + " does not exsist", file.exists());
+        assertTrue(
+                "Mail repository directory " + file.getAbsolutePath() +
+                " does not exsist",
+                file.exists());
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 builder.buildConfigurationContext(file.getAbsolutePath());

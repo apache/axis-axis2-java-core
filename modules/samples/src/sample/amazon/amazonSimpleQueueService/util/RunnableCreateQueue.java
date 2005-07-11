@@ -47,15 +47,23 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
 
     public void run() {
         if (this.createQueue.isEditable()) {
-            OMElement createQueueElement = OMElementCreator.creatQueueElement(this.createQueue.getText(), getKey());
-            this.axis2EngineRuns("CreateQueue", createQueueElement,
-                                 new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,
-                                                                           this.enqueue, this.result));
+            OMElement createQueueElement = OMElementCreator.creatQueueElement(
+                    this.createQueue.getText(), getKey());
+            this.axis2EngineRuns("CreateQueue",
+                    createQueueElement,
+                    new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,
+                            this.enqueue, this.result));
         }
         if (this.enqueue.isEditable()) {
-            OMElement enqueueElement = OMElementCreator.enqueueElement(this.enqueue.getText(),
-                                                                       this.queueCode.getText(), getKey());
-            this.axis2EngineRuns("Enqueue", enqueueElement, new SimpleQueueEnqueueCallbackHandler(this.createQueue, this.queueCode, this.enqueue, this.result));
+            OMElement enqueueElement = OMElementCreator.enqueueElement(
+                    this.enqueue.getText(),
+                    this.queueCode.getText(), getKey());
+            this.axis2EngineRuns("Enqueue",
+                    enqueueElement,
+                    new SimpleQueueEnqueueCallbackHandler(this.createQueue,
+                            this.queueCode,
+                            this.enqueue,
+                            this.result));
         }
     }
 
@@ -66,7 +74,9 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
         try {
             Call call = new Call();
             call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP,
+                    false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

@@ -35,7 +35,9 @@ public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFa
         super(parent, localName, true);
     }
 
-    protected SOAPFaultSubCodeImpl(OMElement parent, String localName, OMXMLParserWrapper builder) {
+    protected SOAPFaultSubCodeImpl(OMElement parent,
+                                   String localName,
+                                   OMXMLParserWrapper builder) {
         super(parent, localName, builder);
     }
 
@@ -45,7 +47,9 @@ public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFa
 
     public SOAPFaultValue getValue() {
         if (value == null) {
-            value = (SOAPFaultValue) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
+            value =
+                    (SOAPFaultValue) UtilProvider.getChildWithName(this,
+                            SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
         }
         return value;
     }
@@ -57,7 +61,9 @@ public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFa
 
     public SOAPFaultSubCode getSubCode() {
         if (subCode == null) {
-            subCode = (SOAPFaultSubCode) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
+            subCode =
+                    (SOAPFaultSubCode) UtilProvider.getChildWithName(this,
+                            SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
         }
         return subCode;
     }

@@ -71,14 +71,24 @@ public class NoNamespaceSerializerTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        readerOne = XMLInputFactory.newInstance().
-                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextOne.getBytes())));
-        readerTwo = XMLInputFactory.newInstance().
-                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
+        readerOne =
+                XMLInputFactory.newInstance().
+                createXMLStreamReader(
+                        new InputStreamReader(
+                                new ByteArrayInputStream(xmlTextOne.getBytes())));
+        readerTwo =
+                XMLInputFactory.newInstance().
+                createXMLStreamReader(
+                        new InputStreamReader(
+                                new ByteArrayInputStream(xmlTextTwo.getBytes())));
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                                createXMLStreamWriter(System.out));
-        builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerOne);
-        builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerTwo);
+                createXMLStreamWriter(System.out));
+        builderOne =
+                OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                        OMAbstractFactory.getSOAP11Factory(), readerOne);
+        builderTwo =
+                OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                        OMAbstractFactory.getSOAP11Factory(), readerTwo);
     }
 
 
@@ -101,10 +111,15 @@ public class NoNamespaceSerializerTest extends TestCase {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
         env.serializeWithCache(omOutput);
         OMElement balanceElement = env.getBody().getFirstElement();
-        assertEquals("Deafualt namespace has not been set properly", balanceElement.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
+        assertEquals("Deafualt namespace has not been set properly",
+                balanceElement.getNamespace().getName(),
+                "http://localhost:8081/axis/services/BankPort/");
 
         OMElement accountNo = balanceElement.getFirstElement();
-        assertEquals("Deafualt namespace of children has not been set properly", accountNo.getNamespace().getName(), "http://localhost:8081/axis/services/BankPort/");
+        assertEquals(
+                "Deafualt namespace of children has not been set properly",
+                accountNo.getNamespace().getName(),
+                "http://localhost:8081/axis/services/BankPort/");
 
     }
 
@@ -112,8 +127,12 @@ public class NoNamespaceSerializerTest extends TestCase {
             throws Exception {
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = omFactory.getDefaultEnvelope();
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(omFactory, XMLInputFactory.newInstance().
-                                                                                        createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+                omFactory,
+                XMLInputFactory.newInstance().
+                createXMLStreamReader(
+                        new InputStreamReader(
+                                new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
         OMOutput omOutput = new OMOutput(System.out, false);

@@ -40,11 +40,15 @@ public class ServiceDescriptionBuilderTest extends TestCase {
     private void initialize() throws Exception {
 
         if (null == this.service) {
-            InputStream in = new FileInputStream(new File("./test-resources/service.wsdl"));
+            InputStream in = new FileInputStream(
+                    new File("./test-resources/service.wsdl"));
             if (in == null) {
                 throw new Exception("Input Stream is null , fileNot Found");
             }
-            WSDLDescription womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory()).getDescription();
+            WSDLDescription womDescription = WOMBuilderFactory.getBuilder(
+                    WOMBuilderFactory.WSDL11)
+                    .build(in, new AxisDescWSDLComponentFactory())
+                    .getDescription();
             Iterator iterator = womDescription.getServices().keySet().iterator();
             if (iterator.hasNext()) {
                 this.service = (ServiceDescription) iterator.next();

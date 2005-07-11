@@ -61,17 +61,24 @@ public class WizardPane1 extends WizardPane {
         this.setSize(width, height);
 
         initDescription("Welcome to the new AXIS Service packager Wizard Interface.\n\n " +
-                        "Insert the location for the class files here.This should be a folder with \n" +
-                        " the compiled classes");
+                "Insert the location for the class files here.This should be a folder with \n" +
+                " the compiled classes");
 
 
         this.classFileLocationLabel = new JLabel("class file location");
         this.add(this.classFileLocationLabel);
-        this.classFileLocationLabel.setBounds(hgap, descHeight, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.classFileLocationLabel.setBounds(hgap,
+                descHeight,
+                Constants.UIConstants.LABEL_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
         this.classFileLocationTextBox = new JTextField();
         this.add(this.classFileLocationTextBox);
-        this.classFileLocationTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, descHeight, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.classFileLocationTextBox.setBounds(
+                Constants.UIConstants.LABEL_WIDTH + 2 * hgap,
+                descHeight,
+                Constants.UIConstants.TEXT_BOX_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.classFileLocationTextBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleTextBoxChange();
@@ -91,7 +98,12 @@ public class WizardPane1 extends WizardPane {
 
         this.browseButton = new JButton(".");
         this.add(this.browseButton);
-        this.browseButton.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap + Constants.UIConstants.TEXT_BOX_WIDTH, descHeight, Constants.UIConstants.BROWSE_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.browseButton.setBounds(
+                Constants.UIConstants.LABEL_WIDTH + 2 * hgap +
+                Constants.UIConstants.TEXT_BOX_WIDTH,
+                descHeight,
+                Constants.UIConstants.BROWSE_BUTTON_WIDTH,
+                Constants.UIConstants.GENERAL_COMP_HEIGHT);
         this.browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 classFileLocationTextBox.setText(browseForAFolder());

@@ -18,7 +18,21 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.EntityReference;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
 
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
@@ -46,9 +60,12 @@ public class SOAPPartImpl extends SOAPPart {
      */
     private String currentEncoding = "UTF-8";
 
-    public SOAPPartImpl(SOAPMessageImpl parent, Object initialContents, boolean isBodyStream) throws SOAPException {
+    public SOAPPartImpl(SOAPMessageImpl parent,
+                        Object initialContents,
+                        boolean isBodyStream) throws SOAPException {
 
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils.generateSessionId());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                SessionUtils.generateSessionId());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
         StAXSOAPModelBuilder stAXSOAPModelBuilder;
 
@@ -59,8 +76,12 @@ public class SOAPPartImpl extends SOAPPart {
                 envelope = initialContents;
             } else if (initialContents instanceof InputStream) {
                 //XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader((InputStream)initialContents);
-                InputStreamReader inr = new InputStreamReader((InputStream) initialContents);
-                stAXSOAPModelBuilder = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(inr));
+                InputStreamReader inr = new InputStreamReader(
+                        (InputStream) initialContents);
+                stAXSOAPModelBuilder =
+                        new StAXSOAPModelBuilder(
+                                XMLInputFactory.newInstance()
+                        .createXMLStreamReader(inr));
                 org.apache.axis2.soap.SOAPEnvelope omEnv = stAXSOAPModelBuilder.getSOAPEnvelope();
                 envelope = new SOAPEnvelopeImpl(omEnv);
                 ((SOAPEnvelopeImpl) envelope).setOwnerDocument(this);
@@ -290,7 +311,8 @@ public class SOAPPartImpl extends SOAPPart {
         return document.createCDATASection(data);
     }
 
-    public ProcessingInstruction createProcessingInstruction(String target, String data)
+    public ProcessingInstruction createProcessingInstruction(String target,
+                                                             String data)
             throws DOMException {
         return document.createProcessingInstruction(target, data);
     }
@@ -322,7 +344,8 @@ public class SOAPPartImpl extends SOAPPart {
         return document.createAttributeNS(namespaceURI, qualifiedName);
     }
 
-    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+    public NodeList getElementsByTagNameNS(String namespaceURI,
+                                           String localName) {
         return document.getElementsByTagNameNS(namespaceURI, localName);
     }
 

@@ -28,7 +28,10 @@ public class SOAPElementTest extends TestCase {
     private SOAPElement soapElem;
 
     protected void setUp() throws Exception {
-        soapElem = SOAPFactoryImpl.newInstance().createElement("Test", "test", "http://test.apache.org/");
+        soapElem =
+                SOAPFactoryImpl.newInstance().createElement("Test",
+                        "test",
+                        "http://test.apache.org/");
     }
 
     public void testAddTextNode() throws Exception {

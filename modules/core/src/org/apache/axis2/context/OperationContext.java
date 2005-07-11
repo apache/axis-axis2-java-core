@@ -151,7 +151,7 @@ public class OperationContext extends AbstractContext {
             return outMessageContext;
         } else {
             throw new AxisFault("Unrecognized message label: '" + messageLabel
-                                + "'");
+                    + "'");
         }
     }
 

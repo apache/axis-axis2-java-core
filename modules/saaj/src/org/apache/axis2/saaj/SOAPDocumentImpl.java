@@ -16,7 +16,21 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.util.XMLUtils;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.EntityReference;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
@@ -121,7 +135,8 @@ public class SOAPDocumentImpl implements Document {
      */
     public EntityReference createEntityReference(String name)
             throws DOMException {
-        throw new java.lang.UnsupportedOperationException("createEntityReference");
+        throw new java.lang.UnsupportedOperationException(
+                "createEntityReference");
     }
 
     /* (non-Javadoc)
@@ -184,18 +199,23 @@ public class SOAPDocumentImpl implements Document {
     /* (non-Javadoc)
      * @see org.w3c.dom.Document#getElementsByTagNameNS(java.lang.String, java.lang.String)
      */
-    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+    public NodeList getElementsByTagNameNS(String namespaceURI,
+                                           String localName) {
         try {
             NodeListImpl list = new NodeListImpl();
             if (soapPart != null) {
                 SOAPEnvelopeImpl soapEnv = (SOAPEnvelopeImpl) soapPart.getEnvelope();
                 SOAPHeaderImpl header = (SOAPHeaderImpl) soapEnv.getHeader();
                 if (header != null) {
-                    list.addNodeList(header.getElementsByTagNameNS(namespaceURI, localName));
+                    list.addNodeList(
+                            header.getElementsByTagNameNS(namespaceURI,
+                                    localName));
                 }
                 SOAPBodyImpl body = (SOAPBodyImpl) soapEnv.getBody();
                 if (body != null) {
-                    list.addNodeList(body.getElementsByTagNameNS(namespaceURI, localName));
+                    list.addNodeList(
+                            body.getElementsByTagNameNS(namespaceURI,
+                                    localName));
                 }
             }
             return list;
@@ -208,7 +228,8 @@ public class SOAPDocumentImpl implements Document {
     public ProcessingInstruction createProcessingInstruction(String target,
                                                              String data)
             throws DOMException {
-        throw new java.lang.UnsupportedOperationException("createProcessingInstruction");
+        throw new java.lang.UnsupportedOperationException(
+                "createProcessingInstruction");
     }
 
 
@@ -259,7 +280,7 @@ public class SOAPDocumentImpl implements Document {
 
     public String getNodeValue() throws DOMException {
         throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
-                               "Cannot use TextNode.get in " + this);
+                "Cannot use TextNode.get in " + this);
     }
 
     public String getPrefix() {
@@ -268,7 +289,7 @@ public class SOAPDocumentImpl implements Document {
 
     public void setNodeValue(String nodeValue) throws DOMException {
         throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
-                               "Cannot use TextNode.set in " + this);
+                "Cannot use TextNode.set in " + this);
     }
 
 

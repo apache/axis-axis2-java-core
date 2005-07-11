@@ -38,34 +38,52 @@ public class SOAPFaultRoleTest extends SOAPFaultTestCase {
     //SOAP 1.1 Fault Role Test (Programaticaly Created)
     public void testSOAP11SetRoleValue() {
         soap11FaultRole.setRoleValue("This is only a test");
-        assertTrue("SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value", soap11FaultRole.getRoleValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
+                soap11FaultRole.getRoleValue().equals("This is only a test"));
     }
 
     public void testSOAP11GetRoleValue() {
-        assertTrue("SOAP 1.1 Fault Role Test : - After creating SOAPFaultRole, it has a value", soap11FaultRole.getRoleValue().equals(""));
+        assertTrue(
+                "SOAP 1.1 Fault Role Test : - After creating SOAPFaultRole, it has a value",
+                soap11FaultRole.getRoleValue().equals(""));
         soap11FaultRole.setRoleValue("This is only a test");
-        assertTrue("SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value", soap11FaultRole.getRoleValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
+                soap11FaultRole.getRoleValue().equals("This is only a test"));
     }
 
     //SOAP 1.2 Fault Role Test (Programaticaly Created)
     public void testSOAP12SetRoleValue() {
         soap12FaultRole.setRoleValue("This is only a test");
-        assertTrue("SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value", soap12FaultRole.getRoleValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
+                soap12FaultRole.getRoleValue().equals("This is only a test"));
     }
 
     public void testSOAP12GetRoleValue() {
-        assertTrue("SOAP 1.2 Fault Role Test : - After creating SOAPFaultRole, it has a value", soap12FaultRole.getRoleValue().equals(""));
+        assertTrue(
+                "SOAP 1.2 Fault Role Test : - After creating SOAPFaultRole, it has a value",
+                soap12FaultRole.getRoleValue().equals(""));
         soap12FaultRole.setRoleValue("This is only a test");
-        assertTrue("SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value", soap12FaultRole.getRoleValue().equals("This is only a test"));
+        assertTrue(
+                "SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
+                soap12FaultRole.getRoleValue().equals("This is only a test"));
     }
 
     //SOAP 1.1 Fault Role Test (With Parser)
     public void testSOAP11GetRoleValueWithParser() {
-        assertTrue("SOAP 1.1 Fault Role Test With Parser : - getRoleValue method returns incorrect value", soap11FaultRoleWithParser.getRoleValue().equals("http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver"));
+        assertTrue(
+                "SOAP 1.1 Fault Role Test With Parser : - getRoleValue method returns incorrect value",
+                soap11FaultRoleWithParser.getRoleValue().equals(
+                        "http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver"));
     }
 
     //SOAP 1.2 Fault Role Test (With Parser)
     public void testSOAP12GetRoleValueWithParser() {
-        assertTrue("SOAP 1.2 Fault Role Test With Parser : - getRoleValue method returns incorrect value", soap12FaultRoleWithParser.getRoleValue().equals("ultimateReceiver"));
+        assertTrue(
+                "SOAP 1.2 Fault Role Test With Parser : - getRoleValue method returns incorrect value",
+                soap12FaultRoleWithParser.getRoleValue().equals(
+                        "ultimateReceiver"));
     }
 }

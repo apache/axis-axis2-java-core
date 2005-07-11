@@ -30,20 +30,31 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Class ServiceDescription
  */
 public class ServiceDescription
         extends WSDLServiceImpl
-        implements WSDLService, ParameterInclude, FlowInclude, DescriptionConstants {
+        implements WSDLService,
+        ParameterInclude,
+        FlowInclude,
+        DescriptionConstants {
 
     private Definition difDefinition = null; //to store the wsdl definition , which is build at the deployment time
 
@@ -93,18 +104,22 @@ public class ServiceDescription
             return;
         }
         if (moduleref != null) {
-            Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
-            for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+            Collection collectionModule = (Collection) this.getComponentProperty(
+                    MODULEREF_KEY);
+            for (Iterator iterator = collectionModule.iterator();
+                 iterator.hasNext();) {
                 ModuleDescription modu = (ModuleDescription) iterator.next();
                 if (modu.getName().equals(moduleref.getName())) {
-                    throw new AxisFault(moduleref.getName().getLocalPart() + " module has alredy engaged to the seevice" +
-                                        "  operation terminated !!!");
+                    throw new AxisFault(moduleref.getName().getLocalPart() +
+                            " module has alredy engaged to the seevice" +
+                            "  operation terminated !!!");
                 }
 
             }
         }
         new PhaseResolver().engageModuleToService(this, moduleref);
-        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
+        Collection collectionModule = (Collection) this.getComponentProperty(
+                MODULEREF_KEY);
         collectionModule.add(moduleref);
     }
 
@@ -123,8 +138,10 @@ public class ServiceDescription
     }
 
     public void addToEngagModuleList(ModuleDescription moduleName) {
-        Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
+        Collection collectionModule = (Collection) this.getComponentProperty(
+                MODULEREF_KEY);
+        for (Iterator iterator = collectionModule.iterator();
+             iterator.hasNext();) {
             ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
             if (moduleName.getName().equals(moduleDescription.getName())) {
                 return;
@@ -434,7 +451,8 @@ public class ServiceDescription
     }
 
     public OperationDescription getOperation(String ncName) {
-        return (OperationDescription) this.getServiceInterface().getOperations().get(ncName);
+        return (OperationDescription) this.getServiceInterface().getOperations()
+                .get(ncName);
     }
 
     /**
@@ -452,8 +470,10 @@ public class ServiceDescription
     public OperationDescription getOperationBySOAPAction(String soapAction) {
         Iterator iterator = this.getEndpoints().keySet().iterator();
         if (iterator.hasNext()) {
-            WSDLEndpoint endpoint = (WSDLEndpoint) this.getEndpoints().get(iterator.next());
-            return this.getOperationBySOAPAction(soapAction, endpoint.getName());
+            WSDLEndpoint endpoint = (WSDLEndpoint) this.getEndpoints().get(
+                    iterator.next());
+            return this.getOperationBySOAPAction(soapAction,
+                    endpoint.getName());
         }
 
         return null;
@@ -474,19 +494,25 @@ public class ServiceDescription
      * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
      *         otherwise will return null.
      */
-    public OperationDescription getOperationBySOAPAction(String soapAction, QName endpoint) {
-        HashMap bindingOperations = this.getEndpoint(endpoint).getBinding().getBindingOperations();
+    public OperationDescription getOperationBySOAPAction(String soapAction,
+                                                         QName endpoint) {
+        HashMap bindingOperations = this.getEndpoint(endpoint).getBinding()
+                .getBindingOperations();
         Iterator operationKeySetIterator = bindingOperations.keySet().iterator();
         OperationDescription operation = null;
         int count = 0;
         while (operationKeySetIterator.hasNext()) {
-            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations.get(operationKeySetIterator.next());
-            Iterator extIterator = bindingOperation.getExtensibilityElements().iterator();
+            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations.get(
+                    operationKeySetIterator.next());
+            Iterator extIterator = bindingOperation.getExtensibilityElements()
+                    .iterator();
             while (extIterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
                 if (element.getType().equals(ExtensionConstants.SOAP_OPERATION)) {
-                    if (((SOAPOperation) element).getSoapAction().equals(soapAction)) {
-                        operation = (OperationDescription) bindingOperation.getOperation();
+                    if (((SOAPOperation) element).getSoapAction().equals(
+                            soapAction)) {
+                        operation =
+                                (OperationDescription) bindingOperation.getOperation();
                         count++;
                     }
                 }
@@ -510,13 +536,15 @@ public class ServiceDescription
     public ServiceContext findServiceContext(MessageContext msgContext) {
         ServiceContext serviceContext = null;
         if (null == msgContext.getServiceInstanceID()) {
-            serviceContext = new ServiceContext(this, msgContext.getSystemContext());
+            serviceContext =
+                    new ServiceContext(this, msgContext.getSystemContext());
             //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
             //			msgContext.getSystemContext().registerServiceContext(serviceContext.getServiceInstanceID(),
             // serviceContext);
         } else {
             serviceContext =
-                    (ServiceContext) msgContext.getSystemContext().getServiceContext(msgContext.getServiceInstanceID());
+                    (ServiceContext) msgContext.getSystemContext()
+                    .getServiceContext(msgContext.getServiceInstanceID());
         }
 
         return serviceContext;
@@ -553,7 +581,8 @@ public class ServiceDescription
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
             if (wsdlDefinition != null) {
-                Iterator sreviceitr = wsdlDefinition.getServices().keySet().iterator();
+                Iterator sreviceitr = wsdlDefinition.getServices().keySet()
+                        .iterator();
                 while (sreviceitr.hasNext()) {
                     wsdlDefinition.removeService((QName) sreviceitr.next());
                 }
@@ -572,7 +601,8 @@ public class ServiceDescription
 
                 Map bindingsMap = wsdlDefinition.getBindings();
                 Collection bind_col = bindingsMap.values();
-                for (Iterator iterator = bind_col.iterator(); iterator.hasNext();) {
+                for (Iterator iterator = bind_col.iterator();
+                     iterator.hasNext();) {
                     Binding binding = (Binding) iterator.next();
                     port.setBinding(binding);
                     break;
@@ -580,10 +610,12 @@ public class ServiceDescription
                 service.addPort(port);
 
                 wsdlDefinition.addService(service);
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
+                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(
+                        wsdlDefinition, out);
                 out.flush();
             } else {
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
+                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(
+                        wsdlDefinition, out);
                 out.write("<wsdl>WSDL is NOT found</wsdl>");
                 out.flush();
             }

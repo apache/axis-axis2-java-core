@@ -39,8 +39,10 @@ public class SimpleQueueEnqueueCallbackHandler extends Callback {
     public SimpleQueueEnqueueCallbackHandler() {
     }//defaultConstructor
 
-    public SimpleQueueEnqueueCallbackHandler(JTextField createQueue, JTextField queueCode,
-                                             JTextField enqueue, JTextArea result) {
+    public SimpleQueueEnqueueCallbackHandler(JTextField createQueue,
+                                             JTextField queueCode,
+                                             JTextField enqueue,
+                                             JTextArea result) {
         super();
         this.createQueue = createQueue;
         this.queueCode = queueCode;

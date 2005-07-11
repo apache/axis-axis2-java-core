@@ -32,7 +32,8 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
 
     protected void init(String pageName) {
         setTitle(CodegenWizardPlugin.getResourceString(pageName + ".title"));
-        setDescription(CodegenWizardPlugin.getResourceString(pageName + ".desc"));
+        setDescription(
+                CodegenWizardPlugin.getResourceString(pageName + ".desc"));
         setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
         
         /*
@@ -42,7 +43,7 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
         IDialogSettings rootSettings = CodegenWizardPlugin.getDefault()
                 .getDialogSettings();
         IDialogSettings section = rootSettings.getSection(this.getClass()
-                                                          .getName());
+                .getName());
         if (section == null) {
             settings = rootSettings.addNewSection(this.getClass().getName());
             restoredFromPreviousSettings = false;

@@ -29,7 +29,9 @@ public class WizardPane3 extends WizardPage {
     public WizardPane3() {
         super("page3");
         this.setTitle(ServiceArchiver.getResourceString("page2.title"));
-        this.setDescription(ServiceArchiver.getResourceString("Generate the service XML file"));
+        this.setDescription(
+                ServiceArchiver.getResourceString(
+                        "Generate the service XML file"));
         this.setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
     }
 

@@ -79,9 +79,15 @@ public abstract class SOAPBodyImpl extends SOAPElement
         } else {
             OMElement element = getFirstElement();
             if (element != null
-                    && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                    && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
-                    || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {  //added this line
+                    &&
+                    SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(
+                            element.getLocalName())
+                    &&
+                    (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                            element.getNamespace().getName())
+                    ||
+                    SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                            element.getNamespace().getName()))) {  //added this line
                 hasSOAPFault = true;
                 return true;
             } else {
@@ -102,9 +108,15 @@ public abstract class SOAPBodyImpl extends SOAPElement
         if (hasSOAPFault) {
             return (SOAPFault) element;
         } else if (element != null
-                && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
-                && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
-                || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {     //added this line
+                &&
+                SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(
+                        element.getLocalName())
+                &&
+                (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                        element.getNamespace().getName())
+                ||
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                        element.getNamespace().getName()))) {     //added this line
             hasSOAPFault = true;
             return (SOAPFault) element;
         } else {
@@ -121,7 +133,8 @@ public abstract class SOAPBodyImpl extends SOAPElement
      */
     public void addFault(SOAPFault soapFault) throws OMException {
         if (hasSOAPFault) {
-            throw new OMException("SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
+            throw new OMException(
+                    "SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
         }
         addChild(soapFault);
         hasSOAPFault = true;
@@ -129,7 +142,8 @@ public abstract class SOAPBodyImpl extends SOAPElement
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAPEnvelopeImpl)) {
-            throw new SOAPProcessingException("Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+            throw new SOAPProcessingException(
+                    "Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
         }
     }
 }

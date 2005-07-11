@@ -61,7 +61,8 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testService() {
-        ServiceDescription service = new ServiceDescription(new QName("Service1"));
+        ServiceDescription service = new ServiceDescription(
+                new QName("Service1"));
         testParameteInClude(service);
         testFlowIncludeTest(service);
 

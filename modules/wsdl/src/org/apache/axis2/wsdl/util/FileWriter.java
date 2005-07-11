@@ -36,7 +36,11 @@ public class FileWriter {
      * @throws IOException
      * @throws Exception
      */
-    public static File createClassFile(File rootLocation, String packageName, String fileName, String extension) throws IOException, Exception {
+    public static File createClassFile(File rootLocation,
+                                       String packageName,
+                                       String fileName,
+                                       String extension) throws IOException,
+            Exception {
         File returnFile = null;
         File root = rootLocation;
 
@@ -77,8 +81,15 @@ public class FileWriter {
      * @throws IOException
      * @throws Exception
      */
-    public static File createClassFile(File rootLocation, String packageName, String fileName, int fileType) throws IOException, Exception {
-        return createClassFile(rootLocation, packageName, fileName, getExtension(fileType));
+    public static File createClassFile(File rootLocation,
+                                       String packageName,
+                                       String fileName,
+                                       int fileType) throws IOException,
+            Exception {
+        return createClassFile(rootLocation,
+                packageName,
+                fileName,
+                getExtension(fileType));
 
     }
 

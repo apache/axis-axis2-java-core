@@ -58,7 +58,10 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, fileName, language);
+        File outputFile = FileWriter.createClassFile(outputFileLocation,
+                packageName,
+                fileName,
+                language);
         this.stream = new FileOutputStream(outputFile);
     }
 
@@ -69,7 +72,9 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void writeOutFile(InputStream documentStream) throws Exception {
-        XSLTTemplateProcessor.parse(this.stream, documentStream, this.xsltStream);
+        XSLTTemplateProcessor.parse(this.stream,
+                documentStream,
+                this.xsltStream);
         this.stream.flush();
         this.stream.close();
 

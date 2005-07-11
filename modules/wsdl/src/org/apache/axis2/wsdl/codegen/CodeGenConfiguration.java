@@ -75,15 +75,20 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
         this.wom = wom;
 
-        String outputLocation = ((CommandLineOption) optionMap.get(OUTPUT_LOCATION_OPTION)).getOptionValue();
+        String outputLocation = ((CommandLineOption) optionMap.get(
+                OUTPUT_LOCATION_OPTION)).getOptionValue();
         this.outputLocation = new File(outputLocation);
 
         serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION) != null);
-        generateDeployementDescriptor = (optionMap.get(GENERATE_SERVICE_DESCRIPTION_OPTION) != null);
+        generateDeployementDescriptor = (optionMap.get(
+                GENERATE_SERVICE_DESCRIPTION_OPTION) !=
+                null);
         writeTestCase = (optionMap.get(GENERATE_TEST_CASE_OPTION) != null);
 
-        boolean asyncFlagPresent = (optionMap.get(CODEGEN_ASYNC_ONLY_OPTION) != null);
-        boolean syncFlagPresent = (optionMap.get(CODEGEN_SYNC_ONLY_OPTION) != null);
+        boolean asyncFlagPresent = (optionMap.get(CODEGEN_ASYNC_ONLY_OPTION) !=
+                null);
+        boolean syncFlagPresent = (optionMap.get(CODEGEN_SYNC_ONLY_OPTION) !=
+                null);
         if (asyncFlagPresent) {
             this.asyncOn = true;
             this.syncOn = false;
@@ -93,12 +98,14 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             this.syncOn = true;
         }
 
-        CommandLineOption packageOption = (CommandLineOption) optionMap.get(PACKAGE_OPTION);
+        CommandLineOption packageOption = (CommandLineOption) optionMap.get(
+                PACKAGE_OPTION);
         if (packageOption != null) {
             this.packageName = packageOption.getOptionValue();
         }
 
-        CommandLineOption langOption = (CommandLineOption) optionMap.get(STUB_LANGUAGE_OPTION);
+        CommandLineOption langOption = (CommandLineOption) optionMap.get(
+                STUB_LANGUAGE_OPTION);
         if (langOption != null) {
             loadLanguge(langOption.getOptionValue());
         }
