@@ -103,18 +103,15 @@ public class StAXOMBuilder extends StAXBuilder {
     protected OMNode createComment() throws OMException {
         OMNode node;
         if (lastNode == null) {
-            node = omfactory.createText(parser.getText());
+            node = omfactory.createText("<!--" + parser.getText() + "-->");
             document.addChild(node);
         } else if (lastNode.isComplete()) {
             node =
                     omfactory.createText((OMElement) lastNode.getParent(),
-                            parser.getText());
-            lastNode.setNextSibling(node);
-            node.setPreviousSibling(lastNode);
+                            "<!--" + parser.getText() + "-->");
         } else {
             OMElement e = (OMElement) lastNode;
-            node = omfactory.createText(e, parser.getText());
-            e.setFirstChild(node);
+            node = omfactory.createText(e, "<!--" + parser.getText() + "-->");
         }
         node.setType(OMNode.COMMENT_NODE);
         return node;
@@ -148,8 +145,6 @@ public class StAXOMBuilder extends StAXBuilder {
                     omfactory.createText((OMElement) lastNode.getParent(),
                             "<?" + target + " " + data + "?>");
             node.setType(OMNode.PI_NODE);
-            lastNode.setNextSibling(node);
-            node.setPreviousSibling(lastNode);
         } else if (lastNode instanceof OMText) {
             node = omfactory.createText("<?" + target + " " + data + "?>");
             node.setType(OMNode.PI_NODE);
@@ -158,7 +153,6 @@ public class StAXOMBuilder extends StAXBuilder {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createText(e, "<?" + target + " " + data + "?>");
             node.setType(OMNode.PI_NODE);
-            e.setFirstChild(node);
         }
         return node;
     }

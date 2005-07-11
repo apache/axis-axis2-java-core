@@ -611,8 +611,9 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the target of the processing-instruction node
      */
     public String getProcessingInstructionTarget(Object object) {
-        //TODO: Fix this better?
-        return super.getProcessingInstructionTarget(object);
+        String data = ((OMText)object).getText().trim();
+        int end = data.indexOf(' ');
+        return data.substring(2,end);
     }
 
     /**
@@ -622,8 +623,10 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the data of the processing-instruction node
      */
     public String getProcessingInstructionData(Object object) {
-        //TODO: Fix this better?
-        return super.getProcessingInstructionData(object);
+        String data = ((OMText)object).getText().trim();
+        int begin = data.indexOf(' ') + 1;
+        int end = data.length()-2;
+        return data.substring(begin,end);
     }
 
     /**
