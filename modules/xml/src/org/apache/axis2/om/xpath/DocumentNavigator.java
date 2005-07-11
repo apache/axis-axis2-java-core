@@ -20,6 +20,7 @@ import org.jaxen.util.SingleObjectIterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.namespace.QName;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -317,7 +318,12 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public Iterator getAttributeAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (isElement(contextNode)) {
-            return ((OMElement) contextNode).getAttributes();
+            ArrayList attributes = new ArrayList();
+            Iterator i = ((OMElement) contextNode).getAttributes();
+            while(i != null && i.hasNext()){
+                attributes.add(new OMAttributeEx((OMAttribute)i.next(), (OMContainer)contextNode));
+            }
+            return attributes.iterator();
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -419,6 +425,8 @@ public class DocumentNavigator extends DefaultNavigator {
             return new SingleObjectIterator(((OMNode) contextNode).getParent());
         }  else if (contextNode instanceof OMNamespaceEx) {
             return new SingleObjectIterator(((OMNamespaceEx) contextNode).getParent());
+        }  else if (contextNode instanceof OMAttributeEx) {
+            return new SingleObjectIterator(((OMAttributeEx) contextNode).getParent());
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -648,10 +656,10 @@ public class DocumentNavigator extends DefaultNavigator {
 
     class OMNamespaceEx implements OMNamespace {
         OMNamespace originalNsp = null;
-        OMContainer contextNode = null;
-        OMNamespaceEx(OMNamespace nsp, OMContainer node) {
+        OMContainer parent = null;
+        OMNamespaceEx(OMNamespace nsp, OMContainer parent) {
             originalNsp = nsp;
-            contextNode = node;
+            this.parent = parent;
         }
         public boolean equals(String uri, String prefix) {
             return originalNsp.equals(uri, prefix);
@@ -666,7 +674,47 @@ public class DocumentNavigator extends DefaultNavigator {
         }
 
         public OMContainer getParent() {
-            return contextNode;
+            return parent;
+        }
+    }
+
+    class OMAttributeEx implements OMAttribute {
+        OMAttribute attribute = null;
+        OMContainer parent = null;
+        OMAttributeEx(OMAttribute attribute, OMContainer parent) {
+            this.attribute = attribute;
+            this.parent = parent;
+        }
+        public String getLocalName() {
+            return attribute.getLocalName();
+        }
+
+        public void setLocalName(String localName) {
+            attribute.setLocalName(localName);
+        }
+
+        public String getValue() {
+            return attribute.getValue();
+        }
+
+        public void setValue(String value) {
+            attribute.setValue(value);
+        }
+
+        public void setOMNamespace(OMNamespace omNamespace) {
+            attribute.setOMNamespace(omNamespace);
+        }
+
+        public OMNamespace getNamespace() {
+            return attribute.getNamespace();
+        }
+
+        public QName getQName() {
+            return attribute.getQName();
+        }
+
+        public OMContainer getParent() {
+            return parent;
         }
     }
 }
