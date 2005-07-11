@@ -172,12 +172,12 @@ public class ArchiveReader implements DeploymentConstants {
      * @return
      * @throws DeploymentException
      */
-    public File creatModuleArchivefromResource(String moduleName) throws DeploymentException {
+    public File creatModuleArchivefromResource(String moduleName , String axis2repository) throws DeploymentException {
         File modulearchiveFile = null;
         File modules = null;
         try {
             int BUFFER = 2048;
-            if(DeploymentEngine.axis2repository == null ){
+            if(axis2repository == null ){
                 String userHome = System.getProperty("user.home");
                 File userHomedir = new File(userHome);
                 File repository = new File(userHomedir, ".axis2home");
@@ -187,9 +187,9 @@ public class ArchiveReader implements DeploymentConstants {
                     modules.mkdirs();
                 }
             } else {
-                modules = new File(DeploymentEngine.axis2repository , "modules");
+                modules = new File(axis2repository , "modules");
                 if(!modules.exists()){
-                    modules = new File(DeploymentEngine.axis2repository, "modules");
+                    modules = new File(axis2repository, "modules");
                     modules.mkdirs();
                 }
             }

@@ -46,7 +46,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
     private static Scheduler scheduler;
 
-    public static String axis2repository = null;
+    public String axis2repository = null;
 
 
     private boolean hotDeployment = true;   //to do hot deployment or not
@@ -212,6 +212,7 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListenerImpl(folderName, this);
         }
         try {
+            ((AxisConfigurationImpl)axisConfig).setRepository(axis2repository);
             engagdeModules();
             validateSystemPredefinedPhases();
             ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
@@ -252,6 +253,7 @@ public class DeploymentEngine implements DeploymentConstants {
             hotUpdate = false;
             new RepositoryListenerImpl(folderName, this);
             try {
+                ((AxisConfigurationImpl)axisConfig).setRepository(axis2repository);
                 engagdeModules();
                 ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
             } catch (AxisFault axisFault) {

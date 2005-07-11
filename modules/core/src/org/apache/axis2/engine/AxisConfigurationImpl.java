@@ -79,6 +79,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     protected final List engagedModules;
 
+    private String axis2Repository =null;
+
     protected HashMap messagRecievers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
@@ -318,7 +320,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
         if(module == null ) {
-            File file =  new  ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart());
+            File file =  new  ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart(),getRepository());
             module =  new DeploymentEngine().buildModule(file);
             isNewmodule = true;
         }
@@ -351,6 +353,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void setPhasesinfo(PhasesInfo phasesinfo) {
         this.phasesinfo = phasesinfo;
+    }
+
+    public String getRepository() {
+        return axis2Repository;
+    }
+
+    public void setRepository(String axis2Repository) {
+        this.axis2Repository = axis2Repository;
     }
 
 }
