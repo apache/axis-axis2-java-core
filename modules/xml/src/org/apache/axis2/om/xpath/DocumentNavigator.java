@@ -647,14 +647,12 @@ public class DocumentNavigator extends DefaultNavigator {
         if (contextNode == null ||
                 contextNode instanceof OMDocument) {
             return null;
+        } else if (contextNode instanceof OMAttributeEx) {
+            return ((OMAttributeEx) contextNode).getParent();
+        } else if (contextNode instanceof OMNamespaceEx) {
+            return ((OMNamespaceEx) contextNode).getParent();
         }
-        else if(contextNode instanceof OMAttributeEx) {
-            return ((OMAttributeEx)contextNode).getParent();
-        }
-        else if(contextNode instanceof OMNamespaceEx) {
-            return ((OMNamespaceEx)contextNode).getParent();
-        }
-        return getDocumentNode(((OMNode) contextNode).getParent());
+        return ((OMNode) contextNode).getParent();
     }
 
     class OMNamespaceEx implements OMNamespace {
