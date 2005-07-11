@@ -417,6 +417,8 @@ public class DocumentNavigator extends DefaultNavigator {
     public Iterator getParentAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (contextNode instanceof OMNode) {
             return new SingleObjectIterator(((OMNode) contextNode).getParent());
+        }  else if (contextNode instanceof OMNamespaceEx) {
+            return new SingleObjectIterator(((OMNamespaceEx) contextNode).getParent());
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
