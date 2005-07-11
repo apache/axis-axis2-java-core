@@ -355,12 +355,12 @@ public class DocumentNavigator extends DefaultNavigator {
                     String prefix = namespace.getPrefix();
                     if (prefix != null && ! prefixes.contains(prefix)) {
                         prefixes.add(prefix);
-                        nsList.add(namespace);
+                        nsList.add(new OMNamespaceEx(namespace, context));
                     }
                 }
             }
         }
-        nsList.add(new OMNamespaceImpl("http://www.w3.org/XML/1998/namespace", "xml"));
+        nsList.add(new OMNamespaceEx(new OMNamespaceImpl("http://www.w3.org/XML/1998/namespace", "xml"), (OMContainer)contextNode));
         return nsList.iterator();
     }
 
@@ -445,8 +445,15 @@ public class DocumentNavigator extends DefaultNavigator {
      *                                  not supported by this object model
      */
     public Iterator getFollowingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
-        //TODO: Fix this better?
-        return super.getFollowingSiblingAxisIterator(contextNode);
+        ArrayList list = new ArrayList();
+        if(contextNode != null &&contextNode instanceof OMNode) {
+            while(contextNode != null && contextNode instanceof OMNode){
+                contextNode = ((OMNode)contextNode).getNextSibling();
+                if(contextNode != null)
+                    list.add(contextNode);
+            }
+        }
+        return list.iterator();
     }
 
     /**
@@ -459,8 +466,15 @@ public class DocumentNavigator extends DefaultNavigator {
      *                                  not supported by this object model
      */
     public Iterator getPrecedingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
-        //TODO: Fix this better?
-        return super.getPrecedingSiblingAxisIterator(contextNode);
+        ArrayList list = new ArrayList();
+        if(contextNode != null &&contextNode instanceof OMNode) {
+            while(contextNode != null && contextNode instanceof OMNode){
+                contextNode = ((OMNode)contextNode).getPreviousSibling();
+                if(contextNode != null)
+                    list.add(contextNode);
+            }
+        }
+        return list.iterator();
     }
 
     /**
@@ -566,7 +580,7 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public String translateNamespacePrefixToUri(String prefix, Object element) {
         //TODO: Fix this better?
-        return super.translateNamespacePrefixToUri(prefix, prefix);
+        return super.translateNamespacePrefixToUri(prefix, element);
     }
 
     /**
@@ -622,10 +636,36 @@ public class DocumentNavigator extends DefaultNavigator {
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
         if (contextNode == null ||
                 contextNode instanceof OMDocument ||
-                contextNode instanceof OMAttribute ||
-                contextNode instanceof OMNamespace)
+                contextNode instanceof OMAttribute)
             return null;
+        if(contextNode instanceof OMNamespaceEx) {
+            return ((OMNamespaceEx)contextNode).getParent();
+        }
         return getDocumentNode(((OMNode) contextNode).getParent());
+    }
+
+    class OMNamespaceEx implements OMNamespace {
+        OMNamespace originalNsp = null;
+        OMContainer contextNode = null;
+        OMNamespaceEx(OMNamespace nsp, OMContainer node) {
+            originalNsp = nsp;
+            contextNode = node;
+        }
+        public boolean equals(String uri, String prefix) {
+            return originalNsp.equals(uri, prefix);
+        }
+
+        public String getPrefix() {
+            return originalNsp.getPrefix();
+        }
+
+        public String getName() {
+            return originalNsp.getName();
+        }
+
+        public OMContainer getParent() {
+            return contextNode;
+        }
     }
 }
 

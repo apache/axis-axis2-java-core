@@ -266,6 +266,9 @@ public class StAXOMBuilder extends StAXBuilder{
                 if (namespace == null) {
                     namespace = node.declareNamespace(namespaceURI, "");
                 }
+                if(node.getNamespace() == null){
+                    node.setNamespace(namespace);
+                }
             } else {
                 namespace = node.findNamespace(namespaceURI, prefix);
                 if(namespace == null){
