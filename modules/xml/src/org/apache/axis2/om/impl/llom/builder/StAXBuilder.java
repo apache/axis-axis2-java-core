@@ -150,12 +150,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             node =
                     omfactory.createText((OMElement) lastNode.getParent(),
                             parser.getText());
-            lastNode.setNextSibling(node);
-            node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createText(e, parser.getText());
-            e.setFirstChild(node);
         }
         return node;
     }
